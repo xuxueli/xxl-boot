@@ -45,7 +45,7 @@ CREATE TABLE `xxl_boot_resource` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '资源ID',
     `parent_id` int(11) NOT NULL COMMENT '父节点ID',
     `name` varchar(50) NOT NULL COMMENT '名称',
-    `type` tinyint(4) NOT NULL COMMENT '类型：0-菜单、1-按钮',
+    `type` tinyint(4) NOT NULL COMMENT '类型',
     `permission` varchar(50) DEFAULT NULL COMMENT '权限标识',
     `url` varchar(50) DEFAULT NULL COMMENT '菜单地址',
     `icon` varchar(50) DEFAULT NULL COMMENT '资源icon',
