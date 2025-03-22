@@ -3,7 +3,6 @@ package com.xxl.boot.admin.web.interceptor;
 import com.xxl.boot.admin.annotation.Permission;
 import com.xxl.boot.admin.model.dto.LoginUserDTO;
 import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
-import com.xxl.boot.admin.model.entity.XxlBootUser;
 import com.xxl.boot.admin.util.I18nUtil;
 import com.xxl.boot.admin.service.impl.LoginService;
 import com.xxl.tool.core.StringTool;
@@ -55,7 +54,7 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 			response.setHeader("location", request.getContextPath() + "/toLogin");
 			return false;
 		}
-		request.setAttribute(LoginService.LOGIN_IDENTITY_KEY, loginUser);
+		LoginService.setLoginUser(request, loginUser);
 
 		// valid permission
 		if (StringTool.isBlank(permission.value())) {

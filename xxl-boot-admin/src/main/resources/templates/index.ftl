@@ -47,7 +47,7 @@
                                 <img src="${request.contextPath}/static/favicon.ico" style="height: 80px;" >
                             </div>
                             <div class="pull-left info" style="padding-left: 10px;padding-top: 5px;" >
-                                <h4>你好，${Request["XXL_BOOT_LOGIN_IDENTITY"].realName}，祝你开心每一天！</h4>
+                                <h4>你好，${_loginUser.realName}，祝你开心每一天！</h4>
                                 <span style="color: #999;">登录时间：${.now?string('yyyy年MM月dd日 HH:mm:ss')}</span>
                             </div>
                         </div>
@@ -142,15 +142,15 @@
                         <div class="modal-body">
                             <form class="form-horizontal form" role="form" >
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">标题</label>
-                                    <div class="col-sm-8 title" ></div>
+                                    <label for="lastname" class="col-sm-2 control-label">通知标题：</label>
+                                    <div class="col-sm-10 title" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">操作时间</label>
+                                    <label for="lastname" class="col-sm-2 control-label">发布时间：</label>
                                     <div class="col-sm-8 addTime" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">正文</label>
+                                    <label for="lastname" class="col-sm-2 control-label">通知正文：</label>
                                     <div class="col-sm-8 content" style="overflow: hidden;" ></div>
                                 </div>
 
