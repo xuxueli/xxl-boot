@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.ResponseBuilder;
-import com.xxl.boot.admin.annotation.Permission;
 
 /**
 * ${classInfo.className} Controller
