@@ -10,7 +10,6 @@ import com.xxl.boot.admin.service.MessageService;
 import com.xxl.boot.admin.service.impl.LoginService;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,7 +57,7 @@ public class MessageController {
                                                            @RequestParam(required = false, defaultValue = "0") int start,
                                                            @RequestParam(required = false, defaultValue = "10") int length) {
         PageModel<XxlBootMessageDTO> pageModel = messageService.pageList(status, title, start, length);
-        return new ResponseBuilder<PageModel<XxlBootMessageDTO>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**

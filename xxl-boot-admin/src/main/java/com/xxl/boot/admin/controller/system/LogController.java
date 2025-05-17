@@ -16,7 +16,6 @@ import javax.annotation.Resource;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.boot.admin.annotation.Permission;
 
 /**
@@ -56,7 +55,7 @@ public class LogController {
                                                     @RequestParam(required = false, defaultValue = "0") int offset,
                                                     @RequestParam(required = false, defaultValue = "10") int pagesize) {
         PageModel<XxlBootLogDTO> pageModel = xxlBootLogService.pageList(type, module, title, offset, pagesize);
-        return new ResponseBuilder<PageModel<XxlBootLogDTO>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**

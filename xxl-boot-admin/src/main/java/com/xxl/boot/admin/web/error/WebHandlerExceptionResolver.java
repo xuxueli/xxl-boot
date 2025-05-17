@@ -3,7 +3,6 @@ package com.xxl.boot.admin.web.error;
 import com.xxl.tool.exception.BizException;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -44,7 +43,7 @@ public class WebHandlerExceptionResolver implements HandlerExceptionResolver {
 		}
 
 		// error result
-		Response<String> errorResult = new ResponseBuilder<String>().fail(ex.toString().replaceAll("\n", "<br/>")).build();
+		Response<String> errorResult = Response.ofFail(ex.toString().replaceAll("\n", "<br/>"));
 
 		// response
 		ModelAndView mv = new ModelAndView();

@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 import java.util.List;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -34,12 +33,12 @@ public class MessageServiceImpl implements MessageService {
 
 		// valid
 		if (xxlBootMessage == null) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 		xxlBootMessage.setSender(loginUser.getUsername());
 
 		messageMapper.insert(xxlBootMessage);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -48,8 +47,7 @@ public class MessageServiceImpl implements MessageService {
 	@Override
 	public Response<String> delete(List<Integer> ids) {
 		int ret = messageMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -58,8 +56,7 @@ public class MessageServiceImpl implements MessageService {
 	@Override
 	public Response<String> update(XxlBootMessage xxlBootMessage) {
 		int ret = messageMapper.update(xxlBootMessage);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -68,7 +65,7 @@ public class MessageServiceImpl implements MessageService {
 	@Override
 	public Response<XxlBootMessage> load(int id) {
 		XxlBootMessage record = messageMapper.load(id);
-		return new ResponseBuilder<XxlBootMessage>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**

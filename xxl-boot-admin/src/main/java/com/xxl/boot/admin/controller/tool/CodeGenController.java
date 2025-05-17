@@ -7,9 +7,8 @@ import com.xxl.boot.admin.constant.enums.LogTypeEnum;
 import com.xxl.boot.admin.util.codegen.ClassInfo;
 import com.xxl.boot.admin.util.codegen.TableParseUtil;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.freemarker.FreemarkerTool;
+import com.xxl.tool.freemarker.FtlTool;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import org.slf4j.Logger;
@@ -46,7 +45,7 @@ public class CodeGenController {
 
         try {
             if (StringTool.isBlank(tableSql)) {
-                return new ResponseBuilder<Map<String, String>>().fail("表结构信息不可为空").build();
+                return Response.ofFail("表结构信息不可为空");
             }
 
             // parse table
@@ -59,12 +58,12 @@ public class CodeGenController {
             // result
             Map<String, String> result = new HashMap<String, String>();
 
-            result.put("controller_code", FreemarkerTool.processString(freemarkerConfig,"tool/codegen-module/controller.ftl", params));
-            result.put("service_code", FreemarkerTool.processString(freemarkerConfig,"tool/codegen-module/service.ftl", params));
-            result.put("service_impl_code", FreemarkerTool.processString(freemarkerConfig,"tool/codegen-module/service_impl.ftl", params));
-            result.put("mapper_code", FreemarkerTool.processString(freemarkerConfig,"tool/codegen-module/mapper.ftl", params));
-            result.put("mapper_xml_code", FreemarkerTool.processString(freemarkerConfig,"tool/codegen-module/mapper_xml.ftl", params));
-            result.put("entity_code", FreemarkerTool.processString(freemarkerConfig,"tool/codegen-module/entity.ftl", params));
+            result.put("controller_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/controller.ftl", params));
+            result.put("service_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/service.ftl", params));
+            result.put("service_impl_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/service_impl.ftl", params));
+            result.put("mapper_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/mapper.ftl", params));
+            result.put("mapper_xml_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/mapper_xml.ftl", params));
+            result.put("entity_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/entity.ftl", params));
 
             // 计算,生成代码行数
             int lineNum = 0;
@@ -75,10 +74,10 @@ public class CodeGenController {
             }
             logger.info("genCode lineNum：{}", lineNum);
 
-            return new ResponseBuilder<Map<String, String>>().success(result).build();
+            return Response.ofSuccess(result);
         } catch (IOException | TemplateException e) {
             logger.error(e.getMessage(), e);
-            return new ResponseBuilder<Map<String, String>>().fail("表结构解析失败").build();
+            return Response.ofFail("表结构解析失败");
         }
 
     }

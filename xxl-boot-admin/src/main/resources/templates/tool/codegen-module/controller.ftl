@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 
 /**
 * ${classInfo.className} Controller
@@ -41,7 +40,7 @@ public class ${classInfo.className}Controller {
     public Response<PageModel<${classInfo.className}>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                     @RequestParam(required = false, defaultValue = "10") int pagesize) {
         PageModel<${classInfo.className}> pageModel = ${classInfo.className?uncap_first}Service.pageList(offset, pagesize);
-        return new ResponseBuilder<PageModel<${classInfo.className}>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**

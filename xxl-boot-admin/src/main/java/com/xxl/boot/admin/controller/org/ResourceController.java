@@ -5,8 +5,6 @@ import com.xxl.boot.admin.constant.enums.ResourceTypeEnum;
 import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.admin.model.entity.XxlBootResource;
 import com.xxl.boot.admin.service.ResourceService;
-import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,7 +69,7 @@ public class ResourceController {
                                                        @RequestParam(required = false, defaultValue = "-1") int status) {
 
         List<XxlBootResourceDTO> treeListData = resourceService.treeList(name, status);
-        return new ResponseBuilder<List<XxlBootResourceDTO>>().success(treeListData).build();
+        return Response.ofSuccess(treeListData);
     }
 
     /**
@@ -92,7 +90,7 @@ public class ResourceController {
     public Response<List<XxlBootResourceDTO>> simpleTreeList(@RequestParam(required = false) String name,
                                                              @RequestParam(required = false, defaultValue = "-1") int status) {
         List<XxlBootResourceDTO> treeListData = resourceService.simpleTreeList(name, status);
-        return new ResponseBuilder<List<XxlBootResourceDTO>>().success(treeListData).build();
+        return Response.ofSuccess(treeListData);
     }
 
     /**

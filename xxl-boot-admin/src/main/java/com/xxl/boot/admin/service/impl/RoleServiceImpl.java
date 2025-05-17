@@ -9,7 +9,6 @@ import com.xxl.boot.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,11 +38,11 @@ public class RoleServiceImpl implements RoleService {
 
 		// valid
 		if (xxlBootRole == null) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 
 		int ret = roleMapper.insert(xxlBootRole);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -54,16 +53,15 @@ public class RoleServiceImpl implements RoleService {
 
 		// valid
 		if (CollectionTool.isEmpty(ids)) {
-			return new ResponseBuilder<String>().fail(I18nUtil.getString("system_please_choose") + I18nUtil.getString("role_tips")).build();
+			return Response.ofFail(I18nUtil.getString("system_please_choose") + I18nUtil.getString("role_tips"));
 		}
 		List<XxlBootRoleRes> roleResList = roleResMapper.queryRoleRes(ids);
 		if (CollectionTool.isNotEmpty(roleResList)) {
-			return new ResponseBuilder<String>().fail("无法删除，请先取消关联资源").build();
+			return Response.ofFail("无法删除，请先取消关联资源");
 		}
 
 		int ret = roleMapper.deleteByIds(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -72,8 +70,7 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public Response<String> update(XxlBootRole xxlBootRole) {
 		int ret = roleMapper.update(xxlBootRole);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -82,7 +79,7 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public Response<XxlBootRole> load(int id) {
 		XxlBootRole record = roleMapper.load(id);
-		return new ResponseBuilder<XxlBootRole>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**
@@ -111,20 +108,20 @@ public class RoleServiceImpl implements RoleService {
 	public Response<List<Integer>> loadRoleRes(int roleId) {
 		List<XxlBootRoleRes> roleResList = roleResMapper.loadRoleRes(roleId);
 		if (CollectionTool.isEmpty(roleResList)) {
-			return new ResponseBuilder<List<Integer>>().success().build();
+			return Response.ofSuccess();
 		}
 
 		List<Integer> resIds = roleResList
 				.stream()
 				.map(XxlBootRoleRes::getResId)
 				.collect(Collectors.toList());
-		return new ResponseBuilder<List<Integer>>().success(resIds).build();
+		return Response.ofSuccess(resIds);
 	}
 
 	@Override
 	public Response<String> updateRoleRes(int roleId, List<Integer> resourceIds) {
 		if (roleId < 1) {
-			return new ResponseBuilder<String>().fail().build();
+			return Response.ofFail();
 		}
 		// remove old
 		roleResMapper.deleteByRoleId(roleId);
@@ -139,7 +136,7 @@ public class RoleServiceImpl implements RoleService {
 			System.out.println(ret);
 		}
 
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 }

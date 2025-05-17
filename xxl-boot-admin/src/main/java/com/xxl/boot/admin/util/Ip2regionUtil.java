@@ -1,7 +1,7 @@
 package com.xxl.boot.admin.util;
 
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.io.StreamTool;
+import com.xxl.tool.io.IOTool;
 import org.lionsoul.ip2region.xdb.Searcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class Ip2regionUtil {
     private static void initIp2regionSearcher() {
         try {
             InputStream inputStream = new ClassPathResource("/other/ip2region/ip2region.xdb").getInputStream();
-            byte[] dbBinStr = StreamTool.copyToByteArray(inputStream);
+            byte[] dbBinStr = IOTool.copyToByteArray(inputStream);
 
             // new with buffer
             searcher = Searcher.newWithBuffer(dbBinStr);

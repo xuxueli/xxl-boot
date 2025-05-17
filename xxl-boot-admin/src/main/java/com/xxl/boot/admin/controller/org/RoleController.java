@@ -5,7 +5,6 @@ import com.xxl.boot.admin.constant.enums.UserStatuEnum;
 import com.xxl.boot.admin.model.entity.XxlBootRole;
 import com.xxl.boot.admin.service.RoleService;
 import com.xxl.tool.response.PageModel;
-import com.xxl.tool.response.ResponseBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +48,7 @@ public class RoleController {
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                      String name) {
         PageModel<XxlBootRole> pageModel = roleService.pageList(offset, pagesize, name);
-        return new ResponseBuilder<PageModel<XxlBootRole>>().success(pageModel).build();
+        return Response.ofSuccess(pageModel);
     }
 
     /**

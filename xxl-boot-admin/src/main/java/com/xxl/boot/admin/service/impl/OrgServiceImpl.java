@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 import java.util.*;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -33,11 +32,11 @@ public class OrgServiceImpl implements OrgService {
 
 		// valid
 		if (xxlBootOrg == null) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 
 		orgMapper.insert(xxlBootOrg);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -46,8 +45,7 @@ public class OrgServiceImpl implements OrgService {
 	@Override
 	public Response<String> delete(List<Integer> ids) {
 		int ret = orgMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail() ;
 	}
 
 	/**
@@ -56,8 +54,7 @@ public class OrgServiceImpl implements OrgService {
 	@Override
 	public Response<String> update(XxlBootOrg xxlBootOrg) {
 		int ret = orgMapper.update(xxlBootOrg);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail() ;
 	}
 
 	/**
@@ -66,7 +63,7 @@ public class OrgServiceImpl implements OrgService {
 	@Override
 	public Response<XxlBootOrg> load(int id) {
 		XxlBootOrg record = orgMapper.load(id);
-		return new ResponseBuilder<XxlBootOrg>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**

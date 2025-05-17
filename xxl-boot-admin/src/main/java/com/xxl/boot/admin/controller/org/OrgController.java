@@ -15,7 +15,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 
 /**
  * XxlBootOrg Controller
@@ -68,7 +67,7 @@ public class OrgController {
                                                   @RequestParam(required = false, defaultValue = "-1") int status) {
 
         List<XxlBootOrgDTO> treeListData = orgService.treeList(name, status);
-        return new ResponseBuilder<List<XxlBootOrgDTO>>().success(treeListData).build();
+        return Response.ofSuccess(treeListData);
     }
 
     /**
@@ -89,7 +88,7 @@ public class OrgController {
     public Response<List<XxlBootOrgDTO>> simpleTreeList(@RequestParam(required = false) String name,
                                                              @RequestParam(required = false, defaultValue = "-1") int status) {
         List<XxlBootOrgDTO> treeListData = orgService.simpleTreeList(name, status);
-        return new ResponseBuilder<List<XxlBootOrgDTO>>().success(treeListData).build();
+        return Response.ofSuccess(treeListData);
     }
 
     /**

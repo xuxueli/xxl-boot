@@ -7,7 +7,7 @@ import com.xxl.boot.admin.util.I18nUtil;
 import com.xxl.boot.admin.service.impl.LoginService;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.exception.BizException;
-import com.xxl.tool.freemarker.FreemarkerTool;
+import com.xxl.tool.freemarker.FtlTool;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
@@ -74,7 +74,7 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 
 		if (modelAndView != null) {
 			// i18n, static method
-			modelAndView.addObject("I18nUtil", FreemarkerTool.generateStaticModel(I18nUtil.class.getName()));
+			modelAndView.addObject("I18nUtil", FtlTool.generateStaticModel(I18nUtil.class.getName()));
 
 			// resource load
 			LoginUserDTO loginUser = loginService.getLoginUser(request);

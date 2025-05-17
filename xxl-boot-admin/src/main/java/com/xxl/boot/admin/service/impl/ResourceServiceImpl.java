@@ -13,7 +13,6 @@ import javax.annotation.Resource;
 import java.util.*;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -35,22 +34,22 @@ public class ResourceServiceImpl implements ResourceService {
 
 		// valid
 		if (xxlBootResource == null) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 
 		// limit： 按钮只能是叶子节点 + 资源类型不能变化；
 		if (xxlBootResource.getParentId() > 0) {
 			XxlBootResource resource = resourceMapper.load(xxlBootResource.getParentId());
 			if (resource == null) {
-				return new ResponseBuilder<String>().fail("操作失败，parentId非法").build();
+				return Response.ofFail("操作失败，parentId非法");
 			}
 			if (ResourceTypeEnum.BUTTOM.getValue() == resource.getType()) {
-				return new ResponseBuilder<String>().fail("操作失败，按钮无法添加子资源").build();
+				return Response.ofFail("操作失败，按钮无法添加子资源");
 			}
 		}
 
 		resourceMapper.insert(xxlBootResource);
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -61,12 +60,11 @@ public class ResourceServiceImpl implements ResourceService {
 
 		List<XxlBootResource> resourceList = resourceMapper.queryByParentIds(ids);
 		if (CollectionTool.isNotEmpty(resourceList)) {
-			return new ResponseBuilder<String>().fail("删除失败，已关联子资源").build();
+			return Response.ofFail("删除失败，已关联子资源");
 		}
 
 		int ret = resourceMapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -75,8 +73,7 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public Response<String> update(XxlBootResource xxlBootResource) {
 		int ret = resourceMapper.update(xxlBootResource);
-		return ret>0? new ResponseBuilder<String>().success().build()
-				: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
 	/**
@@ -85,7 +82,7 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public Response<XxlBootResource> load(int id) {
 		XxlBootResource record = resourceMapper.load(id);
-		return new ResponseBuilder<XxlBootResource>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**

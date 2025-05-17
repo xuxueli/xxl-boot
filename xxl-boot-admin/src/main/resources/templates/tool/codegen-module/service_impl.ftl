@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import com.xxl.tool.response.PageModel;
 
 /**
@@ -28,11 +27,11 @@ public class ${classInfo.className}ServiceImpl implements ${classInfo.className}
 
 		// valid
 		if (${classInfo.className?uncap_first} == null) {
-			return new ResponseBuilder<String>().fail("必要参数缺失").build();
+			return Response.ofFail("必要参数缺失");
         }
 
 		${classInfo.className?uncap_first}Mapper.insert(${classInfo.className?uncap_first});
-		return new ResponseBuilder<String>().success().build();
+		return Response.ofSuccess();
 	}
 
 	/**
@@ -41,8 +40,7 @@ public class ${classInfo.className}ServiceImpl implements ${classInfo.className}
 	@Override
 	public Response<String> delete(List<Integer> ids) {
 		int ret = ${classInfo.className?uncap_first}Mapper.delete(ids);
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+			return ret>0? Response.ofSuccess() : Response.ofFail() ;
 	}
 
 	/**
@@ -51,8 +49,7 @@ public class ${classInfo.className}ServiceImpl implements ${classInfo.className}
 	@Override
 	public Response<String> update(${classInfo.className} ${classInfo.className?uncap_first}) {
 		int ret = ${classInfo.className?uncap_first}Mapper.update(${classInfo.className?uncap_first});
-		return ret>0? new ResponseBuilder<String>().success().build()
-					: new ResponseBuilder<String>().fail().build() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail() ;
 	}
 
 	/**
@@ -61,7 +58,7 @@ public class ${classInfo.className}ServiceImpl implements ${classInfo.className}
 	@Override
 	public Response<${classInfo.className}> load(int id) {
 		${classInfo.className} record = ${classInfo.className?uncap_first}Mapper.load(id);
-		return new ResponseBuilder<${classInfo.className}>().success(record).build();
+		return Response.ofSuccess(record);
 	}
 
 	/**
