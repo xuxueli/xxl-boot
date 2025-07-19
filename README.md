@@ -10,6 +10,9 @@
         <a href="https://github.com/xuxueli/xxl-boot/releases">
             <img src="https://img.shields.io/github/release/xuxueli/xxl-boot.svg" >
         </a>
+        <a href="https://github.com/xuxueli/xxl-boot/">
+            <img src="https://img.shields.io/github/stars/xuxueli/xxl-boot" >
+        </a>
         <a href="http://www.gnu.org/licenses/gpl-3.0.html">
             <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" >
         </a>
