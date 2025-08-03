@@ -29,38 +29,38 @@ public class WebHandlerExceptionResolver implements HandlerExceptionResolver {
 			HttpServletResponse response, Object handler, Exception ex) {
 
 		if (!(ex instanceof BizException)) {
-			logger.error("WebExceptionResolver:{}", ex);
+			logger.error("WebExceptionResolver:{}", ex.getMessage(), ex);
 		}
 
-		// if json
+		// parse isJson
 		boolean isJson = false;
 		if (handler instanceof HandlerMethod) {
 			HandlerMethod method = (HandlerMethod)handler;
-			ResponseBody responseBody = method.getMethodAnnotation(ResponseBody.class);
-			if (responseBody != null) {
-				isJson = true;
-			}
+			isJson = method.getMethodAnnotation(ResponseBody.class)!=null;
 		}
 
-		// error result
-		Response<String> errorResult = Response.ofFail(ex.toString().replaceAll("\n", "<br/>"));
-
-		// response
+		// process error
 		ModelAndView mv = new ModelAndView();
 		if (isJson) {
 			try {
-				response.setContentType("application/json;charset=utf-8");
-				response.getWriter().print(GsonTool.toJson(errorResult));
+				// errorMsg
+				String errorMsg = GsonTool.toJson(Response.ofFail(ex.toString()));
+
+				// write response
+				response.setStatus(HttpServletResponse.SC_OK);
+				response.setContentType("application/json;charset=UTF-8");
+				response.getWriter().println(errorMsg);
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}
 			return mv;
 		} else {
 
-			mv.addObject("exceptionMsg", errorResult.getMsg());
+			mv.addObject("exceptionMsg", ex.toString());
 			mv.setViewName("common/common.errorpage");
 			return mv;
 		}
+
 	}
 	
 }
