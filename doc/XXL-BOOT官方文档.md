@@ -269,8 +269,8 @@ docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAdd
 - 7、【扩展】分布式扩展：系统设计预留丰富扩展能力，可低成本扩展接入RPC、MQ、JOB、CONF、KV、SSO…等分布式中间件能力。
 - 8、【升级】升级依赖版本，如slf4j、poi、spring、gson、mysql…等。
 
-### 版本 v1.0.1 Release Notes[迭代中]
-- 1、【升级】升级依赖版本，如 xxl-tool …等。
+### 版本 v1.1.0 Release Notes[迭代中]
+- 1、【升级】升级依赖版本，如slf4j、xxl-tool、spring、gson、mysql-connector…等。
 
 
 ### TODO LIST
