@@ -1,5 +1,6 @@
 ## 《快速开发平台 XXL-BOOT》
 
+[![Actions Status](https://github.com/xuxueli/xxl-boot/workflows/Java%20CI/badge.svg)](https://github.com/xuxueli/xxl-boot/actions)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-boot.svg)](https://github.com/xuxueli/xxl-boot/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-boot)](https://github.com/xuxueli/xxl-boot/)
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
