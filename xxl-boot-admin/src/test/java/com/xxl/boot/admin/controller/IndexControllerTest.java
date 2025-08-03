@@ -22,7 +22,7 @@ public class IndexControllerTest extends AbstractSpringMvcTest {
   @BeforeEach
   public void login() throws Exception {
     MvcResult ret = mockMvc.perform(
-        post("/doLogin")
+        post("/auth/doLogin")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param("userName", "admin")
             .param("password", "123456")
