@@ -4,13 +4,13 @@ import com.xxl.boot.admin.mapper.RoleMapper;
 import com.xxl.boot.admin.mapper.UserMapper;
 import com.xxl.boot.admin.mapper.UserRoleMapper;
 import com.xxl.boot.admin.model.adaptor.XxlBootUserAdaptor;
-import com.xxl.boot.admin.model.dto.LoginUserDTO;
 import com.xxl.boot.admin.model.dto.XxlBootUserDTO;
 import com.xxl.boot.admin.model.entity.XxlBootRole;
 import com.xxl.boot.admin.model.entity.XxlBootUser;
 import com.xxl.boot.admin.model.entity.XxlBootUserRole;
 import com.xxl.boot.admin.service.UserService;
 import com.xxl.boot.admin.util.I18nUtil;
+import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
      * 删除
      */
     @Override
-    public Response<String> deleteByIds(List<Integer> userIds, LoginUserDTO loginUser) {
+    public Response<String> deleteByIds(List<Integer> userIds, LoginInfo loginInfo) {
 
         // valid
         if (CollectionTool.isEmpty(userIds)) {
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // avoid opt login seft
-        if (userIds.contains(loginUser.getId())) {
+        if (userIds.contains(Integer.valueOf(loginInfo.getUserId()))) {
             return Response.ofFail( I18nUtil.getString("user_update_loginuser_limit") );
         }
 
@@ -140,14 +140,14 @@ public class UserServiceImpl implements UserService {
      * 更新
      */
     @Override
-    public Response<String> update(XxlBootUserDTO xxlJobUser, LoginUserDTO loginUser) {
+    public Response<String> update(XxlBootUserDTO xxlJobUser, LoginInfo loginInfo) {
 
         // adapt
         XxlBootUser user = XxlBootUserAdaptor.adapt(xxlJobUser);
         List<Integer> roleIds = xxlJobUser.getRoleIds();
 
         // avoid opt login seft
-        if (loginUser.getUsername().equals(user.getUsername())) {
+        if (loginInfo.getUserName().equals(user.getUsername())) {
             return Response.ofFail( I18nUtil.getString("user_update_loginuser_limit") );
         }
 
@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 修改密码
      */
-    public Response<String> updatePwd(LoginUserDTO loginUser, String password){
+    public Response<String> updatePwd(LoginInfo loginInfo, String password){
         // valid password
         if (StringTool.isBlank(password)){
             Response.ofFail( "密码不可为空" );
@@ -204,7 +204,7 @@ public class UserServiceImpl implements UserService {
         String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         // update pwd
-        XxlBootUser existUser = userMapper.loadByUserName(loginUser.getUsername());
+        XxlBootUser existUser = userMapper.loadByUserName(loginInfo.getUserName());
         existUser.setPassword(md5Password);
         userMapper.update(existUser);
 
@@ -217,7 +217,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<XxlBootUser> loadByUserName(String username){
         XxlBootUser record = userMapper.loadByUserName(username);
-        return Response.ofSuccess(record);
+        return record!=null ? Response.ofSuccess(record) : Response.ofFail();
+    }
+
+    @Override
+    public Response<XxlBootUser> loadByUserId(int id) {
+        XxlBootUser record = userMapper.load(id);
+        return record!=null ? Response.ofSuccess(record) : Response.ofFail();
     }
 
     /**

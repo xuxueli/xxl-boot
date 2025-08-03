@@ -1,13 +1,13 @@
 package com.xxl.boot.admin.controller.system;
 
-import com.xxl.boot.admin.annotation.Permission;
 import com.xxl.boot.admin.constant.enums.MessageCategoryEnum;
 import com.xxl.boot.admin.constant.enums.MessageStatusEnum;
-import com.xxl.boot.admin.model.dto.LoginUserDTO;
 import com.xxl.boot.admin.model.dto.XxlBootMessageDTO;
 import com.xxl.boot.admin.model.entity.XxlBootMessage;
 import com.xxl.boot.admin.service.MessageService;
-import com.xxl.boot.admin.service.impl.LoginService;
+import com.xxl.sso.core.annotation.XxlSso;
+import com.xxl.sso.core.helper.XxlSsoHelper;
+import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Controller;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -31,14 +32,12 @@ public class MessageController {
 
     @Resource
     private MessageService messageService;
-    @Resource
-    private LoginService loginService;
 
     /**
      * 页面
      */
     @RequestMapping
-    @Permission
+    @XxlSso
     public String index(Model model) {
 
         model.addAttribute("MessageCategoryEnum", MessageCategoryEnum.values());
@@ -52,7 +51,7 @@ public class MessageController {
      */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<PageModel<XxlBootMessageDTO>> pageList(int status, String title,
                                                            @RequestParam(required = false, defaultValue = "0") int start,
                                                            @RequestParam(required = false, defaultValue = "10") int length) {
@@ -65,7 +64,7 @@ public class MessageController {
      */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<XxlBootMessage> load(int id){
         return messageService.load(id);
     }
@@ -75,10 +74,13 @@ public class MessageController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission
-    public Response<String> insert(XxlBootMessage xxlBootMessage, HttpServletRequest request){
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        return messageService.insert(xxlBootMessage, loginUser);
+    @XxlSso
+    public Response<String> insert(XxlBootMessage xxlBootMessage, HttpServletRequest request, HttpServletResponse response){
+
+        // xxl-sso, logincheck
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+
+        return messageService.insert(xxlBootMessage, loginInfoResponse.getData().getUserName());
     }
 
     /**
@@ -86,7 +88,7 @@ public class MessageController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return messageService.delete(ids);
     }
@@ -96,7 +98,7 @@ public class MessageController {
      */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> update(XxlBootMessage xxlBootMessage){
         return messageService.update(xxlBootMessage);
     }

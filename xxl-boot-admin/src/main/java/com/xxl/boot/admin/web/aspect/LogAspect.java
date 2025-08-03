@@ -1,14 +1,14 @@
 package com.xxl.boot.admin.web.aspect;
 
 import com.xxl.boot.admin.annotation.Log;
-import com.xxl.boot.admin.model.dto.LoginUserDTO;
 import com.xxl.boot.admin.model.entity.XxlBootLog;
 import com.xxl.boot.admin.service.LogService;
-import com.xxl.boot.admin.service.impl.LoginService;
 import com.xxl.boot.admin.util.Ip2regionUtil;
+import com.xxl.sso.core.helper.XxlSsoHelper;
+import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
-import org.aspectj.lang.JoinPoint;
+import com.xxl.tool.response.Response;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,6 @@ import java.util.List;
 public class LogAspect {
     private static final Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
-    @Resource
-    private LoginService loginService;
     @Resource
     private LogService logService;
 
@@ -52,9 +51,12 @@ public class LogAspect {
     //@Around("@annotation(com.xxl.boot.admin.annotation.Log)")
     @Around("logPointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        // parse request/response
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
+        HttpServletResponse response = attributes.getResponse();
 
+        // parse annotation
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
 
@@ -70,7 +72,7 @@ public class LogAspect {
             return joinPoint.proceed();
         }
 
-        // proceed
+        // process logic
         long startTime = 0;
         Object result = null;
         long endTime = 0;
@@ -83,7 +85,7 @@ public class LogAspect {
         } finally {
             // TODO 待改造，推送队列，异步消费。
             try {
-                log(log, request, joinPoint, result, startTime, endTime);
+                doLog(log, request, response, result, startTime, endTime);
             } catch (Exception e) {
                 // ignore
                 logger.error(e.getMessage(), e);
@@ -92,10 +94,28 @@ public class LogAspect {
         return result;
     }
 
-    private void log(Log log, HttpServletRequest request, ProceedingJoinPoint joinPoint, Object result, long startTime, long endTime) {
+    /**
+     * do log
+     *
+     * @param log
+     * @param request
+     * @param response
+     * @param result
+     * @param startTime
+     * @param endTime
+     */
+    private void doLog(Log log,
+                       HttpServletRequest request,
+                       HttpServletResponse response,
+                       Object result,
+                       long startTime,
+                       long endTime) {
+
         // process
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        String operator = loginUser!=null?loginUser.getUsername():"";
+        // xxl-sso, logincheck
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+
+        String operator = loginInfoResponse.isSuccess()?loginInfoResponse.getData().getUserName():"";
         String ip = Ip2regionUtil.getIp(request);
         ip = ip!=null?ip:"";
 

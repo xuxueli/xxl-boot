@@ -1,9 +1,9 @@
 package com.xxl.boot.admin.controller.org;
 
-import com.xxl.boot.admin.annotation.Permission;
 import com.xxl.boot.admin.constant.enums.UserStatuEnum;
 import com.xxl.boot.admin.model.entity.XxlBootRole;
 import com.xxl.boot.admin.service.RoleService;
+import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.PageModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,7 +29,7 @@ public class RoleController {
     private RoleService roleService;
 
     @RequestMapping
-    @Permission("org:role")
+    @XxlSso(permission = "org:role")
     public String index(Model model) {
 
         /*PageModel<XxlBootRole> pageModel = roleService.pageList(0, 100);*/
@@ -43,7 +43,7 @@ public class RoleController {
      */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission("org:role")
+    @XxlSso(permission = "org:role")
     public Response<PageModel<XxlBootRole>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                      String name) {
@@ -56,7 +56,7 @@ public class RoleController {
     */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission("org:role")
+    @XxlSso(permission = "org:role")
     public Response<String> insert(XxlBootRole xxlBootRole){
         return roleService.insert(xxlBootRole);
     }
@@ -66,7 +66,7 @@ public class RoleController {
     */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission("org:role")
+    @XxlSso(permission = "org:role")
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
         return roleService.deleteByIds(ids);
     }
@@ -76,7 +76,7 @@ public class RoleController {
     */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission("org:role")
+    @XxlSso(permission = "org:role")
     public Response<String> update(XxlBootRole xxlBootRole){
         return roleService.update(xxlBootRole);
     }
@@ -86,7 +86,7 @@ public class RoleController {
     */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission("org:role")
+    @XxlSso(permission = "org:role")
     public Response<XxlBootRole> load(int id){
         return roleService.load(id);
     }
@@ -96,7 +96,7 @@ public class RoleController {
      */
     @RequestMapping("/loadRoleRes")
     @ResponseBody
-    @Permission("org:role")
+    @XxlSso(permission = "org:role")
     public Response<List<Integer>> loadRoleRes(int roleId){
         return roleService.loadRoleRes(roleId);
     }
@@ -106,7 +106,7 @@ public class RoleController {
      */
     @RequestMapping("/updateRoleRes")
     @ResponseBody
-    @Permission("org:role")
+    @XxlSso(permission = "org:role")
     public Response<String> updateRoleRes(@RequestParam int roleId,
                                           @RequestParam(value = "resourceIds[]", required = false) List<Integer> resourceIds){
         return roleService.updateRoleRes(roleId, resourceIds);

@@ -1,7 +1,5 @@
 package com.xxl.boot.admin.model.adaptor;
 
-import com.xxl.boot.admin.constant.enums.ResourceStatuEnum;
-import com.xxl.boot.admin.model.dto.LoginUserDTO;
 import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.admin.model.dto.XxlBootRoleDTO;
 import com.xxl.boot.admin.model.dto.XxlBootUserDTO;
@@ -78,37 +76,17 @@ public class XxlBootUserAdaptor {
     }
 
     /**
-     * adapt to login user
+     * extract resource permissions with children
      *
-     * @param xxlBootUser
-     * @param resourceList
+     * @param resources
      * @return
      */
-    public static LoginUserDTO adapt2LoginUser(XxlBootUser xxlBootUser, List<XxlBootResourceDTO> resourceList) {
-        if (xxlBootUser == null) {
-            return null;
-        }
-
-        LoginUserDTO loginUserDTO = new LoginUserDTO();
-        loginUserDTO.setId(xxlBootUser.getId());
-        loginUserDTO.setUsername(xxlBootUser.getUsername());
-        loginUserDTO.setPassword(xxlBootUser.getPassword());
-        loginUserDTO.setUserToken(xxlBootUser.getUserToken());
-        loginUserDTO.setRealName(xxlBootUser.getRealName());
-        if (CollectionTool.isNotEmpty(resourceList)) {
-            /*List<String> permissionList = resourceList.stream()
-                    .filter(x -> x.getStatus()== ResourceStatuEnum.NORMAL.getValue())
-                    .map(XxlBootResourceDTO::getPermission)
-                    .collect(Collectors.toList());*/
-            Set<String> permissionList = extractPermissions(resourceList);
-            loginUserDTO.setPermissionList(new ArrayList<>(permissionList));
-        }
-
-        return loginUserDTO;
-    }
-
-    private static Set<String> extractPermissions(List<XxlBootResourceDTO> resources) {
+    public static Set<String> extractPermissions(List<XxlBootResourceDTO> resources) {
         Set<String> permissions = new HashSet<>();
+        if (CollectionTool.isEmpty(resources)) {
+            return permissions;
+        }
+
         for (XxlBootResourceDTO resource : resources) {
             if (StringTool.isNotBlank(resource.getPermission())) {
                 permissions.add(resource.getPermission().trim());

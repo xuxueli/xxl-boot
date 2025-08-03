@@ -5,6 +5,7 @@ import com.xxl.boot.admin.constant.enums.LogTypeEnum;
 import com.xxl.boot.admin.model.dto.XxlBootLogDTO;
 import com.xxl.boot.admin.model.entity.XxlBootLog;
 import com.xxl.boot.admin.service.LogService;
+import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,6 @@ import javax.annotation.Resource;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
-import com.xxl.boot.admin.annotation.Permission;
 
 /**
  * XxlBootLog Controller
@@ -34,7 +34,7 @@ public class LogController {
      * 页面
      */
     @RequestMapping
-    @Permission
+    @XxlSso
     public String index(Model model) {
 
         model.addAttribute("LogTypeEnum", LogTypeEnum.values());
@@ -48,7 +48,7 @@ public class LogController {
      */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<PageModel<XxlBootLogDTO>> pageList(@RequestParam(required = false, defaultValue = "-1") int type,
                                                     String module,
                                                     String title,
@@ -63,7 +63,7 @@ public class LogController {
      */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<XxlBootLog> load(int id){
         return xxlBootLogService.load(id);
     }
@@ -73,7 +73,7 @@ public class LogController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> insert(XxlBootLog xxlBootLog){
         return xxlBootLogService.insert(xxlBootLog);
     }
@@ -83,7 +83,7 @@ public class LogController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return xxlBootLogService.delete(ids);
     }
@@ -93,7 +93,7 @@ public class LogController {
      */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> update(XxlBootLog xxlBootLog){
         return xxlBootLogService.update(xxlBootLog);
     }

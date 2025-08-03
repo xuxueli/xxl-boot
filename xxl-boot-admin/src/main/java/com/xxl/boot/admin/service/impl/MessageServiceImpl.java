@@ -2,7 +2,6 @@ package com.xxl.boot.admin.service.impl;
 
 import com.xxl.boot.admin.mapper.MessageMapper;
 import com.xxl.boot.admin.model.adaptor.XxlBootMesssageAdaptor;
-import com.xxl.boot.admin.model.dto.LoginUserDTO;
 import com.xxl.boot.admin.model.dto.XxlBootMessageDTO;
 import com.xxl.boot.admin.model.entity.XxlBootMessage;
 import com.xxl.boot.admin.service.MessageService;
@@ -29,13 +28,13 @@ public class MessageServiceImpl implements MessageService {
     * 新增
     */
 	@Override
-	public Response<String> insert(XxlBootMessage xxlBootMessage, LoginUserDTO loginUser) {
+	public Response<String> insert(XxlBootMessage xxlBootMessage, String optUserName) {
 
 		// valid
 		if (xxlBootMessage == null) {
 			return Response.ofFail("必要参数缺失");
         }
-		xxlBootMessage.setSender(loginUser.getUsername());
+		xxlBootMessage.setSender(optUserName);
 
 		messageMapper.insert(xxlBootMessage);
 		return Response.ofSuccess();

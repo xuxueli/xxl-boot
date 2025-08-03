@@ -1,16 +1,16 @@
 package com.xxl.boot.admin.controller.org;
 
 import com.xxl.boot.admin.annotation.Log;
-import com.xxl.boot.admin.annotation.Permission;
 import com.xxl.boot.admin.constant.enums.LogModuleEnum;
 import com.xxl.boot.admin.constant.enums.LogTypeEnum;
 import com.xxl.boot.admin.constant.enums.UserStatuEnum;
-import com.xxl.boot.admin.model.dto.LoginUserDTO;
 import com.xxl.boot.admin.model.dto.XxlBootUserDTO;
 import com.xxl.boot.admin.model.entity.XxlBootRole;
 import com.xxl.boot.admin.service.RoleService;
 import com.xxl.boot.admin.service.UserService;
-import com.xxl.boot.admin.service.impl.LoginService;
+import com.xxl.sso.core.annotation.XxlSso;
+import com.xxl.sso.core.helper.XxlSsoHelper;
+import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Controller;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -34,11 +35,9 @@ public class UserController {
     private UserService userService;
     @Resource
     private RoleService roleService;
-    @Resource
-    private LoginService loginService;
 
     @RequestMapping
-    @Permission("org:user")
+    @XxlSso(permission = "org:user")
     public String index(Model model) {
 
         PageModel<XxlBootRole> pageModel = roleService.pageList(0, 999, null);
@@ -51,7 +50,7 @@ public class UserController {
 
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission("org:user")
+    @XxlSso(permission = "org:user")
     public Response<PageModel<XxlBootUserDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int start,
                                                      @RequestParam(required = false, defaultValue = "10") int length,
                                                      String username,
@@ -63,7 +62,7 @@ public class UserController {
 
     @RequestMapping("/add")
     @ResponseBody
-    @Permission("org:user")
+    @XxlSso(permission = "org:user")
     @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER_MANAGE, title = "新增用户")
     public Response<String> add(XxlBootUserDTO xxlJobUser) {
         return userService.insert(xxlJobUser);
@@ -71,29 +70,37 @@ public class UserController {
 
     @RequestMapping("/update")
     @ResponseBody
-    @Permission("org:user")
+    @XxlSso(permission = "org:user")
     @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER_MANAGE, title = "更新用户")
-    public Response<String> update(HttpServletRequest request, XxlBootUserDTO xxlJobUser) {
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        return userService.update(xxlJobUser, loginUser);
+    public Response<String> update(HttpServletRequest request, HttpServletResponse response, XxlBootUserDTO xxlJobUser) {
+        // xxl-sso, logincheck
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+
+        return userService.update(xxlJobUser, loginInfoResponse.getData());
     }
 
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission("org:user")
+    @XxlSso(permission = "org:user")
     @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER_MANAGE, title = "删除用户")
     public Response<String> delete(HttpServletRequest request,
+                                   HttpServletResponse response,
                                    @RequestParam("ids[]") List<Integer> ids) {
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        return userService.deleteByIds(ids, loginUser);
+        // xxl-sso, logincheck
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+
+        return userService.deleteByIds(ids, loginInfoResponse.getData());
     }
 
     @RequestMapping("/updatePwd")
     @ResponseBody
-    @Permission
-    public Response<String> updatePwd(HttpServletRequest request, String password){
-        LoginUserDTO loginUser = loginService.getLoginUser(request);
-        return userService.updatePwd(loginUser, password);
+    @XxlSso
+    public Response<String> updatePwd(HttpServletRequest request, HttpServletResponse response, String password){
+
+        // xxl-sso, logincheck
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+
+        return userService.updatePwd(loginInfoResponse.getData(), password);
     }
 
 }

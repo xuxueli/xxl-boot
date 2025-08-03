@@ -21,6 +21,8 @@ public interface UserMapper {
 
 	public XxlBootUser loadByUserName(@Param("username") String username);
 
+	public XxlBootUser load(@Param("id") int id);
+
 	public List<XxlBootUser> pageList(@Param("offset") int offset,
 									  @Param("pagesize") int pagesize,
 									  @Param("username") String username,
@@ -29,5 +31,6 @@ public interface UserMapper {
 							 @Param("pagesize") int pagesize,
 							 @Param("username") String username,
 							 @Param("status") int status);
+
 
 }

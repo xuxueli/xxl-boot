@@ -1,10 +1,10 @@
 package com.xxl.boot.admin.controller.org;
 
-import com.xxl.boot.admin.annotation.Permission;
 import com.xxl.boot.admin.constant.enums.OrgStatuEnum;
 import com.xxl.boot.admin.model.dto.XxlBootOrgDTO;
 import com.xxl.boot.admin.model.entity.XxlBootOrg;
 import com.xxl.boot.admin.service.OrgService;
+import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +32,7 @@ public class OrgController {
      * 页面
      */
     @RequestMapping
-    @Permission("org:org")
+    @XxlSso(permission = "org:org")
     public String index(Model model) {
 
         model.addAttribute("orgStatuEnum", OrgStatuEnum.values());
@@ -62,7 +62,7 @@ public class OrgController {
      */
     @RequestMapping("/treeList")
     @ResponseBody
-    @Permission("org:org")
+    @XxlSso(permission = "org:org")
     public Response<List<XxlBootOrgDTO>> treeList(@RequestParam(required = false) String name,
                                                   @RequestParam(required = false, defaultValue = "-1") int status) {
 
@@ -84,7 +84,7 @@ public class OrgController {
      */
     @RequestMapping("/simpleTreeList")
     @ResponseBody
-    @Permission("org:org")
+    @XxlSso(permission = "org:org")
     public Response<List<XxlBootOrgDTO>> simpleTreeList(@RequestParam(required = false) String name,
                                                              @RequestParam(required = false, defaultValue = "-1") int status) {
         List<XxlBootOrgDTO> treeListData = orgService.simpleTreeList(name, status);
@@ -96,7 +96,7 @@ public class OrgController {
      */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission("org:org")
+    @XxlSso(permission = "org:org")
     public Response<XxlBootOrg> load(int id){
         return orgService.load(id);
     }
@@ -106,7 +106,7 @@ public class OrgController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission("org:org")
+    @XxlSso(permission = "org:org")
     public Response<String> insert(XxlBootOrg xxlBootOrg){
         return orgService.insert(xxlBootOrg);
     }
@@ -116,7 +116,7 @@ public class OrgController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission("org:org")
+    @XxlSso(permission = "org:org")
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return orgService.delete(ids);
     }
@@ -126,7 +126,7 @@ public class OrgController {
      */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission("org:org")
+    @XxlSso(permission = "org:org")
     public Response<String> update(XxlBootOrg xxlBootOrg){
         return orgService.update(xxlBootOrg);
     }

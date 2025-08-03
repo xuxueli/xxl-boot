@@ -1,11 +1,11 @@
 package com.xxl.boot.admin.controller.tool;
 
 import com.xxl.boot.admin.annotation.Log;
-import com.xxl.boot.admin.annotation.Permission;
 import com.xxl.boot.admin.constant.enums.LogModuleEnum;
 import com.xxl.boot.admin.constant.enums.LogTypeEnum;
 import com.xxl.boot.admin.util.codegen.ClassInfo;
 import com.xxl.boot.admin.util.codegen.TableParseUtil;
+import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.freemarker.FtlTool;
 import com.xxl.tool.response.Response;
@@ -32,14 +32,14 @@ public class CodeGenController {
     private Configuration freemarkerConfig;
 
     @RequestMapping
-    @Permission
+    @XxlSso
     public String index(Model model) {
         return "tool/codegen";
     }
 
     @RequestMapping("/genCode")
     @ResponseBody
-    @Permission
+    @XxlSso
     @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "生成代码")
     public Response<Map<String, String>> codeGenerate(String tableSql) {
 

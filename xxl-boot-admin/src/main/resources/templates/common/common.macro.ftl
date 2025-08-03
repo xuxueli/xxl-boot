@@ -128,7 +128,7 @@
 					<#-- login user -->
                     <li class="dropdown">
                         <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            ${I18n.system_welcome}：${_loginUser.username}
+                            ${I18n.system_welcome}：${xxl_sso_user.userName}
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">

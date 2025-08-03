@@ -72,16 +72,11 @@
 			<version>${mysql-connector-j.version}</version>
 		</dependency>
 
-		<!-- xxl-tool -->
+		<!-- xxl-sso (xxl-tool、gson) -->
 		<dependency>
 			<groupId>com.xuxueli</groupId>
-			<artifactId>xxl-tool</artifactId>
-			<version>${xxl-tool.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
+			<artifactId>xxl-sso-core</artifactId>
+			<version>${xxl-sso.version}</version>
 		</dependency>
 
 		<!-- ip2region -->

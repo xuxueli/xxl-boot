@@ -39,10 +39,7 @@
         <!-- db -->
         <mybatis-spring-boot-starter.version>2.3.2</mybatis-spring-boot-starter.version>
         <mysql-connector-j.version>9.4.0</mysql-connector-j.version>
-        <!-- tool -->
-        <xxl-tool.version>1.5.0</xxl-tool.version>
-        <gson.version>2.13.1</gson.version>
-        <!-- auth -->
+        <!-- xxl-sso (xxl-tool、gson) -->
         <xxl-sso.version>1.2.0</xxl-sso.version>
     </properties>
 

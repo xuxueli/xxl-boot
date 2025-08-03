@@ -270,7 +270,9 @@ docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAdd
 - 8、【升级】升级依赖版本，如slf4j、poi、spring、gson、mysql…等。
 
 ### 版本 v1.1.0 Release Notes[迭代中]
-- 1、【升级】升级依赖版本，如slf4j、xxl-tool、spring、gson、mysql-connector…等。
+- 1、【重构】登录认证：登录认证重构，集成XXL-SSO提供登录认证能力，针对分布式认证、单点登录...等场景可以简单扩展实现；
+- 2、【重构】权限认证：权限认证重构，集成XXL-SSO支持注解式/API方式快速鉴权，便捷集成系统RBAC权限系统；
+- 3、【升级】升级依赖版本，如slf4j、xxl-tool、spring、gson、mysql-connector…等；
 
 
 ### TODO LIST

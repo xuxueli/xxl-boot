@@ -1,10 +1,10 @@
 package com.xxl.boot.admin.controller.org;
-import com.xxl.boot.admin.annotation.Permission;
 import com.xxl.boot.admin.constant.enums.ResourceStatuEnum;
 import com.xxl.boot.admin.constant.enums.ResourceTypeEnum;
 import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.admin.model.entity.XxlBootResource;
 import com.xxl.boot.admin.service.ResourceService;
+import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +32,7 @@ public class ResourceController {
      * 页面
      */
     @RequestMapping
-    @Permission("org:resource")
+    @XxlSso(permission = "org:resource")
     public String index(Model model) {
 
         model.addAttribute("resourceStatuEnum", ResourceStatuEnum.values());
@@ -64,7 +64,7 @@ public class ResourceController {
      */
     @RequestMapping("/treeList")
     @ResponseBody
-    @Permission("org:resource")
+    @XxlSso(permission = "org:resource")
     public Response<List<XxlBootResourceDTO>> treeList(@RequestParam(required = false) String name,
                                                        @RequestParam(required = false, defaultValue = "-1") int status) {
 
@@ -86,7 +86,7 @@ public class ResourceController {
      */
     @RequestMapping("/simpleTreeList")
     @ResponseBody
-    @Permission("org:resource")
+    @XxlSso(permission = "org:resource")
     public Response<List<XxlBootResourceDTO>> simpleTreeList(@RequestParam(required = false) String name,
                                                              @RequestParam(required = false, defaultValue = "-1") int status) {
         List<XxlBootResourceDTO> treeListData = resourceService.simpleTreeList(name, status);
@@ -98,7 +98,7 @@ public class ResourceController {
      */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission("org:resource")
+    @XxlSso(permission = "org:resource")
     public Response<XxlBootResource> load(int id){
         return resourceService.load(id);
     }
@@ -108,7 +108,7 @@ public class ResourceController {
      */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission("org:resource")
+    @XxlSso(permission = "org:resource")
     public Response<String> insert(XxlBootResource xxlBootResource){
         return resourceService.insert(xxlBootResource);
     }
@@ -118,7 +118,7 @@ public class ResourceController {
      */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission("org:resource")
+    @XxlSso(permission = "org:resource")
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return resourceService.delete(ids);
     }
@@ -128,7 +128,7 @@ public class ResourceController {
      */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission("org:resource")
+    @XxlSso(permission = "org:resource")
     public Response<String> update(XxlBootResource xxlBootResource){
         return resourceService.update(xxlBootResource);
     }

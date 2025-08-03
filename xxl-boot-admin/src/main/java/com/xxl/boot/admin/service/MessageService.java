@@ -2,7 +2,6 @@ package com.xxl.boot.admin.service;
 
 import java.util.List;
 
-import com.xxl.boot.admin.model.dto.LoginUserDTO;
 import com.xxl.boot.admin.model.dto.XxlBootMessageDTO;
 import com.xxl.boot.admin.model.entity.XxlBootMessage;
 import com.xxl.tool.response.Response;
@@ -18,7 +17,7 @@ public interface MessageService {
     /**
     * 新增
     */
-    public Response<String> insert(XxlBootMessage xxlBootMessage, LoginUserDTO loginUser);
+    public Response<String> insert(XxlBootMessage xxlBootMessage, String optUserName);
 
     /**
     * 删除

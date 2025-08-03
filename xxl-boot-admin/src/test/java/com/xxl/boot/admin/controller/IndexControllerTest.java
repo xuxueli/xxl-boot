@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.controller;
 
-import com.xxl.boot.admin.service.impl.LoginService;
+import com.xxl.sso.core.constant.Const;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -22,16 +22,16 @@ public class IndexControllerTest extends AbstractSpringMvcTest {
   @BeforeEach
   public void login() throws Exception {
     MvcResult ret = mockMvc.perform(
-        post("/login")
+        post("/doLogin")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param("userName", "admin")
             .param("password", "123456")
     ).andReturn();
-    cookie = ret.getResponse().getCookie(LoginService.LOGIN_IDENTITY_KEY);
+    cookie = ret.getResponse().getCookie(Const.XXL_SSO_TOKEN);
   }
 
   @Test
-  public void testAdd() throws Exception {
+  public void pageListTest() throws Exception {
     MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
     parameters.add("jobGroup", "1");
     parameters.add("triggerStatus", "-1");
