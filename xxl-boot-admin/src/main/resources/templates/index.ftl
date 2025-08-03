@@ -47,7 +47,7 @@
                                 <img src="${request.contextPath}/static/favicon.ico" style="height: 80px;" >
                             </div>
                             <div class="pull-left info" style="padding-left: 10px;padding-top: 5px;" >
-                                <h4>你好，${xxl_sso_user.userName}，祝你开心每一天！</h4>
+                                <h4>你好，${xxl_sso_user.realName}，祝你开心每一天！</h4>
                                 <span style="color: #999;">登录时间：${.now?string('yyyy年MM月dd日 HH:mm:ss')}</span>
                             </div>
                         </div>
