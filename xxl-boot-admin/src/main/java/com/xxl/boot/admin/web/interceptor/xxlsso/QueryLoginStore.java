@@ -57,7 +57,7 @@ public class QueryLoginStore implements LoginStore {
         if (!xxlBootUser.isSuccess()) {
             return Response.ofFail("userId invalid.");
         }
-        String version = Md5Tool.md5(xxlBootUser.getData().getPassword() +"_"+ xxlBootUser.getData().getUpdateTime().getTime());
+        String signature = Md5Tool.md5(xxlBootUser.getData().getPassword() +"_"+ xxlBootUser.getData().getUpdateTime().getTime());
 
         // find resource
         List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.valueOf(userId));
@@ -69,7 +69,7 @@ public class QueryLoginStore implements LoginStore {
         loginInfo.setUserName(xxlBootUser.getData().getUsername());
         loginInfo.setRealName(xxlBootUser.getData().getRealName());
         loginInfo.setPermissionList(new ArrayList<>(permissions));
-        loginInfo.setVersion(version);
+        loginInfo.setSignature(signature);
 
         return Response.ofSuccess(loginInfo);
     }
