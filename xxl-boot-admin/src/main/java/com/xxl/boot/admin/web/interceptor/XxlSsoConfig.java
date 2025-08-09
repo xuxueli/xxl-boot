@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.web.interceptor;
 
-import com.xxl.boot.admin.web.interceptor.xxlsso.QueryLoginStore;
+import com.xxl.boot.admin.web.interceptor.xxlsso.SimpleLoginStore;
 import com.xxl.sso.core.bootstrap.XxlSsoBootstrap;
 import com.xxl.sso.core.auth.interceptor.XxlSsoWebInterceptor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,7 @@ public class XxlSsoConfig implements WebMvcConfigurer {
 
 
     @Resource
-    private QueryLoginStore loginStore;
+    private SimpleLoginStore loginStore;
 
 
     /**

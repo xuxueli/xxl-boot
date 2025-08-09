@@ -76,7 +76,7 @@ public class UserController {
         // xxl-sso, logincheck
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
 
-        return userService.update(xxlJobUser, loginInfoResponse.getData());
+        return userService.update(xxlJobUser, loginInfoResponse.getData().getUserName());
     }
 
     @RequestMapping("/delete")
@@ -89,7 +89,7 @@ public class UserController {
         // xxl-sso, logincheck
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
 
-        return userService.deleteByIds(ids, loginInfoResponse.getData());
+        return userService.deleteByIds(ids, Integer.valueOf(loginInfoResponse.getData().getUserId()));
     }
 
     @RequestMapping("/updatePwd")
@@ -100,7 +100,7 @@ public class UserController {
         // xxl-sso, logincheck
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
 
-        return userService.updatePwd(loginInfoResponse.getData(), password);
+        return userService.updatePwd(loginInfoResponse.getData().getUserName(), password);
     }
 
 }

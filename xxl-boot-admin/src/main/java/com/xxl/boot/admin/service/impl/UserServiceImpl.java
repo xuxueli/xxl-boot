@@ -10,7 +10,6 @@ import com.xxl.boot.admin.model.entity.XxlBootUser;
 import com.xxl.boot.admin.model.entity.XxlBootUserRole;
 import com.xxl.boot.admin.service.UserService;
 import com.xxl.boot.admin.util.I18nUtil;
-import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
@@ -113,7 +112,7 @@ public class UserServiceImpl implements UserService {
      * 删除
      */
     @Override
-    public Response<String> deleteByIds(List<Integer> userIds, LoginInfo loginInfo) {
+    public Response<String> deleteByIds(List<Integer> userIds, int loginUserId) {
 
         // valid
         if (CollectionTool.isEmpty(userIds)) {
@@ -121,7 +120,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // avoid opt login seft
-        if (userIds.contains(Integer.valueOf(loginInfo.getUserId()))) {
+        if (userIds.contains(loginUserId)) {
             return Response.ofFail( I18nUtil.getString("user_update_loginuser_limit") );
         }
 
@@ -140,14 +139,14 @@ public class UserServiceImpl implements UserService {
      * 更新
      */
     @Override
-    public Response<String> update(XxlBootUserDTO xxlJobUser, LoginInfo loginInfo) {
+    public Response<String> update(XxlBootUserDTO xxlJobUser, String loginUserName) {
 
         // adapt
         XxlBootUser user = XxlBootUserAdaptor.adapt(xxlJobUser);
         List<Integer> roleIds = xxlJobUser.getRoleIds();
 
         // avoid opt login seft
-        if (loginInfo.getUserName().equals(user.getUsername())) {
+        if (loginUserName.equals(user.getUsername())) {
             return Response.ofFail( I18nUtil.getString("user_update_loginuser_limit") );
         }
 
@@ -190,7 +189,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 修改密码
      */
-    public Response<String> updatePwd(LoginInfo loginInfo, String password){
+    public Response<String> updatePwd(String loginUserName, String password){
         // valid password
         if (StringTool.isBlank(password)){
             Response.ofFail( "密码不可为空" );
@@ -204,7 +203,7 @@ public class UserServiceImpl implements UserService {
         String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         // update pwd
-        XxlBootUser existUser = userMapper.loadByUserName(loginInfo.getUserName());
+        XxlBootUser existUser = userMapper.loadByUserName(loginUserName);
         existUser.setPassword(md5Password);
         userMapper.update(existUser);
 
@@ -265,6 +264,12 @@ public class UserServiceImpl implements UserService {
         pageModel.setTotalCount(totalCount);
 
         return pageModel;
+    }
+
+    @Override
+    public Response<String> updateToken(Integer id, String userToken) {
+        int ret = userMapper.updateToken(id, userToken);
+        return ret>0 ? Response.ofSuccess() : Response.ofFail();
     }
 
 }

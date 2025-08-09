@@ -4,11 +4,12 @@ import com.xxl.boot.admin.constant.enums.UserStatuEnum;
 import com.xxl.boot.admin.model.entity.XxlBootUser;
 import com.xxl.boot.admin.service.UserService;
 import com.xxl.boot.admin.util.I18nUtil;
-import com.xxl.boot.admin.web.interceptor.xxlsso.QueryLoginStore;
+import com.xxl.boot.admin.web.interceptor.xxlsso.SimpleLoginStore;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.id.UUIDTool;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.DigestUtils;
@@ -50,7 +51,7 @@ public class LoginController {
 	}
 
 	@Resource
-	private QueryLoginStore loginStore;
+	private SimpleLoginStore loginStore;
 
 	@RequestMapping(value="/doLogin", method=RequestMethod.POST)
 	@ResponseBody
@@ -78,8 +79,8 @@ public class LoginController {
 		}
 
 		// xxl-sso, do login
-		Response<LoginInfo> loginInfoResponse = loginStore.get(String.valueOf(xxlBootUser.getId()));
-		return XxlSsoHelper.loginWithCookie(loginInfoResponse.getData(), response, ifRem);
+		LoginInfo loginInfo = new LoginInfo(String.valueOf(xxlBootUser.getId()), UUIDTool.getSimpleUUID());
+		return XxlSsoHelper.loginWithCookie(loginInfo, response, ifRem);
 	}
 	
 	@RequestMapping(value="/logout", method=RequestMethod.POST)

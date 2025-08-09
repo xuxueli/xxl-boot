@@ -2,7 +2,6 @@ package com.xxl.boot.admin.service;
 
 import com.xxl.boot.admin.model.dto.XxlBootUserDTO;
 import com.xxl.boot.admin.model.entity.XxlBootUser;
-import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 
@@ -28,17 +27,17 @@ public interface UserService {
     /**
      * 删除
      */
-    Response<String> deleteByIds(List<Integer> userIds, LoginInfo loginUser);
+    Response<String> deleteByIds(List<Integer> userIds, int loginUserId);
 
     /**
      * 更新
      */
-    public Response<String> update(XxlBootUserDTO xxlJobUser, LoginInfo loginUser);
+    public Response<String> update(XxlBootUserDTO xxlJobUser, String loginUserName);
 
     /**
      * 修改密码
      */
-    public Response<String> updatePwd(LoginInfo loginUser, String password);
+    public Response<String> updatePwd(String loginUserName, String password);
 
     /**
      * Load查询
@@ -54,5 +53,10 @@ public interface UserService {
      * 分页查询
      */
     public PageModel<XxlBootUserDTO> pageList(int offset, int pagesize, String username, int status);
+
+    /**
+     * 更新登录token
+     */
+    Response<String> updateToken(Integer id, String userToken);
 
 }

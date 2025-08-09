@@ -113,4 +113,11 @@
 		</trim>
 	</select>
 
+	<update id="updateToken" parameterType="java.util.HashMap"  >
+		UPDATE xxl_boot_user
+		SET user_token = #{userToken},
+			update_time = NOW()
+		WHERE id = #{id}
+	</update>
+
 </mapper>
