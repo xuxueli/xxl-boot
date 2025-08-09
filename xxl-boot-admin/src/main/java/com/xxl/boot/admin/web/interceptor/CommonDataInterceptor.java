@@ -40,7 +40,7 @@ public class CommonDataInterceptor implements WebMvcConfigurer {
 
                     // resource load
                     // xxl-sso, logincheck
-                    Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+                    Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
                     if (loginInfoResponse.isSuccess()) {
                         // filter Authentication （by authorization）
                         List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.valueOf(loginInfoResponse.getData().getUserId()));
