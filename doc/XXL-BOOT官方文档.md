@@ -276,7 +276,7 @@ docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAdd
 - 3、【升级】升级依赖版本，如slf4j、xxl-tool、spring、gson、mysql-connector…等；
 
 ### 版本 v1.2.0 Release Notes[2025-08-10]
-- 1、【升级】项目升级JDK17；
+- 1、【升级】项目升级 SpringBoot3 + JDK17；
 - 2、【升级】升级多项依赖至较新版本，如xxl-sso、jakarta、spring等，适配JDK17；
 
 ### 版本 v1.2.1 Release Notes[迭代中]
