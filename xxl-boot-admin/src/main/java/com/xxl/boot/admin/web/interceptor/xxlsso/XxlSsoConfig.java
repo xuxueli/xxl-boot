@@ -1,6 +1,5 @@
-package com.xxl.boot.admin.web.interceptor;
+package com.xxl.boot.admin.web.interceptor.xxlsso;
 
-import com.xxl.boot.admin.web.interceptor.xxlsso.SimpleLoginStore;
 import com.xxl.sso.core.bootstrap.XxlSsoBootstrap;
 import com.xxl.sso.core.auth.interceptor.XxlSsoWebInterceptor;
 import org.springframework.beans.factory.annotation.Value;
