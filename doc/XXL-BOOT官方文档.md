@@ -54,9 +54,9 @@ XXL-BOOT 是一个快速开发平台，易学易用、简化开发、丰富扩�
 - [社区交流](https://www.xuxueli.com/page/community.html)
 
 ### 1.4 环境
-- Maven3+
-- Jdk1.8+
-- Mysql8.0+
+- Maven：3+
+- Jdk：17+
+- Mysql：8.0+
 
 ### 1.5 发展历程
 XXL-BOOT 前身为 xxl-permission、xxl-code-generator 等多个历史项目，以及 XXL-JOB、XXL-CONF 等系列开源软件所所沉淀中后台能力，经过整合演进最终诞生。
