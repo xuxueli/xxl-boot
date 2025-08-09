@@ -31,21 +31,17 @@
         <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
-
         <!-- base -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <junit-jupiter.version>5.13.4</junit-jupiter.version>
 
         <!-- servlet -->
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
-
         <!-- spring -->
         <spring-boot.version>3.5.4</spring-boot.version>
-
-        <!-- db -->
-        <mybatis-spring-boot-starter.version>2.3.2</mybatis-spring-boot-starter.version>
+        <!-- mybatis & db -->
+        <mybatis-spring-boot-starter.version>3.0.5</mybatis-spring-boot-starter.version>
         <mysql-connector-j.version>9.4.0</mysql-connector-j.version>
-
         <!-- xxl-sso (+xxl-tool、gson) -->
         <xxl-sso.version>2.0.0</xxl-sso.version>
     </properties>
