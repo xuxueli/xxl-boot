@@ -57,7 +57,7 @@
                             <div class="input-group">
                                 <span class="input-group-addon">系统模块</span>
                                 <select class="form-control module" >
-                                    <option value="-1" >${I18n.system_all}</option>
+                                    <option value="" >${I18n.system_all}</option>
                                     <#list LogModuleEnum as item>
                                         <option value="${item}" >${item.desc}</option>
                                     </#list>

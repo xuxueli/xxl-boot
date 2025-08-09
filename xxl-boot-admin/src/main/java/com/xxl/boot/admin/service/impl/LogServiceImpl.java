@@ -72,13 +72,13 @@ public class LogServiceImpl implements LogService {
 	@Override
 	public PageModel<XxlBootLogDTO> pageList(int type, String module, String title, int offset, int pagesize) {
 
-		List<XxlBootLog> pageList = logMapper.pageList(offset, pagesize);
-		int totalCount = logMapper.pageListCount(offset, pagesize);
+		List<XxlBootLog> pageList = logMapper.pageList(type, module, title, offset, pagesize);
+		int totalCount = logMapper.pageListCount(type, module, title, offset, pagesize);
 
 		List<XxlBootLogDTO> pageListDTO = XxlBootLogAdaptor.adaptor(pageList);
 
 		// result
-		PageModel<XxlBootLogDTO> pageModel = new PageModel<XxlBootLogDTO>();
+		PageModel<XxlBootLogDTO> pageModel = new PageModel<>();
 		pageModel.setPageData(pageListDTO);
 		pageModel.setTotalCount(totalCount);
 

@@ -80,6 +80,18 @@
     <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootLog">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_log AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="type gt -1">
+                AND t.`type` = #{type}
+            </if>
+            <if test="module != null and module != ''">
+                AND t.`module` = #{module}
+            </if>
+            <if test="title != null and title != ''">
+                AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
+            </if>
+
+        </trim>
         ORDER BY t.`id` DESC
         LIMIT #{offset}, #{pagesize}
     </select>

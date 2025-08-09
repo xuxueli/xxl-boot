@@ -37,11 +37,19 @@ public interface LogMapper {
     /**
     * 分页查询Data
     */
-	public List<XxlBootLog> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<XxlBootLog> pageList(@Param("type") int type,
+                                     @Param("module") String module,
+                                     @Param("title") String title,
+                                     @Param("offset") int offset,
+                                     @Param("pagesize") int pagesize);
 
     /**
     * 分页查询Count
     */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+    public int pageListCount(@Param("type") int type,
+                             @Param("module") String module,
+                             @Param("title") String title,
+                             @Param("offset") int offset,
+                             @Param("pagesize") int pagesize);
 
 }
