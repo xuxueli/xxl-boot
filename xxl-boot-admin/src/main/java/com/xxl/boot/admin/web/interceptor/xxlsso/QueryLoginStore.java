@@ -5,7 +5,6 @@ import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.admin.model.entity.XxlBootUser;
 import com.xxl.boot.admin.service.ResourceService;
 import com.xxl.boot.admin.service.UserService;
-import com.xxl.sso.core.exception.XxlSsoException;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.sso.core.store.LoginStore;
 import com.xxl.tool.encrypt.Md5Tool;
@@ -31,14 +30,6 @@ public class QueryLoginStore implements LoginStore {
     private UserService userService;
 
     @Override
-    public void start() {
-    }
-
-    @Override
-    public void stop() {
-    }
-
-    @Override
     public Response<String> set(LoginInfo loginInfo) {
         // not store, query through db
         return Response.ofSuccess();
@@ -46,6 +37,12 @@ public class QueryLoginStore implements LoginStore {
 
     @Override
     public Response<String> update(LoginInfo loginInfo) {
+        // not store, query through db
+        return Response.ofSuccess();
+    }
+
+    @Override
+    public Response<String> remove(String userId) {
         // not store, query through db
         return Response.ofSuccess();
     }
@@ -58,7 +55,7 @@ public class QueryLoginStore implements LoginStore {
         // load login user
         Response<XxlBootUser> xxlBootUser = userService.loadByUserId(Integer.valueOf(userId));
         if (!xxlBootUser.isSuccess()) {
-            return Response.ofFail("userId ivalid.");
+            return Response.ofFail("userId invalid.");
         }
         String version = Md5Tool.md5(xxlBootUser.getData().getPassword() +"_"+ xxlBootUser.getData().getUpdateTime().getTime());
 
@@ -75,22 +72,6 @@ public class QueryLoginStore implements LoginStore {
         loginInfo.setVersion(version);
 
         return Response.ofSuccess(loginInfo);
-    }
-
-    @Override
-    public Response<String> remove(String userId) {
-        // not store, query through db
-        return Response.ofSuccess();
-    }
-
-    @Override
-    public Response<String> createTicket(String userId, String token, long ticketTimeout) {
-        throw new XxlSsoException("not support createTicket");
-    }
-
-    @Override
-    public Response<String> validTicket(String ticket) {
-        throw new XxlSsoException("not support validTicket");
     }
 
 }

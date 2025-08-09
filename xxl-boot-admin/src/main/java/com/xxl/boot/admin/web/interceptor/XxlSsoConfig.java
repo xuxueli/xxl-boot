@@ -50,8 +50,6 @@ public class XxlSsoConfig implements WebMvcConfigurer {
 
     /**
      * 2、配置 XxlSso 拦截器
-     *
-     * @param registry
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

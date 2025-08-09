@@ -50,7 +50,7 @@ public class LoginController {
 	}
 
 	@Resource
-	private QueryLoginStore simpleLoginStore;
+	private QueryLoginStore loginStore;
 
 	@RequestMapping(value="/doLogin", method=RequestMethod.POST)
 	@ResponseBody
@@ -78,7 +78,7 @@ public class LoginController {
 		}
 
 		// xxl-sso, do login
-		Response<LoginInfo> loginInfoResponse = simpleLoginStore.get(String.valueOf(xxlBootUser.getId()));
+		Response<LoginInfo> loginInfoResponse = loginStore.get(String.valueOf(xxlBootUser.getId()));
 		return XxlSsoHelper.loginWithCookie(loginInfoResponse.getData(), response, ifRem);
 	}
 	
