@@ -28,10 +28,12 @@ import java.util.Set;
 @Component
 public class SimpleLoginStore implements LoginStore {
 
+
     @Resource
     private ResourceService resourceService;
     @Resource
     private UserService userService;
+
 
     @Override
     public Response<String> set(LoginInfo loginInfo) {

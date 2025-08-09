@@ -4,7 +4,6 @@ import com.xxl.boot.admin.constant.enums.UserStatuEnum;
 import com.xxl.boot.admin.model.entity.XxlBootUser;
 import com.xxl.boot.admin.service.UserService;
 import com.xxl.boot.admin.util.I18nUtil;
-import com.xxl.boot.admin.web.interceptor.xxlsso.SimpleLoginStore;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
@@ -49,9 +48,6 @@ public class LoginController {
 		}
 		return new ModelAndView("login");
 	}
-
-	@Resource
-	private SimpleLoginStore loginStore;
 
 	@RequestMapping(value="/doLogin", method=RequestMethod.POST)
 	@ResponseBody

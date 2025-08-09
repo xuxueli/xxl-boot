@@ -85,7 +85,7 @@ public class LogAspect {
         } finally {
             // TODO 待改造，推送队列，异步消费。
             try {
-                doLog(log, request, response, result, startTime, endTime);
+                doLog(log, request, result, startTime, endTime);
             } catch (Exception e) {
                 // ignore
                 logger.error(e.getMessage(), e);
@@ -99,21 +99,19 @@ public class LogAspect {
      *
      * @param log
      * @param request
-     * @param response
      * @param result
      * @param startTime
      * @param endTime
      */
     private void doLog(Log log,
                        HttpServletRequest request,
-                       HttpServletResponse response,
                        Object result,
                        long startTime,
                        long endTime) {
 
         // process
         // xxl-sso, logincheck
-        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
         String operator = loginInfoResponse.isSuccess()?loginInfoResponse.getData().getUserName():"";
         String ip = Ip2regionUtil.getIp(request);
