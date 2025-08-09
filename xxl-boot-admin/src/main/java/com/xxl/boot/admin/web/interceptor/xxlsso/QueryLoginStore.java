@@ -11,7 +11,7 @@ import com.xxl.tool.encrypt.Md5Tool;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

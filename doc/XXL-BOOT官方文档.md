@@ -275,8 +275,9 @@ docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAdd
 - 2、【重构】权限认证重构，支持注解式/API方式快速鉴权，便捷集成系统RBAC权限系统，提升系统安全性、以及二次开发效率体验；
 - 3、【升级】升级依赖版本，如slf4j、xxl-tool、spring、gson、mysql-connector…等；
 
-### 版本 v1.1.1 Release Notes[迭代中]
-- 1、【ING】代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
+### 版本 v1.2.0 Release Notes[迭代中]
+- 1、【升级】项目升级JDK17；
+- 2、【升级】升级多项依赖至较新版本，如jakarta、spring等，适配JDK17；
 
 
 ### TODO LIST

@@ -7,7 +7,7 @@ import com.xxl.boot.admin.service.OrgService;
 import com.xxl.tool.core.CollectionTool;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.*;
 
 import com.xxl.tool.response.Response;
