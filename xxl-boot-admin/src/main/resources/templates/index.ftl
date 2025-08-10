@@ -19,7 +19,7 @@
 
     <!-- left -->
     <#-- biz start（2/5 left） -->
-    <@netCommon.commonLeft "/index" />
+    <@netCommon.commonLeft "/" />
     <#-- biz end（2/5 left） -->
 
     <!-- right start -->

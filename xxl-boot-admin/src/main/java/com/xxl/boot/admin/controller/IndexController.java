@@ -36,12 +36,6 @@ public class IndexController {
 
 	@RequestMapping("/")
 	@XxlSso
-	public String defaultpage(Model model) {
-		return "redirect:/index";
-	}
-
-	@RequestMapping("/index")
-	@XxlSso
 	public String index(HttpServletRequest request, Model model) {
 
 		// message
@@ -53,6 +47,7 @@ public class IndexController {
 		/*model.addAttribute("BasicJsonwriter", new BasicJsonwriter());*/
 
 		return "index";
+		/*return "redirect:/index";*/
 	}
 
 	@RequestMapping("/help")
