@@ -53,9 +53,9 @@ public class LoginController {
 	@ResponseBody
 	@XxlSso(login=false)
 	public Response<String> doLogin(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
-		boolean ifRem = StringTool.isNotBlank(ifRemember) && "on".equals(ifRemember);
 
 		// param
+		boolean ifRem = StringTool.isNotBlank(ifRemember) && "on".equals(ifRemember);
 		if (StringTool.isBlank(userName) || StringTool.isBlank(password)){
 			return Response.ofFail( I18nUtil.getString("login_param_empty") );
 		}

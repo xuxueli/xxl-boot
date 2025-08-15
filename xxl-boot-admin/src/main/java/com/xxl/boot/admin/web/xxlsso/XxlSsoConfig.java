@@ -26,7 +26,7 @@ public class XxlSsoConfig implements WebMvcConfigurer {
     @Value("${xxl-sso.client.excluded.paths}")
     private String excludedPaths;
 
-    @Value("${xxl.sso.client.login.path}")
+    @Value("${xxl-sso.client.login.path}")
     private String loginPath;
 
 
