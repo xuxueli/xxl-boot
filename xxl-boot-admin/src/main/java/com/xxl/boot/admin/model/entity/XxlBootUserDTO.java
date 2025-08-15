@@ -13,7 +13,7 @@ public class XxlBootUserDTO {
 	private int id;
 	private String username;		// 账号
 	private String password;		// 密码
-	private String userToken;		// 登录token
+	private String token;		// 登录token
 	private int status;				// 状态：0-正常、1-停用
 	private String realName;		// 真实姓名
 
@@ -46,12 +46,12 @@ public class XxlBootUserDTO {
 		this.password = password;
 	}
 
-	public String getUserToken() {
-		return userToken;
+	public String getToken() {
+		return token;
 	}
 
-	public void setUserToken(String userToken) {
-		this.userToken = userToken;
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	public int getStatus() {

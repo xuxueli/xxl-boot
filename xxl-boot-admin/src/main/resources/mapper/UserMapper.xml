@@ -7,7 +7,7 @@
 		<result column="id" property="id" />
 		<result column="username" property="username" />
 	    <result column="password" property="password" />
-	    <result column="user_token" property="userToken" />
+	    <result column="token" property="token" />
 	    <result column="status" property="status" />
 		<result column="real_name" property="realName" />
 		<result column="add_time" property="addTime" />
@@ -18,7 +18,7 @@
 		t.id,
 		t.username,
 		t.password,
-		t.user_token,
+		t.token,
 		t.status,
 		t.real_name,
 		t.add_time,
@@ -29,7 +29,7 @@
 		INSERT INTO xxl_boot_user (
 			username,
 			password,
-			user_token,
+			token,
 			status,
 			real_name,
 			add_time,
@@ -37,7 +37,7 @@
 		) VALUES (
 			 #{username},
 			 #{password},
-			 #{userToken},
+			 #{token},
 			 #{status},
 			 #{realName},
 			 NOW(),
@@ -66,7 +66,7 @@
 			<if test="password != null and password != ''">
 				password = #{password},
 			</if>
-			user_token = #{userToken},
+			token = #{token},
 			status = #{status},
 			real_name = #{realName},
 			update_time = NOW()
@@ -115,7 +115,7 @@
 
 	<update id="updateToken" parameterType="java.util.HashMap"  >
 		UPDATE xxl_boot_user
-		SET user_token = #{userToken},
+		SET token = #{token},
 			update_time = NOW()
 		WHERE id = #{id}
 	</update>

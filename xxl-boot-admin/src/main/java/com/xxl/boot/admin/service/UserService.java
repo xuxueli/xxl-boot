@@ -57,6 +57,6 @@ public interface UserService {
     /**
      * 更新登录token
      */
-    Response<String> updateToken(Integer id, String userToken);
+    Response<String> updateToken(Integer id, String token);
 
 }

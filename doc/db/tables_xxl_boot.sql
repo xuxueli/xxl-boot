@@ -23,7 +23,7 @@ CREATE TABLE `xxl_boot_user` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
     `username` varchar(50) NOT NULL COMMENT '账号',
     `password` varchar(50) NOT NULL COMMENT '密码',
-    `user_token` varchar(200) DEFAULT NULL COMMENT '登录token',
+    `token` varchar(200) DEFAULT NULL COMMENT '登录token',
     `status` tinyint(4) NOT NULL COMMENT '状态：0-正常、1-禁用',
     `real_name` varchar(50) DEFAULT NULL COMMENT '真实姓名',
     `add_time` datetime NOT NULL COMMENT '新增时间',
@@ -105,7 +105,7 @@ CREATE TABLE `xxl_boot_message` (
 
 ## —————————————————————— for default data ——————————————————
 
-INSERT INTO `xxl_boot_user` (`id`, `username`, `password`, `user_token`, `status`, `real_name`, `add_time`, `update_time`)
+INSERT INTO `xxl_boot_user` (`id`, `username`, `password`, `token`, `status`, `real_name`, `add_time`, `update_time`)
 VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', '', 0 , '吴彦祖', now(), now()),
        (2, 'user', 'e10adc3949ba59abbe56e057f20f883e', '', 0 , '张三', now(), now());
 INSERT INTO `xxl_boot_role` (`id`, `name`, `order`, `add_time`, `update_time`)

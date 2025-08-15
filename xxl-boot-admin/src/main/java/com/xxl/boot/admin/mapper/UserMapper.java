@@ -33,6 +33,6 @@ public interface UserMapper {
 					  @Param("status") int status);
 
 
-	int updateToken(@Param("id") int id, @Param("userToken") String userToken);
+	int updateToken(@Param("id") int id, @Param("token") String token);
 
 }

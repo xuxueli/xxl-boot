@@ -267,8 +267,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response<String> updateToken(Integer id, String userToken) {
-        int ret = userMapper.updateToken(id, userToken);
+    public Response<String> updateToken(Integer id, String token) {
+        int ret = userMapper.updateToken(id, token);
         return ret>0 ? Response.ofSuccess() : Response.ofFail();
     }
 
