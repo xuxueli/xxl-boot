@@ -35,8 +35,6 @@
         <slf4j-api.version>2.0.17</slf4j-api.version>
         <junit-jupiter.version>5.13.4</junit-jupiter.version>
 
-        <!-- servlet -->
-        <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <!-- spring -->
         <spring-boot.version>3.5.4</spring-boot.version>
         <!-- mybatis & db -->
@@ -46,18 +44,12 @@
         <xxl-sso.version>2.0.0</xxl-sso.version>
     </properties>
 
-    <build>
-        <plugins>
-        </plugins>
-    </build>
-
     <licenses>
         <license>
             <name>GNU General Public License version 3</name>
             <url>https://opensource.org/licenses/GPL-3.0</url>
         </license>
     </licenses>
-
     <scm>
         <tag>master</tag>
         <url>https://github.com/xuxueli/xxl-boot.git</url>
@@ -72,6 +64,11 @@
             <url>https://github.com/xuxueli</url>
         </developer>
     </developers>
+
+    <build>
+        <plugins>
+        </plugins>
+    </build>
 
     <profiles>
 
