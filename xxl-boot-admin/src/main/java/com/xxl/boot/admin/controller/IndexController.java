@@ -3,7 +3,6 @@ package com.xxl.boot.admin.controller;
 import com.xxl.boot.admin.constant.enums.MessageStatusEnum;
 import com.xxl.boot.admin.model.dto.XxlBootMessageDTO;
 import com.xxl.boot.admin.service.MessageService;
-import com.xxl.boot.admin.service.UserService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.response.PageModel;

@@ -9,6 +9,7 @@ import jakarta.annotation.Resource;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
+import com.xxl.sso.core.annotation.XxlSso;
 
 /**
 * ${classInfo.className} Controller
@@ -26,7 +27,7 @@ public class ${classInfo.className}Controller {
     * 页面
     */
     @RequestMapping
-    @Permission
+    @XxlSso
     public String index(Model model) {
         return "${classInfo.className?uncap_first}";
     }
@@ -36,7 +37,7 @@ public class ${classInfo.className}Controller {
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<PageModel<${classInfo.className}>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                     @RequestParam(required = false, defaultValue = "10") int pagesize) {
         PageModel<${classInfo.className}> pageModel = ${classInfo.className?uncap_first}Service.pageList(offset, pagesize);
@@ -48,7 +49,7 @@ public class ${classInfo.className}Controller {
     */
     @RequestMapping("/load")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<${classInfo.className}> load(int id){
         return ${classInfo.className?uncap_first}Service.load(id);
     }
@@ -58,7 +59,7 @@ public class ${classInfo.className}Controller {
     */
     @RequestMapping("/insert")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> insert(${classInfo.className} ${classInfo.className?uncap_first}){
         return ${classInfo.className?uncap_first}Service.insert(${classInfo.className?uncap_first});
     }
@@ -68,7 +69,7 @@ public class ${classInfo.className}Controller {
     */
     @RequestMapping("/delete")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return ${classInfo.className?uncap_first}Service.delete(ids);
     }
@@ -78,7 +79,7 @@ public class ${classInfo.className}Controller {
     */
     @RequestMapping("/update")
     @ResponseBody
-    @Permission
+    @XxlSso
     public Response<String> update(${classInfo.className} ${classInfo.className?uncap_first}){
         return ${classInfo.className?uncap_first}Service.update(${classInfo.className?uncap_first});
     }
