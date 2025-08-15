@@ -1,4 +1,4 @@
-package com.xxl.boot.admin.web.interceptor.xxlsso;
+package com.xxl.boot.admin.web.xxlsso;
 
 import com.xxl.sso.core.bootstrap.XxlSsoBootstrap;
 import com.xxl.sso.core.auth.interceptor.XxlSsoWebInterceptor;

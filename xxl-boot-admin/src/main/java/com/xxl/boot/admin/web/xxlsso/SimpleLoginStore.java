@@ -1,4 +1,4 @@
-package com.xxl.boot.admin.web.interceptor.xxlsso;
+package com.xxl.boot.admin.web.xxlsso;
 
 import com.xxl.boot.admin.model.adaptor.XxlBootUserAdaptor;
 import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
