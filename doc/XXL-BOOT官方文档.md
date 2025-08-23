@@ -285,8 +285,10 @@ docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAdd
 ALTER TABLE xxl_boot_user
     MODIFY COLUMN `password` varchar(100) NOT NULL COMMENT '密码加密信息';
 ```
-- 2、【安全】登录态持久化逻辑调整，简化代码逻辑；
-- 3、【ING】代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
+- 2、【优化】登录态持久化逻辑调整，简化代码逻辑；
+- 3、【优化】异常页面处理逻辑优化，新增兜底落地页配置；
+- 4、【优化】登录信息页面空值处理优化，避免空值影响ftl渲染；
+- 5、【ING】代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
 
 ### TODO LIST
 - 1、代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
