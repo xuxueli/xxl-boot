@@ -12,10 +12,10 @@ import com.xxl.boot.admin.service.UserService;
 import com.xxl.boot.admin.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.encrypt.SHA256Tool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import jakarta.annotation.Resource;
 import java.util.*;
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
             return Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
         // md5 password
-        user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));    // todo，move to token
+        user.setPassword(SHA256Tool.sha256(user.getPassword()));
 
         // valid user role
         if (CollectionTool.isNotEmpty(roleIds)) {
@@ -157,7 +157,7 @@ public class UserServiceImpl implements UserService {
                 return Response.ofFail(  I18nUtil.getString("system_lengh_limit")+"[4-20]" );
             }
             // md5 password
-            user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
+            user.setPassword(SHA256Tool.sha256(user.getPassword()));
         } else {
             user.setPassword(null);
         }
@@ -200,7 +200,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // md5 password
-        String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
+        String md5Password = SHA256Tool.sha256(password);
 
         // update pwd
         XxlBootUser existUser = userMapper.loadByUserName(loginUserName);

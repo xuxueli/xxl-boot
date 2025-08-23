@@ -7,8 +7,6 @@ import com.xxl.boot.admin.service.ResourceService;
 import com.xxl.boot.admin.service.UserService;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.sso.core.store.LoginStore;
-import com.xxl.sso.core.token.TokenHelper;
-import com.xxl.tool.encrypt.Md5Tool;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Component;
 
@@ -38,15 +36,11 @@ public class SimpleLoginStore implements LoginStore {
     @Override
     public Response<String> set(LoginInfo loginInfo) {
 
-        // build token
-        Response<String> tokenResponse = TokenHelper.generateToken(loginInfo);
-        if (!tokenResponse.isSuccess()) {
-            return Response.ofFail("generate token fail");
-        }
-        String token = tokenResponse.getData();
+        // parse token-signature
+        String token_sign = loginInfo.getSignature();
 
         // write token by UserId
-        return userService.updateToken(Integer.valueOf(loginInfo.getUserId()), token);
+        return userService.updateToken(Integer.valueOf(loginInfo.getUserId()), token_sign);
     }
 
     @Override
@@ -56,7 +50,7 @@ public class SimpleLoginStore implements LoginStore {
 
     @Override
     public Response<String> remove(String userId) {
-        // delete token by UserId
+        // delete token-signature
         return userService.updateToken(Integer.valueOf(userId), "");
     }
 
@@ -66,23 +60,18 @@ public class SimpleLoginStore implements LoginStore {
     @Override
     public Response<LoginInfo> get(String userId) {
 
-        // load user by UserId
-        Response<XxlBootUser> xxlBootUser = userService.loadByUserId(Integer.valueOf(userId));
+        // load login-user
+        Response<XxlBootUser> xxlBootUser = userService.loadByUserId(Integer.parseInt(userId));
         if (!xxlBootUser.isSuccess()) {
             return Response.ofFail("userId invalid.");
         }
 
-        // parse token of UserId
-        LoginInfo loginInfo = TokenHelper.parseToken(xxlBootUser.getData().getToken());
-        if (loginInfo==null) {
-            return Response.ofFail("token invalid.");
-        }
-
         // find permission
-        List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.valueOf(userId));
+        List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(userId));
         Set<String> permissions = XxlBootUserAdaptor.extractPermissions(resourceList);
 
-        // fill data of loginInfo
+        // build LoginInfo
+        LoginInfo loginInfo = new LoginInfo(userId, xxlBootUser.getData().getToken());
         loginInfo.setUserName(xxlBootUser.getData().getUsername());
         loginInfo.setRealName(xxlBootUser.getData().getRealName());
         loginInfo.setPermissionList(new ArrayList<>(permissions));

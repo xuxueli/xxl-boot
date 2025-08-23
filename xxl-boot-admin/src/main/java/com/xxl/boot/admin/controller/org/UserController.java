@@ -72,9 +72,9 @@ public class UserController {
     @ResponseBody
     @XxlSso(permission = "org:user")
     @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER_MANAGE, title = "更新用户")
-    public Response<String> update(HttpServletRequest request, HttpServletResponse response, XxlBootUserDTO xxlJobUser) {
+    public Response<String> update(HttpServletRequest request, XxlBootUserDTO xxlJobUser) {
         // xxl-sso, logincheck
-        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
         return userService.update(xxlJobUser, loginInfoResponse.getData().getUserName());
     }
@@ -84,10 +84,9 @@ public class UserController {
     @XxlSso(permission = "org:user")
     @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER_MANAGE, title = "删除用户")
     public Response<String> delete(HttpServletRequest request,
-                                   HttpServletResponse response,
                                    @RequestParam("ids[]") List<Integer> ids) {
         // xxl-sso, logincheck
-        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
         return userService.deleteByIds(ids, Integer.valueOf(loginInfoResponse.getData().getUserId()));
     }
@@ -95,10 +94,10 @@ public class UserController {
     @RequestMapping("/updatePwd")
     @ResponseBody
     @XxlSso
-    public Response<String> updatePwd(HttpServletRequest request, HttpServletResponse response, String password){
+    public Response<String> updatePwd(HttpServletRequest request, String password){
 
         // xxl-sso, logincheck
-        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
         return userService.updatePwd(loginInfoResponse.getData().getUserName(), password);
     }

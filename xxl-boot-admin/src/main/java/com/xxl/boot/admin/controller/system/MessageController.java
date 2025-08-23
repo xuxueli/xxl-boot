@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -75,10 +74,10 @@ public class MessageController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(XxlBootMessage xxlBootMessage, HttpServletRequest request, HttpServletResponse response){
+    public Response<String> insert(XxlBootMessage xxlBootMessage, HttpServletRequest request){
 
         // xxl-sso, logincheck
-        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
         return messageService.insert(xxlBootMessage, loginInfoResponse.getData().getUserName());
     }
