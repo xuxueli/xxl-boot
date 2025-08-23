@@ -68,7 +68,8 @@ public class UserServiceImpl implements UserService {
             return Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
         // md5 password
-        user.setPassword(SHA256Tool.sha256(user.getPassword()));
+        String passwordHash = SHA256Tool.sha256(user.getPassword());
+        user.setPassword(passwordHash);
 
         // valid user role
         if (CollectionTool.isNotEmpty(roleIds)) {
@@ -157,7 +158,8 @@ public class UserServiceImpl implements UserService {
                 return Response.ofFail(  I18nUtil.getString("system_lengh_limit")+"[4-20]" );
             }
             // md5 password
-            user.setPassword(SHA256Tool.sha256(user.getPassword()));
+            String passwordHash = SHA256Tool.sha256(user.getPassword());
+            user.setPassword(passwordHash);
         } else {
             user.setPassword(null);
         }
@@ -200,11 +202,11 @@ public class UserServiceImpl implements UserService {
         }
 
         // md5 password
-        String md5Password = SHA256Tool.sha256(password);
+        String passwordHash = SHA256Tool.sha256(password);
 
         // update pwd
         XxlBootUser existUser = userMapper.loadByUserName(loginUserName);
-        existUser.setPassword(md5Password);
+        existUser.setPassword(passwordHash);
         userMapper.update(existUser);
 
         return Response.ofSuccess();

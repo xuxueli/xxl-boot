@@ -69,8 +69,8 @@ public class LoginController {
 		if (xxlBootUser.getStatus() != UserStatuEnum.NORMAL.getStatus()) {
 			return Response.ofFail( I18nUtil.getString("login_status_invalid") );
 		}
-		String passwordMd5 = SHA256Tool.sha256(password);
-		if (!passwordMd5.equals(xxlBootUser.getPassword())) {
+		String passwordHash = SHA256Tool.sha256(password);
+		if (!passwordHash.equals(xxlBootUser.getPassword())) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
 
