@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
         if (!(user.getPassword().length()>=4 && user.getPassword().length()<=20)) {
             return Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
-        // md5 password
+        // hash password
         String passwordHash = SHA256Tool.sha256(user.getPassword());
         user.setPassword(passwordHash);
 
@@ -157,7 +157,7 @@ public class UserServiceImpl implements UserService {
             if (!(user.getPassword().length()>=4 && user.getPassword().length()<=20)) {
                 return Response.ofFail(  I18nUtil.getString("system_lengh_limit")+"[4-20]" );
             }
-            // md5 password
+            // hash password
             String passwordHash = SHA256Tool.sha256(user.getPassword());
             user.setPassword(passwordHash);
         } else {
@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
             Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
 
-        // md5 password
+        // hash password
         String passwordHash = SHA256Tool.sha256(password);
 
         // update pwd
