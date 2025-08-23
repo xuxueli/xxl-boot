@@ -61,8 +61,8 @@ public class SimpleLoginStore implements LoginStore {
     public Response<LoginInfo> get(String userId) {
 
         // load login-user
-        Response<XxlBootUser> xxlBootUser = userService.loadByUserId(Integer.parseInt(userId));
-        if (!xxlBootUser.isSuccess()) {
+        Response<XxlBootUser> userResponse = userService.loadByUserId(Integer.parseInt(userId));
+        if (!userResponse.isSuccess()) {
             return Response.ofFail("userId invalid.");
         }
 
@@ -71,9 +71,9 @@ public class SimpleLoginStore implements LoginStore {
         Set<String> permissions = XxlBootUserAdaptor.extractPermissions(resourceList);
 
         // build LoginInfo
-        LoginInfo loginInfo = new LoginInfo(userId, xxlBootUser.getData().getToken());
-        loginInfo.setUserName(xxlBootUser.getData().getUsername());
-        loginInfo.setRealName(xxlBootUser.getData().getRealName());
+        LoginInfo loginInfo = new LoginInfo(userId, userResponse.getData().getToken());
+        loginInfo.setUserName(userResponse.getData().getUsername());
+        loginInfo.setRealName(userResponse.getData().getRealName());
         loginInfo.setPermissionList(new ArrayList<>(permissions));
 
         return Response.ofSuccess(loginInfo);
