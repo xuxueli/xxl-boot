@@ -3,39 +3,17 @@
 <head>
 	<#-- import macro -->
 	<#import "../common/common.macro.ftl" as netCommon>
-	<#-- commonStyle -->
-	<@netCommon.commonStyle />
 
-	<#-- biz start（1/5 style） -->
+	<#-- 1-style start -->
+	<@netCommon.commonStyle />
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/codemirror/lib/codemirror.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/codemirror/addon/hint/show-hint.css">
-	<#-- biz end（1/5 end） -->
+	<#-- 1-style end -->
 
 </head>
-<body class="hold-transition skin-blue sidebar-mini" >
+<body class="hold-transition" style="background-color: #ecf0f5;">
 <div class="wrapper">
-
-	<!-- header -->
-	<@netCommon.commonHeader />
-
-	<!-- left -->
-	<#-- biz start（2/5 left） -->
-	<@netCommon.commonLeft "/tool/codegen" />
-	<#-- biz end（2/5 left） -->
-
-	<!-- right start -->
-	<div class="content-wrapper">
-
-		<!-- content-header -->
-		<section class="content-header">
-			<#-- biz start（3/5 name） -->
-			<h1>${I18n.codegen_name}</h1>
-			<#-- biz end（3/5 name） -->
-		</section>
-
-		<!-- content-main -->
-		<section class="content">
-
+	<section class="content">
 			<#-- biz start（4/5 content） -->
 
 			<#-- 表结构 -->
@@ -118,17 +96,11 @@ CREATE TABLE `user` (
 
 			<#-- biz end（4/5 content） -->
 
-		</section>
-
-	</div>
-	<!-- right end -->
-
-	<!-- footer -->
-	<@netCommon.commonFooter />
+	</section>
 </div>
-<@netCommon.commonScript />
 
-<#-- biz start（5/5 script） -->
+<#-- 3-script start -->
+<@netCommon.commonScript />
 <script src="${request.contextPath}/static/plugins/codemirror/lib/codemirror.js"></script>
 <script src="${request.contextPath}/static/plugins/codemirror/addon/hint/show-hint.js"></script>
 <script src="${request.contextPath}/static/plugins/codemirror/addon/hint/anyword-hint.js"></script>
@@ -136,8 +108,8 @@ CREATE TABLE `user` (
 <script src="${request.contextPath}/static/plugins/codemirror/mode/clike/clike.js"></script>
 <script src="${request.contextPath}/static/plugins/codemirror/mode/sql/sql.js"></script>
 <script src="${request.contextPath}/static/plugins/codemirror/mode/xml/xml.js"></script>
-<script src="${request.contextPath}/static/js/tool/codegen.js"></script>
-<#-- biz end（5/5 script） -->
+<script src="${request.contextPath}/static/biz/tool/codegen.js"></script>
+<#-- 3-script end -->
 
 </body>
 </html>

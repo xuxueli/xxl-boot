@@ -2,194 +2,167 @@
 <html>
 <head>
     <#-- import macro -->
-  	<#import "./common/common.macro.ftl" as netCommon>
-    <#-- commonStyle -->
-	<@netCommon.commonStyle />
+    <#import "./common/common.macro.ftl" as netCommon>
 
-    <#-- biz start（1/5 style） -->
-    <link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.css">
-    <#-- biz end（1/5 end） -->
+    <#-- 1-style start -->
+    <@netCommon.commonStyle />
+    <#-- 1-style end -->
 
 </head>
 <body class="hold-transition skin-blue sidebar-mini" >
 <div class="wrapper" >
 
-    <!-- header -->
-    <@netCommon.commonHeader />
+    <#-- 2-header start -->
+    <header class="main-header">
+        <!-- header logo -->
+        <a href="${request.contextPath}/" class="logo">
+            <span class="logo-mini"><b>XXL</b></span>
+            <span class="logo-lg"><b>${I18n.admin_name}</b></span>
+        </a>
+        <nav class="navbar navbar-static-top" role="navigation">
+            <!--header left -->
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <!--header right -->
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
 
-    <!-- left -->
-    <#-- biz start（2/5 left） -->
-    <@netCommon.commonLeft "/" />
-    <#-- biz end（2/5 left） -->
+                    <#-- login user -->
+                    <li class="dropdown">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="font-weight: bold;">
+                            ${I18n.system_welcome}：${xxl_sso_user.userName!}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li id="updatePwd" >
+                                <a href="javascript:" style="height: 30px;padding: 3px 25px;" ><i class="fa fa-key"></i> ${I18n.change_pwd}</a>
+                            </li>
+                            <li id="logoutBtn" >
+                                <a href="javascript:" style="height: 30px;padding: 3px 25px;" ><i class="fa fa-sign-out"></i> ${I18n.logout_btn}</a>
+                            </li>
+                        </ul>
 
-    <!-- right start -->
-    <div class="content-wrapper">
-
-        <!-- content-header -->
-        <section class="content-header">
-            <#-- biz start（3/5 name） -->
-            <h1>${I18n.index_name}</h1>
-            <#-- biz end（3/5 name） -->
-        </section>
-
-        <!-- content-main -->
-        <section class="content">
-
-            <#-- biz start（4/5 content） -->
-
-            <!-- 顶部公告 start -->
-            <div class="box box-default">
-                <div class="box-body">
-                    <div class="row">
-                        <!-- left -->
-                        <div class="col-md-6">
-                            <div class="pull-left image">
-                                <img src="${request.contextPath}/static/favicon.ico" style="height: 80px;" >
-                            </div>
-                            <div class="pull-left info" style="padding-left: 10px;padding-top: 5px;" >
-                                <h4>你好，${xxl_sso_user.realName!}，祝你开心每一天！</h4>
-                                <span style="color: #999;">登录时间：${.now?string('yyyy年MM月dd日 HH:mm:ss')}</span>
-                            </div>
-                        </div>
-                        <!-- right -->
-                        <div class="col-md-6">
-                            <div class="pull-right info" style="margin-top: 10px;margin-right: 30px;">
-                                <span style="color: #999;">用户浏览</span><br><span style="font-size: 30px;font-weight: 300;">900000</span>
-                            </div>
-                            <div class="pull-right info" style="margin-top: 10px;margin-right: 15px;padding-right: 15px;border-right: 1px solid #E5E5E5;">
-                                <span style="color: #999;">注册用户</span><br><span style="font-size: 30px;font-weight: 300;">5000</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
-            <!-- 顶部公告 end --->
 
-            <!-- 个人信息区域 start -->
-            <div class="row">
-                <div class="col-md-8">
-                    <!-- 常用功能 -->
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">常用功能</h3>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                            <strong><i class="fa fa-users margin-r-5"></i>组织管理</strong>
-                            <p class="text-muted">
-                                针对组织、用户、角色及资源等进行管理，支持灵活的人员角色、菜单权限、人员授权等操作管理。
-                            </p>
+        </nav>
+    </header>
+    <#-- 2-header end -->
 
-                            <hr>
-                            <strong><i class="fa fa-cogs margin-r-5"></i>系统管理</strong>
-                            <p class="text-muted">
-                                提供通知触达、审计日志、系统监控……等相关能力，支持高校灵活进行系统监控及管理。
-                            </p>
-
-                            <hr>
-                            <strong><i class="fa fa-wrench margin-r-5"></i>系统工具</strong>
-                            <p class="text-muted">
-                                提供Entity、业务代码、SQL、页面交互等……前后端一站式代码生成工具，辅助快速进行敏捷迭代开发。
-                            </p>
-
-                            <hr>
-                            <strong><i class="fa fa-book margin-r-5"></i> 帮助中心</strong>
-                            <p>提供内容丰富、干练易懂的操作文档，辅助快速上手项目。</p>
-
-                        </div>
-                        <!-- /.box-body -->
-                    </div>
-                </div>
-
-                <#-- 通知消息 -->
-                <div class="col-md-4">
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">通知消息</h3>
-                        </div>
-                        <div class="box-body" id="messageList">
-                            <ul class="products-list product-list-in-box">
-                                <#if messageList?exists && messageList?size gt 0>
-                                <#list messageList as item>
-                                    <li class="item">
-                                        <div class="product-info" style="margin-left: 10px;">
-                                                <a href="javascript:void(0)" class="product-title showdetail" data-title="${item.title}" data-content="${item.content?html}" data-addTime="${item.addTime}" >
-                                                    ${item.title}
-                                                    <span class="label label-info pull-right">${item.sender}</span></a>
-                                                </a>
-                                                <span class="product-description">${item.addTime}</span>
-                                        </div>
-                                    </li>
-                                </#list>
+    <#-- 3-left start -->
+    <aside class="main-sidebar">
+        <section class="sidebar" style="height: auto;" >
+            <!-- sidebar menu -->
+            <ul class="sidebar-menu" data-widget="tree" >
+                <li class="header">${I18n.system_nav}</li>
+                <#if resourceList?? && resourceList?size gt 0>
+                    <@renderMenu resourceList />
+                </#if>
+            </ul>
+            <#-- render menu -->
+            <#macro renderMenu resourceList >
+                <#list resourceList as resource>
+                    <#if resource.type ==0>
+                        <#-- catalog -->
+                        <li class="treeview" style="height: auto;"  >
+                            <a href="javascript:void(0);">
+                                <i class="fa ${resource.icon}"></i>
+                                <span>${resource.name}</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" >
+                                <#if resource.children?? && resource.children?size gt 0>
+                                    <@renderMenu resource.children />
                                 </#if>
                             </ul>
-                        </div>
-                        <#--<div class="box-footer text-center">
-                            <a href="javascript:void(0)" class="uppercase">查看全部消息</a>
-                        </div>-->
-                    </div>
-                </div>
-            </div>
-            <!-- 个人信息区域 end -->
-
-            <!-- 查看通知.模态框 start -->
-            <div class="modal fade" id="showMessageModal" tabindex="-1" role="dialog"  aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title" >查看通知</h4>
-                        </div>
-                        <div class="modal-body">
-                            <form class="form-horizontal form" role="form" >
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知标题：</label>
-                                    <div class="col-sm-10 title" ></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">发布时间：</label>
-                                    <div class="col-sm-8 addTime" ></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知正文：</label>
-                                    <div class="col-sm-8 content" style="overflow: hidden;" ></div>
-                                </div>
-
-                                <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
-                                    <div style="margin-top: 10px;" >
-                                        <button type="button" class="btn btn-primary" data-dismiss="modal" >关闭</button>
-                                    </div>
-                                </div>
-
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- 查看通知.模态框 end -->
-
-            <#-- biz end（4/5 content） -->
-
+                        </li>
+                    <#elseif resource.type ==1>
+                        <#-- mainMenu -->
+                        <#if !(mainMenu?exists) >
+                            <#assign mainMenu = resource />
+                        <#elseif resource.order lt mainMenu.order >
+                            <#assign mainMenu = resource />
+                        </#if>
+                        <#-- menu -->
+                        <li class="nav-click">
+                            <a class="J_menuItem" href="${request.contextPath}${resource.url}">
+                                <i class="fa ${resource.icon}"></i>
+                                <span>${resource.name}</span>
+                            </a>
+                        </li>
+                    </#if>
+                </#list>
+            </#macro>
         </section>
+    </aside>
+    <#-- 3-left end -->
+
+    <#-- 4-right start -->
+    <div class="content-wrapper">
+
+        <!-- Tabs -->
+        <div class="content-tabs">
+            <!-- left -->
+            <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i></button>
+            <!-- init tab -->
+            <nav class="page-tabs J_menuTabs">
+                <div class="page-tabs-content">
+                    <#-- mainPage -->
+                    <#if mainMenu?exists >
+                        <a href="javascript:;" class="active J_menuTab noactive" data-id="${request.contextPath}${mainMenu.url}">${mainMenu.name}</a>
+                    </#if>
+                </div>
+            </nav>
+            <!-- right -->
+            <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i></button>
+            <!-- opt -->
+            <div class="btn-group roll-nav roll-right">
+                <button class="dropdown" data-toggle="dropdown">页签操作<span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                    <li class="tabCloseCurrent"><a>关闭当前</a></li>
+                    <li class="J_tabCloseOther"><a>关闭其他</a></li>
+                    <li class="J_tabCloseAll"><a>全部关闭</a></li>
+                </ul>
+            </div>
+            <!-- refresh -->
+            <a href="#" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
+            <!-- fullscreen -->
+            <a href="#" class="roll-nav roll-right fullscreen" id="fullScreen"><i class="fa fa-arrows-alt"></i></a>
+        </div>
+        <!-- Iframe Content -->
+        <div class="J_mainContent" id="content-main" >
+            <#-- mainPage -->
+            <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="${request.contextPath}${mainMenu.url}" frameborder="0" data-id="${request.contextPath}${mainMenu.url}" seamless></iframe>
+        </div>
 
     </div>
-    <!-- right end -->
+    <#-- 4-right end -->
 
-    <!-- footer -->
-    <@netCommon.commonFooter />
+    <#-- 5-footer start -->
+    <footer class="main-footer">
+        Powered by <b>XXL-BOOT</b> ${I18n.admin_version}
+        <div class="pull-right hidden-xs">
+            <strong>Copyright &copy; 2015-${.now?string('yyyy')} &nbsp;
+                <a href="https://www.xuxueli.com/" target="_blank" >xuxueli</a>
+                &nbsp;
+                <a href="https://github.com/xuxueli/xxl-boot" target="_blank" >github</a>
+            </strong><!-- All rights reserved. -->
+        </div>
+    </footer>
+    <#-- 5-footer end -->
+
 </div>
 
-<#-- commonScript -->
+<#-- 6-script start -->
 <@netCommon.commonScript />
-
-<#-- biz start（5/5 script） -->
-<!-- daterangepicker -->
-<script src="${request.contextPath}/static/adminlte/bower_components/moment/moment.min.js"></script>
-<script src="${request.contextPath}/static/adminlte/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
-<!-- echarts -->
-<script src="${request.contextPath}/static/plugins/echarts/echarts.common.min.js"></script>
-<!-- js file -->
-<script src="${request.contextPath}/static/js/index.js"></script>
-<#-- biz end（5/5 script） -->
+<#-- 6-script end -->
 
 </body>
 </html>

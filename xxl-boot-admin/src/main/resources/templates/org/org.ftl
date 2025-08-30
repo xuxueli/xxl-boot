@@ -3,38 +3,17 @@
 <head>
 	<#-- import macro -->
 	<#import "../common/common.macro.ftl" as netCommon>
-	<#-- commonStyle -->
-	<@netCommon.commonStyle />
 
-	<#-- biz start（1/5 style） -->
+	<#-- 1-style start -->
+	<@netCommon.commonStyle />
 	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/zTree/css/metroStyle/metroStyle.css">
-	<#-- biz end（1/5 end） -->
+	<#-- 1-style end -->
 
 </head>
-<body class="hold-transition skin-blue sidebar-mini" >
+<body class="hold-transition" style="background-color: #ecf0f5;">
 <div class="wrapper">
-
-	<!-- header -->
-	<@netCommon.commonHeader />
-
-	<!-- left -->
-	<#-- biz start（2/5 left） -->
-	<@netCommon.commonLeft "/org/org" />
-	<#-- biz end（2/5 left） -->
-
-	<!-- right start -->
-	<div class="content-wrapper">
-
-		<!-- content-header -->
-		<section class="content-header">
-			<#-- biz start（3/5 name） -->
-			<h1>组织管理</h1>
-			<#-- biz end（3/5 name） -->
-		</section>
-
-		<!-- content-main -->
-		<section class="content">
+	<section class="content">
 
 			<#-- biz start（4/5 content） -->
 
@@ -221,24 +200,18 @@
 
 			<#-- biz end（4/5 content） -->
 
-		</section>
-
-	</div>
-	<!-- right end -->
-
-	<!-- footer -->
-	<@netCommon.commonFooter />
+	</section>
 </div>
-<@netCommon.commonScript />
 
-<#-- biz start（5/5 script） -->
+<#-- 3-script start -->
+<@netCommon.commonScript />
 <script src="${request.contextPath}/static/adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <script src="${request.contextPath}/static/plugins/treeGrid/dataTables.treeGrid.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.core.js"></script>
-<script src="${request.contextPath}/static/js/common/datatables.select.js"></script>
-<script src="${request.contextPath}/static/js/org/org.js"></script>
-<#-- biz end（5/5 script） -->
+<script src="${request.contextPath}/static/biz/common/datatables.select.js"></script>
+<script src="${request.contextPath}/static/biz/org/org.js"></script>
+<#-- 3-script end -->
 
 </body>
 </html>

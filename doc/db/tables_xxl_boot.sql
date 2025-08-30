@@ -115,7 +115,7 @@ INSERT INTO `xxl_boot_user_role` (`id`, `user_id`, `role_id`, `add_time`, `updat
 VALUES (1, 1, 1, now(), now()),
        (2, 2, 2, now(), now());
 INSERT INTO `xxl_boot_resource` (`id`, `parent_id`, `name`, `type`, `permission`, `url`, `icon`, `order`, `status`, `add_time`, `update_time`)
-VALUES (1, 0,'首页', 1, 'index', '/', 'fa fa-home', 200, 0, now(), now()),
+VALUES (1, 0,'首页', 1, 'dashboard', '/dashboard', 'fa fa-home', 200, 0, now(), now()),
         (2, 0,'组织管理', 0, 'org', '/org', 'fa-users', 210, 0, now(), now()),
         (3, 2,'用户管理', 1, 'org:user', '/org/user', "", 211, 0, now(), now()),
         (4, 2,'角色管理', 1, 'org:role', '/org/role', "", 212, 0, now(), now()),

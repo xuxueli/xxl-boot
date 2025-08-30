@@ -49,41 +49,27 @@ public class IndexController {
 		/*return "redirect:/index";*/
 	}
 
+	@RequestMapping("/dashboard")
+	@XxlSso
+	public String dashboard(HttpServletRequest request, Model model) {
+
+		// message
+		PageModel<XxlBootMessageDTO>  pageModel = messageService.pageList(MessageStatusEnum.NORMAL.getValue(), null, 0, 10);
+		if (pageModel!=null && CollectionTool.isNotEmpty(pageModel.getPageData())) {
+			List<XxlBootMessageDTO> messageList = pageModel.getPageData();
+			model.addAttribute("messageList", messageList);
+		}
+		/*model.addAttribute("BasicJsonwriter", new BasicJsonwriter());*/
+
+		return "other/dashboard";
+		/*return "redirect:/index";*/
+	}
+
 	@RequestMapping("/help")
 	@XxlSso
 	public String help() {
-		return "help";
+		return "other/help";
 	}
-
-    /*@RequestMapping("/chartInfo")
-	@ResponseBody
-	public Response<Map<String, Object>> chartInfo(Date startDate, Date endDate) {
-		//Response<Map<String, Object>> chartInfo = xxlJobService.chartInfo(startDate, endDate);
-
-
-		List<String> triggerDayList = new ArrayList<String>();
-		List<Integer> triggerDayCountRunningList = new ArrayList<Integer>();
-		List<Integer> triggerDayCountSucList = new ArrayList<Integer>();
-		List<Integer> triggerDayCountFailList = new ArrayList<Integer>();
-		int triggerCountRunningTotal = 0;
-		int triggerCountSucTotal = 0;
-		int triggerCountFailTotal = 0;
-
-
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("triggerDayList", triggerDayList);
-		result.put("triggerDayCountRunningList", triggerDayCountRunningList);
-		result.put("triggerDayCountSucList", triggerDayCountSucList);
-		result.put("triggerDayCountFailList", triggerDayCountFailList);
-
-		result.put("triggerCountRunningTotal", triggerCountRunningTotal);
-		result.put("triggerCountSucTotal", triggerCountSucTotal);
-		result.put("triggerCountFailTotal", triggerCountFailTotal);
-
-
-		return new ResponseBuilder<Map<String, Object>>().success(result).build();
-    }*/
-
 
 	@RequestMapping(value = "/errorpage")
 	@XxlSso(login = false)
