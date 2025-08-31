@@ -279,7 +279,7 @@ docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAdd
 - 1、【升级】项目升级 SpringBoot3 + JDK17；
 - 2、【升级】升级多项依赖至较新版本，如xxl-sso、jakarta、spring等，适配JDK17；
 
-### 版本 v1.2.1 Release Notes[迭代中]
+### 版本 v1.3.0 Release Notes[2025-08-23]
 - 1、【安全】登录安全升级，密码加密处理算法从Md5改为Sha256；
 ```
 // 1、用户表password字段需要调整长度，执行如下命令
