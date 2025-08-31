@@ -6,6 +6,7 @@
 
     <#-- 1-style start -->
     <@netCommon.commonStyle />
+    <link rel="stylesheet" href="${request.contextPath}/static/biz/common/admin.tab.css">
     <#-- 1-style end -->
 
 </head>
@@ -162,6 +163,8 @@
 
 <#-- 6-script start -->
 <@netCommon.commonScript />
+<script src="${request.contextPath}/static/biz/common/admin.tab.js"></script>
+<script src="${request.contextPath}/static/biz/common/admin.common.js"></script>
 <#-- 6-script end -->
 
 </body>

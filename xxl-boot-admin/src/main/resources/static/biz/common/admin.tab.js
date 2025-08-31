@@ -200,12 +200,6 @@ $(function () {
         return false;
     }
 
-    // 默认打开第一个菜单
-    var $firstMenuItem = $(".J_menuItem:first");
-    if ($firstMenuItem.length > 0) {
-        $firstMenuItem.click();
-    }
-
     /**
      * 选项卡-关闭x按钮：关闭菜单页面
      */
@@ -332,8 +326,11 @@ $(function () {
         }
     }
     function syncMenuTab(dataId) {
-        var $dataObj = $('a[href$="' + decodeURI(dataId) + '"]');
-        $dataObj.click();
+        var $dataObj = $('.J_menuItem').find('a[href$="' + decodeURI(dataId) + '"]');
+        if ($dataObj.length > 0) {
+            $dataObj.click();
+        }
+
 
         /*$(".sidebar-menu ul li, .sidebar-menu li").removeClass("active");
         $($dataObj).parents("li").addClass("active");*/
@@ -396,6 +393,16 @@ $(function () {
         $('.page-tabs-content').css("margin-left", "0");
         syncMenuTab($('.page-tabs-content').find('.active').attr('data-id'));
     });
+
+    // 默认打开第一个菜单
+    var $firstMenuItem = $(".J_menuItem:first");
+    if ($firstMenuItem.length > 0) {
+        $firstMenuItem.click();
+    }
+    let page = window.location.hash.slice(1);
+    console.log(page);
+    //syncMenuTab();
+
 
     /**
      * 全屏显示

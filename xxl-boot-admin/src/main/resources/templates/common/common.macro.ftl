@@ -21,7 +21,6 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 <link rel="stylesheet" href="${request.contextPath}/static/plugins/nprogress/nprogress.css">
-<link rel="stylesheet" href="${request.contextPath}/static/biz/common/admin.tab.css">
 <#-- 1-style end -->
 
 </#macro>
@@ -44,7 +43,5 @@
 	var base_url = '${request.contextPath}';
 	var I18n = ${I18nUtil.getMultString()};
 </script>
-<script src="${request.contextPath}/static/biz/common/admin.tab.js"></script>
-<script src="${request.contextPath}/static/biz/common/admin.common.js"></script>
 
 </#macro>
