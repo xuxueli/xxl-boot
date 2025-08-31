@@ -294,13 +294,13 @@ UPDATE xxl_boot_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5
 - 4、【优化】登录信息页面空值处理优化，避免空值影响ftl渲染；
 - 5、【优化】系统日志调整，支持启动时指定 -DLOG_HOME 参数自定义日志位置；同时优化日志格式提升易读性；
 
-
-### 版本 v1.3.0 Release Notes[迭代中]
-- 1、【ING】IFrame 支持；
+### 版本 v1.4.0 Release Notes[迭代中]
+- 1、【新增】UI框架操作升级，新增支持iframe以及tab页签管理功能；
 - 2、【ING】页面Hash地址自动识别跳转；
 - 3、【ING】主题切换；
 - 4、【ING】底部bar优化；
 - 5、【ING】代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
+
 
 ### TODO LIST
 - 1、代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
