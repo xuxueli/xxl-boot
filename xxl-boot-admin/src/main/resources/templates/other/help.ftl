@@ -4,9 +4,9 @@
 	<#-- import macro -->
 	<#import "../common/common.macro.ftl" as netCommon>
 
-	<#-- 1-style start -->
+	<!-- 1-style start -->
 	<@netCommon.commonStyle />
-	<#-- 1-style end -->
+	<!-- 1-style end -->
 
 </head>
 <body class="hold-transition" style="background-color: #ecf0f5;">
@@ -32,9 +32,9 @@
 	</section>
 </div>
 
-<#-- 3-script start -->
+<!-- 3-script start -->
 <@netCommon.commonScript />
-<#-- 3-script end -->
+<!-- 3-script end -->
 
 </body>
 </html>

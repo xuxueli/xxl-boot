@@ -4,16 +4,16 @@
     <#-- import macro -->
     <#import "./common/common.macro.ftl" as netCommon>
 
-    <#-- 1-style start -->
+    <!-- 1-style start -->
     <@netCommon.commonStyle />
     <link rel="stylesheet" href="${request.contextPath}/static/biz/common/admin.tab.css">
-    <#-- 1-style end -->
+    <!-- 1-style end -->
 
 </head>
 <body class="hold-transition skin-blue sidebar-mini" >
 <div class="wrapper" >
 
-    <#-- 2-header start -->
+    <!-- 2-header start -->
     <header class="main-header">
         <!-- header logo -->
         <a href="${request.contextPath}/" class="logo">
@@ -53,9 +53,9 @@
 
         </nav>
     </header>
-    <#-- 2-header end -->
+    <!-- 2-header end -->
 
-    <#-- 3-left start -->
+    <!-- 3-left start -->
     <aside class="main-sidebar">
         <section class="sidebar" style="height: auto;" >
             <!-- sidebar menu -->
@@ -103,9 +103,9 @@
             </#macro>
         </section>
     </aside>
-    <#-- 3-left end -->
+    <!-- 3-left end -->
 
-    <#-- 4-right start -->
+    <!-- 4-right start -->
     <div class="content-wrapper">
 
         <!-- Tabs -->
@@ -144,9 +144,9 @@
         </div>
 
     </div>
-    <#-- 4-right end -->
+    <!-- 4-right end -->
 
-    <#-- 5-footer start -->
+    <!-- 5-footer start -->
     <footer class="main-footer">
         Powered by <b>XXL-BOOT</b> ${I18n.admin_version}
         <div class="pull-right hidden-xs">
@@ -157,15 +157,15 @@
             </strong><!-- All rights reserved. -->
         </div>
     </footer>
-    <#-- 5-footer end -->
+    <!-- 5-footer end -->
 
 </div>
 
-<#-- 6-script start -->
+<!-- 6-script start -->
 <@netCommon.commonScript />
 <script src="${request.contextPath}/static/biz/common/admin.tab.js"></script>
 <script src="${request.contextPath}/static/biz/common/admin.common.js"></script>
-<#-- 6-script end -->
+<!-- 6-script end -->
 
 </body>
 </html>

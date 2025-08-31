@@ -1,7 +1,6 @@
 <#-- import: style -->
 <#macro commonStyle>
 
-<#-- 1-style start -->
 <#-- i18n -->
 <#global I18n = I18nUtil.getMultString()?eval />
 <#-- title、favicon、meta -->
@@ -21,7 +20,6 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 <link rel="stylesheet" href="${request.contextPath}/static/plugins/nprogress/nprogress.css">
-<#-- 1-style end -->
 
 </#macro>
 

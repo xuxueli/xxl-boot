@@ -4,16 +4,16 @@
 	<#-- import macro -->
 	<#import "./common/common.macro.ftl" as netCommon>
 
-	<#-- 1-style start -->
+	<!-- 1-style start -->
 	<@netCommon.commonStyle />
 	<!-- iCheck -->
 	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/iCheck/square/blue.css">
-	<#-- 1-style end -->
+	<!-- 1-style end -->
 
 </head>
 <body class="hold-transition login-page">
 
-	<#-- login div -->
+	<!-- 2-biz start -->
 	<div class="login-box">
 		<div class="login-logo">
 			<a><b>XXL</b>BOOT</a>
@@ -44,11 +44,11 @@
 			</div>
 		</form>
 	</div>
+	<!-- 2-biz end -->
 
-<#-- 3-script start -->
+<!-- 3-script start -->
 <@netCommon.commonScript />
 <script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
-<script src="${request.contextPath}/static/biz/login.1.js"></script>
 <script>
 $(function () {
 
@@ -118,7 +118,7 @@ $(function () {
 
 });
 </script>
-<#-- 3-script end -->
+<!-- 3-script end -->
 
 
 </body>
