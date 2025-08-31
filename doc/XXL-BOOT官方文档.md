@@ -297,7 +297,7 @@ UPDATE xxl_boot_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5
 ### 版本 v1.4.0 Release Notes[迭代中]
 - 1、【新增】UI框架操作升级，新增支持iframe以及tab页签管理功能；
 - 2、【优化】UI框架tab页面初始化优化，支持根据URL地址自动定位菜单页面；
-- 3、【ING】新增支持主题切换；
+- 3、【ING】新增支持主题切换，支持切换UI主题以及UI配置；
 - 4、【ING】底部bar优化；
 - 5、【ING】代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
 
