@@ -325,11 +325,16 @@ $(function () {
             scrollToTab(this);
         }
     }
+    /**
+     * 左侧菜单active更新
+     */
     function syncMenuTab(dataId) {
-        var $dataObj = $('.J_menuItem').find('a[href$="' + decodeURI(dataId) + '"]');
+        var $dataObj = $('.J_menuItem').filter('a[href$="' + decodeURI(dataId) + '"]');
         if ($dataObj.length > 0) {
             $dataObj.click();
+            return true;
         }
+        return false;
 
 
         /*$(".sidebar-menu ul li, .sidebar-menu li").removeClass("active");
@@ -394,15 +399,15 @@ $(function () {
         syncMenuTab($('.page-tabs-content').find('.active').attr('data-id'));
     });
 
-    // 默认打开第一个菜单
-    var $firstMenuItem = $(".J_menuItem:first");
-    if ($firstMenuItem.length > 0) {
-        $firstMenuItem.click();
+    // 默认打开菜单Tab：优先尝试打开url路径TAB，兜底打开首个菜单
+    let hashPath = window.location.hash.slice(1);
+    setTimeout(1000);
+    if (!syncMenuTab(hashPath)) {
+        var $firstMenuItem = $(".J_menuItem:first");
+        if ($firstMenuItem.length > 0) {
+            $firstMenuItem.click();
+        }
     }
-    let page = window.location.hash.slice(1);
-    console.log(page);
-    //syncMenuTab();
-
 
     /**
      * 全屏显示
