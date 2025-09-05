@@ -42,6 +42,9 @@
 						<div class="col-xs-1">
 							<button class="btn btn-block btn-primary searchBtn" >${I18n.system_search}</button>
 						</div>
+						<div class="col-xs-1">
+							<button class="btn btn-block btn-default resetBtn" >${I18n.system_reset}</button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -211,14 +214,18 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.min.js"></script>
 <script src="${request.contextPath}/static/plugins/jquery-treegrid/jquery.treegrid.min.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.core.js"></script>
+<#-- admin table -->
+<script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
 <script>
 $(function() {
 
-	// ---------- ---------- ---------- main table  ---------- ---------- ----------
-	var mainDataTable = $("#data_list").bootstrapTable({
+	// ---------- ---------- ---------- table + curd  ---------- ---------- ----------
+	/**
+	 * init table
+	 */
+	$.adminTable.initTreeTable({
+		table: '#data_list',
 		url: base_url + "/org/org/treeList",
-		method: "post",
-		contentType: "application/x-www-form-urlencoded",
 		queryParams: function (params) {
 			var obj = {};
 			obj.name = $('#data_filter .name').val();
@@ -226,31 +233,6 @@ $(function() {
 			obj.start = params.offset;
 			obj.length = params.limit;
 			return obj;
-		},
-		responseHandler: function(result) {
-			if (result.code !== 200) {
-				layer.open({
-					icon: '2',
-					content: result.msg
-				});
-				return ;
-			}
-			return result.data;
-		},
-		treeEnable:true,
-		idField: 'id',					// 树形id
-		parentIdField: 'parentId',		// 父级字段
-		treeShowField: 'name',			// 树形字段
-		onPostBody: function(data) {
-			$("#data_list").treegrid({
-				treeColumn: 1,												// 选择第几列作为树形字段
-				initialState: 'expanded',									// 默认展开；expanded、collapsed
-				expanderExpandedClass: 'fa fa-fw  fa-minus-square-o',		// 树形展开图标
-				expanderCollapsedClass: 'fa fa-fw  fa-plus-square-o',		// 树形折叠图标
-				onChange () {
-					$("#data_list").bootstrapTable('resetView')				// 树形表格重绘
-				}
-			})
 		},
 		columns: [
 			{
@@ -285,37 +267,132 @@ $(function() {
 					return result;
 				}
 			}
-		],
-		clickToSelect: true, 			// 是否启用点击选中行
-		sortable: false, 				// 是否启用排序
-		showRefresh: true,				// 显示刷新按钮
-		showColumns: true,				// 显示/隐藏列
-		minimumCountColumns: 2,			// 最少允许的列数
-		onAll: function(name, args) {
-			// filter
-			if (!(['check.bs.table', "uncheck.bs.table", "check-all.bs.table", "uncheck-all.bs.table"].indexOf(name) > -1)) {
-				return false;
-			}
-			var rows = mainDataTable.bootstrapTable('getSelections');
-			var selectLen = rows.length;
+		]
+	});
 
-			if (selectLen > 0) {
-				$("#data_operation .selectAny").removeClass('disabled');
-			} else {
-				$("#data_operation .selectAny").addClass('disabled');
+	/**
+	 * init delete
+	 */
+	$.adminTable.initDelete({
+		url: base_url + "/org/org/delete"
+	});
+
+	/**
+	 * init add
+	 */
+	$.adminTable.initAdd( {
+		url: base_url + "/org/org/insert",
+		rules : {
+			name : {
+				required : true,
+				rangelength:[2, 50]
+			},
+			permission : {
+				required : true,
+				rangelength:[2, 50]
+			},
+			order : {
+				required : true,
+				range:[1, 99999999]
 			}
-			if (selectLen === 1) {
-				$("#data_operation .selectOnlyOne").removeClass('disabled');
-			} else {
-				$("#data_operation .selectOnlyOne").addClass('disabled');
+		},
+		messages : {
+			name : {
+				required : I18n.system_please_input + I18n.resource_name,
+				rangelength: I18n.system_lengh_limit + "[2-50]"
+			},
+			permission : {
+				required : I18n.system_please_input + I18n.resource_permission,
+				rangelength: I18n.system_lengh_limit + "[2-20]"
+			},
+			order : {
+				required : I18n.system_please_input,
+				range: I18n.system_num_range + " 1~99999999"
 			}
+		},
+		writeFormData:function (){
+			// reset origin parent
+			initTree();
+			$("#addModal .form input[name=parentId]").val( 0 );
+		},
+		readFormData: function() {
+			// request
+			return {
+				"parentId": $("#addModal .form input[name=parentId]").val(),
+				"name": $("#addModal .form input[name=name]").val(),
+				"order": $("#addModal .form input[name=order]").val(),
+				"status": $("#addModal .form select[name=status]").val()
+			};
 		}
 	});
-	document.querySelector('.fixed-table-toolbar').classList.remove('fixed-table-toolbar');
 
-	// search btn
-	$('#data_filter .searchBtn').on('click', function(){
-		mainDataTable.bootstrapTable('refresh');
+
+	/**
+	 * init update
+	 */
+	$.adminTable.initUpdate( {
+		url: base_url + "/org/org/update",
+		writeFormData: function(row) {
+			// base data
+			$("#updateModal .form input[name=id]").val( row.id );
+			$("#updateModal .form input[name=parentId]").val( row.parentId );
+			$("#updateModal .form input[name=name]").val( row.name );
+			$("#updateModal .form input[name=order]").val( row.order );
+			$("#updateModal .form select[name=status]").val( row.status );
+
+			// 设置 tree 选中
+			initTree();
+			if (row.id > 0) {
+				var chooseNode = zTreeObj.getNodeByParam("id", row.parentId, null);
+				if (chooseNode) {
+					zTreeObj.selectNode(chooseNode);
+					$("#updateModal .form input[name=parentName]").val( chooseNode.name );
+				}
+
+			}
+		},
+		rules : {
+			name : {
+				required : true,
+				rangelength:[2, 50]
+			},
+			permission : {
+				required : true,
+				rangelength:[2, 50]
+			},
+			order : {
+				required : true,
+				range:[1, 99999999]
+			}
+		},
+		messages : {
+			name : {
+				required : I18n.system_please_input + I18n.user_password,
+				rangelength: I18n.system_lengh_limit + "[2-50]"
+			},
+			permission : {
+				required : I18n.system_please_input + I18n.user_real_name,
+				rangelength: I18n.system_lengh_limit + "[2-20]"
+			},
+			order : {
+				required : I18n.system_please_input,
+				range: I18n.system_num_range + " 1~99999999"
+			}
+		},
+		readFormData: function() {
+			// request
+			return {
+				"id": $("#updateModal .form input[name=id]").val(),
+				"parentId": $("#updateModal .form input[name=parentId]").val(),
+				"name": $("#updateModal .form input[name=name]").val(),
+				"type": $("#updateModal .form select[name=type]").val(),
+				"permission": $("#updateModal .form input[name=permission]").val(),
+				"url": $("#updateModal .form input[name=url]").val(),
+				"icon": $("#updateModal .form input[name=icon]").val(),
+				"order": $("#updateModal .form input[name=order]").val(),
+				"status": $("#updateModal .form select[name=status]").val()
+			};
+		}
 	});
 
 
@@ -329,54 +406,40 @@ $(function() {
 		}
 	});
 
-	// ---------- ---------- ---------- delete operation ---------- ---------- ----------
-	// delete
-	$("#data_operation").on('click', '.delete',function() {
-		// get select rows
-		var rows = mainDataTable.bootstrapTable('getSelections');
 
-		// find select ids
-		const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
-		if (selectIds.length <= 0) {
-			layer.msg(I18n.system_please_choose + I18n.system_data);
+	// ---------- ---------- ---------- parent resource choose ---------- ---------- ----------
+
+	/**
+	 * open parent-treeModal
+	 */
+	$(".selectParent").click(function(){
+		$('#treeModal').modal({backdrop: false, keyboard: false}).modal('show');
+	});
+
+	/**
+	 * choose parent-treeModal
+	 */
+	$('#treeModal .choose').click(function(){
+
+		// valid choose
+		if (zTreeObj.getSelectedNodes().length < 1) {
+			layer.msg( I18n.system_please_choose + I18n.resource_parent );
 			return;
 		}
 
-		// do delete
-		layer.confirm( I18n.system_ok + I18n.system_opt_del + '?', {
-			icon: 3,
-			title: I18n.system_tips ,
-			btn: [ I18n.system_ok, I18n.system_cancel ]
-		}, function(index){
-			layer.close(index);
+		// fill choose data, todo-
+		$("#addModal .form input[name=parentId]").val( zTreeObj.getSelectedNodes()[0].id );
+		$("#addModal .form input[name=parentName]").val( zTreeObj.getSelectedNodes()[0].name );
 
-			$.ajax({
-				type : 'POST',
-				url : base_url + "/org/org/delete",
-				data : {
-					"ids" : selectIds
-				},
-				dataType : "json",
-				success : function(data){
-					if (data.code == 200) {
-						layer.msg( I18n.system_opt_del + I18n.system_success );
-						// refresh table
-						$('#data_filter .searchBtn').click();
-					} else {
-						layer.msg( data.msg || I18n.system_opt_del + I18n.system_fail );
-					}
-				},
-				error: function(xhr, status, error) {
-					layer.open({
-						icon: '2',
-						content: (I18n.system_opt_del + I18n.system_fail)
-					});
-				}
-			});
-		});
+		$("#updateModal .form input[name=parentId]").val( zTreeObj.getSelectedNodes()[0].id );
+		$("#updateModal .form input[name=parentName]").val( zTreeObj.getSelectedNodes()[0].name );
+
+		$('#treeModal').modal('hide');
 	});
 
-	// ---------- ---------- ---------- ztree ---------- ---------- ----------
+	/**
+	 * parent resource tree
+	 */
 	var zTreeObj;
 	function initTree(){
 		var setting = {
@@ -408,7 +471,7 @@ $(function() {
 			dataType : "json",
 			async: false,
 			success : function(data){
-				if (data.code == "200") {
+				if (data.code === 200) {
 					var zNodes = data.data;
 
 					zTreeObj = $.fn.zTree.init($("#tree"), setting, zNodes); //初始化树
@@ -420,234 +483,6 @@ $(function() {
 			}
 		});
 	}
-
-	// open
-	$(".selectParent").click(function(){
-		$('#treeModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
-	// choose
-	$('#treeModal .choose').click(function(){
-
-		// valid choose
-		if (zTreeObj.getSelectedNodes().length < 1) {
-			layer.msg( I18n.system_please_choose + I18n.resource_parent );
-			return;
-		}
-
-		// fill choose data, todo-
-		$("#addModal .form input[name=parentId]").val( zTreeObj.getSelectedNodes()[0].id );
-		$("#addModal .form input[name=parentName]").val( zTreeObj.getSelectedNodes()[0].name );
-
-		$("#updateModal .form input[name=parentId]").val( zTreeObj.getSelectedNodes()[0].id );
-		$("#updateModal .form input[name=parentName]").val( zTreeObj.getSelectedNodes()[0].name );
-
-		$('#treeModal').modal('hide');
-	});
-
-	// ---------- ---------- ---------- add operation ---------- ---------- ----------
-	// add modal
-	$("#data_operation .add").click(function(){
-
-		// todo，reset not work
-		initTree();
-		$("#addModal .form input[name=parentId]").val( 0 );
-
-		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
-	var addModalValidate = $("#addModal .form").validate({
-		errorElement : 'span',
-		errorClass : 'help-block',
-		focusInvalid : true,
-		rules : {
-			name : {
-				required : true,
-				rangelength:[2, 50]
-			},
-			permission : {
-				required : true,
-				rangelength:[2, 50]
-			},
-			order : {
-				required : true,
-				range:[1, 99999999]
-			}
-		},
-		messages : {
-			name : {
-				required : I18n.system_please_input + I18n.resource_name,
-				rangelength: I18n.system_lengh_limit + "[2-50]"
-			},
-			permission : {
-				required : I18n.system_please_input + I18n.resource_permission,
-				rangelength: I18n.system_lengh_limit + "[2-20]"
-			},
-			order : {
-				required : I18n.system_please_input,
-				range: I18n.system_num_range + " 1~99999999"
-			}
-		},
-		highlight : function(element) {
-			$(element).closest('.form-group').addClass('has-error');
-		},
-		success : function(label) {
-			label.closest('.form-group').removeClass('has-error');
-			label.remove();
-		},
-		errorPlacement : function(error, element) {
-			element.parent('div').append(error);
-		},
-		submitHandler : function(form) {
-
-			// request
-			var paramData = {
-				"parentId": $("#addModal .form input[name=parentId]").val(),
-				"name": $("#addModal .form input[name=name]").val(),
-				"order": $("#addModal .form input[name=order]").val(),
-				"status": $("#addModal .form select[name=status]").val()
-			};
-
-			// post
-			$.post(base_url + "/org/org/insert", paramData, function(data, status) {
-				if (data.code == "200") {
-					$('#addModal').modal('hide');
-					layer.msg( I18n.system_opt_add + I18n.system_success );
-
-					// refresh table
-					$('#data_filter .searchBtn').click();
-				} else {
-					layer.open({
-						title: I18n.system_tips ,
-						btn: [ I18n.system_ok ],
-						content: (data.msg || I18n.system_opt_add + I18n.system_fail ),
-						icon: '2'
-					});
-				}
-			});
-		}
-	});
-	$("#addModal").on('hide.bs.modal', function () {
-		// reset
-		$("#addModal .form")[0].reset();
-		$("#addModal .form .form-group").removeClass("has-error");
-		// reset
-		addModalValidate.resetForm();
-	});
-
-	// ---------- ---------- ---------- update operation ---------- ---------- ----------
-	$("#data_operation .update").click(function(){
-		// get select rows
-		var rows = mainDataTable.bootstrapTable('getSelections');
-
-		// find select row
-		if (rows.length !== 1) {
-			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
-			return;
-		}
-		var row = rows[0];
-
-		// base data
-		$("#updateModal .form input[name=id]").val( row.id );
-		$("#updateModal .form input[name=parentId]").val( row.parentId );
-		$("#updateModal .form input[name=name]").val( row.name );
-		$("#updateModal .form input[name=order]").val( row.order );
-		$("#updateModal .form select[name=status]").val( row.status );
-
-		// 设置 tree 选中
-		initTree();
-		if (row.id > 0) {
-			var chooseNode = zTreeObj.getNodeByParam("id", row.parentId, null);
-			if (chooseNode) {
-				zTreeObj.selectNode(chooseNode);
-				$("#updateModal .form input[name=parentName]").val( chooseNode.name );
-			}
-
-		}
-
-		// show
-		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
-	var updateModalValidate = $("#updateModal .form").validate({
-		errorElement : 'span',
-		errorClass : 'help-block',
-		focusInvalid : true,
-		highlight : function(element) {
-			$(element).closest('.form-group').addClass('has-error');
-		},
-		success : function(label) {
-			label.closest('.form-group').removeClass('has-error');
-			label.remove();
-		},
-		errorPlacement : function(error, element) {
-			element.parent('div').append(error);
-		},
-		rules : {
-			name : {
-				required : true,
-				rangelength:[2, 50]
-			},
-			permission : {
-				required : true,
-				rangelength:[2, 50]
-			},
-			order : {
-				required : true,
-				range:[1, 99999999]
-			}
-		},
-		messages : {
-			name : {
-				required : I18n.system_please_input + I18n.user_password,
-				rangelength: I18n.system_lengh_limit + "[2-50]"
-			},
-			permission : {
-				required : I18n.system_please_input + I18n.user_real_name,
-				rangelength: I18n.system_lengh_limit + "[2-20]"
-			},
-			order : {
-				required : I18n.system_please_input,
-				range: I18n.system_num_range + " 1~99999999"
-			}
-		},
-		submitHandler : function(form) {
-
-			// request
-			var paramData = {
-				"id": $("#updateModal .form input[name=id]").val(),
-				"parentId": $("#updateModal .form input[name=parentId]").val(),
-				"name": $("#updateModal .form input[name=name]").val(),
-				"type": $("#updateModal .form select[name=type]").val(),
-				"permission": $("#updateModal .form input[name=permission]").val(),
-				"url": $("#updateModal .form input[name=url]").val(),
-				"icon": $("#updateModal .form input[name=icon]").val(),
-				"order": $("#updateModal .form input[name=order]").val(),
-				"status": $("#updateModal .form select[name=status]").val()
-			};
-
-			$.post(base_url + "/org/org/update", paramData, function(data, status) {
-				if (data.code == "200") {
-					$('#updateModal').modal('hide');
-					layer.msg( I18n.system_opt_edit + I18n.system_success );
-
-					// refresh table
-					$('#data_filter .searchBtn').click();
-				} else {
-					layer.open({
-						title: I18n.system_tips ,
-						btn: [ I18n.system_ok ],
-						content: (data.msg || I18n.system_opt_edit + I18n.system_fail ),
-						icon: '2'
-					});
-				}
-			});
-		}
-	});
-	$("#updateModal").on('hide.bs.modal', function () {
-		// reset
-		$("#updateModal .form")[0].reset();
-		$("#updateModal .form .form-group").removeClass("has-error");
-		// reset
-		updateModalValidate.resetForm();
-	});
 
 });
 

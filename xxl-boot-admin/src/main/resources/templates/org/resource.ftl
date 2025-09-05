@@ -1220,7 +1220,7 @@ $(function() {
 					return result;
 				}
 			}
-		],
+		]
 	});
 
 	/**
@@ -1354,6 +1354,7 @@ $(function() {
 		}
 	});
 
+
 	// ---------- ---------- ---------- tree collapseAll\expandAll ---------- ---------- ----------
 	var expandOrCollapse_val = 0;
 	$("#data_operation").on('click', '.expandAndCollapse',function() {
@@ -1373,6 +1374,7 @@ $(function() {
 	$(".selectParent").click(function(){
 		$('#treeModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
+
 	/**
 	 * choose parent-treeModal
 	 */
