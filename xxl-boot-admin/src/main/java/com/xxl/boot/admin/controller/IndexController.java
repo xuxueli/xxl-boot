@@ -36,15 +36,6 @@ public class IndexController {
 	@RequestMapping("/")
 	@XxlSso
 	public String index(HttpServletRequest request, Model model) {
-
-		// message
-		PageModel<XxlBootMessageDTO>  pageModel = messageService.pageList(MessageStatusEnum.NORMAL.getValue(), null, 0, 10);
-		if (pageModel!=null && CollectionTool.isNotEmpty(pageModel.getPageData())) {
-			List<XxlBootMessageDTO> messageList = pageModel.getPageData();
-			model.addAttribute("messageList", messageList);
-		}
-		/*model.addAttribute("BasicJsonwriter", new BasicJsonwriter());*/
-
 		return "index";
 		/*return "redirect:/index";*/
 	}
@@ -59,10 +50,8 @@ public class IndexController {
 			List<XxlBootMessageDTO> messageList = pageModel.getPageData();
 			model.addAttribute("messageList", messageList);
 		}
-		/*model.addAttribute("BasicJsonwriter", new BasicJsonwriter());*/
 
 		return "other/dashboard";
-		/*return "redirect:/index";*/
 	}
 
 	@RequestMapping("/help")

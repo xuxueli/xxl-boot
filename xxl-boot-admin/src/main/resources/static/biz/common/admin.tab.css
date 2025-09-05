@@ -10,7 +10,8 @@ body .wrapper{
 }
 
 body .content-wrapper{
-    height:calc(100% - 51px);
+    /*for footer*/
+    height:calc(100% - 36px);
 }
 
 body .sidebar{
@@ -19,16 +20,16 @@ body .sidebar{
 
 .content-tabs {
     position: relative;
-    height: 42px;
+    height: 35px;
     background: #fafafa;
-    line-height: 40px;
+    line-height: 35px;
 }
 
 .content-tabs .roll-nav,
 .page-tabs-list {
     position: absolute;
     width: 40px;
-    height: 40px;
+    height: 35px;
     text-align: center;
     color: #999;
     z-index: 2;
@@ -48,7 +49,7 @@ body .sidebar{
 .content-tabs button {
     background: #fff;
     border: 0;
-    height: 40px;
+    height: 35px;
     width: 40px;
     outline: none;
 }
@@ -60,7 +61,7 @@ body .sidebar{
 nav.page-tabs {
     margin-left: 40px;
     width: 100000px;
-    height: 40px;
+    height: 35px;
     overflow: hidden;
 }
 
@@ -103,14 +104,14 @@ nav.page-tabs .page-tabs-content {
 .roll-right.J_tabExit, .roll-right.tabReload {
 	right: 60px;
     background: #fff;
-    height: 40px;
+    height: 35px;
     width: 60px;
     outline: none;
 }
 
 .roll-right.J_tabExit, .roll-right.fullscreen {
     background: #fff;
-    height: 40px;
+    height: 35px;
     width: 60px;
     outline: none;
 }
@@ -130,7 +131,8 @@ nav.page-tabs .page-tabs-content {
 }
 
 .content-tabs {
-    border-bottom: solid 2px silver;
+    height: 37px;
+    border-bottom: solid 2px #d2d6de;
 }
 
 .page-tabs a {
@@ -142,13 +144,13 @@ nav.page-tabs .page-tabs-content {
 }
 
 .page-tabs a.active {
-    background: #212d32;
-    color: #a7b1c2;
+    background: #2f4050;
+    color: #ccc;
 }
 
 .page-tabs a.active:hover,
 .page-tabs a.active i:hover {
-    background: #293846;
+    background: #2f4050;
     color: #fff;
 }
 
@@ -192,4 +194,10 @@ nav.page-tabs .page-tabs-content {
 
 .dropdown-menu {
 	min-width: 100px;
+}
+
+.main-footer {
+    height: 37px;
+    border-top: solid 2px #d2d6de;
+    padding: 8px 20px 12px 20px;
 }
