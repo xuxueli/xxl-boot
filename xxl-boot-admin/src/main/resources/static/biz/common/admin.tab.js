@@ -72,7 +72,11 @@ $(function () {
 
             // 添加遮罩层
             NProgress.inc(0.2);
-            NProgress.configure({ easing: 'ease', speed: 500, showSpinner: false });
+            NProgress.configure({
+                easing: 'ease',         // 动画缓动函数 (默认: 'ease')
+                speed: 500,             // 动画速度（毫秒）(默认: 200)
+                showSpinner: true      // 是否显示旋转图标 (默认: true)
+            });
             NProgress.start();
 
             let $iframe = $('.J_mainContent iframe:visible');
@@ -82,7 +86,6 @@ $(function () {
                 NProgress.done();
                 // 处理加载失败情况，防止跳转
                 console.error('iframe load error, src = ' + $(this).attr('src'));
-                // 可以显示错误信息或重试机制
             });
 
             // 添加Tab，切换Tab
@@ -300,13 +303,23 @@ $(function () {
     $('.tabReload').on('click', refreshTab);
     function refreshTab() {
         NProgress.inc(0.2);
-        NProgress.configure({ easing: 'ease', speed: 500, showSpinner: false });
+        NProgress.configure({
+            easing: 'ease',         // 动画缓动函数 (默认: 'ease')
+            speed: 500,             // 动画速度（毫秒）(默认: 200)
+            showSpinner: true       // 是否显示旋转图标 (默认: true)
+        });
         NProgress.start();
         var currentId = $('.page-tabs-content').find('.active').attr('data-id');
         var target = $('.J_iframe[data-id="' + currentId + '"]');
         var url = target.attr('src');
-        target.attr('src', url).ready();
-        NProgress.done();
+        // target.attr('src', url).ready();
+        target.attr('src', url).on('load', function () {
+            NProgress.done();
+        }).on('error', function () {
+            NProgress.done();
+            // 处理加载失败情况，防止跳转
+            console.error('iframe load error, src = ' + $(this).attr('src'));
+        });
     }
 
     /**

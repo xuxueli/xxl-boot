@@ -44,7 +44,7 @@ public class IndexController {
 	@XxlSso
 	public String dashboard(HttpServletRequest request, Model model) {
 
-		// message
+        // message
 		PageModel<XxlBootMessageDTO>  pageModel = messageService.pageList(MessageStatusEnum.NORMAL.getValue(), null, 0, 10);
 		if (pageModel!=null && CollectionTool.isNotEmpty(pageModel.getPageData())) {
 			List<XxlBootMessageDTO> messageList = pageModel.getPageData();
