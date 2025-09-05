@@ -145,7 +145,7 @@
         <!-- Iframe Content -->
         <div class="J_mainContent" id="content-main" >
             <!-- Iframe -->
-            <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="${request.contextPath}${mainMenu.url}" frameborder="0" data-id="${request.contextPath}${mainMenu.url}" seamless></iframe>
+            <iframe class="J_iframe" width="100%" height="100%" src="${request.contextPath}${mainMenu.url}" frameborder="0" data-id="${request.contextPath}${mainMenu.url}" seamless></iframe>
         </div>
 
     </div>

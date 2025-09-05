@@ -26,22 +26,12 @@ $(function () {
      */
 
     /**
-     * 初始化：通过遍历给菜单项加上data-index属性
-     */
-    $(".J_menuItem").each(function (index) {
-        if (!$(this).attr('data-index')) {
-            $(this).attr('data-index', index);
-        }
-    });
-
-    /**
      * 点击菜单：打开页面
      */
     $('.J_menuItem').on('click', menuItem);
     function menuItem() {
         // 获取标识数据
         var dataUrl = $(this).attr('href'),              // data url
-            dataIndex = $(this).data('index'),                 // data index
             menuName = $.trim($(this).text()),    // menu mane
             needBuildTab = true;                       // need build tab or not
 
@@ -82,7 +72,7 @@ $(function () {
             $('.J_menuTab').removeClass('active');
 
             // build IFrame
-            var iframeStr = '<iframe class="J_iframe" name="iframe' + dataIndex + '" width="100%" height="100%" src="' + dataUrl + '" frameborder="0" data-id="' + dataUrl + '" seamless></iframe>';
+            var iframeStr = '<iframe class="J_iframe" width="100%" height="100%" src="' + dataUrl + '" frameborder="0" data-id="' + dataUrl + '" seamless></iframe>';
             $('.J_mainContent').find('iframe.J_iframe').hide().parents('.J_mainContent').append(iframeStr);
 
             // 添加遮罩层
