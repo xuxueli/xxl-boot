@@ -302,7 +302,8 @@ UPDATE xxl_boot_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5
 - 5、【优化】调整 UI框架的底部 bar 高度，增加正文内容展示区域
 
 ### 版本 v1.5.0 Release Notes[迭代中]
-- 1、【ING】代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
+- 1、【新增】UI框架Table组件封装，抽象基础操作提升复用；
+- 2、【ING】代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
 
 
 ### TODO LIST
