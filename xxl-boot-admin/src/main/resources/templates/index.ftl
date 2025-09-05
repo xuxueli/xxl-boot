@@ -96,7 +96,13 @@
                         </#if>
                         <#-- menu -->
                         <li class="nav-click">
-                            <a class="J_menuItem" href="${request.contextPath}${resource.url}">
+                            <#-- url -->
+                            <#assign resourceUrl = request.contextPath + resource.url />
+                            <#if resource.url?starts_with("http") >
+                                <#assign resourceUrl = resource.url />
+                            </#if>
+                            <#-- menu -->
+                            <a class="J_menuItem" href="${resourceUrl}">
                                 <i class="fa ${resource.icon}"></i>
                                 <span>${resource.name}</span>
                             </a>
