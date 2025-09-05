@@ -93,4 +93,13 @@
         ORDER BY t.`order` ASC
     </select>
 
+    <select id="queryByParentIds" parameterType="java.util.Map" resultMap="XxlBootOrg">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_org AS t
+        WHERE t.`parent_id` in
+        <foreach collection="ids" item="parentId" index="index" separator="," open="(" close=")" >
+            #{parentId}
+        </foreach>
+    </select>
+
 </mapper>

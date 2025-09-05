@@ -6,7 +6,8 @@
 
 	<!-- 1-style start -->
 	<@netCommon.commonStyle />
-	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/plugins/jquery-treegrid/jquery.treegrid.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/zTree/css/metroStyle/metroStyle.css">
 	<!-- 1-style end -->
 
@@ -49,7 +50,7 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="box">
-						<div class="box-header" style="float: right" id="data_operation" >
+						<div class="box-header pull-left" id="data_operation" >
 							<button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
 							<button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
 							<button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
@@ -205,106 +206,79 @@
 
 <!-- 3-script start -->
 <@netCommon.commonScript />
-<script src="${request.contextPath}/static/adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${request.contextPath}/static/adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<script src="${request.contextPath}/static/plugins/treeGrid/dataTables.treeGrid.js"></script>
+<script src="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="${request.contextPath}/static/plugins/bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.min.js"></script>
+<script src="${request.contextPath}/static/plugins/jquery-treegrid/jquery.treegrid.min.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.core.js"></script>
-<script src="${request.contextPath}/static/biz/common/datatables.select.js"></script>
 <script>
 $(function() {
 
 	// ---------- ---------- ---------- main table  ---------- ---------- ----------
-	// treeGrid：https://github.com/lhmyy521125/dataTables.treeGrid
-	// init dataTableSelect
-	$.dataTableSelect.init();
-	// table data
-	var tableData = {};
-	// init date tables
-	var mainDataTable = $("#data_list").dataTable({
-		"deferRender": false,
-		"processing" : true,
-		"serverSide": true,
-		"ajax": {
-			url: base_url + "/org/org/treeList",
-			type:"post",
-			// request data
-			data : function ( d ) {
-				var obj = {};
-				obj.name = $('#data_filter .name').val();
-				obj.status = $('#data_filter .status').val();
-				obj.start = d.start;
-				obj.length = d.length;
-				return obj;
-			},
-			// response data filter
-			dataFilter: function (originData) {
-				var originJson = $.parseJSON(originData);
-				return JSON.stringify({
-					data: originJson.data?originJson.data: {}
+	var mainDataTable = $("#data_list").bootstrapTable({
+		url: base_url + "/org/org/treeList",
+		method: "post",
+		contentType: "application/x-www-form-urlencoded",
+		queryParams: function (params) {
+			var obj = {};
+			obj.name = $('#data_filter .name').val();
+			obj.status = $('#data_filter .status').val();
+			obj.start = params.offset;
+			obj.length = params.limit;
+			return obj;
+		},
+		responseHandler: function(result) {
+			if (result.code !== 200) {
+				layer.open({
+					icon: '2',
+					content: result.msg
 				});
+				return ;
 			}
+			return result.data;
 		},
-		"searching": false,
-		"ordering": false,
-		//"scrollX": true,																		// scroll x，close self-adaption
-		/**
-		 l - Length changing 改变每页显示多少条数据的控件
-		 f - Filtering input 即时搜索框控件
-		 t - The Table 表格本身
-		 i - Information 表格相关信息控件
-		 p - Pagination 分页控件
-		 r - pRocessing 加载等待显示信息
-		 **/
-		"dom": "tr",
-		"drawCallback": function( settings ) {
-			$.dataTableSelect.selectStatusInit();
-		},
-		"columns": [
-			{
-				"title": '<input align="center" type="checkbox" id="checkAll" >',
-				"data": 'id',
-				"visible" : true,
-				"width":'5%',
-				"render": function ( data, type, row ) {
-					tableData['key'+row.id] = row;
-					return '<input align="center" type="checkbox" class="checkItem" data-id="'+ row.id +'"  >';
+		treeEnable:true,
+		idField: 'id',					// 树形id
+		parentIdField: 'parentId',		// 父级字段
+		treeShowField: 'name',			// 树形字段
+		onPostBody: function(data) {
+			$("#data_list").treegrid({
+				treeColumn: 1,												// 选择第几列作为树形字段
+				initialState: 'expanded',									// 默认展开；expanded、collapsed
+				expanderExpandedClass: 'fa fa-fw  fa-minus-square-o',		// 树形展开图标
+				expanderCollapsedClass: 'fa fa-fw  fa-plus-square-o',		// 树形折叠图标
+				onChange () {
+					$("#data_list").bootstrapTable('resetView')				// 树形表格重绘
 				}
-			},
+			})
+		},
+		columns: [
 			{
-				"title": '层级',
-				"className": 'treegrid-control',
-				"data": function (row) {
-					if (row.children != null && row.children.length > 0) {
-						return '<span><i class="fa fa-fw fa-plus-square-o" ></span>';
-					}
-					return '';
-				},
-				"width":'5%'
-			},
-			{
-				"title": I18n.resource_name,
-				"render": function ( data, type, row ) {
-					var iconAndName = '<i class="fa _icon_"></i> ' + row.name;
+				checkbox: true,
+				field: 'state',
+				width: '5%'
+			},{
+				title: I18n.resource_name,
+				field: 'name',
+				width: '25%',
+				formatter: function(value, row, index) {
+					var iconAndName = '&nbsp;&nbsp;<i class="fa _icon_"></i> ' + row.name;
 					var icon = row.icon?row.icon:'';		// fa-circle-o
 
 					return iconAndName.replace("_icon_", icon);
-				},
-				"width":'25%'
-			},
-			{
-				"title": I18n.resource_order,
-				"data": 'order',
-				"width":'10%'
-			},
-			{
-				"title": I18n.resource_status,
-				"data": 'status',
-				"visible" : true,
-				"width":'10%',
-				"render": function ( data, type, row ) {
+				}
+			},{
+				title: I18n.resource_order,
+				field: 'order',
+				width: '10%'
+			},{
+				title: I18n.resource_status,
+				field: 'status',
+				width: '10%',
+				formatter: function(value, row, index) {
 					var result = "";
 					$('#addModal select[name="status"] option').each(function(){
-						if ( data.toString() === $(this).val() ) {
+						if ( value.toString() === $(this).val() ) {
 							result = $(this).text();
 						}
 					});
@@ -312,50 +286,57 @@ $(function() {
 				}
 			}
 		],
-		"columnDefs": [
-			{
-				"defaultContent": "",
-				"targets": "_all"
+		clickToSelect: true, 			// 是否启用点击选中行
+		sortable: false, 				// 是否启用排序
+		showRefresh: true,				// 显示刷新按钮
+		showColumns: true,				// 显示/隐藏列
+		minimumCountColumns: 2,			// 最少允许的列数
+		onAll: function(name, args) {
+			// filter
+			if (!(['check.bs.table', "uncheck.bs.table", "check-all.bs.table", "uncheck-all.bs.table"].indexOf(name) > -1)) {
+				return false;
 			}
-		],
-		"language" : {
-			"sProcessing" : I18n.dataTable_sProcessing ,
-			"sZeroRecords" : I18n.dataTable_sZeroRecords ,
-			"sEmptyTable" : I18n.dataTable_sEmptyTable ,
-			"sLoadingRecords" : I18n.dataTable_sLoadingRecords ,
-			"sInfoThousands" : ","
+			var rows = mainDataTable.bootstrapTable('getSelections');
+			var selectLen = rows.length;
+
+			if (selectLen > 0) {
+				$("#data_operation .selectAny").removeClass('disabled');
+			} else {
+				$("#data_operation .selectAny").addClass('disabled');
+			}
+			if (selectLen === 1) {
+				$("#data_operation .selectOnlyOne").removeClass('disabled');
+			} else {
+				$("#data_operation .selectOnlyOne").addClass('disabled');
+			}
 		}
 	});
-	// tree grid : expandAll / collapseAll
-	tree = new $.fn.dataTable.TreeGrid(mainDataTable,{
-		left: 20,
-		expandAll: true,
-		expandIcon: '<span><i class="fa fa-fw  fa-plus-square-o" ></i></span>',
-		collapseIcon: '<span><i class="fa fa-fw  fa-minus-square-o" ></i></span>'
-	});
+	document.querySelector('.fixed-table-toolbar').classList.remove('fixed-table-toolbar');
 
 	// search btn
 	$('#data_filter .searchBtn').on('click', function(){
-		mainDataTable.fnDraw(false);
-		//mainDataTable.draw(false);
+		mainDataTable.bootstrapTable('refresh');
 	});
+
 
 	// ---------- ---------- ---------- tree operation ---------- ---------- ----------
 	var expandOrCollapse_val = 0;
 	$("#data_operation").on('click', '.expandAndCollapse',function() {
 		if ((expandOrCollapse_val++)%2 === 0) {
-			tree.collapseAll();
+			$("#data_list").treegrid('collapseAll');
 		} else {
-			tree.expandAll();
+			$("#data_list").treegrid('expandAll');
 		}
 	});
 
 	// ---------- ---------- ---------- delete operation ---------- ---------- ----------
 	// delete
 	$("#data_operation").on('click', '.delete',function() {
+		// get select rows
+		var rows = mainDataTable.bootstrapTable('getSelections');
 
 		// find select ids
-		var selectIds = $.dataTableSelect.selectIdsFind();
+		const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
 		if (selectIds.length <= 0) {
 			layer.msg(I18n.system_please_choose + I18n.system_data);
 			return;
@@ -379,7 +360,8 @@ $(function() {
 				success : function(data){
 					if (data.code == 200) {
 						layer.msg( I18n.system_opt_del + I18n.system_success );
-						mainDataTable.fnDraw(false);	// false，refresh current page；true，all refresh
+						// refresh table
+						$('#data_filter .searchBtn').click();
 					} else {
 						layer.msg( data.msg || I18n.system_opt_del + I18n.system_fail );
 					}
@@ -528,9 +510,10 @@ $(function() {
 			$.post(base_url + "/org/org/insert", paramData, function(data, status) {
 				if (data.code == "200") {
 					$('#addModal').modal('hide');
-
 					layer.msg( I18n.system_opt_add + I18n.system_success );
-					mainDataTable.fnDraw();
+
+					// refresh table
+					$('#data_filter .searchBtn').click();
 				} else {
 					layer.open({
 						title: I18n.system_tips ,
@@ -543,22 +526,24 @@ $(function() {
 		}
 	});
 	$("#addModal").on('hide.bs.modal', function () {
-		addModalValidate.resetForm();
-
+		// reset
 		$("#addModal .form")[0].reset();
 		$("#addModal .form .form-group").removeClass("has-error");
+		// reset
+		addModalValidate.resetForm();
 	});
 
 	// ---------- ---------- ---------- update operation ---------- ---------- ----------
 	$("#data_operation .update").click(function(){
+		// get select rows
+		var rows = mainDataTable.bootstrapTable('getSelections');
 
-		// find select ids
-		var selectIds = $.dataTableSelect.selectIdsFind();
-		if (selectIds.length != 1) {
+		// find select row
+		if (rows.length !== 1) {
 			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
 			return;
 		}
-		var row = tableData[ 'key' + selectIds[0] ];
+		var row = rows[0];
 
 		// base data
 		$("#updateModal .form input[name=id]").val( row.id );
@@ -641,9 +626,10 @@ $(function() {
 			$.post(base_url + "/org/org/update", paramData, function(data, status) {
 				if (data.code == "200") {
 					$('#updateModal').modal('hide');
-
 					layer.msg( I18n.system_opt_edit + I18n.system_success );
-					mainDataTable.fnDraw(false);
+
+					// refresh table
+					$('#data_filter .searchBtn').click();
 				} else {
 					layer.open({
 						title: I18n.system_tips ,
@@ -656,10 +642,11 @@ $(function() {
 		}
 	});
 	$("#updateModal").on('hide.bs.modal', function () {
-		updateModalValidate.resetForm();
-
+		// reset
 		$("#updateModal .form")[0].reset();
 		$("#updateModal .form .form-group").removeClass("has-error");
+		// reset
+		updateModalValidate.resetForm();
 	});
 
 });

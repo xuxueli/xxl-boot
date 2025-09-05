@@ -44,6 +44,14 @@ public class OrgServiceImpl implements OrgService {
 	*/
 	@Override
 	public Response<String> delete(List<Integer> ids) {
+		if (CollectionTool.isEmpty(ids)) {
+			return Response.ofFail("请选择要删除的记录");
+		}
+
+		if (CollectionTool.isNotEmpty(orgMapper.queryByParentIds(ids))) {
+			return Response.ofFail("存在子组织，禁止删除");
+		}
+
 		int ret = orgMapper.delete(ids);
 		return ret>0? Response.ofSuccess() : Response.ofFail() ;
 	}
@@ -86,7 +94,8 @@ public class OrgServiceImpl implements OrgService {
 	@Override
 	public List<XxlBootOrgDTO> treeList(String name, int status) {
 		List<XxlBootOrg> orgDTOList = orgMapper.queryOrg(name, status);
-		return generateTreeList(orgDTOList);
+		//return generateTreeList(orgDTOList);
+		return orgDTOList.stream().map(org -> new XxlBootOrgDTO(org, null)).toList();
 	}
 
 	private List<XxlBootOrgDTO> generateTreeList(List<XxlBootOrg> orgList) {

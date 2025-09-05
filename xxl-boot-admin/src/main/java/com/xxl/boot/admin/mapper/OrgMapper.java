@@ -49,4 +49,9 @@ public interface OrgMapper {
      */
     List<XxlBootOrg> queryOrg(@Param("name") String name, @Param("status") int status);
 
+    /**
+     * 查询子节点
+     */
+    List<XxlBootOrg> queryByParentIds(@Param("ids") List<Integer> ids);
+
 }
