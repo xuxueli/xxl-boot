@@ -93,7 +93,7 @@
             method: "post",
             contentType: "application/x-www-form-urlencoded",
             queryParamsType: "limit",
-            queryParams: queryParams,
+            queryParams: queryParams,       // bootstrapTable -> queryParams
             sidePagination: "server",		// server side page
             responseHandler: function (result) {
                 return {
@@ -213,15 +213,20 @@
         let url = options.url;
         let rules = options.rules;
         let messages = options.messages;
+        let writeFormData = options.writeFormData;
         let readFormData = options.readFormData;
 
         // add
         $("#data_operation .add").click(function(){
             // reset
             addModalValidate.resetForm();
-            $('#addModal .form input[name="roleId"]').prop('checked', false).iCheck('update');
             $("#addModal .form")[0].reset();
             $("#addModal .form .form-group").removeClass("has-error");
+
+            // write FormData
+            if (typeof writeFormData === 'function') {
+                writeFormData();
+            }
 
             // show
             $('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
@@ -230,8 +235,8 @@
             errorElement : 'span',
             errorClass : 'help-block',
             focusInvalid : true,
-            rules : rules,
-            messages : messages,
+            rules : rules,                      // jquery.validate -> rules
+            messages : messages,                // jquery.validate -> messages
             highlight : function(element) {
                 $(element).closest('.form-group').addClass('has-error');
             },
@@ -289,7 +294,6 @@
             var row = rows[0];
 
             // reset
-            $('#updateModal .form input[name="roleId"]').prop('checked', false).iCheck('update');
             $("#updateModal .form")[0].reset();
             $("#updateModal .form .form-group").removeClass("has-error");
             updateModalValidate.resetForm();
@@ -314,8 +318,8 @@
             errorPlacement : function(error, element) {
                 element.parent('div').append(error);
             },
-            rules : rules,
-            messages : messages,
+            rules : rules,                      // jquery.validate -> rules
+            messages : messages,                // jquery.validate -> messages
             submitHandler : function(form) {
 
                 // request

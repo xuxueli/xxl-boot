@@ -30,6 +30,9 @@
 					<div class="col-xs-1">
 						<button class="btn btn-block btn-primary searchBtn" >${I18n.system_search}</button>
 					</div>
+					<div class="col-xs-1">
+						<button class="btn btn-block btn-default resetBtn" >${I18n.system_reset}</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -89,7 +92,7 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title" >${I18n.system_opt_add}${I18n.user_tips}</h4>
+						<h4 class="modal-title" >${I18n.system_opt_add}${I18n.role_tips}</h4>
 					</div>
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
@@ -120,7 +123,7 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title" >${I18n.system_opt_edit}${I18n.user_tips}</h4>
+						<h4 class="modal-title" >${I18n.system_opt_edit}${I18n.role_tips}</h4>
 					</div>
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
@@ -158,29 +161,25 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.core.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.excheck.js"></script>
+<#-- admin table -->
+<script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
 <script>
 $(function() {
 
-	// ---------- ---------- ---------- main table  ---------- ---------- ----------
+	// ---------- ---------- ---------- table + curd  ---------- ---------- ----------
 
-	var mainDataTable = $("#data_list").bootstrapTable({
+	/**
+	 * init table
+	 */
+	$.adminTable.initTable({
+		table: '#data_list',
 		url: base_url + "/org/role/pageList",
-		method: "post",
-		contentType: "application/x-www-form-urlencoded",
-		queryParamsType: "limit",
 		queryParams: function (params) {
 			var obj = {};
 			obj.name = $('#data_filter .name').val();
 			obj.start = params.offset;
 			obj.length = params.limit;
 			return obj;
-		},
-		sidePagination: "server",		// server side page
-		responseHandler: function (result) {
-			return {
-				"total": result.data.totalCount,
-				"rows": result.data.pageData
-			};
 		},
 		columns: [
 			{
@@ -201,102 +200,21 @@ $(function() {
 				align: 'left'
 			}
 		],
-		clickToSelect: true, 			// 是否启用点击选中行
-		sortable: false, 				// 是否启用排序
-		pagination: true, 				// 是否显示分页
-		pageNumber: 1, 					// 默认第一页
-		pageList: [10, 25, 50, 100] , 	// 可供选择的每页的行数（*）
-		smartDisplay: false,			// 当总记录数小于分页数，是否显示可选项
-		paginationPreText: '<<',		// 跳转页面的 上一页按钮
-		paginationNextText: '>>',		// 跳转页面的 下一页按钮
-		showRefresh: true,				// 显示刷新按钮
-		showColumns: true,				// 显示/隐藏列
-		minimumCountColumns: 2,			// 最少允许的列数
-		onAll: function(name, args) {
-			// filter
-			if (!(['check.bs.table', "uncheck.bs.table", "check-all.bs.table", "uncheck-all.bs.table"].indexOf(name) > -1)) {
-				return false;
-			}
-			var rows = mainDataTable.bootstrapTable('getSelections');
-			var selectLen = rows.length;
-
-			if (selectLen > 0) {
-				$("#data_operation .selectAny").removeClass('disabled');
-			} else {
-				$("#data_operation .selectAny").addClass('disabled');
-			}
-			if (selectLen === 1) {
-				$("#data_operation .selectOnlyOne").removeClass('disabled');
-			} else {
-				$("#data_operation .selectOnlyOne").addClass('disabled');
-			}
-		}
-	});
-	document.querySelector('.fixed-table-toolbar').classList.remove('fixed-table-toolbar');
-
-	// search btn
-	$('#data_filter .searchBtn').on('click', function(){
-		mainDataTable.bootstrapTable('refresh');
 	});
 
-	// ---------- ---------- ---------- delete operation ---------- ---------- ----------
-	// delete
-	$("#data_operation").on('click', '.delete',function() {
-		// get select rows
-		var rows = mainDataTable.bootstrapTable('getSelections');
 
-		// find select ids
-		const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
-		if (selectIds.length <= 0) {
-			layer.msg(I18n.system_please_choose + I18n.system_data);
-			return;
-		}
-
-		// do delete
-		layer.confirm( I18n.system_ok + I18n.system_opt_del + '?', {
-			icon: 3,
-			title: I18n.system_tips ,
-			btn: [ I18n.system_ok, I18n.system_cancel ]
-		}, function(index){
-			layer.close(index);
-
-			$.ajax({
-				type : 'POST',
-				url : base_url + "/org/role/delete",
-				data : {
-					"ids" : selectIds
-				},
-				dataType : "json",
-				success : function(data){
-					if (data.code == 200) {
-						layer.msg( I18n.system_opt_del + I18n.system_success );
-						// refresh table
-						$('#data_filter .searchBtn').click();
-					} else {
-						layer.msg( data.msg || I18n.system_opt_del + I18n.system_fail );
-					}
-				},
-				error: function(xhr, status, error) {
-					// Handle error
-					console.log("Error: " + error);
-					layer.open({
-						icon: '2',
-						content: (I18n.system_opt_del + I18n.system_fail)
-					});
-				}
-			});
-		});
+	/**
+	 * init delete
+	 */
+	$.adminTable.initDelete({
+		url: base_url + "/org/role/delete"
 	});
 
-	// ---------- ---------- ---------- add operation ---------- ---------- ----------
-	// add
-	$("#data_operation .add").click(function(){
-		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
-	var addModalValidate = $("#addModal .form").validate({
-		errorElement : 'span',
-		errorClass : 'help-block',
-		focusInvalid : true,
+	/**
+	 * init add
+	 */
+	$.adminTable.initAdd( {
+		url: base_url + "/org/role/insert",
 		rules : {
 			name : {
 				required : true,
@@ -317,99 +235,25 @@ $(function() {
 				digits: I18n.role_order_valid
 			}
 		},
-		highlight : function(element) {
-			$(element).closest('.form-group').addClass('has-error');
-		},
-		success : function(label) {
-			label.closest('.form-group').removeClass('has-error');
-			label.remove();
-		},
-		errorPlacement : function(error, element) {
-			element.parent('div').append(error);
-		},
-		submitHandler : function(form) {
-
+		readFormData: function() {
 			// request
-			var paramData = {
+			return {
 				"name": $("#addModal .form input[name=name]").val(),
 				"order": $("#addModal .form input[name=order]").val()
 			};
-
-			// invoke
-			$.ajax({
-				type : 'POST',
-				url : base_url + "/org/role/insert",
-				data : paramData,
-				dataType : "json",
-				success : function(data){
-					if (data.code == "200") {
-						$('#addModal').modal('hide');
-						layer.msg( I18n.system_opt_add + I18n.system_success );
-
-						// refresh table
-						$('#data_filter .searchBtn').click();
-					} else {
-						layer.open({
-							title: I18n.system_tips ,
-							btn: [ I18n.system_ok ],
-							content: (data.msg || I18n.system_opt_add + I18n.system_fail ),
-							icon: '2'
-						});
-					}
-				},
-				error: function(xhr, status, error) {
-					// Handle error
-					console.log("Error: " + error);
-					layer.open({
-						icon: '2',
-						content: (I18n.system_opt_add + I18n.system_fail)
-					});
-				}
-			});
-
 		}
-	});
-	$("#addModal").on('hide.bs.modal', function () {
-		// reset
-		$("#addModal .form")[0].reset();
-		$("#addModal .form .form-group").removeClass("has-error");
-		// reset
-		addModalValidate.resetForm();
-	});
+	})
 
-	// ---------- ---------- ---------- update operation ---------- ---------- ----------
-	$("#data_operation .update").click(function(){
-		// get select rows
-		var rows = mainDataTable.bootstrapTable('getSelections');
-
-		// find select row
-		if (rows.length !== 1) {
-			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
-			return;
-		}
-		var row = rows[0];
-
-		// base data
-		$("#updateModal .form input[name='id']").val( row.id );
-		$("#updateModal .form input[name='name']").val( row.name );
-		$("#updateModal .form input[name='order']").val( row.order );
-
-		// show
-		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
-	var updateModalValidate = $("#updateModal .form").validate({
-		errorElement : 'span',
-		errorClass : 'help-block',
-		focusInvalid : true,
-		highlight : function(element) {
-			$(element).closest('.form-group').addClass('has-error');
-		},
-		success : function(label) {
-			label.closest('.form-group').removeClass('has-error');
-			label.remove();
-		},
-		errorPlacement : function(error, element) {
-			element.parent('div').append(error);
+	/**
+	 * init update
+	 */
+	$.adminTable.initUpdate( {
+		url: base_url + "/org/role/update",
+		writeFormData: function(row) {
+			// base data
+			$("#updateModal .form input[name='id']").val( row.id );
+			$("#updateModal .form input[name='name']").val( row.name );
+			$("#updateModal .form input[name='order']").val( row.order );
 		},
 		rules : {
 			name : {
@@ -431,57 +275,18 @@ $(function() {
 				digits: I18n.role_order_valid
 			}
 		},
-		submitHandler : function(form) {
-
+		readFormData: function() {
 			// request
-			var paramData = {
+			return {
 				"id": $("#updateModal .form input[name=id]").val(),
 				"name": $("#updateModal .form input[name=name]").val(),
 				"order": $("#updateModal .form input[name=order]").val()
 			};
-
-			// invoke
-			$.ajax({
-				type : 'POST',
-				url : base_url + "/org/role/update",
-				data : paramData,
-				dataType : "json",
-				success : function(data){
-					if (data.code == "200") {
-						$('#updateModal').modal('hide');
-						layer.msg( I18n.system_opt_edit + I18n.system_success );
-
-						// refresh table
-						$('#data_filter .searchBtn').click();
-					} else {
-						layer.open({
-							title: I18n.system_tips ,
-							btn: [ I18n.system_ok ],
-							content: (data.msg || I18n.system_opt_edit + I18n.system_fail ),
-							icon: '2'
-						});
-					}
-				},
-				error: function(xhr, status, error) {
-					// Handle error
-					console.log("Error: " + error);
-					layer.open({
-						icon: '2',
-						content: (I18n.system_opt_edit + I18n.system_fail)
-					});
-				}
-			});
-
 		}
-	});
-	$("#updateModal").on('hide.bs.modal', function () {
-		updateModalValidate.resetForm();
-
-		$("#updateModal .form")[0].reset();
-		$("#updateModal .form .form-group").removeClass("has-error");
 	});
 
 	// ---------- ---------- ---------- allocate resource ---------- ---------- ----------
+	var mainDataTable = $.adminTable.table;
 	$("#data_operation .allocateResource").click(function(){
 		// get select rows
 		var rows = mainDataTable.bootstrapTable('getSelections');
@@ -607,9 +412,7 @@ $(function() {
 		});
 	}
 
-
 });
-
 </script>
 <!-- 3-script end -->
 

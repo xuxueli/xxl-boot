@@ -303,6 +303,10 @@ $(function() {
 				rangelength: I18n.system_lengh_limit + "[2-20]"
 			}
 		},
+		writeFormData: function() {
+			// write default data
+			$('#addModal .form input[name="roleId"]').prop('checked', false).iCheck('update');
+		},
 		readFormData: function() {
 			// get roleids
 			var roleIds = $('#addModal .form input[name="roleId"]:checked').map(function() {
@@ -318,7 +322,7 @@ $(function() {
 				"roleIds": roleIds
 			};
 		}
-	})
+	});
 
 	/**
 	 * init update
@@ -326,13 +330,15 @@ $(function() {
 	$.adminTable.initUpdate( {
 		url: base_url + "/org/user/update",
 		writeFormData: function(row) {
+			// write origin data
 			$("#updateModal .form input[name='id']").val( row.id );
 			$("#updateModal .form input[name='username']").val( row.username );
 			$("#updateModal .form input[name='password']").val( '' );
 			$("#updateModal .form select[name='status']").val( row.status );
 			$("#updateModal .form input[name='realName']").val( row.realName );
 
-			// set roleid
+			// write roleid
+			$('#updateModal .form input[name="roleId"]').prop('checked', false).iCheck('update');
 			if (row.roleIds && row.roleIds.length > 0) {
 				row.roleIds.forEach(function (item){
 					$('#updateModal .form input[name="roleId"][value="'+ item +'"]').prop('checked', true).iCheck('update');
