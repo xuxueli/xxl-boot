@@ -36,7 +36,7 @@
         <junit-jupiter.version>5.13.4</junit-jupiter.version>
 
         <!-- spring -->
-        <spring-boot.version>3.5.4</spring-boot.version>
+        <spring-boot.version>3.5.5</spring-boot.version>
         <!-- mybatis & db -->
         <mybatis-spring-boot-starter.version>3.0.5</mybatis-spring-boot-starter.version>
         <mysql-connector-j.version>9.4.0</mysql-connector-j.version>
