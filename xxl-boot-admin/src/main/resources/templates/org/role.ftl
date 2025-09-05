@@ -6,7 +6,7 @@
 
 	<!-- 1-style start -->
 	<@netCommon.commonStyle />
-	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/zTree/css/metroStyle/metroStyle.css">
 	<!-- 1-style end -->
 
@@ -38,7 +38,7 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="box">
-					<div class="box-header" style="float: right" id="data_operation" >
+					<div class="box-header pull-left" id="data_operation" >
 						<button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
 						<button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
 						<button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
@@ -154,112 +154,101 @@
 
 <!-- 3-script start -->
 <@netCommon.commonScript />
-<script src="${request.contextPath}/static/adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${request.contextPath}/static/adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.core.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.excheck.js"></script>
-
-<script src="${request.contextPath}/static/biz/common/datatables.select.js"></script>
 <script>
 $(function() {
 
 	// ---------- ---------- ---------- main table  ---------- ---------- ----------
-	// init date tables
-	$.dataTableSelect.init();
-	var mainDataTable = $("#data_list").dataTable({
-		"deferRender": true,
-		"processing" : true,
-		"serverSide": true,
-		"ajax": {
-			url: base_url + "/org/role/pageList",
-			type:"post",
-			// request data
-			data : function ( d ) {
-				var obj = {};
-				obj.name = $('#data_filter .name').val();
-				obj.offset = d.start;
-				obj.pagesize = d.length;
-				return obj;
-			},
-			// response data filter
-			dataFilter: function (originData) {
-				var originJson = $.parseJSON(originData);
-				return JSON.stringify({
-					recordsTotal: originJson.data.totalCount,
-					recordsFiltered: originJson.data.totalCount,
-					data: originJson.data.pageData
-				});
-			}
+
+	var mainDataTable = $("#data_list").bootstrapTable({
+		url: base_url + "/org/role/pageList",
+		method: "post",
+		contentType: "application/x-www-form-urlencoded",
+		queryParamsType: "limit",
+		queryParams: function (params) {
+			var obj = {};
+			obj.name = $('#data_filter .name').val();
+			obj.start = params.offset;
+			obj.length = params.limit;
+			return obj;
 		},
-		"searching": false,
-		"ordering": false,
-		//"scrollX": true,																		// scroll x，close self-adaption
-		//"dom": '<"top" t><"bottom" <"col-sm-3" i><"col-sm-3 right" l><"col-sm-6" p> >',		// dataTable "DOM layout"：https://datatables.club/example/diy.html
-		"drawCallback": function( settings ) {
-			$.dataTableSelect.selectStatusInit();
+		sidePagination: "server",		// server side page
+		responseHandler: function (result) {
+			return {
+				"total": result.data.totalCount,
+				"rows": result.data.pageData
+			};
 		},
-		"columns": [
+		columns: [
 			{
-				"title": '<input align="center" type="checkbox" id="checkAll" >',
-				"data": 'id',
-				"visible" : true,
-				"width":'5%',
-				"render": function ( data, type, row ) {
-					tableData['key'+row.id] = row;
-					return '<input align="center" type="checkbox" class="checkItem" data-id="'+ row.id +'"  >';
-				}
-			},
-			{
-				"title": I18n.role_tips + I18n.role_name,
-				"data": 'name',
-				"width":'40%'
-			},
-			{
-				"title": I18n.role_tips + I18n.role_order,
-				"data": 'order',
-				"width":'30%'
+				checkbox: true,
+				field: 'state',
+				width: '5%',
+				align: 'center',
+				valign: 'middle'
+			}, {
+				title: I18n.role_tips + I18n.role_name,
+				field: 'name',
+				width: '40%',
+				align: 'left'
+			},{
+				title: I18n.role_tips + I18n.role_order,
+				field: 'order',
+				width: '30%',
+				align: 'left'
 			}
 		],
-		"language" : {
-			"sProcessing" : I18n.dataTable_sProcessing ,
-			"sLengthMenu" : I18n.dataTable_sLengthMenu ,
-			"sZeroRecords" : I18n.dataTable_sZeroRecords ,
-			"sInfo" : I18n.dataTable_sInfo ,
-			"sInfoEmpty" : I18n.dataTable_sInfoEmpty ,
-			"sInfoFiltered" : I18n.dataTable_sInfoFiltered ,
-			"sInfoPostFix" : "",
-			"sSearch" : I18n.dataTable_sSearch ,
-			"sUrl" : "",
-			"sEmptyTable" : I18n.dataTable_sEmptyTable ,
-			"sLoadingRecords" : I18n.dataTable_sLoadingRecords ,
-			"sInfoThousands" : ",",
-			"oPaginate" : {
-				"sFirst" : I18n.dataTable_sFirst ,
-				"sPrevious" : I18n.dataTable_sPrevious ,
-				"sNext" : I18n.dataTable_sNext ,
-				"sLast" : I18n.dataTable_sLast
-			},
-			"oAria" : {
-				"sSortAscending" : I18n.dataTable_sSortAscending ,
-				"sSortDescending" : I18n.dataTable_sSortDescending
+		uniqueId: "id", 				// 每一行的唯一标识，一般为主键列
+		clickToSelect: true, 			// 是否启用点击选中行
+		sortable: false, 				// 是否启用排序
+		align: "left",					// 列的标题对齐方式
+		pagination: true, 				// 是否显示分页
+		pageNumber: 1, 					// 默认第一页
+		pageList: [10, 25, 50, 100] , 	// 可供选择的每页的行数（*）
+		smartDisplay: false,			// 当总记录数小于分页数，是否显示可选项
+		paginationPreText: '<<',		// 跳转页面的 上一页按钮
+		paginationNextText: '>>',		// 跳转页面的 下一页按钮
+		showRefresh: true,				// 显示刷新按钮
+		showColumns: true,				// 显示/隐藏列
+		minimumCountColumns: 2,			// 最少允许的列数
+		onAll: function(name, args) {
+			// filter
+			if (!(['check.bs.table', "uncheck.bs.table", "check-all.bs.table", "uncheck-all.bs.table"].indexOf(name) > -1)) {
+				return false;
+			}
+			var rows = mainDataTable.bootstrapTable('getSelections');
+			var selectLen = rows.length;
+
+			if (selectLen > 0) {
+				$("#data_operation .selectAny").removeClass('disabled');
+			} else {
+				$("#data_operation .selectAny").addClass('disabled');
+			}
+			if (selectLen === 1) {
+				$("#data_operation .selectOnlyOne").removeClass('disabled');
+			} else {
+				$("#data_operation .selectOnlyOne").addClass('disabled');
 			}
 		}
 	});
-
-	// table data
-	var tableData = {};
+	document.querySelector('.fixed-table-toolbar').classList.remove('fixed-table-toolbar');
 
 	// search btn
 	$('#data_filter .searchBtn').on('click', function(){
-		mainDataTable.fnDraw();
+		mainDataTable.bootstrapTable('refresh');
 	});
 
 	// ---------- ---------- ---------- delete operation ---------- ---------- ----------
 	// delete
 	$("#data_operation").on('click', '.delete',function() {
+		// get select rows
+		var rows = mainDataTable.bootstrapTable('getSelections');
 
 		// find select ids
-		var selectIds = $.dataTableSelect.selectIdsFind();
+		const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
 		if (selectIds.length <= 0) {
 			layer.msg(I18n.system_please_choose + I18n.system_data);
 			return;
@@ -283,7 +272,8 @@ $(function() {
 				success : function(data){
 					if (data.code == 200) {
 						layer.msg( I18n.system_opt_del + I18n.system_success );
-						mainDataTable.fnDraw(false);	// false，refresh current page；true，all refresh
+						// refresh table
+						$('#data_filter .searchBtn').click();
 					} else {
 						layer.msg( data.msg || I18n.system_opt_del + I18n.system_fail );
 					}
@@ -356,9 +346,10 @@ $(function() {
 				success : function(data){
 					if (data.code == "200") {
 						$('#addModal').modal('hide');
-
 						layer.msg( I18n.system_opt_add + I18n.system_success );
-						mainDataTable.fnDraw();
+
+						// refresh table
+						$('#data_filter .searchBtn').click();
 					} else {
 						layer.open({
 							title: I18n.system_tips ,
@@ -381,22 +372,25 @@ $(function() {
 		}
 	});
 	$("#addModal").on('hide.bs.modal', function () {
-		addModalValidate.resetForm();
-
+		// reset
 		$("#addModal .form")[0].reset();
 		$("#addModal .form .form-group").removeClass("has-error");
+		// reset
+		addModalValidate.resetForm();
 	});
 
 	// ---------- ---------- ---------- update operation ---------- ---------- ----------
 	$("#data_operation .update").click(function(){
 
-		// find select ids
-		var selectIds = $.dataTableSelect.selectIdsFind();
-		if (selectIds.length != 1) {
+		// get select rows
+		var rows = mainDataTable.bootstrapTable('getSelections');
+
+		// find select row
+		if (rows.length !== 1) {
 			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
 			return;
 		}
-		var row = tableData[ 'key' + selectIds[0] ];
+		var row = rows[0];
 
 		// base data
 		$("#updateModal .form input[name='id']").val( row.id );
@@ -458,9 +452,10 @@ $(function() {
 				success : function(data){
 					if (data.code == "200") {
 						$('#updateModal').modal('hide');
-
 						layer.msg( I18n.system_opt_edit + I18n.system_success );
-						mainDataTable.fnDraw(false);
+
+						// refresh table
+						$('#data_filter .searchBtn').click();
 					} else {
 						layer.open({
 							title: I18n.system_tips ,
@@ -491,14 +486,15 @@ $(function() {
 
 	// ---------- ---------- ---------- allocate resource ---------- ---------- ----------
 	$("#data_operation .allocateResource").click(function(){
+		// get select rows
+		var rows = mainDataTable.bootstrapTable('getSelections');
 
-		// find select ids
-		var selectIds = $.dataTableSelect.selectIdsFind();
-		if (selectIds.length != 1) {
+		// find select row
+		if (rows.length !== 1) {
 			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
 			return;
 		}
-		var row = tableData[ 'key' + selectIds[0] ];
+		var row = rows[0];
 		var roleId = row.id;
 
 		// base data
@@ -552,9 +548,10 @@ $(function() {
 			success : function(data){
 				if (data.code == "200") {
 					$('#updateModal').modal('hide');
-
 					layer.msg( '操作成功' );
-					mainDataTable.fnDraw(false);
+
+					// refresh table
+					$('#data_filter .searchBtn').click();
 				} else {
 					layer.open({
 						title: I18n.system_tips ,
