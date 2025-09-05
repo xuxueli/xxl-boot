@@ -1,5 +1,10 @@
 $(function(){
 
+    // ---------------------- body fixed ----------------------
+
+    // init body fixed
+    $('body').addClass('fixed');
+
     // ---------------------- logout ----------------------
 
     /**
@@ -31,7 +36,6 @@ $(function(){
 		});
 
 	});
-
 
     // ---------------------- update pwd ----------------------
 
@@ -144,7 +148,6 @@ $(function(){
         $("#updatePwdModal .form .form-group").removeClass("has-error");
     });
 
-
     // ---------------------- slideToTop ----------------------
 
     /**
@@ -195,12 +198,164 @@ $(function(){
 		}, 100);
 	});
 
+    // ---------------------- change skin ----------------------
 
-    // ---------------------- body fixed ----------------------
+    /**
+     * skinModal
+     */
+    let skinModal = $(`
+        <!-- 主题切换.模态框 -->
+        <div class="modal fade" id="skinModal" tabindex="-1" role="dialog"  aria-hidden="true">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" >` + I18n.change_skin +`</h4>
+                    </div>
+                    <div class="modal-body">
+                        <!-- 主题列表 -->
+                        <ul class="list-unstyled clearfix" >
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:" data-skin='skin-blue' style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <span style='display:block; width: 20%; float: left; height: 13px; background: #367fa9;'></span>
+                                    <span style='display:block; width: 80%; float: left; height: 13px; background: #367fa9;'></span>
+                                    <span style='display:block; width: 20%; float: left; height: 30px; background: #222d32;'></span>
+                                    <span style='display:block; width: 80%; float: left; height: 30px; background: #f4f5f7;'></span>
+                                </a>
+                                <p class="text-center">Blue</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:" data-skin="skin-black" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <span style='display:block; width: 20%; float: left; height: 13px; background: #fefefe;'></span>
+                                    <span style='display:block; width: 80%; float: left; height: 13px; background: #fefefe;'></span>
+                                    <span style='display:block; width: 20%; float: left; height: 30px; background: #222;'></span>
+                                    <span style='display:block; width: 80%; float: left; height: 30px; background: #f4f5f7;'></span>
+                                </a>
+                                <p class="text-center">Black</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:" data-skin="skin-purple" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <span style="width: 20%; float: left; height: 13px;" class='bg-purple-active'></span>
+                                    <span style="width: 80%; float: left; height: 13px;" class='bg-purple'></span>
+                                    <span style="width: 20%; float: left; height: 30px; background: #222d32"></span>
+                                    <span style="width: 80%; float: left; height: 30px; background: #f4f5f7"></span>
+                                </a>
+                                <p class="text-center">Purple</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:" data-skin="skin-blue-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <span style="width: 20%; float: left; height: 13px; background: #367fa9"></span>
+                                    <span style="width: 80%; float: left; height: 13px;" class='bg-light-blue'></span>
+                                    <span style="width: 20%; float: left; height: 30px; background: #f9fafc"></span>
+                                    <span style="width: 80%; float: left; height: 30px; background: #f4f5f7"></span>
+                                </a>
+                                <p class="text-center">Blue(Light)</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:" data-skin="skin-black-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <span style="width: 20%; float: left; height: 13px; background: #fefefe"></span>
+                                    <span style="width: 80%; float: left; height: 13px; background: #fefefe"></span>
+                                    <span style="width: 20%; float: left; height: 30px; background: #f9fafc"></span>
+                                    <span style="width: 80%; float: left; height: 30px; background: #f4f5f7"></span>
+                                </a>
+                                <p class="text-center">Black(Light)</p>
+                            </li>
+                            
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:" data-skin="skin-purple-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <span style="width: 20%; float: left; height: 13px;" class='bg-purple-active'></span>
+                                    <span style="width: 80%; float: left; height: 13px;" class='bg-purple'></span>
+                                    <span style="width: 20%; float: left; height: 30px; background: #f9fafc"></span>
+                                    <span style="width: 80%; float: left; height: 30px; background: #f4f5f7"></span>
+                                </a>
+                                <p class="text-center">Purple(Light)</p>
+                            </li>
+                            
+                            <!-- style -->
+                            <style>
+                                .list-unstyled{margin:10px;}
+                                .full-opacity-hover{opacity:1;filter:alpha(opacity=1);border:1px solid #fff}
+                                .full-opacity-hover:hover{border:1px solid silver;}
+                            </style>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+    $('.wrapper').append(skinModal);
 
-    // init body fixed
-    $('body').addClass('fixed');
+    /**
+     * skin opt
+     */
+    $('#changeSkin').on('click', function(){
+        $('#skinModal').modal({backdrop: true, keyboard: false}).modal('show');
+    });
 
+    /**
+     * skin list
+     */
+    var skins = [
+        "skin-blue",
+        "skin-black",
+        "skin-red",
+        "skin-yellow",
+        "skin-purple",
+        "skin-green",
+        "skin-blue-light",
+        "skin-black-light",
+        "skin-red-light",
+        "skin-yellow-light",
+        "skin-purple-light",
+        "skin-green-light"
+    ];
+
+    /**
+     * skin change
+     */
+    $("[data-skin]").on('click', function(e) {
+        var skin = $(this).data('skin');
+        $.each(skins, function (i) {
+            $("body").removeClass(skins[i]);
+        });
+        $("body").addClass(skin);
+        store('admin_skin', skin);
+        return false;
+    });
+
+    /**
+     * skin init
+     */
+    let skin = loadStore('admin_skin');
+    if (skin) {
+        $.each(skins, function (i) {
+            $("body").removeClass(skins[i]);
+        });
+        $("body").addClass(skin);
+    }
+
+    // ---------------------- localStorage ----------------------
+
+    /**
+     * store
+     */
+    function store(name, val) {
+        if (typeof (Storage) !== "undefined") {
+            localStorage.setItem(name, val);
+        } else {
+            window.alert('Please use a modern browser to properly view this template!');
+        }
+    }
+
+    /**
+     * get
+     */
+    function loadStore(name) {
+        if (typeof (Storage) !== "undefined") {
+            return localStorage.getItem(name);
+        } else {
+            window.alert('Please use a modern browser to properly view this template!');
+        }
+    }
 
     // ---------------------- menu, sidebar-toggle ----------------------
 
@@ -208,7 +363,8 @@ $(function(){
     $('.sidebar-menu').attr('data-animation-speed', 1);
 
     // init menu status
-    if ( 'close' === $.cookie('sidebar_status') ) {
+    let sidebar = loadStore('admin_sidebar_status');
+    if ( 'close' === sidebar ) {
         $('body').addClass('sidebar-collapse');
     } else {
         $('body').removeClass('sidebar-collapse');
@@ -216,10 +372,10 @@ $(function(){
 
     // change menu status
     $('.sidebar-toggle').click(function(){
-        if ( 'close' === $.cookie('sidebar_status') ) {
-            $.cookie('sidebar_status', 'open', { expires: 7 });
+        if ( 'close' === loadStore('admin_sidebar_status') ) {
+            store('admin_sidebar_status', 'open')
         } else {
-            $.cookie('sidebar_status', 'close', { expires: 7 });	//$.cookie('the_cookie', '', { expires: -1 });
+            store('admin_sidebar_status', 'close')
         }
     });
 	

@@ -42,6 +42,9 @@
                             <li id="updatePwd" >
                                 <a href="javascript:" style="height: 30px;padding: 3px 25px;" ><i class="fa fa-key"></i> ${I18n.change_pwd}</a>
                             </li>
+                            <li id="changeSkin" >
+                                <a href="javascript:" style="height: 30px;padding: 3px 25px;" ><i class="fa fa-key"></i> ${I18n.change_skin}</a>
+                            </li>
                             <li id="logoutBtn" >
                                 <a href="javascript:" style="height: 30px;padding: 3px 25px;" ><i class="fa fa-sign-out"></i> ${I18n.logout_btn}</a>
                             </li>
