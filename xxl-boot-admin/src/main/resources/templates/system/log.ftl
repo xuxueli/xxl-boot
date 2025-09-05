@@ -6,7 +6,7 @@
 
     <!-- 1-style start -->
     <@netCommon.commonStyle />
-    <link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
     <link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/iCheck/square/blue.css">
     <!-- 1-style end -->
 
@@ -15,7 +15,7 @@
 <div class="wrapper">
     <section class="content">
 
-            <#-- biz start（4/5 content） -->
+            <!-- 2-content start -->
 
             <#-- 查询区域 -->
             <div class="box" style="margin-bottom:9px;">
@@ -60,10 +60,9 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box">
-                        <div class="box-header" style="float: right" id="data_operation" >
-                            <button class="btn btn-sm btn-primary selectOnlyOne showdetail" type="button"><i class="fa fa-edit"></i>查看日志详情</button>
+                        <div class="box-header pull-left" id="data_operation" >
                             <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
-
+                            <button class="btn btn-sm btn-primary selectOnlyOne showdetail" type="button"><i class="fa fa-edit"></i>查看日志详情</button>
                         </div>
                         <div class="box-body" >
                             <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -125,175 +124,141 @@
                 </div>
             </div>
 
-            <#-- biz end（4/5 content） -->
+            <!-- 2-content end -->
 
     </section>
 </div>
 
 <!-- 3-script start -->
 <@netCommon.commonScript />
-<script src="${request.contextPath}/static/adminlte/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="${request.contextPath}/static/adminlte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
-
-<script src="${request.contextPath}/static/biz/common/datatables.select.js"></script>
 <script>
 $(function() {
 
     // ---------- ---------- ---------- main table  ---------- ---------- ----------
-    // init date tables
-    $.dataTableSelect.init();
-    var mainDataTable = $("#data_list").dataTable({
-        "deferRender": true,
-        "processing" : true,
-        "serverSide": true,
-        "ajax": {
-            url: base_url + "/system/log/pageList",
-            type:"post",
-            // request data
-            data : function ( d ) {
-                var obj = {};
-                obj.type = $('#data_filter .type').val();
-                obj.module = $('#data_filter .module').val();
-                obj.title = $('#data_filter .title').val();
-                obj.start = d.start;
-                obj.length = d.length;
-                return obj;
-            },
-            // response data filter
-            dataFilter: function (originData) {
-                var originJson = $.parseJSON(originData);
-                if (originJson.code != 200) {
-                    layer.open({
-                        icon: '2',
-                        content: (originJson.msg)
-                    });
-                    return originData;
-                }
-                return JSON.stringify({
-                    recordsTotal: originJson.data.totalCount,
-                    recordsFiltered: originJson.data.totalCount,
-                    data: originJson.data.pageData
-                });
-            }
+
+    var mainDataTable = $("#data_list").bootstrapTable({
+        url: base_url + "/system/log/pageList",
+        method: "post",
+        contentType: "application/x-www-form-urlencoded",
+        queryParamsType: "limit",
+        queryParams: function (params) {
+            var obj = {};
+            obj.type = $('#data_filter .type').val();
+            obj.module = $('#data_filter .module').val();
+            obj.title = $('#data_filter .title').val();
+            obj.start = params.offset;
+            obj.length = params.limit;
+            return obj;
         },
-        "searching": false,
-        "ordering": false,
-        //"scrollX": true,																		// scroll x，close self-adaption
-        //"dom": '<"top" t><"bottom" <"col-sm-3" i><"col-sm-3 right" l><"col-sm-6" p> >',		// dataTable "DOM layout"：https://datatables.club/example/diy.html
-        "drawCallback": function( settings ) {
-            $.dataTableSelect.selectStatusInit();
+        sidePagination: "server",		// server side page
+        responseHandler: function (result) {
+            return {
+                "total": result.data.totalCount,
+                "rows": result.data.pageData
+            };
         },
-        "columns": [
+        columns: [
             {
-                "title": '<input align="center" type="checkbox" id="checkAll" >',
-                "data": 'id',
-                "visible" : true,
-                "width":'5%',
-                "render": function ( data, type, row ) {
-                    tableData['key'+row.id] = row;
-                    return '<input align="center" type="checkbox" class="checkItem" data-id="'+ row.id +'"  >';
-                }
-            },
-            {
-                "title": "日志类型",
-                "data": 'type',
-                "width":'10%',
-                "render": function ( data, type, row ) {
+                checkbox: true,
+                field: 'state',
+                width: '5%'
+            }, {
+                title: '日志类型',
+                field: 'type',
+                width: '10%',
+                formatter: function(value, row, index) {
                     var result = "";
                     $('#data_filter .type option').each(function(){
-                        if ( data.toString() === $(this).val() ) {
+                        if ( value.toString() === $(this).val() ) {
                             result = $(this).text();
                         }
                     });
                     return result;
                 }
-            },
-            {
-                "title": "系统模块",
-                "data": 'module',
-                "width":'10%',
-                "render": function ( data, type, row ) {
+            }, {
+                title: '系统模块',
+                field: 'module',
+                width: '10%',
+                formatter: function(value, row, index) {
                     var result = "";
                     $('#data_filter .module option').each(function(){
-                        if ( data.toString() === $(this).val() ) {
+                        if ( value.toString() === $(this).val() ) {
                             result = $(this).text();
                         }
                     });
                     return result;
                 }
-            },
-            {
-                "title": '日志标题',
-                "data": 'title',
-                "width":'10%'
-            }/*,
-                {
-                    "title": '日志正文',
-                    "data": 'content',
-                    "width":'20%',
-                    "visible" : false,
-                    "render": function ( data, type, row ) {
-                        return data;
-                    }
-                }*/,{
-                "title": '操作人',
-                "data": 'operator',
-                "width":'10%'
-            },{
-                "title": '操作IP',
-                "data": 'ip',
-                "width":'15%'
-            },{
-                "title": '操作地址',
-                "data": 'ipAddress',
-                "width":'15%'
-            },{
-                "title": '操作时间',
-                "data": 'addTime',
-                "width":'15%'
+            }, {
+                title: '日志标题',
+                field: 'title',
+                width: '10%'
+            }, {
+                title: '操作人',
+                field: 'operator',
+                width: '10%'
+            }, {
+                title: '操作IP',
+                field: 'ip',
+                width: '15%'
+            }, {
+                title: '操作地址',
+                field: 'ipAddress',
+                width: '15%'
+            }, {
+                title: '操作时间',
+                field: 'addTime',
+                width: '15%'
             }
         ],
-        "language" : {
-            "sProcessing" : I18n.dataTable_sProcessing ,
-            "sLengthMenu" : I18n.dataTable_sLengthMenu ,
-            "sZeroRecords" : I18n.dataTable_sZeroRecords ,
-            "sInfo" : I18n.dataTable_sInfo ,
-            "sInfoEmpty" : I18n.dataTable_sInfoEmpty ,
-            "sInfoFiltered" : I18n.dataTable_sInfoFiltered ,
-            "sInfoPostFix" : "",
-            "sSearch" : I18n.dataTable_sSearch ,
-            "sUrl" : "",
-            "sEmptyTable" : I18n.dataTable_sEmptyTable ,
-            "sLoadingRecords" : I18n.dataTable_sLoadingRecords ,
-            "sInfoThousands" : ",",
-            "oPaginate" : {
-                "sFirst" : I18n.dataTable_sFirst ,
-                "sPrevious" : I18n.dataTable_sPrevious ,
-                "sNext" : I18n.dataTable_sNext ,
-                "sLast" : I18n.dataTable_sLast
-            },
-            "oAria" : {
-                "sSortAscending" : I18n.dataTable_sSortAscending ,
-                "sSortDescending" : I18n.dataTable_sSortDescending
+        clickToSelect: true, 			// 是否启用点击选中行
+        sortable: false, 				// 是否启用排序
+        pagination: true, 				// 是否显示分页
+        pageNumber: 1, 					// 默认第一页
+        pageList: [10, 25, 50, 100] , 	// 可供选择的每页的行数（*）
+        smartDisplay: false,			// 当总记录数小于分页数，是否显示可选项
+        paginationPreText: '<<',		// 跳转页面的 上一页按钮
+        paginationNextText: '>>',		// 跳转页面的 下一页按钮
+        showRefresh: true,				// 显示刷新按钮
+        showColumns: true,				// 显示/隐藏列
+        minimumCountColumns: 2,			// 最少允许的列数
+        onAll: function(name, args) {
+            // filter
+            if (!(['check.bs.table', "uncheck.bs.table", "check-all.bs.table", "uncheck-all.bs.table"].indexOf(name) > -1)) {
+                return false;
+            }
+            var rows = mainDataTable.bootstrapTable('getSelections');
+            var selectLen = rows.length;
+            if (selectLen > 0) {
+                $("#data_operation .selectAny").removeClass('disabled');
+            } else {
+                $("#data_operation .selectAny").addClass('disabled');
+            }
+            if (selectLen === 1) {
+                $("#data_operation .selectOnlyOne").removeClass('disabled');
+            } else {
+                $("#data_operation .selectOnlyOne").addClass('disabled');
             }
         }
     });
+    document.querySelector('.fixed-table-toolbar').classList.remove('fixed-table-toolbar');
 
-    // table data
-    var tableData = {};
 
     // search btn
     $('#data_filter .searchBtn').on('click', function(){
-        mainDataTable.fnDraw();
+        mainDataTable.bootstrapTable('refresh');
     });
 
     // ---------- ---------- ---------- delete operation ---------- ---------- ----------
     // delete
     $("#data_operation").on('click', '.delete',function() {
+        // get select rows
+        var rows = mainDataTable.bootstrapTable('getSelections');
 
         // find select ids
-        var selectIds = $.dataTableSelect.selectIdsFind();
+        const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
         if (selectIds.length <= 0) {
             layer.msg(I18n.system_please_choose + I18n.system_data);
             return;
@@ -317,7 +282,8 @@ $(function() {
                 success : function(data){
                     if (data.code == 200) {
                         layer.msg( I18n.system_opt_del + I18n.system_success );
-                        mainDataTable.fnDraw(false);	// false，refresh current page；true，all refresh
+                        // refresh table
+                        $('#data_filter .searchBtn').click();
                     } else {
                         layer.msg( data.msg || I18n.system_opt_del + I18n.system_fail );
                     }
@@ -336,14 +302,15 @@ $(function() {
 
     // ---------- ---------- ---------- showModal operation ---------- ---------- ----------
     $("#data_operation").on('click', '.showdetail',function() {
+        // get select rows
+        var rows = mainDataTable.bootstrapTable('getSelections');
 
-        // find select ids
-        var selectIds = $.dataTableSelect.selectIdsFind();
-        if (selectIds.length != 1) {
+        // find select row
+        if (rows.length !== 1) {
             layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
             return;
         }
-        var row = tableData[ 'key' + selectIds[0] ];
+        var row = rows[0];
 
         // fill
         $('#showModal .title').text(row.title);
@@ -354,7 +321,7 @@ $(function() {
         $('#showModal .ipAddress').text(row.ipAddress);
 
         // show
-        $('#showModal').modal({backdrop: false, keyboard: false}).modal('show');
+        $('#showModal').modal({backdrop: true, keyboard: false}).modal('show');
     });
 
 });

@@ -256,10 +256,8 @@ $(function() {
 				}
 			}
 		],
-		uniqueId: "id", 				// 每一行的唯一标识，一般为主键列
 		clickToSelect: true, 			// 是否启用点击选中行
 		sortable: false, 				// 是否启用排序
-		align: "left",					// 列的标题对齐方式
 		pagination: true, 				// 是否显示分页
 		pageNumber: 1, 					// 默认第一页
 		pageList: [10, 25, 50, 100] , 	// 可供选择的每页的行数（*）
