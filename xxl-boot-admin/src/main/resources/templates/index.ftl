@@ -112,7 +112,8 @@
         <div class="content-tabs">
             <!-- left -->
             <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i></button>
-            <!-- init tab -->
+
+            <!-- Tab -->
             <nav class="page-tabs J_menuTabs">
                 <div class="page-tabs-content">
                     <#-- mainPage -->
@@ -121,6 +122,7 @@
                     </#if>
                 </div>
             </nav>
+
             <!-- right -->
             <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i></button>
             <!-- opt -->
@@ -139,7 +141,7 @@
         </div>
         <!-- Iframe Content -->
         <div class="J_mainContent" id="content-main" >
-            <#-- mainPage -->
+            <!-- Iframe -->
             <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="${request.contextPath}${mainMenu.url}" frameborder="0" data-id="${request.contextPath}${mainMenu.url}" seamless></iframe>
         </div>
 
