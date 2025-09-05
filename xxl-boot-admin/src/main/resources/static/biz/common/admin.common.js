@@ -241,6 +241,7 @@ $(function(){
                                 </a>
                                 <p class="text-center">Purple</p>
                             </li>
+                            
                             <li style="float:left; width: 33.33333%; padding: 5px;">
                                 <a href="javascript:" data-skin="skin-blue-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
                                     <span style="width: 20%; float: left; height: 13px; background: #367fa9"></span>
@@ -259,7 +260,6 @@ $(function(){
                                 </a>
                                 <p class="text-center">Black(Light)</p>
                             </li>
-                            
                             <li style="float:left; width: 33.33333%; padding: 5px;">
                                 <a href="javascript:" data-skin="skin-purple-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
                                     <span style="width: 20%; float: left; height: 13px;" class='bg-purple-active'></span>
@@ -268,6 +268,35 @@ $(function(){
                                     <span style="width: 80%; float: left; height: 30px; background: #f4f5f7"></span>
                                 </a>
                                 <p class="text-center">Purple(Light)</p>
+                            </li>
+                            
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:" data-skin="skin-green-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <span style="width: 20%; float: left; height: 13px;" class='bg-green-active'></span>
+                                    <span style="width: 80%; float: left; height: 13px;" class='bg-green'></span>
+                                    <span style="width: 20%; float: left; height: 30px; background: #f9fafc"></span>
+                                    <span style="width: 80%; float: left; height: 30px; background: #f4f5f7"></span>
+                                </a>
+                                <p class="text-center">Green(Light)</p>
+                            </li>
+                            
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:" data-skin="skin-red-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <span style="width: 20%; float: left; height: 13px;" class='bg-red-active'></span>
+                                    <span style="width: 80%; float: left; height: 13px;" class='bg-red'></span>
+                                    <span style="width: 20%; float: left; height: 30px; background: #f9fafc"></span>
+                                    <span style="width: 80%; float: left; height: 30px; background: #f4f5f7"></span>
+                                </a>
+                                <p class="text-center">Red(Light)</p>
+                            </li>
+                            <li style="float:left; width: 33.33333%; padding: 5px;">
+                                <a href="javascript:" data-skin="skin-yellow-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="clearfix full-opacity-hover">
+                                    <span style="width: 20%; float: left; height: 13px;" class='bg-yellow-active'></span>
+                                    <span style="width: 80%; float: left; height: 13px;" class='bg-yellow'></span>
+                                    <span style="width: 20%; float: left; height: 30px; background: #f9fafc"></span>
+                                    <span style="width: 80%; float: left; height: 30px; background: #f4f5f7"></span>
+                                </a>
+                                <p class="text-center">Yellow(Light)</p>
                             </li>
                             
                             <!-- style -->
