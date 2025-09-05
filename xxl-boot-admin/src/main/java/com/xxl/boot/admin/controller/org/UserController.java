@@ -52,9 +52,9 @@ public class UserController {
     @ResponseBody
     @XxlSso(permission = "org:user")
     public Response<PageModel<XxlBootUserDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-                                                     @RequestParam(required = false, defaultValue = "10") int length,
-                                                     String username,
-                                                     @RequestParam(required = false, defaultValue = "-1") int status) {
+                                                        @RequestParam(required = false, defaultValue = "10") int length,
+                                                        String username,
+                                                        @RequestParam(required = false, defaultValue = "-1") int status) {
 
         PageModel<XxlBootUserDTO> pageModel = userService.pageList(start, length, username, status);
         return Response.ofSuccess(pageModel);
