@@ -38,31 +38,37 @@ $(function(){
     /**
      * updatePwd Modal
      */
-    let updatePwd = $('' +
-        '<div class="modal fade" id="updatePwdModal" tabindex="-1" role="dialog"  aria-hidden="true"> \n'+
-        '    <div class="modal-dialog "> \n'+
-        '        <div class="modal-content"> \n'+
-        '            <div class="modal-header"> \n'+
-        '                <h4 class="modal-title" >'+ I18n.change_pwd +'</h4> \n'+
-        '            </div> \n'+
-        '            <div class="modal-body"> \n'+
-        '                <form class="form-horizontal form" role="form" > \n'+
-        '                    <div class="form-group"> \n'+
-        '                        <label for="lastname" class="col-sm-2 control-label">'+ I18n.change_pwd_field_newpwd +'<font color="red">*</font></label> \n'+
-        '                        <div class="col-sm-10"><input type="text" class="form-control" name="password" placeholder="'+ I18n.system_please_input + I18n.change_pwd_field_newpwd +'" maxlength="18" ></div> \n'+
-        '                    </div> \n'+
-        '                    <hr> \n'+
-        '                        <div class="form-group"> \n'+
-        '                            <div class="col-sm-offset-3 col-sm-6"> \n'+
-        '                                <button type="submit" class="btn btn-primary"  >'+ I18n.system_save +'</button> \n'+
-        '                                <button type="button" class="btn btn-default" data-dismiss="modal">' + I18n.system_cancel + '</button> \n'+
-        '                            </div> \n'+
-        '                        </div> \n'+
-        '                </form> \n'+
-        '            </div> \n'+
-        '        </div> \n'+
-        '    </div> \n'+
-        '</div>');
+    let updatePwd = $(`
+        <!-- 修改密码.模态框 -->
+        <div class="modal fade" id="updatePwdModal" tabindex="-1" role="dialog"  aria-hidden="true">
+            <div class="modal-dialog ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" >` + I18n.change_pwd +`</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal form" role="form" >
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">` + I18n.change_pwd_field_oldpwd +`<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="oldPassword" placeholder="` + I18n.system_please_input + I18n.change_pwd_field_oldpwd + `" maxlength="20" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">` + I18n.change_pwd_field_newpwd +` <font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="password" placeholder="` + I18n.system_please_input + I18n.change_pwd_field_newpwd + `" maxlength="20" ></div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-6">
+                                    <button type="submit" class="btn btn-primary"  >` + I18n.system_save +`</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">` + I18n.system_cancel +`</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
     $('.wrapper').append(updatePwd);
 
     /**
@@ -76,14 +82,22 @@ $(function(){
         errorClass : 'help-block',
         focusInvalid : true,
         rules : {
+            oldPassword : {
+                required : true ,
+                rangelength:[4,50]
+            },
             password : {
                 required : true ,
                 rangelength:[4,50]
             }
         },
         messages : {
+            oldPassword : {
+                required : I18n.system_please_input +I18n.change_pwd_field_oldpwd,
+                rangelength : "密码长度限制为4~50"
+            },
             password : {
-                required : '请输入密码'  ,
+                required : I18n.system_please_input +I18n.change_pwd_field_newpwd,
                 rangelength : "密码长度限制为4~50"
             }
         },

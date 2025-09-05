@@ -191,21 +191,30 @@ public class UserServiceImpl implements UserService {
     /**
      * 修改密码
      */
-    public Response<String> updatePwd(String loginUserName, String password){
+    public Response<String> updatePwd(String loginUserName, String oldPassword, String password){
         // valid password
+        if (StringTool.isBlank(oldPassword)){
+            Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_oldpwd") );
+        }
         if (StringTool.isBlank(password)){
-            Response.ofFail( "密码不可为空" );
+            Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_newpwd") );
         }
         password = password.trim();
         if (!(password.length()>=4 && password.length()<=20)) {
             Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
 
-        // hash password
+        // md5 password
+        String oldPasswordHash = SHA256Tool.sha256(oldPassword);
         String passwordHash = SHA256Tool.sha256(password);
 
-        // update pwd
+        // valid old pwd
         XxlBootUser existUser = userMapper.loadByUserName(loginUserName);
+        if (!oldPasswordHash.equals(existUser.getPassword())) {
+            return Response.ofFail(I18nUtil.getString("change_pwd_field_oldpwd") + I18nUtil.getString("system_error"));
+        }
+
+        // update pwd
         existUser.setPassword(passwordHash);
         userMapper.update(existUser);
 

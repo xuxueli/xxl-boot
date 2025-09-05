@@ -94,12 +94,12 @@ public class UserController {
     @RequestMapping("/updatePwd")
     @ResponseBody
     @XxlSso
-    public Response<String> updatePwd(HttpServletRequest request, String password){
+    public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String password){
 
         // xxl-sso, logincheck
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
-        return userService.updatePwd(loginInfoResponse.getData().getUserName(), password);
+        return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, password);
     }
 
 }

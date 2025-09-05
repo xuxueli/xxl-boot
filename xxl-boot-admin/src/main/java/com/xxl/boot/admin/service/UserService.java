@@ -37,7 +37,7 @@ public interface UserService {
     /**
      * 修改密码
      */
-    public Response<String> updatePwd(String loginUserName, String password);
+    public Response<String> updatePwd(String loginUserName, String oldPassword, String password);
 
     /**
      * Load查询
