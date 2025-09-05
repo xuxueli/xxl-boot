@@ -24,10 +24,23 @@
                 // parse param
                 this.table = $(options.table);
 
-                // init
+                // init filter
                 initSearch(this.table);
                 initReset();
+
+                // init table
                 initAdminTable(this.table, options);
+            },
+            initTreeTable: function(options) {
+                // parse param
+                this.table = $(options.table);
+
+                // init filter
+                initSearch(this.table);
+                initReset();
+
+                // init tree table
+                initAdminTreeTable(this.table, options);
             },
             initDelete: function(options) {
                 initDeleteFun(this.table, options);
@@ -126,6 +139,78 @@
                     return false;
                 }
                 var rows = $(table).bootstrapTable('getSelections');
+                var selectLen = rows.length;
+
+                if (selectLen > 0) {
+                    $("#data_operation .selectAny").removeClass('disabled');
+                } else {
+                    $("#data_operation .selectAny").addClass('disabled');
+                }
+                if (selectLen === 1) {
+                    $("#data_operation .selectOnlyOne").removeClass('disabled');
+                } else {
+                    $("#data_operation .selectOnlyOne").addClass('disabled');
+                }
+            }
+        });
+
+        // toolbar 样式调整；
+        var toolbarElement = document.querySelector('.fixed-table-toolbar');
+        if (toolbarElement) {
+            toolbarElement.classList.remove('fixed-table-toolbar');
+        }
+    }
+
+    function initAdminTreeTable(table, options) {
+
+        // parse param
+        let url = options.url;
+        let queryParams = options.queryParams;
+        let columns = options.columns;
+
+        // table
+        var mainDataTable = $("#data_list").bootstrapTable({
+            url: url,
+            method: "post",
+            contentType: "application/x-www-form-urlencoded",
+            queryParams: queryParams,
+            responseHandler: function(result) {
+                if (result.code !== 200) {
+                    layer.open({
+                        icon: '2',
+                        content: result.msg
+                    });
+                    return ;
+                }
+                return result.data;
+            },
+            treeEnable:true,
+            idField: 'id',					// 树形id
+            parentIdField: 'parentId',		// 父级字段
+            treeShowField: 'name',			// 树形字段
+            onPostBody: function(data) {
+                $("#data_list").treegrid({
+                    treeColumn: 1,												// 选择第几列作为树形字段
+                    initialState: 'expanded',									// 默认展开；expanded、collapsed
+                    expanderExpandedClass: 'fa fa-fw  fa-minus-square-o',		// 树形展开图标
+                    expanderCollapsedClass: 'fa fa-fw  fa-plus-square-o',		// 树形折叠图标
+                    onChange () {
+                        $("#data_list").bootstrapTable('resetView')				// 树形表格重绘
+                    }
+                })
+            },
+            columns:columns,
+            clickToSelect: true, 			// 是否启用点击选中行
+            sortable: false, 				// 是否启用排序
+            showRefresh: true,				// 显示刷新按钮
+            showColumns: true,				// 显示/隐藏列
+            minimumCountColumns: 2,			// 最少允许的列数
+            onAll: function(name, args) {
+                // filter
+                if (!(['check.bs.table', "uncheck.bs.table", "check-all.bs.table", "uncheck-all.bs.table"].indexOf(name) > -1)) {
+                    return false;
+                }
+                var rows = mainDataTable.bootstrapTable('getSelections');
                 var selectLen = rows.length;
 
                 if (selectLen > 0) {

@@ -199,7 +199,7 @@ $(function() {
 				width: '30%',
 				align: 'left'
 			}
-		],
+		]
 	});
 
 
