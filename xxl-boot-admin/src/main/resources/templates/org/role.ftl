@@ -186,17 +186,20 @@ $(function() {
 				checkbox: true,
 				field: 'state',
 				width: '5%',
+				widthUnit: '%',
 				align: 'center',
 				valign: 'middle'
 			}, {
 				title: I18n.role_tips + I18n.role_name,
 				field: 'name',
-				width: '40%',
+				width: '40',
+				widthUnit: '%',
 				align: 'left'
 			},{
 				title: I18n.role_tips + I18n.role_order,
 				field: 'order',
-				width: '30%',
+				width: '30',
+				widthUnit: '%',
 				align: 'left'
 			}
 		]

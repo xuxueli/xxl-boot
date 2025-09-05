@@ -51,6 +51,9 @@
                         <div class="col-xs-1">
                             <button class="btn btn-block btn-primary searchBtn" >${I18n.system_search}</button>
                         </div>
+                        <div class="col-xs-1">
+                            <button class="btn btn-block btn-default resetBtn" >${I18n.system_reset}</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,15 +196,19 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/bower_components/ckeditor/ckeditor.js"></script>
+<#-- admin table -->
+<script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
 <script>
 $(function() {
 
-    // ---------- ---------- ---------- main table  ---------- ---------- ----------
-    var mainDataTable = $("#data_list").bootstrapTable({
+    // ---------- ---------- ---------- table + curd  ---------- ---------- ----------
+
+    /**
+     * init table
+     */
+    $.adminTable.initTable({
+        table: '#data_list',
         url: base_url + "/system/message/pageList",
-        method: "post",
-        contentType: "application/x-www-form-urlencoded",
-        queryParamsType: "limit",
         queryParams: function (params) {
             var obj = {};
             obj.title = $('#data_filter .title').val();
@@ -210,22 +217,17 @@ $(function() {
             obj.length = params.limit;
             return obj;
         },
-        sidePagination: "server",		// server side page
-        responseHandler: function (result) {
-            return {
-                "total": result.data.totalCount,
-                "rows": result.data.pageData
-            };
-        },
         columns: [
             {
                 checkbox: true,
                 field: 'state',
-                width: '5%'
+                width: '5',
+                widthUnit: '%'
             }, {
                 title: '通知分类',
                 field: 'category',
-                width: '15%',
+                width: '15',
+                widthUnit: '%',
                 formatter: function(value, row, index) {
                     var result = "";
                     $('#data_filter .category option').each(function(){
@@ -238,11 +240,13 @@ $(function() {
             }, {
                 title: '通知标题',
                 field: 'title',
-                width: '35%'
+                width: '35',
+                widthUnit: '%'
             }, {
                 title: '状态',
                 field: 'status',
-                width: '10%',
+                width: '10',
+                widthUnit: '%',
                 formatter: function(value, row, index) {
                     var result = "";
                     $('#data_filter .status option').each(function(){
@@ -255,116 +259,32 @@ $(function() {
             }, {
                 title: '发送人',
                 field: 'sender',
-                width: '15%'
+                width: '15',
+                widthUnit: '%'
             }, {
                 title: '发送时间',
                 field: 'addTime',
-                width: '20%'
+                width: '20',
+                widthUnit: '%'
             }
-        ],
-        clickToSelect: true, 			// 是否启用点击选中行
-        sortable: false, 				// 是否启用排序
-        pagination: true, 				// 是否显示分页
-        pageNumber: 1, 					// 默认第一页
-        pageList: [10, 25, 50, 100] , 	// 可供选择的每页的行数（*）
-        smartDisplay: false,			// 当总记录数小于分页数，是否显示可选项
-        paginationPreText: '<<',		// 跳转页面的 上一页按钮
-        paginationNextText: '>>',		// 跳转页面的 下一页按钮
-        showRefresh: true,				// 显示刷新按钮
-        showColumns: true,				// 显示/隐藏列
-        minimumCountColumns: 2,			// 最少允许的列数
-        onAll: function(name, args) {
-            // filter
-            if (!(['check.bs.table', "uncheck.bs.table", "check-all.bs.table", "uncheck-all.bs.table"].indexOf(name) > -1)) {
-                return false;
-            }
-            var rows = mainDataTable.bootstrapTable('getSelections');
-            var selectLen = rows.length;
-            if (selectLen > 0) {
-                $("#data_operation .selectAny").removeClass('disabled');
-            } else {
-                $("#data_operation .selectAny").addClass('disabled');
-            }
-            if (selectLen === 1) {
-                $("#data_operation .selectOnlyOne").removeClass('disabled');
-            } else {
-                $("#data_operation .selectOnlyOne").addClass('disabled');
-            }
-        }
-    });
-    document.querySelector('.fixed-table-toolbar').classList.remove('fixed-table-toolbar');
-
-    // search btn
-    $('#data_filter .searchBtn').on('click', function(){
-        mainDataTable.bootstrapTable('refresh');
+        ]
     });
 
-    // ---------- ---------- ---------- delete operation ---------- ---------- ----------
-    // delete
-    $("#data_operation").on('click', '.delete',function() {
-        // get select rows
-        var rows = mainDataTable.bootstrapTable('getSelections');
-
-        // find select ids
-        const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
-        if (selectIds.length <= 0) {
-            layer.msg(I18n.system_please_choose + I18n.system_data);
-            return;
-        }
-
-        // do delete
-        layer.confirm( I18n.system_ok + I18n.system_opt_del + '?', {
-            icon: 3,
-            title: I18n.system_tips ,
-            btn: [ I18n.system_ok, I18n.system_cancel ]
-        }, function(index){
-            layer.close(index);
-
-            $.ajax({
-                type : 'POST',
-                url : base_url + "/system/message/delete",
-                data : {
-                    "ids" : selectIds
-                },
-                dataType : "json",
-                success : function(data){
-                    if (data.code == 200) {
-                        layer.msg( I18n.system_opt_del + I18n.system_success );
-                        // refresh table
-                        $('#data_filter .searchBtn').click();
-                    } else {
-                        layer.msg( data.msg || I18n.system_opt_del + I18n.system_fail );
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    console.log("Error: " + error);
-                    layer.open({
-                        icon: '2',
-                        content: (I18n.system_opt_del + I18n.system_fail)
-                    });
-                }
-            });
-        });
+    /**
+     * init delete
+     */
+    $.adminTable.initDelete({
+        url: base_url + "/system/message/delete"
     });
 
-    // ---------- ---------- ---------- add operation ---------- ---------- ----------
 
+    /**
+     * init add
+     */
     // init add editor
-    CKEDITOR.replace('add_content');		// todo, 图片弹框宽高编辑与 bootstrap 冲突问题
-    /*$('#addModal').on('shown.bs.modal', function () {
-        if (!CKEDITOR.instances.add_content) {
-            CKEDITOR.replace('add_content');
-        }
-    });*/
-    // add
-    $("#data_operation .add").click(function(){
-        $('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
-    });
-    var addModalValidate = $("#addModal .form").validate({
-        errorElement : 'span',
-        errorClass : 'help-block',
-        focusInvalid : true,
+    CKEDITOR.replace('add_content');    // todo, 图片弹框宽高编辑与 bootstrap 冲突问题
+    $.adminTable.initAdd( {
+        url: base_url + "/system/message/insert",
         rules : {
             title : {
                 required : true,
@@ -377,18 +297,7 @@ $(function() {
                 rangelength: I18n.system_lengh_limit + "[4-20]"
             }
         },
-        highlight : function(element) {
-            $(element).closest('.form-group').addClass('has-error');
-        },
-        success : function(label) {
-            label.closest('.form-group').removeClass('has-error');
-            label.remove();
-        },
-        errorPlacement : function(error, element) {
-            element.parent('div').append(error);
-        },
-        submitHandler : function(form) {
-
+        readFormData: function() {
             // add_content
             const addEditorInstance = CKEDITOR.instances.add_content;
             const contentWithHTML = addEditorInstance.getData();
@@ -402,83 +311,33 @@ $(function() {
             }
 
             // request
-            var paramData = {
+            return {
                 "category": $("#addModal .form select[name=category]").val(),
                 "status": $("#addModal .form select[name=status]").val(),
                 "title": $("#addModal .form input[name=title]").val(),
                 "content": contentWithHTML
             };
-
-            // post
-            $.post(base_url + "/system/message/insert", paramData, function(data, status) {
-                if (data.code == "200") {
-                    $('#addModal').modal('hide');
-                    layer.msg( I18n.system_opt_add + I18n.system_success );
-
-                    // refresh table
-                    $('#data_filter .searchBtn').click();
-                } else {
-                    layer.open({
-                        title: I18n.system_tips ,
-                        btn: [ I18n.system_ok ],
-                        content: (data.msg || I18n.system_opt_add + I18n.system_fail ),
-                        icon: '2'
-                    });
-                }
-            });
         }
     });
-    $("#addModal").on('hide.bs.modal', function () {
-        // reset
-        addModalValidate.resetForm();
-        // reset
-        $("#addModal .form")[0].reset();
-        $("#addModal .form .form-group").removeClass("has-error");
-    });
 
-    // ---------- ---------- ---------- update operation ---------- ---------- ----------
-
+    /**
+     * init update
+     */
     // init update editor
     CKEDITOR.replace('update_content');
-    // modal
-    $("#data_operation .update").click(function(){
-        // get select rows
-        var rows = mainDataTable.bootstrapTable('getSelections');
+    $.adminTable.initUpdate( {
+        url: base_url + "/system/message/update",
+        writeFormData: function(row) {
+            // base data
+            $("#updateModal .form input[name='id']").val( row.id );
+            $("#updateModal .form select[name='category']").val( row.category );
+            $("#updateModal .form select[name='status']").val( row.status );
+            $("#updateModal .form input[name='title']").val( row.title );
+            $("#updateModal .form input[name='status']").val( row.status );
 
-        // find select row
-        if (rows.length !== 1) {
-            layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
-            return;
-        }
-        var row = rows[0];
-
-        // base data
-        $("#updateModal .form input[name='id']").val( row.id );
-        $("#updateModal .form select[name='category']").val( row.category );
-        $("#updateModal .form select[name='status']").val( row.status );
-        $("#updateModal .form input[name='title']").val( row.title );
-        $("#updateModal .form input[name='status']").val( row.status );
-
-        // add_content
-        const updateEditorInstance = CKEDITOR.instances.update_content;
-        updateEditorInstance.setData( row.content );
-
-        // show
-        $('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
-    });
-    var updateModalValidate = $("#updateModal .form").validate({
-        errorElement : 'span',
-        errorClass : 'help-block',
-        focusInvalid : true,
-        highlight : function(element) {
-            $(element).closest('.form-group').addClass('has-error');
-        },
-        success : function(label) {
-            label.closest('.form-group').removeClass('has-error');
-            label.remove();
-        },
-        errorPlacement : function(error, element) {
-            element.parent('div').append(error);
+            // add_content
+            const updateEditorInstance = CKEDITOR.instances.update_content;
+            updateEditorInstance.setData( row.content );
         },
         rules : {
             title : {
@@ -492,8 +351,7 @@ $(function() {
                 rangelength: I18n.system_lengh_limit + "[4-20]"
             }
         },
-        submitHandler : function(form) {
-
+        readFormData: function() {
             // add_content
             const updateEditorInstance = CKEDITOR.instances.update_content;
             const contentWithHTML = updateEditorInstance.getData();
@@ -507,38 +365,14 @@ $(function() {
             }
 
             // request
-            var paramData = {
+            return {
                 "id": $("#updateModal .form input[name=id]").val(),
                 "category": $("#updateModal .form select[name=category]").val(),
                 "status": $("#updateModal .form select[name=status]").val(),
                 "title": $("#updateModal .form input[name=title]").val(),
-                "content":contentWithHTML
+                "content": contentWithHTML
             };
-
-            $.post(base_url + "/system/message/update", paramData, function(data, status) {
-                if (data.code == "200") {
-                    $('#updateModal').modal('hide');
-                    layer.msg( I18n.system_opt_edit + I18n.system_success );
-
-                    // refresh table
-                    $('#data_filter .searchBtn').click();
-                } else {
-                    layer.open({
-                        title: I18n.system_tips ,
-                        btn: [ I18n.system_ok ],
-                        content: (data.msg || I18n.system_opt_edit + I18n.system_fail ),
-                        icon: '2'
-                    });
-                }
-            });
         }
-    });
-    $("#updateModal").on('hide.bs.modal', function () {
-        // reset
-        updateModalValidate.resetForm();
-        // reset
-        $("#updateModal .form")[0].reset();
-        $("#updateModal .form .form-group").removeClass("has-error");
     });
 
 });

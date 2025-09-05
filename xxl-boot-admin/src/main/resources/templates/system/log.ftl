@@ -52,6 +52,9 @@
                         <div class="col-xs-1">
                             <button class="btn btn-block btn-primary searchBtn" >${I18n.system_search}</button>
                         </div>
+                        <div class="col-xs-1">
+                            <button class="btn btn-block btn-default resetBtn" >${I18n.system_reset}</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -134,16 +137,19 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
+<#-- admin table -->
+<script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
 <script>
 $(function() {
 
-    // ---------- ---------- ---------- main table  ---------- ---------- ----------
+    // ---------- ---------- ---------- table + curd  ---------- ---------- ----------
 
-    var mainDataTable = $("#data_list").bootstrapTable({
+    /**
+     * init table
+     */
+    $.adminTable.initTable({
+        table: '#data_list',
         url: base_url + "/system/log/pageList",
-        method: "post",
-        contentType: "application/x-www-form-urlencoded",
-        queryParamsType: "limit",
         queryParams: function (params) {
             var obj = {};
             obj.type = $('#data_filter .type').val();
@@ -153,22 +159,17 @@ $(function() {
             obj.length = params.limit;
             return obj;
         },
-        sidePagination: "server",		// server side page
-        responseHandler: function (result) {
-            return {
-                "total": result.data.totalCount,
-                "rows": result.data.pageData
-            };
-        },
         columns: [
             {
                 checkbox: true,
                 field: 'state',
-                width: '5%'
+                width: '5',
+                widthUnit: '%'
             }, {
                 title: '日志类型',
                 field: 'type',
-                width: '10%',
+                width: '10',
+                widthUnit: '%',
                 formatter: function(value, row, index) {
                     var result = "";
                     $('#data_filter .type option').each(function(){
@@ -181,7 +182,8 @@ $(function() {
             }, {
                 title: '系统模块',
                 field: 'module',
-                width: '10%',
+                width: '10',
+                widthUnit: '%',
                 formatter: function(value, row, index) {
                     var result = "";
                     $('#data_filter .module option').each(function(){
@@ -194,113 +196,41 @@ $(function() {
             }, {
                 title: '日志标题',
                 field: 'title',
-                width: '10%'
+                width: '10',
+                widthUnit: '%'
             }, {
                 title: '操作人',
                 field: 'operator',
-                width: '10%'
+                width: '10',
+                widthUnit: '%'
             }, {
                 title: '操作IP',
                 field: 'ip',
-                width: '15%'
+                width: '15',
+                widthUnit: '%'
             }, {
                 title: '操作地址',
                 field: 'ipAddress',
-                width: '15%'
+                width: '15',
+                widthUnit: '%'
             }, {
                 title: '操作时间',
                 field: 'addTime',
-                width: '15%'
+                width: '15',
+                widthUnit: '%'
             }
-        ],
-        clickToSelect: true, 			// 是否启用点击选中行
-        sortable: false, 				// 是否启用排序
-        pagination: true, 				// 是否显示分页
-        pageNumber: 1, 					// 默认第一页
-        pageList: [10, 25, 50, 100] , 	// 可供选择的每页的行数（*）
-        smartDisplay: false,			// 当总记录数小于分页数，是否显示可选项
-        paginationPreText: '<<',		// 跳转页面的 上一页按钮
-        paginationNextText: '>>',		// 跳转页面的 下一页按钮
-        showRefresh: true,				// 显示刷新按钮
-        showColumns: true,				// 显示/隐藏列
-        minimumCountColumns: 2,			// 最少允许的列数
-        onAll: function(name, args) {
-            // filter
-            if (!(['check.bs.table', "uncheck.bs.table", "check-all.bs.table", "uncheck-all.bs.table"].indexOf(name) > -1)) {
-                return false;
-            }
-            var rows = mainDataTable.bootstrapTable('getSelections');
-            var selectLen = rows.length;
-            if (selectLen > 0) {
-                $("#data_operation .selectAny").removeClass('disabled');
-            } else {
-                $("#data_operation .selectAny").addClass('disabled');
-            }
-            if (selectLen === 1) {
-                $("#data_operation .selectOnlyOne").removeClass('disabled');
-            } else {
-                $("#data_operation .selectOnlyOne").addClass('disabled');
-            }
-        }
-    });
-    document.querySelector('.fixed-table-toolbar').classList.remove('fixed-table-toolbar');
-
-
-    // search btn
-    $('#data_filter .searchBtn').on('click', function(){
-        mainDataTable.bootstrapTable('refresh');
+        ]
     });
 
-    // ---------- ---------- ---------- delete operation ---------- ---------- ----------
-    // delete
-    $("#data_operation").on('click', '.delete',function() {
-        // get select rows
-        var rows = mainDataTable.bootstrapTable('getSelections');
-
-        // find select ids
-        const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
-        if (selectIds.length <= 0) {
-            layer.msg(I18n.system_please_choose + I18n.system_data);
-            return;
-        }
-
-        // do delete
-        layer.confirm( I18n.system_ok + I18n.system_opt_del + '?', {
-            icon: 3,
-            title: I18n.system_tips ,
-            btn: [ I18n.system_ok, I18n.system_cancel ]
-        }, function(index){
-            layer.close(index);
-
-            $.ajax({
-                type : 'POST',
-                url : base_url + "/system/log/delete",
-                data : {
-                    "ids" : selectIds
-                },
-                dataType : "json",
-                success : function(data){
-                    if (data.code == 200) {
-                        layer.msg( I18n.system_opt_del + I18n.system_success );
-                        // refresh table
-                        $('#data_filter .searchBtn').click();
-                    } else {
-                        layer.msg( data.msg || I18n.system_opt_del + I18n.system_fail );
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    console.log("Error: " + error);
-                    layer.open({
-                        icon: '2',
-                        content: (I18n.system_opt_del + I18n.system_fail)
-                    });
-                }
-            });
-        });
+    /**
+     * init delete
+     */
+    $.adminTable.initDelete({
+        url: base_url + "/system/log/delete"
     });
 
     // ---------- ---------- ---------- showModal operation ---------- ---------- ----------
+    var mainDataTable = $.adminTable.table;
     $("#data_operation").on('click', '.showdetail',function() {
         // get select rows
         var rows = mainDataTable.bootstrapTable('getSelections');

@@ -218,18 +218,21 @@ $(function() {
 			{
 				checkbox: true,
 				field: 'state',
-				width: '5%',
+				width: '5',
+				widthUnit: '%',
 				align: 'center',
 				valign: 'middle'
 			}, {
 				title: I18n.user_username,
 				field: 'username',
-				width: '30%',
+				width: '30',
+				widthUnit: '%',
 				align: 'left'
 			},{
 				title: I18n.user_password,
 				field: 'password',
-				width: '20%',
+				width: '20',
+				widthUnit: '%',
 				align: 'left',
 				formatter: function(value) {
 					return '*********';
@@ -237,12 +240,14 @@ $(function() {
 			}, {
 				title: '真实姓名',
 				field: 'realName',
-				width: '25%',
+				width: '25',
+				widthUnit: '%',
 				align: 'left'
 			}, {
 				title: '启用状态',
 				field: 'status',
-				width: '20%',
+				width: '20',
+				widthUnit: '%',
 				align: 'left',
 				formatter: function(value) {
 					var result = "";

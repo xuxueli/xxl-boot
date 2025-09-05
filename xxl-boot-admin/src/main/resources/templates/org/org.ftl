@@ -238,11 +238,13 @@ $(function() {
 			{
 				checkbox: true,
 				field: 'state',
-				width: '5%'
+				width: '5',
+				widthUnit: '%'
 			},{
 				title: I18n.resource_name,
 				field: 'name',
-				width: '25%',
+				width: '40',
+				widthUnit: '%',
 				formatter: function(value, row, index) {
 					var iconAndName = '&nbsp;&nbsp;<i class="fa _icon_"></i> ' + row.name;
 					var icon = row.icon?row.icon:'';		// fa-circle-o
@@ -252,11 +254,13 @@ $(function() {
 			},{
 				title: I18n.resource_order,
 				field: 'order',
-				width: '10%'
+				width: '15',
+				widthUnit: '%'
 			},{
 				title: I18n.resource_status,
 				field: 'status',
-				width: '10%',
+				width: '15',
+				widthUnit: '%',
 				formatter: function(value, row, index) {
 					var result = "";
 					$('#addModal select[name="status"] option').each(function(){

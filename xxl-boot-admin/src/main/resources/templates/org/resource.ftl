@@ -1170,11 +1170,13 @@ $(function() {
 			{
 				checkbox: true,
 				field: 'state',
-				width: '5%'
+				width: '5',
+				widthUnit: '%'
 			},{
 				title: I18n.resource_tips + I18n.resource_name,
 				field: 'name',
-				width: '35%',
+				width: '25',
+				widthUnit: '%',
 				formatter: function(value, row, index) {
 					var iconAndName = '&nbsp;&nbsp;<i class="fa _icon_"></i> ' + row.name;
 					var icon = row.icon?row.icon:'';		// fa-circle-o
@@ -1184,7 +1186,8 @@ $(function() {
 			},{
 				title: I18n.resource_tips + I18n.resource_type,
 				field: 'type',
-				width: '10%',
+				width: '10',
+				widthUnit: '%',
 				formatter: function(value, row, index) {
 					var result = "";
 					$('#addModal select[name="type"] option').each(function(){
@@ -1197,19 +1200,23 @@ $(function() {
 			},{
 				title: I18n.resource_permission,
 				field: 'permission',
-				width: '20%',
+				width: '20',
+				widthUnit: '%'
 			},{
 				title: I18n.resource_tips + I18n.resource_url,
 				field: 'url',
-				width: '20%',
+				width: '20',
+				widthUnit: '%'
 			},{
 				title: I18n.resource_tips + I18n.resource_order,
 				field: 'order',
-				width: '10%',
+				width: '10',
+				widthUnit: '%'
 			},{
 				title: I18n.resource_status,
 				field: 'status',
-				width: '10%',
+				width: '10',
+				widthUnit: '%',
 				formatter: function(value, row, index) {
 					var result = "";
 					$('#addModal select[name="status"] option').each(function(){
