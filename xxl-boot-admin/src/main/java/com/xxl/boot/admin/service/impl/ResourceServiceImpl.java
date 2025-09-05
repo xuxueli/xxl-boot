@@ -105,7 +105,8 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public List<XxlBootResourceDTO> treeList(String name, int status) {
 		List<XxlBootResource> resourceList = resourceMapper.queryResource(name, status);
-		return generateTreeList(resourceList);
+		//return generateTreeList(resourceList);
+		return resourceList.stream().map(resource -> new XxlBootResourceDTO(resource, null)).toList();
 	}
 
 	@Override

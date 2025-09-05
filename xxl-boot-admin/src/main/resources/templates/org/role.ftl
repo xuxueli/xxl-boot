@@ -381,7 +381,6 @@ $(function() {
 
 	// ---------- ---------- ---------- update operation ---------- ---------- ----------
 	$("#data_operation .update").click(function(){
-
 		// get select rows
 		var rows = mainDataTable.bootstrapTable('getSelections');
 
