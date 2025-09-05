@@ -11,6 +11,21 @@ $(function () {
 
     // -------------------- init menu, open/close menu-tab --------------------
     /**
+     * 1、menu：
+     *      - J_menuItem
+     * 2、tab：
+     *      - J_tabLeft
+     *      - J_menuTabs
+     *          - J_menuTab
+     *      - J_tabRight
+     *      - J_tabCloseOther
+     *      - J_tabCloseAll
+     * 3、contont
+     *      - J_mainContent
+     *          - J_iframe
+     */
+
+    /**
      * 初始化：通过遍历给菜单项加上data-index属性
      */
     $(".J_menuItem").each(function (index) {

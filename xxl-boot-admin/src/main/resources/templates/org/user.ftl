@@ -41,6 +41,9 @@
 					<div class="col-xs-1">
 						<button class="btn btn-block btn-primary searchBtn" >${I18n.system_search}</button>
 					</div>
+					<div class="col-xs-1">
+						<button class="btn btn-block btn-default resetBtn" >${I18n.system_reset}</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -190,16 +193,19 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
+<#-- admin table -->
+<script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
 <script>
 $(function() {
 
-	// ---------- ---------- ---------- main table  ---------- ---------- ----------
+	// ---------- ---------- ---------- table + curd  ---------- ---------- ----------
 
-	var mainDataTable = $("#data_list").bootstrapTable({
+	/**
+	 * init table
+	 */
+	$.adminTable.initTable({
+		table: '#data_list',
 		url: base_url + "/org/user/pageList",
-		method: "post",
-		contentType: "application/x-www-form-urlencoded",
-		queryParamsType: "limit",
 		queryParams: function (params) {
 			var obj = {};
 			obj.username = $('#data_filter .username').val();
@@ -208,14 +214,7 @@ $(function() {
 			obj.length = params.limit;
 			return obj;
 		},
-		sidePagination: "server",		// server side page
-		responseHandler: function (result) {
-			return {
-				"total": result.data.totalCount,
-				"rows": result.data.pageData
-			};
-		},
-		columns: [
+		columns:[
 			{
 				checkbox: true,
 				field: 'state',
@@ -255,116 +254,26 @@ $(function() {
 					return result;
 				}
 			}
-		],
-		clickToSelect: true, 			// 是否启用点击选中行
-		sortable: false, 				// 是否启用排序
-		pagination: true, 				// 是否显示分页
-		pageNumber: 1, 					// 默认第一页
-		pageList: [10, 25, 50, 100] , 	// 可供选择的每页的行数（*）
-		smartDisplay: false,			// 当总记录数小于分页数，是否显示可选项
-		/*formatShowingRows: function(from, to, total) {
-			return '显示第 ' + from + ' 到 ' + to + ' 条，共 '+ total + '条记录';
-		},
-		formatRecordsPerPage: function(pageNumber) {
-			return '每页 '+ pageNumber +' 条';
-		},*/
-		paginationPreText: '<<',		// 跳转页面的 上一页按钮
-		paginationNextText: '>>',		// 跳转页面的 下一页按钮
-		showRefresh: true,				// 显示刷新按钮
-		showColumns: true,				// 显示/隐藏列
-		minimumCountColumns: 2,			// 最少允许的列数
-		// onLoadSuccess: function(data) {}
-		onAll: function(name, args) {
-			// filter
-			if (!(['check.bs.table', "uncheck.bs.table", "check-all.bs.table", "uncheck-all.bs.table"].indexOf(name) > -1)) {
-				return false;
-			}
-			var rows = mainDataTable.bootstrapTable('getSelections');
-			var selectLen = rows.length;
-
-			if (selectLen > 0) {
-				$("#data_operation .selectAny").removeClass('disabled');
-			} else {
-				$("#data_operation .selectAny").addClass('disabled');
-			}
-			if (selectLen === 1) {
-				$("#data_operation .selectOnlyOne").removeClass('disabled');
-			} else {
-				$("#data_operation .selectOnlyOne").addClass('disabled');
-			}
-		}
-	});
-	document.querySelector('.fixed-table-toolbar').classList.remove('fixed-table-toolbar');
-
-	// search btn
-	$('#data_filter .searchBtn').on('click', function(){
-		mainDataTable.bootstrapTable('refresh');
+		]
 	});
 
-	// ---------- ---------- ---------- delete operation ---------- ---------- ----------
-	// delete
-	$("#data_operation").on('click', '.delete',function() {
-		// get select rows
-		var rows = mainDataTable.bootstrapTable('getSelections');
-
-		// find select ids
-		const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
-		if (selectIds.length <= 0) {
-			layer.msg(I18n.system_please_choose + I18n.system_data);
-			return;
-		}
-
-		// do delete
-		layer.confirm( I18n.system_ok + I18n.system_opt_del + '?', {
-			icon: 3,
-			title: I18n.system_tips ,
-			btn: [ I18n.system_ok, I18n.system_cancel ]
-		}, function(index){
-			layer.close(index);
-
-			$.ajax({
-				type : 'POST',
-				url : base_url + "/org/user/delete",
-				data : {
-					"ids" : selectIds
-				},
-				dataType : "json",
-				success : function(data){
-					if (data.code == 200) {
-						layer.msg( I18n.system_opt_del + I18n.system_success );
-						// refresh table
-						$('#data_filter .searchBtn').click();
-					} else {
-						layer.msg( data.msg || I18n.system_opt_del + I18n.system_fail );
-					}
-				},
-				error: function(xhr, status, error) {
-					// Handle error
-					console.log("Error: " + error);
-					layer.open({
-						icon: '2',
-						content: (I18n.system_opt_del + I18n.system_fail)
-					});
-				}
-			});
-		});
+	/**
+	 * init delete
+	 */
+	$.adminTable.initDelete({
+		url: base_url + "/org/user/delete"
 	});
 
-	// ---------- ---------- ---------- add operation ---------- ---------- ----------
-	// add validator method
+	/**
+	 * init add
+	 */
 	jQuery.validator.addMethod("usernameValid", function(value, element) {
 		var length = value.length;
 		var valid = /^[a-z][a-z0-9]*$/;
 		return this.optional(element) || valid.test(value);
 	}, I18n.user_username_valid );
-	// add
-	$("#data_operation .add").click(function(){
-		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
-	var addModalValidate = $("#addModal .form").validate({
-		errorElement : 'span',
-		errorClass : 'help-block',
-		focusInvalid : true,
+	$.adminTable.initAdd( {
+		url: base_url + "/org/user/add",
 		rules : {
 			username : {
 				required : true,
@@ -394,102 +303,41 @@ $(function() {
 				rangelength: I18n.system_lengh_limit + "[2-20]"
 			}
 		},
-		highlight : function(element) {
-			$(element).closest('.form-group').addClass('has-error');
-		},
-		success : function(label) {
-			label.closest('.form-group').removeClass('has-error');
-			label.remove();
-		},
-		errorPlacement : function(error, element) {
-			element.parent('div').append(error);
-		},
-		submitHandler : function(form) {
-
+		readFormData: function() {
 			// get roleids
 			var roleIds = $('#addModal .form input[name="roleId"]:checked').map(function() {
 				return this.value;
 			}).get();
 
 			// request
-			var paramData = {
+			return {
 				"username": $("#addModal .form input[name=username]").val(),
 				"password": $("#addModal .form input[name=password]").val(),
 				"status": $("#addModal .form select[name=status]").val(),
 				"realName": $("#addModal .form input[name=realName]").val(),
 				"roleIds": roleIds
 			};
-
-			// post
-			$.post(base_url + "/org/user/add", paramData, function(data, status) {
-				if (data.code == "200") {
-					$('#addModal').modal('hide');
-					layer.msg( I18n.system_opt_add + I18n.system_success );
-
-					// refresh table
-					$('#data_filter .searchBtn').click();
-				} else {
-					layer.open({
-						title: I18n.system_tips ,
-						btn: [ I18n.system_ok ],
-						content: (data.msg || I18n.system_opt_add + I18n.system_fail ),
-						icon: '2'
-					});
-				}
-			});
 		}
-	});
-	$("#addModal").on('hide.bs.modal', function () {
-		// reset
-		$('#addModal .form input[name="roleId"]').prop('checked', false).iCheck('update');
-		$("#addModal .form")[0].reset();
-		$("#addModal .form .form-group").removeClass("has-error");
-		// reset
-		addModalValidate.resetForm();
-	});
+	})
 
-	// ---------- ---------- ---------- update operation ---------- ---------- ----------
-	$("#data_operation .update").click(function(){
-		// get select rows
-		var rows = mainDataTable.bootstrapTable('getSelections');
+	/**
+	 * init update
+	 */
+	$.adminTable.initUpdate( {
+		url: base_url + "/org/user/update",
+		writeFormData: function(row) {
+			$("#updateModal .form input[name='id']").val( row.id );
+			$("#updateModal .form input[name='username']").val( row.username );
+			$("#updateModal .form input[name='password']").val( '' );
+			$("#updateModal .form select[name='status']").val( row.status );
+			$("#updateModal .form input[name='realName']").val( row.realName );
 
-		// find select row
-		if (rows.length !== 1) {
-			layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
-			return;
-		}
-		var row = rows[0];
-
-		// base data
-		$("#updateModal .form input[name='id']").val( row.id );
-		$("#updateModal .form input[name='username']").val( row.username );
-		$("#updateModal .form input[name='password']").val( '' );
-		$("#updateModal .form select[name='status']").val( row.status );
-		$("#updateModal .form input[name='realName']").val( row.realName );
-
-		// set roleid
-		if (row.roleIds && row.roleIds.length > 0) {
-			row.roleIds.forEach(function (item){
-				$('#updateModal .form input[name="roleId"][value="'+ item +'"]').prop('checked', true).iCheck('update');
-			});
-		}
-
-		// show
-		$('#updateModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
-	var updateModalValidate = $("#updateModal .form").validate({
-		errorElement : 'span',
-		errorClass : 'help-block',
-		focusInvalid : true,
-		highlight : function(element) {
-			$(element).closest('.form-group').addClass('has-error');
-		},
-		success : function(label) {
-			label.closest('.form-group').removeClass('has-error');
-			label.remove();
-		},
-		errorPlacement : function(error, element) {
-			element.parent('div').append(error);
+			// set roleid
+			if (row.roleIds && row.roleIds.length > 0) {
+				row.roleIds.forEach(function (item){
+					$('#updateModal .form input[name="roleId"][value="'+ item +'"]').prop('checked', true).iCheck('update');
+				});
+			}
 		},
 		rules : {
 			realName : {
@@ -503,49 +351,22 @@ $(function() {
 				rangelength: I18n.system_lengh_limit + "[2-20]"
 			}
 		},
-		submitHandler : function(form) {
-
+		readFormData: function() {
 			// get roleids
 			var roleIds = $('#updateModal .form input[name="roleId"]:checked').map(function() {
 				return this.value;
 			}).get();
 
 			// request
-			var paramData = {
+			return {
 				"id": $("#updateModal .form input[name=id]").val(),
 				"username": $("#updateModal .form input[name=username]").val(),
 				"password": $("#updateModal .form input[name=password]").val(),
 				"status": $("#updateModal .form select[name=status]").val(),
 				"realName": $("#updateModal .form input[name=realName]").val(),
-				"roleIds":roleIds
+				"roleIds": roleIds
 			};
-
-			$.post(base_url + "/org/user/update", paramData, function(data, status) {
-				if (data.code == "200") {
-					$('#updateModal').modal('hide');
-					layer.msg( I18n.system_opt_edit + I18n.system_success );
-
-					// refresh table
-					$('#data_filter .searchBtn').click();
-				} else {
-					layer.open({
-						title: I18n.system_tips ,
-						btn: [ I18n.system_ok ],
-						content: (data.msg || I18n.system_opt_edit + I18n.system_fail ),
-						icon: '2'
-					});
-				}
-			});
 		}
-	});
-	$("#updateModal").on('hide.bs.modal', function () {
-		// reset
-		$('#updateModal .form input[name="roleId"]').prop('checked', false).iCheck('update');
-		$("#updateModal .form")[0].reset();
-		$("#updateModal .form .form-group").removeClass("has-error");
-
-		// reset
-		updateModalValidate.resetForm();
 	});
 
 	// ---------- ---------- ---------- iCheck ---------- ---------- ----------
