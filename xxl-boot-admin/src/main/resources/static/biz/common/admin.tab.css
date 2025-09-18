@@ -201,3 +201,16 @@ nav.page-tabs .page-tabs-content {
     border-top: solid 2px #d2d6de;
     padding: 8px 20px 12px 20px;
 }
+
+/* nprogress start */
+#nprogress .bar {
+    background: #FFFFFF !important;
+}
+#nprogress .peg {
+    box-shadow: 0 0 10px #FFFFFF, 0 0 5px #FFFFFF !important;
+}
+#nprogress .spinner-icon {
+    border-top-color: #FFFFFF !important;
+    border-left-color: #FFFFFF !important;
+}
+/* nprogress end */

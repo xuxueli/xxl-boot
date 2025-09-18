@@ -31,7 +31,6 @@
 <script src="${request.contextPath}/static/adminlte/dist/js/adminlte.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/bower_components/fastclick/fastclick.js"></script>
-<#--<script src="${request.contextPath}/static/plugins/jquery/jquery.cookie.js"></script>-->
 <script src="${request.contextPath}/static/plugins/jquery/jquery.validate.min.js"></script>
 <script src="${request.contextPath}/static/plugins/layer/layer.js"></script>
 <script src="${request.contextPath}/static/plugins/nprogress/nprogress.js"></script>
