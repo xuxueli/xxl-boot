@@ -176,6 +176,12 @@
 <@netCommon.commonScript />
 <script src="${request.contextPath}/static/biz/common/admin.tab.js"></script>
 <script src="${request.contextPath}/static/biz/common/admin.common.js"></script>
+<script>
+    /**
+     * init admin tab
+      */
+    $.adminTab.initTab();
+</script>
 <!-- 6-script end -->
 
 </body>
