@@ -10,7 +10,7 @@
     <!-- 1-style end -->
 
 </head>
-<body class="hold-transition skin-blue sidebar-mini" >
+<body class="hold-transition skin-blue sidebar-mini fixed" >
 <div class="wrapper" >
 
     <!-- 2-header start -->
@@ -136,15 +136,15 @@
             <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i></button>
             <!-- opt -->
             <div class="btn-group roll-nav roll-right">
-                <button class="dropdown" data-toggle="dropdown">页签操作<span class="caret"></span></button>
+                <button class="dropdown" data-toggle="dropdown">${I18n.tab_opt}<span class="caret"></span></button>
                 <ul role="menu" class="dropdown-menu dropdown-menu-right">
-                    <li class="tabCloseCurrent"><a>关闭当前</a></li>
-                    <li class="J_tabCloseOther"><a>关闭其他</a></li>
-                    <li class="J_tabCloseAll"><a>全部关闭</a></li>
+                    <li class="tabCloseCurrent"><a>${I18n.tab_close_current}</a></li>
+                    <li class="J_tabCloseOther"><a>${I18n.tab_close_other}</a></li>
+                    <li class="J_tabCloseAll"><a>${I18n.tab_close_all}</a></li>
                 </ul>
             </div>
             <!-- refresh -->
-            <a href="#" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
+            <a href="#" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> ${I18n.tab_refresh}</a>
             <!-- fullscreen -->
             <a href="#" class="roll-nav roll-right fullscreen" id="fullScreen"><i class="fa fa-arrows-alt"></i></a>
         </div>
@@ -177,9 +177,7 @@
 <script src="${request.contextPath}/static/biz/common/admin.tab.js"></script>
 <script src="${request.contextPath}/static/biz/common/admin.common.js"></script>
 <script>
-    /**
-     * init admin tab
-      */
+    // init admin tab
     $.adminTab.initTab();
 </script>
 <!-- 6-script end -->

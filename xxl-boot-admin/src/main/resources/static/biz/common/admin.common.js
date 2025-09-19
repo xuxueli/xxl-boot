@@ -1,9 +1,12 @@
 $(function(){
 
-    // ---------------------- body fixed ----------------------
-
-    // init body fixed
-    $('body').addClass('fixed');
+    /**
+     * 1、logout
+     * 2、updatePwd
+     * 3、slideToTop
+     * 4、change skin
+     * 5、menu, sidebar-toggle
+     */
 
     // ---------------------- logout ----------------------
 
@@ -48,6 +51,7 @@ $(function(){
             <div class="modal-dialog ">
                 <div class="modal-content">
                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                         <h4 class="modal-title" >` + I18n.change_pwd +`</h4>
                     </div>
                     <div class="modal-body">
@@ -209,6 +213,7 @@ $(function(){
             <div class="modal-dialog ">
                 <div class="modal-content">
                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                         <h4 class="modal-title" >` + I18n.change_skin +`</h4>
                     </div>
                     <div class="modal-body">
