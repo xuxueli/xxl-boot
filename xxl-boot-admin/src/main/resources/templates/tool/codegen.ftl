@@ -52,6 +52,7 @@ CREATE TABLE `user` (
 				<ul class="nav nav-tabs pull-right" >
 					<h4 class="pull-left" style="padding-left: 10px;">${I18n.codegen_result}</h4>
 
+					<li><a href="#page" data-toggle="tab">Page</a></li>
 					<li><a href="#entity" data-toggle="tab">Entity</a></li>
 					<li><a href="#mapper_xml" data-toggle="tab">Mapper(XML)</a></li>
 					<li><a href="#mapper" data-toggle="tab">Mapper</a></li>
@@ -89,6 +90,11 @@ CREATE TABLE `user` (
 					<div class="chart tab-pane active" id="entity" >
 						<div class="box-body ">
 							Entity：<textarea id="entity_ide" ></textarea>
+						</div>
+					</div>
+					<div class="chart tab-pane active" id="page" >
+						<div class="box-body ">
+							Page：<textarea id="page_ide" ></textarea>
 						</div>
 					</div>
 				</div>
@@ -139,6 +145,7 @@ $(function () {
 	var mapper_ide;
 	var mapper_xml_ide;
 	var entity_ide;
+	var page_ide;
 	function initCodeArea(){
 
 		// controller_ide
@@ -210,6 +217,16 @@ $(function () {
 			gutters:["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
 		});
 		entity_ide.setSize('auto','auto');
+
+		// page_ide
+		page_ide = CodeMirror.fromTextArea(document.getElementById("page_ide"), {
+			lineNumbers: true,
+			matchBrackets: true,
+			mode: "text/html",
+			lineWrapping:true,
+			readOnly:true
+		});
+		page_ide.setSize('auto','auto');
 	}
 	initCodeArea();
 
@@ -252,6 +269,9 @@ $(function () {
 					entity_ide.setValue(data.data.entity_code);
 					entity_ide.setSize('auto','auto');
 
+					page_ide.setValue(data.data.page_code);
+					page_ide.setSize('auto','auto');
+
 					// refresh
 					controller_ide.refresh();
 					service_ide.refresh();
@@ -259,6 +279,7 @@ $(function () {
 					mapper_ide.refresh();
 					mapper_xml_ide.refresh();
 					entity_ide.refresh();
+					page_ide.refresh();
 
 					// hide nav + panel
 					$('.nav-tabs > li').removeClass('active')

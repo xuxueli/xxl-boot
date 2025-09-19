@@ -64,6 +64,7 @@ public class CodeGenController {
             result.put("mapper_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/mapper.ftl", params));
             result.put("mapper_xml_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/mapper_xml.ftl", params));
             result.put("entity_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/entity.ftl", params));
+            result.put("page_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/page.ftl", params));
 
             // 计算,生成代码行数
             int lineNum = 0;
