@@ -304,7 +304,10 @@ UPDATE xxl_boot_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5
 ### 版本 v1.5.0 Release Notes[2025-09-20]
 - 1、【新增】UI框架Table组件封装，抽象基础操作提升复用；
 - 2、【升级】升级依赖版本，如 springboot、spring 等；
-- 3、【ING】代码生成：支持交互层代码生成，包括ui及js；层级目录支持；
+- 3、【新增】代码生成：支持交互层代码生成，包括页面ui及js代码生成；
+
+### 版本 v1.6.0 Release Notes[ING]
+- 1、【ING】代码生成，支持自定义代码层级目录；
 
 
 ### TODO LIST
