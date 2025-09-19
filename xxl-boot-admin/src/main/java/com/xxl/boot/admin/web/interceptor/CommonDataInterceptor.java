@@ -1,12 +1,8 @@
 package com.xxl.boot.admin.web.interceptor;
 
-import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.admin.service.ResourceService;
 import com.xxl.boot.admin.util.I18nUtil;
-import com.xxl.sso.core.helper.XxlSsoHelper;
-import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.freemarker.FtlTool;
-import com.xxl.tool.response.Response;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,7 +12,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * web mvc config
@@ -37,15 +32,6 @@ public class CommonDataInterceptor implements WebMvcConfigurer {
                 if (modelAndView != null) {
                     // i18n, static method
                     modelAndView.addObject("I18nUtil", FtlTool.generateStaticModel(I18nUtil.class.getName()));
-
-                    // resource load
-                    // xxl-sso, logincheck
-                    Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
-                    if (loginInfoResponse.isSuccess()) {
-                        // filter Authentication （by authorization）
-                        List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.valueOf(loginInfoResponse.getData().getUserId()));
-                        modelAndView.addObject("resourceList", resourceList);
-                    }
                 }
             }
         }).addPathPatterns("/**");

@@ -2,10 +2,15 @@ package com.xxl.boot.admin.controller;
 
 import com.xxl.boot.admin.constant.enums.MessageStatusEnum;
 import com.xxl.boot.admin.model.dto.XxlBootMessageDTO;
+import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.admin.service.MessageService;
+import com.xxl.boot.admin.service.ResourceService;
 import com.xxl.sso.core.annotation.XxlSso;
+import com.xxl.sso.core.helper.XxlSsoHelper;
+import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.response.PageModel;
+import com.xxl.tool.response.Response;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,11 +36,19 @@ public class IndexController {
 
 	@Resource
 	private MessageService messageService;
+	@Resource
+	private ResourceService resourceService;
 
 
 	@RequestMapping("/")
 	@XxlSso
 	public String index(HttpServletRequest request, Model model) {
+
+		// menu resource
+		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
+		List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(loginInfoResponse.getData().getUserId()));
+		model.addAttribute("resourceList", resourceList);
+
 		return "index";
 		/*return "redirect:/index";*/
 	}
