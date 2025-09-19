@@ -308,7 +308,8 @@ UPDATE xxl_boot_user t SET t.password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5
 
 ### 版本 v1.6.0 Release Notes[ING]
 - 1、【优化】调整资源加载逻辑，移除不必要的拦截器逻辑，提升页面加载效率。
-- 2、【ING】代码生成，支持自定义代码层级目录；
+- 2、【优化】重构国际化组件，优化模板静态工具加载方式。
+- 3、【ING】代码生成，支持自定义代码层级目录；
 
 
 ### TODO LIST
