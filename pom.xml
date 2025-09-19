@@ -40,8 +40,9 @@
         <!-- mybatis & db -->
         <mybatis-spring-boot-starter.version>3.0.5</mybatis-spring-boot-starter.version>
         <mysql-connector-j.version>9.4.0</mysql-connector-j.version>
+
         <!-- xxl-sso (+xxl-tool、gson) -->
-        <xxl-sso.version>2.0.0</xxl-sso.version>
+        <xxl-sso.version>2.1.0</xxl-sso.version>
     </properties>
 
     <licenses>
