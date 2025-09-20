@@ -109,6 +109,11 @@
             queryParams: queryParams,       // bootstrapTable -> queryParams
             sidePagination: "server",		// server side page
             responseHandler: function (result) {
+                // custome
+                if (options.responseHandler) {
+                    return options.responseHandler(result);
+                }
+                // default
                 return {
                     "total": result.data.totalCount,
                     "rows": result.data.pageData

@@ -86,6 +86,21 @@
             },
             openTab: function(options) {
                 return openTab(options.tabSrc, options.tabName);
+            },
+            openUrl: function(options) {
+                // check if in iframe
+                let isInIframe = true;
+                try {
+                    isInIframe = window.self !== window.top;
+                } catch (e) {}
+
+                // open url
+                if (isInIframe) {
+                    return openTab(options.tabSrc, options.tabName);
+                } else {
+                    window.open(options.tabSrc, '_blank');
+                    return true;
+                }
             }
         }
     });
