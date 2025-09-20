@@ -86,21 +86,6 @@
             },
             openTab: function(options) {
                 return openTab(options.tabSrc, options.tabName);
-            },
-            openUrl: function(options) {
-                // check if in iframe
-                let isInIframe = true;
-                try {
-                    isInIframe = window.self !== window.top;
-                } catch (e) {}
-
-                // open url
-                if (isInIframe) {
-                    return openTab(options.tabSrc, options.tabName);
-                } else {
-                    window.open(options.tabSrc, '_blank');
-                    return true;
-                }
             }
         }
     });
@@ -112,15 +97,25 @@
      */
     function openDefaultTab() {
         let tabSrc = window.location.hash.slice(1);
-        var $menuItem = $('.J_menuItem').filter('a[href$="' + decodeURI(tabSrc) + '"]');
-        if ($menuItem.length > 0) {
-            $menuItem.click();
-        } else {
-            var $firstMenuItem = $(".J_menuItem:first");
+        // 初始路径，默认第一个菜单
+        if (tabSrc === '' || tabSrc === undefined || tabSrc === null) {
+            let $firstMenuItem = $(".J_menuItem:first");
             if ($firstMenuItem.length > 0) {
                 $firstMenuItem.click();
             }
+            return;
         }
+
+        // 匹配到菜单，打开
+        var $menuItem = $('.J_menuItem').filter('a[href$="' + decodeURI(tabSrc) + '"]');
+        if ($menuItem.length > 0) {
+            $menuItem.click();
+            return;
+        }
+
+
+        // 兜底，直接打开
+        openTab(tabSrc, tabSrc);
     }
 
     // -------------------- tab：open、close --------------------
@@ -139,8 +134,8 @@
         }
         if (tabName === undefined || $.trim(tabName).length === 0){
             tabName = tabSrc;
-            tabName = tabName.length > 10 ? tabName.substring(0, 10) + '...' : tabName;
         }
+        let tabNameShow = tabName.length > 10 ? tabName.substring(0, 10) + '...' : tabName;
 
         // 1、菜单Menu联动 + 页面锚点（hash参数）更新
         activeMenuAndPath(tabSrc);
@@ -173,7 +168,7 @@
         // 3、Tab不存在，创新新Tab
         // build Tab (other tab no-active)
         $('.J_menuTab').removeClass('active');
-        var tabStr = '<a href="javascript:;" class="active J_menuTab" data-id="' + tabSrc + '">' + tabName + ' <i class="fa fa-times-circle"></i></a>';
+        var tabStr = '<a href="javascript:;" class="active J_menuTab" data-id="' + tabSrc + '" title="'+ tabName +'" >' + tabNameShow + ' <i class="fa fa-times-circle"></i></a>';
 
         // build IFrame (other ifame hide)
         var iframeStr = '<iframe class="J_iframe" width="100%" height="100%" src="' + tabSrc + '" frameborder="0" data-id="' + tabSrc + '" seamless></iframe>';
@@ -303,6 +298,11 @@
      * 菜单Menu联动 + 页面锚点（hash参数）更新
      */
     function activeMenuAndPath(tabSrc) {
+
+        // 页面锚点（hash参数）更新
+        window.location.hash = tabSrc;
+
+        // 菜单Menu切换/active
         $(".sidebar-menu ul li, .sidebar-menu li").removeClass("active");
         $('.J_menuItem').each(function () {
             if ($(this).attr('href') === tabSrc) {
@@ -310,8 +310,7 @@
                 // 菜单Menu切换/active
                 $(this).parents("li").addClass("active");
 
-                // 页面锚点（hash参数）更新
-                window.location.hash = tabSrc;
+
                 return true;
             }
         })
