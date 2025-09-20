@@ -99,7 +99,7 @@ $(function () {
 		},
 		submitHandler : function(form) {
 			$.post(base_url + "/auth/doLogin", $("#loginForm").serialize(), function(data, status) {
-				if (data.code == "200") {
+				if (data.code === 200) {
 					layer.msg( I18n.login_success );
 					setTimeout(function(){
 						window.location.href = base_url + "/";

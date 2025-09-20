@@ -37,10 +37,10 @@ public class LoginController {
 
 	@RequestMapping("/login")
 	@XxlSso(login = false)
-	public ModelAndView login(HttpServletRequest request, ModelAndView modelAndView) {
+	public ModelAndView login(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) {
 
 		// xxl-sso, logincheck
-		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
+		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
 
 		if (loginInfoResponse.isSuccess()) {
 			modelAndView.setView(new RedirectView("/",true,false));
