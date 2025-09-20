@@ -1,4 +1,4 @@
-package com.xxl.boot.admin.controller.login;
+package com.xxl.boot.admin.controller.base;
 
 import com.xxl.boot.admin.constant.enums.UserStatuEnum;
 import com.xxl.boot.admin.model.entity.XxlBootUser;
@@ -46,7 +46,7 @@ public class LoginController {
 			modelAndView.setView(new RedirectView("/",true,false));
 			return modelAndView;
 		}
-		return new ModelAndView("login");
+		return new ModelAndView("base/login");
 	}
 
 	@RequestMapping(value="/doLogin", method=RequestMethod.POST)

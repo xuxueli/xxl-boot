@@ -1,4 +1,4 @@
-package com.xxl.boot.admin.controller;
+package com.xxl.boot.admin.controller.base;
 
 import com.xxl.boot.admin.constant.enums.MessageStatusEnum;
 import com.xxl.boot.admin.model.dto.XxlBootMessageDTO;
@@ -49,7 +49,7 @@ public class IndexController {
 		List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(loginInfoResponse.getData().getUserId()));
 		model.addAttribute("resourceList", resourceList);
 
-		return "index";
+		return "base/index";
 		/*return "redirect:/index";*/
 	}
 
@@ -64,13 +64,13 @@ public class IndexController {
 			model.addAttribute("messageList", messageList);
 		}
 
-		return "other/dashboard";
+		return "base/dashboard";
 	}
 
 	@RequestMapping("/help")
 	@XxlSso
 	public String help() {
-		return "other/help";
+		return "base/help";
 	}
 
 	@RequestMapping(value = "/errorpage")
