@@ -63,7 +63,7 @@
         <section class="sidebar" style="height: auto;" >
             <!-- sidebar menu -->
             <ul class="sidebar-menu" data-widget="tree" >
-                <#--<li class="header">${I18n.system_nav}</li>-->
+                <li class="header">${I18n.system_nav}</li>
                 <#if resourceList?? && resourceList?size gt 0>
                     <@renderMenu resourceList />
                 </#if>
