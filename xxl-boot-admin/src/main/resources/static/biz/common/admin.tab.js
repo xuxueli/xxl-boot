@@ -482,15 +482,19 @@
         });
         NProgress.start();
 
-        // 获取当前激活的 Tab
+        // 1、获取当前激活的 Tab
         var tabSrc = $('.page-tabs-content').find('.active').attr('data-id');
         var target = $('.J_iframe[data-id="' + tabSrc + '"]');
         var url = target.attr('src');
 
-        // 重新加载页面
+        // 2、重新加载页面
         // target.attr('src', url).ready();
         target.attr('src', url).on('load', function () {
             NProgress.done();
+
+            // 3、菜单Menu联动 + 页面锚点（hash参数）更新
+            activeMenuAndPath($('.page-tabs-content').find('.active').attr('data-id'));
+
         }).on('error', function () {
             NProgress.done();
             // 处理加载失败情况，防止跳转
