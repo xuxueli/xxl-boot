@@ -63,7 +63,7 @@
         <section class="sidebar" style="height: auto;" >
             <!-- sidebar menu -->
             <ul class="sidebar-menu" data-widget="tree" >
-                <#--<li class="header">${I18n.system_nav}</li>-->
+                <li class="header">${I18n.system_nav}</li>
                 <#if resourceList?? && resourceList?size gt 0>
                     <@renderMenu resourceList />
                 </#if>
@@ -177,8 +177,10 @@
 <script src="${request.contextPath}/static/biz/common/admin.tab.js"></script>
 <script src="${request.contextPath}/static/biz/common/admin.common.js"></script>
 <script>
-    // init admin tab
-    $.adminTab.initTab();
+    $(function () {
+        // init admin tab
+        $.adminTab.initTab();
+    });
 </script>
 <!-- 6-script end -->
 

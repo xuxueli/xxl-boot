@@ -76,7 +76,15 @@
                  * 全屏显示
                  */
                 $('#fullScreen').on('click', function () {
+                    let currentHash = window.location.hash;
                     $(document).toggleFullScreen();
+
+                    // reset
+                    if (currentHash) {
+                        setTimeout(function (){
+                            window.location.hash = currentHash;
+                        },50)
+                    }
                 });
 
                 /**
@@ -84,7 +92,12 @@
                  */
                 openDefaultTab();
             },
-            openTab: function(options) {
+            openTab: function(options, isCloseCurrent) {
+                // 当前页面是否关闭
+                if (isCloseCurrent) {
+                    tabCloseCurrent();
+                }
+                // 打开Tab页面
                 return openTab(options.tabSrc, options.tabName);
             }
         }
@@ -135,7 +148,7 @@
         if (tabName === undefined || $.trim(tabName).length === 0){
             tabName = tabSrc;
         }
-        let tabNameShow = tabName.length > 10 ? tabName.substring(0, 10) + '...' : tabName;
+        let tabNameShow = tabName.length > 15 ? tabName.substring(0, 15) + '...' : tabName;
 
         // 1、菜单Menu联动 + 页面锚点（hash参数）更新
         activeMenuAndPath(tabSrc);
