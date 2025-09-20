@@ -87,4 +87,15 @@ public class LoginController {
 		return XxlSsoHelper.logoutWithCookie(request, response);
 	}
 
+	@RequestMapping("/updatePwd")
+	@ResponseBody
+	@XxlSso
+	public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String password){
+
+		// xxl-sso, logincheck
+		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
+
+		return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, password);
+	}
+
 }

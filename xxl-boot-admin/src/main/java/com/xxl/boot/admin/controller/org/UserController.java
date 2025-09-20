@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -89,17 +88,6 @@ public class UserController {
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
         return userService.deleteByIds(ids, Integer.valueOf(loginInfoResponse.getData().getUserId()));
-    }
-
-    @RequestMapping("/updatePwd")
-    @ResponseBody
-    @XxlSso
-    public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String password){
-
-        // xxl-sso, logincheck
-        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
-
-        return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, password);
     }
 
 }

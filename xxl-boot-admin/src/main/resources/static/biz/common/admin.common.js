@@ -120,7 +120,7 @@ $(function(){
             element.parent('div').append(error);
         },
         submitHandler : function(form) {
-            $.post(base_url + "/org/user/updatePwd",  $("#updatePwdModal .form").serialize(), function(data, status) {
+            $.post(base_url + "/auth/updatePwd",  $("#updatePwdModal .form").serialize(), function(data, status) {
                 if (data.code == 200) {
                     $('#updatePwdModal').modal('hide');
 
