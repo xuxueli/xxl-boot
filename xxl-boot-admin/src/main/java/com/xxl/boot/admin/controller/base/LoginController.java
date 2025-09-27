@@ -39,7 +39,7 @@ public class LoginController {
 	@XxlSso(login = false)
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) {
 
-		// xxl-sso, logincheck
+		// xxl-sso, logincheck (login-false, must check wiht cookie)
 		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
 
 		if (loginInfoResponse.isSuccess()) {
