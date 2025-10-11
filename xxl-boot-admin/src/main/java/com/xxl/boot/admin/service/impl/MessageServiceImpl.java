@@ -5,6 +5,7 @@ import com.xxl.boot.admin.model.adaptor.XxlBootMesssageAdaptor;
 import com.xxl.boot.admin.model.dto.XxlBootMessageDTO;
 import com.xxl.boot.admin.model.entity.XxlBootMessage;
 import com.xxl.boot.admin.service.MessageService;
+import com.xxl.tool.core.StringTool;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
@@ -34,6 +35,9 @@ public class MessageServiceImpl implements MessageService {
 		if (xxlBootMessage == null) {
 			return Response.ofFail("必要参数缺失");
         }
+		if (StringTool.isBlank(xxlBootMessage.getContent())){
+			return Response.ofFail("请输入通知正文");
+		}
 		xxlBootMessage.setSender(optUserName);
 
 		messageMapper.insert(xxlBootMessage);

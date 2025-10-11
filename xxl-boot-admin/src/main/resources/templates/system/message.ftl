@@ -297,18 +297,15 @@ $(function() {
                 rangelength: I18n.system_lengh_limit + "[4-20]"
             }
         },
+        writeFormData: function(row) {
+            // add_content
+            const updateEditorInstance = CKEDITOR.instances.add_content;
+            updateEditorInstance.setData('');
+        },
         readFormData: function() {
             // add_content
             const addEditorInstance = CKEDITOR.instances.add_content;
             const contentWithHTML = addEditorInstance.getData();
-            if (!contentWithHTML) {
-                layer.open({title: I18n.system_tips ,
-                    btn: [ I18n.system_ok ],
-                    content: "请输入通知正文",
-                    icon: '2'
-                });
-                return;
-            }
 
             // request
             return {
