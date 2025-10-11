@@ -155,8 +155,8 @@ $(function() {
             obj.type = $('#data_filter .type').val();
             obj.module = $('#data_filter .module').val();
             obj.title = $('#data_filter .title').val();
-            obj.start = params.offset;
-            obj.length = params.limit;
+            obj.offset = params.offset;
+            obj.pagesize = params.limit;
             return obj;
         },
         columns: [

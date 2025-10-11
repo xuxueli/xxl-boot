@@ -50,12 +50,12 @@ public class UserController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso(permission = "org:user")
-    public Response<PageModel<XxlBootUserDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int start,
-                                                        @RequestParam(required = false, defaultValue = "10") int length,
+    public Response<PageModel<XxlBootUserDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+                                                        @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                         String username,
                                                         @RequestParam(required = false, defaultValue = "-1") int status) {
 
-        PageModel<XxlBootUserDTO> pageModel = userService.pageList(start, length, username, status);
+        PageModel<XxlBootUserDTO> pageModel = userService.pageList(offset, pagesize, username, status);
         return Response.ofSuccess(pageModel);
     }
 

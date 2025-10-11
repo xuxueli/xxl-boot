@@ -49,11 +49,12 @@ public class LogController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<XxlBootLogDTO>> pageList(@RequestParam(required = false, defaultValue = "-1") int type,
-                                                    String module,
-                                                    String title,
-                                                    @RequestParam(required = false, defaultValue = "0") int offset,
-                                                    @RequestParam(required = false, defaultValue = "10") int pagesize) {
+    public Response<PageModel<XxlBootLogDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+                                                       @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                       @RequestParam(required = false, defaultValue = "-1") int type,
+                                                       String module,
+                                                       String title
+                                                       ) {
         PageModel<XxlBootLogDTO> pageModel = xxlBootLogService.pageList(type, module, title, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }

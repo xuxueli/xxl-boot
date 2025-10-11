@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xuxueli</groupId>
     <artifactId>xxl-boot</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0</version>
     <packaging>pom</packaging>
 
     <name>xxl-boot</name>
@@ -26,14 +26,14 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.test.skip>true</maven.test.skip>
         <!-- plugin -->
-        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.9.0</central-publishing-maven-plugin.version>
         <!-- base -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <junit-jupiter.version>5.13.4</junit-jupiter.version>
+        <junit-jupiter.version>5.14.0</junit-jupiter.version>
 
         <!-- spring -->
         <spring-boot.version>3.5.6</spring-boot.version>
@@ -42,7 +42,7 @@
         <mysql-connector-j.version>9.4.0</mysql-connector-j.version>
 
         <!-- xxl-sso (+xxl-tool、gson) -->
-        <xxl-sso.version>2.1.0</xxl-sso.version>
+        <xxl-sso.version>2.1.1</xxl-sso.version>
     </properties>
 
     <licenses>

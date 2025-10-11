@@ -51,10 +51,11 @@ public class MessageController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<XxlBootMessageDTO>> pageList(int status, String title,
-                                                           @RequestParam(required = false, defaultValue = "0") int start,
-                                                           @RequestParam(required = false, defaultValue = "10") int length) {
-        PageModel<XxlBootMessageDTO> pageModel = messageService.pageList(status, title, start, length);
+    public Response<PageModel<XxlBootMessageDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+                                                           @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                           int status,
+                                                           String title) {
+        PageModel<XxlBootMessageDTO> pageModel = messageService.pageList(status, title, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 

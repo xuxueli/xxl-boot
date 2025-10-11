@@ -158,8 +158,8 @@
             queryParams: function (params) {
                 var obj = {};
                 obj.param = $('#data_filter .param').val();
-                obj.start = params.offset;
-                obj.length = params.limit;
+                obj.offset = params.offset;
+                obj.pagesize = params.limit;
                 return obj;
             },
             columns: [
