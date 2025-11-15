@@ -41,7 +41,7 @@ public class UserController {
 
         PageModel<XxlBootRole> pageModel = roleService.pageList(0, 999, null);
 
-        model.addAttribute("roleList", pageModel.getPageData());
+        model.addAttribute("roleList", pageModel.getData());
         model.addAttribute("userStatuEnum", UserStatuEnum.values());
 
         return "org/user";

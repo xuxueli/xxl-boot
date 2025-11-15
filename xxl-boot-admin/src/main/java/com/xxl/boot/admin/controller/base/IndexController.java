@@ -11,6 +11,9 @@ import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +22,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -59,8 +59,8 @@ public class IndexController {
 
         // message
 		PageModel<XxlBootMessageDTO>  pageModel = messageService.pageList(MessageStatusEnum.NORMAL.getValue(), null, 0, 10);
-		if (pageModel!=null && CollectionTool.isNotEmpty(pageModel.getPageData())) {
-			List<XxlBootMessageDTO> messageList = pageModel.getPageData();
+		if (pageModel!=null && CollectionTool.isNotEmpty(pageModel.getData())) {
+			List<XxlBootMessageDTO> messageList = pageModel.getData();
 			model.addAttribute("messageList", messageList);
 		}
 

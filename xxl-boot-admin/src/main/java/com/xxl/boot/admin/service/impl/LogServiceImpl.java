@@ -5,13 +5,12 @@ import com.xxl.boot.admin.model.adaptor.XxlBootLogAdaptor;
 import com.xxl.boot.admin.model.dto.XxlBootLogDTO;
 import com.xxl.boot.admin.model.entity.XxlBootLog;
 import com.xxl.boot.admin.service.LogService;
+import com.xxl.tool.response.PageModel;
+import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Resource;
 import java.util.List;
-
-import com.xxl.tool.response.Response;
-import com.xxl.tool.response.PageModel;
 
 /**
 * XxlBootLog Service Impl
@@ -79,8 +78,8 @@ public class LogServiceImpl implements LogService {
 
 		// result
 		PageModel<XxlBootLogDTO> pageModel = new PageModel<>();
-		pageModel.setPageData(pageListDTO);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageListDTO);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

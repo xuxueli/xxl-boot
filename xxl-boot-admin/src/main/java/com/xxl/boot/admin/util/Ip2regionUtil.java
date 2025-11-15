@@ -2,14 +2,14 @@ package com.xxl.boot.admin.util;
 
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.io.IOTool;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import org.lionsoul.ip2region.xdb.Searcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -30,7 +30,7 @@ public class Ip2regionUtil {
     private static void initIp2regionSearcher() {
         try {
             InputStream inputStream = new ClassPathResource("/other/ip2region/ip2region.xdb").getInputStream();
-            byte[] dbBinStr = IOTool.copyToByteArray(inputStream);
+            byte[] dbBinStr = IOTool.readBytes(inputStream);
 
             // new with buffer
             searcher = Searcher.newWithBuffer(dbBinStr);

@@ -72,8 +72,8 @@ public class ${classInfo.className}ServiceImpl implements ${classInfo.className}
 
 		// result
 		PageModel<${classInfo.className}> pageModel = new PageModel<${classInfo.className}>();
-		pageModel.setPageData(pageList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

@@ -15,10 +15,13 @@ import com.xxl.tool.core.StringTool;
 import com.xxl.tool.encrypt.SHA256Tool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -270,9 +273,9 @@ public class UserServiceImpl implements UserService {
         }
 
         // result
-        PageModel<XxlBootUserDTO> pageModel = new PageModel<XxlBootUserDTO>();
-        pageModel.setPageData(pageListDto);
-        pageModel.setTotalCount(totalCount);
+        PageModel<XxlBootUserDTO> pageModel = new PageModel<>();
+        pageModel.setData(pageListDto);
+        pageModel.setTotal(totalCount);
 
         return pageModel;
     }

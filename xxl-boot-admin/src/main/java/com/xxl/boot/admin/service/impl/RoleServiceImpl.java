@@ -12,9 +12,7 @@ import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -92,14 +90,9 @@ public class RoleServiceImpl implements RoleService {
 		int totalCount = roleMapper.pageListCount(offset, pagesize, name);
 
 		// result
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("pageList", pageList);
-		result.put("totalCount", totalCount);
-
-		// result
-		PageModel<XxlBootRole> pageModel = new PageModel<XxlBootRole>();
-		pageModel.setPageData(pageList);
-		pageModel.setTotalCount(totalCount);
+		PageModel<XxlBootRole> pageModel = new PageModel<>();
+		pageModel.setData(pageList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

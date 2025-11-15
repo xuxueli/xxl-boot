@@ -85,8 +85,8 @@ public class OrgServiceImpl implements OrgService {
 
 		// result
 		PageModel<XxlBootOrg> pageModel = new PageModel<XxlBootOrg>();
-		pageModel.setPageData(pageList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

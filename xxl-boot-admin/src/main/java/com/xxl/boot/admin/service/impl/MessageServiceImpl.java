@@ -6,13 +6,12 @@ import com.xxl.boot.admin.model.dto.XxlBootMessageDTO;
 import com.xxl.boot.admin.model.entity.XxlBootMessage;
 import com.xxl.boot.admin.service.MessageService;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.response.PageModel;
+import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Resource;
 import java.util.List;
-
-import com.xxl.tool.response.Response;
-import com.xxl.tool.response.PageModel;
 
 /**
 * XxlBootMessage Service Impl
@@ -85,8 +84,8 @@ public class MessageServiceImpl implements MessageService {
 
 		// result
 		PageModel<XxlBootMessageDTO> pageModel = new PageModel<XxlBootMessageDTO>();
-		pageModel.setPageData(dtoList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(dtoList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}

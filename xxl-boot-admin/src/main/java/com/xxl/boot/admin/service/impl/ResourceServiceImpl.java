@@ -7,13 +7,15 @@ import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.admin.model.entity.XxlBootResource;
 import com.xxl.boot.admin.service.ResourceService;
 import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.response.PageModel;
+import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Resource;
-import java.util.*;
-
-import com.xxl.tool.response.Response;
-import com.xxl.tool.response.PageModel;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
 * XxlBootResource Service Impl
@@ -96,8 +98,8 @@ public class ResourceServiceImpl implements ResourceService {
 
 		// result
 		PageModel<XxlBootResource> pageModel = new PageModel<XxlBootResource>();
-		pageModel.setPageData(pageList);
-		pageModel.setTotalCount(totalCount);
+		pageModel.setData(pageList);
+		pageModel.setTotal(totalCount);
 
 		return pageModel;
 	}
