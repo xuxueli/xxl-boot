@@ -316,7 +316,8 @@ docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAdd
 
 ### 版本 v1.7.0 Release Notes[ING]
 - 1、【升级】升级依赖版本，如 springboot、spring、mybatis、xxl-sso 等；
-- 2、【ING】代码生成，支持自定义代码层级目录；
+- 2、【优化】增加主题皮肤选项并优化界面交互；
+- 3、【ING】代码生成，支持自定义代码层级目录；
 
 ### TODO LIST
 - 1、【ING】代码生成，支持自定义代码层级目录；
