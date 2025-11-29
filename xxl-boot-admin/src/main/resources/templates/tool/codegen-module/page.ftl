@@ -239,7 +239,7 @@
                 return {
                     <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
                     <#list classInfo.fieldList as fieldItem >
-                    "${fieldItem.fieldName}": $("#addModal .form input[name=${fieldItem.fieldName}]").val()<#if fieldItem?has_next>,</#if>
+                    "${fieldItem.fieldName}": $("#updateModal .form input[name=${fieldItem.fieldName}]").val()<#if fieldItem?has_next>,</#if>
                     </#list>
                     </#if>
                 };
