@@ -35,7 +35,7 @@
         <slf4j-api.version>2.0.17</slf4j-api.version>
 
         <!-- spring -->
-        <spring-boot.version>3.5.7</spring-boot.version>
+        <spring-boot.version>3.5.8</spring-boot.version>
         <!-- mybatis & db -->
         <mybatis-spring-boot-starter.version>3.0.5</mybatis-spring-boot-starter.version>
         <mysql-connector-j.version>9.5.0</mysql-connector-j.version>
