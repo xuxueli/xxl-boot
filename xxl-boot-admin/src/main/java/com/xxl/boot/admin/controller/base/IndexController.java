@@ -40,6 +40,8 @@ public class IndexController {
 	private ResourceService resourceService;
 
 
+    // ---------------------- index ----------------------
+
 	@RequestMapping("/")
 	@XxlSso
 	public String index(HttpServletRequest request, Model model) {
@@ -52,6 +54,9 @@ public class IndexController {
 		return "base/index";
 		/*return "redirect:/index";*/
 	}
+
+
+    // ---------------------- dashboard ----------------------
 
 	@RequestMapping("/dashboard")
 	@XxlSso
@@ -66,6 +71,9 @@ public class IndexController {
 
 		return "base/dashboard";
 	}
+
+
+    // ---------------------- help ----------------------
 
 	@RequestMapping("/help")
 	@XxlSso
