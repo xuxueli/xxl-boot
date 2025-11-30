@@ -115,18 +115,18 @@ INSERT INTO `xxl_boot_user_role` (`id`, `user_id`, `role_id`, `add_time`, `updat
 VALUES (1, 1, 1, now(), now()),
        (2, 2, 2, now(), now());
 INSERT INTO `xxl_boot_resource` (`id`, `parent_id`, `name`, `type`, `permission`, `url`, `icon`, `order`, `status`, `add_time`, `update_time`)
-VALUES (1, 0,'首页', 1, 'dashboard', '/dashboard', 'fa fa-home', 200, 0, now(), now()),
-        (2, 0,'组织管理', 0, 'org', '/org', 'fa-users', 210, 0, now(), now()),
-        (3, 2,'用户管理', 1, 'org:user', '/org/user', "", 211, 0, now(), now()),
-        (4, 2,'角色管理', 1, 'org:role', '/org/role', "", 212, 0, now(), now()),
-        (5, 2, '资源管理', 1, 'org:resource', '/org/resource', "", 213, 0, now(), now()),
-        (6, 2,'组织管理', 1, 'org:org', '/org/org', "", 214, 0, now(), now()),
-        (7, 0,'系统管理', 0, 'system', '/system', 'fa-cogs', 220, 0, now(), now()),
-        (8, 7,'通知管理', 1, 'system:message', '/system/message', 'fa-cogs', 221, 0, now(), now()),
-        (9, 7,'审计日志', 1, 'system:log', '/system/log', 'fa-cogs', 222, 0, now(), now()),
-        (10, 0,'系统工具', 0, 'tool', '/tool', 'fa-wrench', 230, 0, now(), now()),
-        (11, 10,'代码生成', 1, 'tool:codegen', '/tool/codegen', "", 231, 0, now(), now()),
-        (12, 0,'帮助中心', 1, 'help', '/help', 'fa-book', 240, 0, now(), now());
+VALUES (1, 0,'首页', 1, 'dashboard', '/dashboard', 'fa fa-home', 100, 0, now(), now()),
+        (2, 0,'组织管理', 0, 'org', '/org', 'fa-users', 900, 0, now(), now()),
+        (3, 2,'用户管理', 1, 'org:user', '/org/user', "", 901, 0, now(), now()),
+        (4, 2,'角色管理', 1, 'org:role', '/org/role', "", 902, 0, now(), now()),
+        (5, 2, '资源管理', 1, 'org:resource', '/org/resource', "", 903, 0, now(), now()),
+        (6, 2,'组织管理', 1, 'org:org', '/org/org', "", 904, 0, now(), now()),
+        (7, 0,'系统管理', 0, 'system', '/system', 'fa-cogs', 910, 0, now(), now()),
+        (8, 7,'通知管理', 1, 'system:message', '/system/message', 'fa-cogs', 911, 0, now(), now()),
+        (9, 7,'审计日志', 1, 'system:log', '/system/log', 'fa-cogs', 912, 0, now(), now()),
+        (10, 0,'系统工具', 0, 'tool', '/tool', 'fa-wrench', 920, 0, now(), now()),
+        (11, 10,'代码生成', 1, 'tool:codegen', '/tool/codegen', "", 921, 0, now(), now()),
+        (12, 0,'帮助中心', 1, 'help', '/help', 'fa-book', 930, 0, now(), now());
 INSERT INTO `xxl_boot_role_res` (`id`, `role_id`, `res_id`, `add_time`, `update_time`)
 VALUES (1, 1, 1, now(), now()),
        (2, 1, 2, now(), now()),

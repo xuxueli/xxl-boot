@@ -85,6 +85,13 @@
 			<version>2.7.0</version>
 		</dependency>
 
+        <!-- plugin -->
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-boot-plugin</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
 	</dependencies>
 
 	<build>

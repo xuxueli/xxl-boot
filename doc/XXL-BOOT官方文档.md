@@ -327,6 +327,7 @@ xuxueli/xxl-boot-admin:{指定版本}
 ### 版本 v1.7.0 Release Notes[ING]
 - 1、【升级】升级依赖版本，如 springboot、spring、mybatis、xxl-sso 等；
 - 2、【优化】增加主题皮肤选项并优化界面交互；
+- 3、【ING】插件化升级：支持扩展并隔离业务模块，并原生提供AI等开箱即用能力；
 - 3、【ING】代码生成，支持自定义代码层级目录；
 
 ### TODO LIST
