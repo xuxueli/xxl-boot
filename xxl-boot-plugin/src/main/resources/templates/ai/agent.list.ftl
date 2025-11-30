@@ -170,7 +170,7 @@
          */
         $.adminTable.initTable({
             table: '#data_list',
-            url: base_url + "/ai/agentpageList",
+            url: base_url + "/ai/agent/pageList",
             queryParams: function (params) {
                 var obj = {};
                 obj.param = $('#data_filter .param').val();
@@ -240,7 +240,7 @@
          * init delete
          */
         $.adminTable.initDelete({
-            url: base_url + "/ai/agentdelete"
+            url: base_url + "/ai/agent/delete"
         });
 
 
@@ -249,7 +249,7 @@
          */
         // init add editor
         $.adminTable.initAdd( {
-            url: base_url + "/ai/agentinsert",
+            url: base_url + "/ai/agent/insert",
             rules : {
             },
             messages : {
@@ -270,7 +270,7 @@
          * init update
          */
         $.adminTable.initUpdate( {
-            url: base_url + "/ai/agentupdate",
+            url: base_url + "/ai/agent/update",
             writeFormData: function(row) {
                 // base data
 
