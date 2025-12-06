@@ -62,31 +62,27 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" >新增记录</h4>
+                        <h4 class="modal-title" >新增</h4>
                     </div>
                     <div class="modal-body">
                         <form class="form-horizontal form" role="form" >
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">账号<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="username" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">ChatBot<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">密码<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="password" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="cueWord" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">登录token<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="userToken" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">状态：0-正常、1-禁用<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="status" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">真实姓名<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="realName" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">Ollama URL<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
                             </div>
 
                             <br>
@@ -108,31 +104,27 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" >更新记录</h4>
+                        <h4 class="modal-title" >更新</h4>
                     </div>
                     <div class="modal-body">
                         <form class="form-horizontal form" role="form" >
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">账号<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="username" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">ChatBot<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">密码<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="password" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="cueWord" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">登录token<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="userToken" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">状态：0-正常、1-禁用<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="status" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">真实姓名<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="realName" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">Ollama URL<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
                             </div>
 
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -218,7 +210,11 @@
                     title: '新增时间',
                     field: 'addTime',
                     width: '15',
-                    widthUnit: '%'
+                    widthUnit: '%',
+                    formatter: function(value, row, index) {
+                        // JS 语法，时间格式化
+
+                    }
                 }
                 ,{
                     title: '更新时间',
@@ -244,17 +240,49 @@
         $.adminTable.initAdd( {
             url: base_url + "/ai/chatbot/insert",
             rules : {
+                name: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 20
+                },
+                cueWord: {
+                    required: false,
+                    maxlength: 100
+                },
+                model: {
+                    required: true,
+                    maxlength: 100
+                },
+                ollamaUrl: {
+                    required: true,
+                    maxlength: 200
+                }
             },
             messages : {
+                name: {
+                    required: "请输入",
+                    minlength: "长度不能少于2",
+                    maxlength: "长度不能超过20"
+                },
+                cueWord: {
+                    maxlength: "长度不能超过100"
+                },
+                model: {
+                    required: "请输入",
+                    maxlength: "长度不能超过200"
+                },
+                ollamaUrl: {
+                    required: "请输入",
+                    maxlength: "长度不能超过200"
+                }
             },
             readFormData: function() {
                 // request
                 return {
-                    "username": $("#addModal .form input[name=username]").val(),
-                    "password": $("#addModal .form input[name=password]").val(),
-                    "userToken": $("#addModal .form input[name=userToken]").val(),
-                    "status": $("#addModal .form input[name=status]").val(),
-                    "realName": $("#addModal .form input[name=realName]").val(),
+                    "name": $("#addModal .form input[name=name]").val(),
+                    "cueWord": $("#addModal .form input[name=cueWord]").val(),
+                    "model": $("#addModal .form input[name=model]").val(),
+                    "ollamaUrl": $("#addModal .form input[name=ollamaUrl]").val(),
                 };
             }
         });
@@ -268,27 +296,56 @@
                 // base data
 
                 $("#updateModal .form input[name='id']").val( row.id );
-                $("#updateModal .form input[name='username']").val( row.username );
-                $("#updateModal .form input[name='password']").val( row.password );
-                $("#updateModal .form input[name='userToken']").val( row.userToken );
-                $("#updateModal .form input[name='status']").val( row.status );
-                $("#updateModal .form input[name='realName']").val( row.realName );
+                $("#updateModal .form input[name='name']").val( row.name );
+                $("#updateModal .form input[name='cueWord']").val( row.cueWord );
+                $("#updateModal .form input[name='model']").val( row.model );
+                $("#updateModal .form input[name='ollamaUrl']").val( row.ollamaUrl );
             },
             rules : {
+                name: {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 20
+                },
+                cueWord: {
+                    required: false,
+                    maxlength: 100
+                },
+                model: {
+                    required: true,
+                    maxlength: 100
+                },
+                ollamaUrl: {
+                    required: true,
+                    maxlength: 200
+                }
             },
             messages : {
+                name: {
+                    required: "请输入",
+                    minlength: "长度不能少于2",
+                    maxlength: "长度不能超过20"
+                },
+                cueWord: {
+                    maxlength: "长度不能超过100"
+                },
+                model: {
+                    required: "请输入",
+                    maxlength: "长度不能超过200"
+                },
+                ollamaUrl: {
+                    required: "请输入",
+                    maxlength: "长度不能超过200"
+                }
             },
             readFormData: function() {
                 // request
                 return {
                     "id": $("#updateModal .form input[name=id]").val(),
-                    "username": $("#updateModal .form input[name=username]").val(),
-                    "password": $("#updateModal .form input[name=password]").val(),
-                    "userToken": $("#updateModal .form input[name=userToken]").val(),
-                    "status": $("#updateModal .form input[name=status]").val(),
-                    "realName": $("#updateModal .form input[name=realName]").val(),
-                    "addTime": $("#updateModal .form input[name=addTime]").val(),
-                    "updateTime": $("#updateModal .form input[name=updateTime]").val()
+                    "name": $("#updateModal .form input[name=name]").val(),
+                    "cueWord": $("#updateModal .form input[name=cueWord]").val(),
+                    "model": $("#updateModal .form input[name=model]").val(),
+                    "ollamaUrl": $("#updateModal .form input[name=ollamaUrl]").val(),
                 };
             }
         });

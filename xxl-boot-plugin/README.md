@@ -11,5 +11,7 @@
 ### 1、AI模块
 
 - AI助手（ai/chatbot）：对话；图片分析；
-- AI生图（ai/image）：文生图、图生图；
-- Workflow（ai/workflow）：工作流管理、执行；
+- Workflow（ai/workflow）：工作流管理，支持模型能力编排；执行历史记录；
+- AI生图（ai/image）：文生图、图生图；生图流程设计，集成本地模型；
+- AI视频（ai/video）：视频流程设计，集成本地Vision模型；
+- 知识库：知识库管理，向量数据库集成；

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.admin.plugin.ai.mapper.ChatBotMapper">
+
+    <resultMap id="ChatBot" type="com.xxl.boot.admin.plugin.ai.model.ChatBot" >
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="cue_word" property="cueWord" />
+        <result column="model" property="model" />
+        <result column="ollama_url" property="ollamaUrl" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`name`,
+        t.`cue_word`,
+        t.`model`,
+        t.`ollama_url`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_ai_chat_bot (
+            `name`,
+            `cue_word`,
+            `model`,
+            `ollama_url`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+              #{chatBot.name} ,
+              #{chatBot.cueWord} ,
+              #{chatBot.model} ,
+              #{chatBot.ollamaUrl} ,
+              NOW() ,
+              NOW()
+          )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_ai_chat_bot
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_ai_chat_bot
+        SET
+            `name` = #{chatBot.name},
+            `cue_word` = #{chatBot.cueWord},
+            `model` = #{chatBot.model},
+            `ollama_url` = #{chatBot.ollamaUrl},
+            `update_time` = NOW()
+        WHERE `id` = #{chatBot.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="ChatBot">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_chat_bot AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="ChatBot">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_chat_bot AS t
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_ai_chat_bot AS t
+    </select>
+
+</mapper>
