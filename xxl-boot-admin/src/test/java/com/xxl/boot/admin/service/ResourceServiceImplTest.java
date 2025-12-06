@@ -10,9 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import jakarta.annotation.Resource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ResourceServiceImplTest extends AbstractSpringMvcTest {
     private ResourceService resourceService;
 
     //@SpyBean
-    @MockBean
+    @MockitoBean
     private ResourceMapper resourceMapper;
 
     @Test

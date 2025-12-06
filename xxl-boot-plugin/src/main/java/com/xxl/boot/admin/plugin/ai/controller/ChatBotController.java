@@ -1,7 +1,7 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
-import com.xxl.boot.admin.plugin.ai.model.Agent;
-import com.xxl.boot.admin.plugin.ai.service.AgentService;
+import com.xxl.boot.admin.plugin.ai.model.ChatBot;
+import com.xxl.boot.admin.plugin.ai.service.ChatBotService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +21,11 @@ import com.xxl.sso.core.annotation.XxlSso;
 * Created by xuxueli on '2025-11-30 20:41:37'.
 */
 @Controller
-@RequestMapping("/ai/agent")
-public class AgentrController {
+@RequestMapping("/ai/chatbot")
+public class ChatBotController {
 
     @Resource
-    private AgentService userService;
+    private ChatBotService userService;
 
     /**
     * 页面
@@ -33,7 +33,7 @@ public class AgentrController {
     @RequestMapping
     @XxlSso
     public String index(Model model) {
-        return "ai/agent.list";
+        return "ai/chatbot.list";
     }
 
     /**
@@ -42,9 +42,9 @@ public class AgentrController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<Agent>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                               @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<Agent> pageModel = userService.pageList(offset, pagesize);
+    public Response<PageModel<ChatBot>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+                                                 @RequestParam(required = false, defaultValue = "10") int pagesize) {
+        PageModel<ChatBot> pageModel = userService.pageList(offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
@@ -54,7 +54,7 @@ public class AgentrController {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso
-    public Response<Agent> load(int id){
+    public Response<ChatBot> load(int id){
         return userService.load(id);
     }
 
@@ -64,7 +64,7 @@ public class AgentrController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(Agent user){
+    public Response<String> insert(ChatBot user){
         return userService.insert(user);
     }
 
@@ -84,7 +84,7 @@ public class AgentrController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(Agent user){
+    public Response<String> update(ChatBot user){
         return userService.update(user);
     }
 

@@ -170,7 +170,7 @@
          */
         $.adminTable.initTable({
             table: '#data_list',
-            url: base_url + "/ai/agent/pageList",
+            url: base_url + "/ai/chatbot/pageList",
             queryParams: function (params) {
                 var obj = {};
                 obj.param = $('#data_filter .param').val();
@@ -186,45 +186,38 @@
                     widthUnit: '%'
                 }
                 ,{
-                    title: '用户ID',
+                    title: 'ID',
                     field: 'id',
                     width: '20',
                     widthUnit: '%'
                 }
                 ,{
-                    title: '账号',
+                    title: 'ChatBot名称',
                     field: 'username',
                     width: '20',
                     widthUnit: '%'
                 }
                 ,{
-                    title: '密码',
-                    field: 'password',
+                    title: '提示词',
+                    field: 'cueWord',
                     width: '20',
-                    widthUnit: '%'
+                    widthUnit: '%',
+                    formatter: function(value, row, index) {
+                        return value.length > 10
+                            ? (value = value.substring(0, 10) + "...")
+                            : value ;
+                    }
                 }
                 ,{
-                    title: '登录token',
-                    field: 'userToken',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: '状态：0-正常、1-禁用',
-                    field: 'status',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: '真实姓名',
-                    field: 'realName',
-                    width: '20',
+                    title: '模型',
+                    field: 'model',
+                    width: '15',
                     widthUnit: '%'
                 }
                 ,{
                     title: '新增时间',
                     field: 'addTime',
-                    width: '20',
+                    width: '15',
                     widthUnit: '%'
                 }
                 ,{
@@ -240,7 +233,7 @@
          * init delete
          */
         $.adminTable.initDelete({
-            url: base_url + "/ai/agent/delete"
+            url: base_url + "/ai/chatbot/delete"
         });
 
 
@@ -249,7 +242,7 @@
          */
         // init add editor
         $.adminTable.initAdd( {
-            url: base_url + "/ai/agent/insert",
+            url: base_url + "/ai/chatbot/insert",
             rules : {
             },
             messages : {
@@ -270,7 +263,7 @@
          * init update
          */
         $.adminTable.initUpdate( {
-            url: base_url + "/ai/agent/update",
+            url: base_url + "/ai/chatbot/update",
             writeFormData: function(row) {
                 // base data
 

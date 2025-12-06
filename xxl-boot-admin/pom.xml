@@ -47,10 +47,10 @@
 			<artifactId>spring-boot-starter-freemarker</artifactId>
 		</dependency>
 
-		<!-- aop -->
+		<!-- aspectj: aop -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
 		</dependency>
 		<!-- actuator -->
 		<dependency>

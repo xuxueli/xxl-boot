@@ -1,12 +1,14 @@
 package com.xxl.boot.admin.web.error;
 
-import org.springframework.boot.web.server.ErrorPage;
-import org.springframework.boot.web.server.ErrorPageRegistrar;
-import org.springframework.boot.web.server.ErrorPageRegistry;
+import org.springframework.boot.web.error.ErrorPage;
+import org.springframework.boot.web.error.ErrorPageRegistrar;
+import org.springframework.boot.web.error.ErrorPageRegistry;
 import org.springframework.stereotype.Component;
 
 /**
  * error page
+ *
+ * @author xuxueli 2016-1-6 19:22:18
  */
 @Component
 public class WebErrorPageRegistrar implements ErrorPageRegistrar {
