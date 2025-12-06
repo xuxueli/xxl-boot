@@ -3,6 +3,7 @@ package com.xxl.boot.admin.plugin.ai.service.impl;
 import com.xxl.boot.admin.plugin.ai.mapper.ChatBotMapper;
 import com.xxl.boot.admin.plugin.ai.model.ChatBot;
 import com.xxl.boot.admin.plugin.ai.service.ChatBotService;
+import com.xxl.tool.core.StringTool;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
@@ -31,7 +32,20 @@ public class ChatBotServiceImpl implements ChatBotService {
         if (chatBot == null) {
             return Response.ofFail("必要参数缺失");
         }
+        if (StringTool.isBlank(chatBot.getName())) {
+            return Response.ofFail("名称不能为空");
+        }
+        if (!(chatBot.getName().length()>=2 && chatBot.getName().length()<=20)) {
+            return Response.ofFail("名称长度限制2-20");
+        }
+        if (StringTool.isBlank(chatBot.getModel())) {
+            return Response.ofFail("模型不能为空");
+        }
+        if (StringTool.isBlank(chatBot.getOllamaUrl())) {
+            return Response.ofFail("Ollama URL不能为空");
+        }
 
+        // write
         chatBotMapper.insert(chatBot);
         return Response.ofSuccess();
     }
@@ -50,6 +64,25 @@ public class ChatBotServiceImpl implements ChatBotService {
      */
     @Override
     public Response<String> update(ChatBot chatBot) {
+
+        // valid
+        if (chatBot == null || chatBot.getId()<=0) {
+            return Response.ofFail("必要参数缺失");
+        }
+        if (StringTool.isBlank(chatBot.getName())) {
+            return Response.ofFail("名称不能为空");
+        }
+        if (!(chatBot.getName().length()>=2 && chatBot.getName().length()<=20)) {
+            return Response.ofFail("名称长度限制2-20");
+        }
+        if (StringTool.isBlank(chatBot.getModel())) {
+            return Response.ofFail("模型不能为空");
+        }
+        if (StringTool.isBlank(chatBot.getOllamaUrl())) {
+            return Response.ofFail("Ollama URL不能为空");
+        }
+
+        // write
         int ret = chatBotMapper.update(chatBot);
         return ret>0? Response.ofSuccess() : Response.ofFail() ;
     }

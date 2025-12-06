@@ -45,6 +45,8 @@
                         <button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
                         <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
                         <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
+                        ｜
+                        <button class="btn btn-sm btn-primary selectOnlyOne chat" type="button">开启对话</button>
                     </div>
                     <div class="box-body" >
                         <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -70,11 +72,13 @@
                             <!-- field -->
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">ChatBot<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="20" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="cueWord" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" name="cueWord" placeholder="" maxlength="200" ></textarea>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
@@ -82,7 +86,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">Ollama URL<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="200" ></div>
                             </div>
 
                             <br>
@@ -112,11 +116,13 @@
                             <!-- field -->
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">ChatBot<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="20" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="cueWord" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" name="cueWord" placeholder="" maxlength="200" ></textarea>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
@@ -124,7 +130,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">Ollama URL<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="200" ></div>
                             </div>
 
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -247,7 +253,7 @@
                 },
                 cueWord: {
                     required: false,
-                    maxlength: 100
+                    maxlength: 200
                 },
                 model: {
                     required: true,
@@ -280,7 +286,7 @@
                 // request
                 return {
                     "name": $("#addModal .form input[name=name]").val(),
-                    "cueWord": $("#addModal .form input[name=cueWord]").val(),
+                    "cueWord": $("#addModal .form textarea[name=cueWord]").val(),
                     "model": $("#addModal .form input[name=model]").val(),
                     "ollamaUrl": $("#addModal .form input[name=ollamaUrl]").val(),
                 };
@@ -297,7 +303,7 @@
 
                 $("#updateModal .form input[name='id']").val( row.id );
                 $("#updateModal .form input[name='name']").val( row.name );
-                $("#updateModal .form input[name='cueWord']").val( row.cueWord );
+                $("#updateModal .form textarea[name='cueWord']").val( row.cueWord );
                 $("#updateModal .form input[name='model']").val( row.model );
                 $("#updateModal .form input[name='ollamaUrl']").val( row.ollamaUrl );
             },
@@ -343,11 +349,32 @@
                 return {
                     "id": $("#updateModal .form input[name=id]").val(),
                     "name": $("#updateModal .form input[name=name]").val(),
-                    "cueWord": $("#updateModal .form input[name=cueWord]").val(),
+                    "cueWord": $("#updateModal .form textarea[name=cueWord]").val(),
                     "model": $("#updateModal .form input[name=model]").val(),
                     "ollamaUrl": $("#updateModal .form input[name=ollamaUrl]").val(),
                 };
             }
+        });
+
+        // ---------- ---------- ---------- chat ---------- ---------- ----------
+
+        /**
+         * job registryinfo
+         */
+        $("#data_operation").on('click', '.chat',function() {
+            // get select rows
+            var rows = $.adminTable.table.bootstrapTable('getSelections');
+
+            // find select row
+            if (rows.length !== 1) {
+                layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+                return;
+            }
+            var row = rows[0];
+
+            // open chat
+            window.open('https://www.baidu.com/s?wd=' + row.cueWord);
+
         });
 
     });
