@@ -35,13 +35,13 @@
         <slf4j-api.version>2.0.17</slf4j-api.version>
 
         <!-- spring -->
-        <spring-boot.version>4.0.0</spring-boot.version>
+        <spring-boot.version>4.0.1</spring-boot.version>
         <!-- mybatis & db -->
         <mybatis-spring-boot-starter.version>4.0.0</mybatis-spring-boot-starter.version>
         <mysql-connector-j.version>9.5.0</mysql-connector-j.version>
 
         <!-- xxl-sso (+xxl-tool、gson) -->
-        <xxl-sso.version>2.2.0</xxl-sso.version>
+        <xxl-sso.version>2.3.1</xxl-sso.version>
     </properties>
 
     <licenses>

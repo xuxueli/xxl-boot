@@ -2,7 +2,7 @@ package com.xxl.boot.admin.util.codegen;
 
 
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.exception.BizException;
+import com.xxl.tool.error.BizException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
