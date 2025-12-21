@@ -1,7 +1,10 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
+import com.xxl.boot.admin.plugin.ai.model.Chat;
 import com.xxl.boot.admin.plugin.ai.model.ChatMessage;
 import com.xxl.boot.admin.plugin.ai.service.ChatMessageService;
+import com.xxl.boot.admin.plugin.ai.service.ChatService;
+import com.xxl.tool.core.AssertTool;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,13 +29,23 @@ public class ChatMessageController {
 
     @Resource
     private ChatMessageService chatMessageService;
+    @Resource
+    private ChatService chatService;
 
     /**
     * 页面
     */
     @RequestMapping
     @XxlSso(permission = "ai:chat")
-    public String index(Model model) {
+    public String index(Model model, @RequestParam(required = false, defaultValue = "0") int chatId) {
+
+        // valid chat
+        Response<Chat> chatRest =chatService.load(chatId);
+        AssertTool.notNull(chatRest.getData(), "参数非法，当前对话不存在");
+
+        // set chat data
+        model.addAttribute("chat", chatRest.getData());
+
         return "ai/chat.detail";
     }
 

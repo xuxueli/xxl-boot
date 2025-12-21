@@ -16,128 +16,46 @@
 
         <!-- 2-content start -->
 
-        <!-- 查询区域 -->
-        <div class="box" style="margin-bottom:9px;">
+        <#-- 对话 -->
+        <div class="box direct-chat direct-chat-info" style="margin-bottom:9px;" >
+            <div class="box-header with-border">
+                <h3 class="box-title">对话记录</h3>
+            </div>
+            <!-- 消息明细 -->
             <div class="box-body">
-                <div class="row" id="data_filter" >
-                    <div class="col-xs-3">
-                        <!--query param-->
-                        <div class="input-group">
-                            <span class="input-group-addon">查询参数</span>
-                            <input type="text" class="form-control param" autocomplete="on" >
+                <div class="direct-chat-messages" id="messageList" style="height: 100%;padding: 20px;" >
+                    <!-- Message1：左侧 -->
+                    <div class="direct-chat-msg" >
+                        <div class="direct-chat-info clearfix">
+                            <span class="direct-chat-name pull-left">Agent：</span>
+                            <span class="direct-chat-timestamp pull-left">2025-12-12 15:30</span>
+                        </div>
+                        <div class="direct-chat-text" style="margin-left: 0px;float: left;" >
+                            你好，欢迎来到聊天室！
                         </div>
                     </div>
-                    <div class="col-xs-1">
-                        <button class="btn btn-block btn-primary searchBtn" >${I18n.system_search}</button>
-                    </div>
-                    <div class="col-xs-1">
-                        <button class="btn btn-block btn-default resetBtn" >${I18n.system_reset}</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 数据表格区域 -->
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-header pull-left" id="data_operation" >
-                        <button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
-                        <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
-                        <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
-                    </div>
-                    <div class="box-body" >
-                        <table id="data_list" class="table table-bordered table-striped" width="100%" >
-                            <thead></thead>
-                            <tbody></tbody>
-                            <tfoot></tfoot>
-                        </table>
+                    <!-- Message1：右侧 -->
+                    <div class="direct-chat-msg right">
+                        <div class="direct-chat-info clearfix">
+                            <span class="direct-chat-timestamp pull-right">2025-12-12 15:30</span>
+                            <span class="direct-chat-name pull-right">用户：</span>
+                        </div>
+                        <div class="direct-chat-text" style="margin-right: 0px;float: right;" >
+                            你好，很高兴认识你！
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- 新增.模态框 -->
-        <div class="modal fade" id="addModal" tabindex="-1" role="dialog"  aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" >新增记录</h4>
+            <!-- 发送消息 -->
+            <div class="box-footer">
+                <form method="post" id="sendMessage">
+                    <div class="input-group">
+                        <input type="text" name="content" placeholder="请输入 ..." class="form-control">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-info btn-flat send">发送消息</button>
+                        </span>
                     </div>
-                    <div class="modal-body">
-                        <form class="form-horizontal form" role="form" >
-
-                            <!-- field -->
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">chat id<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="chatId" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">发送者类型：1-agent、2-用户<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="senderType" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">发送者，用户名<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="senderUsername" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">消息内容<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="content" placeholder="" maxlength="100" ></div>
-                            </div>
-
-                            <br>
-                            <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
-                                <div style="margin-top: 10px;" >
-                                    <button type="submit" class="btn btn-primary"  >${I18n.system_save}</button>
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
-                                </div>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 更新.模态框 -->
-        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog"  aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" >更新记录</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form class="form-horizontal form" role="form" >
-
-                            <!-- field -->
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">chat id<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="chatId" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">发送者类型：1-agent、2-用户<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="senderType" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">发送者，用户名<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="senderUsername" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">消息内容<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="content" placeholder="" maxlength="100" ></div>
-                            </div>
-
-                            <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
-                                <div style="margin-top: 10px;" >
-                                    <button type="submit" class="btn btn-primary"  >${I18n.system_save}</button>
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
-                                    <input type="hidden" name="id" >
-                                </div>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
 
@@ -155,133 +73,55 @@
 <script>
     $(function() {
 
-        // ---------- ---------- ---------- table + curd  ---------- ---------- ----------
+        // ---------- ---------- ---------- init data  ---------- ---------- ----------
+        const chat = {
+            'id': ${chat.id}
+        }
 
-        /**
-         * init table
-         */
-        $.adminTable.initTable({
-            table: '#data_list',
-            url: base_url + "/chatMessage/pageList",
-            queryParams: function (params) {
-                var obj = {};
-                obj.param = $('#data_filter .param').val();
-                obj.offset = params.offset;
-                obj.pagesize = params.limit;
-                return obj;
-            },
-            columns: [
-                {
-                    checkbox: true,
-                    field: 'state',
-                    width: '5',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: ' message id',
-                    field: 'id',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: 'chat id',
-                    field: 'chatId',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: '发送者类型：1-agent、2-用户',
-                    field: 'senderType',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: '发送者，用户名',
-                    field: 'senderUsername',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: '消息内容',
-                    field: 'content',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: '新增时间',
-                    field: 'addTime',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: '更新时间',
-                    field: 'updateTime',
-                    width: '20',
-                    widthUnit: '%'
-                }
-            ]
-        });
+        // ---------- ---------- ---------- init message list  ---------- ---------- ----------
+        // todo
 
-        /**
-         * init delete
-         */
-        $.adminTable.initDelete({
-            url: base_url + "/chatMessage/delete"
-        });
+        // ---------- ---------- ---------- listen new message  ---------- ---------- ----------
+        // todo
 
 
-        /**
-         * init add
-         */
-        // init add editor
-        $.adminTable.initAdd( {
-            url: base_url + "/chatMessage/insert",
-            rules : {
-            },
-            messages : {
-            },
-            readFormData: function() {
-                // request
-                return {
-                    "chatId": $("#addModal .form input[name=chatId]").val(),
-                    "senderType": $("#addModal .form input[name=senderType]").val(),
-                    "senderUsername": $("#addModal .form input[name=senderUsername]").val(),
-                    "content": $("#addModal .form input[name=content]").val(),
-                };
+        // ---------- ---------- ---------- send message  ---------- ---------- ----------
+
+        const messageTemplate = `
+                <div class="direct-chat-msg right">
+                    <div class="direct-chat-info clearfix">
+                        <span class="direct-chat-name pull-right">{userName}：</span>
+                        <span class="direct-chat-timestamp pull-left">{sendTime}</span>
+                    </div>
+                    <div class="direct-chat-text" style="margin-right: 0px;float: right;" >
+                        {content}
+                    </div>
+                </div>
+            `;
+
+        // sendMessage
+        $("#sendMessage .send").click(function(){
+            var newMessge = $("#sendMessage input[name='content']").val();
+            // valid message
+            if (!(newMessge && newMessge.trim() !== '')) {
+                layer.msg("请输入消息内容");
+                return;
             }
+            newMessge = newMessge.trim();
+
+            // send message : todo，发送后端借口，SSE获取相应结果；
+            let mockMessage = messageTemplate;
+            mockMessage = mockMessage.replace("{userName}", '用户');
+            mockMessage = mockMessage.replace("{sendTime}", new Date().toLocaleString());
+            mockMessage = mockMessage.replace("{content}", newMessge);
+
+            // refresh message list
+            $("#messageList").append(mockMessage);
+            $("#sendMessage input[name='content']").val('');
+            scrollTo(0, document.body.scrollHeight);
         });
 
-        /**
-         * init update
-         */
-        $.adminTable.initUpdate( {
-            url: base_url + "/chatMessage/update",
-            writeFormData: function(row) {
-                // base data
 
-                $("#updateModal .form input[name='id']").val( row.id );
-                $("#updateModal .form input[name='chatId']").val( row.chatId );
-                $("#updateModal .form input[name='senderType']").val( row.senderType );
-                $("#updateModal .form input[name='senderUsername']").val( row.senderUsername );
-                $("#updateModal .form input[name='content']").val( row.content );
-            },
-            rules : {
-            },
-            messages : {
-            },
-            readFormData: function() {
-                // request
-                return {
-                    "id": $("#updateModal .form input[name=id]").val(),
-                    "chatId": $("#updateModal .form input[name=chatId]").val(),
-                    "senderType": $("#updateModal .form input[name=senderType]").val(),
-                    "senderUsername": $("#updateModal .form input[name=senderUsername]").val(),
-                    "content": $("#updateModal .form input[name=content]").val(),
-                    "addTime": $("#updateModal .form input[name=addTime]").val(),
-                    "updateTime": $("#updateModal .form input[name=updateTime]").val()
-                };
-            }
-        });
 
     });
 

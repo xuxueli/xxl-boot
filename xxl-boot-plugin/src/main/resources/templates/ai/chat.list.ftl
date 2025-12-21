@@ -297,7 +297,7 @@
 
         // open chat detail
         let title = row.title.size>10?row.title.substring(0,10) + "...":row.title;
-        let url = base_url + '/ai/chat/detail?id=' + row.id;
+        let url = base_url + '/ai/chat/detail?chatId=' + row.id;
         openTab(url, title, false);
     });
 
