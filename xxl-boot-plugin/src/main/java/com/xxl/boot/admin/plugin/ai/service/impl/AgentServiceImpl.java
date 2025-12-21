@@ -134,4 +134,9 @@ public class AgentServiceImpl implements AgentService {
 		return pageModel;
 	}
 
+	@Override
+	public List<Agent> queryAllAgent() {
+		return agentMapper.queryAllAgent();
+	}
+
 }

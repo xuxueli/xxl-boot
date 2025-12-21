@@ -104,16 +104,18 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="prompt" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" aria-placeholder="例如 qwen3:0.6b" ></div>
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">Ollama Url<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
+                                <div class="col-sm-10">
+                                    <textarea id="add_content" name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
+                                </div>
                             </div>
 
                             <br>
@@ -166,16 +168,18 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="prompt" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" aria-placeholder="例如 qwen3:0.6b" ></div>
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">Ollama Url<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
+                                <div class="col-sm-10">
+                                    <textarea id="add_content" name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
+                                </div>
                             </div>
 
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -323,7 +327,7 @@
                     "name": $("#addModal .form input[name=name]").val(),
                     "agentType": $("#addModal .form select[name=agentType]").val(),
                     "supplierType": $("#addModal .form select[name=supplierType]").val(),
-                    "prompt": $("#addModal .form input[name=prompt]").val(),
+                    "prompt": $("#addModal .form textarea[name=prompt]").val(),
                     "model": $("#addModal .form input[name=model]").val(),
                     "ollamaUrl": $("#addModal .form input[name=ollamaUrl]").val(),
                 };
@@ -342,7 +346,7 @@
                 $("#updateModal .form input[name='name']").val( row.name );
                 $("#updateModal .form select[name='agentType']").val( row.agentType );
                 $("#updateModal .form select[name='supplierType']").val( row.supplierType );
-                $("#updateModal .form input[name='prompt']").val( row.prompt );
+                $("#updateModal .form textarea[name='prompt']").val( row.prompt );
                 $("#updateModal .form input[name='model']").val( row.model );
                 $("#updateModal .form input[name='ollamaUrl']").val( row.ollamaUrl );
             },
@@ -357,7 +361,7 @@
                     "name": $("#updateModal .form input[name=name]").val(),
                     "agentType": $("#updateModal .form select[name=agentType]").val(),
                     "supplierType": $("#updateModal .form select[name=supplierType]").val(),
-                    "prompt": $("#updateModal .form input[name=prompt]").val(),
+                    "prompt": $("#updateModal .form textarea[name=prompt]").val(),
                     "model": $("#updateModal .form input[name=model]").val(),
                     "ollamaUrl": $("#updateModal .form input[name=ollamaUrl]").val(),
                     "addTime": $("#updateModal .form input[name=addTime]").val(),

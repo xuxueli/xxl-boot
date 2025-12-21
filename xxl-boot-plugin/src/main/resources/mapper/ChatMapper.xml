@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.admin.plugin.ai.mapper.ChatMapper">
+
+    <resultMap id="Chat" type="com.xxl.boot.admin.plugin.ai.model.Chat" >
+        <result column="id" property="id" />
+        <result column="agent_id" property="agentId" />
+        <result column="title" property="title" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`agent_id`,
+        t.`title`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_ai_chat (
+            `agent_id`,
+            `title`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{chat.agentId} ,
+                  #{chat.title} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_ai_chat
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_ai_chat
+        SET
+            `agent_id` = #{chat.agentId},
+            `title` = #{chat.title},
+            `update_time` = NOW()
+        WHERE `id` = #{chat.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="Chat">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_chat AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="Chat">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_chat AS t
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_ai_chat AS t
+    </select>
+
+</mapper>

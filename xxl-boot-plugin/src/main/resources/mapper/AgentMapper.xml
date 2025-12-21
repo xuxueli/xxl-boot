@@ -104,4 +104,10 @@
         </trim>
     </select>
 
+    <select id="queryAllAgent" resultMap="Agent">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_agent AS t
+        ORDER BY t.`name` ASC
+    </select>
+
 </mapper>

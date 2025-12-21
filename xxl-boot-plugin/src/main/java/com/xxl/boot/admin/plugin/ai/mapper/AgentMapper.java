@@ -50,4 +50,9 @@ public interface AgentMapper {
                              @Param("agentType") int agentType,
                              @Param("name") String name);
 
+    /**
+    * 查询所有
+    */
+    List<Agent> queryAllAgent();
+
 }

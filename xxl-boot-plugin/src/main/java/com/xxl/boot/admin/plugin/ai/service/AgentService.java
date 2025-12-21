@@ -39,4 +39,9 @@ public interface AgentService {
     */
     public PageModel<Agent> pageList(int offset, int pagesize, int agentType, String name);
 
+    /**
+     * 查询所有
+     */
+    public List<Agent> queryAllAgent();
+
 }
