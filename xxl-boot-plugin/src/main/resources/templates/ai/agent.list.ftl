@@ -78,6 +78,7 @@
                     <div class="modal-body">
                         <form class="form-horizontal form" role="form" >
 
+                            <p style="margin: 0 0 10px;text-align: left;border-bottom: 1px solid #e5e5e5;color: gray;">Agent基础配置</p>
                             <!-- field -->
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">Agent名称<font color="red">*</font></label>
@@ -94,6 +95,15 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
+                                <div class="col-sm-10">
+                                    <textarea id="add_content" name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
+                                </div>
+                            </div>
+
+                            <br>
+                            <p style="margin: 0 0 10px;text-align: left;border-bottom: 1px solid #e5e5e5;color: gray;">供应商配置</p>
+                            <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">供应商类型<font color="red">*</font></label>
                                 <div class="col-sm-10">
                                     <select class="form-control" name="supplierType" >
@@ -105,18 +115,13 @@
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" aria-placeholder="例如 qwen3:0.6b" ></div>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="例如 qwen3:0.6b" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">Ollama Url<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="例如 http://127.0.0.1:11434" maxlength="100" ></div>
                             </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
-                                <div class="col-sm-10">
-                                    <textarea id="add_content" name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
-                                </div>
-                            </div>
+
 
                             <br>
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -142,7 +147,7 @@
                     <div class="modal-body">
                         <form class="form-horizontal form" role="form" >
 
-                            <!-- field -->
+                            <p style="margin: 0 0 10px;text-align: left;border-bottom: 1px solid #e5e5e5;color: gray;">Agent配置</p>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">Agent名称<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
@@ -158,6 +163,15 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
+                                <div class="col-sm-10">
+                                    <textarea id="add_content" name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
+                                </div>
+                            </div>
+
+                            <br>
+                            <p style="margin: 0 0 10px;text-align: left;border-bottom: 1px solid #e5e5e5;color: gray;">供应商配置</p>
+                            <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">供应商类型<font color="red">*</font></label>
                                 <div class="col-sm-10">
                                     <select class="form-control" name="supplierType" >
@@ -169,17 +183,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" aria-placeholder="例如 qwen3:0.6b" ></div>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="例如 qwen3:0.6b" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">Ollama Url<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
-                                <div class="col-sm-10">
-                                    <textarea id="add_content" name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
-                                </div>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="例如 http://127.0.0.1:11434" maxlength="100" ></div>
                             </div>
 
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
