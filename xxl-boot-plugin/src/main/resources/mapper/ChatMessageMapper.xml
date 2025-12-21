@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.admin.plugin.ai.mapper.ChatMessageMapper">
+
+    <resultMap id="ChatMessage" type="com.xxl.boot.admin.plugin.ai.model.ChatMessage" >
+        <result column="id" property="id" />
+        <result column="chat_id" property="chatId" />
+        <result column="sender_type" property="senderType" />
+        <result column="sender_username" property="senderUsername" />
+        <result column="content" property="content" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`chat_id`,
+        t.`sender_type`,
+        t.`sender_username`,
+        t.`content`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_ai_chat_message (
+            `chat_id`,
+            `sender_type`,
+            `sender_username`,
+            `content`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{chatMessage.chatId} ,
+                  #{chatMessage.senderType} ,
+                  #{chatMessage.senderUsername} ,
+                  #{chatMessage.content} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_ai_chat_message
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_ai_chat_message
+        SET
+            `chat_id` = #{chatMessage.chatId},
+            `sender_type` = #{chatMessage.senderType},
+            `sender_username` = #{chatMessage.senderUsername},
+            `content` = #{chatMessage.content},
+            `update_time` = NOW()
+        WHERE `id` = #{chatMessage.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="ChatMessage">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_chat_message AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="ChatMessage">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_chat_message AS t
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_ai_chat_message AS t
+    </select>
+
+</mapper>

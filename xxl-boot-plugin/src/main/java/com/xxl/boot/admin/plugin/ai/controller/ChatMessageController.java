@@ -1,9 +1,7 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
-import com.xxl.boot.admin.plugin.ai.model.Agent;
-import com.xxl.boot.admin.plugin.ai.model.Chat;
-import com.xxl.boot.admin.plugin.ai.service.AgentService;
-import com.xxl.boot.admin.plugin.ai.service.ChatService;
+import com.xxl.boot.admin.plugin.ai.model.ChatMessage;
+import com.xxl.boot.admin.plugin.ai.service.ChatMessageService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,18 +16,16 @@ import com.xxl.tool.response.PageModel;
 import com.xxl.sso.core.annotation.XxlSso;
 
 /**
-* Chat Controller
+* ChatMessage Controller
 *
-* Created by xuxueli on '2025-12-21 17:41:58'.
+* Created by xuxueli on '2025-12-21 18:18:12'.
 */
 @Controller
-@RequestMapping("/ai/chat")
-public class ChatController {
+@RequestMapping("/ai/chat/detail")
+public class ChatMessageController {
 
     @Resource
-    private ChatService chatService;
-    @Resource
-    private AgentService agentService;
+    private ChatMessageService chatMessageService;
 
     /**
     * 页面
@@ -37,12 +33,7 @@ public class ChatController {
     @RequestMapping
     @XxlSso(permission = "ai:chat")
     public String index(Model model) {
-
-        // find all agent
-        List<Agent> agentList = agentService.queryAllAgent();
-        model.addAttribute("agentList", agentList);
-
-        return "ai/chat.list";
+        return "ai/chat.detail";
     }
 
     /**
@@ -51,9 +42,9 @@ public class ChatController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso(permission = "ai:chat")
-    public Response<PageModel<Chat>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                              @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<Chat> pageModel = chatService.pageList(offset, pagesize);
+    public Response<PageModel<ChatMessage>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+                                                     @RequestParam(required = false, defaultValue = "10") int pagesize) {
+        PageModel<ChatMessage> pageModel = chatMessageService.pageList(offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
@@ -63,8 +54,8 @@ public class ChatController {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso(permission = "ai:chat")
-    public Response<Chat> load(int id){
-        return chatService.load(id);
+    public Response<ChatMessage> load(int id){
+        return chatMessageService.load(id);
     }
 
     /**
@@ -73,8 +64,8 @@ public class ChatController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso(permission = "ai:chat")
-    public Response<String> insert(Chat chat){
-        return chatService.insert(chat);
+    public Response<String> insert(ChatMessage chatMessage){
+        return chatMessageService.insert(chatMessage);
     }
 
     /**
@@ -84,7 +75,7 @@ public class ChatController {
     @ResponseBody
     @XxlSso(permission = "ai:chat")
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
-        return chatService.delete(ids);
+        return chatMessageService.delete(ids);
     }
 
     /**
@@ -93,8 +84,8 @@ public class ChatController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso(permission = "ai:chat")
-    public Response<String> update(Chat chat){
-        return chatService.update(chat);
+    public Response<String> update(ChatMessage chatMessage){
+        return chatMessageService.update(chatMessage);
     }
 
 }

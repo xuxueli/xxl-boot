@@ -23,15 +23,8 @@
                     <div class="col-xs-3">
                         <!--query param-->
                         <div class="input-group">
-                            <span class="input-group-addon">Agent</span>
-                            <select class="form-control agentId" >
-                                <option value="-1" >${I18n.system_please_choose}</option>
-                                <#if agentList?? >
-                                    <#list agentList as item>
-                                        <option value="${item.id}" >${item.name}</option>
-                                    </#list>
-                                </#if>
-                            </select>
+                            <span class="input-group-addon">查询参数</span>
+                            <input type="text" class="form-control param" autocomplete="on" >
                         </div>
                     </div>
                     <div class="col-xs-1">
@@ -49,10 +42,9 @@
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-header pull-left" id="data_operation" >
-                        <button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}对话</button>
+                        <button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
                         <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
                         <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
-                        <button class="btn btn-sm btn-primary selectOnlyOne toChat" type="button">进入对话</button>
                     </div>
                     <div class="box-body" >
                         <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -77,19 +69,20 @@
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">Agent<font color="red">*</font></label>
-                                <div class="col-sm-10">
-                                    <select class="form-control" name="agentId" >
-                                        <option value="-1" >${I18n.system_please_choose}</option>
-                                        <#list agentList as item>
-                                            <option value="${item.id}" >${item.name}</option>
-                                        </#list>
-                                    </select>
-                                </div>
+                                <label for="lastname" class="col-sm-2 control-label">chat id<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="chatId" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">对话标题<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">发送者类型：1-agent、2-用户<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="senderType" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">发送者，用户名<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="senderUsername" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">消息内容<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="content" placeholder="" maxlength="100" ></div>
                             </div>
 
                             <br>
@@ -118,21 +111,20 @@
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">Agent<font color="red">*</font></label>
-                                <div class="col-sm-10">
-                                    <select class="form-control" name="agentId" >
-                                        <option value="-1" >${I18n.system_please_choose}</option>
-                                        <#if agentList?? >
-                                        <#list agentList as item>
-                                            <option value="${item.id}" >${item.name}</option>
-                                        </#list>
-                                        </#if>
-                                    </select>
-                                </div>
+                                <label for="lastname" class="col-sm-2 control-label">chat id<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="chatId" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">对话标题<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">发送者类型：1-agent、2-用户<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="senderType" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">发送者，用户名<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="senderUsername" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">消息内容<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="content" placeholder="" maxlength="100" ></div>
                             </div>
 
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -160,18 +152,8 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <!-- admin table -->
 <script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
-<script src="${request.contextPath}/static/biz/common/admin.util.js"></script>
 <script>
     $(function() {
-
-        // ---------- ---------- ---------- convert date 2 js  ---------- ---------- ----------
-        const agentTypeMap = {
-            <#if agentList?? >
-            <#list agentList as item>
-            ${item.id}: "${item.name}"<#if item?has_next>,</#if>
-            </#list>
-            </#if>
-        };
 
         // ---------- ---------- ---------- table + curd  ---------- ---------- ----------
 
@@ -180,7 +162,7 @@
          */
         $.adminTable.initTable({
             table: '#data_list',
-            url: base_url + "/ai/chat/pageList",
+            url: base_url + "/chatMessage/pageList",
             queryParams: function (params) {
                 var obj = {};
                 obj.param = $('#data_filter .param').val();
@@ -196,17 +178,32 @@
                     widthUnit: '%'
                 }
                 ,{
-                    title: 'Agent',
-                    field: 'agentId',
+                    title: ' message id',
+                    field: 'id',
                     width: '20',
-                    widthUnit: '%',
-                    formatter: function (value, row, index) {
-                        return agentTypeMap[value];
-                    }
+                    widthUnit: '%'
                 }
                 ,{
-                    title: '对话标题',
-                    field: 'title',
+                    title: 'chat id',
+                    field: 'chatId',
+                    width: '20',
+                    widthUnit: '%'
+                }
+                ,{
+                    title: '发送者类型：1-agent、2-用户',
+                    field: 'senderType',
+                    width: '20',
+                    widthUnit: '%'
+                }
+                ,{
+                    title: '发送者，用户名',
+                    field: 'senderUsername',
+                    width: '20',
+                    widthUnit: '%'
+                }
+                ,{
+                    title: '消息内容',
+                    field: 'content',
                     width: '20',
                     widthUnit: '%'
                 }
@@ -229,7 +226,7 @@
          * init delete
          */
         $.adminTable.initDelete({
-            url: base_url + "/ai/chat/delete"
+            url: base_url + "/chatMessage/delete"
         });
 
 
@@ -238,7 +235,7 @@
          */
         // init add editor
         $.adminTable.initAdd( {
-            url: base_url + "/ai/chat/insert",
+            url: base_url + "/chatMessage/insert",
             rules : {
             },
             messages : {
@@ -246,8 +243,10 @@
             readFormData: function() {
                 // request
                 return {
-                    "agentId": $("#addModal .form select[name=agentId]").val(),
-                    "title": $("#addModal .form input[name=title]").val(),
+                    "chatId": $("#addModal .form input[name=chatId]").val(),
+                    "senderType": $("#addModal .form input[name=senderType]").val(),
+                    "senderUsername": $("#addModal .form input[name=senderUsername]").val(),
+                    "content": $("#addModal .form input[name=content]").val(),
                 };
             }
         });
@@ -256,13 +255,15 @@
          * init update
          */
         $.adminTable.initUpdate( {
-            url: base_url + "/ai/chat/update",
+            url: base_url + "/chatMessage/update",
             writeFormData: function(row) {
                 // base data
 
                 $("#updateModal .form input[name='id']").val( row.id );
-                $("#updateModal .form select[name='agentId']").val( row.agentId );
-                $("#updateModal .form input[name='title']").val( row.title );
+                $("#updateModal .form input[name='chatId']").val( row.chatId );
+                $("#updateModal .form input[name='senderType']").val( row.senderType );
+                $("#updateModal .form input[name='senderUsername']").val( row.senderUsername );
+                $("#updateModal .form input[name='content']").val( row.content );
             },
             rules : {
             },
@@ -272,8 +273,10 @@
                 // request
                 return {
                     "id": $("#updateModal .form input[name=id]").val(),
-                    "agentId": $("#updateModal .form select[name=agentId]").val(),
-                    "title": $("#updateModal .form input[name=title]").val(),
+                    "chatId": $("#updateModal .form input[name=chatId]").val(),
+                    "senderType": $("#updateModal .form input[name=senderType]").val(),
+                    "senderUsername": $("#updateModal .form input[name=senderUsername]").val(),
+                    "content": $("#updateModal .form input[name=content]").val(),
                     "addTime": $("#updateModal .form input[name=addTime]").val(),
                     "updateTime": $("#updateModal .form input[name=updateTime]").val()
                 };
@@ -281,26 +284,6 @@
         });
 
     });
-
-    // ---------- ---------- ---------- chat detail  ---------- ---------- ----------
-
-    $("#data_operation .toChat").click(function(){
-        // get select rows
-        var rows = $.adminTable.table.bootstrapTable('getSelections');
-        // find select row
-        if (rows.length !== 1) {
-            layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
-            return;
-        }
-        var row = rows[0];
-        layer.msg("选中：" + row.title);
-
-        // open chat detail
-        let title = row.title.size>10?row.title.substring(0,10) + "...":row.title;
-        let url = base_url + '/ai/chat/detail?id=' + row.id;
-        openTab(url, title, false);
-    });
-
 
 </script>
 <!-- 3-script end -->
