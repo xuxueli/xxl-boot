@@ -1,13 +1,13 @@
 package com.xxl.boot.admin.plugin.ai.constant.enums;
 
-public enum AgentTypeEnum {
+public enum SupplierTypeEnum {
 
-    CHAT(1, "ChatAgent");
+    OLLAMA(1, "OLLAMA");
 
-    private final int value;
-    private final String desc;
+    private int value;
+    private String desc;
 
-    AgentTypeEnum(int value, String desc) {
+    SupplierTypeEnum(int value, String desc) {
         this.value = value;
         this.desc = desc;
     }
@@ -20,8 +20,8 @@ public enum AgentTypeEnum {
         return desc;
     }
 
-    public static AgentTypeEnum getByValue(int value, AgentTypeEnum defaultValue) {
-        for (AgentTypeEnum item : values()) {
+    public static SupplierTypeEnum getByValue(int value, SupplierTypeEnum defaultValue) {
+        for (SupplierTypeEnum item : values()) {
             if (item.value == value) {
                 return item;
             }

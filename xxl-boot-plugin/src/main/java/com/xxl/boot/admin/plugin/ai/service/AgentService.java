@@ -37,6 +37,6 @@ public interface AgentService {
     /**
     * 分页查询
     */
-    public PageModel<Agent> pageList(int offset, int pagesize);
+    public PageModel<Agent> pageList(int offset, int pagesize, int agentType, String name);
 
 }

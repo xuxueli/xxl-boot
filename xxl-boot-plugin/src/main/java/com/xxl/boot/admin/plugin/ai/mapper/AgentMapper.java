@@ -37,11 +37,17 @@ public interface AgentMapper {
     /**
     * 分页查询Data
     */
-	public List<Agent> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<Agent> pageList(@Param("offset") int offset,
+                                @Param("pagesize") int pagesize,
+                                @Param("agentType") int agentType,
+                                @Param("name") String name);
 
     /**
     * 分页查询Count
     */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+    public int pageListCount(@Param("offset") int offset,
+                             @Param("pagesize") int pagesize,
+                             @Param("agentType") int agentType,
+                             @Param("name") String name);
 
 }

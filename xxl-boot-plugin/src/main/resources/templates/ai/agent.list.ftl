@@ -23,8 +23,19 @@
                     <div class="col-xs-3">
                         <!--query param-->
                         <div class="input-group">
-                            <span class="input-group-addon">查询参数</span>
-                            <input type="text" class="form-control param" autocomplete="on" >
+                            <span class="input-group-addon">Agent类型</span>
+                            <select class="form-control agentType" >
+                                <option value="-1" >${I18n.system_all}</option>
+                                <#list AgentTypeEnum as item>
+                                    <option value="${item.value}" >${item.desc}</option>
+                                </#list>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <div class="input-group">
+                            <span class="input-group-addon">Agent名称</span>
+                            <input type="text" class="form-control name" autocomplete="on" >
                         </div>
                     </div>
                     <div class="col-xs-1">
@@ -69,27 +80,39 @@
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">agent名称<font color="red">*</font></label>
+                                <label for="lastname" class="col-sm-2 control-label">Agent名称<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">agent类型：1-chatagent<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="agentType" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">Agent类型<font color="red">*</font></label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="agentType" >
+                                        <#list AgentTypeEnum as item>
+                                            <option value="${item.value}" >${item.desc}</option>
+                                        </#list>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">供应商类型：1-ollama<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="supplierType" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">供应商类型<font color="red">*</font></label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="supplierType" >
+                                        <#list SupplierTypeEnum as item>
+                                            <option value="${item.value}" >${item.desc}</option>
+                                        </#list>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="prompt" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">模型，如 qwen3:0.6b<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" aria-placeholder="例如 qwen3:0.6b" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">ollama url<font color="red">*</font></label>
+                                <label for="lastname" class="col-sm-2 control-label">Ollama Url<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
                             </div>
 
@@ -119,27 +142,39 @@
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">agent名称<font color="red">*</font></label>
+                                <label for="lastname" class="col-sm-2 control-label">Agent名称<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">agent类型：1-chatagent<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="agentType" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">Agent类型<font color="red">*</font></label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="agentType" >
+                                        <#list AgentTypeEnum as item>
+                                            <option value="${item.value}" >${item.desc}</option>
+                                        </#list>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">供应商类型：1-ollama<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="supplierType" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">供应商类型<font color="red">*</font></label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="supplierType" >
+                                        <#list SupplierTypeEnum as item>
+                                            <option value="${item.value}" >${item.desc}</option>
+                                        </#list>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="prompt" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">模型，如 qwen3:0.6b<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" aria-placeholder="例如 qwen3:0.6b" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">ollama url<font color="red">*</font></label>
+                                <label for="lastname" class="col-sm-2 control-label">Ollama Url<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
                             </div>
 
@@ -171,6 +206,18 @@
 <script>
     $(function() {
 
+        // ---------- ---------- ---------- convert date 2 js  ---------- ---------- ----------
+        const agentTypeMap = {
+            <#list AgentTypeEnum as item>
+            ${item.value}: "${item.desc}"<#if item?has_next>,</#if>
+            </#list>
+        };
+        const supplierTypeMap = {
+            <#list SupplierTypeEnum as item>
+            ${item.value}: "${item.desc}"<#if item?has_next>,</#if>
+            </#list>
+        };
+
         // ---------- ---------- ---------- table + curd  ---------- ---------- ----------
 
         /**
@@ -181,7 +228,8 @@
             url: base_url + "/ai/agent/pageList",
             queryParams: function (params) {
                 var obj = {};
-                obj.param = $('#data_filter .param').val();
+                obj.agentType = $('#data_filter .agentType').val();
+                obj.name = $('#data_filter .name').val();
                 obj.offset = params.offset;
                 obj.pagesize = params.limit;
                 return obj;
@@ -194,56 +242,57 @@
                     widthUnit: '%'
                 }
                 ,{
-                    title: 'agent id',
+                    title: 'AgentID',
                     field: 'id',
-                    width: '20',
+                    width: '10',
                     widthUnit: '%'
                 }
                 ,{
-                    title: 'agent名称',
+                    title: 'Agent名称',
                     field: 'name',
                     width: '20',
                     widthUnit: '%'
                 }
                 ,{
-                    title: 'agent类型：1-chatagent',
+                    title: 'Agent类型',
                     field: 'agentType',
-                    width: '20',
-                    widthUnit: '%'
+                    width: '10',
+                    widthUnit: '%',
+                    formatter: function (value, row, index) {
+                        return agentTypeMap[value];
+                    }
                 }
                 ,{
-                    title: '供应商类型：1-ollama',
+                    title: '供应商类型',
                     field: 'supplierType',
-                    width: '20',
-                    widthUnit: '%'
+                    width: '10',
+                    widthUnit: '%',
+                    formatter: function (value, row, index) {
+                        return supplierTypeMap[value];
+                    }
                 }
                 ,{
                     title: '提示词',
                     field: 'prompt',
                     width: '20',
+                    visible: false,
                     widthUnit: '%'
                 }
                 ,{
-                    title: '模型，如 qwen3:0.6b',
+                    title: '模型',
                     field: 'model',
-                    width: '20',
+                    width: '15',
                     widthUnit: '%'
                 }
                 ,{
-                    title: 'ollama url',
+                    title: 'Ollama Url',
                     field: 'ollamaUrl',
-                    width: '20',
+                    width: '15',
                     widthUnit: '%'
                 }
                 ,{
                     title: '新增时间',
                     field: 'addTime',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
-                    title: '更新时间',
-                    field: 'updateTime',
                     width: '20',
                     widthUnit: '%'
                 }
@@ -272,8 +321,8 @@
                 // request
                 return {
                     "name": $("#addModal .form input[name=name]").val(),
-                    "agentType": $("#addModal .form input[name=agentType]").val(),
-                    "supplierType": $("#addModal .form input[name=supplierType]").val(),
+                    "agentType": $("#addModal .form select[name=agentType]").val(),
+                    "supplierType": $("#addModal .form select[name=supplierType]").val(),
                     "prompt": $("#addModal .form input[name=prompt]").val(),
                     "model": $("#addModal .form input[name=model]").val(),
                     "ollamaUrl": $("#addModal .form input[name=ollamaUrl]").val(),
@@ -291,8 +340,8 @@
 
                 $("#updateModal .form input[name='id']").val( row.id );
                 $("#updateModal .form input[name='name']").val( row.name );
-                $("#updateModal .form input[name='agentType']").val( row.agentType );
-                $("#updateModal .form input[name='supplierType']").val( row.supplierType );
+                $("#updateModal .form select[name='agentType']").val( row.agentType );
+                $("#updateModal .form select[name='supplierType']").val( row.supplierType );
                 $("#updateModal .form input[name='prompt']").val( row.prompt );
                 $("#updateModal .form input[name='model']").val( row.model );
                 $("#updateModal .form input[name='ollamaUrl']").val( row.ollamaUrl );
@@ -306,8 +355,8 @@
                 return {
                     "id": $("#updateModal .form input[name=id]").val(),
                     "name": $("#updateModal .form input[name=name]").val(),
-                    "agentType": $("#updateModal .form input[name=agentType]").val(),
-                    "supplierType": $("#updateModal .form input[name=supplierType]").val(),
+                    "agentType": $("#updateModal .form select[name=agentType]").val(),
+                    "supplierType": $("#updateModal .form select[name=supplierType]").val(),
                     "prompt": $("#updateModal .form input[name=prompt]").val(),
                     "model": $("#updateModal .form input[name=model]").val(),
                     "ollamaUrl": $("#updateModal .form input[name=ollamaUrl]").val(),

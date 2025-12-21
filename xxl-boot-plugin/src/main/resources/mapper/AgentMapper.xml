@@ -80,12 +80,28 @@
     <select id="pageList" parameterType="java.util.Map" resultMap="Agent">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_ai_agent AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="agentType gt -1">
+                AND t.`agent_type` = #{agentType}
+            </if>
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+        </trim>
         LIMIT #{offset}, #{pagesize}
     </select>
 
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_boot_ai_agent AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="agentType gt -1">
+                AND t.`agent_type` = #{agentType}
+            </if>
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+        </trim>
     </select>
 
 </mapper>

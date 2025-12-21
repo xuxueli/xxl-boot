@@ -1,13 +1,20 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
+import com.xxl.boot.admin.plugin.ai.constant.enums.AgentTypeEnum;
+import com.xxl.boot.admin.plugin.ai.constant.enums.SupplierTypeEnum;
 import com.xxl.boot.admin.plugin.ai.model.Agent;
 import com.xxl.boot.admin.plugin.ai.service.AgentService;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import jakarta.annotation.Resource;
 
@@ -31,8 +38,13 @@ public class AgentController {
     * 页面
     */
     @RequestMapping
-    @XxlSso
+    @XxlSso(permission = "ai:agent")
     public String index(Model model) {
+
+        // set enum
+        model.addAttribute("AgentTypeEnum", AgentTypeEnum.values());
+        model.addAttribute("SupplierTypeEnum", SupplierTypeEnum.values());
+
         return "/ai/agent.list";
     }
 
@@ -41,10 +53,12 @@ public class AgentController {
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @XxlSso
+    @XxlSso(permission = "ai:agent")
     public Response<PageModel<Agent>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                               @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<Agent> pageModel = agentService.pageList(offset, pagesize);
+                                               @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                               int agentType,
+                                               String name) {
+        PageModel<Agent> pageModel = agentService.pageList(offset, pagesize, agentType, name);
         return Response.ofSuccess(pageModel);
     }
 
@@ -53,7 +67,7 @@ public class AgentController {
     */
     @RequestMapping("/load")
     @ResponseBody
-    @XxlSso
+    @XxlSso(permission = "ai:agent")
     public Response<Agent> load(int id){
         return agentService.load(id);
     }
@@ -73,7 +87,7 @@ public class AgentController {
     */
     @RequestMapping("/delete")
     @ResponseBody
-    @XxlSso
+    @XxlSso(permission = "ai:agent")
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return agentService.delete(ids);
     }
@@ -83,9 +97,16 @@ public class AgentController {
     */
     @RequestMapping("/update")
     @ResponseBody
-    @XxlSso
+    @XxlSso(permission = "ai:agent")
     public Response<String> update(Agent agent){
         return agentService.update(agent);
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat.setLenient(false);
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
 
 }
