@@ -89,16 +89,6 @@
                         <div class="modal-body">
                             <form class="form-horizontal form" role="form" >
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">日志标题</label>
-                                    <div class="col-sm-8 title" ></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">日志正文</label>
-                                    <div class="col-sm-8" >
-                                        <pre class="content2" style="width: 120%;"></pre>
-                                    </div>
-                                </div>
-                                <div class="form-group">
                                     <label for="lastname" class="col-sm-2 control-label2">操作人</label>
                                     <div class="col-sm-8 operator" ></div>
                                 </div>
@@ -113,6 +103,16 @@
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-2 control-label2">操作时间</label>
                                     <div class="col-sm-8 addTime" ></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" class="col-sm-2 control-label2">日志标题</label>
+                                    <div class="col-sm-8 title" ></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" class="col-sm-2 control-label2">日志正文</label>
+                                    <div class="col-sm-8" >
+                                        <pre class="content2" style="width: 120%;"></pre>
+                                    </div>
                                 </div>
 
                                 <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">

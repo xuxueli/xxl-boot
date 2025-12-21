@@ -1,41 +1,45 @@
 package com.xxl.boot.admin.util;
 
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.io.IOTool;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import org.lionsoul.ip2region.xdb.Searcher;
+import org.lionsoul.ip2region.service.Config;
+import org.lionsoul.ip2region.service.Ip2Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Component
 public class Ip2regionUtil {
-    private static Logger logger = LoggerFactory.getLogger(Ip2regionUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(Ip2regionUtil.class);
 
     /**
-     * Ip2region searcher
+     * Ip2region
      */
-    private static Searcher searcher;
+    private static volatile Ip2Region ip2Region;
 
     /**
      * init when start, load ip2region.db to mem
      */
     @PostConstruct
-    private static void initIp2regionSearcher() {
+    public static void initIp2Region() {
         try {
-            InputStream inputStream = new ClassPathResource("/other/ip2region/ip2region.xdb").getInputStream();
-            byte[] dbBinStr = IOTool.readBytes(inputStream);
+            // build v4 config
+            Config v4Config = Config.custom()
+                    .setCachePolicy(Config.BufferCache)             // 指定缓存策略:  NoCache / VIndexCache / BufferCache
+                    .setSearchers(15)                           // 设置初始化的查询器数量
+                    .setXdbInputStream(new ClassPathResource("/other/ip2region/ip2region_v4.xdb").getInputStream())
+                    //.setXdbPath("ip2region v4 xdb path")      // 设置 v4 xdb 文件的路径
+                    .asV4();
 
-            // new with buffer
-            searcher = Searcher.newWithBuffer(dbBinStr);
+            // build ip2region
+            ip2Region = Ip2Region.create(v4Config, null);
         } catch (Exception e) {
-            logger.info("Ip2regionUtil initIp2regionSearcher error:", e);
+            logger.info("Ip2regionUtil(ip2Region) init error:", e);
         }
     }
 
@@ -52,7 +56,7 @@ public class Ip2regionUtil {
             if (StringTool.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
                 ip = request.getHeader("Proxy-Client-IP");
             }
-            if (StringTool.isEmpty(ip) || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (StringTool.isEmpty(ip) || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
                 ip = request.getHeader("WL-Proxy-Client-IP");
             }
             if (StringTool.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
@@ -65,13 +69,12 @@ public class Ip2regionUtil {
                 ip = request.getRemoteAddr();
                 if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
                     // 根据网卡取本机配置的IP
-                    InetAddress inet = null;
                     try {
-                        inet = InetAddress.getLocalHost();
+                        InetAddress inet = InetAddress.getLocalHost();
+                        ip = inet.getHostAddress();
                     } catch (UnknownHostException e) {
                         logger.error("getIpAddress exception:", e);
                     }
-                    ip = inet.getHostAddress();
                 }
             }
         } catch (Exception e) {
@@ -81,12 +84,12 @@ public class Ip2regionUtil {
     }
 
     /**
-     * get address by ip (with ip2region.db）
+     * get region info by ip
      *
-     * @param ip
-     * @return 地理位置
+     * @param ip ip
+     * @return region info
      */
-    public static CityInfo getCityInfo(String ip) {
+    public static RegionInfo getRegionInfo(String ip) {
         // base valid
         if (StringTool.isEmpty(ip)) {
             return null;
@@ -97,25 +100,20 @@ public class Ip2regionUtil {
         }
 
         /**
-         * 数据格式： 国家|区域|省份|城市|ISP
-         * 192.168.31.160 0|0|0|内网IP|内网IP
-         * 47.52.236.180 中国|0|香港|0|阿里云
-         * 220.248.12.158 中国|0|上海|上海市|联通
-         * 164.114.53.60 美国|0|华盛顿|0|0
+         * 数据格式：            国家|区域|省份|城市|ISP
+         * 115.192.145.222   中国|浙江省|杭州市|电信
          */
-
         try {
-            String searchIpInfo = searcher.search(ip);
+            String searchIpInfo = ip2Region.search(ip);
             String[] splitIpInfo = searchIpInfo.split("\\|");
 
-            CityInfo cityInfo = new CityInfo();
+            RegionInfo cityInfo = new RegionInfo();
             cityInfo.setIp(ip);
             cityInfo.setSearchIpInfo(searchIpInfo);
             cityInfo.setCountry(splitIpInfo[0]);
-            cityInfo.setRegion(splitIpInfo[1]);
-            cityInfo.setProvince(splitIpInfo[2]);
-            cityInfo.setCity(splitIpInfo[3]);
-            cityInfo.setISP(splitIpInfo[3]);
+            cityInfo.setProvince(splitIpInfo[1]);
+            cityInfo.setCity(splitIpInfo[2]);
+            cityInfo.setIsp(splitIpInfo[3]);
 
             return cityInfo;
         } catch (Exception e) {
@@ -124,23 +122,44 @@ public class Ip2regionUtil {
         return null;
     }
 
-    public static class CityInfo{
+    /**
+     * region info
+     *
+     *  数据格式：
+     *      IP：             115.192.145.222
+     *      searchIpInfo：   国家|区域|省份|城市|ISP
+     *      result：         country|province|city|ISP
+     */
+    public static class RegionInfo {
         /**
-         * cityInfo.put("searchInfo", searchIpInfo);
-         *             cityInfo.put("country",splitIpInfo[0]);
-         *             cityInfo.put("region",splitIpInfo[1]);
-         *             cityInfo.put("province",splitIpInfo[2]);
-         *             cityInfo.put("city",splitIpInfo[3]);
-         *             cityInfo.put("ISP",splitIpInfo[3]);
+         * ip
          */
-
         private String ip;
+
+        /**
+         * origin search ip info
+         */
         private String searchIpInfo;
+
+        /**
+         * country, like "中国"
+         */
         private String country;
-        private String region;
+
+        /**
+         * province, like "浙江省"
+         */
         private String province;
+
+        /**
+         * city, like "杭州市"
+         */
         private String city;
-        private String ISP;
+
+        /**
+         * Internet Service Provider, like "电信"
+         */
+        private String isp;
 
         public String getIp() {
             return ip;
@@ -166,14 +185,6 @@ public class Ip2regionUtil {
             this.country = country;
         }
 
-        public String getRegion() {
-            return region;
-        }
-
-        public void setRegion(String region) {
-            this.region = region;
-        }
-
         public String getProvince() {
             return province;
         }
@@ -190,14 +201,25 @@ public class Ip2regionUtil {
             this.city = city;
         }
 
-        public String getISP() {
-            return ISP;
+        public String getIsp() {
+            return isp;
         }
 
-        public void setISP(String ISP) {
-            this.ISP = ISP;
+        public void setIsp(String isp) {
+            this.isp = isp;
         }
 
+        @Override
+        public String toString() {
+            return "RegionInfo{" +
+                    "ip='" + ip + '\'' +
+                    ", searchIpInfo='" + searchIpInfo + '\'' +
+                    ", country='" + country + '\'' +
+                    ", province='" + province + '\'' +
+                    ", city='" + city + '\'' +
+                    ", isp='" + isp + '\'' +
+                    '}';
+        }
     }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.ollama.OllamaChatModel;
+import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -103,17 +104,17 @@ public class ChatBotController {
 
     // --------------------------------- ollama chat ---------------------------------
 
-    @Resource
-    private OllamaChatModel ollamaChatModel;
-    private String prompt = "你好，你是一个研发工程师，擅长解决技术类问题。";
+    private String ollamaUrl = "http://localhost:11434";
     private String modle = "qwen3:0.6b";
+    private String prompt = "你好，你是一个研发工程师，擅长解决技术类问题。";
 
-    /**
-     * ChatClient 简单调用
-     */
-    @GetMapping("/chat/simple")
-    @ResponseBody
-    public String simpleChat(@RequestParam(value = "input", required = false, defaultValue = "介绍你自己") String input) {
+
+    private ChatClient buildOllamaChatClient() {
+        // build chat-model
+        OllamaChatModel ollamaChatModel = OllamaChatModel
+                .builder()
+                .ollamaApi(OllamaApi.builder().baseUrl(ollamaUrl).build())
+                .build();
 
         // build chat-client
         ChatClient ollamaChatClient = ChatClient
@@ -122,6 +123,18 @@ public class ChatBotController {
                 .defaultAdvisors(SimpleLoggerAdvisor.builder().build())                                                     // add logger
                 .defaultOptions(OllamaChatOptions.builder().model(modle).build())                                           // assign model
                 .build();
+        return ollamaChatClient;
+    }
+
+    /**
+     * ChatClient 简单调用
+     */
+    @GetMapping("/chat/default")
+    @ResponseBody
+    public String simpleChat(@RequestParam(value = "input", required = false, defaultValue = "介绍你自己") String input) {
+
+        // build chat-client
+        ChatClient ollamaChatClient = buildOllamaChatClient();
 
         // call ollama
         String response = ollamaChatClient
@@ -130,7 +143,7 @@ public class ChatBotController {
                 .call()
                 .content();
 
-        logger.info("result: " + response);
+        logger.debug("result: " + response);
         return response;
     }
 
@@ -142,12 +155,7 @@ public class ChatBotController {
         response.setCharacterEncoding("UTF-8");
 
         // build chat-client
-        ChatClient ollamaChatClient = ChatClient
-                .builder(ollamaChatModel)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build())
-                .defaultAdvisors(SimpleLoggerAdvisor.builder().build())
-                .defaultOptions(OllamaChatOptions.builder().model(modle).build())
-                .build();
+        ChatClient ollamaChatClient = buildOllamaChatClient();
 
         // call ollama
         return ollamaChatClient

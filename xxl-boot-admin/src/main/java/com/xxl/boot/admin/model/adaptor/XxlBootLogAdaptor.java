@@ -25,10 +25,10 @@ public class XxlBootLogAdaptor {
             dto.setIp(xxlBootLog.getIp());
             dto.setAddTime(DateTool.formatDateTime(xxlBootLog.getAddTime()));
             // ip
-            Ip2regionUtil.CityInfo cityInfo = Ip2regionUtil.getCityInfo(xxlBootLog.getIp());
+            Ip2regionUtil.RegionInfo cityInfo = Ip2regionUtil.getRegionInfo(xxlBootLog.getIp());
             if (cityInfo != null) {
-                String temp = String.format("%s%s%s", cityInfo.getCountry(), cityInfo.getProvince(), cityInfo.getCity());
-                dto.setIpAddress(temp);
+                //String temp = String.format("%s%s%s", cityInfo.getCountry(), cityInfo.getProvince(), cityInfo.getCity());
+                dto.setIpAddress(cityInfo.getSearchIpInfo());
             }
 
             // collect

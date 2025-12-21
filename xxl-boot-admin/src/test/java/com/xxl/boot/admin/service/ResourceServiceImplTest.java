@@ -4,7 +4,7 @@ import com.xxl.boot.admin.controller.AbstractSpringMvcTest;
 import com.xxl.boot.admin.mapper.ResourceMapper;
 import com.xxl.boot.admin.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.admin.model.entity.XxlBootResource;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

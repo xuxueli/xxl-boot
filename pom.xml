@@ -42,7 +42,67 @@
 
         <!-- xxl-sso (+xxl-tool、gson) -->
         <xxl-sso.version>2.3.1</xxl-sso.version>
+        <!-- ip2region -->
+        <ip2region.version>3.3.1</ip2region.version>
+        <!-- spring-ai -->
+        <spring-ai.version>2.0.0-M1</spring-ai.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- springboot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- mybatis-starter：mybatis + mybatis-spring + hikari（default） -->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis-spring-boot-starter.version}</version>
+            </dependency>
+            <!-- mysql -->
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector-j.version}</version>
+            </dependency>
+
+            <!-- xxl-sso (xxl-tool、gson) -->
+            <dependency>
+                <groupId>com.xuxueli</groupId>
+                <artifactId>xxl-sso-core</artifactId>
+                <version>${xxl-sso.version}</version>
+            </dependency>
+
+            <!-- ip2region -->
+            <dependency>
+                <groupId>org.lionsoul</groupId>
+                <artifactId>ip2region</artifactId>
+                <version>${ip2region.version}</version>
+            </dependency>
+
+            <!-- xxl-boot-plugin（optional）-->
+            <dependency>
+                <groupId>com.xuxueli</groupId>
+                <artifactId>xxl-boot-plugin</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+
+            <!-- spring-ai -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-starter-model-ollama</artifactId>
+                <version>${spring-ai.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
 
     <licenses>
         <license>
