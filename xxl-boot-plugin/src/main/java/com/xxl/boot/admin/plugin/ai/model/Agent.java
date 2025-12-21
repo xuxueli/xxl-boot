@@ -4,47 +4,58 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-*  Chat Bot
-*
-*  Created by xuxueli on '2025-11-30 20:41:37'.
-*/
-public class ChatBot implements Serializable {
+ *  Agent Entity
+ *
+ *  Created by xuxueli on '2025-12-21 16:30:24'.
+ */
+public class Agent implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**
-    * ChatBot ID
-    */
+     * agent id
+     */
     private int id;
 
     /**
-    * ChatBot 名称
-    */
+     * agent名称
+     */
     private String name;
+
+    /**
+     * agent类型：1-chatagent
+     */
+    private int agentType;
+
+    /**
+     * 供应商类型：1-ollama
+     */
+    private int supplierType;
 
     /**
      * 提示词
      */
-    private String cueWord;
+    private String prompt;
 
     /**
-    * 模型，如 qwen3:0.6b
-    */
+     * 模型，如 qwen3:0.6b
+     */
     private String model;
 
     /**
-    * ollama url
-    */
+     * ollama url
+     */
     private String ollamaUrl;
 
     /**
-    * 新增时间
-    */
+     * 新增时间
+     */
     private Date addTime;
 
     /**
-    * 更新时间
-    */
+     * 更新时间
+     */
     private Date updateTime;
+
 
     public int getId() {
         return id;
@@ -62,12 +73,28 @@ public class ChatBot implements Serializable {
         this.name = name;
     }
 
-    public String getCueWord() {
-        return cueWord;
+    public int getAgentType() {
+        return agentType;
     }
 
-    public void setCueWord(String cueWord) {
-        this.cueWord = cueWord;
+    public void setAgentType(int agentType) {
+        this.agentType = agentType;
+    }
+
+    public int getSupplierType() {
+        return supplierType;
+    }
+
+    public void setSupplierType(int supplierType) {
+        this.supplierType = supplierType;
+    }
+
+    public String getPrompt() {
+        return prompt;
+    }
+
+    public void setPrompt(String prompt) {
+        this.prompt = prompt;
     }
 
     public String getModel() {
@@ -101,4 +128,5 @@ public class ChatBot implements Serializable {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
 }

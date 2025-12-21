@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.boot.admin.plugin.ai.mapper.ChatBotMapper">
+<mapper namespace="com.xxl.boot.admin.plugin.ai.mapper.AgentMapper">
 
-    <resultMap id="ChatBot" type="com.xxl.boot.admin.plugin.ai.model.ChatBot" >
+    <resultMap id="Agent" type="com.xxl.boot.admin.plugin.ai.model.Agent" >
         <result column="id" property="id" />
         <result column="name" property="name" />
-        <result column="cue_word" property="cueWord" />
+        <result column="agent_type" property="agentType" />
+        <result column="supplier_type" property="supplierType" />
+        <result column="prompt" property="prompt" />
         <result column="model" property="model" />
         <result column="ollama_url" property="ollamaUrl" />
         <result column="add_time" property="addTime" />
@@ -16,7 +18,9 @@
     <sql id="Base_Column_List">
         t.`id`,
         t.`name`,
-        t.`cue_word`,
+        t.`agent_type`,
+        t.`supplier_type`,
+        t.`prompt`,
         t.`model`,
         t.`ollama_url`,
         t.`add_time`,
@@ -24,26 +28,30 @@
     </sql>
 
     <insert id="insert" parameterType="java.util.Map" >
-        INSERT INTO xxl_boot_ai_chat_bot (
+        INSERT INTO xxl_boot_ai_agent (
             `name`,
-            `cue_word`,
+            `agent_type`,
+            `supplier_type`,
+            `prompt`,
             `model`,
             `ollama_url`,
             `add_time`,
             `update_time`
         )
         VALUES(
-              #{chatBot.name} ,
-              #{chatBot.cueWord} ,
-              #{chatBot.model} ,
-              #{chatBot.ollamaUrl} ,
-              NOW() ,
-              NOW()
-          )
+                  #{agent.name} ,
+                  #{agent.agentType} ,
+                  #{agent.supplierType} ,
+                  #{agent.prompt} ,
+                  #{agent.model} ,
+                  #{agent.ollamaUrl} ,
+                  NOW() ,
+                  NOW()
+              )
     </insert>
 
     <delete id="delete" parameterType="java.util.Map" >
-        DELETE FROM xxl_boot_ai_chat_bot
+        DELETE FROM xxl_boot_ai_agent
         WHERE `id` in
         <foreach collection="ids" item="item" open="(" close=")" separator="," >
             #{item}
@@ -51,31 +59,33 @@
     </delete>
 
     <update id="update" parameterType="java.util.Map" >
-        UPDATE xxl_boot_ai_chat_bot
+        UPDATE xxl_boot_ai_agent
         SET
-            `name` = #{chatBot.name},
-            `cue_word` = #{chatBot.cueWord},
-            `model` = #{chatBot.model},
-            `ollama_url` = #{chatBot.ollamaUrl},
+            `name` = #{agent.name},
+            `agent_type` = #{agent.agentType},
+            `supplier_type` = #{agent.supplierType},
+            `prompt` = #{agent.prompt},
+            `model` = #{agent.model},
+            `ollama_url` = #{agent.ollamaUrl},
             `update_time` = NOW()
-        WHERE `id` = #{chatBot.id}
+        WHERE `id` = #{agent.id}
     </update>
 
-    <select id="load" parameterType="java.util.Map" resultMap="ChatBot">
+    <select id="load" parameterType="java.util.Map" resultMap="Agent">
         SELECT <include refid="Base_Column_List" />
-        FROM xxl_boot_ai_chat_bot AS t
+        FROM xxl_boot_ai_agent AS t
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="pageList" parameterType="java.util.Map" resultMap="ChatBot">
+    <select id="pageList" parameterType="java.util.Map" resultMap="Agent">
         SELECT <include refid="Base_Column_List" />
-        FROM xxl_boot_ai_chat_bot AS t
+        FROM xxl_boot_ai_agent AS t
         LIMIT #{offset}, #{pagesize}
     </select>
 
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
-        FROM xxl_boot_ai_chat_bot AS t
+        FROM xxl_boot_ai_agent AS t
     </select>
 
 </mapper>

@@ -109,7 +109,7 @@ public class TableParseUtil {
                     }
 
                     // field class
-                    columnLine = columnLine.substring(columnLine.indexOf("`")+1).trim();	// int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+                    columnLine = columnLine.substring(columnLine.indexOf("`")+1).trim().toLowerCase();	// int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
                     String fieldClass = Object.class.getSimpleName();
                     if (columnLine.startsWith("int") || columnLine.startsWith("tinyint") || columnLine.startsWith("smallint")) {
                         fieldClass = Integer.TYPE.getSimpleName();
@@ -129,9 +129,9 @@ public class TableParseUtil {
 
                     // field comment
                     String fieldComment = "";
-                    if (columnLine.contains("COMMENT")) {
-                        String commentTmp = fieldComment = columnLine.substring(columnLine.indexOf("COMMENT")+7).trim();	// '用户ID',
-                        if (commentTmp.contains("'") || commentTmp.indexOf("'")!=commentTmp.lastIndexOf("'")) {
+                    if (columnLine.contains("comment")) {
+                        String commentTmp = columnLine.substring(columnLine.indexOf("COMMENT")+7).trim();	// '用户ID',
+                        if (commentTmp.contains("'") && commentTmp.indexOf("'")!=commentTmp.lastIndexOf("'")) {
                             commentTmp = commentTmp.substring(commentTmp.indexOf("'")+1, commentTmp.lastIndexOf("'"));
                         }
                         fieldComment = commentTmp;

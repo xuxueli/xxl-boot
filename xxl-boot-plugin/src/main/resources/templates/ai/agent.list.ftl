@@ -45,8 +45,6 @@
                         <button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
                         <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
                         <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
-                        ｜
-                        <button class="btn btn-sm btn-primary selectOnlyOne chat" type="button">开启对话</button>
                     </div>
                     <div class="box-body" >
                         <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -64,29 +62,35 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" >新增</h4>
+                        <h4 class="modal-title" >新增记录</h4>
                     </div>
                     <div class="modal-body">
                         <form class="form-horizontal form" role="form" >
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">ChatBot<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="20" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">agent名称<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" name="cueWord" placeholder="" maxlength="200" ></textarea>
-                                </div>
+                                <label for="lastname" class="col-sm-2 control-label">agent类型：1-chatagent<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="agentType" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
+                                <label for="lastname" class="col-sm-2 control-label">供应商类型：1-ollama<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="supplierType" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="prompt" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">模型，如 qwen3:0.6b<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">Ollama URL<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="200" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">ollama url<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
                             </div>
 
                             <br>
@@ -108,29 +112,35 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" >更新</h4>
+                        <h4 class="modal-title" >更新记录</h4>
                     </div>
                     <div class="modal-body">
                         <form class="form-horizontal form" role="form" >
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">ChatBot<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="20" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">agent名称<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" name="cueWord" placeholder="" maxlength="200" ></textarea>
-                                </div>
+                                <label for="lastname" class="col-sm-2 control-label">agent类型：1-chatagent<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="agentType" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">模型<font color="red">*</font></label>
+                                <label for="lastname" class="col-sm-2 control-label">供应商类型：1-ollama<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="supplierType" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="prompt" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">模型，如 qwen3:0.6b<font color="red">*</font></label>
                                 <div class="col-sm-10"><input type="text" class="form-control" name="model" placeholder="" maxlength="100" ></div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">Ollama URL<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="200" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">ollama url<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="ollamaUrl" placeholder="" maxlength="100" ></div>
                             </div>
 
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -168,7 +178,7 @@
          */
         $.adminTable.initTable({
             table: '#data_list',
-            url: base_url + "/ai/chatbot/pageList",
+            url: base_url + "/ai/agent/pageList",
             queryParams: function (params) {
                 var obj = {};
                 obj.param = $('#data_filter .param').val();
@@ -184,43 +194,52 @@
                     widthUnit: '%'
                 }
                 ,{
-                    title: 'ID',
+                    title: 'agent id',
                     field: 'id',
                     width: '20',
                     widthUnit: '%'
                 }
                 ,{
-                    title: 'ChatBot名称',
-                    field: 'username',
+                    title: 'agent名称',
+                    field: 'name',
+                    width: '20',
+                    widthUnit: '%'
+                }
+                ,{
+                    title: 'agent类型：1-chatagent',
+                    field: 'agentType',
+                    width: '20',
+                    widthUnit: '%'
+                }
+                ,{
+                    title: '供应商类型：1-ollama',
+                    field: 'supplierType',
                     width: '20',
                     widthUnit: '%'
                 }
                 ,{
                     title: '提示词',
-                    field: 'cueWord',
+                    field: 'prompt',
                     width: '20',
-                    widthUnit: '%',
-                    formatter: function(value, row, index) {
-                        return value.length > 10
-                            ? (value = value.substring(0, 10) + "...")
-                            : value ;
-                    }
+                    widthUnit: '%'
                 }
                 ,{
-                    title: '模型',
+                    title: '模型，如 qwen3:0.6b',
                     field: 'model',
-                    width: '15',
+                    width: '20',
+                    widthUnit: '%'
+                }
+                ,{
+                    title: 'ollama url',
+                    field: 'ollamaUrl',
+                    width: '20',
                     widthUnit: '%'
                 }
                 ,{
                     title: '新增时间',
                     field: 'addTime',
-                    width: '15',
-                    widthUnit: '%',
-                    formatter: function(value, row, index) {
-                        // JS 语法，时间格式化
-
-                    }
+                    width: '20',
+                    widthUnit: '%'
                 }
                 ,{
                     title: '更新时间',
@@ -235,7 +254,7 @@
          * init delete
          */
         $.adminTable.initDelete({
-            url: base_url + "/ai/chatbot/delete"
+            url: base_url + "/ai/agent/delete"
         });
 
 
@@ -244,49 +263,18 @@
          */
         // init add editor
         $.adminTable.initAdd( {
-            url: base_url + "/ai/chatbot/insert",
+            url: base_url + "/ai/agent/insert",
             rules : {
-                name: {
-                    required: true,
-                    minlength: 2,
-                    maxlength: 20
-                },
-                cueWord: {
-                    required: false,
-                    maxlength: 200
-                },
-                model: {
-                    required: true,
-                    maxlength: 100
-                },
-                ollamaUrl: {
-                    required: true,
-                    maxlength: 200
-                }
             },
             messages : {
-                name: {
-                    required: "请输入",
-                    minlength: "长度不能少于2",
-                    maxlength: "长度不能超过20"
-                },
-                cueWord: {
-                    maxlength: "长度不能超过100"
-                },
-                model: {
-                    required: "请输入",
-                    maxlength: "长度不能超过200"
-                },
-                ollamaUrl: {
-                    required: "请输入",
-                    maxlength: "长度不能超过200"
-                }
             },
             readFormData: function() {
                 // request
                 return {
                     "name": $("#addModal .form input[name=name]").val(),
-                    "cueWord": $("#addModal .form textarea[name=cueWord]").val(),
+                    "agentType": $("#addModal .form input[name=agentType]").val(),
+                    "supplierType": $("#addModal .form input[name=supplierType]").val(),
+                    "prompt": $("#addModal .form input[name=prompt]").val(),
                     "model": $("#addModal .form input[name=model]").val(),
                     "ollamaUrl": $("#addModal .form input[name=ollamaUrl]").val(),
                 };
@@ -297,84 +285,36 @@
          * init update
          */
         $.adminTable.initUpdate( {
-            url: base_url + "/ai/chatbot/update",
+            url: base_url + "/ai/agent/update",
             writeFormData: function(row) {
                 // base data
 
                 $("#updateModal .form input[name='id']").val( row.id );
                 $("#updateModal .form input[name='name']").val( row.name );
-                $("#updateModal .form textarea[name='cueWord']").val( row.cueWord );
+                $("#updateModal .form input[name='agentType']").val( row.agentType );
+                $("#updateModal .form input[name='supplierType']").val( row.supplierType );
+                $("#updateModal .form input[name='prompt']").val( row.prompt );
                 $("#updateModal .form input[name='model']").val( row.model );
                 $("#updateModal .form input[name='ollamaUrl']").val( row.ollamaUrl );
             },
             rules : {
-                name: {
-                    required: true,
-                    minlength: 2,
-                    maxlength: 20
-                },
-                cueWord: {
-                    required: false,
-                    maxlength: 100
-                },
-                model: {
-                    required: true,
-                    maxlength: 100
-                },
-                ollamaUrl: {
-                    required: true,
-                    maxlength: 200
-                }
             },
             messages : {
-                name: {
-                    required: "请输入",
-                    minlength: "长度不能少于2",
-                    maxlength: "长度不能超过20"
-                },
-                cueWord: {
-                    maxlength: "长度不能超过100"
-                },
-                model: {
-                    required: "请输入",
-                    maxlength: "长度不能超过200"
-                },
-                ollamaUrl: {
-                    required: "请输入",
-                    maxlength: "长度不能超过200"
-                }
             },
             readFormData: function() {
                 // request
                 return {
                     "id": $("#updateModal .form input[name=id]").val(),
                     "name": $("#updateModal .form input[name=name]").val(),
-                    "cueWord": $("#updateModal .form textarea[name=cueWord]").val(),
+                    "agentType": $("#updateModal .form input[name=agentType]").val(),
+                    "supplierType": $("#updateModal .form input[name=supplierType]").val(),
+                    "prompt": $("#updateModal .form input[name=prompt]").val(),
                     "model": $("#updateModal .form input[name=model]").val(),
                     "ollamaUrl": $("#updateModal .form input[name=ollamaUrl]").val(),
+                    "addTime": $("#updateModal .form input[name=addTime]").val(),
+                    "updateTime": $("#updateModal .form input[name=updateTime]").val()
                 };
             }
-        });
-
-        // ---------- ---------- ---------- chat ---------- ---------- ----------
-
-        /**
-         * job registryinfo
-         */
-        $("#data_operation").on('click', '.chat',function() {
-            // get select rows
-            var rows = $.adminTable.table.bootstrapTable('getSelections');
-
-            // find select row
-            if (rows.length !== 1) {
-                layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
-                return;
-            }
-            var row = rows[0];
-
-            // open chat
-            window.open('https://www.baidu.com/s?wd=' + row.cueWord);
-
         });
 
     });
