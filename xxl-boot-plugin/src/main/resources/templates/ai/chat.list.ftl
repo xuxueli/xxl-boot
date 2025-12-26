@@ -212,8 +212,12 @@
                     field: 'state',
                     width: '5',
                     widthUnit: '%'
-                }
-                ,{
+                },{
+                    title: '对话标题',
+                    field: 'title',
+                    width: '20',
+                    widthUnit: '%'
+                },{
                     title: 'Model',
                     field: 'modelId',
                     width: '20',
@@ -221,20 +225,12 @@
                     formatter: function (value, row, index) {
                         return modelMap[value];
                     }
-                }
-                ,{
-                    title: '对话标题',
-                    field: 'title',
-                    width: '20',
-                    widthUnit: '%'
-                }
-                ,{
+                },{
                     title: '新增时间',
                     field: 'addTime',
                     width: '20',
                     widthUnit: '%'
-                }
-                ,{
+                },{
                     title: '更新时间',
                     field: 'updateTime',
                     width: '20',

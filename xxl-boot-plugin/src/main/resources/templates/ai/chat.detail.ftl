@@ -126,7 +126,7 @@
             let localMessage = agentOrUser?agentMessageTemplate:userMessageTemplate;
             localMessage = localMessage.replace("{userName}", userNameTmp);
             localMessage = localMessage.replace("{sendTime}", new Date().toLocaleString().replace(/\//g, '-') );
-            localMessage = localMessage.replace("{content}", newMessge + "<b>1111</b>" );
+            localMessage = localMessage.replace("{content}", newMessge );
 
             // append show-message
             $("#messageList").append(localMessage);

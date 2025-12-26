@@ -342,6 +342,7 @@ xuxueli/xxl-boot-admin:{指定版本}
 - 3、生图Agent：生图流程设计，集成本地Vision模型；
 - 4、Chat对话增强：
   - 前端SSE交互；
+  - 前端内容展示支持解析markdown；
   - 对话记忆控制；
 - 5、知识库：知识库管理，知识库检索；
 

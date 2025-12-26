@@ -56,8 +56,8 @@ VALUES (1, 1, 1,  '用户', '你好！', NOW(), NOW());
 
 INSERT INTO `xxl_boot_resource` (`id`, `parent_id`, `name`, `type`, `permission`, `url`, `icon`, `order`, `status`, `add_time`, `update_time`)
 VALUES (200, 0,'AI应用', 0, 'ai', '/ai', 'fa-fire', 200, 0, now(), now()),
-       (201, 200,'模型配置', 1, 'ai:model', '/ai/model', "", 201, 0, now(), now()),
-       (202, 200,'对话管理', 1, 'ai:chat', '/ai/chat', "", 201, 0, now(), now());
+       (201, 200,'对话管理', 1, 'ai:chat', '/ai/chat', "", 201, 0, now(), now()),
+       (202, 200,'模型配置', 1, 'ai:model', '/ai/model', "", 202, 0, now(), now());
 
 INSERT INTO `xxl_boot_role_res` (`role_id`, `res_id`, `add_time`, `update_time`)
 VALUES ( 1, 200, now(), now()),

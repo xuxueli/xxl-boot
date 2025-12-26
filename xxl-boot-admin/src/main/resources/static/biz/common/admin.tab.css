@@ -216,3 +216,10 @@ nav.page-tabs .page-tabs-content {
     border-left-color: #FFFFFF !important;
 }
 /* nprogress end */
+
+/* menu start */
+.treeview-menu>li>a {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+/* menu end */
