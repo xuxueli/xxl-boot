@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.plugin.ai.service.impl;
 
-import com.xxl.boot.admin.plugin.ai.mapper.AgentMapper;
+import com.xxl.boot.admin.plugin.ai.mapper.ModelMapper;
 import com.xxl.boot.admin.plugin.ai.mapper.ChatMapper;
 import com.xxl.boot.admin.plugin.ai.mapper.ChatMessageMapper;
 import com.xxl.boot.admin.plugin.ai.model.Chat;
@@ -24,7 +24,7 @@ public class ChatServiceImpl implements ChatService {
 	@Resource
 	private ChatMapper chatMapper;
 	@Resource
-	private AgentMapper agentMapper;
+	private ModelMapper agentMapper;
 	@Resource
 	private ChatMessageMapper chatMessageMapper;
 

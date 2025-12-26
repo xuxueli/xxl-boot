@@ -1,13 +1,14 @@
 package com.xxl.boot.admin.plugin.ai.constant.enums;
 
-public enum AgentTypeEnum {
+public enum ModelTypeEnum {
 
-    CHAT(1, "ChatAgent");
+    // Model类型：1-基础模型，1-文本模型，2-视觉模型
+    CHAT(1, "基础模型");
 
     private final int value;
     private final String desc;
 
-    AgentTypeEnum(int value, String desc) {
+    ModelTypeEnum(int value, String desc) {
         this.value = value;
         this.desc = desc;
     }
@@ -20,8 +21,8 @@ public enum AgentTypeEnum {
         return desc;
     }
 
-    public static AgentTypeEnum getByValue(int value, AgentTypeEnum defaultValue) {
-        for (AgentTypeEnum item : values()) {
+    public static ModelTypeEnum getByValue(int value, ModelTypeEnum defaultValue) {
+        for (ModelTypeEnum item : values()) {
             if (item.value == value) {
                 return item;
             }

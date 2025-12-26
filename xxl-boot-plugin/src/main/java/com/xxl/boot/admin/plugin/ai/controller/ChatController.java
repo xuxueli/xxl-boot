@@ -1,11 +1,10 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
-import com.xxl.boot.admin.plugin.ai.model.Agent;
+import com.xxl.boot.admin.plugin.ai.model.Model;
 import com.xxl.boot.admin.plugin.ai.model.Chat;
-import com.xxl.boot.admin.plugin.ai.service.AgentService;
+import com.xxl.boot.admin.plugin.ai.service.ModelService;
 import com.xxl.boot.admin.plugin.ai.service.ChatService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,17 +28,17 @@ public class ChatController {
     @Resource
     private ChatService chatService;
     @Resource
-    private AgentService agentService;
+    private ModelService agentService;
 
     /**
     * 页面
     */
     @RequestMapping
     @XxlSso(permission = "ai:chat")
-    public String index(Model model) {
+    public String index(org.springframework.ui.Model model) {
 
         // find all agent
-        List<Agent> agentList = agentService.queryAllAgent();
+        List<Model> agentList = agentService.queryAllModel();
         model.addAttribute("agentList", agentList);
 
         return "ai/chat.list";

@@ -1,23 +1,22 @@
 package com.xxl.boot.admin.plugin.ai.service;
 
-import java.util.Map;
 import java.util.List;
 
-import com.xxl.boot.admin.plugin.ai.model.Agent;
+import com.xxl.boot.admin.plugin.ai.model.Model;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
 /**
-* Agent Service
+* Model Service
 *
 * Created by xuxueli on '2025-12-21 16:13:29'.
 */
-public interface AgentService {
+public interface ModelService {
 
     /**
     * 新增
     */
-    public Response<String> insert(Agent agent);
+    public Response<String> insert(Model model);
 
     /**
     * 删除
@@ -27,21 +26,21 @@ public interface AgentService {
     /**
     * 更新
     */
-    public Response<String> update(Agent agent);
+    public Response<String> update(Model model);
 
     /**
     * Load查询
     */
-    public Response<Agent> load(int id);
+    public Response<Model> load(int id);
 
     /**
     * 分页查询
     */
-    public PageModel<Agent> pageList(int offset, int pagesize, int agentType, String name);
+    public PageModel<Model> pageList(int offset, int pagesize, int modelType, String name);
 
     /**
      * 查询所有
      */
-    public List<Agent> queryAllAgent();
+    public List<Model> queryAllModel();
 
 }

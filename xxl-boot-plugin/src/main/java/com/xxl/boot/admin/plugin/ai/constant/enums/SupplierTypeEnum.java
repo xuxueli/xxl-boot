@@ -2,7 +2,7 @@ package com.xxl.boot.admin.plugin.ai.constant.enums;
 
 public enum SupplierTypeEnum {
 
-    OLLAMA(1, "OLLAMA");
+    OLLAMA(1, "Ollama");
 
     private int value;
     private String desc;

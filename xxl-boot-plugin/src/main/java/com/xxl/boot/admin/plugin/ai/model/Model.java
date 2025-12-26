@@ -4,37 +4,32 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *  Agent Entity
+ *  Model Entity
  *
  *  Created by xuxueli on '2025-12-21 16:30:24'.
  */
-public class Agent implements Serializable {
+public class Model implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**
-     * agent id
+     * Model ID
      */
     private int id;
 
     /**
-     * agent名称
+     * Model名称
      */
     private String name;
 
     /**
-     * agent类型：1-chatagent
+     * Model类型：1-基础模型，1-文本模型，2-视觉模型
      */
-    private int agentType;
+    private int modelType;
 
     /**
-     * 供应商类型：1-ollama
+     * 供应商类型：1-Ollama
      */
     private int supplierType;
-
-    /**
-     * 提示词
-     */
-    private String prompt;
 
     /**
      * 模型，如 qwen3:0.6b
@@ -42,9 +37,14 @@ public class Agent implements Serializable {
     private String model;
 
     /**
-     * ollama url
+     * base_url
      */
-    private String ollamaUrl;
+    private String baseUrl;
+
+    /**
+     * api_key
+     */
+    private String apiKey;
 
     /**
      * 新增时间
@@ -73,12 +73,12 @@ public class Agent implements Serializable {
         this.name = name;
     }
 
-    public int getAgentType() {
-        return agentType;
+    public int getModelType() {
+        return modelType;
     }
 
-    public void setAgentType(int agentType) {
-        this.agentType = agentType;
+    public void setModelType(int modelType) {
+        this.modelType = modelType;
     }
 
     public int getSupplierType() {
@@ -89,14 +89,6 @@ public class Agent implements Serializable {
         this.supplierType = supplierType;
     }
 
-    public String getPrompt() {
-        return prompt;
-    }
-
-    public void setPrompt(String prompt) {
-        this.prompt = prompt;
-    }
-
     public String getModel() {
         return model;
     }
@@ -105,12 +97,20 @@ public class Agent implements Serializable {
         this.model = model;
     }
 
-    public String getOllamaUrl() {
-        return ollamaUrl;
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
-    public void setOllamaUrl(String ollamaUrl) {
-        this.ollamaUrl = ollamaUrl;
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     public Date getAddTime() {

@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.plugin.ai.mapper;
 
-import com.xxl.boot.admin.plugin.ai.model.Agent;
+import com.xxl.boot.admin.plugin.ai.model.Model;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,12 +12,12 @@ import java.util.List;
 * Created by xuxueli on '2025-12-21 16:13:29'.
 */
 @Mapper
-public interface AgentMapper {
+public interface ModelMapper {
 
     /**
     * 新增
     */
-    public int insert(@Param("agent") Agent agent);
+    public int insert(@Param("model") Model model);
 
     /**
     * 删除
@@ -27,19 +27,19 @@ public interface AgentMapper {
     /**
     * 更新
     */
-    public int update(@Param("agent") Agent agent);
+    public int update(@Param("model") Model model);
 
     /**
     * Load查询
     */
-    public Agent load(@Param("id") int id);
+    public Model load(@Param("id") int id);
 
     /**
     * 分页查询Data
     */
-	public List<Agent> pageList(@Param("offset") int offset,
+	public List<Model> pageList(@Param("offset") int offset,
                                 @Param("pagesize") int pagesize,
-                                @Param("agentType") int agentType,
+                                @Param("modelType") int modelType,
                                 @Param("name") String name);
 
     /**
@@ -47,12 +47,12 @@ public interface AgentMapper {
     */
     public int pageListCount(@Param("offset") int offset,
                              @Param("pagesize") int pagesize,
-                             @Param("agentType") int agentType,
+                             @Param("modelType") int modelType,
                              @Param("name") String name);
 
     /**
     * 查询所有
     */
-    List<Agent> queryAllAgent();
+    List<Model> queryAllModel();
 
 }

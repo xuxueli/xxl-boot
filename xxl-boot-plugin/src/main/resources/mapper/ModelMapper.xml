@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.boot.admin.plugin.ai.mapper.AgentMapper">
+<mapper namespace="com.xxl.boot.admin.plugin.ai.mapper.ModelMapper">
 
-    <resultMap id="Agent" type="com.xxl.boot.admin.plugin.ai.model.Agent" >
+    <resultMap id="Agent" type="com.xxl.boot.admin.plugin.ai.model.Model" >
         <result column="id" property="id" />
         <result column="name" property="name" />
-        <result column="agent_type" property="agentType" />
+        <result column="model_type" property="modelType" />
         <result column="supplier_type" property="supplierType" />
-        <result column="prompt" property="prompt" />
         <result column="model" property="model" />
-        <result column="ollama_url" property="ollamaUrl" />
+        <result column="base_url" property="baseUrl" />
+        <result column="api_key" property="apiKey" />
         <result column="add_time" property="addTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
@@ -18,40 +18,40 @@
     <sql id="Base_Column_List">
         t.`id`,
         t.`name`,
-        t.`agent_type`,
+        t.`model_type`,
         t.`supplier_type`,
-        t.`prompt`,
         t.`model`,
-        t.`ollama_url`,
+        t.`base_url`,
+        t.`api_key`,
         t.`add_time`,
         t.`update_time`
     </sql>
 
     <insert id="insert" parameterType="java.util.Map" >
-        INSERT INTO xxl_boot_ai_agent (
+        INSERT INTO xxl_boot_ai_model (
             `name`,
-            `agent_type`,
+            `model_type`,
             `supplier_type`,
-            `prompt`,
             `model`,
-            `ollama_url`,
+            `base_url`,
+            `api_key`,
             `add_time`,
             `update_time`
         )
         VALUES(
-                  #{agent.name} ,
-                  #{agent.agentType} ,
-                  #{agent.supplierType} ,
-                  #{agent.prompt} ,
-                  #{agent.model} ,
-                  #{agent.ollamaUrl} ,
-                  NOW() ,
-                  NOW()
-              )
+              #{model.name} ,
+              #{model.modelType} ,
+              #{model.supplierType} ,
+              #{model.model} ,
+              #{model.baseUrl} ,
+              #{model.apiKey} ,
+              NOW() ,
+              NOW()
+          )
     </insert>
 
     <delete id="delete" parameterType="java.util.Map" >
-        DELETE FROM xxl_boot_ai_agent
+        DELETE FROM xxl_boot_ai_model
         WHERE `id` in
         <foreach collection="ids" item="item" open="(" close=")" separator="," >
             #{item}
@@ -59,30 +59,30 @@
     </delete>
 
     <update id="update" parameterType="java.util.Map" >
-        UPDATE xxl_boot_ai_agent
+        UPDATE xxl_boot_ai_model
         SET
-            `name` = #{agent.name},
-            `agent_type` = #{agent.agentType},
-            `supplier_type` = #{agent.supplierType},
-            `prompt` = #{agent.prompt},
-            `model` = #{agent.model},
-            `ollama_url` = #{agent.ollamaUrl},
+            `name` = #{model.name},
+            `model_type` = #{model.modelType},
+            `supplier_type` = #{model.supplierType},
+            `model` = #{model.model},
+            `base_url` = #{model.baseUrl},
+            `api_key` = #{model.apiKey},
             `update_time` = NOW()
-        WHERE `id` = #{agent.id}
+        WHERE `id` = #{model.id}
     </update>
 
     <select id="load" parameterType="java.util.Map" resultMap="Agent">
         SELECT <include refid="Base_Column_List" />
-        FROM xxl_boot_ai_agent AS t
+        FROM xxl_boot_ai_model AS t
         WHERE t.`id` = #{id}
     </select>
 
     <select id="pageList" parameterType="java.util.Map" resultMap="Agent">
         SELECT <include refid="Base_Column_List" />
-        FROM xxl_boot_ai_agent AS t
+        FROM xxl_boot_ai_model AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR" >
-            <if test="agentType gt -1">
-                AND t.`agent_type` = #{agentType}
+            <if test="modelType gt -1">
+                AND t.`model_type` = #{modelType}
             </if>
             <if test="name != null and name != ''">
                 AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
@@ -93,10 +93,10 @@
 
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
-        FROM xxl_boot_ai_agent AS t
+        FROM xxl_boot_ai_model AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR" >
-            <if test="agentType gt -1">
-                AND t.`agent_type` = #{agentType}
+            <if test="modelType gt -1">
+                AND t.`model_type` = #{modelType}
             </if>
             <if test="name != null and name != ''">
                 AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
@@ -106,7 +106,7 @@
 
     <select id="queryAllAgent" resultMap="Agent">
         SELECT <include refid="Base_Column_List" />
-        FROM xxl_boot_ai_agent AS t
+        FROM xxl_boot_ai_model AS t
         ORDER BY t.`name` ASC
     </select>
 

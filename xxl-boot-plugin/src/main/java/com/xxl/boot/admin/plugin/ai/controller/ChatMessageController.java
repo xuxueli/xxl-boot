@@ -1,10 +1,10 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
 import com.xxl.boot.admin.plugin.ai.constant.enums.SenderTypeEnum;
-import com.xxl.boot.admin.plugin.ai.model.Agent;
+import com.xxl.boot.admin.plugin.ai.model.Model;
 import com.xxl.boot.admin.plugin.ai.model.Chat;
 import com.xxl.boot.admin.plugin.ai.model.ChatMessage;
-import com.xxl.boot.admin.plugin.ai.service.AgentService;
+import com.xxl.boot.admin.plugin.ai.service.ModelService;
 import com.xxl.boot.admin.plugin.ai.service.ChatMessageService;
 import com.xxl.boot.admin.plugin.ai.service.ChatService;
 import com.xxl.sso.core.helper.XxlSsoHelper;
@@ -22,7 +22,6 @@ import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,14 +48,14 @@ public class ChatMessageController {
     @Resource
     private ChatService chatService;
     @Resource
-    private AgentService agentService;
+    private ModelService agentService;
 
     /**
     * 页面
     */
     @RequestMapping
     @XxlSso(permission = "ai:chat")
-    public String index(Model model, @RequestParam(required = false, defaultValue = "0") int chatId) {
+    public String index(org.springframework.ui.Model model, @RequestParam(required = false, defaultValue = "0") int chatId) {
 
         // load chat
         Response<Chat> chatRest =chatService.load(chatId);
@@ -90,17 +89,17 @@ public class ChatMessageController {
         // load chat
         Response<Chat> chatRest =chatService.load(chatMessage.getChatId());
         AssertTool.notNull(chatRest.getData(), "当前对话不存在");
-        Response<Agent> agentResp = agentService.load(chatRest.getData().getAgentId());
+        Response<Model> agentResp = agentService.load(chatRest.getData().getAgentId());
         AssertTool.notNull(chatRest.getData(), "当前回话对应Agent配置非法");
 
         // load chat-client
-        ChatClient chatClient = loadChatClient(agentResp.getData().getModel(), agentResp.getData().getOllamaUrl(), null);
+        ChatClient chatClient = loadChatClient(agentResp.getData().getModel(), agentResp.getData().getBaseUrl(), null);
 
         // call ollama
         String responseMesssage = null;
         try {
             responseMesssage = chatClient
-                    .prompt(agentResp.getData().getPrompt())
+                    .prompt(agentResp.getData().getBaseUrl())
                     .user(chatMessage.getContent())
                     .call()
                     .content();

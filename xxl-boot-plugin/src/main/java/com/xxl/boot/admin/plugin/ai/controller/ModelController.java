@@ -1,12 +1,11 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
-import com.xxl.boot.admin.plugin.ai.constant.enums.AgentTypeEnum;
+import com.xxl.boot.admin.plugin.ai.constant.enums.ModelTypeEnum;
 import com.xxl.boot.admin.plugin.ai.constant.enums.SupplierTypeEnum;
-import com.xxl.boot.admin.plugin.ai.model.Agent;
-import com.xxl.boot.admin.plugin.ai.service.AgentService;
+import com.xxl.boot.admin.plugin.ai.model.Model;
+import com.xxl.boot.admin.plugin.ai.service.ModelService;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,29 +22,29 @@ import com.xxl.tool.response.PageModel;
 import com.xxl.sso.core.annotation.XxlSso;
 
 /**
-* Agent Controller
+* Model Controller
 *
 * Created by xuxueli on '2025-12-21 16:13:29'.
 */
 @Controller
-@RequestMapping("/ai/agent")
-public class AgentController {
+@RequestMapping("/ai/model")
+public class ModelController {
 
     @Resource
-    private AgentService agentService;
+    private ModelService modelService;
 
     /**
     * 页面
     */
     @RequestMapping
-    @XxlSso(permission = "ai:agent")
-    public String index(Model model) {
+    @XxlSso(permission = "ai:model")
+    public String index(org.springframework.ui.Model model) {
 
         // set enum
-        model.addAttribute("AgentTypeEnum", AgentTypeEnum.values());
+        model.addAttribute("ModelTypeEnum", ModelTypeEnum.values());
         model.addAttribute("SupplierTypeEnum", SupplierTypeEnum.values());
 
-        return "/ai/agent.list";
+        return "/ai/model.list";
     }
 
     /**
@@ -53,12 +52,12 @@ public class AgentController {
     */
     @RequestMapping("/pageList")
     @ResponseBody
-    @XxlSso(permission = "ai:agent")
-    public Response<PageModel<Agent>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    @XxlSso(permission = "ai:model")
+    public Response<PageModel<Model>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                               int agentType,
+                                               int modelType,
                                                String name) {
-        PageModel<Agent> pageModel = agentService.pageList(offset, pagesize, agentType, name);
+        PageModel<Model> pageModel = modelService.pageList(offset, pagesize, modelType, name);
         return Response.ofSuccess(pageModel);
     }
 
@@ -67,9 +66,9 @@ public class AgentController {
     */
     @RequestMapping("/load")
     @ResponseBody
-    @XxlSso(permission = "ai:agent")
-    public Response<Agent> load(int id){
-        return agentService.load(id);
+    @XxlSso(permission = "ai:model")
+    public Response<Model> load(int id){
+        return modelService.load(id);
     }
 
     /**
@@ -78,8 +77,8 @@ public class AgentController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(Agent agent){
-        return agentService.insert(agent);
+    public Response<String> insert(Model model){
+        return modelService.insert(model);
     }
 
     /**
@@ -87,9 +86,9 @@ public class AgentController {
     */
     @RequestMapping("/delete")
     @ResponseBody
-    @XxlSso(permission = "ai:agent")
+    @XxlSso(permission = "ai:model")
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
-        return agentService.delete(ids);
+        return modelService.delete(ids);
     }
 
     /**
@@ -97,9 +96,9 @@ public class AgentController {
     */
     @RequestMapping("/update")
     @ResponseBody
-    @XxlSso(permission = "ai:agent")
-    public Response<String> update(Agent agent){
-        return agentService.update(agent);
+    @XxlSso(permission = "ai:model")
+    public Response<String> update(Model model){
+        return modelService.update(model);
     }
 
     @InitBinder
