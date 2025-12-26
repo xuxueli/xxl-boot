@@ -4,6 +4,10 @@ import com.xxl.boot.admin.plugin.ai.constant.enums.ModelTypeEnum;
 import com.xxl.boot.admin.plugin.ai.constant.enums.SupplierTypeEnum;
 import com.xxl.boot.admin.plugin.ai.model.Model;
 import com.xxl.boot.admin.plugin.ai.service.ModelService;
+import com.xxl.tool.core.AssertTool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -29,6 +33,7 @@ import com.xxl.sso.core.annotation.XxlSso;
 @Controller
 @RequestMapping("/ai/model")
 public class ModelController {
+    private static final Logger logger = LoggerFactory.getLogger(ModelController.class);
 
     @Resource
     private ModelService modelService;
@@ -101,11 +106,27 @@ public class ModelController {
         return modelService.update(model);
     }
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dateFormat.setLenient(false);
-        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+    /**
+     * test
+     */
+    @RequestMapping("/test")
+    @ResponseBody
+    @XxlSso(permission = "ai:model")
+    public Response<String> test(int id){
+        Response<Model> modelResponse = modelService.load(id);
+        AssertTool.isTrue(modelResponse.isSuccess(), "Model ID非法");
+
+        try {
+            // build chatClient
+            ChatClient chatClient = ChatMessageController.loadChatClient(modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), null);
+
+            // call
+            String response = chatClient.prompt("Hi").call().content();
+            logger.info("model test success, model:{}, baseUrl:{}, response: {}", modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), response);
+            return Response.ofSuccess("测试成功");
+        } catch (Exception e) {
+            return Response.ofFail("测试失败：" + e.getMessage());
+        }
     }
 
 }

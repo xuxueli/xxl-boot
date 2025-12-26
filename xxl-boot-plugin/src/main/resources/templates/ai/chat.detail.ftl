@@ -126,7 +126,7 @@
             let localMessage = agentOrUser?agentMessageTemplate:userMessageTemplate;
             localMessage = localMessage.replace("{userName}", userNameTmp);
             localMessage = localMessage.replace("{sendTime}", new Date().toLocaleString().replace(/\//g, '-') );
-            localMessage = localMessage.replace("{content}", newMessge);
+            localMessage = localMessage.replace("{content}", newMessge + "<b>1111</b>" );
 
             // append show-message
             $("#messageList").append(localMessage);
@@ -153,6 +153,9 @@
             newMessge = newMessge.trim();
 
             // send message
+            var index = layer.load(1, { shade: [0.1,'#fff'] });
+            // append user message
+            appendLocalMessage(newMessge, false);
             $.ajax({
                 type : 'POST',
                 url : base_url + "/ai/chat/detail/send",
@@ -162,9 +165,8 @@
                 },
                 dataType : "json",
                 success : function(data){
+                    layer.close(index);
                     if (data.code === 200) {
-                        // append user message
-                        appendLocalMessage(newMessge, false);
                         // append agent message
                         appendLocalMessage(data.data, true);
                     } else {
@@ -172,11 +174,12 @@
                     }
                 },
                 error: function(xhr, status, error) {
+                    layer.close(index);
                     // Handle error
                     console.log("Error: " + error);
                     layer.open({
                         icon: '2',
-                        content: (I18n.system_opt_del + I18n.system_fail)
+                        content: '消息发送失败[2]'
                     });
                 }
             });

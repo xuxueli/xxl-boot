@@ -1,15 +1,19 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
 import com.xxl.boot.admin.plugin.ai.constant.enums.SenderTypeEnum;
-import com.xxl.boot.admin.plugin.ai.model.Model;
 import com.xxl.boot.admin.plugin.ai.model.Chat;
 import com.xxl.boot.admin.plugin.ai.model.ChatMessage;
-import com.xxl.boot.admin.plugin.ai.service.ModelService;
+import com.xxl.boot.admin.plugin.ai.model.Model;
 import com.xxl.boot.admin.plugin.ai.service.ChatMessageService;
 import com.xxl.boot.admin.plugin.ai.service.ChatService;
+import com.xxl.boot.admin.plugin.ai.service.ModelService;
+import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.AssertTool;
+import com.xxl.tool.response.PageModel;
+import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -27,14 +31,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
-import jakarta.annotation.Resource;
-
-import com.xxl.tool.response.Response;
-import com.xxl.tool.response.PageModel;
-import com.xxl.sso.core.annotation.XxlSso;
-import reactor.core.publisher.Flux;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
 * ChatMessage Controller
@@ -143,33 +143,38 @@ public class ChatMessageController {
 
         // call ollama
         try {
+            // send
             Flux<String> responseFlux = chatClient
                     .prompt(chatRest.getData().getPrompt())
                     .user(chatMessage.getContent())
                     .stream()
                     .content();
 
+            // flux process
+            AtomicReference<StringBuilder> responseMesssage = new AtomicReference<>(new StringBuilder());
             return responseFlux.map(content ->
                     ServerSentEvent.builder(Response.ofSuccess(content)).build()
-            );
+            ).doOnNext(event -> {
+                responseMesssage.updateAndGet(sb -> sb.append(event.data().getData()));
+            }).doOnComplete(()->{
+                String responseMesssageFinal = responseMesssage.get().toString();
+                // final send
+                chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.USER.getValue(), userName, chatMessage.getContent());
+                chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.MODEL.getValue(), SenderTypeEnum.MODEL.getDesc(), responseMesssageFinal);
+                logger.debug("chat-message send success, chatId:{},  request:{}, response:{}", chatMessage.getChatId(), chatMessage.getContent(), responseMesssageFinal);
+            });
 
         } catch (Exception e) {
             logger.error("chat-message send error, request:{}, error: {}", chatMessage, e.getMessage(), e);
             // 直接返回结果
             return Flux.just(ServerSentEvent.builder(Response.<String>ofFail("处理请求时出错: " + e.getMessage())).build());
         }
-
-
-        // send message
-        /*
-        chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.USER.getValue(), userName, chatMessage.getContent());
-        chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.MODEL.getValue(), SenderTypeEnum.MODEL.getDesc(), responseMesssage);
-        logger.debug("chat-message send success, chatId:{},  request:{}, response:{}", chatMessage.getChatId(), chatMessage.getContent(), responseMesssage);
-        return Response.ofSuccess(responseMesssage);
-        */
     }
 
-    private ChatClient loadChatClient(String model, String baseUrl, String apiKey){
+    /**
+     * load chat-client
+     */
+    public static ChatClient loadChatClient(String model, String baseUrl, String apiKey){
         AssertTool.notNull(model, "模型不能为空");
         AssertTool.notNull(baseUrl, "模型地址不能为空");
 

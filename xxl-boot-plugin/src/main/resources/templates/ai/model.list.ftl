@@ -56,6 +56,7 @@
                         <button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
                         <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
                         <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
+                        <button class="btn btn-sm btn-primary selectOnlyOne test" type="button">模型检测</button>
                     </div>
                     <div class="box-body" >
                         <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -372,6 +373,49 @@
                     "updateTime": $("#updateModal .form input[name=updateTime]").val()
                 };
             }
+        });
+
+        // ---------- ---------- ---------- test  ---------- ---------- ----------
+
+        // sendMessage
+        $("#data_operation .test").click(function(){
+            // get select rows
+            var rows = $.adminTable.selectRows();
+            // find select row
+            if (rows.length !== 1) {
+                layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+                return;
+            }
+            var row = rows[0];
+
+            // test
+            var index = layer.load(1, { shade: [0.2,'#090909'] });
+            $.ajax({
+                type : 'POST',
+                url : base_url + "/ai/model/test",
+                data : {
+                    "id" : row.id
+                },
+                dataType : "json",
+                success : function(data){
+                    layer.close(index);
+                    if (data.code === 200) {
+                        layer.open({ icon: '1', content: '模型检测成功' });
+                    } else {
+                        layer.msg( data.msg || "模型检测失败" );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    layer.close(index);
+                    // Handle error
+                    console.log("Error: " + error);
+                    layer.open({
+                        icon: '2',
+                        content: '模型检测失败[2]'
+                    });
+                }
+            });
+
         });
 
     });
