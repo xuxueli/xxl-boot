@@ -44,4 +44,14 @@ public interface ChatMessageMapper {
     */
     public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
 
+    /**
+    * 根据chatId查询
+    */
+    public List<ChatMessage> queryByChatId(@Param("chatId") int chatId);
+
+    /**
+    * 根据chatId删除
+    */
+    public int deleteByChatId(Integer id);
+
 }

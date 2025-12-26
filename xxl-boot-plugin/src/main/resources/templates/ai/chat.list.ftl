@@ -53,6 +53,7 @@
                         <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
                         <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
                         <button class="btn btn-sm btn-primary selectOnlyOne toChat" type="button">进入对话</button>
+                        <button class="btn btn-sm btn-primary selectOnlyOne deleteMessage" type="button">清空消息</button>
                     </div>
                     <div class="box-body" >
                         <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -282,18 +283,65 @@
 
     });
 
-    // ---------- ---------- ---------- chat detail  ---------- ---------- ----------
+    // ---------- ---------- ---------- deleteMessage  ---------- ---------- ----------
 
-    $("#data_operation .toChat").click(function(){
+    $("#data_operation .deleteMessage").click(function(){
         // get select rows
-        var rows = $.adminTable.table.bootstrapTable('getSelections');
+        var rows = $.adminTable.selectRows();
         // find select row
         if (rows.length !== 1) {
             layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
             return;
         }
         var row = rows[0];
-        layer.msg("选中：" + row.title);
+
+        // do delete
+        layer.confirm('确认清空消息?', {
+            icon: 3,
+            title: I18n.system_tips ,
+            btn: [ I18n.system_ok, I18n.system_cancel ]
+        }, function(index){
+            layer.close(index);
+
+            // send message
+            $.ajax({
+                type : 'POST',
+                url : base_url + "/ai/chat/deleteMessage",
+                data : {
+                    "id" : row.id
+                },
+                dataType : "json",
+                success : function(data){
+                    if (data.code === 200) {
+                        layer.msg( I18n.system_opt + I18n.system_success );
+                    } else {
+                        layer.msg( data.msg || "发送失败" );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.log("Error: " + error);
+                    layer.open({
+                        icon: '2',
+                        content: (I18n.system_opt_del + I18n.system_fail)
+                    });
+                }
+            });
+        });
+
+    });
+
+    // ---------- ---------- ---------- chat detail  ---------- ---------- ----------
+
+    $("#data_operation .toChat").click(function(){
+        // get select rows
+        var rows = $.adminTable.selectRows();
+        // find select row
+        if (rows.length !== 1) {
+            layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+            return;
+        }
+        var row = rows[0];
 
         // open chat detail
         let title = row.title.size>10?row.title.substring(0,10) + "...":row.title;

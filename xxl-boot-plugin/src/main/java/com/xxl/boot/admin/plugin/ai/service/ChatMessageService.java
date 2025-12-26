@@ -16,7 +16,7 @@ public interface ChatMessageService {
     /**
     * 新增
     */
-    public Response<String> insert(ChatMessage chatMessage);
+    public Response<String> send(int chatId, int senderType, String senderUsername, String content);
 
     /**
     * 删除
@@ -37,5 +37,10 @@ public interface ChatMessageService {
     * 分页查询
     */
     public PageModel<ChatMessage> pageList(int offset, int pagesize);
+
+    /**
+    * 查询
+    */
+    public Response<List<ChatMessage>> queryByChatId(int chatId);
 
 }

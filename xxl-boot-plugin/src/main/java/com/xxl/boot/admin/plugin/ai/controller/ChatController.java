@@ -88,6 +88,16 @@ public class ChatController {
     }
 
     /**
+     * 删除消息
+     */
+    @RequestMapping("/deleteMessage")
+    @ResponseBody
+    @XxlSso(permission = "ai:chat")
+    public Response<String> deleteMessage(@RequestParam("id") int id){
+        return chatService.deleteMessage(id);
+    }
+
+    /**
     * 更新
     */
     @RequestMapping("/update")

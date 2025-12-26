@@ -2,6 +2,7 @@ package com.xxl.boot.admin.plugin.ai.service.impl;
 
 import com.xxl.boot.admin.plugin.ai.mapper.AgentMapper;
 import com.xxl.boot.admin.plugin.ai.mapper.ChatMapper;
+import com.xxl.boot.admin.plugin.ai.mapper.ChatMessageMapper;
 import com.xxl.boot.admin.plugin.ai.model.Chat;
 import com.xxl.boot.admin.plugin.ai.service.ChatService;
 import com.xxl.tool.core.StringTool;
@@ -24,6 +25,8 @@ public class ChatServiceImpl implements ChatService {
 	private ChatMapper chatMapper;
 	@Resource
 	private AgentMapper agentMapper;
+	@Resource
+	private ChatMessageMapper chatMessageMapper;
 
 	/**
     * 新增
@@ -53,8 +56,21 @@ public class ChatServiceImpl implements ChatService {
 	*/
 	@Override
 	public Response<String> delete(List<Integer> ids) {
+
+		// delete chat message
+		for (Integer id: ids) {
+			chatMessageMapper.deleteByChatId(id);
+		}
+
+		// delete chat
 		int ret = chatMapper.delete(ids);
-			return ret>0? Response.ofSuccess() : Response.ofFail() ;
+		return ret>0? Response.ofSuccess() : Response.ofFail() ;
+	}
+
+	@Override
+	public Response<String> deleteMessage(int id) {
+		int ret = chatMessageMapper.deleteByChatId(id);
+		return ret>0? Response.ofSuccess() : Response.ofFail() ;
 	}
 
 	/**

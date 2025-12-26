@@ -25,6 +25,16 @@
         adminTable: {
             table :null,
             options: {},
+            selectIds: function () {
+                // get select rows
+                let rows = this.table.bootstrapTable('getSelections');
+                // find select ids
+                return (rows && rows.length > 0) ? rows.map(row => row.id) : [];
+            },
+            selectRows: function () {
+                // get select rows
+                return this.table.bootstrapTable('getSelections');
+            },
             initTable: function(options) {
                 // parse param
                 this.table = $(options.table);

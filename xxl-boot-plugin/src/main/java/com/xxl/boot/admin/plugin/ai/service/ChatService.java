@@ -23,6 +23,8 @@ public interface ChatService {
     */
     public Response<String> delete(List<Integer> ids);
 
+    public Response<String> deleteMessage(int id);
+
     /**
     * 更新
     */

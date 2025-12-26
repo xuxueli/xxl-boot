@@ -78,4 +78,16 @@
         FROM xxl_boot_ai_chat_message AS t
     </select>
 
+    <select id="queryByChatId" parameterType="java.util.Map" resultMap="ChatMessage">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_chat_message AS t
+        WHERE t.`chat_id` = #{chatId}
+        ORDER BY t.`id` ASC
+    </select>
+
+    <delete id="deleteByChatId" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_ai_chat_message
+        WHERE `chat_id` = #{chatId}
+    </delete>
+
 </mapper>

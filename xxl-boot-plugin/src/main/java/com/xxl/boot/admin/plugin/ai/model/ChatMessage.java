@@ -103,4 +103,16 @@ public class ChatMessage implements Serializable {
         this.updateTime = updateTime;
     }
 
+    @Override
+    public String toString() {
+        return "ChatMessage{" +
+                "id=" + id +
+                ", chatId=" + chatId +
+                ", senderType=" + senderType +
+                ", senderUsername='" + senderUsername + '\'' +
+                ", content='" + content + '\'' +
+                ", addTime=" + addTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 }
