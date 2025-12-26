@@ -21,19 +21,23 @@
             <div class="box-body">
                 <div class="row" id="data_filter" >
                     <div class="col-xs-3">
-                        <!--query param-->
                         <div class="input-group">
-                            <span class="input-group-addon">Agent</span>
-                            <select class="form-control agentId" >
+                            <span class="input-group-addon">Model</span>
+                            <select class="form-control" name="modelId" >
                                 <option value="-1" >${I18n.system_please_choose}</option>
-                                <#if agentList?? >
-                                    <#list agentList as item>
-                                        <option value="${item.id}" >${item.name}</option>
-                                    </#list>
-                                </#if>
+                                <#list modelList as item>
+                                    <option value="${item.id}" >${item.name}</option>
+                                </#list>
                             </select>
                         </div>
                     </div>
+                    <div class="col-xs-3">
+                        <div class="input-group">
+                            <span class="input-group-addon">对话标题</span>
+                            <input type="text" class="form-control" name="title" placeholder="" maxlength="100" >
+                        </div>
+                    </div>
+
                     <div class="col-xs-1">
                         <button class="btn btn-block btn-primary searchBtn" >${I18n.system_search}</button>
                     </div>
@@ -78,19 +82,25 @@
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">Agent<font color="red">*</font></label>
+                                <label for="lastname" class="col-sm-2 control-label">对话标题<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" name="agentId" >
+                                    <textarea name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">Model<font color="red">*</font></label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="modelId" >
                                         <option value="-1" >${I18n.system_please_choose}</option>
-                                        <#list agentList as item>
+                                        <#list modelList as item>
                                             <option value="${item.id}" >${item.name}</option>
                                         </#list>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">对话标题<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="100" ></div>
                             </div>
 
                             <br>
@@ -119,21 +129,27 @@
 
                             <!-- field -->
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">Agent<font color="red">*</font></label>
+                                <label for="lastname" class="col-sm-2 control-label">对话标题<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="100" ></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
                                 <div class="col-sm-10">
-                                    <select class="form-control" name="agentId" >
-                                        <option value="-1" >${I18n.system_please_choose}</option>
-                                        <#if agentList?? >
-                                        <#list agentList as item>
-                                            <option value="${item.id}" >${item.name}</option>
-                                        </#list>
-                                        </#if>
-                                    </select>
+                                    <textarea name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">对话标题<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="100" ></div>
+                                <label for="lastname" class="col-sm-2 control-label">Model<font color="red">*</font></label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" name="modelId" >
+                                        <option value="-1" >${I18n.system_please_choose}</option>
+                                        <#if modelList?? >
+                                            <#list modelList as item>
+                                                <option value="${item.id}" >${item.name}</option>
+                                            </#list>
+                                        </#if>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -166,9 +182,9 @@
     $(function() {
 
         // ---------- ---------- ---------- convert date 2 js  ---------- ---------- ----------
-        const agentTypeMap = {
-            <#if agentList?? >
-            <#list agentList as item>
+        const modelMap = {
+            <#if modelList?? >
+            <#list modelList as item>
             ${item.id}: "${item.name}"<#if item?has_next>,</#if>
             </#list>
             </#if>
@@ -184,7 +200,8 @@
             url: base_url + "/ai/chat/pageList",
             queryParams: function (params) {
                 var obj = {};
-                obj.param = $('#data_filter .param').val();
+                obj.modelId = $('#data_filter [name=modelId]').val();
+                obj.title = $('#data_filter [name=title]').val();
                 obj.offset = params.offset;
                 obj.pagesize = params.limit;
                 return obj;
@@ -197,12 +214,12 @@
                     widthUnit: '%'
                 }
                 ,{
-                    title: 'Agent',
-                    field: 'agentId',
+                    title: 'Model',
+                    field: 'modelId',
                     width: '20',
                     widthUnit: '%',
                     formatter: function (value, row, index) {
-                        return agentTypeMap[value];
+                        return modelMap[value];
                     }
                 }
                 ,{
@@ -247,8 +264,9 @@
             readFormData: function() {
                 // request
                 return {
-                    "agentId": $("#addModal .form select[name=agentId]").val(),
-                    "title": $("#addModal .form input[name=title]").val(),
+                    "modelId": $("#addModal [name=modelId]").val(),
+                    "title": $("#addModal [name=title]").val(),
+                    "prompt": $("#addModal [name=prompt]").val()
                 };
             }
         });
@@ -261,9 +279,10 @@
             writeFormData: function(row) {
                 // base data
 
-                $("#updateModal .form input[name='id']").val( row.id );
-                $("#updateModal .form select[name='agentId']").val( row.agentId );
-                $("#updateModal .form input[name='title']").val( row.title );
+                $("#updateModal [name='id']").val( row.id );
+                $("#updateModal [name='modelId']").val( row.modelId );
+                $("#updateModal [name='title']").val( row.title );
+                $("#updateModal [name='prompt']").val( row.prompt );
             },
             rules : {
             },
@@ -272,11 +291,10 @@
             readFormData: function() {
                 // request
                 return {
-                    "id": $("#updateModal .form input[name=id]").val(),
-                    "agentId": $("#updateModal .form select[name=agentId]").val(),
-                    "title": $("#updateModal .form input[name=title]").val(),
-                    "addTime": $("#updateModal .form input[name=addTime]").val(),
-                    "updateTime": $("#updateModal .form input[name=updateTime]").val()
+                    "id": $("#updateModal [name=id]").val(),
+                    "modelId": $("#updateModal [name=modelId]").val(),
+                    "title": $("#updateModal [name=title]").val(),
+                    "prompt": $("#updateModal [name=prompt]").val()
                 };
             }
         });

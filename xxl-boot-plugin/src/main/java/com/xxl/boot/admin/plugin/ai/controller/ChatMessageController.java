@@ -21,6 +21,8 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +34,7 @@ import jakarta.annotation.Resource;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 import com.xxl.sso.core.annotation.XxlSso;
+import reactor.core.publisher.Flux;
 
 /**
 * ChatMessage Controller
@@ -48,7 +51,7 @@ public class ChatMessageController {
     @Resource
     private ChatService chatService;
     @Resource
-    private ModelService agentService;
+    private ModelService modelService;
 
     /**
     * 页面
@@ -89,17 +92,17 @@ public class ChatMessageController {
         // load chat
         Response<Chat> chatRest =chatService.load(chatMessage.getChatId());
         AssertTool.notNull(chatRest.getData(), "当前对话不存在");
-        Response<Model> agentResp = agentService.load(chatRest.getData().getAgentId());
-        AssertTool.notNull(chatRest.getData(), "当前回话对应Agent配置非法");
+        Response<Model> modelResponse = modelService.load(chatRest.getData().getModelId());
+        AssertTool.notNull(chatRest.getData(), "当前回话Model配置非法");
 
         // load chat-client
-        ChatClient chatClient = loadChatClient(agentResp.getData().getModel(), agentResp.getData().getBaseUrl(), null);
+        ChatClient chatClient = loadChatClient(modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), null);
 
         // call ollama
         String responseMesssage = null;
         try {
             responseMesssage = chatClient
-                    .prompt(agentResp.getData().getBaseUrl())
+                    .prompt(modelResponse.getData().getBaseUrl())
                     .user(chatMessage.getContent())
                     .call()
                     .content();
@@ -110,32 +113,61 @@ public class ChatMessageController {
 
         // send message
         chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.USER.getValue(), userName, chatMessage.getContent());
-        chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.AGENT.getValue(), SenderTypeEnum.AGENT.getDesc(), responseMesssage);
+        chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.MODEL.getValue(), SenderTypeEnum.MODEL.getDesc(), responseMesssage);
         logger.debug("chat-message send success, chatId:{},  request:{}, response:{}", chatMessage.getChatId(), chatMessage.getContent(), responseMesssage);
         return Response.ofSuccess(responseMesssage);
     }
 
-    /**
-     * @GetMapping("/chat/stream")
-     * public Flux<String> streamChat(HttpServletResponse response, @RequestParam(value = "input", required = false, defaultValue = "介绍你自己") String input) {
-     *     response.setCharacterEncoding("UTF-8");
-     *
-     *     // build chat-client
-     *     ChatClient ollamaChatClient = ChatClient
-     *             .builder(ollamaChatModel)
-     *             .defaultAdvisors(MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build())
-     *             .defaultAdvisors(SimpleLoggerAdvisor.builder().build())
-     *             .defaultOptions(OllamaChatOptions.builder().model(modle).build())
-     *             .build();
-     *
-     *     // call ollama
-     *     return ollamaChatClient
-     *             .prompt(prompt)
-     *             .user(input)
-     *             .stream()
-     *             .content();
-     * }
-     */
+    @RequestMapping(value = "/send2", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @ResponseBody
+    @XxlSso(permission = "ai:chat")
+    public Flux<ServerSentEvent<Response<String>>> send2(HttpServletRequest request,
+                                               HttpServletResponse response,
+                                               ChatMessage chatMessage){
+
+        // valid
+        AssertTool.notNull(chatMessage.getContent(), "请输入内容");
+
+        // login user
+        Response<LoginInfo> loginInfoRest = XxlSsoHelper.loginCheckWithAttr(request);
+        String userName = loginInfoRest.getData().getUserName();
+
+        // load chat
+        Response<Chat> chatRest =chatService.load(chatMessage.getChatId());
+        AssertTool.notNull(chatRest.getData(), "当前对话不存在");
+        Response<Model> modelResponse = modelService.load(chatRest.getData().getModelId());
+        AssertTool.notNull(chatRest.getData(), "当前回话Model配置非法");
+
+        // load chat-client
+        ChatClient chatClient = loadChatClient(modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), null);
+
+        // call ollama
+        try {
+            Flux<String> responseFlux = chatClient
+                    .prompt(chatRest.getData().getPrompt())
+                    .user(chatMessage.getContent())
+                    .stream()
+                    .content();
+
+            return responseFlux.map(content ->
+                    ServerSentEvent.builder(Response.ofSuccess(content)).build()
+            );
+
+        } catch (Exception e) {
+            logger.error("chat-message send error, request:{}, error: {}", chatMessage, e.getMessage(), e);
+            // 直接返回结果
+            return Flux.just(ServerSentEvent.builder(Response.<String>ofFail("处理请求时出错: " + e.getMessage())).build());
+        }
+
+
+        // send message
+        /*
+        chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.USER.getValue(), userName, chatMessage.getContent());
+        chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.MODEL.getValue(), SenderTypeEnum.MODEL.getDesc(), responseMesssage);
+        logger.debug("chat-message send success, chatId:{},  request:{}, response:{}", chatMessage.getChatId(), chatMessage.getContent(), responseMesssage);
+        return Response.ofSuccess(responseMesssage);
+        */
+    }
 
     private ChatClient loadChatClient(String model, String baseUrl, String apiKey){
         AssertTool.notNull(model, "模型不能为空");
@@ -179,34 +211,5 @@ public class ChatMessageController {
         return Response.ofSuccess(pageModel);
     }
 
-    /**
-     * Load查询
-     */
-    @RequestMapping("/load")
-    @ResponseBody
-    @XxlSso(permission = "ai:chat")
-    public Response<ChatMessage> load(int id){
-        return chatMessageService.load(id);
-    }
-
-    /**
-    * 删除
-    */
-    @RequestMapping("/delete")
-    @ResponseBody
-    @XxlSso(permission = "ai:chat")
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
-        return chatMessageService.delete(ids);
-    }
-
-    /**
-    * 更新
-    */
-    @RequestMapping("/update")
-    @ResponseBody
-    @XxlSso(permission = "ai:chat")
-    public Response<String> update(ChatMessage chatMessage){
-        return chatMessageService.update(chatMessage);
-    }
 
 }

@@ -17,14 +17,19 @@ public class Chat implements Serializable {
     private int id;
 
     /**
-    * agent id
+    * Model ID
     */
-    private int agentId;
+    private int modelId;
 
     /**
     * chat 标题
     */
     private String title;
+
+    /**
+    * 提示词
+    */
+    private String prompt;
 
     /**
     * 新增时间
@@ -36,7 +41,6 @@ public class Chat implements Serializable {
     */
     private Date updateTime;
 
-
     public int getId() {
         return id;
     }
@@ -45,12 +49,12 @@ public class Chat implements Serializable {
         this.id = id;
     }
 
-    public int getAgentId() {
-        return agentId;
+    public int getModelId() {
+        return modelId;
     }
 
-    public void setAgentId(int agentId) {
-        this.agentId = agentId;
+    public void setModelId(int modelId) {
+        this.modelId = modelId;
     }
 
     public String getTitle() {
@@ -59,6 +63,14 @@ public class Chat implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getPrompt() {
+        return prompt;
+    }
+
+    public void setPrompt(String prompt) {
+        this.prompt = prompt;
     }
 
     public Date getAddTime() {
@@ -76,5 +88,4 @@ public class Chat implements Serializable {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-
 }

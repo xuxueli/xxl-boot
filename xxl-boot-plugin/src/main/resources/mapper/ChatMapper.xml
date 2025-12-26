@@ -5,30 +5,34 @@
 
     <resultMap id="Chat" type="com.xxl.boot.admin.plugin.ai.model.Chat" >
         <result column="id" property="id" />
-        <result column="agent_id" property="agentId" />
+        <result column="model_id" property="modelId" />
         <result column="title" property="title" />
+        <result column="prompt" property="prompt" />
         <result column="add_time" property="addTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
 
     <sql id="Base_Column_List">
         t.`id`,
-        t.`agent_id`,
+        t.`model_id`,
         t.`title`,
+        t.`prompt`,
         t.`add_time`,
         t.`update_time`
     </sql>
 
     <insert id="insert" parameterType="java.util.Map" >
         INSERT INTO xxl_boot_ai_chat (
-            `agent_id`,
+            `model_id`,
             `title`,
+            `prompt`,
             `add_time`,
             `update_time`
         )
         VALUES(
-                  #{chat.agentId} ,
+                  #{chat.modelId} ,
                   #{chat.title} ,
+                  #{chat.prompt} ,
                   NOW() ,
                   NOW()
               )
@@ -45,8 +49,9 @@
     <update id="update" parameterType="java.util.Map" >
         UPDATE xxl_boot_ai_chat
         SET
-            `agent_id` = #{chat.agentId},
+            `model_id` = #{chat.modelId},
             `title` = #{chat.title},
+            `prompt` = #{chat.prompt},
             `update_time` = NOW()
         WHERE `id` = #{chat.id}
     </update>
@@ -60,12 +65,28 @@
     <select id="pageList" parameterType="java.util.Map" resultMap="Chat">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_ai_chat AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="modelId gt 0">
+                AND t.`model_id` = #{modelId}
+            </if>
+            <if test="title != null and title != ''">
+                AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
+            </if>
+        </trim>
         LIMIT #{offset}, #{pagesize}
     </select>
 
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_boot_ai_chat AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="modelId gt 0">
+                AND t.`model_id` = #{modelId}
+            </if>
+            <if test="title != null and title != ''">
+                AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
+            </if>
+        </trim>
     </select>
 
 </mapper>

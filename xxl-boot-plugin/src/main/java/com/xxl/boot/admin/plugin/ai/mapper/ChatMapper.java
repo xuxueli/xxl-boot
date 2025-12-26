@@ -37,11 +37,17 @@ public interface ChatMapper {
     /**
     * 分页查询Data
     */
-	public List<Chat> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<Chat> pageList(@Param("modelId") int modelId,
+                               @Param("title") String title,
+                               @Param("offset") int offset,
+                               @Param("pagesize") int pagesize);
 
     /**
     * 分页查询Count
     */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+    public int pageListCount(@Param("modelId") int modelId,
+                             @Param("title") String title,
+                             @Param("offset") int offset,
+                             @Param("pagesize") int pagesize);
 
 }

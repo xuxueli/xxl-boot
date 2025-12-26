@@ -2,7 +2,7 @@ package com.xxl.boot.admin.plugin.ai.constant.enums;
 
 public enum SenderTypeEnum {
 
-    AGENT(1, "Agent"),
+    MODEL(1, "Model"),
     USER(2, "用户");
 
     private int value;

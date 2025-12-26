@@ -94,12 +94,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <#--<div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
-                                <div class="col-sm-10">
-                                    <textarea id="add_content" name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
-                                </div>
-                            </div>-->
 
                             <br>
                             <p style="margin: 0 0 10px;text-align: left;border-bottom: 1px solid #e5e5e5;color: gray;">供应商配置</p>
@@ -166,12 +160,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <#--<div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
-                                <div class="col-sm-10">
-                                    <textarea id="add_content" name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
-                                </div>
-                            </div>-->
 
                             <br>
                             <p style="margin: 0 0 10px;text-align: left;border-bottom: 1px solid #e5e5e5;color: gray;">供应商配置</p>

@@ -24,7 +24,7 @@ public class ChatServiceImpl implements ChatService {
 	@Resource
 	private ChatMapper chatMapper;
 	@Resource
-	private ModelMapper agentMapper;
+	private ModelMapper modelMapper;
 	@Resource
 	private ChatMessageMapper chatMessageMapper;
 
@@ -40,11 +40,11 @@ public class ChatServiceImpl implements ChatService {
         }
 
 		// valid field
-		if (chat.getAgentId() <= 0 || agentMapper.load(chat.getAgentId()) == null) {
-			return Response.ofFail("关联的Agent非法");
-		}
 		if (StringTool.isBlank(chat.getTitle())) {
 			return Response.ofFail("标题不能为空");
+		}
+		if (chat.getModelId() <= 0 || modelMapper.load(chat.getModelId()) == null) {
+			return Response.ofFail("关联的Model非法");
 		}
 
 		chatMapper.insert(chat);
@@ -85,8 +85,8 @@ public class ChatServiceImpl implements ChatService {
 		}
 
 		// valid field
-		if (chat.getAgentId() <= 0 || agentMapper.load(chat.getAgentId()) == null) {
-			return Response.ofFail("关联的Agent非法");
+		if (chat.getModelId() <= 0 || modelMapper.load(chat.getModelId()) == null) {
+			return Response.ofFail("关联的Model非法");
 		}
 		if (StringTool.isBlank(chat.getTitle())) {
 			return Response.ofFail("标题不能为空");
@@ -109,10 +109,10 @@ public class ChatServiceImpl implements ChatService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<Chat> pageList(int offset, int pagesize) {
+	public PageModel<Chat> pageList(int modelId, String title, int offset, int pagesize) {
 
-		List<Chat> pageList = chatMapper.pageList(offset, pagesize);
-		int totalCount = chatMapper.pageListCount(offset, pagesize);
+		List<Chat> pageList = chatMapper.pageList(modelId, title, offset, pagesize);
+		int totalCount = chatMapper.pageListCount(modelId, title, offset, pagesize);
 
 		// result
 		PageModel<Chat> pageModel = new PageModel<Chat>();

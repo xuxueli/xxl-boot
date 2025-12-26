@@ -37,9 +37,9 @@ public class ChatController {
     @XxlSso(permission = "ai:chat")
     public String index(org.springframework.ui.Model model) {
 
-        // find all agent
-        List<Model> agentList = modelService.queryAllModel();
-        model.addAttribute("agentList", agentList);
+        // find all model
+        List<Model> modelList = modelService.queryAllModel();
+        model.addAttribute("modelList", modelList);
 
         return "ai/chat.list";
     }
@@ -51,8 +51,10 @@ public class ChatController {
     @ResponseBody
     @XxlSso(permission = "ai:chat")
     public Response<PageModel<Chat>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                              @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<Chat> pageModel = chatService.pageList(offset, pagesize);
+                                              @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                              @RequestParam(value = "modelId") int modelId,
+                                              @RequestParam(value = "title") String title) {
+        PageModel<Chat> pageModel = chatService.pageList(modelId, title, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 

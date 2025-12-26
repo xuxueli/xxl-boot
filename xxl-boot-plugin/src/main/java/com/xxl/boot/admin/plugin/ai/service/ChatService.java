@@ -38,6 +38,6 @@ public interface ChatService {
     /**
     * 分页查询
     */
-    public PageModel<Chat> pageList(int offset, int pagesize);
+    public PageModel<Chat> pageList(int modelId, String title, int offset, int pagesize);
 
 }
