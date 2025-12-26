@@ -1,6 +1,8 @@
 
+## XXL-BOOT 插件      
+XXL-BOOT 插件，基于 XXL-BOOT-ADMIN 建设的开箱即用的扩展插件，可结合实际业务诉求选择性启用。
 
-## 扩展明细
+## 插件明细
 
 | 模块        | 功能         | 描述                   |
 |-----------|------------|----------------------|
@@ -12,8 +14,26 @@
 | AI模块      | Agent生视频   | 文生视频、图生视频；支持集成多模型供应商；
 
 
+## 集成应用
 
-## 扩展功能
+### 1、数据库初始化        
+执行扩展插件数据库初始化脚本，脚本位置：
+
+```
+xxl-boot/xxl-boot-plugin/doc/db/tables_xxl_boot_plugin.sql
+```
+
+### 2、项目部署启动
+参考 XXL-BOOT 官方文档，部署启动 xxl-boot-admin 即可，注意需要引入如下插件依赖：
+
+```
+<dependency>
+    <groupId>com.xuxueli</groupId>
+    <artifactId>xxl-boot-plugin</artifactId>
+</dependency>
+```
+
+## 详情介绍
 
 ### 1、AI模块
 

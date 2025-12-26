@@ -253,6 +253,20 @@ docker run -d \
 xuxueli/xxl-boot-admin:{指定版本}
 ```
 
+### 4.8 扩展插件
+
+项目支持通过插件方式进行扩展模块集成，同时提供多个官方插件模块，详细见如下仓库目录，
+
+```
+/xxl-boot/
+    - xxl-boot-admin                  基础模块
+    - xxl-boot-plugins                扩展模块
+        /README.md                        扩展模块文档指南    
+        /com.xxl.boot.admin.plugin.ai     AI扩展
+        /com.xxl.boot.admin.plugin.xxx    其他扩展
+```
+
+
 
 ## 四、版本更新日志
 ### 版本 v0.1.0 Release Notes[2018-05-03]
