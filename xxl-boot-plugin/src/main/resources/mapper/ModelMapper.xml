@@ -104,7 +104,7 @@
         </trim>
     </select>
 
-    <select id="queryAllAgent" resultMap="Agent">
+    <select id="queryAllModel" resultMap="Agent">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_ai_model AS t
         ORDER BY t.`name` ASC

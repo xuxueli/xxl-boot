@@ -28,7 +28,7 @@ public class ChatController {
     @Resource
     private ChatService chatService;
     @Resource
-    private ModelService agentService;
+    private ModelService modelService;
 
     /**
     * 页面
@@ -38,7 +38,7 @@ public class ChatController {
     public String index(org.springframework.ui.Model model) {
 
         // find all agent
-        List<Model> agentList = agentService.queryAllModel();
+        List<Model> agentList = modelService.queryAllModel();
         model.addAttribute("agentList", agentList);
 
         return "ai/chat.list";
