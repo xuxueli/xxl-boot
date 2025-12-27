@@ -88,7 +88,7 @@
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
                                 <div class="col-sm-10">
-                                    <textarea name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
+                                    <textarea name="prompt" rows="15" cols="90" maxlength="2000" ></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -135,7 +135,7 @@
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">提示词<font color="black">*</font></label>
                                 <div class="col-sm-10">
-                                    <textarea name="prompt" rows="5" cols="90" maxlength="500" ></textarea>
+                                    <textarea name="prompt" rows="15" cols="90" maxlength="2000" ></textarea>
                                 </div>
                             </div>
                             <div class="form-group">

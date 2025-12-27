@@ -7,6 +7,12 @@
     <!-- 1-style start -->
     <@netCommon.commonStyle />
     <link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
+    <link rel="stylesheet" href="${request.contextPath}/static/plugins/editor.md-1.5.0/main/editormd.min.css">
+    <style>
+        .editormd-html-preview,.editormd-preview-container {
+            padding: 5px 10px
+        }
+    </style>
     <!-- 1-style end -->
 
 </head>
@@ -25,33 +31,6 @@
             <div class="box-body">
                 <div class="direct-chat-messages" id="messageList" style="height: 100%;padding: 20px;" >
                     <#-- 消息列表 -->
-                    <#if messageList?exists >
-                        <#list messageList as message>
-                            <#if message.senderType == 1 >
-                                <!-- Message1：左侧 -->
-                                <div class="direct-chat-msg" >
-                                    <div class="direct-chat-info clearfix">
-                                        <span class="direct-chat-name pull-left">Agent：</span>
-                                        <span class="direct-chat-timestamp pull-left">${message.addTime?string("yyyy-MM-dd HH:mm:ss")}</span>
-                                    </div>
-                                    <div class="direct-chat-text" style="margin-left: 0px;float: left;" >
-                                        ${message.content}
-                                    </div>
-                                </div>
-                            <#else>
-                                <!-- Message1：右侧 -->
-                                <div class="direct-chat-msg right">
-                                    <div class="direct-chat-info clearfix">
-                                        <span class="direct-chat-timestamp pull-right">${message.addTime?string("yyyy-MM-dd HH:mm:ss")}</span>
-                                        <span class="direct-chat-name pull-right">${message.senderUsername}：</span>
-                                    </div>
-                                    <div class="direct-chat-text" style="margin-right: 0px;float: right;" >
-                                        ${message.content}
-                                    </div>
-                                </div>
-                            </#if>
-                        </#list>
-                    </#if>
                 </div>
             </div>
             <!-- 发送消息 -->
@@ -76,6 +55,9 @@
 <@netCommon.commonScript />
 <script src="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="${request.contextPath}/static/plugins/editor.md-1.5.0/main/editormd.min.js"></script>
+<script src="${request.contextPath}/static/plugins/editor.md-1.5.0/lib/marked.min.js"></script>
+<script src="${request.contextPath}/static/plugins/editor.md-1.5.0/lib/prettify.min.js"></script>
 <!-- admin table -->
 <script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
 <script>
@@ -95,8 +77,8 @@
                         <span class="direct-chat-name pull-left">{userName}：</span>
                         <span class="direct-chat-timestamp pull-left">{sendTime}</span>
                     </div>
-                    <div class="direct-chat-text" style="margin-left: 0px;float: left;" >
-                        {content}
+                    <div class="direct-chat-text" style="margin-left: 0px;float: left;background:#ffffff;" id="{messageId}" >
+                        <textarea style="display:none;">{content}</textarea>
                     </div>
                 </div>
             `;
@@ -106,11 +88,25 @@
                         <span class="direct-chat-timestamp pull-right">{sendTime}</span>
                         <span class="direct-chat-name pull-right">{userName}：</span>
                     </div>
-                    <div class="direct-chat-text" style="margin-right: 0px;float: right;" >
+                    <div class="direct-chat-text" style="margin-right: 0px;float: right;" id="{messageId}" >
                         {content}
                     </div>
                 </div>
             `;
+        var messageNo = 1;
+
+        /**
+         * init message list
+         */
+        function initMessageList(){
+            <#if messageList?exists >
+                <#list messageList as message>
+                    appendLocalMessage("${message.content?js_string}", <#if message.senderType == 1 >true<#else>false</#if> );
+                </#list>
+            </#if>
+        }
+        initMessageList();
+        scrollTo(0, document.body.scrollHeight);
 
         /**
          * append message
@@ -120,18 +116,37 @@
          */
         function appendLocalMessage(newMessge, agentOrUser){
 
+            // process data
             let userNameTmp = agentOrUser?'Agent':userName;
+            let sendTime = new Date().toLocaleString().replace(/\//g, '-');
+            let messageId = 'messageId_' + messageNo++;
 
             // build show-message
             let localMessage = agentOrUser?agentMessageTemplate:userMessageTemplate;
             localMessage = localMessage.replace("{userName}", userNameTmp);
-            localMessage = localMessage.replace("{sendTime}", new Date().toLocaleString().replace(/\//g, '-') );
+            localMessage = localMessage.replace("{sendTime}", sendTime);
             localMessage = localMessage.replace("{content}", newMessge );
+            localMessage = localMessage.replace("{messageId}", messageId );
 
             // append show-message
             $("#messageList").append(localMessage);
 
-            // clear send-message
+            // agent message format
+            if (agentOrUser) {
+
+                console.log("" + $("#"+messageId).length);
+
+                editormd.markdownToHTML(messageId, {
+                    htmlDecode      : "style,script,iframe",  // you can filter tags decode
+                    emoji           : false,
+                    taskList        : false,
+                    tex             : false,  // 默认不解析
+                    flowChart       : false,  // 默认不解析
+                    sequenceDiagram : false,  // 默认不解析
+                });
+            }
+
+            // clear user send-message
             if (!agentOrUser) {
                 $("#sendMessage input[name='content']").val('');
             }

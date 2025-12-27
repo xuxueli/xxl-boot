@@ -11,30 +11,40 @@ import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.AssertTool;
+import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
+import io.netty.channel.ChannelOption;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.netty.http.client.HttpClient;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
 * ChatMessage Controller
@@ -89,21 +99,42 @@ public class ChatMessageController {
         Response<LoginInfo> loginInfoRest = XxlSsoHelper.loginCheckWithAttr(request);
         String userName = loginInfoRest.getData().getUserName();
 
-        // load chat
+        // get chat data
         Response<Chat> chatRest =chatService.load(chatMessage.getChatId());
         AssertTool.notNull(chatRest.getData(), "当前对话不存在");
         Response<Model> modelResponse = modelService.load(chatRest.getData().getModelId());
         AssertTool.notNull(chatRest.getData(), "当前回话Model配置非法");
 
-        // load chat-client
+        // 1、chat-client
         ChatClient chatClient = loadChatClient(modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), null);
 
-        // call ollama
+        // 2、prompt
+        // 2.1、系统提示词：定义全局行为或上下文（如角色、输出格式）
+        List<Message> promptMessages = new ArrayList<>();
+        promptMessages.add(new SystemMessage(chatRest.getData().getPrompt()));
+        // 2.2、历史对话记忆：
+        Response<List<ChatMessage>> chatMessageResponse = chatMessageService.queryByChatId(chatMessage.getChatId());
+        if (chatMessageResponse.isSuccess() && CollectionTool.isNotEmpty(chatMessageResponse.getData())) {
+            promptMessages = chatMessageResponse
+                    .getData()
+                    .stream()
+                    .skip(Math.max(0, chatMessageResponse.getData().size() - 10))       // only store 10 recent messages
+                    .map(e -> {
+                                return SenderTypeEnum.USER.getValue() == e.getSenderType()
+                                        ? (Message)new UserMessage(e.getContent()) :
+                                        new AssistantMessage(e.getContent());
+                            }
+                    ).collect(Collectors.toList());
+        }
+        // 2.3、新增动态消息：用户输入内容
+        promptMessages.add(new UserMessage(chatMessage.getContent()));  // user message
+        Prompt prompt = new Prompt(promptMessages);                     // message + tool
+
+        // 3、call
         String responseMesssage = null;
         try {
             responseMesssage = chatClient
-                    .prompt(modelResponse.getData().getBaseUrl())
-                    .user(chatMessage.getContent())
+                    .prompt(prompt)
                     .call()
                     .content();
         } catch (Exception e) {
@@ -184,19 +215,26 @@ public class ChatMessageController {
                 .ollamaApi(OllamaApi
                         .builder()
                         .baseUrl(baseUrl)
+                        .webClientBuilder(WebClient.builder().clientConnector(
+                                new ReactorClientHttpConnector(
+                                        HttpClient.create()
+                                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30 * 1000)
+                                                .responseTimeout(Duration.ofMillis(30 * 1000))
+                                )
+                        ))
                         .build())
                 .build();
 
         // build chat-client
         return ChatClient
                 .builder(ollamaChatModel)
-                .defaultAdvisors(MessageChatMemoryAdvisor   // chat memory
-                        .builder(MessageWindowChatMemory    // memory window with length 20
+                /*.defaultAdvisors(MessageChatMemoryAdvisor                   // chat memory with window
+                        .builder(MessageWindowChatMemory
                                 .builder()
                                 .maxMessages(20)
                                 .build())
-                        .build())       // add memory
-                .defaultAdvisors(SimpleLoggerAdvisor.builder().build())                                                     // add logger
+                        .build())
+                .defaultAdvisors(SimpleLoggerAdvisor.builder().build())     // logger*/
                 .defaultOptions(OllamaChatOptions
                         .builder()
                         .model(model)
