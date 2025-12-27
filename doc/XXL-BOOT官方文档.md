@@ -339,7 +339,7 @@ xuxueli/xxl-boot-admin:{指定版本}
 - 6、【升级】升级多项依赖至较新版本；
 
 ### 版本 v1.7.0 Release Notes[2025-12-27]
-- 1、【升级】升级至 SpringBoot4；升级多项maven依赖至较新版本，如 spring、、groovy 等；
+- 1、【升级】升级至 SpringBoot4；升级多项maven依赖至较新版本，如 spring、groovy 等；
 - 2、【新增】插件化升级：支持扩展并隔离业务模块，为后续逐步扩展业务插件模块做前置准备；
 - 3、【新增】新增“AI模块”：
   - Model管理：支持多模型供应商，包括：Ollama、OpenAI等。
