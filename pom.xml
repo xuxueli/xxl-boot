@@ -40,7 +40,7 @@
         <mybatis-spring-boot-starter.version>4.0.0</mybatis-spring-boot-starter.version>
         <mysql-connector-j.version>9.5.0</mysql-connector-j.version>
 
-        <!-- xxl-sso (+xxl-tool、gson) -->
+        <!-- xxl-sso -->
         <xxl-sso.version>2.3.1</xxl-sso.version>
         <!-- ip2region -->
         <ip2region.version>3.3.2</ip2region.version>
@@ -50,7 +50,6 @@
 
     <dependencyManagement>
         <dependencies>
-
             <!-- springboot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -60,7 +59,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- mybatis-starter：mybatis + mybatis-spring + hikari（default） -->
+            <!-- mybatis -->
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -73,7 +72,7 @@
                 <version>${mysql-connector-j.version}</version>
             </dependency>
 
-            <!-- xxl-sso (xxl-tool、gson) -->
+            <!-- xxl-sso -->
             <dependency>
                 <groupId>com.xuxueli</groupId>
                 <artifactId>xxl-sso-core</artifactId>
@@ -93,7 +92,6 @@
                 <artifactId>xxl-boot-plugin</artifactId>
                 <version>${project.parent.version}</version>
             </dependency>
-
             <!-- spring-ai -->
             <dependency>
                 <groupId>org.springframework.ai</groupId>
