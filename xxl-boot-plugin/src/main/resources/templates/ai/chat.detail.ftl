@@ -40,6 +40,7 @@
                         <input type="text" name="content" placeholder="请输入 ..." class="form-control">
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-info btn-flat send">发送消息</button>
+                            <button type="button" class="btn btn-default btn-flat sending" style="display: none;background-color: #ccc;color: #666;cursor: not-allowed;" disabled>发送中...</button>
                         </span>
                     </div>
                 </form>
@@ -209,8 +210,11 @@
             }
             newMessge = newMessge.trim();
 
+            // change send btn
+            $(".send").hide();
+            $(".sending").show();
+
             // send message
-            var index = layer.load(1, { shade: [0.1,'#fff'] });
             // append user message
             appendLocalMessage(newMessge, false);
             $.ajax({
@@ -222,22 +226,28 @@
                 },
                 dataType : "json",
                 success : function(data){
-                    layer.close(index);
                     if (data.code === 200) {
                         // append agent message
                         appendLocalMessage(data.data, true);
                     } else {
                         layer.msg( data.msg || "发送失败" );
                     }
+
+                    // change send btn
+                    $(".send").show();
+                    $(".sending").hide();
                 },
                 error: function(xhr, status, error) {
-                    layer.close(index);
                     // Handle error
                     console.log("Error: " + error);
                     layer.open({
                         icon: '2',
                         content: '消息发送失败[2]'
                     });
+
+                    // change send btn
+                    $(".send").show();
+                    $(".sending").hide();
                 }
             });
 
