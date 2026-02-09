@@ -39,8 +39,8 @@
                     <div class="input-group">
                         <input type="text" name="content" placeholder="请输入 ..." class="form-control">
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-info btn-flat send">发送消息</button>
-                            <button type="button" class="btn btn-default btn-flat sending" style="display: none;background-color: #ccc;color: #666;cursor: not-allowed;" disabled>发送中...</button>
+                            <button type="button" class="btn btn-info btn-flat send" style="width: 100px;">发送消息</button>
+                            <button type="button" class="btn btn-default btn-flat sending" style="display: none;width: 100px;background-color: #ccc;color: #666;cursor: not-allowed;" disabled>发送中...</button>
                         </span>
                     </div>
                 </form>
@@ -202,6 +202,13 @@
 
         // sendMessage
         $("#sendMessage .send").click(function(){
+            // valid repeat message
+            if ($(".send").is(":hidden")) {
+                layer.msg("消息发送中，请稍候...");
+                return;
+            }
+
+            // load message
             var newMessge = $("#sendMessage input[name='content']").val();
             // valid message
             if (!(newMessge && newMessge.trim() !== '')) {
@@ -210,9 +217,16 @@
             }
             newMessge = newMessge.trim();
 
-            // change send btn
+            // 切换按钮状态 + 启动省略号动画
             $(".send").hide();
             $(".sending").show();
+            // sending btn
+            let dotCount = 0;
+            const maxDots = 3;
+            const intervalId = setInterval(() => {
+                dotCount = (dotCount % maxDots) + 1;
+                $(".sending").text("发送中" + ".".repeat(dotCount));
+            }, 500); // 每500ms更新一次
 
             // send message
             // append user message
@@ -233,7 +247,8 @@
                         layer.msg( data.msg || "发送失败" );
                     }
 
-                    // change send btn
+                    // 停止动画并恢复按钮状态
+                    clearInterval(intervalId);
                     $(".send").show();
                     $(".sending").hide();
                 },
@@ -245,7 +260,8 @@
                         content: '消息发送失败[2]'
                     });
 
-                    // change send btn
+                    // 停止动画并恢复按钮状态
+                    clearInterval(intervalId);
                     $(".send").show();
                     $(".sending").hide();
                 }
