@@ -22,7 +22,7 @@
 
         <!-- 2-content start -->
 
-        <#-- 对话 -->
+        <!-- 对话 -->
         <div class="box direct-chat direct-chat-info" style="margin-bottom:9px;" >
             <div class="box-header with-border">
                 <h3 class="box-title">对话记录</h3>
@@ -46,6 +46,48 @@
             </div>
         </div>
 
+        <!-- 滚动按钮 -->
+        <div id="scrollButtons" >
+            <button id="scrollTop" class="btn btn-primary" >↑</button>
+            <button id="scrollBottom" class="btn btn-primary">↓</button>
+        </div>
+        <style>
+            #scrollButtons {
+                position: fixed;
+                right: 20px;
+                bottom: 90px;
+                z-index: 1000;
+            }
+
+            #scrollButtons button {
+                display: block;
+                width: 40px; /* 缩小宽度 */
+                height: 40px; /* 缩小高度 */
+                border-radius: 50%; /* 圆形按钮 */
+                background-color: rgba(128, 128, 128, 0.5); /* 默认半透明灰色 */
+                color: white;
+                border: none;
+                font-size: 14px; /* 字体稍小 */
+                cursor: pointer;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                outline: none; /* 移除点击后的焦点边框 */
+                transition: background-color 0.3s ease; /* 添加过渡效果 */
+            }
+
+            #scrollButtons button:hover {
+                background-color: rgba(128, 128, 128, 1); /* 悬停时颜色加深 */
+            }
+
+            #scrollButtons button:focus {
+                outline: none; /* 移除默认焦点边框 */
+                box-shadow: 0 0 0 2px rgba(128, 128, 128, 0.8); /* 自定义焦点高亮 */
+            }
+
+            #scrollTop {
+                display: none; /* 默认隐藏顶部按钮 */
+                margin-bottom: 10px;
+            }
+        </style>
         <!-- 2-content end -->
 
     </section>
@@ -199,6 +241,43 @@
                 }
             });
 
+        });
+
+        // listen enter
+        $("#sendMessage input[name='content']").keydown(function(event) {
+            // Enter: keyCode = 13
+            if (event.keyCode === 13) {
+                event.preventDefault(); // 阻止表单默认提交行为
+                $("#sendMessage .send").click();
+            }
+        });
+
+        // ---------- ---------- ---------- scrollTop scrollBottom  ---------- ---------- ----------
+
+        // 监听滚动事件，控制顶部按钮的显示/隐藏
+        let isScrolling = false;
+        $(window).scroll(function () {
+            if (!isScrolling) {
+                window.requestAnimationFrame(function () {
+                    if ($(this).scrollTop() > 100) {
+                        $('#scrollTop').fadeIn();
+                    } else {
+                        $('#scrollTop').fadeOut();
+                    }
+                    isScrolling = false;
+                });
+                isScrolling = true;
+            }
+        });
+
+        // 点击顶部按钮，滚动到页面顶部
+        $('#scrollTop').click(function () {
+            $('html, body').animate({ scrollTop: 0 }, 500);
+        });
+
+        // 点击底部按钮，滚动到页面底部
+        $('#scrollBottom').click(function () {
+            $('html, body').animate({ scrollTop: $(document).height() }, 500);
         });
 
     });
