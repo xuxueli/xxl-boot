@@ -74,6 +74,11 @@ public class ResourceServiceImpl implements ResourceService {
 	 */
 	@Override
 	public Response<String> update(XxlBootResource xxlBootResource) {
+
+		if (xxlBootResource.getParentId() == xxlBootResource.getId()) {
+			return Response.ofFail("操作失败，父资源不能设置为自己");
+		}
+
 		int ret = resourceMapper.update(xxlBootResource);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}

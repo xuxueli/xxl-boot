@@ -354,6 +354,7 @@ xuxueli/xxl-boot-admin:{指定版本}
 - 1、【ING】AI模块：Chat对话增强；
   - 前端SSE交互；
   - 代码重构，多模块可扩展设计；
+- 2、【ING】左侧菜单改为JS方式；
 
 
 ### TODO LIST
@@ -364,6 +365,7 @@ xuxueli/xxl-boot-admin:{指定版本}
   - 前端SSE交互；
   - 对话记忆控制；
 - 5、知识库：知识库管理，知识库检索；
+- 6、iframe弹框居中优化；
 
 ## 五、其他
 
