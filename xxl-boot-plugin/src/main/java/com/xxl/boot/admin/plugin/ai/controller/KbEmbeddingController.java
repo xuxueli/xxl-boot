@@ -1,6 +1,7 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
 import com.xxl.boot.admin.plugin.ai.model.KbChunk;
+import com.xxl.boot.admin.plugin.ai.model.dto.KbChunkDTO;
 import com.xxl.boot.admin.plugin.ai.service.KbEmbeddingService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.Response;
@@ -58,7 +59,7 @@ public class KbEmbeddingController {
     @RequestMapping("/query")
     @ResponseBody
     @XxlSso
-    public Response<List<KbChunk>> query(Long kbId, String keyword) {
+    public Response<List<KbChunkDTO>> query(Long kbId, String keyword) {
         return kbEmbeddingService.query(kbId, keyword);
     }
 

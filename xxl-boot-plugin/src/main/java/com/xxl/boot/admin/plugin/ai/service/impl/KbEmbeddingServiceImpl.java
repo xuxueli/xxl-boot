@@ -9,8 +9,10 @@ import com.xxl.boot.admin.plugin.ai.mapper.KbInfoMapper;
 import com.xxl.boot.admin.plugin.ai.model.KbChunk;
 import com.xxl.boot.admin.plugin.ai.model.KbDocument;
 import com.xxl.boot.admin.plugin.ai.model.KbInfo;
+import com.xxl.boot.admin.plugin.ai.model.dto.KbChunkDTO;
 import com.xxl.boot.admin.plugin.ai.service.KbEmbeddingService;
 import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.Response;
@@ -424,7 +426,7 @@ public class KbEmbeddingServiceImpl implements KbEmbeddingService {
     }
 
     @Override
-    public Response<List<KbChunk>> query(Long kbId, String keyword) {
+    public Response<List<KbChunkDTO>> query(Long kbId, String keyword) {
 
         // valid
         if (kbId == null) {
@@ -455,8 +457,8 @@ public class KbEmbeddingServiceImpl implements KbEmbeddingService {
                     .searchParams(Map.of("radius", SIMILARITY_THRESHOLD))           // 搜索参数, 相似度阈值
                     .build();
             SearchResp searchResp = client.search(searchReq);
-            // parse result
-            List<Long> chunkIds = new ArrayList<>();
+            // parse KbChunkDTO
+            Map<Long, Float> chunkResultMap = new HashMap<>();
             List<List<SearchResp.SearchResult>> searchResults = searchResp.getSearchResults();
             for (List<SearchResp.SearchResult> results : searchResults) {
                 for (SearchResp.SearchResult result : results) {
@@ -464,16 +466,27 @@ public class KbEmbeddingServiceImpl implements KbEmbeddingService {
                         // 相似度阈值: >0.8 高精度场景；>0.7 平衡场景；>0.3 ‌高召回场景
                         continue;
                     }*/
-                    chunkIds.add((Long) result.getEntity().get("chunkId"));
+                    chunkResultMap.put((Long) result.getEntity().get("chunkId"), result.getScore());
                 }
             }
 
-            // load data
-            if (CollectionTool.isEmpty(chunkIds)) {
+            // load KbChunk
+            if (MapTool.isEmpty(chunkResultMap)) {
                 return Response.ofFail("没有匹配结果");
             }
-            List<KbChunk> chunkData = kbChunkMapper.queryByIds(chunkIds);
-            return Response.ofSuccess(chunkData);
+            // chunkDTOS.add(new KbChunkDTO((Long) result.getEntity().get("chunkId"), result.getScore()));
+            List<KbChunk> chunkData = kbChunkMapper.queryByIds(new ArrayList<>(chunkResultMap.keySet()));
+
+            // parse resule
+            List<KbChunkDTO> chunkDTOS = chunkData
+                    .stream()
+                    .map(chunk
+                            -> new KbChunkDTO(chunk, chunkResultMap.get(chunk.getId())))
+                    .sorted(Comparator.comparingDouble(KbChunkDTO::getScore).reversed())    // 降序
+                    .toList();
+
+
+            return Response.ofSuccess(chunkDTOS);
         } catch (InterruptedException e) {
             logger.error("知识库查询失败，kbId: {}", kbId, e);
             return Response.ofFail("知识库查询失败：" + e.getMessage());

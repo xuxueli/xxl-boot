@@ -1,6 +1,7 @@
 package com.xxl.boot.admin.plugin.ai.service;
 
 import com.xxl.boot.admin.plugin.ai.model.KbChunk;
+import com.xxl.boot.admin.plugin.ai.model.dto.KbChunkDTO;
 import com.xxl.tool.response.Response;
 
 import java.util.List;
@@ -14,6 +15,6 @@ public interface KbEmbeddingService {
 
     Response<String> embed(Long kbId);
 
-    Response<List<KbChunk>> query(Long kbId, String keyword);
+    Response<List<KbChunkDTO>> query(Long kbId, String keyword);
 
 }

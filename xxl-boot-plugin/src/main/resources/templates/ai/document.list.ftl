@@ -391,6 +391,9 @@
                 //if(value === '') return elem.focus();
                 layer.close(index);
 
+                // loading
+                var index2 = layer.load(1, { shade: [0.2,'#090909'] });
+
                 // query
                 $.ajax({
                     type : 'POST',
@@ -401,6 +404,7 @@
                     },
                     dataType : "json",
                     success : function(data){
+                        layer.close(index2);
                         if (data.code === 200) {
                             // show
                             queryKbModelShow(data.data);
@@ -409,6 +413,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
+                        layer.close(index2);
                         // Handle error
                         console.log("Error: " + error);
                         layer.open({
@@ -435,10 +440,11 @@
                                         <table class="table table-bordered table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 5%;" >No</th>
-                                                    <th style="width: 10%;" >文档ID</th>
-                                                    <th style="width: 10%;" >分块ID</th>
-                                                    <th style="width: 75%;" >内容</th>
+                                                    <th style="width: 4%;" >No</th>
+                                                    <th style="width: 8%;" >文档ID</th>
+                                                    <th style="width: 8%;" >分块ID</th>
+                                                    <th style="width: 70%;" >内容</th>
+                                                    <th style="width: 10%;" >相似度</th>
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
@@ -464,6 +470,7 @@
                             <td>`+ item.docId +`</td>
                             <td>`+ item.id + `</td>
                             <td>`+ item.content + `</td>
+                            <td>`+ item.score + `</td>
                         </tr>
                     `;
                 });
