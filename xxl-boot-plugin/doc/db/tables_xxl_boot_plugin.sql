@@ -2,7 +2,7 @@
 # XXL-BOOT
 # Copyright (c) 2025-present, xuxueli.
 
-## —————————————————————— for ai start ——————————————————
+## —————————————————————— for ai（model + chat） start ——————————————————
 
 ## ----------- model、chat、message -----------
 CREATE TABLE `xxl_boot_ai_model`(
@@ -66,3 +66,56 @@ VALUES ( 1, 200, now(), now()),
 ## ----------- chat bot end -----------
 
 ## —————————————————————— for ai stop ——————————————————
+
+## —————————————————————— for rag（knowledge base） start ——————————————————
+
+CREATE TABLE `xxl_boot_ai_kb_info`
+(
+    `id`              bigint       NOT NULL AUTO_INCREMENT COMMENT '知识库ID',
+    `kb_name`         varchar(100) NOT NULL COMMENT '知识库名称',
+    `kb_desc`         varchar(500) DEFAULT NULL COMMENT '描述',
+    `embedding_model` varchar(100) NOT NULL COMMENT '嵌入模型，如qwen3-embedding:0.6b',
+    `vector_db_type`  varchar(50)  NOT NULL COMMENT '向量库类型，默认milvus',
+    `collection_name` varchar(100) NOT NULL COMMENT 'milvus集合名，默认xxl_ai数据库下新建：kb_{主键id}',
+    `add_time`        datetime     NOT NULL COMMENT '新增时间',
+    `update_time`     datetime     NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='知识库主表';
+
+CREATE TABLE `xxl_boot_ai_kb_document`
+(
+    `id`          bigint                NOT NULL AUTO_INCREMENT COMMENT '文档ID',
+    `kb_id`       bigint                NOT NULL COMMENT '所属知识库',
+    `doc_name`    varchar(200)          NOT NULL COMMENT '文档名称',
+    `doc_type`    varchar(20)           NOT NULL COMMENT 'txt/pdf/word/md',
+    `content`     longtext              NOT NULL COMMENT '原文内容',
+    `file_url`    varchar(500)          DEFAULT NULL COMMENT '文件存储地址',
+    `status`      tinyint               NOT NULL DEFAULT '0' COMMENT '0待处理 1处理中 2已向量化 3失败',
+    `add_time`    datetime              NOT NULL COMMENT '新增时间',
+    `update_time` datetime              NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_kb_id` (`kb_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='文档表';
+
+CREATE TABLE `xxl_boot_ai_kb_chunk`
+(
+    `id`          bigint            NOT NULL AUTO_INCREMENT COMMENT '分片ID',
+    `kb_id`       bigint            NOT NULL,
+    `doc_id`      bigint            NOT NULL,
+    `chunk_index` int               NOT NULL COMMENT '分片序号',
+    `content`     text              NOT NULL COMMENT '分片文本',
+    `vector_id`   varchar(100)      DEFAULT NULL COMMENT '向量数据ID(milvus集合数据主键id)',
+    `status`      tinyint           NOT NULL DEFAULT '0' COMMENT '0未向量化 1已向量化',
+    `add_time`    datetime          NOT NULL COMMENT '新增时间',
+    `update_time` datetime          NOT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_kb_doc` (`kb_id`, `doc_id`),
+    KEY `idx_vector_id` (`vector_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='文档分片表';
+
+## ----------- init data  -----------
+
+## —————————————————————— for rag end ——————————————————
