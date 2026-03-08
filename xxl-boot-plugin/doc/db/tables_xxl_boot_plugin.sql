@@ -81,13 +81,11 @@ CREATE TABLE `xxl_boot_ai_kb_chunk`
     `doc_id`      bigint            NOT NULL,
     `chunk_index` int               NOT NULL COMMENT '分片序号',
     `content`     text              NOT NULL COMMENT '分片文本',
-    `vector_id`   varchar(100)      DEFAULT NULL COMMENT '向量数据ID(milvus集合数据主键id)',
     `status`      tinyint           NOT NULL DEFAULT '0' COMMENT '0未向量化 1已向量化',
     `add_time`    datetime          NOT NULL COMMENT '新增时间',
     `update_time` datetime          NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `idx_kb_doc` (`kb_id`, `doc_id`),
-    KEY `idx_vector_id` (`vector_id`)
+    KEY `idx_kb_doc` (`kb_id`, `doc_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='文档分片表';
 

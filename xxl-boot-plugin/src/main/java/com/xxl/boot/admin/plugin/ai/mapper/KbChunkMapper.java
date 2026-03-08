@@ -1,5 +1,6 @@
 package com.xxl.boot.admin.plugin.ai.mapper;
 
+import com.networknt.schema.format.BaseFormatValidator;
 import com.xxl.boot.admin.plugin.ai.model.KbChunk;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
@@ -43,5 +44,15 @@ public interface KbChunkMapper {
     * 分页查询Count
     */
     public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+
+    /**
+    * 删除 ByKbId
+    */
+    public int deleteByKbId(@Param("kbId") long kbId);
+
+    /**
+    * 查询 ByKbId
+    */
+    public List<KbChunk> queryByIds(@Param("ids") List<Long> chunkIds);
 
 }

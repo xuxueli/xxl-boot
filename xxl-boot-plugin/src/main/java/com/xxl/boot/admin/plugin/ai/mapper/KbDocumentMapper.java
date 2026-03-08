@@ -1,5 +1,6 @@
 package com.xxl.boot.admin.plugin.ai.mapper;
 
+import com.xxl.boot.admin.plugin.ai.constant.enums.KbDucumentStatusEnum;
 import com.xxl.boot.admin.plugin.ai.model.KbDocument;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
@@ -43,5 +44,15 @@ public interface KbDocumentMapper {
     * 分页查询Count
     */
     public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+
+    /**
+    * 查询By kbId
+    */
+    public List<KbDocument> queryByKbId(@Param("kbId") long kbId);
+
+    /**
+    * 更新状态
+    */
+    public int updateStatusByKbId(@Param("kbId") long kbId, @Param("status") int status);
 
 }

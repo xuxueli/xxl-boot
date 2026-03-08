@@ -45,7 +45,7 @@
         <!-- ip2region -->
         <ip2region.version>3.3.2</ip2region.version>
         <!-- spring-ai -->
-        <spring-ai.version>2.0.0-M1</spring-ai.version>
+        <spring-ai.version>2.0.0-M2</spring-ai.version>
         <!-- milvus -->
         <milvus.version>2.6.14</milvus.version>
     </properties>

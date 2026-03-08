@@ -9,7 +9,6 @@
         <result column="doc_id" property="docId" />
         <result column="chunk_index" property="chunkIndex" />
         <result column="content" property="content" />
-        <result column="vector_id" property="vectorId" />
         <result column="status" property="status" />
         <result column="add_time" property="addTime" />
         <result column="update_time" property="updateTime" />
@@ -21,19 +20,17 @@
         t.`doc_id`,
         t.`chunk_index`,
         t.`content`,
-        t.`vector_id`,
         t.`status`,
         t.`add_time`,
         t.`update_time`
     </sql>
 
-    <insert id="insert" parameterType="java.util.Map" >
+    <insert id="insert" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO xxl_boot_ai_kb_chunk (
             `kb_id`,
             `doc_id`,
             `chunk_index`,
             `content`,
-            `vector_id`,
             `status`,
             `add_time`,
             `update_time`
@@ -43,7 +40,6 @@
                   #{kbChunk.docId} ,
                   #{kbChunk.chunkIndex} ,
                   #{kbChunk.content} ,
-                  #{kbChunk.vectorId} ,
                   #{kbChunk.status} ,
                   NOW() ,
                   NOW()
@@ -65,7 +61,6 @@
             `doc_id` = #{kbChunk.docId},
             `chunk_index` = #{kbChunk.chunkIndex},
             `content` = #{kbChunk.content},
-            `vector_id` = #{kbChunk.vectorId},
             `status` = #{kbChunk.status},
             `update_time` = NOW()
         WHERE `id` = #{kbChunk.id}
@@ -86,6 +81,20 @@
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_boot_ai_kb_chunk AS t
+    </select>
+
+    <delete id="deleteByKbId" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_ai_kb_chunk
+        WHERE `kb_id` = #{kbId}
+    </delete>
+
+    <select id="queryByIds" parameterType="java.util.Map" resultMap="KbChunk">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_kb_chunk AS t
+        WHERE t.`id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
     </select>
 
 </mapper>

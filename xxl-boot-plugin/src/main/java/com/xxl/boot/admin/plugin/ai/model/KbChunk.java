@@ -37,11 +37,6 @@ public class KbChunk implements Serializable {
     private String content;
 
     /**
-    * 向量数据id(milvus集合数据主键id)
-    */
-    private String vectorId;
-
-    /**
     * 状态
     * KbChunkStatusEnum
     */
@@ -96,14 +91,6 @@ public class KbChunk implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public String getVectorId() {
-        return vectorId;
-    }
-
-    public void setVectorId(String vectorId) {
-        this.vectorId = vectorId;
     }
 
     public int getStatus() {

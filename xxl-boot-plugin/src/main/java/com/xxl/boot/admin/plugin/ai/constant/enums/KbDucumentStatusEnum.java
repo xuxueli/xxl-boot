@@ -5,8 +5,8 @@ public enum KbDucumentStatusEnum {
     INIT_UNPROCESSED(0, "初始化/待处理"),
     CHANGED_UNPROCESSED(1, "有变化/待处理"),
     PROCESSING(2, "处理中"),
-    SUCCESS(3, "已向量化"),
-    FAIL(4, "失败");
+    SUCCESS(3, "向量成功"),
+    FAIL(4, "向量失败");
 
     private final int value;
     private final String desc;

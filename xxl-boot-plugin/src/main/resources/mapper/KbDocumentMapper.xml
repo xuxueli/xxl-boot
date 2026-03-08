@@ -88,4 +88,18 @@
         FROM xxl_boot_ai_kb_document AS t
     </select>
 
+    <select id="queryByKbId" parameterType="java.util.Map" resultMap="KbDocument">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_kb_document AS t
+        WHERE t.`kb_id` = #{kbId}
+    </select>
+
+    <update id="updateStatusByKbId" parameterType="java.util.Map">
+        UPDATE xxl_boot_ai_kb_document
+        SET
+            `status` = #{status},
+            `update_time` = NOW()
+        WHERE `kb_id` = #{kbId}
+    </update>
+
 </mapper>
