@@ -45,6 +45,8 @@
                         <button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
                         <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
                         <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
+                        ｜
+                        <button class="btn btn-sm btn-primary selectAny toManageDoc" type="button">知识管理</button>
                     </div>
                     <div class="box-body" >
                         <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -156,6 +158,7 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <!-- admin table -->
 <script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
+<script src="${request.contextPath}/static/biz/common/admin.util.js"></script>
 <script>
     $(function() {
 
@@ -288,6 +291,25 @@
                     "updateTime": $("#updateModal [name=updateTime]").val()
                 };
             }
+        });
+
+
+        // ---------- ---------- ---------- document manage ---------- ---------- ----------
+
+        $("#data_operation .toManageDoc").click(function(){
+            // get select rows
+            var rows = $.adminTable.selectRows();
+            // find select row
+            if (rows.length !== 1) {
+                layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+                return;
+            }
+            var row = rows[0];
+
+            // open chat detail
+            let title = row.kbName.size>10?row.kbName.substring(0,10) + "...":row.kbName;
+            let url = base_url + '/ai/kb/document?kbId=' + row.id;
+            openTab(url, title, false);
         });
 
     });
