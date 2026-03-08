@@ -43,8 +43,9 @@ public class KbInfoController {
     @ResponseBody
     @XxlSso
     public Response<PageModel<KbInfo>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                    @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<KbInfo> pageModel = kbInfoService.pageList(offset, pagesize);
+                                                @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                String kbName) {
+        PageModel<KbInfo> pageModel = kbInfoService.pageList(kbName, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 

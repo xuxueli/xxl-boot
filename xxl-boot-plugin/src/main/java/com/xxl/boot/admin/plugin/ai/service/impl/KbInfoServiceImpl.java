@@ -74,7 +74,7 @@ public class KbInfoServiceImpl implements KbInfoService {
 	* Load查询
 	*/
 	@Override
-	public Response<KbInfo> load(int id) {
+	public Response<KbInfo> load(long id) {
 		KbInfo record = kbInfoMapper.load(id);
 		return Response.ofSuccess(record);
 	}
@@ -83,10 +83,10 @@ public class KbInfoServiceImpl implements KbInfoService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<KbInfo> pageList(int offset, int pagesize) {
+	public PageModel<KbInfo> pageList(String kbName, int offset, int pagesize) {
 
-		List<KbInfo> pageList = kbInfoMapper.pageList(offset, pagesize);
-		int totalCount = kbInfoMapper.pageListCount(offset, pagesize);
+		List<KbInfo> pageList = kbInfoMapper.pageList(kbName, offset, pagesize);
+		int totalCount = kbInfoMapper.pageListCount(kbName, offset, pagesize);
 
 		// result
 		PageModel<KbInfo> pageModel = new PageModel<KbInfo>();

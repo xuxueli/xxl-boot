@@ -3,21 +3,21 @@ package com.xxl.boot.admin.plugin.ai.service;
 import java.util.Map;
 import java.util.List;
 
-import com.xxl.boot.admin.plugin.ai.model.KbInfo;
+import com.xxl.boot.admin.plugin.ai.model.KbDocument;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
 /**
-* KbInfo Service
+* KbDocument Service
 *
-* Created by xuxueli on '2026-03-08 09:39:11'.
+* Created by xuxueli on '2026-03-08 10:57:39'.
 */
-public interface KbInfoService {
+public interface KbDocumentService {
 
     /**
     * 新增
     */
-    public Response<String> insert(KbInfo kbInfo);
+    public Response<String> insert(KbDocument kbDocument);
 
     /**
     * 删除
@@ -27,16 +27,16 @@ public interface KbInfoService {
     /**
     * 更新
     */
-    public Response<String> update(KbInfo kbInfo);
+    public Response<String> update(KbDocument kbDocument);
 
     /**
     * Load查询
     */
-    public Response<KbInfo> load(long id);
+    public Response<KbDocument> load(int id);
 
     /**
     * 分页查询
     */
-    public PageModel<KbInfo> pageList(String kbName, int offset, int pagesize);
+    public PageModel<KbDocument> pageList(int offset, int pagesize);
 
 }

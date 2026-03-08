@@ -66,7 +66,7 @@ CREATE TABLE `xxl_boot_ai_kb_document`
     `doc_type`    varchar(20)           NOT NULL COMMENT 'txt/pdf/word/md',
     `content`     longtext              NOT NULL COMMENT '原文内容',
     `file_url`    varchar(500)          DEFAULT NULL COMMENT '文件存储地址',
-    `status`      tinyint               NOT NULL DEFAULT '0' COMMENT '0待处理 1处理中 2已向量化 3失败',
+    `status`      tinyint               NOT NULL DEFAULT '0' COMMENT '状态',
     `add_time`    datetime              NOT NULL COMMENT '新增时间',
     `update_time` datetime              NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),

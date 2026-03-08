@@ -62,7 +62,7 @@ public class TableParseUtil {
         }
 
         // field List
-        List<FieldInfo> fieldList = new ArrayList<FieldInfo>();
+        List<FieldInfo> fieldList = new ArrayList<>();
 
         String fieldListTmp = tableSql.substring(tableSql.indexOf("(")+1, tableSql.lastIndexOf(")"));
 
@@ -130,7 +130,7 @@ public class TableParseUtil {
                     // field comment
                     String fieldComment = "";
                     if (columnLine.contains("comment")) {
-                        String commentTmp = columnLine.substring(columnLine.indexOf("COMMENT")+7).trim();	// '用户ID',
+                        String commentTmp = columnLine.substring(columnLine.indexOf("comment")+7).trim();	// '用户ID',
                         if (commentTmp.contains("'") && commentTmp.indexOf("'")!=commentTmp.lastIndexOf("'")) {
                             commentTmp = commentTmp.substring(commentTmp.indexOf("'")+1, commentTmp.lastIndexOf("'"));
                         }

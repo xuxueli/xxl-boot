@@ -32,16 +32,16 @@ public interface KbInfoMapper {
     /**
     * Load查询
     */
-    public KbInfo load(@Param("id") int id);
+    public KbInfo load(@Param("id") long id);
 
     /**
     * 分页查询Data
     */
-	public List<KbInfo> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<KbInfo> pageList(@Param("kbName") String kbName, @Param("offset") int offset, @Param("pagesize") int pagesize);
 
     /**
     * 分页查询Count
     */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+    public int pageListCount(@Param("kbName") String kbName, @Param("offset") int offset, @Param("pagesize") int pagesize);
 
 }

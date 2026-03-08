@@ -75,12 +75,22 @@
     <select id="pageList" parameterType="java.util.Map" resultMap="KbInfo">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_ai_kb_info AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="kbName != null and kbName != ''">
+                AND t.`kb_name` like CONCAT(CONCAT('%', #{kbName}), '%')
+            </if>
+        </trim>
         LIMIT #{offset}, #{pagesize}
     </select>
 
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_boot_ai_kb_info AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="kbName != null and kbName != ''">
+                AND t.`kb_name` like CONCAT(CONCAT('%', #{kbName}), '%')
+            </if>
+        </trim>
     </select>
 
 </mapper>
