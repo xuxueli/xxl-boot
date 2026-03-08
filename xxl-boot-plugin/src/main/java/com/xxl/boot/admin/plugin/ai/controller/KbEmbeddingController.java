@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
-import com.xxl.boot.admin.plugin.ai.model.KbDocument;
+import com.xxl.boot.admin.plugin.ai.model.KbChunk;
 import com.xxl.boot.admin.plugin.ai.service.KbEmbeddingService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.Response;
@@ -44,7 +44,7 @@ public class KbEmbeddingController {
     @ResponseBody
     @XxlSso
     public Response<String> embed(Long kbId) {
-        return kbEmbeddingService.embedding(kbId);
+        return kbEmbeddingService.embed(kbId);
     }
 
     /**
@@ -58,9 +58,8 @@ public class KbEmbeddingController {
     @RequestMapping("/query")
     @ResponseBody
     @XxlSso
-    public Response<List<KbDocument>> query(Long kbId) {
-        //return kbEmbeddingService.embedding(kbId);
-        return null;
+    public Response<List<KbChunk>> query(Long kbId, String keywoard) {
+        return kbEmbeddingService.query(kbId, keywoard);
     }
 
 }

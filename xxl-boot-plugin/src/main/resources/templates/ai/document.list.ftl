@@ -46,7 +46,7 @@
                         <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
                         <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
                         ｜
-                        <button class="btn btn-sm btn-primary selectAny doEmbedding" type="button">向量处理</button>
+                        <button class="btn btn-sm btn-primary doEmbedding" type="button">向量处理</button>
                     </div>
                     <div class="box-body" >
                         <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -338,41 +338,29 @@
         // ---------- ---------- ---------- do embedding ---------- ---------- ----------
 
         $("#data_operation .doEmbedding").click(function(){
-
-            // invoke
             $.ajax({
                 type : 'POST',
                 url : base_url + "/ai/kb/embedding/embed",
                 data : {
-                    "chatId" : chat.id,
-                    "content" : newMessge
+                    "kbId" : ${kbInfo.id}
                 },
                 dataType : "json",
                 success : function(data){
                     if (data.code === 200) {
-                        // append agent message
-                        appendLocalMessage(data.data, true);
+                        layer.msg( I18n.system_opt + I18n.system_success );
+                        // refresh table
+                        $('#data_filter .searchBtn').click();
                     } else {
-                        layer.msg( data.msg || "发送失败" );
+                        layer.msg( data.msg || I18n.system_opt + I18n.system_fail );
                     }
-
-                    // 停止动画并恢复按钮状态
-                    clearInterval(intervalId);
-                    $(".send").show();
-                    $(".sending").hide();
                 },
                 error: function(xhr, status, error) {
                     // Handle error
                     console.log("Error: " + error);
                     layer.open({
                         icon: '2',
-                        content: '消息发送失败[2]'
+                        content: (I18n.system_opt + I18n.system_fail)
                     });
-
-                    // 停止动画并恢复按钮状态
-                    clearInterval(intervalId);
-                    $(".send").show();
-                    $(".sending").hide();
                 }
             });
         });

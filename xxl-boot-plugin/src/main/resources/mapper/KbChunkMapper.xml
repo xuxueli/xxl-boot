@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.admin.plugin.ai.mapper.KbChunkMapper">
+
+    <resultMap id="KbChunk" type="com.xxl.boot.admin.plugin.ai.model.KbChunk" >
+        <result column="id" property="id" />
+        <result column="kb_id" property="kbId" />
+        <result column="doc_id" property="docId" />
+        <result column="chunk_index" property="chunkIndex" />
+        <result column="content" property="content" />
+        <result column="vector_id" property="vectorId" />
+        <result column="status" property="status" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`kb_id`,
+        t.`doc_id`,
+        t.`chunk_index`,
+        t.`content`,
+        t.`vector_id`,
+        t.`status`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_ai_kb_chunk (
+            `kb_id`,
+            `doc_id`,
+            `chunk_index`,
+            `content`,
+            `vector_id`,
+            `status`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{kbChunk.kbId} ,
+                  #{kbChunk.docId} ,
+                  #{kbChunk.chunkIndex} ,
+                  #{kbChunk.content} ,
+                  #{kbChunk.vectorId} ,
+                  #{kbChunk.status} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_ai_kb_chunk
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_ai_kb_chunk
+        SET
+            `kb_id` = #{kbChunk.kbId},
+            `doc_id` = #{kbChunk.docId},
+            `chunk_index` = #{kbChunk.chunkIndex},
+            `content` = #{kbChunk.content},
+            `vector_id` = #{kbChunk.vectorId},
+            `status` = #{kbChunk.status},
+            `update_time` = NOW()
+        WHERE `id` = #{kbChunk.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="KbChunk">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_kb_chunk AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="KbChunk">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_kb_chunk AS t
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_ai_kb_chunk AS t
+    </select>
+
+</mapper>
