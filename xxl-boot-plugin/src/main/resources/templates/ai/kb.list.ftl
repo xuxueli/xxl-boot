@@ -202,7 +202,7 @@
                     width: '20',
                     widthUnit: '%',
                     formatter: function (value, row, index) {
-                        return value.length > 10 ? value.substr(0, 10) + "..." : value;
+                        return (value && value.length>10) ? value.substring(0, 10) + '...' : value;
                     }
                 }
                 ,{

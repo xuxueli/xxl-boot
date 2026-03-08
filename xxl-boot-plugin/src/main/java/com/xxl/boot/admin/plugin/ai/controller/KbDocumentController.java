@@ -4,6 +4,7 @@ import com.xxl.boot.admin.plugin.ai.constant.enums.KbDucumentStatusEnum;
 import com.xxl.boot.admin.plugin.ai.model.KbDocument;
 import com.xxl.boot.admin.plugin.ai.model.KbInfo;
 import com.xxl.boot.admin.plugin.ai.service.KbDocumentService;
+import com.xxl.boot.admin.plugin.ai.service.KbEmbeddingService;
 import com.xxl.boot.admin.plugin.ai.service.KbInfoService;
 import com.xxl.tool.error.BizException;
 import org.springframework.stereotype.Controller;
@@ -32,6 +33,8 @@ public class KbDocumentController {
     private KbDocumentService kbDocumentService;
     @Resource
     private KbInfoService KbIndexService;
+    @Resource
+    private KbEmbeddingService kbEmbeddingService;
 
     /**
     * 页面

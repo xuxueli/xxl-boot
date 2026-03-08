@@ -45,6 +45,8 @@
                         <button class="btn btn-sm btn-info add" type="button"><i class="fa fa-plus" ></i>${I18n.system_opt_add}</button>
                         <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
                         <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
+                        ｜
+                        <button class="btn btn-sm btn-primary selectAny doEmbedding" type="button">向量处理</button>
                     </div>
                     <div class="box-body" >
                         <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -93,7 +95,7 @@
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">文档内容<font color="red">*</font></label>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control" name="content" placeholder="" maxlength="5000" rows="5" ></textarea>
+                                    <textarea class="form-control" name="content" placeholder="" maxlength="100000" rows="10" ></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -151,7 +153,7 @@
                             <div class="form-group">
                                 <label for="lastname" class="col-sm-2 control-label">文档内容<font color="red">*</font></label>
                                 <div class="col-sm-10">
-                                    <textarea class="form-control" name="content" placeholder="" maxlength="5000" rows="5" ></textarea>
+                                    <textarea class="form-control" name="content" placeholder="" maxlength="100000" rows="10" ></textarea>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -239,7 +241,7 @@
                     width: '15',
                     widthUnit: '%',
                     formatter: function (value, row, index) {
-                        return value.length > 10 ? value.substr(0, 10) + "..." : value;
+                        return (value && value.length>10) ? value.substring(0, 10) + '...' : value;
                     }
                 }
                 ,{
@@ -331,6 +333,48 @@
                     "updateTime": $("#updateModal [name=updateTime]").val()
                 };
             }
+        });
+
+        // ---------- ---------- ---------- do embedding ---------- ---------- ----------
+
+        $("#data_operation .doEmbedding").click(function(){
+
+            // invoke
+            $.ajax({
+                type : 'POST',
+                url : base_url + "/ai/kb/embedding/embed",
+                data : {
+                    "chatId" : chat.id,
+                    "content" : newMessge
+                },
+                dataType : "json",
+                success : function(data){
+                    if (data.code === 200) {
+                        // append agent message
+                        appendLocalMessage(data.data, true);
+                    } else {
+                        layer.msg( data.msg || "发送失败" );
+                    }
+
+                    // 停止动画并恢复按钮状态
+                    clearInterval(intervalId);
+                    $(".send").show();
+                    $(".sending").hide();
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.log("Error: " + error);
+                    layer.open({
+                        icon: '2',
+                        content: '消息发送失败[2]'
+                    });
+
+                    // 停止动画并恢复按钮状态
+                    clearInterval(intervalId);
+                    $(".send").show();
+                    $(".sending").hide();
+                }
+            });
         });
 
     });

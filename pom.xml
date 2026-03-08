@@ -46,6 +46,8 @@
         <ip2region.version>3.3.2</ip2region.version>
         <!-- spring-ai -->
         <spring-ai.version>2.0.0-M1</spring-ai.version>
+        <!-- milvus -->
+        <milvus.version>2.6.14</milvus.version>
     </properties>
 
     <dependencyManagement>
@@ -97,6 +99,12 @@
                 <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-starter-model-ollama</artifactId>
                 <version>${spring-ai.version}</version>
+            </dependency>
+            <!-- milvus -->
+            <dependency>
+                <groupId>io.milvus</groupId>
+                <artifactId>milvus-sdk-java</artifactId>
+                <version>${milvus.version}</version>
             </dependency>
 
         </dependencies>
