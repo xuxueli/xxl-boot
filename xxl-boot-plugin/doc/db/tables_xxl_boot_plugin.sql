@@ -92,7 +92,8 @@ CREATE TABLE `xxl_boot_ai_kb_chunk`
 ## ----------- init data  -----------
 
 INSERT INTO xxl_boot_ai_model (id, name, model_type, supplier_type, model, base_url, api_key, add_time, update_time)
-VALUES (1, 'Ollama模型示例', 1, 1, 'qwen3:0.6b', 'http://127.0.0.1:11434', '',NOW(), NOW());
+VALUES (1, 'Ollama模型（qwen）', 1, 1, 'qwen3.5:2b', 'http://127.0.0.1:11434', '',NOW(), NOW()),
+       (2, 'Ollama模型（qwen3-embedding）', 1, 1, 'qwen3-embedding:0.6b', 'http://127.0.0.1:11434', '',NOW(), NOW());
 
 INSERT INTO xxl_boot_ai_chat (id, model_id, title, prompt, add_time, update_time)
 VALUES (1, 1, '默认对话', '你是一个资深研发工程师，严谨、专业；',  NOW(), NOW());
