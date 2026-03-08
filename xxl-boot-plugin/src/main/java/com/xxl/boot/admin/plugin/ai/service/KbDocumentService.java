@@ -37,6 +37,6 @@ public interface KbDocumentService {
     /**
     * 分页查询
     */
-    public PageModel<KbDocument> pageList(int offset, int pagesize);
+    public PageModel<KbDocument> pageList(String docName, int offset, int pagesize);
 
 }

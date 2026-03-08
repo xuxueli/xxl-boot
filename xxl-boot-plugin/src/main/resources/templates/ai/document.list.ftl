@@ -23,8 +23,8 @@
                     <div class="col-xs-3">
                         <!--query param-->
                         <div class="input-group">
-                            <span class="input-group-addon">查询参数</span>
-                            <input type="text" class="form-control param" autocomplete="on" >
+                            <span class="input-group-addon">文档名称</span>
+                            <input type="text" class="form-control" name="docName" autocomplete="on" >
                         </div>
                     </div>
                     <div class="col-xs-1">
@@ -205,7 +205,7 @@
             url: base_url + "/ai/kb/document/pageList",
             queryParams: function (params) {
                 var obj = {};
-                obj.param = $('#data_filter .param').val();
+                obj.docName = $('#data_filter [name=docName]').val();
                 obj.offset = params.offset;
                 obj.pagesize = params.limit;
                 return obj;

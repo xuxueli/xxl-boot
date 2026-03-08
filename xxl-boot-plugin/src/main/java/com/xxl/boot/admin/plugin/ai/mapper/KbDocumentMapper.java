@@ -38,12 +38,12 @@ public interface KbDocumentMapper {
     /**
     * 分页查询Data
     */
-	public List<KbDocument> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<KbDocument> pageList(@Param("docName") String docName, @Param("offset") int offset, @Param("pagesize") int pagesize);
 
     /**
     * 分页查询Count
     */
-    public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
+    public int pageListCount(@Param("docName") String docName, @Param("offset") int offset, @Param("pagesize") int pagesize);
 
     /**
     * 查询By kbId

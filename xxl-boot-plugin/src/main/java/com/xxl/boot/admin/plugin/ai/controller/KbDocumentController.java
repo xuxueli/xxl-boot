@@ -62,12 +62,9 @@ public class KbDocumentController {
     @ResponseBody
     @XxlSso
     public Response<PageModel<KbDocument>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                    @RequestParam(required = false, defaultValue = "10") int pagesize) {
-
-
-
-
-        PageModel<KbDocument> pageModel = kbDocumentService.pageList(offset, pagesize);
+                                                    @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                    String docName) {
+        PageModel<KbDocument> pageModel = kbDocumentService.pageList(docName, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 

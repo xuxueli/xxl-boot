@@ -104,10 +104,10 @@ public class KbDocumentServiceImpl implements KbDocumentService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<KbDocument> pageList(int offset, int pagesize) {
+	public PageModel<KbDocument> pageList(String docName, int offset, int pagesize) {
 
-		List<KbDocument> pageList = kbDocumentMapper.pageList(offset, pagesize);
-		int totalCount = kbDocumentMapper.pageListCount(offset, pagesize);
+		List<KbDocument> pageList = kbDocumentMapper.pageList(docName, offset, pagesize);
+		int totalCount = kbDocumentMapper.pageListCount(docName, offset, pagesize);
 
 		// result
 		PageModel<KbDocument> pageModel = new PageModel<KbDocument>();
