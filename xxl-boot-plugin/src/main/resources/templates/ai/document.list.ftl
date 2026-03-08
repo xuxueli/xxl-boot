@@ -338,6 +338,7 @@
         // ---------- ---------- ---------- do embedding ---------- ---------- ----------
 
         $("#data_operation .doEmbedding").click(function(){
+            var index = layer.load(1, { shade: [0.2,'#090909'] });
             $.ajax({
                 type : 'POST',
                 url : base_url + "/ai/kb/embedding/embed",
@@ -346,6 +347,7 @@
                 },
                 dataType : "json",
                 success : function(data){
+                    layer.close(index);
                     if (data.code === 200) {
                         layer.msg( I18n.system_opt + I18n.system_success );
                         // refresh table
@@ -355,6 +357,7 @@
                     }
                 },
                 error: function(xhr, status, error) {
+                    layer.close(index);
                     // Handle error
                     console.log("Error: " + error);
                     layer.open({
