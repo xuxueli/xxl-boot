@@ -14,6 +14,6 @@ public interface KbEmbeddingService {
 
     Response<String> embed(Long kbId);
 
-    Response<List<KbChunk>> query(Long kbId, String keywoard);
+    Response<List<KbChunk>> query(Long kbId, String keyword);
 
 }

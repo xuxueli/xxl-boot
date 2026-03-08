@@ -58,8 +58,8 @@ public class KbEmbeddingController {
     @RequestMapping("/query")
     @ResponseBody
     @XxlSso
-    public Response<List<KbChunk>> query(Long kbId, String keywoard) {
-        return kbEmbeddingService.query(kbId, keywoard);
+    public Response<List<KbChunk>> query(Long kbId, String keyword) {
+        return kbEmbeddingService.query(kbId, keyword);
     }
 
 }

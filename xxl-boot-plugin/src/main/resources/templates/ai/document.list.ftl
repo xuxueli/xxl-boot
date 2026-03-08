@@ -46,7 +46,8 @@
                         <button class="btn btn-sm btn-warning selectOnlyOne update" type="button"><i class="fa fa-edit"></i>${I18n.system_opt_edit}</button>
                         <button class="btn btn-sm btn-danger selectAny delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>
                         ｜
-                        <button class="btn btn-sm btn-primary doEmbedding" type="button">向量处理</button>
+                        <button class="btn btn-sm btn-primary embedKb" type="button">知识库向量化</button>
+                        <button class="btn btn-sm btn-primary queryKb" type="button">相似性检索</button>
                     </div>
                     <div class="box-body" >
                         <table id="data_list" class="table table-bordered table-striped" width="100%" >
@@ -335,38 +336,145 @@
             }
         });
 
-        // ---------- ---------- ---------- do embedding ---------- ---------- ----------
+        // ---------- ---------- ---------- embedding ---------- ---------- ----------
 
-        $("#data_operation .doEmbedding").click(function(){
-            var index = layer.load(1, { shade: [0.2,'#090909'] });
-            $.ajax({
-                type : 'POST',
-                url : base_url + "/ai/kb/embedding/embed",
-                data : {
-                    "kbId" : ${kbInfo.id}
-                },
-                dataType : "json",
-                success : function(data){
-                    layer.close(index);
-                    if (data.code === 200) {
-                        layer.msg( I18n.system_opt + I18n.system_success );
-                        // refresh table
-                        $('#data_filter .searchBtn').click();
-                    } else {
-                        layer.msg( data.msg || I18n.system_opt + I18n.system_fail );
+        $("#data_operation .embedKb").click(function(){
+
+            layer.confirm( '确认进行「知识库向量化」？', {
+                icon: 3,
+                title: I18n.system_tips ,
+                btn: [ I18n.system_ok, I18n.system_cancel ]
+            }, function(index){
+                layer.close(index);
+
+                // loading
+                var index = layer.load(1, { shade: [0.2,'#090909'] });
+
+                // invoke
+                $.ajax({
+                    type : 'POST',
+                    url : base_url + "/ai/kb/embedding/embed",
+                    data : {
+                        "kbId" : ${kbInfo.id}
+                    },
+                    dataType : "json",
+                    success : function(data){
+                        layer.close(index);
+                        if (data.code === 200) {
+                            layer.msg( I18n.system_opt + I18n.system_success );
+                            // refresh table
+                            $('#data_filter .searchBtn').click();
+                        } else {
+                            layer.msg( data.msg || I18n.system_opt + I18n.system_fail );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        layer.close(index);
+                        // Handle error
+                        console.log("Error: " + error);
+                        layer.open({
+                            icon: '2',
+                            content: (I18n.system_opt + I18n.system_fail)
+                        });
                     }
-                },
-                error: function(xhr, status, error) {
-                    layer.close(index);
-                    // Handle error
-                    console.log("Error: " + error);
-                    layer.open({
-                        icon: '2',
-                        content: (I18n.system_opt + I18n.system_fail)
-                    });
-                }
+                });
+
             });
+
         });
+
+        // ---------- ---------- ---------- query ---------- ---------- ----------
+
+        $("#data_operation .queryKb").click(function(){
+
+            layer.prompt({title: '相似性检索', formType: 2}, function(value, index, elem){
+                //if(value === '') return elem.focus();
+                layer.close(index);
+
+                // query
+                $.ajax({
+                    type : 'POST',
+                    url : base_url + "/ai/kb/embedding/query",
+                    data : {
+                        "kbId" : ${kbInfo.id},
+                        "keyword" : value
+                    },
+                    dataType : "json",
+                    success : function(data){
+                        if (data.code === 200) {
+                            // show
+                            queryKbModelShow(data.data);
+                        } else {
+                            layer.msg( data.msg || I18n.system_opt + I18n.system_fail );
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error
+                        console.log("Error: " + error);
+                        layer.open({
+                            icon: '2',
+                            content: (I18n.system_opt + I18n.system_fail)
+                        });
+                    }
+                });
+            });
+
+        });
+
+        const queryKbTemplate = `
+
+                <div class="modal fade" id="queryKbModel" tabindex="-1" role="dialog"  aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" >相似性检索结果</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="box">
+                                    <div class="box-body" >
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 5%;" >No</th>
+                                                    <th style="width: 10%;" >文档ID</th>
+                                                    <th style="width: 10%;" >分块ID</th>
+                                                    <th style="width: 75%;" >内容</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+        $('.wrapper').append(queryKbTemplate);
+
+        function queryKbModelShow(data) {
+
+            // build table data
+            let tableHtml =  '';
+            if (!data || !Array.isArray(data) || data.length === 0) {
+                tableHtml = '<p>暂无数据</p>';
+            } else {
+                data.forEach((item, index) => {
+                    tableHtml += `<tr>
+                            <td>`+ (index+1) +`</td>
+                            <td>`+ item.docId +`</td>
+                            <td>`+ item.id + `</td>
+                            <td>`+ item.content + `</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // fill data
+            $('#queryKbModel tbody').html(tableHtml);
+
+            // show
+            $('#queryKbModel').modal({backdrop: true, keyboard: false}).modal('show');
+        }
 
     });
 

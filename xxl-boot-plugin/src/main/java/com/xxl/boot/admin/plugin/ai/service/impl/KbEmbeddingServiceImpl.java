@@ -80,7 +80,8 @@ public class KbEmbeddingServiceImpl implements KbEmbeddingService {
     /**
      * 查询相似度阈值
      */
-    private static final Float SIMILARITY_THRESHOLD = 0.45f;
+    private static final Float SIMILARITY_THRESHOLD = 0.4f; // 默认相似度阈值
+    private static final int TOP_K_COUNT = 3;               // 默认查询数量
 
     // build collection name
     private String buildCollectionName(Long kbId) {
@@ -450,7 +451,7 @@ public class KbEmbeddingServiceImpl implements KbEmbeddingService {
                     .data(Collections.singletonList(new FloatVec(keywordVector)))       // 查询数据向量化
                     .annsField("contentVector")                                         // 查询向量字段
                     .outputFields(Arrays.asList("id", "chunkId", "contentVector"))      // 返回字段
-                    .limit(5)
+                    .limit(TOP_K_COUNT)
                     .searchParams(Map.of("radius", SIMILARITY_THRESHOLD))           // 搜索参数, 相似度阈值
                     .build();
             SearchResp searchResp = client.search(searchReq);
@@ -460,7 +461,7 @@ public class KbEmbeddingServiceImpl implements KbEmbeddingService {
             for (List<SearchResp.SearchResult> results : searchResults) {
                 for (SearchResp.SearchResult result : results) {
                     /*if (result.getScore() < 0.45) {
-                        // 相似度阈值: >0.8 高精度场景；>0.7 平衡场景；>0.45 ‌高召回场景
+                        // 相似度阈值: >0.8 高精度场景；>0.7 平衡场景；>0.3 ‌高召回场景
                         continue;
                     }*/
                     chunkIds.add((Long) result.getEntity().get("chunkId"));
@@ -468,7 +469,10 @@ public class KbEmbeddingServiceImpl implements KbEmbeddingService {
             }
 
             // load data
-            List<KbChunk> chunkData =kbChunkMapper.queryByIds(chunkIds);
+            if (CollectionTool.isEmpty(chunkIds)) {
+                return Response.ofFail("没有匹配结果");
+            }
+            List<KbChunk> chunkData = kbChunkMapper.queryByIds(chunkIds);
             return Response.ofSuccess(chunkData);
         } catch (InterruptedException e) {
             logger.error("知识库查询失败，kbId: {}", kbId, e);
