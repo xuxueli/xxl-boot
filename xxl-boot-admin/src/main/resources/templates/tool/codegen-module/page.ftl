@@ -206,7 +206,7 @@
                     <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
                         <#list classInfo.fieldList as fieldItem >
                             <#if fieldItem.fieldName != "id" && fieldItem.fieldName != "addTime" && fieldItem.fieldName != "updateTime">
-                    "${fieldItem.fieldName}": $("#addModal .form input[name=${fieldItem.fieldName}]").val()<#if fieldItem?has_next>,</#if>
+                    "${fieldItem.fieldName}": $("#addModal [name=${fieldItem.fieldName}]").val()<#if fieldItem?has_next>,</#if>
                             </#if>
                         </#list>
                     </#if>
@@ -225,7 +225,7 @@
                 <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
                     <#list classInfo.fieldList as fieldItem >
                         <#if fieldItem.fieldName != "addTime" && fieldItem.fieldName != "updateTime">
-                $("#updateModal .form input[name='${fieldItem.fieldName}']").val( row.${fieldItem.fieldName} );
+                $("#updateModal [name='${fieldItem.fieldName}']").val( row.${fieldItem.fieldName} );
                         </#if>
                     </#list>
                 </#if>
@@ -239,7 +239,7 @@
                 return {
                     <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
                     <#list classInfo.fieldList as fieldItem >
-                    "${fieldItem.fieldName}": $("#updateModal .form input[name=${fieldItem.fieldName}]").val()<#if fieldItem?has_next>,</#if>
+                    "${fieldItem.fieldName}": $("#updateModal [name=${fieldItem.fieldName}]").val()<#if fieldItem?has_next>,</#if>
                     </#list>
                     </#if>
                 };
