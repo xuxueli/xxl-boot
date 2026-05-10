@@ -106,10 +106,10 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 - 默认登录账号："admin/123456"
 
 登录页截图示例：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_001.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_001.png "在这里输入图片标题")
 
 系统首页截图示例：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_002.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_002.png "在这里输入图片标题")
 
 #### 步骤三：集群部署（可选）：
 项目支持集群部署，提升系统容灾和可用性。 集群部署时，几点要求和建议：
@@ -121,15 +121,15 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ### 3.1、权限管控
 
 进入“用户管理”菜单，支持针对系统用户进行管理，进行用户新增、管理、角色授权等操作。
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_003.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_003.png "在这里输入图片标题")
 
 进入“角色管理”菜单，支持针对系统权限角色进行动态管理，进行角色新增、管理、菜单分配等操作。
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_004.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_004.png "在这里输入图片标题")
 
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_005.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_005.png "在这里输入图片标题")
 
 进入“资源管理”菜单，支持针对系统资源进行细粒度管理，支持页面、按钮等多类型资源管理，进行新增、管理等操作。
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_006.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_006.png "在这里输入图片标题")
 
 ### 3.2、代码生成
 
@@ -138,7 +138,7 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 内置代码生成器，只需提供SQL将会自动生成全部代码，覆盖“controller/servie/dao/entity…”等多层，加速研发效率。
 
 默认提供Demo表SQL语句，可操作体验，参考下图。
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_007.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_007.png "在这里输入图片标题")
 
 #### 第二步：生成代码
 点击右上角 "生成代码按钮"，即可完整多层代码的生成，非常方便；
@@ -147,22 +147,22 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 代码生成后，可在界面查看和使用 "controller/service/dao/mybatis/model" 多层源代码。部分截图如下：
 
 代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_008.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_008.png "在这里输入图片标题")
 
 代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_009.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_009.png "在这里输入图片标题")
 
 代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_010.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_010.png "在这里输入图片标题")
 
 代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_011.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_011.png "在这里输入图片标题")
 
 代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_012.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_012.png "在这里输入图片标题")
 
 代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/doc/static/xxl-boot/images/img_013.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_013.png "在这里输入图片标题")
 
 
 ## 四、总体设计
