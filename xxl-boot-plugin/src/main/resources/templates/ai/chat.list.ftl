@@ -25,9 +25,6 @@
                             <span class="input-group-addon">Model</span>
                             <select class="form-control" name="modelId" >
                                 <option value="-1" >${I18n.system_please_choose}</option>
-                                <#list modelList as item>
-                                    <option value="${item.id}" >${item.name}</option>
-                                </#list>
                             </select>
                         </div>
                     </div>
@@ -96,9 +93,6 @@
                                 <div class="col-sm-10">
                                     <select class="form-control" name="modelId" >
                                         <option value="-1" >${I18n.system_please_choose}</option>
-                                        <#list modelList as item>
-                                            <option value="${item.id}" >${item.name}</option>
-                                        </#list>
                                     </select>
                                 </div>
                             </div>
@@ -143,11 +137,6 @@
                                 <div class="col-sm-10">
                                     <select class="form-control" name="modelId" >
                                         <option value="-1" >${I18n.system_please_choose}</option>
-                                        <#if modelList?? >
-                                            <#list modelList as item>
-                                                <option value="${item.id}" >${item.name}</option>
-                                            </#list>
-                                        </#if>
                                     </select>
                                 </div>
                             </div>
@@ -185,10 +174,29 @@
         const modelMap = {
             <#if modelList?? >
             <#list modelList as item>
-            ${item.id}: "${item.name}"<#if item?has_next>,</#if>
+                <#-- supplierType Desc -->
+                <#assign supplierTypeDesc = '--' >
+                <#list SupplierTypeEnum as supplierType>
+                    <#if item.supplierType == supplierType.value>
+                        <#assign supplierTypeDesc = supplierType.desc>
+                        <#break>
+                    </#if>
+                </#list>
+                <#-- item -->
+            ${item.id}: "${item.model} [${supplierTypeDesc}]"<#if item?has_next>,</#if>
             </#list>
             </#if>
         };
+
+        // init : modelId
+        var $data_filterSelect = $("#data_filter [name=modelId]");
+        var $addModalSelect = $("#addModal [name=modelId]");
+        var $updateModalSelect = $("#updateModal [name=modelId]");
+        for (var id in modelMap) {
+            $data_filterSelect.append('<option value="' + id + '">' + modelMap[id] + '</option>');
+            $addModalSelect.append('<option value="' + id + '">' + modelMap[id] + '</option>');
+            $updateModalSelect.append('<option value="' + id + '">' + modelMap[id] + '</option>');
+        }
 
         // ---------- ---------- ---------- table + curd  ---------- ---------- ----------
 

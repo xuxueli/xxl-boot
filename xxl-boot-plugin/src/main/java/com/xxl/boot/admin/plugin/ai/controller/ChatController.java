@@ -1,5 +1,6 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
+import com.xxl.boot.admin.plugin.ai.constant.enums.SupplierTypeEnum;
 import com.xxl.boot.admin.plugin.ai.model.Model;
 import com.xxl.boot.admin.plugin.ai.model.Chat;
 import com.xxl.boot.admin.plugin.ai.service.ModelService;
@@ -40,6 +41,7 @@ public class ChatController {
         // find all model
         List<Model> modelList = modelService.queryAllModel();
         model.addAttribute("modelList", modelList);
+        model.addAttribute("SupplierTypeEnum", SupplierTypeEnum.values());
 
         return "ai/chat.list";
     }
