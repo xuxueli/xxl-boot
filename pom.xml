@@ -14,6 +14,7 @@
 
     <modules>
         <module>xxl-boot-admin</module>
+        <module>xxl-boot-api</module>
     </modules>
 
     <properties>
