@@ -1,3 +1,4 @@
+# for idea
 .idea
 .classpath
 .project
@@ -5,3 +6,8 @@
 target/
 .DS_Store
 .gitattributes
+
+# for node
+node_modules/
+dist/
+package-lock.json

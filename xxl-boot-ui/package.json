@@ -1,0 +1,46 @@
+{
+  "name": "boot",
+  "version": "4.0.0",
+  "description": "Boot管理系统",
+  "author": "Jason",
+  "license": "GPL",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:prod": "vite build",
+    "build:stage": "vite build --mode staging",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "3.5.33",
+    "vue-router": "5.0.6",
+    "pinia": "3.0.4",
+    "axios": "1.16.0",
+    "element-plus": "2.13.7",
+    "@element-plus/icons-vue": "2.3.2",
+    "@vueuse/core": "14.1.0",
+    "js-cookie": "3.0.5",
+    "nprogress": "0.2.0",
+    "clipboard": "2.0.11",
+    "echarts": "5.6.0",
+    "@vueup/vue-quill": "1.2.0",
+    "vue-cropper": "1.1.1",
+    "vuedraggable": "4.1.0",
+    "fuse.js": "7.1.0",
+    "file-saver": "2.0.5",
+    "jsencrypt": "3.3.2",
+    "js-beautify": "1.15.4"
+  },
+  "devDependencies": {
+    "vite": "8.0.10",
+    "@vitejs/plugin-vue": "6.0.6",
+    "sass-embedded": "1.97.2",
+    "unplugin-auto-import": "0.18.6",
+    "unplugin-vue-setup-extend-plus": "1.0.1",
+    "vite-plugin-compression": "0.5.1",
+    "vite-plugin-svg-icons": "2.0.1"
+  },
+  "overrides": {
+    "quill": "2.0.3"
+  }
+}
