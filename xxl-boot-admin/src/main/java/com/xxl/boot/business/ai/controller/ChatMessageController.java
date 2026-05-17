@@ -1,0 +1,284 @@
+package com.xxl.boot.business.ai.controller;
+
+import com.xxl.boot.business.ai.enums.SenderTypeEnum;
+import com.xxl.boot.business.ai.enums.SupplierTypeEnum;
+import com.xxl.boot.business.ai.model.Chat;
+import com.xxl.boot.business.ai.model.ChatMessage;
+import com.xxl.boot.business.ai.model.Model;
+import com.xxl.boot.business.ai.service.ChatMessageService;
+import com.xxl.boot.business.ai.service.ChatService;
+import com.xxl.boot.business.ai.service.ModelService;
+import com.xxl.sso.core.annotation.XxlSso;
+import com.xxl.sso.core.helper.XxlSsoHelper;
+import com.xxl.sso.core.model.LoginInfo;
+import com.xxl.tool.core.AssertTool;
+import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.response.PageModel;
+import com.xxl.tool.response.Response;
+import io.netty.channel.ChannelOption;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.ollama.OllamaChatModel;
+import org.springframework.ai.ollama.api.OllamaApi;
+import org.springframework.ai.ollama.api.OllamaChatOptions;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.netty.http.client.HttpClient;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+
+/**
+* ChatMessage Controller
+*
+* Created by xuxueli on '2025-12-21 18:18:12'.
+*/
+@Controller
+@RequestMapping("/ai/chat/detail")
+public class ChatMessageController {
+    private static final Logger logger = LoggerFactory.getLogger(ChatMessageController.class);
+
+    @Resource
+    private ChatMessageService chatMessageService;
+    @Resource
+    private ChatService chatService;
+    @Resource
+    private ModelService modelService;
+
+    /**
+    * 页面
+    */
+    @RequestMapping
+    @XxlSso(permission = "ai:chat")
+    public String index(org.springframework.ui.Model model, @RequestParam(required = false, defaultValue = "0") int chatId) {
+
+        // load chat
+        Response<Chat> chatRest =chatService.load(chatId);
+        AssertTool.notNull(chatRest.getData(), "参数非法，当前对话不存在");
+
+        // query chat message
+        Response<List<ChatMessage>> chatMessageResp = chatMessageService.queryByChatId(chatId);
+
+        // set data
+        model.addAttribute("chat", chatRest.getData());
+        model.addAttribute("messageList", chatMessageResp.getData());
+        model.addAttribute("SenderTypeEnum", SenderTypeEnum.values());
+
+        return "business/ai/chat.detail";
+    }
+
+    @RequestMapping("/send")
+    @ResponseBody
+    @XxlSso(permission = "ai:chat")
+    public Response<String> send(HttpServletRequest request,
+                             HttpServletResponse response,
+                             ChatMessage chatMessage){
+
+        // valid
+        AssertTool.notNull(chatMessage.getContent(), "请输入内容");
+
+        // login user
+        Response<LoginInfo> loginInfoRest = XxlSsoHelper.loginCheckWithAttr(request);
+        String userName = loginInfoRest.getData().getUserName();
+
+        // get chat data
+        Response<Chat> chatRest =chatService.load(chatMessage.getChatId());
+        AssertTool.notNull(chatRest.getData(), "当前对话不存在");
+        Response<Model> modelResponse = modelService.load(chatRest.getData().getModelId());
+        AssertTool.notNull(chatRest.getData(), "当前回话Model配置非法");
+
+        // 1、chat-client
+        ChatClient chatClient = loadChatClient(modelResponse.getData());
+
+        // 2、prompt
+        // 2.1、系统提示词：定义全局行为或上下文（如角色、输出格式）
+        List<Message> promptMessages = new ArrayList<>();
+        promptMessages.add(new SystemMessage(chatRest.getData().getPrompt()));
+        // 2.2、历史对话记忆：
+        Response<List<ChatMessage>> chatMessageResponse = chatMessageService.queryByChatId(chatMessage.getChatId());
+        if (chatMessageResponse.isSuccess() && CollectionTool.isNotEmpty(chatMessageResponse.getData())) {
+            promptMessages = chatMessageResponse
+                    .getData()
+                    .stream()
+                    .skip(Math.max(0, chatMessageResponse.getData().size() - 10))       // only store 10 recent messages
+                    .map(e -> {
+                                return SenderTypeEnum.USER.getValue() == e.getSenderType()
+                                        ? (Message)new UserMessage(e.getContent()) :
+                                        new AssistantMessage(e.getContent());
+                            }
+                    ).collect(Collectors.toList());
+        }
+        // 2.3、新增动态消息：用户输入内容
+        promptMessages.add(new UserMessage(chatMessage.getContent()));  // user message
+        Prompt prompt = new Prompt(promptMessages);                     // message + tool
+
+        // 3、call
+        String responseMesssage = null;
+        try {
+            responseMesssage = chatClient
+                    .prompt(prompt)
+                    .call()
+                    .content();
+        } catch (Exception e) {
+            logger.error("chat-message send error, request:{}, error: {}", chatMessage, e.getMessage(), e);
+            return Response.ofFail("处理请求时出错: " + e.getMessage());
+        }
+
+        // send message
+        chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.USER.getValue(), userName, chatMessage.getContent());
+        chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.MODEL.getValue(), SenderTypeEnum.MODEL.getDesc(), responseMesssage);
+        logger.debug("chat-message send success, chatId:{},  request:{}, response:{}", chatMessage.getChatId(), chatMessage.getContent(), responseMesssage);
+        return Response.ofSuccess(responseMesssage);
+    }
+
+    @RequestMapping(value = "/send2", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @ResponseBody
+    @XxlSso(permission = "ai:chat")
+    public Flux<ServerSentEvent<Response<String>>> send2(HttpServletRequest request,
+                                               HttpServletResponse response,
+                                               ChatMessage chatMessage){
+
+        // valid
+        AssertTool.notNull(chatMessage.getContent(), "请输入内容");
+
+        // login user
+        Response<LoginInfo> loginInfoRest = XxlSsoHelper.loginCheckWithAttr(request);
+        String userName = loginInfoRest.getData().getUserName();
+
+        // load chat
+        Response<Chat> chatRest =chatService.load(chatMessage.getChatId());
+        AssertTool.notNull(chatRest.getData(), "当前对话不存在");
+        Response<Model> modelResponse = modelService.load(chatRest.getData().getModelId());
+        AssertTool.notNull(chatRest.getData(), "当前回话Model配置非法");
+
+        // load chat-client
+        ChatClient chatClient = loadChatClient(modelResponse.getData());
+
+        // call ollama
+        try {
+            // send
+            Flux<String> responseFlux = chatClient
+                    .prompt(chatRest.getData().getPrompt())
+                    .user(chatMessage.getContent())
+                    .stream()
+                    .content();
+
+            // flux process
+            AtomicReference<StringBuilder> responseMesssage = new AtomicReference<>(new StringBuilder());
+            return responseFlux.map(content ->
+                    ServerSentEvent.builder(Response.ofSuccess(content)).build()
+            ).doOnNext(event -> {
+                responseMesssage.updateAndGet(sb -> sb.append(event.data().getData()));
+            }).doOnComplete(()->{
+                String responseMesssageFinal = responseMesssage.get().toString();
+                // final send
+                chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.USER.getValue(), userName, chatMessage.getContent());
+                chatMessageService.send(chatMessage.getChatId(), SenderTypeEnum.MODEL.getValue(), SenderTypeEnum.MODEL.getDesc(), responseMesssageFinal);
+                logger.debug("chat-message send success, chatId:{},  request:{}, response:{}", chatMessage.getChatId(), chatMessage.getContent(), responseMesssageFinal);
+            });
+
+        } catch (Exception e) {
+            logger.error("chat-message send error, request:{}, error: {}", chatMessage, e.getMessage(), e);
+            // 直接返回结果
+            return Flux.just(ServerSentEvent.builder(Response.<String>ofFail("处理请求时出错: " + e.getMessage())).build());
+        }
+    }
+
+    /**
+     * load chat-client
+     */
+    public static ChatClient loadChatClient(Model model){
+
+        // parse model param
+        SupplierTypeEnum supplierType = SupplierTypeEnum.getByValue(model.getSupplierType(), SupplierTypeEnum.OLLAMA);
+        String baseUrl = model.getBaseUrl();
+        String apiKey = model.getApiKey();
+        String modelName = model.getModel();
+
+        AssertTool.notNull(model, "模型不能为空");
+        AssertTool.notNull(baseUrl, "模型地址不能为空");
+
+        // supplier dispatch
+        ChatModel chatModel = null;
+        if (supplierType == SupplierTypeEnum.OpenRouter) {
+            chatModel = OpenAiChatModel
+                    .builder()
+                    .options(
+                            OpenAiChatOptions.builder()
+                                    .baseUrl(baseUrl)
+                                    .apiKey(apiKey)
+                                    .model(modelName)
+                                    .build()
+                    )
+                    .build();
+        } else if (supplierType == SupplierTypeEnum.OLLAMA) {
+            chatModel = OllamaChatModel
+                    .builder()
+                    .ollamaApi(OllamaApi
+                            .builder()
+                            .baseUrl(baseUrl)
+                            .webClientBuilder(WebClient.builder().clientConnector(
+                                    new ReactorClientHttpConnector(
+                                            HttpClient.create()
+                                                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30 * 1000)
+                                                    .responseTimeout(Duration.ofMillis(30 * 1000))
+                                    )
+                            ))
+                            .build())
+                    .defaultOptions(
+                            OllamaChatOptions.builder()
+                                    .model(modelName)
+                                    .build()
+                    )
+                    .build();
+        }
+
+        // build chat-client
+        return ChatClient
+                .builder(chatModel)
+                /*.defaultAdvisors(MessageChatMemoryAdvisor                   // chat memory with window
+                        .builder(MessageWindowChatMemory
+                                .builder()
+                                .maxMessages(20)
+                                .build())
+                        .build())
+                .defaultAdvisors(SimpleLoggerAdvisor.builder().build())     // logger*/
+                .build();
+    }
+
+    /**
+    * 分页查询
+    */
+    @RequestMapping("/pageList")
+    @ResponseBody
+    @XxlSso(permission = "ai:chat")
+    public Response<PageModel<ChatMessage>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+                                                     @RequestParam(required = false, defaultValue = "10") int pagesize) {
+        PageModel<ChatMessage> pageModel = chatMessageService.pageList(offset, pagesize);
+        return Response.ofSuccess(pageModel);
+    }
+
+
+}
