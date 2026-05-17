@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.plugin.ai.mapper.ModelMapper">
+
+    <resultMap id="Agent" type="com.xxl.boot.plugin.ai.model.Model" >
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="model_type" property="modelType" />
+        <result column="supplier_type" property="supplierType" />
+        <result column="model" property="model" />
+        <result column="base_url" property="baseUrl" />
+        <result column="api_key" property="apiKey" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`name`,
+        t.`model_type`,
+        t.`supplier_type`,
+        t.`model`,
+        t.`base_url`,
+        t.`api_key`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_ai_model (
+            `name`,
+            `model_type`,
+            `supplier_type`,
+            `model`,
+            `base_url`,
+            `api_key`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+              #{model.name} ,
+              #{model.modelType} ,
+              #{model.supplierType} ,
+              #{model.model} ,
+              #{model.baseUrl} ,
+              #{model.apiKey} ,
+              NOW() ,
+              NOW()
+          )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_ai_model
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_ai_model
+        SET
+            `name` = #{model.name},
+            `model_type` = #{model.modelType},
+            `supplier_type` = #{model.supplierType},
+            `model` = #{model.model},
+            `base_url` = #{model.baseUrl},
+            `api_key` = #{model.apiKey},
+            `update_time` = NOW()
+        WHERE `id` = #{model.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="Agent">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_model AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="Agent">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_model AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="modelType gt -1">
+                AND t.`model_type` = #{modelType}
+            </if>
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+        </trim>
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_ai_model AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="modelType gt -1">
+                AND t.`model_type` = #{modelType}
+            </if>
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryAllModel" resultMap="Agent">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_ai_model AS t
+        ORDER BY t.`name` ASC
+    </select>
+
+</mapper>

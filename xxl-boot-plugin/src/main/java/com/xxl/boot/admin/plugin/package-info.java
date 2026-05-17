@@ -1,1 +1,0 @@
-package com.xxl.boot.admin.plugin;

@@ -32,7 +32,7 @@ public class Ip2regionUtil {
             Config v4Config = Config.custom()
                     .setCachePolicy(Config.BufferCache)             // 指定缓存策略:  NoCache / VIndexCache / BufferCache
                     .setSearchers(15)                           // 设置初始化的查询器数量
-                    .setXdbInputStream(new ClassPathResource("/other/ip2region/ip2region_v4.xdb").getInputStream())
+                    .setXdbInputStream(new ClassPathResource("/other/ip2region_v4.xdb").getInputStream())
                     //.setXdbPath("ip2region v4 xdb path")      // 设置 v4 xdb 文件的路径
                     .asV4();
 

@@ -14,7 +14,6 @@
 
     <modules>
         <module>xxl-boot-admin</module>
-        <module>xxl-boot-plugin</module>
     </modules>
 
     <properties>
@@ -88,6 +87,8 @@
                 <version>${ip2region.version}</version>
             </dependency>
 
+            <!-- ********************************* for plugin start ********************************* -->
+
             <!-- xxl-boot-plugin（optional）-->
             <dependency>
                 <groupId>com.xuxueli</groupId>
@@ -111,6 +112,8 @@
                 <artifactId>milvus-sdk-java</artifactId>
                 <version>${milvus.version}</version>
             </dependency>
+
+            <!-- ********************************* for plugin end ********************************* -->
 
         </dependencies>
     </dependencyManagement>
