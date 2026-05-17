@@ -253,22 +253,73 @@ docker run -d \
 xuxueli/xxl-boot-admin:{指定版本}
 ```
 
-### 4.8 扩展插件
+## 五、业务扩展
 
-项目支持通过插件方式进行扩展模块集成，同时提供多个官方插件模块，详细见如下仓库目录，
+### 5.1 仓库扩展说明
+
+项目支持灵活扩展集成业务模块，详细仓库目录结构如下，扩展SQL脚本 以及 系统扩展点 说明如下：
+  - 扩展SQL脚本：用于 业务扩展模块 数据库初始化；
+  - 系统扩展点：
+    - 扩展点A：扩展代码包，存放业务扩展模块代码；参考仓库中 ai 扩展代码包模块；
+    - 扩展点B：扩展配置文件：存放业务扩展模块配置文件，如 spring-ai 属性配置；
+    - 扩展点C：扩展MyBatis文件：存放业务扩展模块 MyBatis 映射文件；
+    - 扩展点D：扩展模板文件：存放业务扩展模块模板文件，如 freemarker文件；
 
 ```
-/xxl-boot/
-    - xxl-boot-admin                  基础模块
-    - xxl-boot-plugins                扩展模块
-        /README.md                        扩展模块文档指南    
-        /com.xxl.boot.admin.plugin.ai     AI扩展
-        /com.xxl.boot.admin.plugin.xxx    其他扩展
+xxl-boot/
+│
+├── doc/                                # 文档目录
+│   ├── db/                             
+│   │   ├── tables_xxl_boot.sql         # 核心表结构
+│   │   └── tables_xxl_boot_plugin.sql  # 【扩展】业务扩展模块SQL脚本
+│   ├── XXL-BOOT官方文档.md              # 官方文档
+│
+├── xxl-boot-admin/                   # 管理后台模块（核心）
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/xxl/boot/
+│   │   │   │   ├── XxlBootAdminApplication.java  # 启动类
+│   │   │   │   ├── admin/                        # 核心包：项目配置、系统管理、工具组件等。
+│   │   │   │   └── business/                     # 【扩展点A】业务扩展包
+│   │   │   │       ├── ai/                           # AI业务扩展模块
+│   │   │   │       └── workflow/                     # 工作流扩展模块
+│   │   │   └── resources/
+│   │   │       ├── application.properties        # 主配置文件
+│   │   │       ├── application-plugin.properties # 【扩展点B】业务扩展配置文件
+│   │   │       └── mapper/                       
+│   │   │           ├── /admin/*.xml              # 核心 MyBatis 文件
+│   │   │           ├── /business/*.xml           # 【扩展点C】业务扩展模块 MyBatis 文件
+│   │   │       └── templates/                    # 模板文件
+│   │   │           ├── /admin/*.xml              # 核心 模板文件
+│   │   │           └── /business/*.xml           # 【扩展点D】业务扩展模块 模板文件
+│   └── pom.xml                                   # Maven配置
+│
 ```
 
+### 5.2 官方业务扩展明细
+
+当前提供多项 开箱即用 的业务扩展，可结合实际业务诉求选择性启用。
+
+| 模块        | 功能         | 描述                   |
+|-----------|------------|----------------------|
+| AI模块      | Model配置    | Model配置管理，支持多Model类型，包括：基础模型、文本模型、视觉模型...等；支持多模型供应商，包括：Ollama、OpenAI...等。
+| AI模块      | Chat对话     | Chat对话管理，支持自定义Prompt、Model参数；支持历史对话消息持久化，保留历史对话记忆；可基于此支持多场景，包括：智能客服、聊天助手...等；
+| AI模块      | 知识库        | 知识库管理，支持知识库管理、索引、检索等；支持多知识库类型，包括：Text、Word、PDF、图片...等；
+| AI模块      | WorkFlow定义 | WorkFlow定义管理，支持工作流及Agent/模型的编排定义；工作流执行及日志记录，支持分布式工作流执行以及执行日志记录；
+| AI模块      | Agent生图    | 文生图、图生图；生图流程设计，支持集成多模型供应商；
+| AI模块      | Agent生视频   | 文生视频、图生视频；支持集成多模型供应商；
+
+### 5.2 扩展模块说明：AI模块
+
+- Model配置：Model配置管理，支持多Model类型，包括：基础模型、文本模型、视觉模型...等；支持多模型供应商，包括：Ollama、OpenAI...等。
+- Chat对话：Chat对话管理，支持自定义Prompt、Model参数；支持历史对话消息持久化，保留历史对话记忆；可基于此支持多场景，包括：智能客服、聊天助手...等；
+- 知识库：知识库管理，支持知识库管理、索引、检索等；支持多知识库类型，包括：Text、Word、PDF、图片...等；
+- WorkFlow定义：WorkFlow定义管理，支持工作流及Agent/模型的编排定义；工作流执行及日志记录，支持分布式工作流执行以及执行日志记录；
+- Agent生图：文生图、图生图；生图流程设计，支持集成多模型供应商；
+- Agent生视频：文生视频、图生视频；支持集成多模型供应商；
 
 
-## 四、版本更新日志
+## 六、版本更新日志
 ### 版本 v0.1.0 Release Notes[2018-05-03]
 - 1、简洁：界面操作，简洁直观，可快速上手；
 - 2、轻量级：仅需提供建表SQL，即可自动完成代码生成，简洁高效；
@@ -367,15 +418,15 @@ xuxueli/xxl-boot-admin:{指定版本}
 - 5、知识库：知识库管理，知识库检索；
 - 6、iframe弹框居中优化；
 
-## 五、其他
+## 七、其他
 
-### 5.1 项目贡献
+### 7.1 项目贡献
 欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-boot/issues/) 讨论新特性或者变更。
 
-### 5.2 用户接入登记
+### 7.2 用户接入登记
 更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-boot/issues/1 ) 登记，登记仅仅为了产品推广。
 
-### 5.3 开源协议和版权
+### 7.3 开源协议和版权
 产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
 
 - Licensed under the GNU General Public License (GPL) v3.

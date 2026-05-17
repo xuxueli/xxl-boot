@@ -89,12 +89,6 @@
 
             <!-- ********************************* for plugin start ********************************* -->
 
-            <!-- xxl-boot-plugin（optional）-->
-            <dependency>
-                <groupId>com.xuxueli</groupId>
-                <artifactId>xxl-boot-plugin</artifactId>
-                <version>${project.parent.version}</version>
-            </dependency>
             <!-- spring-ai -->
             <dependency>
                 <groupId>org.springframework.ai</groupId>
