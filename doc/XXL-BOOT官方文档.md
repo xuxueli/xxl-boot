@@ -102,7 +102,7 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 #### 步骤二：部署项目：
 项目打包部署后，可通过如下地址及账号进行登录。
-- 访问地址：http://localhost:8080/xxl-boot-admin   
+- 访问地址：http://localhost:8080 
 - 默认登录账号："admin/123456"
 
 登录页截图示例：

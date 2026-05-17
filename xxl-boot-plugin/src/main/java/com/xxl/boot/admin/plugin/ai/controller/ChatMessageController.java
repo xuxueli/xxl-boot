@@ -237,8 +237,7 @@ public class ChatMessageController {
                 .defaultAdvisors(SimpleLoggerAdvisor.builder().build())     // logger*/
                 .defaultOptions(OllamaChatOptions
                         .builder()
-                        .model(model)
-                        .build())                                           // assign model
+                        .model(model))                                      // assign model
                 .build();
     }
 
