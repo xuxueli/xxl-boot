@@ -2,7 +2,8 @@ package com.xxl.boot.admin.plugin.ai.constant.enums;
 
 public enum SupplierTypeEnum {
 
-    OLLAMA(1, "Ollama");
+    OLLAMA(1, "Ollama"),
+    OpenRouter(2, "OpenRouter");
 
     private int value;
     private String desc;

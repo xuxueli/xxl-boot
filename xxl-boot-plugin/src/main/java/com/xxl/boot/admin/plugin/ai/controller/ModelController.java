@@ -118,7 +118,7 @@ public class ModelController {
 
         try {
             // build chatClient
-            ChatClient chatClient = ChatMessageController.loadChatClient(modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), null);
+            ChatClient chatClient = ChatMessageController.loadChatClient(modelResponse.getData());
 
             // call
             String response = chatClient.prompt("Hi").call().content();

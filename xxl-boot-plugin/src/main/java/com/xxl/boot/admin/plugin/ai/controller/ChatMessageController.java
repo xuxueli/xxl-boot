@@ -1,6 +1,7 @@
 package com.xxl.boot.admin.plugin.ai.controller;
 
 import com.xxl.boot.admin.plugin.ai.constant.enums.SenderTypeEnum;
+import com.xxl.boot.admin.plugin.ai.constant.enums.SupplierTypeEnum;
 import com.xxl.boot.admin.plugin.ai.model.Chat;
 import com.xxl.boot.admin.plugin.ai.model.ChatMessage;
 import com.xxl.boot.admin.plugin.ai.model.Model;
@@ -25,10 +26,13 @@ import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaChatOptions;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.codec.ServerSentEvent;
@@ -106,7 +110,7 @@ public class ChatMessageController {
         AssertTool.notNull(chatRest.getData(), "当前回话Model配置非法");
 
         // 1、chat-client
-        ChatClient chatClient = loadChatClient(modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), null);
+        ChatClient chatClient = loadChatClient(modelResponse.getData());
 
         // 2、prompt
         // 2.1、系统提示词：定义全局行为或上下文（如角色、输出格式）
@@ -170,7 +174,7 @@ public class ChatMessageController {
         AssertTool.notNull(chatRest.getData(), "当前回话Model配置非法");
 
         // load chat-client
-        ChatClient chatClient = loadChatClient(modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), null);
+        ChatClient chatClient = loadChatClient(modelResponse.getData());
 
         // call ollama
         try {
@@ -205,29 +209,55 @@ public class ChatMessageController {
     /**
      * load chat-client
      */
-    public static ChatClient loadChatClient(String model, String baseUrl, String apiKey){
+    public static ChatClient loadChatClient(Model model){
+
+        // parse model param
+        SupplierTypeEnum supplierType = SupplierTypeEnum.getByValue(model.getSupplierType(), SupplierTypeEnum.OLLAMA);
+        String baseUrl = model.getBaseUrl();
+        String apiKey = model.getApiKey();
+        String modelName = model.getModel();
+
         AssertTool.notNull(model, "模型不能为空");
         AssertTool.notNull(baseUrl, "模型地址不能为空");
 
-        // build chat model
-        OllamaChatModel ollamaChatModel = OllamaChatModel
-                .builder()
-                .ollamaApi(OllamaApi
-                        .builder()
-                        .baseUrl(baseUrl)
-                        .webClientBuilder(WebClient.builder().clientConnector(
-                                new ReactorClientHttpConnector(
-                                        HttpClient.create()
-                                                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30 * 1000)
-                                                .responseTimeout(Duration.ofMillis(30 * 1000))
-                                )
-                        ))
-                        .build())
-                .build();
+        // supplier dispatch
+        ChatModel chatModel = null;
+        if (supplierType == SupplierTypeEnum.OpenRouter) {
+            chatModel = OpenAiChatModel
+                    .builder()
+                    .options(
+                            OpenAiChatOptions.builder()
+                                    .baseUrl(baseUrl)
+                                    .apiKey(apiKey)
+                                    .model(modelName)
+                                    .build()
+                    )
+                    .build();
+        } else if (supplierType == SupplierTypeEnum.OLLAMA) {
+            chatModel = OllamaChatModel
+                    .builder()
+                    .ollamaApi(OllamaApi
+                            .builder()
+                            .baseUrl(baseUrl)
+                            .webClientBuilder(WebClient.builder().clientConnector(
+                                    new ReactorClientHttpConnector(
+                                            HttpClient.create()
+                                                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30 * 1000)
+                                                    .responseTimeout(Duration.ofMillis(30 * 1000))
+                                    )
+                            ))
+                            .build())
+                    .defaultOptions(
+                            OllamaChatOptions.builder()
+                                    .model(modelName)
+                                    .build()
+                    )
+                    .build();
+        }
 
         // build chat-client
         return ChatClient
-                .builder(ollamaChatModel)
+                .builder(chatModel)
                 /*.defaultAdvisors(MessageChatMemoryAdvisor                   // chat memory with window
                         .builder(MessageWindowChatMemory
                                 .builder()
@@ -235,9 +265,6 @@ public class ChatMessageController {
                                 .build())
                         .build())
                 .defaultAdvisors(SimpleLoggerAdvisor.builder().build())     // logger*/
-                .defaultOptions(OllamaChatOptions
-                        .builder()
-                        .model(model))                                      // assign model
                 .build();
     }
 
