@@ -34,7 +34,7 @@ public class CodeGenController {
     @RequestMapping
     @XxlSso
     public String index(Model model) {
-        return "tool/codegen";
+        return "/admin/tool/codegen";
     }
 
     @RequestMapping("/genCode")
@@ -58,13 +58,13 @@ public class CodeGenController {
             // result
             Map<String, String> result = new HashMap<String, String>();
 
-            result.put("controller_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/controller.ftl", params));
-            result.put("service_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/service.ftl", params));
-            result.put("service_impl_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/service_impl.ftl", params));
-            result.put("mapper_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/mapper.ftl", params));
-            result.put("mapper_xml_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/mapper_xml.ftl", params));
-            result.put("entity_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/entity.ftl", params));
-            result.put("page_code", FtlTool.processString(freemarkerConfig,"tool/codegen-module/page.ftl", params));
+            result.put("controller_code", FtlTool.processString(freemarkerConfig,"/admin/tool/codegen-module/controller.ftl", params));
+            result.put("service_code", FtlTool.processString(freemarkerConfig,"/admin/tool/codegen-module/service.ftl", params));
+            result.put("service_impl_code", FtlTool.processString(freemarkerConfig,"/admin/tool/codegen-module/service_impl.ftl", params));
+            result.put("mapper_code", FtlTool.processString(freemarkerConfig,"/admin/tool/codegen-module/mapper.ftl", params));
+            result.put("mapper_xml_code", FtlTool.processString(freemarkerConfig,"/admin/tool/codegen-module/mapper_xml.ftl", params));
+            result.put("entity_code", FtlTool.processString(freemarkerConfig,"/admin/tool/codegen-module/entity.ftl", params));
+            result.put("page_code", FtlTool.processString(freemarkerConfig,"/admin/tool/codegen-module/page.ftl", params));
 
             // 计算,生成代码行数
             int lineNum = 0;

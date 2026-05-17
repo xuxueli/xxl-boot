@@ -44,7 +44,7 @@ public class UserController {
         model.addAttribute("roleList", pageModel.getData());
         model.addAttribute("userStatuEnum", UserStatuEnum.values());
 
-        return "org/user";
+        return "/admin/org/user";
     }
 
     @RequestMapping("/pageList")

@@ -3,7 +3,7 @@
 <head>
 <#noparse>
     <#-- import macro -->
-    <#import "../common/common.macro.ftl" as netCommon>
+    <#import "/admin/common/common.macro.ftl" as netCommon>
 
     <!-- 1-style start -->
     <@netCommon.commonStyle />

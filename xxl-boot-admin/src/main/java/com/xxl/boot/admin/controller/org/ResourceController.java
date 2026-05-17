@@ -38,7 +38,7 @@ public class ResourceController {
         model.addAttribute("resourceStatuEnum", ResourceStatuEnum.values());
         model.addAttribute("resourceTypeEnum", ResourceTypeEnum.values());
 
-        return "org/resource";
+        return "/admin/org/resource";
     }
 
     /**

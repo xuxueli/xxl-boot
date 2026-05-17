@@ -42,7 +42,7 @@ public class MessageController {
         model.addAttribute("MessageCategoryEnum", MessageCategoryEnum.values());
         model.addAttribute("MessageStatusEnum", MessageStatusEnum.values());
 
-        return "system/message";
+        return "/admin/system/message";
     }
 
     /**
