@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.boot.admin.mapper.RoleMapper">
+<mapper namespace="com.xxl.boot.admin.framework.mapper.RoleMapper">
 
-    <resultMap id="XxlBootRole" type="com.xxl.boot.admin.model.entity.XxlBootRole" >
+    <resultMap id="XxlBootRole" type="com.xxl.boot.admin.framework.model.entity.XxlBootRole" >
         <result column="id" property="id" />
         <result column="name" property="name" />
         <result column="order" property="order" />
@@ -19,7 +19,7 @@
         t.`update_time`
     </sql>
 
-    <insert id="insert" parameterType="com.xxl.boot.admin.model.entity.XxlBootRole" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="com.xxl.boot.admin.framework.model.entity.XxlBootRole" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO xxl_boot_role (`name`,
                                    `order`,
                                    `add_time`,
@@ -38,7 +38,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="com.xxl.boot.admin.model.entity.XxlBootRole" >
+    <update id="update" parameterType="com.xxl.boot.admin.framework.model.entity.XxlBootRole" >
         UPDATE xxl_boot_role
         SET
             `name` = #{name},

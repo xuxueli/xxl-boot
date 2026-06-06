@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.boot.admin.mapper.ResourceMapper">
+<mapper namespace="com.xxl.boot.admin.framework.mapper.ResourceMapper">
 
-    <resultMap id="XxlBootResource" type="com.xxl.boot.admin.model.entity.XxlBootResource" >
+    <resultMap id="XxlBootResource" type="com.xxl.boot.admin.framework.model.entity.XxlBootResource" >
         <result column="id" property="id" />
         <result column="parent_id" property="parentId" />
         <result column="name" property="name" />

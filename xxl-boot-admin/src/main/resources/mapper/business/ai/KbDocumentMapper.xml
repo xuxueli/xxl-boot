@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.boot.business.ai.mapper.KbDocumentMapper">
+<mapper namespace="com.xxl.boot.admin.business.ai.mapper.KbDocumentMapper">
 
-    <resultMap id="KbDocument" type="com.xxl.boot.business.ai.model.KbDocument" >
+    <resultMap id="KbDocument" type="com.xxl.boot.admin.business.ai.model.KbDocument" >
         <result column="id" property="id" />
         <result column="kb_id" property="kbId" />
         <result column="doc_name" property="docName" />

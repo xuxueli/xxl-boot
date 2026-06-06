@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.boot.admin.mapper.MessageMapper">
+<mapper namespace="com.xxl.boot.admin.framework.mapper.MessageMapper">
 
-    <resultMap id="XxlBootMessage" type="com.xxl.boot.admin.model.entity.XxlBootMessage" >
+    <resultMap id="XxlBootMessage" type="com.xxl.boot.admin.framework.model.entity.XxlBootMessage" >
         <result column="id" property="id" />
         <result column="category" property="category" />
         <result column="title" property="title" />

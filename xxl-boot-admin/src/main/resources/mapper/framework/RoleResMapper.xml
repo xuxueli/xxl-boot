@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.boot.admin.mapper.RoleResMapper">
+<mapper namespace="com.xxl.boot.admin.framework.mapper.RoleResMapper">
 
-    <resultMap id="XxlBootRoleRes" type="com.xxl.boot.admin.model.entity.XxlBootRoleRes" >
+    <resultMap id="XxlBootRoleRes" type="com.xxl.boot.admin.framework.model.entity.XxlBootRoleRes" >
         <result column="id" property="id" />
         <result column="role_id" property="roleId" />
         <result column="res_id" property="resId" />

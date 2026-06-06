@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.boot.business.ai.mapper.ModelMapper">
+<mapper namespace="com.xxl.boot.admin.business.ai.mapper.ModelMapper">
 
-    <resultMap id="Agent" type="com.xxl.boot.business.ai.model.Model" >
+    <resultMap id="Agent" type="com.xxl.boot.admin.business.ai.model.Model" >
         <result column="id" property="id" />
         <result column="name" property="name" />
         <result column="model_type" property="modelType" />

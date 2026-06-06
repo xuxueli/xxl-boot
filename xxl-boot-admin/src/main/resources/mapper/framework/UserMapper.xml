@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xxl.boot.admin.mapper.UserMapper">
+<mapper namespace="com.xxl.boot.admin.framework.mapper.UserMapper">
 
-	<resultMap id="XxlBootUser" type="com.xxl.boot.admin.model.entity.XxlBootUser" >
+	<resultMap id="XxlBootUser" type="com.xxl.boot.admin.framework.model.entity.XxlBootUser" >
 		<result column="id" property="id" />
 		<result column="username" property="username" />
 	    <result column="password" property="password" />
@@ -25,7 +25,7 @@
 		t.update_time
 	</sql>
 
-	<insert id="insert" parameterType="com.xxl.boot.admin.model.entity.XxlBootUser" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="insert" parameterType="com.xxl.boot.admin.framework.model.entity.XxlBootUser" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_boot_user (
 			username,
 			password,
@@ -60,7 +60,7 @@
 		</foreach>
 	</delete>
 
-	<update id="update" parameterType="com.xxl.boot.admin.model.entity.XxlBootUser" >
+	<update id="update" parameterType="com.xxl.boot.admin.framework.model.entity.XxlBootUser" >
 		UPDATE xxl_boot_user
 		SET
 			<if test="password != null and password != ''">
