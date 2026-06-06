@@ -2,7 +2,7 @@
 <html>
 <head>
 	<#-- import macro -->
-	<#import "/admin/common/common.macro.ftl" as netCommon>
+	<#import "/framework/common/common.macro.ftl" as netCommon>
 
 	<!-- 1-style start -->
 	<@netCommon.commonStyle />

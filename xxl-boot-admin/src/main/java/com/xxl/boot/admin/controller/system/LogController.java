@@ -40,7 +40,7 @@ public class LogController {
         model.addAttribute("LogTypeEnum", LogTypeEnum.values());
         model.addAttribute("LogModuleEnum", LogModuleEnum.values());
 
-        return "/admin/system/log";
+        return "/framework/system/log";
     }
 
     /**

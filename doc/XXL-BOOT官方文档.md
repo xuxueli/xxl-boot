@@ -288,10 +288,10 @@ xxl-boot/
 │   │   │       ├── application.properties        # 主配置文件
 │   │   │       ├── application-plugin.properties # 【扩展点B】业务扩展配置文件
 │   │   │       └── mapper/                       
-│   │   │           ├── /admin/*.xml              # 核心 MyBatis 文件
+│   │   │           ├── /framework/*.xml              # 核心 MyBatis 文件
 │   │   │           ├── /business/*.xml           # 【扩展点C】业务扩展模块 MyBatis 文件
 │   │   │       └── templates/                    # 模板文件
-│   │   │           ├── /admin/*.xml              # 核心 模板文件
+│   │   │           ├── /framework/*.xml              # 核心 模板文件
 │   │   │           └── /business/*.xml           # 【扩展点D】业务扩展模块 模板文件
 │   └── pom.xml                                   # Maven配置
 │

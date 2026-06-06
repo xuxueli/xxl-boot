@@ -36,7 +36,7 @@ public class OrgController {
     public String index(Model model) {
 
         model.addAttribute("orgStatuEnum", OrgStatuEnum.values());
-        return "/admin/org/org";
+        return "/framework/org/org";
     }
 
     /**

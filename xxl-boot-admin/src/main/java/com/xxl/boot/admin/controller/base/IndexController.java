@@ -51,7 +51,7 @@ public class IndexController {
 		List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(loginInfoResponse.getData().getUserId()));
 		model.addAttribute("resourceList", resourceList);
 
-		return "/admin/base/index";
+		return "/framework/base/index";
 		/*return "redirect:/index";*/
 	}
 
@@ -69,7 +69,7 @@ public class IndexController {
 			model.addAttribute("messageList", messageList);
 		}
 
-		return "/admin/base/dashboard";
+		return "/framework/base/dashboard";
 	}
 
 
@@ -78,7 +78,7 @@ public class IndexController {
 	@RequestMapping("/help")
 	@XxlSso
 	public String help() {
-		return "/admin/base/help";
+		return "/framework/base/help";
 	}
 
 	@RequestMapping(value = "/errorpage")
@@ -88,7 +88,7 @@ public class IndexController {
 		String exceptionMsg = "HTTP Status Code: "+response.getStatus();
 
 		mv.addObject("exceptionMsg", exceptionMsg);
-		mv.setViewName("/admin/common/common.errorpage");
+		mv.setViewName("/framework/common/common.errorpage");
 		return mv;
 	}
 

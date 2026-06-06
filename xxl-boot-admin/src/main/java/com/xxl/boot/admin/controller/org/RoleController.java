@@ -35,7 +35,7 @@ public class RoleController {
         /*PageModel<XxlBootRole> pageModel = roleService.pageList(0, 100);*/
         model.addAttribute("userStatuEnum", UserStatuEnum.values());
 
-        return "/admin/org/role";
+        return "/framework/org/role";
     }
 
     /**
