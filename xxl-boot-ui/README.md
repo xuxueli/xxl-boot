@@ -66,14 +66,15 @@ xxl-boot-ui/
 │   ├── main.js                         # 应用入口（Vue 实例创建、插件安装、全局组件/指令注册）
 │   │
 │   ├── api/                            # API 服务模块
+│   ├── assets/                         # 静态资源
 │   ├── components/                     # 全局通用组件
-│   ├── layout/                         # 布局系统
-│   ├── views/                          # 页面视图
-│   ├── router/
-│   ├── store/                          # Pinia 状态管理
-│   ├── plugins/                        # 全局插件（注入到 app.config.globalProperties）
 │   ├── directive/                      # 自定义指令
-│   └── utils/                          # 工具模块
+│   ├── layout/                         # 布局系统
+│   ├── plugins/                        # 全局插件（注入到 app.config.globalProperties）
+│   ├── router/                         # 路由系统
+│   ├── store/                          # Pinia 状态管理
+│   ├── utils/                          # 工具模块
+│   └── views/                          # 页面视图
 ```
 
 详细目录结构：
