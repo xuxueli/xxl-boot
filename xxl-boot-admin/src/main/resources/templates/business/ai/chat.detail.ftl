@@ -102,7 +102,7 @@
 <script src="${request.contextPath}/static/plugins/editor.md-1.5.0/lib/marked.min.js"></script>
 <script src="${request.contextPath}/static/plugins/editor.md-1.5.0/lib/prettify.min.js"></script>
 <!-- admin table -->
-<script src="${request.contextPath}/static/biz/common/admin.table.js"></script>
+<script src="${request.contextPath}/static/framework/admin.table.js"></script>
 <script>
     $(function() {
 
