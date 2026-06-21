@@ -22,7 +22,7 @@ export default defineConfig(({ mode, command }) => {
    * 获取环境变量：
    */
   const rawEnv = loadEnv(mode, process.cwd());                      // 获取环境变量
-  const API_URL = rawEnv.VITE_API_URL || 'http://localhost:8080';   // 后端API地址
+  const API_URL = rawEnv.VITE_API_URL || 'http://localhost:8081';   // 后端API地址
   const APP_BASE_API = rawEnv.VITE_APP_BASE_API || '/api';              // 后端路由前缀
   const APP_ENV = rawEnv.VITE_APP_ENV;                              // 环境配置
   const APP_PORT = Number(rawEnv.VITE_APP_PORT) || 3000;    // 端口号
