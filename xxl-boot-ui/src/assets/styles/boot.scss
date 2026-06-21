@@ -3,53 +3,11 @@
  */
 
 /** 基础通用 **/
-.pt5 {
-  padding-top: 5px;
-}
-.pr5 {
-  padding-right: 5px;
-}
-.pb5 {
-  padding-bottom: 5px;
-}
-.mt5 {
-  margin-top: 5px;
-}
-.mr5 {
-  margin-right: 5px;
-}
-.mb5 {
-  margin-bottom: 5px;
-}
 .mb8 {
   margin-bottom: 8px;
 }
 .ml5 {
   margin-left: 5px;
-}
-.mt10 {
-  margin-top: 10px;
-}
-.mr10 {
-  margin-right: 10px;
-}
-.mb10 {
-  margin-bottom: 10px;
-}
-.ml10 {
-  margin-left: 10px;
-}
-.mt20 {
-  margin-top: 20px;
-}
-.mr20 {
-  margin-right: 20px;
-}
-.mb20 {
-  margin-bottom: 20px;
-}
-.ml20 {
-  margin-left: 20px;
 }
 
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
@@ -212,31 +170,6 @@
 
 .el-card__body {
   padding: 15px 20px 20px 20px !important;
-}
-
-.card-box {
-  margin-bottom: 10px;
-}
-
-/* button color */
-.el-button--cyan.is-active,
-.el-button--cyan:active {
-  background: #20B2AA;
-  border-color: #20B2AA;
-  color: #FFFFFF;
-}
-
-.el-button--cyan:focus,
-.el-button--cyan:hover {
-  background: #48D1CC;
-  border-color: #48D1CC;
-  color: #FFFFFF;
-}
-
-.el-button--cyan {
-  background-color: #20B2AA;
-  border-color: #20B2AA;
-  color: #FFFFFF;
 }
 
 /** 详细卡片样式 */
@@ -419,41 +352,6 @@
   line-height: 1.7;
   word-break: break-all;
   white-space: pre-wrap;
-}
-
-/* http method */
-.method-GET    { background: #e8f5e9; color: #27ae60; }
-.method-POST   { background: #e3f2fd; color: #1565c0; }
-.method-PUT    { background: #fff3e0; color: #e65100; }
-.method-DELETE { background: #ffebee; color: #c62828; }
-
-/* text color */
-.text-navy {
-  color: #1ab394;
-}
-
-.text-primary {
-  color: inherit;
-}
-
-.text-success {
-  color: #1c84c6;
-}
-
-.text-info {
-  color: #23c6c8;
-}
-
-.text-warning {
-  color: #f8ac59;
-}
-
-.text-danger {
-  color: #ed5565;
-}
-
-.text-muted {
-  color: #888888;
 }
 
 /* image */

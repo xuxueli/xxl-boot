@@ -1,13 +1,3 @@
-// base color
-$blue: #324157;
-$light-blue: #333c46;
-$red: #C03639;
-$pink: #E65D6E;
-$green: #30B08F;
-$tiffany: #4AB7BD;
-$yellow: #FEC171;
-$panGreen: #30B08F;
-
 // 默认主题变量
 $menuText: #bfcbd9;
 $menuActiveText: #409eff;
@@ -31,38 +21,11 @@ $base-menu-background: #1a1f2e;
 $base-sub-menu-background: #141824;
 $base-sub-menu-hover: rgba(255,255,255,.06);
 
-// 组件变量
-$--color-primary: #409EFF;
-$--color-success: #67C23A;
-$--color-warning: #E6A23C;
-$--color-danger: #F56C6C;
-$--color-info: #909399;
-
 :export {
   menuText: $menuText;
-  menuActiveText: $menuActiveText;
   menuBg: $menuBg;
-  menuHover: $menuHover;
   menuLightBg: $menuLightBg;
-  menuLightHover: $menuLightHover;
   menuLightText: $menuLightText;
-  menuLightActiveText: $menuLightActiveText;
-  sideBarWidth: $sideBarWidth;
-  // 导出基础颜色
-  blue: $blue;
-  lightBlue: $light-blue;
-  red: $red;
-  pink: $pink;
-  green: $green;
-  tiffany: $tiffany;
-  yellow: $yellow;
-  panGreen: $panGreen;
-  // 导出组件颜色
-  colorPrimary: $--color-primary;
-  colorSuccess: $--color-success;
-  colorWarning: $--color-warning;
-  colorDanger: $--color-danger;
-  colorInfo: $--color-info;
 }
 
 // CSS变量定义
