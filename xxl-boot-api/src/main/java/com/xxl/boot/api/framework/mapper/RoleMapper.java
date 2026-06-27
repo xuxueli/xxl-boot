@@ -50,4 +50,9 @@ public interface RoleMapper {
 
     List<XxlBootRole> queryByRoleIds(@Param("roleIds") List<Integer> roleIds);
 
+    /**
+     * 根据用户id查询角色
+     */
+    List<XxlBootRole> queryByUserid(@Param("userId") int userId);
+
 }

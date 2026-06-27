@@ -1,16 +1,18 @@
 package com.xxl.boot.api.framework.controller.base;
 
 import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
-import com.xxl.boot.api.framework.model.adaptor.XxlBootUserAdaptor;
 import com.xxl.boot.api.framework.model.dto.LoginRequest;
-import com.xxl.boot.api.framework.model.dto.XxlBootResourceDTO;
+import com.xxl.boot.api.framework.model.entity.XxlBootResource;
+import com.xxl.boot.api.framework.model.entity.XxlBootRole;
 import com.xxl.boot.api.framework.model.entity.XxlBootUser;
 import com.xxl.boot.api.framework.service.ResourceService;
+import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.boot.api.framework.service.UserService;
 import com.xxl.boot.api.framework.util.I18nUtil;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
+import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.crypto.Sha256Tool;
 import com.xxl.tool.id.UUIDTool;
@@ -24,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * index controller
@@ -40,6 +41,8 @@ public class LoginController {
 	private UserService userService;
 	@Resource
 	private ResourceService resourceService;
+	@Resource
+	private RoleService roleService;
 
 
 	/**
@@ -67,9 +70,16 @@ public class LoginController {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
 
-		// 2、find permission
-		List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(xxlBootUser.getId());
-		Set<String> permissions = XxlBootUserAdaptor.extractPermissions(resourceList);
+		// 2、find permission + role
+		List<XxlBootResource> resourceList = resourceService.queryResourceByUserid(xxlBootUser.getId());
+		List<String> permissions = CollectionTool.isNotEmpty(resourceList) ?
+				resourceList.stream().map(XxlBootResource::getPermission).toList() :
+				new ArrayList<>();
+
+		List<XxlBootRole> roleList = roleService.queryRoleByUserid(xxlBootUser.getId());
+		List<String> roleIds = CollectionTool.isNotEmpty(roleList) ?
+				roleList.stream().map(XxlBootRole::getName).toList() :		// TODO, change 角色Code
+				new ArrayList<>();
 
 		// 3、build LoginInfo
 		LoginInfo loginInfo = new LoginInfo(
@@ -77,8 +87,8 @@ public class LoginController {
 				xxlBootUser.getUsername(),
 				xxlBootUser.getRealName(),
 				null,
-				null,
-				new ArrayList<>(permissions),
+				roleIds,
+				permissions,
 				-1,
 				UUIDTool.getSimpleUUID());
 

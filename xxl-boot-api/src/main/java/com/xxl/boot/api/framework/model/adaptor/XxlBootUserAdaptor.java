@@ -84,7 +84,7 @@ public class XxlBootUserAdaptor {
      * @param resources resources
      * @return resource permissions
      */
-    public static Set<String> extractPermissions(List<XxlBootResourceDTO> resources) {
+    /*public static Set<String> extractPermissions(List<XxlBootResourceDTO> resources) {
         Set<String> permissions = new HashSet<>();
         if (CollectionTool.isEmpty(resources)) {
             return permissions;
@@ -99,6 +99,6 @@ public class XxlBootUserAdaptor {
             }
         }
         return permissions;
-    }
+    }*/
 
 }

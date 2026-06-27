@@ -50,8 +50,13 @@ public interface ResourceService {
     public List<XxlBootResourceDTO> simpleTreeList(String name, int status);
 
     /**
-     * Tree查询（已授权）
+     * 根据 用户ID 查询 资源Tree列表（已授权）
      */
-    public List<XxlBootResourceDTO> treeListByUserId(int userId);
+    /*public List<XxlBootResourceDTO> treeListByUserId(int userId);*/
+
+    /**
+     * 根据 用户ID 获取 资源列表（已授权）
+     */
+    List<XxlBootResource> queryResourceByUserid(int userId);
 
 }

@@ -16,7 +16,7 @@ public class LoginControllerTest {
     private static final String TEST_USER = "admin";
     private static final String TEST_PASS = "123456";
     private static final String TEST_TOKEN_KEY = "xxl_sso_token";
-    private static final String TEST_TOKEN_VALUE = "eyJ1c2VySWQiOiIxIiwiZXhwaXJlVGltZSI6MCwic2lnbmF0dXJlIjoiOWE3ZGNmZjU3MmJiNDE2ZmIyMDNmYzkwZGU5ZmY5MzgifQ";
+    private static final String TEST_TOKEN_VALUE = "eyJ1c2VySWQiOiIxIiwiZXhwaXJlVGltZSI6MCwic2lnbmF0dXJlIjoiNjdhMjNkZjE3OTk5NGNjMDgyNmVmYjMzNmY3MWIyMjMifQ";
 
     @Test
     void login_test() {

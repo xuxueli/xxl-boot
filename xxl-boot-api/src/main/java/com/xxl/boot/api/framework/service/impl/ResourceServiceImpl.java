@@ -130,16 +130,21 @@ public class ResourceServiceImpl implements ResourceService {
 		return result;
 	}
 
-	@Override
+	/*@Override
 	public List<XxlBootResourceDTO> treeListByUserId(int userId) {
 		List<XxlBootResource> resourceList = resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getValue());
 		return generateTreeList(resourceList);
+	}*/
+
+	@Override
+	public List<XxlBootResource> queryResourceByUserid(int userId) {
+        return resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getValue());
 	}
 
 	/**
 	 * build resource tree
 	 */
-	private List<XxlBootResourceDTO> generateTreeList(List<XxlBootResource> resourceList) {
+	/*private List<XxlBootResourceDTO> generateTreeList(List<XxlBootResource> resourceList) {
 		List<XxlBootResourceDTO> resultList = new ArrayList<>();
 		if (CollectionTool.isEmpty(resourceList)) {
 			return resultList;
@@ -171,6 +176,6 @@ public class ResourceServiceImpl implements ResourceService {
 		}
 
 		return parentMap.get(0);
-	}
+	}*/
 
 }
