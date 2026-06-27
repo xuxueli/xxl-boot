@@ -29,11 +29,16 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- freemarker-starter -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-freemarker</artifactId>
+		</dependency>
 
 		<!-- aspectj: aop -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aspectj</artifactId>
+			<artifactId>spring-boot-starter-aspectj</artifactId>
 		</dependency>
 		<!-- actuator -->
 		<dependency>
@@ -64,11 +69,21 @@
 			<artifactId>ip2region</artifactId>
 		</dependency>
 
+		<!-- redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<!-- ********************************* for plugin start ********************************* -->
+
+		<!-- ********************************* for plugin end ********************************* -->
+
 	</dependencies>
 
 	<build>
 		<plugins>
-            <!-- spring-boot, jar -->
+			<!-- spring-boot, jar -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -81,7 +96,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
 

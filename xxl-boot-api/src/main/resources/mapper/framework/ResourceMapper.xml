@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.api.framework.mapper.ResourceMapper">
+
+    <resultMap id="XxlBootResource" type="com.xxl.boot.api.framework.model.entity.XxlBootResource" >
+        <result column="id" property="id" />
+        <result column="parent_id" property="parentId" />
+        <result column="name" property="name" />
+        <result column="type" property="type" />
+        <result column="permission" property="permission" />
+        <result column="url" property="url" />
+        <result column="icon" property="icon" />
+        <result column="order" property="order" />
+        <result column="status" property="status" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`parent_id`,
+        t.`name`,
+        t.`type`,
+        t.`permission`,
+        t.`url`,
+        t.`icon`,
+        t.`order`,
+        t.`status`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO xxl_boot_resource (
+            `parent_id`,
+            `name`,
+            `type`,
+            `permission`,
+            `url`,
+            `icon`,
+            `order`,
+            `status`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{xxlBootResource.parentId} ,
+                  #{xxlBootResource.name} ,
+                  #{xxlBootResource.type} ,
+                  #{xxlBootResource.permission} ,
+                  #{xxlBootResource.url} ,
+                  #{xxlBootResource.icon} ,
+                  #{xxlBootResource.order} ,
+                  #{xxlBootResource.status} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_resource
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_resource
+        SET
+            `parent_id` = #{xxlBootResource.parentId},
+            `name` = #{xxlBootResource.name},
+            `type` = #{xxlBootResource.type},
+            `permission` = #{xxlBootResource.permission},
+            `url` = #{xxlBootResource.url},
+            `icon` = #{xxlBootResource.icon},
+            `order` = #{xxlBootResource.order},
+            `status` = #{xxlBootResource.status},
+            update_time = NOW()
+        WHERE `id` = #{xxlBootResource.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="XxlBootResource">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_resource AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootResource">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_resource AS t
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_resource AS t
+    </select>
+
+    <select id="queryResource" parameterType="java.util.Map" resultMap="XxlBootResource">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_resource AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+            <if test="status gt -1">
+                AND t.status = #{status}
+            </if>
+        </trim>
+        ORDER BY t.`order` ASC
+    </select>
+
+    <select id="queryByParentIds" parameterType="java.util.Map" resultMap="XxlBootResource">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_resource AS t
+        WHERE t.`parent_id` in
+        <foreach collection="ids" item="parentId" index="index" separator="," open="(" close=")" >
+            #{parentId}
+        </foreach>
+    </select>
+
+    <select id="queryResourceByUserId" parameterType="java.util.Map" resultMap="XxlBootResource">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_resource AS t
+        WHERE   t.`status` = #{status}
+                AND t.`id` in (
+                    SELECT res_id
+                    FROM xxl_boot_role_res
+                    WHERE role_id in (
+                        SELECT role_id
+                        FROM xxl_boot_user_role
+                        WHERE user_id = #{userId}
+                    )
+                )
+        ORDER BY t.`order` ASC
+    </select>
+
+</mapper>

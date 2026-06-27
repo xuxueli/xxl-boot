@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.api.framework.mapper.RoleMapper">
+
+    <resultMap id="XxlBootRole" type="com.xxl.boot.api.framework.model.entity.XxlBootRole" >
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="order" property="order" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`name`,
+        t.`order`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="com.xxl.boot.api.framework.model.entity.XxlBootRole" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO xxl_boot_role (`name`,
+                                   `order`,
+                                   `add_time`,
+                                   `update_time`)
+        VALUES (#{name},
+                #{order},
+                NOW(),
+                NOW())
+    </insert>
+
+    <delete id="deleteByIds" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_role
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="com.xxl.boot.api.framework.model.entity.XxlBootRole" >
+        UPDATE xxl_boot_role
+        SET
+            `name` = #{name},
+            `order` = #{order},
+            `update_time` = NOW()
+        WHERE `id` = #{id}
+    </update>
+
+
+    <select id="load" parameterType="java.util.Map" resultMap="XxlBootRole">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootRole">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+        </trim>
+        ORDER BY `order` ASC
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_role AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryByRoleIds" parameterType="java.util.Map" resultMap="XxlBootRole">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        WHERE t.`id` in
+        <foreach collection="roleIds" item="roleId" index="index" separator="," open="(" close=")" >
+            #{roleId}
+        </foreach>
+    </select>
+
+</mapper>

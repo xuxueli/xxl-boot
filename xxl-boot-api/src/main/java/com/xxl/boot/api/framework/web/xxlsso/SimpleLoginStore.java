@@ -1,0 +1,82 @@
+package com.xxl.boot.api.framework.web.xxlsso;
+
+import com.xxl.boot.api.framework.model.adaptor.XxlBootUserAdaptor;
+import com.xxl.boot.api.framework.model.dto.XxlBootResourceDTO;
+import com.xxl.boot.api.framework.model.entity.XxlBootUser;
+import com.xxl.boot.api.framework.service.ResourceService;
+import com.xxl.boot.api.framework.service.UserService;
+import com.xxl.sso.core.model.LoginInfo;
+import com.xxl.sso.core.store.LoginStore;
+import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Simple LoginStore
+ *
+ * 1、store by database；
+ * 2、If you have higher performance requirements, it is recommended to use RedisLoginStore；
+ *
+ * @author xuxueli 2025-08-03
+ */
+@Component
+public class SimpleLoginStore implements LoginStore {
+
+
+    @Resource
+    private ResourceService resourceService;
+    @Resource
+    private UserService userService;
+
+
+    @Override
+    public Response<String> set(LoginInfo loginInfo) {
+
+        // parse token-signature
+        String token_sign = loginInfo.getSignature();
+
+        // write token by UserId
+        return userService.updateToken(Integer.valueOf(loginInfo.getUserId()), token_sign);
+    }
+
+    @Override
+    public Response<String> update(LoginInfo loginInfo) {
+        return Response.ofFail("not support");
+    }
+
+    @Override
+    public Response<String> remove(String userId) {
+        // delete token-signature
+        return userService.updateToken(Integer.valueOf(userId), "");
+    }
+
+    /**
+     * check through DB query
+     */
+    @Override
+    public Response<LoginInfo> get(String userId) {
+
+        // load login-user
+        Response<XxlBootUser> userResponse = userService.loadByUserId(Integer.parseInt(userId));
+        if (!userResponse.isSuccess()) {
+            return Response.ofFail("userId invalid.");
+        }
+
+        // find permission
+        List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(userId));
+        Set<String> permissions = XxlBootUserAdaptor.extractPermissions(resourceList);
+
+        // build LoginInfo
+        LoginInfo loginInfo = new LoginInfo(userId, userResponse.getData().getToken());
+        loginInfo.setUserName(userResponse.getData().getUsername());
+        loginInfo.setRealName(userResponse.getData().getRealName());
+        loginInfo.setPermissionList(new ArrayList<>(permissions));
+
+        return Response.ofSuccess(loginInfo);
+    }
+
+}

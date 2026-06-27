@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.api.framework.mapper.MessageMapper">
+
+    <resultMap id="XxlBootMessage" type="com.xxl.boot.api.framework.model.entity.XxlBootMessage" >
+        <result column="id" property="id" />
+        <result column="category" property="category" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="sender" property="sender" />
+        <result column="status" property="status" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`category`,
+        t.`title`,
+        t.`content`,
+        t.`sender`,
+        t.`status`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_message (
+            `category`,
+            `title`,
+            `content`,
+            `sender`,
+            `status`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{xxlBootMessage.category} ,
+                  #{xxlBootMessage.title} ,
+                  #{xxlBootMessage.content} ,
+                  #{xxlBootMessage.sender} ,
+                  #{xxlBootMessage.status} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_message
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_message
+        SET
+            `category` = #{xxlBootMessage.category},
+            `title` = #{xxlBootMessage.title},
+            `content` = #{xxlBootMessage.content},
+            `status` = #{xxlBootMessage.status},
+            update_time = NOW()
+        WHERE `id` = #{xxlBootMessage.id}
+    </update>
+
+
+    <select id="load" parameterType="java.util.Map" resultMap="XxlBootMessage">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_message AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootMessage">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_message AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="title != null and title != ''">
+                AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
+            </if>
+            <if test="status gt -1">
+                AND t.`status` = #{status}
+            </if>
+        </trim>
+        ORDER BY t.`id` DESC
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_message AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="title != null and title != ''">
+                AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
+            </if>
+            <if test="status gt -1">
+                AND t.`status` = #{status}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

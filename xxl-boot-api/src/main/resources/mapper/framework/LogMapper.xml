@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.api.framework.mapper.LogMapper">
+
+    <resultMap id="XxlBootLog" type="com.xxl.boot.api.framework.model.entity.XxlBootLog" >
+        <result column="id" property="id" />
+        <result column="type" property="type" />
+        <result column="module" property="module" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="operator" property="operator" />
+        <result column="ip" property="ip" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`type`,
+        t.`module`,
+        t.`title`,
+        t.`content`,
+        t.`operator`,
+        t.`ip`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_log (
+            `type`,
+            `module`,
+            `title`,
+            `content`,
+            `operator`,
+            `ip`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+          #{xxlBootLog.type} ,
+          #{xxlBootLog.module} ,
+          #{xxlBootLog.title} ,
+          #{xxlBootLog.content} ,
+          #{xxlBootLog.operator} ,
+          #{xxlBootLog.ip} ,
+          NOW() ,
+          NOW()
+      )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_log
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_log
+        SET
+            `type` = #{xxlBootLog.type},
+            `module` = #{xxlBootLog.module},
+            `title` = #{xxlBootLog.title},
+            `content` = #{xxlBootLog.content},
+            `operator` = #{xxlBootLog.operator},
+            `ip` = #{xxlBootLog.ip},
+            update_time = NOW()
+        WHERE `id` = #{xxlBootLog.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="XxlBootLog">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_log AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootLog">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_log AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="type gt -1">
+                AND t.`type` = #{type}
+            </if>
+            <if test="module != null and module != ''">
+                AND t.`module` = #{module}
+            </if>
+            <if test="title != null and title != ''">
+                AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
+            </if>
+
+        </trim>
+        ORDER BY t.`id` DESC
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_log AS t
+    </select>
+
+</mapper>
