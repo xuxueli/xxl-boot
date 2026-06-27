@@ -11,12 +11,16 @@ import com.xxl.boot.api.framework.util.I18nUtil;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
+import com.xxl.tool.core.StringTool;
 import com.xxl.tool.crypto.Sha256Tool;
 import com.xxl.tool.id.UUIDTool;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,8 +97,21 @@ public class LoginController {
 	@RequestMapping("/logout")
 	@XxlSso(login = false)
 	public Response<String> logout(HttpServletRequest request) {
-		// logout
+		return logoutWithHeader(request);
+	}
+
+	/**
+	 * logout with header
+	 */
+	private static Response<String> logoutWithHeader(HttpServletRequest request) {
+
+		// get header
 		String token = request.getHeader(XxlSsoHelper.getInstance().getTokenKey());
+		if (StringTool.isBlank(token)) {
+			return Response.ofSuccess();    // not login; no need to logout.
+		}
+
+		// do logout
 		return XxlSsoHelper.logout(token);
 	}
 
