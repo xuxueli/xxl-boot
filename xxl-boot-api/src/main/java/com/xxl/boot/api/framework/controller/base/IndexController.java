@@ -54,7 +54,6 @@ public class IndexController {
 		model.addAttribute("resourceList", resourceList);
 
 		return "/framework/base/index";
-		/*return "redirect:/index";*/
 	}
 
 

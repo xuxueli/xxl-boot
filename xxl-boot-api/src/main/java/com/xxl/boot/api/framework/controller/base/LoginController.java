@@ -1,66 +1,57 @@
 package com.xxl.boot.api.framework.controller.base;
 
 import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
+import com.xxl.boot.api.framework.model.adaptor.XxlBootUserAdaptor;
+import com.xxl.boot.api.framework.model.dto.LoginRequest;
+import com.xxl.boot.api.framework.model.dto.LogoutRequest;
+import com.xxl.boot.api.framework.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.api.framework.model.entity.XxlBootUser;
+import com.xxl.boot.api.framework.service.ResourceService;
 import com.xxl.boot.api.framework.service.UserService;
 import com.xxl.boot.api.framework.util.I18nUtil;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
-import com.xxl.tool.core.StringTool;
 import com.xxl.tool.crypto.Sha256Tool;
 import com.xxl.tool.id.UUIDTool;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * index controller
+ *
  * @author xuxueli 2015-12-19 16:13:16
  */
-@Controller
+@RestController
 @RequestMapping("/auth")
 public class LoginController {
 
 
 	@Resource
 	private UserService userService;
+	@Resource
+	private ResourceService resourceService;
 
 
+	/**
+	 * Login
+	 */
 	@RequestMapping("/login")
 	@XxlSso(login = false)
-	public ModelAndView login(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) {
-
-		// xxl-sso, logincheck (login-false, must check wiht cookie)
-		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
-
-		if (loginInfoResponse.isSuccess()) {
-			modelAndView.setView(new RedirectView("/",true,false));
-			return modelAndView;
-		}
-		return new ModelAndView("/framework/base/login");
-	}
-
-	@RequestMapping(value="/doLogin", method=RequestMethod.POST)
-	@ResponseBody
-	@XxlSso(login=false)
-	public Response<String> doLogin(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
-
-		// param
-		boolean ifRem = StringTool.isNotBlank(ifRemember) && "on".equals(ifRemember);
-		if (StringTool.isBlank(userName) || StringTool.isBlank(password)){
-			return Response.ofFail( I18nUtil.getString("login_param_empty") );
+	public Response<String> login(@RequestBody(required = false) LoginRequest loginRequest) {
+		// base valid
+		if (loginRequest == null) {
+			return Response.ofFail("username or password is invalid.");
 		}
 
-		// valid user, empty、status、passowrd
-		Response<XxlBootUser> xxlBootUserResponse = userService.loadByUserName(userName);
+		// 1、verify login user, include userName, password, status
+		Response<XxlBootUser> xxlBootUserResponse = userService.loadByUserName(loginRequest.getUsername());
 		if (!xxlBootUserResponse.isSuccess()) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
@@ -68,30 +59,70 @@ public class LoginController {
 		if (xxlBootUser.getStatus() != UserStatuEnum.NORMAL.getStatus()) {
 			return Response.ofFail( I18nUtil.getString("login_status_invalid") );
 		}
-		String passwordHash = Sha256Tool.sha256(password);
+		String passwordHash = Sha256Tool.sha256(loginRequest.getPassword());
 		if (!passwordHash.equals(xxlBootUser.getPassword())) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
 
-		// xxl-sso, do login
-		LoginInfo loginInfo = new LoginInfo(String.valueOf(xxlBootUser.getId()), UUIDTool.getSimpleUUID());
-		return XxlSsoHelper.loginWithCookie(loginInfo, response, ifRem);
-	}
-	
-	@RequestMapping(value="/logout", method=RequestMethod.POST)
-	@ResponseBody
-	@XxlSso(login=false)
-	public Response<String> logout(HttpServletRequest request, HttpServletResponse response){
-		// xxl-sso, do logout
-		return XxlSsoHelper.logoutWithCookie(request, response);
+		// 2、find permission
+		List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(xxlBootUser.getId());
+		Set<String> permissions = XxlBootUserAdaptor.extractPermissions(resourceList);
+
+		// 3、build LoginInfo
+		LoginInfo loginInfo = new LoginInfo(
+				String.valueOf(xxlBootUser.getId()),
+				xxlBootUser.getUsername(),
+				xxlBootUser.getRealName(),
+				null,
+				null,
+				new ArrayList<>(permissions),
+				-1,
+				UUIDTool.getSimpleUUID());
+
+		// 4、login (write store)
+		Response<String> loginResult = XxlSsoHelper.login(loginInfo);
+		if (!loginResult.isSuccess()) {
+			return loginResult;
+		}
+		String token = loginResult.getData();
+		return Response.ofSuccess(token);
 	}
 
+	/**
+	 * Logout
+	 */
+	@RequestMapping("/logout")
+	@XxlSso(login = false)
+	public Response<String> logout(@RequestBody(required = false) LogoutRequest logoutRequest) {
+		// base valid
+		if (logoutRequest == null) {
+			return Response.ofFail("token is invalid.");
+		}
+
+		// 1、logout  (remove store)
+		return XxlSsoHelper.logout(logoutRequest.getToken());
+	}
+
+	/**
+	 * loginCheck
+	 */
+	@RequestMapping("/logincheck")
+	@XxlSso
+	public Response<LoginInfo> logincheck(HttpServletRequest request) {
+		// login check
+		return XxlSsoHelper.loginCheckWithAttr(request);
+	}
+
+
+	/**
+	 * updatePwd
+	 */
 	@RequestMapping("/updatePwd")
 	@ResponseBody
 	@XxlSso
 	public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String password){
 
-		// xxl-sso, logincheck
+		// login check
 		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
 		return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, password);

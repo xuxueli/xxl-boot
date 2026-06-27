@@ -81,8 +81,8 @@ public class XxlBootUserAdaptor {
     /**
      * extract resource permissions with children
      *
-     * @param resources
-     * @return
+     * @param resources resources
+     * @return resource permissions
      */
     public static Set<String> extractPermissions(List<XxlBootResourceDTO> resources) {
         Set<String> permissions = new HashSet<>();

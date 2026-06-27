@@ -1,19 +1,15 @@
 package com.xxl.boot.api.framework.web.xxlsso;
 
-import com.xxl.boot.api.framework.model.adaptor.XxlBootUserAdaptor;
-import com.xxl.boot.api.framework.model.dto.XxlBootResourceDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootUser;
-import com.xxl.boot.api.framework.service.ResourceService;
-import com.xxl.boot.api.framework.service.UserService;
+import com.xxl.boot.api.framework.util.RedisCacheUtil;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.sso.core.store.LoginStore;
+import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Simple LoginStore
@@ -27,56 +23,141 @@ import java.util.Set;
 public class SimpleLoginStore implements LoginStore {
 
 
-    @Resource
-    private ResourceService resourceService;
-    @Resource
-    private UserService userService;
+    @Value("${xxl-sso.store.redis.keyprefix}")
+    private String storeKeyPrefix;
 
+    @Resource
+    private RedisCacheUtil redisCacheUtil;
+
+    /**
+     * parse store key from userId
+     *
+     * <pre>
+     *     key: "xxl_sso_user:" + {user001}
+     *     value: loginInfo
+     * </pre>>
+     *
+     * @param userId
+     * @return
+     */
+    private String parseStoreKey(String userId){
+        return storeKeyPrefix + userId;
+    }
 
     @Override
     public Response<String> set(LoginInfo loginInfo) {
 
-        // parse token-signature
-        String token_sign = loginInfo.getSignature();
+        // valid loginInfo
+        if (loginInfo == null
+                || StringTool.isBlank(loginInfo.getUserId())
+                || StringTool.isBlank(loginInfo.getSignature())) {
+            return Response.ofFail("loginInfo invalid.");
+        }
 
-        // write token by UserId
-        return userService.updateToken(Integer.valueOf(loginInfo.getUserId()), token_sign);
+        // valid expire-time
+        if (loginInfo.getExpireTime() < System.currentTimeMillis()) {
+            return Response.ofFail("expireTime invalid.");
+        }
+
+        // generate redis timeout (seconds)
+        long seconds = (loginInfo.getExpireTime() - System.currentTimeMillis()) / 1000;
+
+        // generate storeKey
+        String storeKey = parseStoreKey(loginInfo.getUserId());
+
+        // write
+        redisCacheUtil.setObject(storeKey, loginInfo, seconds, TimeUnit.SECONDS);
+        return Response.ofSuccess();
     }
 
     @Override
     public Response<String> update(LoginInfo loginInfo) {
-        return Response.ofFail("not support");
+
+        // valid loginInfo
+        if (loginInfo == null || StringTool.isBlank(loginInfo.getUserId())) {
+            return Response.ofFail("loginInfo invalid.");
+        }
+
+        // generate storeKey
+        String storeKey = parseStoreKey(loginInfo.getUserId());
+
+        // valid expire-time
+        if (loginInfo.getExpireTime() < System.currentTimeMillis()) {
+            return Response.ofFail("expireTime invalid.");
+        }
+
+        // read
+        LoginInfo loginInfoStore = redisCacheUtil.getObject(storeKey);
+        if (loginInfoStore == null) {
+            return Response.ofFail("loginInfo not exists.");
+        }
+
+        // update LoginInfo
+        loginInfoStore.setUserName(loginInfo.getUserName());
+        loginInfoStore.setRealName(loginInfo.getRealName());
+        loginInfoStore.setExtraInfo(loginInfo.getExtraInfo());
+        loginInfoStore.setRoleList(loginInfo.getRoleList());
+        loginInfoStore.setPermissionList(loginInfo.getPermissionList());
+        loginInfoStore.setExpireTime(loginInfo.getExpireTime());
+
+        // generate redis timeout (seconds)
+        long seconds = (loginInfo.getExpireTime() - System.currentTimeMillis()) / 1000;
+
+        // write
+        redisCacheUtil.setObject(storeKey, loginInfoStore, seconds, TimeUnit.SECONDS);
+        return Response.ofSuccess();
     }
 
     @Override
     public Response<String> remove(String userId) {
-        // delete token-signature
-        return userService.updateToken(Integer.valueOf(userId), "");
-    }
 
-    /**
-     * check through DB query
-     */
-    @Override
-    public Response<LoginInfo> get(String userId) {
-
-        // load login-user
-        Response<XxlBootUser> userResponse = userService.loadByUserId(Integer.parseInt(userId));
-        if (!userResponse.isSuccess()) {
+        // valid userId
+        if (StringTool.isBlank(userId)) {
             return Response.ofFail("userId invalid.");
         }
 
-        // find permission
-        List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(userId));
-        Set<String> permissions = XxlBootUserAdaptor.extractPermissions(resourceList);
+        // generate storeKey
+        String storeKey = parseStoreKey(userId);
 
-        // build LoginInfo
-        LoginInfo loginInfo = new LoginInfo(userId, userResponse.getData().getToken());
-        loginInfo.setUserName(userResponse.getData().getUsername());
-        loginInfo.setRealName(userResponse.getData().getRealName());
-        loginInfo.setPermissionList(new ArrayList<>(permissions));
+        // remove
+        redisCacheUtil.delete(storeKey);
+        return Response.ofSuccess();
+    }
+
+    @Override
+    public Response<LoginInfo> get(String userId) {
+
+        // valid userId
+        if (StringTool.isBlank(userId)) {
+            return Response.ofFail("userId invalid.");
+        }
+
+        // generate storeKey
+        String storeKey = parseStoreKey(userId);
+
+        // read
+        LoginInfo loginInfo = redisCacheUtil.getObject(storeKey);
+        if (loginInfo == null) {
+            return Response.ofFail("loginInfo not exists.");
+        }
+
+        // valid expire time
+        if (loginInfo.getExpireTime() < System.currentTimeMillis()) {
+            redisCacheUtil.delete(storeKey);
+            return Response.ofFail("loginInfo is timeout");
+        }
 
         return Response.ofSuccess(loginInfo);
+    }
+
+    @Override
+    public Response<String> createTicket(String ticket, String token, long ticketTimeout) {
+        return Response.ofFail("not support.");
+    }
+
+    @Override
+    public Response<String> validTicket(String ticket) {
+        return Response.ofFail("not support.");
     }
 
 }

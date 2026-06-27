@@ -1,13 +1,12 @@
 package com.xxl.boot.api.framework.web.xxlsso;
 
-import com.xxl.boot.api.framework.web.xxlsso.SimpleLoginStore;
-import com.xxl.sso.core.auth.interceptor.XxlSsoWebInterceptor;
+import com.xxl.sso.core.auth.filter.XxlSsoNativeFilter;
 import com.xxl.sso.core.bootstrap.XxlSsoBootstrap;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -26,12 +25,9 @@ public class XxlSsoConfig implements WebMvcConfigurer {
     @Value("${xxl-sso.client.excluded.paths}")
     private String excludedPaths;
 
-    @Value("${xxl-sso.client.login.path}")
-    private String loginPath;
-
 
     @Resource
-    private SimpleLoginStore loginStore;
+    private SimpleLoginStore simpleLoginStore;
 
 
     /**
@@ -41,23 +37,34 @@ public class XxlSsoConfig implements WebMvcConfigurer {
     public XxlSsoBootstrap xxlSsoBootstrap() {
 
         XxlSsoBootstrap bootstrap = new XxlSsoBootstrap();
-        bootstrap.setLoginStore(loginStore);
+        bootstrap.setLoginStore(simpleLoginStore);
         bootstrap.setTokenKey(tokenKey);
         bootstrap.setTokenTimeout(tokenTimeout);
         return bootstrap;
     }
 
+
     /**
-     * 2、配置 XxlSso 拦截器
+     * 2、配置 XxlSso Filter
+     *
+     * @param bootstrap
+     * @return
      */
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    @Bean
+    public FilterRegistrationBean<XxlSsoNativeFilter> xxlSsoFilterRegistration(XxlSsoBootstrap bootstrap) {
 
-        // 2.1、build xxl-sso interceptor
-        XxlSsoWebInterceptor webInterceptor = new XxlSsoWebInterceptor(excludedPaths, loginPath);
+        // 2.1、build xxl-sso filter
+        XxlSsoNativeFilter nativeFilter = new XxlSsoNativeFilter(excludedPaths);
 
-        // 2.2、add interceptor
-        registry.addInterceptor(webInterceptor).addPathPatterns("/**");
+        // 2.2、registry filter
+        FilterRegistrationBean<XxlSsoNativeFilter> registration = new FilterRegistrationBean<>();
+        registration.setName("XxlSsoNativeFilter");
+        registration.setOrder(1);
+        registration.addUrlPatterns("/*");
+        registration.setFilter(nativeFilter);
+
+        return registration;
     }
+
 
 }
