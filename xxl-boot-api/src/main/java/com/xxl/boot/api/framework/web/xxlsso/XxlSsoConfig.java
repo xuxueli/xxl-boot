@@ -1,12 +1,12 @@
 package com.xxl.boot.api.framework.web.xxlsso;
 
-import com.xxl.sso.core.auth.filter.XxlSsoNativeFilter;
+import com.xxl.sso.core.auth.interceptor.XxlSsoNativeInterceptor;
 import com.xxl.sso.core.bootstrap.XxlSsoBootstrap;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -45,25 +45,18 @@ public class XxlSsoConfig implements WebMvcConfigurer {
 
 
     /**
-     * 2、配置 XxlSso Filter
+     * 2、配置 XxlSso 拦截器
      *
-     * @param bootstrap
-     * @return
+     * @param registry
      */
-    @Bean
-    public FilterRegistrationBean<XxlSsoNativeFilter> xxlSsoFilterRegistration(XxlSsoBootstrap bootstrap) {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
 
-        // 2.1、build xxl-sso filter
-        XxlSsoNativeFilter nativeFilter = new XxlSsoNativeFilter(excludedPaths);
+        // 2.1、build xxl-sso interceptor
+        XxlSsoNativeInterceptor webInterceptor = new XxlSsoNativeInterceptor(excludedPaths);
 
-        // 2.2、registry filter
-        FilterRegistrationBean<XxlSsoNativeFilter> registration = new FilterRegistrationBean<>();
-        registration.setName("XxlSsoNativeFilter");
-        registration.setOrder(1);
-        registration.addUrlPatterns("/*");
-        registration.setFilter(nativeFilter);
-
-        return registration;
+        // 2.2、add interceptor
+        registry.addInterceptor(webInterceptor).addPathPatterns("/**");
     }
 
 

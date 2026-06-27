@@ -8,8 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,7 +20,7 @@ import java.io.IOException;
  */
 @Component
 public class WebHandlerExceptionResolver implements HandlerExceptionResolver {
-	private static transient Logger logger = LoggerFactory.getLogger(WebHandlerExceptionResolver.class);
+	private static final Logger logger = LoggerFactory.getLogger(WebHandlerExceptionResolver.class);
 
 	@Override
 	public ModelAndView resolveException(HttpServletRequest request,
@@ -33,34 +31,21 @@ public class WebHandlerExceptionResolver implements HandlerExceptionResolver {
 		}
 
 		// parse isJson
-		boolean isJson = false;
-		if (handler instanceof HandlerMethod) {
-			HandlerMethod method = (HandlerMethod)handler;
-			isJson = method.getMethodAnnotation(ResponseBody.class)!=null;
+		boolean isJson = true;
+
+		// process error: api server, only return json
+		try {
+			// errorMsg
+			String errorMsg = GsonTool.toJson(Response.ofFail(ex.toString()));
+
+			// write response
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().println(errorMsg);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
 		}
-
-		// process error
-		ModelAndView mv = new ModelAndView();
-		if (isJson) {
-			try {
-				// errorMsg
-				String errorMsg = GsonTool.toJson(Response.ofFail(ex.toString()));
-
-				// write response
-				response.setStatus(HttpServletResponse.SC_OK);
-				response.setContentType("application/json;charset=UTF-8");
-				response.getWriter().println(errorMsg);
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-			}
-			return mv;
-		} else {
-
-			mv.addObject("exceptionMsg", ex.toString());
-			mv.setViewName("/framework/common/common.errorpage");
-			return mv;
-		}
-
+		return new ModelAndView();
 	}
 	
 }

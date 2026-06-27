@@ -3,7 +3,6 @@ package com.xxl.boot.api.framework.controller.base;
 import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
 import com.xxl.boot.api.framework.model.adaptor.XxlBootUserAdaptor;
 import com.xxl.boot.api.framework.model.dto.LoginRequest;
-import com.xxl.boot.api.framework.model.dto.LogoutRequest;
 import com.xxl.boot.api.framework.model.dto.XxlBootResourceDTO;
 import com.xxl.boot.api.framework.model.entity.XxlBootUser;
 import com.xxl.boot.api.framework.service.ResourceService;
@@ -93,14 +92,10 @@ public class LoginController {
 	 */
 	@RequestMapping("/logout")
 	@XxlSso(login = false)
-	public Response<String> logout(@RequestBody(required = false) LogoutRequest logoutRequest) {
-		// base valid
-		if (logoutRequest == null) {
-			return Response.ofFail("token is invalid.");
-		}
-
-		// 1、logout  (remove store)
-		return XxlSsoHelper.logout(logoutRequest.getToken());
+	public Response<String> logout(HttpServletRequest request) {
+		// logout
+		String token = request.getHeader(XxlSsoHelper.getInstance().getTokenKey());
+		return XxlSsoHelper.logout(token);
 	}
 
 	/**

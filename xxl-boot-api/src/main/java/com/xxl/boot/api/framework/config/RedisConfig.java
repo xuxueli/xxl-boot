@@ -7,7 +7,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import tools.jackson.databind.ObjectMapper;
 
 /**
  * redis config
@@ -22,13 +21,20 @@ public class RedisConfig extends CachingConfigurerSupport {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
 
-        // for string key and object value
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJacksonJsonRedisSerializer(new ObjectMapper()));
+        // serializer
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        GenericJacksonJsonRedisSerializer jacksonJsonRedisSerializer = GenericJacksonJsonRedisSerializer
+                .builder()
+                .enableUnsafeDefaultTyping()
+                .build();
 
-        // for hash key and object value
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new GenericJacksonJsonRedisSerializer(new ObjectMapper()));
+        // for object
+        template.setKeySerializer(stringRedisSerializer);
+        template.setValueSerializer(jacksonJsonRedisSerializer);
+
+        // for hash
+        template.setHashKeySerializer(stringRedisSerializer);
+        template.setHashValueSerializer(jacksonJsonRedisSerializer);
 
         template.afterPropertiesSet();
         return template;

@@ -37,6 +37,7 @@ public class WebHandlerExceptionResolver implements HandlerExceptionResolver {
 		if (handler instanceof HandlerMethod) {
 			HandlerMethod method = (HandlerMethod)handler;
 			isJson = method.getMethodAnnotation(ResponseBody.class)!=null;
+			// TODO, RestController should be processed
 		}
 
 		// process error
