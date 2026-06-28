@@ -236,6 +236,7 @@
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
 								<div style="margin-top: 10px;" >
 									<button type="button" class="btn btn-primary orgTreeChoose"  >${I18n.system_ok}</button>
+									<button type="button" class="btn btn-default orgTreeClear"  >清除</button>
 									<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
 								</div>
 							</div>
@@ -499,14 +500,22 @@ $(function() {
 		initOrgTree();
 		$('#orgTreeModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
-	// click orgName input to open tree (filter & modals)
-	/*$(document).on('click', '.orgName', function(){
-		var $input = $(this);
-		var $modal = $input.closest('.modal');
-		orgSelectSource = $modal.length > 0 ? $modal.attr('id') : 'filter';
-		initOrgTree();
-		$('#orgTreeModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});*/
+	/**
+	 * clear org tree selection
+	 */
+	$('#orgTreeModal .orgTreeClear').click(function(){
+		if (orgSelectSource === 'addModal') {
+			$('#addModal .form input[name="orgName"]').val('');
+			$('#addModal .form input[name="orgId"]').val(0);
+		} else if (orgSelectSource === 'updateModal') {
+			$('#updateModal .form input[name="orgName"]').val('');
+			$('#updateModal .form input[name="orgId"]').val(0);
+		} else {
+			$('#data_filter .orgName').val('');
+			$('#data_filter .orgId').val(0);
+		}
+		$('#orgTreeModal').modal('hide');
+	});
 
 	/**
 	 * choose org tree confirm
