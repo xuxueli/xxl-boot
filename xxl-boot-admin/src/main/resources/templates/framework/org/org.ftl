@@ -98,13 +98,17 @@
 									<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
 								</div>
 								<div class="form-group">
+									<label  class="col-sm-2 control-label">负责人</label>
+									<div class="col-sm-8"><input type="text" class="form-control" name="manager" placeholder="${I18n.system_please_input}负责人" maxlength="50" ></div>
+								</div>
+								<div class="form-group">
 									<label  class="col-sm-2 control-label">生效状态<font color="red">*</font></label>
-									<div class="col-sm-4">
-										<select class="form-control" name="status" >
-											<#list orgStatuEnum as item>
-												<option value="${item.value}" >${item.desc}</option>
-											</#list>
-										</select>
+									<div class="col-sm-8">
+										<#list orgStatuEnum as item>
+											<label class="radio-inline">
+												<input type="radio" name="status" value="${item.value}" <#if item.value == 0>checked</#if> > ${item.desc}
+											</label>
+										</#list>
 									</div>
 								</div>
 
@@ -149,13 +153,17 @@
 									<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
 								</div>
 								<div class="form-group">
+									<label  class="col-sm-2 control-label">负责人</label>
+									<div class="col-sm-8"><input type="text" class="form-control" name="manager" placeholder="${I18n.system_please_input}负责人" maxlength="50" ></div>
+								</div>
+								<div class="form-group">
 									<label  class="col-sm-2 control-label">生效状态<font color="red">*</font></label>
-									<div class="col-sm-4">
-										<select class="form-control" name="status" >
-											<#list orgStatuEnum as item>
-												<option value="${item.value}" >${item.desc}</option>
-											</#list>
-										</select>
+									<div class="col-sm-8">
+										<#list orgStatuEnum as item>
+											<label class="radio-inline">
+												<input type="radio" name="status" value="${item.value}" <#if item.value == 0>checked</#if> > ${item.desc}
+											</label>
+										</#list>
 									</div>
 								</div>
 
@@ -220,6 +228,12 @@
 $(function() {
 
 	// ---------- ---------- ---------- table + curd  ---------- ---------- ----------
+	// status map for table formatter
+	var statusMap = {};
+	<#list orgStatuEnum as item>
+	statusMap['${item.value}'] = '${item.desc}';
+	</#list>
+
 	/**
 	 * init table
 	 */
@@ -261,15 +275,9 @@ $(function() {
 				field: 'status',
 				width: '15',
 				widthUnit: '%',
-				formatter: function(value, row, index) {
-					var result = "";
-					$('#addModal select[name="status"] option').each(function(){
-						if ( value.toString() === $(this).val() ) {
-							result = $(this).text();
-						}
-					});
-					return result;
-				}
+			formatter: function(value, row, index) {
+				return statusMap[value] || value;
+			}
 			}
 		]
 	});
@@ -291,10 +299,6 @@ $(function() {
 				required : true,
 				rangelength:[2, 50]
 			},
-			permission : {
-				required : true,
-				rangelength:[2, 50]
-			},
 			order : {
 				required : true,
 				range:[1, 99999999]
@@ -304,10 +308,6 @@ $(function() {
 			name : {
 				required : I18n.system_please_input + I18n.resource_name,
 				rangelength: I18n.system_lengh_limit + "[2-50]"
-			},
-			permission : {
-				required : I18n.system_please_input + I18n.resource_permission,
-				rangelength: I18n.system_lengh_limit + "[2-20]"
 			},
 			order : {
 				required : I18n.system_please_input,
@@ -325,7 +325,8 @@ $(function() {
 				"parentId": $("#addModal .form input[name=parentId]").val(),
 				"name": $("#addModal .form input[name=name]").val(),
 				"order": $("#addModal .form input[name=order]").val(),
-				"status": $("#addModal .form select[name=status]").val()
+				"manager": $("#addModal .form input[name=manager]").val(),
+				"status": $("#addModal .form input[name='status']:checked").val()
 			};
 		}
 	});
@@ -342,7 +343,8 @@ $(function() {
 			$("#updateModal .form input[name=parentId]").val( row.parentId );
 			$("#updateModal .form input[name=name]").val( row.name );
 			$("#updateModal .form input[name=order]").val( row.order );
-			$("#updateModal .form select[name=status]").val( row.status );
+			$("#updateModal .form input[name=manager]").val( row.manager );
+			$("#updateModal .form input[name='status'][value='" + row.status + "']").prop('checked', true);
 
 			// 设置 tree 选中
 			initTree();
@@ -360,10 +362,6 @@ $(function() {
 				required : true,
 				rangelength:[2, 50]
 			},
-			permission : {
-				required : true,
-				rangelength:[2, 50]
-			},
 			order : {
 				required : true,
 				range:[1, 99999999]
@@ -373,10 +371,6 @@ $(function() {
 			name : {
 				required : I18n.system_please_input + I18n.user_password,
 				rangelength: I18n.system_lengh_limit + "[2-50]"
-			},
-			permission : {
-				required : I18n.system_please_input + I18n.user_real_name,
-				rangelength: I18n.system_lengh_limit + "[2-20]"
 			},
 			order : {
 				required : I18n.system_please_input,
@@ -389,12 +383,9 @@ $(function() {
 				"id": $("#updateModal .form input[name=id]").val(),
 				"parentId": $("#updateModal .form input[name=parentId]").val(),
 				"name": $("#updateModal .form input[name=name]").val(),
-				"type": $("#updateModal .form select[name=type]").val(),
-				"permission": $("#updateModal .form input[name=permission]").val(),
-				"url": $("#updateModal .form input[name=url]").val(),
-				"icon": $("#updateModal .form input[name=icon]").val(),
 				"order": $("#updateModal .form input[name=order]").val(),
-				"status": $("#updateModal .form select[name=status]").val()
+				"manager": $("#updateModal .form input[name=manager]").val(),
+				"status": $("#updateModal .form input[name='status']:checked").val()
 			};
 		}
 	});

@@ -14,6 +14,7 @@ CREATE TABLE `xxl_boot_org`
     `name`          VARCHAR(50)     NOT NULL                     COMMENT '名称',
     `order`         INT             NOT NULL                     COMMENT '顺序',
     `status`        TINYINT         NOT NULL                     COMMENT '状态：0-正常、1-禁用',
+    `manager`       VARCHAR(50)     DEFAULT NULL                 COMMENT '负责人',
     `add_time`      DATETIME        NOT NULL                     COMMENT '新增时间',
     `update_time`   DATETIME        NOT NULL                     COMMENT '更新时间',
     PRIMARY KEY (`id`)

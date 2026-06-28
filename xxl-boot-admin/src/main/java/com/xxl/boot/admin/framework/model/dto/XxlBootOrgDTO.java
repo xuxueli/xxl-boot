@@ -40,6 +40,11 @@ public class XxlBootOrgDTO implements Serializable {
     private int status;
 
     /**
+    * 负责人
+    */
+    private String manager;
+
+    /**
     * 新增时间
     */
     private Date addTime;
@@ -59,6 +64,7 @@ public class XxlBootOrgDTO implements Serializable {
         this.setName(org.getName());
         this.setOrder(org.getOrder());
         this.setStatus(org.getStatus());
+        this.setManager(org.getManager());
         this.setAddTime(org.getAddTime());
         this.setUpdateTime(org.getUpdateTime());
         this.setChildren(children);
@@ -102,6 +108,14 @@ public class XxlBootOrgDTO implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getManager() {
+        return manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
     }
 
     public Date getAddTime() {

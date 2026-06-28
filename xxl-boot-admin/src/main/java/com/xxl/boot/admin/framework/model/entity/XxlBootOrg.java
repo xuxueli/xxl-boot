@@ -37,6 +37,11 @@ public class XxlBootOrg implements Serializable {
     private int status;
 
     /**
+    * 负责人
+    */
+    private String manager;
+
+    /**
     * 新增时间
     */
     private Date addTime;
@@ -85,6 +90,14 @@ public class XxlBootOrg implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getManager() {
+        return manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
     }
 
     public Date getAddTime() {

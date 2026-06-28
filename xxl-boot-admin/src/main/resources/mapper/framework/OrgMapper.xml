@@ -9,6 +9,7 @@
         <result column="name" property="name" />
         <result column="order" property="order" />
         <result column="status" property="status" />
+        <result column="manager" property="manager" />
         <result column="add_time" property="addTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
@@ -19,6 +20,7 @@
         t.`name`,
         t.`order`,
         t.`status`,
+        t.`manager`,
         t.`add_time`,
         t.`update_time`
     </sql>
@@ -29,6 +31,7 @@
             `name`,
             `order`,
             `status`,
+            `manager`,
             `add_time`,
             `update_time`
         )
@@ -37,6 +40,7 @@
                   #{xxlBootOrg.name} ,
                   #{xxlBootOrg.order} ,
                   #{xxlBootOrg.status} ,
+                  #{xxlBootOrg.manager} ,
                   NOW() ,
                   NOW()
               )
@@ -57,6 +61,7 @@
             `name` = #{xxlBootOrg.name},
             `order` = #{xxlBootOrg.order},
             `status` = #{xxlBootOrg.status},
+            `manager` = #{xxlBootOrg.manager},
             update_time = NOW()
         WHERE `id` = #{xxlBootOrg.id}
     </update>
