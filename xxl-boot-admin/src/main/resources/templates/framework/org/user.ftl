@@ -89,18 +89,6 @@
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_username}</label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="username" placeholder="${I18n.system_please_input}${I18n.user_username}" maxlength="20" ></div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_password}</label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="password" placeholder="${I18n.system_please_input}${I18n.user_password}" maxlength="20" ></div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_real_name}</label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="realName" placeholder="${I18n.system_please_input}${I18n.user_real_name}" maxlength="20" ></div>
-							</div>
-							<div class="form-group">
 								<label class="col-sm-2 control-label">归属组织</label>
 								<div class="col-sm-4">
 									<div class="input-group">
@@ -111,6 +99,18 @@
 										</span>
 									</div>
 								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_username}</label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="username" placeholder="${I18n.system_please_input}${I18n.user_username}" maxlength="20" ></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_password}</label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="password" placeholder="${I18n.system_please_input}${I18n.user_password}" maxlength="20" ></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_real_name}</label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="realName" placeholder="${I18n.system_please_input}${I18n.user_real_name}" maxlength="20" ></div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_staus}</label>
@@ -158,18 +158,6 @@
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_username}</label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="username" placeholder="${I18n.system_please_input}${I18n.user_username}" maxlength="20" readonly ></div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_password}</label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="password" placeholder="${I18n.user_password_update_placeholder}" maxlength="20" ></div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_real_name}</label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="realName" placeholder="${I18n.system_please_input}${I18n.user_real_name}" maxlength="20" ></div>
-							</div>
-							<div class="form-group">
 								<label class="col-sm-2 control-label">归属组织</label>
 								<div class="col-sm-4">
 									<div class="input-group">
@@ -180,6 +168,18 @@
 										</span>
 									</div>
 								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_username}</label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="username" placeholder="${I18n.system_please_input}${I18n.user_username}" maxlength="20" readonly ></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_password}</label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="password" placeholder="${I18n.user_password_update_placeholder}" maxlength="20" ></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_real_name}</label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="realName" placeholder="${I18n.system_please_input}${I18n.user_real_name}" maxlength="20" ></div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_staus}</label>
