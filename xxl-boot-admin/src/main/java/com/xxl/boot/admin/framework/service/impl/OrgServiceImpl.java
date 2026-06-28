@@ -1,7 +1,6 @@
 package com.xxl.boot.admin.framework.service.impl;
 
 import com.xxl.boot.admin.framework.mapper.OrgMapper;
-import com.xxl.boot.admin.framework.model.dto.XxlBootOrgDTO;
 import com.xxl.boot.admin.framework.model.entity.XxlBootOrg;
 import com.xxl.boot.admin.framework.service.OrgService;
 import com.xxl.tool.core.CollectionTool;
@@ -92,56 +91,8 @@ public class OrgServiceImpl implements OrgService {
 	}
 
 	@Override
-	public List<XxlBootOrgDTO> treeList(String name, int status) {
-		List<XxlBootOrg> orgDTOList = orgMapper.queryOrg(name, status);
-		//return generateTreeList(orgDTOList);
-		return orgDTOList.stream().map(org -> new XxlBootOrgDTO(org, null)).toList();
-	}
-
-	private List<XxlBootOrgDTO> generateTreeList(List<XxlBootOrg> orgList) {
-		List<XxlBootOrgDTO> resultList = new ArrayList<>();
-		if (CollectionTool.isEmpty(orgList)) {
-			return resultList;
-		}
-
-		// collect children data
-		Map<Integer, List<XxlBootOrgDTO>> parentMap = new HashMap<>();;
-		for (XxlBootOrg org : orgList) {
-			int pId = org.getParentId();
-
-			List<XxlBootOrgDTO> sameLevelData = parentMap.containsKey(pId)?parentMap.get(pId) :new ArrayList<>();
-			sameLevelData.add(new XxlBootOrgDTO(org, null));
-
-			parentMap.put(pId, sameLevelData);
-		}
-
-		// fill chindren
-		List<XxlBootOrgDTO> toFillParent = parentMap.get(0);
-		while (CollectionTool.isNotEmpty(toFillParent)) {
-			List<XxlBootOrgDTO> toFillParentTmp = new ArrayList<>();
-			for (XxlBootOrgDTO org : toFillParent) {
-				List<XxlBootOrgDTO> children = parentMap.get(org.getId());
-				if (CollectionTool.isNotEmpty(children)) {
-					org.setChildren(children);
-					toFillParentTmp.addAll(children);
-				}
-			}
-			toFillParent = toFillParentTmp;
-		}
-
-		return parentMap.get(0);
-	}
-
-	@Override
-	public List<XxlBootOrgDTO> simpleTreeList(String name, int status) {
-		List<XxlBootOrg> orgList = orgMapper.queryOrg(name, status);
-		List<XxlBootOrgDTO> result = new ArrayList<>();
-
-		for (XxlBootOrg org : orgList) {
-			XxlBootOrgDTO resourceDTO = new XxlBootOrgDTO(org, null);
-			result.add(resourceDTO);
-		}
-		return result;
+	public List<XxlBootOrg> treeList(String name, int status) {
+		return orgMapper.queryOrg(name, status);
 	}
 
 }

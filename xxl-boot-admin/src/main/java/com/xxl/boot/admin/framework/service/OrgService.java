@@ -2,7 +2,6 @@ package com.xxl.boot.admin.framework.service;
 
 import java.util.List;
 
-import com.xxl.boot.admin.framework.model.dto.XxlBootOrgDTO;
 import com.xxl.boot.admin.framework.model.entity.XxlBootOrg;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
@@ -42,8 +41,6 @@ public interface OrgService {
     /**
      * treeList
      */
-    List<XxlBootOrgDTO> treeList(String name, int status);
-
-    List<XxlBootOrgDTO> simpleTreeList(String name, int status);
+    List<XxlBootOrg> treeList(String name, int status);
 
 }

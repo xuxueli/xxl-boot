@@ -1,7 +1,6 @@
 package com.xxl.boot.api.framework.controller.org;
 
 import com.xxl.boot.api.framework.constant.enums.OrgStatuEnum;
-import com.xxl.boot.api.framework.model.dto.XxlBootOrgDTO;
 import com.xxl.boot.api.framework.model.entity.XxlBootOrg;
 import com.xxl.boot.api.framework.service.OrgService;
 import com.xxl.sso.core.annotation.XxlSso;
@@ -41,37 +40,6 @@ public class OrgController {
     /**
      * tree数据查询
      *
-     *  <pre>
-     *  {
-     *      "data":
-     *          [
-     *              {
-     *                  "name": "lhmyy521125",
-     *                  ...
-     *                  "children": [
-     *                      {
-     *                          "name": "hello",
-     *                          ...
-     *                      }
-     *                  ]
-     *              }
-     *          ]
-     *  }
-     *  </pre>
-     */
-    @RequestMapping("/treeList")
-    @ResponseBody
-    @XxlSso(permission = "org:org")
-    public Response<List<XxlBootOrgDTO>> treeList(@RequestParam(required = false) String name,
-                                                  @RequestParam(required = false, defaultValue = "-1") int status) {
-
-        List<XxlBootOrgDTO> treeListData = orgService.treeList(name, status);
-        return Response.ofSuccess(treeListData);
-    }
-
-    /**
-     * 简单tree数据查询
-     *
      * <pre>
      *     [
      * 			  {id: 1, pId: 0, name: "资源A", open: true},
@@ -81,12 +49,13 @@ public class OrgController {
      * 		]
      * </pre>
      */
-    @RequestMapping("/simpleTreeList")
+    @RequestMapping("/treeList")
     @ResponseBody
     @XxlSso(permission = "org:org")
-    public Response<List<XxlBootOrgDTO>> simpleTreeList(@RequestParam(required = false) String name,
-                                                             @RequestParam(required = false, defaultValue = "-1") int status) {
-        List<XxlBootOrgDTO> treeListData = orgService.simpleTreeList(name, status);
+    public Response<List<XxlBootOrg>> treeList(@RequestParam(required = false) String name,
+                                               @RequestParam(required = false, defaultValue = "-1") int status) {
+
+        List<XxlBootOrg> treeListData = orgService.treeList(name, status);
         return Response.ofSuccess(treeListData);
     }
 

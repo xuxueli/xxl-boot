@@ -472,7 +472,7 @@ $(function() {
 		// post
 		$.ajax({
 			type : 'POST',
-			url : base_url + "/org/org/simpleTreeList",
+			url : base_url + "/org/org/treeList",
 			dataType : "json",
 			async: false,
 			success : function(data){
