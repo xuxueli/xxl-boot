@@ -101,6 +101,18 @@
 								<div class="col-sm-8"><input type="text" class="form-control" name="realName" placeholder="${I18n.system_please_input}${I18n.user_real_name}" maxlength="20" ></div>
 							</div>
 							<div class="form-group">
+								<label class="col-sm-2 control-label">归属组织</label>
+								<div class="col-sm-4">
+									<div class="input-group">
+										<input type="text" class="form-control orgName" name="orgName" readonly placeholder="${I18n.system_please_input}选择组织" >
+										<input type="hidden" class="form-control" name="orgId" value="0" >
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-default selectOrg" ><i class="fa fa-search"></i></button>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_staus}</label>
 								<div class="col-sm-8">
 									<#list userStatuEnum as item>
@@ -110,20 +122,10 @@
 									</#list>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>归属组织</label>
-								<div class="col-sm-6">
-									<input type="text" class="form-control" name="orgName" readonly placeholder="${I18n.system_please_input}选择组织" >
-									<input type="hidden" class="form-control" name="orgId" value="0" >
-								</div>
-								<div class="col-sm-2">
-									<button type="button" class="btn btn-sm btn-default selectOrg" >请选择</button>
-								</div>
-							</div>
 
 							<br>
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>用户角色</label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>分配角色</label>
 								<div class="col-sm-8">
 									<#if roleList?? && roleList?size gt 0>
 									<#list roleList as role>
@@ -168,6 +170,18 @@
 								<div class="col-sm-8"><input type="text" class="form-control" name="realName" placeholder="${I18n.system_please_input}${I18n.user_real_name}" maxlength="20" ></div>
 							</div>
 							<div class="form-group">
+								<label class="col-sm-2 control-label">归属组织</label>
+								<div class="col-sm-4">
+									<div class="input-group">
+										<input type="text" class="form-control orgName" name="orgName" readonly placeholder="${I18n.system_please_input}选择组织" >
+										<input type="hidden" class="form-control" name="orgId" value="0" >
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-default selectOrg" ><i class="fa fa-search"></i></button>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_staus}</label>
 								<div class="col-sm-8">
 									<#list userStatuEnum as item>
@@ -177,20 +191,10 @@
 									</#list>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>归属组织</label>
-								<div class="col-sm-6">
-									<input type="text" class="form-control" name="orgName" readonly placeholder="${I18n.system_please_input}选择组织" >
-									<input type="hidden" class="form-control" name="orgId" value="0" >
-								</div>
-								<div class="col-sm-2">
-									<button type="button" class="btn btn-sm btn-default selectOrg" >请选择</button>
-								</div>
-							</div>
 
 							<br>
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>用户角色</label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>分配角色</label>
 								<div class="col-sm-8">
 									<#if roleList?? && roleList?size gt 0>
 										<#list roleList as role>
@@ -259,7 +263,7 @@
 	// org tree data from model
 	var orgZNodes = [
 	<#list orgTree as org>
-		{id: ${org.id}, pId: ${org.parentId}, name: '${org.name?js_string}', open: true}<#sep>,</#sep>
+		{id: ${org.id}, parentId: ${org.parentId}, name: '${org.name?js_string}', open: true}<#sep>,</#sep>
 	</#list>
 	];
 
@@ -483,15 +487,26 @@ $(function() {
 	var orgSelectSource = 'filter';
 
 	/**
-	 * open org tree modal
+	 * click selectOrg button to open tree (filter & modals)
 	 */
 	$(document).on('click', '.selectOrg', function(){
+		// find source, modal or filter
 		var $btn = $(this);
 		var $modal = $btn.closest('.modal');
 		orgSelectSource = $modal.length > 0 ? $modal.attr('id') : 'filter';
+
+		// init org tree
 		initOrgTree();
 		$('#orgTreeModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
+	// click orgName input to open tree (filter & modals)
+	/*$(document).on('click', '.orgName', function(){
+		var $input = $(this);
+		var $modal = $input.closest('.modal');
+		orgSelectSource = $modal.length > 0 ? $modal.attr('id') : 'filter';
+		initOrgTree();
+		$('#orgTreeModal').modal({backdrop: false, keyboard: false}).modal('show');
+	});*/
 
 	/**
 	 * choose org tree confirm
@@ -545,14 +560,6 @@ $(function() {
 		orgZTreeObj = $.fn.zTree.init($("#orgTree"), setting, orgZNodes);
 		orgZTreeObj.expandAll(true);
 	}
-
-	// click filter orgName input to open tree
-	$('#data_filter .orgName').click(function(){
-		orgSelectSource = 'filter';
-		initOrgTree();
-		$('#orgTreeModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
-
 
 });
 
