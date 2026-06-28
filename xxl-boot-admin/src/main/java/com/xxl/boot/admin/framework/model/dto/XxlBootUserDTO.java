@@ -9,6 +9,7 @@ import java.util.List;
 public class XxlBootUserDTO {
 
 	private int id;
+	private int orgId;				// 组织ID
 	private String username;		// 账号
 	private String password;		// 密码
 	private String token;			// 登录token
@@ -19,6 +20,7 @@ public class XxlBootUserDTO {
 
 	// other
 	private List<Integer> roleIds;
+	private String orgName;			// 组织名称（非DB字段）
 
 
 	public int getId() {
@@ -27,6 +29,22 @@ public class XxlBootUserDTO {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(int orgId) {
+		this.orgId = orgId;
+	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
 	}
 
 	public String getUsername() {

@@ -52,7 +52,7 @@ public interface UserService {
     /**
      * 分页查询
      */
-    public PageModel<XxlBootUserDTO> pageList(int offset, int pagesize, String username, int status);
+    public PageModel<XxlBootUserDTO> pageList(int offset, int pagesize, String username, int status, int orgId);
 
     /**
      * 更新登录token

@@ -5,7 +5,9 @@ import com.xxl.boot.admin.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.admin.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.admin.framework.constant.enums.UserStatuEnum;
 import com.xxl.boot.admin.framework.model.dto.XxlBootUserDTO;
+import com.xxl.boot.admin.framework.model.entity.XxlBootOrg;
 import com.xxl.boot.admin.framework.model.entity.XxlBootRole;
+import com.xxl.boot.admin.framework.service.OrgService;
 import com.xxl.boot.admin.framework.service.RoleService;
 import com.xxl.boot.admin.framework.service.UserService;
 import com.xxl.sso.core.annotation.XxlSso;
@@ -34,15 +36,19 @@ public class UserController {
     private UserService userService;
     @Resource
     private RoleService roleService;
+    @Resource
+    private OrgService orgService;
 
     @RequestMapping
     @XxlSso(permission = "org:user")
     public String index(Model model) {
 
         PageModel<XxlBootRole> pageModel = roleService.pageList(0, 999, null);
+        List<XxlBootOrg> orgTree = orgService.treeList(null, -1);
 
         model.addAttribute("roleList", pageModel.getData());
         model.addAttribute("userStatuEnum", UserStatuEnum.values());
+        model.addAttribute("orgTree", orgTree);
 
         return "/framework/org/user";
     }
@@ -53,9 +59,10 @@ public class UserController {
     public Response<PageModel<XxlBootUserDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                         @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                         String username,
-                                                        @RequestParam(required = false, defaultValue = "-1") int status) {
+                                                        @RequestParam(required = false, defaultValue = "-1") int status,
+                                                        @RequestParam(required = false, defaultValue = "0") int orgId) {
 
-        PageModel<XxlBootUserDTO> pageModel = userService.pageList(offset, pagesize, username, status);
+        PageModel<XxlBootUserDTO> pageModel = userService.pageList(offset, pagesize, username, status, orgId);
         return Response.ofSuccess(pageModel);
     }
 

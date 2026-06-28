@@ -1,10 +1,12 @@
 package com.xxl.boot.admin.framework.service.impl;
 
+import com.xxl.boot.admin.framework.mapper.OrgMapper;
 import com.xxl.boot.admin.framework.mapper.RoleMapper;
 import com.xxl.boot.admin.framework.mapper.UserMapper;
 import com.xxl.boot.admin.framework.mapper.UserRoleMapper;
 import com.xxl.boot.admin.framework.model.adaptor.XxlBootUserAdaptor;
 import com.xxl.boot.admin.framework.model.dto.XxlBootUserDTO;
+import com.xxl.boot.admin.framework.model.entity.XxlBootOrg;
 import com.xxl.boot.admin.framework.model.entity.XxlBootRole;
 import com.xxl.boot.admin.framework.model.entity.XxlBootUser;
 import com.xxl.boot.admin.framework.model.entity.XxlBootUserRole;
@@ -34,6 +36,8 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private OrgMapper orgMapper;
     @Resource
     private RoleMapper roleMapper;
     @Resource
@@ -243,11 +247,11 @@ public class UserServiceImpl implements UserService {
      * 分页查询
      */
     @Override
-    public PageModel<XxlBootUserDTO> pageList(int offset, int pagesize, String username, int status) {
+    public PageModel<XxlBootUserDTO> pageList(int offset, int pagesize, String username, int status, int orgId) {
 
         // data
-        List<XxlBootUser> pageList = userMapper.pageList(offset, pagesize, username, status);
-        int totalCount = userMapper.pageListCount(offset, pagesize, username, status);
+        List<XxlBootUser> pageList = userMapper.pageList(offset, pagesize, username, status, orgId);
+        int totalCount = userMapper.pageListCount(offset, pagesize, username, status, orgId);
 
         // adaptor
         List<XxlBootUserDTO> pageListDto = new ArrayList<>();
@@ -270,6 +274,17 @@ public class UserServiceImpl implements UserService {
                     .stream()
                     .map(item->XxlBootUserAdaptor.adapt2dto(item, false, userIdToRoleIdsMap))
                     .collect(Collectors.toList());
+        }
+
+        // fill orgName
+        if (CollectionTool.isNotEmpty(pageListDto)) {
+            List<XxlBootOrg> orgList = orgMapper.queryOrg(null, -1);
+            Map<Integer, String> orgMap = orgList.stream().collect(Collectors.toMap(XxlBootOrg::getId, XxlBootOrg::getName));
+            pageListDto.forEach(dto -> {
+                if (dto.getOrgId() > 0 && orgMap.containsKey(dto.getOrgId())) {
+                    dto.setOrgName(orgMap.get(dto.getOrgId()));
+                }
+            });
         }
 
         // result

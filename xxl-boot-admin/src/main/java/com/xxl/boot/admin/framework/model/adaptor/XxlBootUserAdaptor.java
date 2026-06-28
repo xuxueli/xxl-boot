@@ -21,6 +21,7 @@ public class XxlBootUserAdaptor {
 
         XxlBootUser xxlUser = new XxlBootUser();
         xxlUser.setId(xxlJobUser.getId());
+        xxlUser.setOrgId(xxlJobUser.getOrgId());
         xxlUser.setUsername(xxlJobUser.getUsername());
         xxlUser.setPassword(xxlJobUser.getPassword());
         xxlUser.setToken(xxlJobUser.getToken());
@@ -38,6 +39,7 @@ public class XxlBootUserAdaptor {
 
         XxlBootUserDTO xxlUser = new XxlBootUserDTO();
         xxlUser.setId(xxlJobUser.getId());
+        xxlUser.setOrgId(xxlJobUser.getOrgId());
         xxlUser.setUsername(xxlJobUser.getUsername());
         if (withPwd) {
             xxlUser.setPassword(xxlJobUser.getPassword());

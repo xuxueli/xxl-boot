@@ -24,6 +24,7 @@ CREATE TABLE `xxl_boot_org`
 CREATE TABLE `xxl_boot_user`
 (
     `id`            INT             NOT NULL AUTO_INCREMENT      COMMENT '用户ID',
+    `org_id`        INT             NOT NULL                     COMMENT '组织ID',
     `username`      VARCHAR(50)     NOT NULL                     COMMENT '账号',
     `password`      VARCHAR(100)    NOT NULL                     COMMENT '密码加密信息',
     `token`         VARCHAR(100)    DEFAULT NULL                 COMMENT '登录token',

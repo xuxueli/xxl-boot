@@ -8,6 +8,7 @@ import java.util.Date;
 public class XxlBootUser {
 
 	private int id;
+	private int orgId;				// 组织ID
 	private String username;		// 账号
 	private String password;		// 密码
 	private String token;			// 登录token
@@ -23,6 +24,14 @@ public class XxlBootUser {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(int orgId) {
+		this.orgId = orgId;
 	}
 
 	public String getUsername() {

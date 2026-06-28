@@ -5,6 +5,7 @@
 
 	<resultMap id="XxlBootUser" type="com.xxl.boot.admin.framework.model.entity.XxlBootUser" >
 		<result column="id" property="id" />
+		<result column="org_id" property="orgId" />
 		<result column="username" property="username" />
 	    <result column="password" property="password" />
 	    <result column="token" property="token" />
@@ -16,6 +17,7 @@
 
 	<sql id="Base_Column_List">
 		t.id,
+		t.org_id,
 		t.username,
 		t.password,
 		t.token,
@@ -27,6 +29,7 @@
 
 	<insert id="insert" parameterType="com.xxl.boot.admin.framework.model.entity.XxlBootUser" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_boot_user (
+			org_id,
 			username,
 			password,
 			token,
@@ -35,6 +38,7 @@
 			add_time,
 			update_time
 		) VALUES (
+			 #{orgId},
 			 #{username},
 			 #{password},
 			 #{token},
@@ -67,6 +71,7 @@
 				password = #{password},
 			</if>
 			token = #{token},
+			org_id = #{orgId},
 			status = #{status},
 			real_name = #{realName},
 			update_time = NOW()
@@ -95,6 +100,9 @@
 			<if test="status gt -1">
 				AND t.status = #{status}
 			</if>
+			<if test="orgId gt 0">
+				AND t.org_id = #{orgId}
+			</if>
 		</trim>
 		ORDER BY username ASC
 		LIMIT #{offset}, #{pagesize}
@@ -109,6 +117,9 @@
 			</if>
 			<if test="status gt -1">
 				AND t.status = #{status}
+			</if>
+			<if test="orgId gt 0">
+				AND t.org_id = #{orgId}
 			</if>
 		</trim>
 	</select>

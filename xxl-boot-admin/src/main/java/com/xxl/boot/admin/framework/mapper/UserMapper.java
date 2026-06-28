@@ -26,11 +26,13 @@ public interface UserMapper {
 	List<XxlBootUser> pageList(@Param("offset") int offset,
 							   @Param("pagesize") int pagesize,
 							   @Param("username") String username,
-							   @Param("status") int status);
+							   @Param("status") int status,
+							   @Param("orgId") int orgId);
 	int pageListCount(@Param("offset") int offset,
 					  @Param("pagesize") int pagesize,
 					  @Param("username") String username,
-					  @Param("status") int status);
+					  @Param("status") int status,
+					  @Param("orgId") int orgId);
 
 
 	int updateToken(@Param("id") int id, @Param("token") String token);
