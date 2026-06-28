@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/jquery-treegrid/jquery.treegrid.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/zTree/css/metroStyle/metroStyle.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/iCheck/square/blue.css">
 	<!-- 1-style end -->
 
 </head>
@@ -95,7 +96,7 @@
 								</div>
 								<div class="form-group">
 									<label  class="col-sm-2 control-label">展示顺序<font color="red">*</font></label>
-									<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
+									<div class="col-sm-8"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
 								</div>
 								<div class="form-group">
 									<label  class="col-sm-2 control-label">负责人</label>
@@ -106,7 +107,7 @@
 									<div class="col-sm-8">
 										<#list orgStatuEnum as item>
 											<label class="radio-inline">
-												<input type="radio" name="status" value="${item.value}" <#if item.value == 0>checked</#if> > ${item.desc}
+												<input type="radio" name="status" value="${item.value}" > ${item.desc}
 											</label>
 										</#list>
 									</div>
@@ -150,7 +151,7 @@
 								</div>
 								<div class="form-group">
 									<label  class="col-sm-2 control-label">展示顺序<font color="red">*</font></label>
-									<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
+									<div class="col-sm-8"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
 								</div>
 								<div class="form-group">
 									<label  class="col-sm-2 control-label">负责人</label>
@@ -161,7 +162,7 @@
 									<div class="col-sm-8">
 										<#list orgStatuEnum as item>
 											<label class="radio-inline">
-												<input type="radio" name="status" value="${item.value}" <#if item.value == 0>checked</#if> > ${item.desc}
+												<input type="radio" name="status" value="${item.value}" > ${item.desc}
 											</label>
 										</#list>
 									</div>
@@ -222,6 +223,7 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.min.js"></script>
 <script src="${request.contextPath}/static/plugins/jquery-treegrid/jquery.treegrid.min.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.core.js"></script>
+<script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
 <#-- admin table -->
 <script src="${request.contextPath}/static/framework/admin.table.js"></script>
 <script>
@@ -233,6 +235,11 @@ $(function() {
 	<#list orgStatuEnum as item>
 	statusMap['${item.value}'] = '${item.desc}';
 	</#list>
+
+	// iCheck
+	$('#updateModal, #addModal').find('input').iCheck({
+		radioClass: 'iradio_square-blue',
+	});
 
 	/**
 	 * init table
@@ -318,6 +325,7 @@ $(function() {
 			// reset origin parent
 			initTree();
 			$("#addModal .form input[name=parentId]").val( 0 );
+			$("#addModal .form input[name='status'][value='0']").prop('checked', true).iCheck('update');
 		},
 		readFormData: function() {
 			// request
@@ -344,7 +352,7 @@ $(function() {
 			$("#updateModal .form input[name=name]").val( row.name );
 			$("#updateModal .form input[name=order]").val( row.order );
 			$("#updateModal .form input[name=manager]").val( row.manager );
-			$("#updateModal .form input[name='status'][value='" + row.status + "']").prop('checked', true);
+			$("#updateModal .form input[name='status'][value='" + row.status + "']").prop('checked', true).iCheck('update');
 
 			// 设置 tree 选中
 			initTree();
