@@ -26,7 +26,7 @@
 						<div class="input-group">
 							<span class="input-group-addon">归属组织</span>
 							<input type="text" class="form-control orgName" readonly placeholder="${I18n.system_all}" >
-							<input type="hidden" class="form-control orgId" value="0" >
+							<input type="hidden" class="form-control orgId" name="orgId" value="0" >
 							<span class="input-group-btn">
 								<button type="button" class="btn btn-default selectOrg" ><i class="fa fa-search"></i></button>
 							</span>
@@ -261,14 +261,14 @@
 <#-- admin table -->
 <script src="${request.contextPath}/static/framework/admin.table.js"></script>
 <script>
+$(function() {
+
 	// org tree data from model
 	var orgZNodes = [
-	<#list orgTree as org>
+		<#list orgTree as org>
 		{id: ${org.id}, parentId: ${org.parentId}, name: '${org.name?js_string}', open: true}<#sep>,</#sep>
-	</#list>
+		</#list>
 	];
-
-$(function() {
 
 	// ---------- ---------- ---------- table + curd  ---------- ---------- ----------
 
@@ -485,89 +485,60 @@ $(function() {
 
 	// ---------- ---------- ---------- org tree ---------- ---------- ----------
 
-	var orgSelectSource = 'filter';
+	var orgSelectSource = 'filter';		// current source of org select, 'filter' | 'addModal' | 'updateModal'
+	var orgZTreeObj;					// zTree object
 
 	/**
-	 * click selectOrg button to open tree (filter & modals)
+	 * open org tree modal
 	 */
-	$(document).on('click', '.selectOrg', function(){
-		// find source, modal or filter
-		var $btn = $(this);
-		var $modal = $btn.closest('.modal');
-		orgSelectSource = $modal.length > 0 ? $modal.attr('id') : 'filter';
-
-		// init org tree
-		initOrgTree();
-		$('#orgTreeModal').modal({backdrop: false, keyboard: false}).modal('show');
+	$(document).on('click', '.selectOrg, .orgName', function(){
+		var $el = $(this);
+		var $modal = $el.closest('.modal');
+		openOrgTree($modal.length > 0 ? $modal.attr('id') : 'filter');
 	});
+
+	/** init tree and open modal */
+	function openOrgTree(source) {
+		orgSelectSource = source;
+		var setting = {
+			view: { dblClickExpand: false, showLine: true, selectedMulti: false },
+			data: { simpleData: { enable: true, idKey: "id", pIdKey: "parentId", rootPId: "0" } }
+		};
+		orgZTreeObj = $.fn.zTree.init($("#orgTree"), setting, orgZNodes);
+		orgZTreeObj.expandAll(true);
+		$('#orgTreeModal').modal({backdrop: false, keyboard: false}).modal('show');
+	}
+
 	/**
-	 * clear org tree selection
+	 * clear choose org data
 	 */
 	$('#orgTreeModal .orgTreeClear').click(function(){
-		if (orgSelectSource === 'addModal') {
-			$('#addModal .form input[name="orgName"]').val('');
-			$('#addModal .form input[name="orgId"]').val(0);
-		} else if (orgSelectSource === 'updateModal') {
-			$('#updateModal .form input[name="orgName"]').val('');
-			$('#updateModal .form input[name="orgId"]').val(0);
-		} else {
-			$('#data_filter .orgName').val('');
-			$('#data_filter .orgId').val(0);
-		}
+		setOrgData('', 0);
 		$('#orgTreeModal').modal('hide');
 	});
 
 	/**
-	 * choose org tree confirm
+	 * choose org
 	 */
 	$('#orgTreeModal .orgTreeChoose').click(function(){
-
-		// valid choose
-		if (orgZTreeObj.getSelectedNodes().length < 1) {
+		if (!orgZTreeObj || orgZTreeObj.getSelectedNodes().length < 1) {
 			layer.msg( I18n.system_please_choose + '组织' );
 			return;
 		}
-
 		var selNode = orgZTreeObj.getSelectedNodes()[0];
-
-		// fill by source
-		if (orgSelectSource === 'addModal') {
-			$('#addModal .form input[name="orgName"]').val( selNode.name );
-			$('#addModal .form input[name="orgId"]').val( selNode.id );
-		} else if (orgSelectSource === 'updateModal') {
-			$('#updateModal .form input[name="orgName"]').val( selNode.name );
-			$('#updateModal .form input[name="orgId"]').val( selNode.id );
-		} else {
-			$('#data_filter .orgName').val( selNode.name );
-			$('#data_filter .orgId').val( selNode.id );
-		}
-
+		setOrgData(selNode.name, selNode.id);
 		$('#orgTreeModal').modal('hide');
 	});
 
-	/**
-	 * org tree
-	 */
-	var orgZTreeObj;
-	function initOrgTree(){
-		var setting = {
-			view: {
-				dblClickExpand: false,
-				showLine: true,
-				selectedMulti: false
-			},
-			data: {
-				simpleData: {
-					enable: true,
-					idKey: "id",
-					pIdKey: "parentId",
-					rootPId: "0"
-				}
-			}
-		};
-
-		orgZTreeObj = $.fn.zTree.init($("#orgTree"), setting, orgZNodes);
-		orgZTreeObj.expandAll(true);
+	/** fill org data by current source */
+	function setOrgData(orgName, orgId) {
+		var selector = orgSelectSource === 'addModal'
+				? '#addModal'
+				: orgSelectSource === 'updateModal'
+						? '#updateModal'
+						: '#data_filter';
+		$(selector).find('.orgName').val(orgName);
+		$(selector).find('[name="orgId"]').val(orgId);
 	}
 
 });

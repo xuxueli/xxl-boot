@@ -82,12 +82,14 @@
 							<form class="form-horizontal form" role="form" >
 								<div class="form-group">
 									<label class="col-sm-2 control-label"><font color="red">*</font>父组织</label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control"  name="parentName" readonly value="根组织" >
-										<input type="hidden" class="form-control" name="parentId" value="0" >
-									</div>
-									<div class="col-sm-4">
-										<button type="button" class="btn btn-sm btn-default selectParent" >请选择</button>
+									<div class="col-sm-8">
+										<div class="input-group">
+											<input type="text" class="form-control parentName" name="parentName" readonly value="根组织" >
+											<input type="hidden" class="form-control" name="parentId" value="0" >
+											<span class="input-group-btn">
+												<button type="button" class="btn btn-default selectParent" ><i class="fa fa-search"></i></button>
+											</span>
+										</div>
 									</div>
 								</div>
 								<div class="form-group">
@@ -136,17 +138,19 @@
 						<div class="modal-body">
 							<form class="form-horizontal form" role="form" >
 								<div class="form-group">
-									<label  class="col-sm-2 control-label">父组织<font color="red">*</font></label>
-									<div class="col-sm-4">
-										<input type="text" class="form-control"  name="parentName" readonly value="根组织" >
-										<input type="hidden" class="form-control" name="parentId" value="0" >
-									</div>
-									<div class="col-sm-4">
-										<button type="button" class="btn btn-sm btn-default selectParent" >请选择</button>
+									<label class="col-sm-2 control-label"><font color="red">*</font>父组织</label>
+									<div class="col-sm-8">
+										<div class="input-group">
+											<input type="text" class="form-control parentName" name="parentName" readonly value="根组织" >
+											<input type="hidden" class="form-control" name="parentId" value="0" >
+											<span class="input-group-btn">
+												<button type="button" class="btn btn-default selectParent" ><i class="fa fa-search"></i></button>
+											</span>
+										</div>
 									</div>
 								</div>
 								<div class="form-group">
-									<label  class="col-sm-2 control-label"><font color="red">*</font>组织名称</label>
+									<label class="col-sm-2 control-label"><font color="red">*</font>组织名称</label>
 									<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
 								</div>
 								<div class="form-group">
@@ -201,6 +205,7 @@
 								<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
 									<div style="margin-top: 10px;" >
 										<button type="button" class="btn btn-primary choose"  >${I18n.system_ok}</button>
+										<button type="button" class="btn btn-default treeClear"  >清除</button>
 										<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
 									</div>
 								</div>
@@ -415,30 +420,38 @@ $(function() {
 	// ---------- ---------- ---------- parent resource choose ---------- ---------- ----------
 
 	/**
-	 * open parent-treeModal
+	 * open parent tree modal
 	 */
-	$(".selectParent").click(function(){
-		$('#treeModal').modal({backdrop: false, keyboard: false}).modal('show');
+	$(document).on('click', '.selectParent, .parentName', function(){
+		openParentTree();
 	});
 
-	/**
-	 * choose parent-treeModal
-	 */
-	$('#treeModal .choose').click(function(){
+	/** init tree and open modal */
+	function openParentTree() {
+		initTree();
+		$('#treeModal').modal({backdrop: false, keyboard: false}).modal('show');
+	}
 
-		// valid choose
+	/** set parent data for both modals */
+	function setParentData(id, name) {
+		$("#addModal .form input[name=parentId]").val(id);
+		$("#addModal .form input[name=parentName]").val(name);
+		$("#updateModal .form input[name=parentId]").val(id);
+		$("#updateModal .form input[name=parentName]").val(name);
+	}
+
+	$('#treeModal .treeClear').click(function(){
+		setParentData(0, '根组织');
+		$('#treeModal').modal('hide');
+	});
+
+	$('#treeModal .choose').click(function(){
 		if (zTreeObj.getSelectedNodes().length < 1) {
 			layer.msg( I18n.system_please_choose + I18n.resource_parent );
 			return;
 		}
-
-		// fill choose data, todo-
-		$("#addModal .form input[name=parentId]").val( zTreeObj.getSelectedNodes()[0].id );
-		$("#addModal .form input[name=parentName]").val( zTreeObj.getSelectedNodes()[0].name );
-
-		$("#updateModal .form input[name=parentId]").val( zTreeObj.getSelectedNodes()[0].id );
-		$("#updateModal .form input[name=parentName]").val( zTreeObj.getSelectedNodes()[0].name );
-
+		var selNode = zTreeObj.getSelectedNodes()[0];
+		setParentData(selNode.id, selNode.name);
 		$('#treeModal').modal('hide');
 	});
 
@@ -462,12 +475,6 @@ $(function() {
 				}
 			}
 		};
-		/*var zNodes = [
-			{id: 1, pId: 0, name: "资源A", open: true},
-			{id: 5, pId: 1, name: "资源A1"},
-			{id: 2, pId: 0, name: "资源B", open: false},
-			{id: 11, pId: 2, name: "资源B2"}
-		];*/
 
 		// post
 		$.ajax({
