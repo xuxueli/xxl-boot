@@ -81,7 +81,7 @@
 						<div class="modal-body">
 							<form class="form-horizontal form" role="form" >
 								<div class="form-group">
-									<label class="col-sm-2 control-label">父组织<font color="red">*</font></label>
+									<label class="col-sm-2 control-label"><font color="red">*</font>父组织</label>
 									<div class="col-sm-4">
 										<input type="text" class="form-control"  name="parentName" readonly value="根组织" >
 										<input type="hidden" class="form-control" name="parentId" value="0" >
@@ -91,11 +91,11 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label">组织名称<font color="red">*</font></label>
+									<label class="col-sm-2 control-label"><font color="red">*</font>组织名称</label>
 									<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
 								</div>
 								<div class="form-group">
-									<label  class="col-sm-2 control-label">展示顺序<font color="red">*</font></label>
+									<label  class="col-sm-2 control-label"><font color="red">*</font>展示顺序</label>
 									<div class="col-sm-8"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
 								</div>
 								<div class="form-group">
@@ -103,7 +103,7 @@
 									<div class="col-sm-8"><input type="text" class="form-control" name="manager" placeholder="${I18n.system_please_input}负责人" maxlength="50" ></div>
 								</div>
 								<div class="form-group">
-									<label  class="col-sm-2 control-label">生效状态<font color="red">*</font></label>
+									<label  class="col-sm-2 control-label"><font color="red">*</font>生效状态</label>
 									<div class="col-sm-8">
 										<#list orgStatuEnum as item>
 											<label class="radio-inline">
@@ -146,11 +146,11 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label  class="col-sm-2 control-label">组织名称<font color="red">*</font></label>
+									<label  class="col-sm-2 control-label"><font color="red">*</font>组织名称</label>
 									<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
 								</div>
 								<div class="form-group">
-									<label  class="col-sm-2 control-label">展示顺序<font color="red">*</font></label>
+									<label  class="col-sm-2 control-label"><font color="red">*</font>展示顺序</label>
 									<div class="col-sm-8"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
 								</div>
 								<div class="form-group">
@@ -158,7 +158,7 @@
 									<div class="col-sm-8"><input type="text" class="form-control" name="manager" placeholder="${I18n.system_please_input}负责人" maxlength="50" ></div>
 								</div>
 								<div class="form-group">
-									<label  class="col-sm-2 control-label">生效状态<font color="red">*</font></label>
+									<label  class="col-sm-2 control-label"><font color="red">*</font>生效状态</label>
 									<div class="col-sm-8">
 										<#list orgStatuEnum as item>
 											<label class="radio-inline">
@@ -229,17 +229,17 @@
 <script>
 $(function() {
 
+	// iCheck
+	$('#updateModal, #addModal').find('input').iCheck({
+		radioClass: 'iradio_square-blue',
+	});
+
 	// ---------- ---------- ---------- table + curd  ---------- ---------- ----------
 	// status map for table formatter
 	var statusMap = {};
 	<#list orgStatuEnum as item>
 	statusMap['${item.value}'] = '${item.desc}';
 	</#list>
-
-	// iCheck
-	$('#updateModal, #addModal').find('input').iCheck({
-		radioClass: 'iradio_square-blue',
-	});
 
 	/**
 	 * init table
@@ -325,7 +325,8 @@ $(function() {
 			// reset origin parent
 			initTree();
 			$("#addModal .form input[name=parentId]").val( 0 );
-			$("#addModal .form input[name='status'][value='0']").prop('checked', true).iCheck('update');
+			//$("#addModal .form input[name='status']").iCheck('uncheck');
+			$("#addModal .form input[name='status'][value='0']").iCheck('check');
 		},
 		readFormData: function() {
 			// request
@@ -352,7 +353,8 @@ $(function() {
 			$("#updateModal .form input[name=name]").val( row.name );
 			$("#updateModal .form input[name=order]").val( row.order );
 			$("#updateModal .form input[name=manager]").val( row.manager );
-			$("#updateModal .form input[name='status'][value='" + row.status + "']").prop('checked', true).iCheck('update');
+			//$("#updateModal .form input[name='status']").iCheck('uncheck');
+			$("#updateModal .form input[name='status'][value='" + row.status + "']").iCheck('check');
 
 			// 设置 tree 选中
 			initTree();
