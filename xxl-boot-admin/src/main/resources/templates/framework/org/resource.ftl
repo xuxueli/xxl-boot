@@ -1475,9 +1475,19 @@ $(function() {
 	}
 
 	// ---------- ---------- ---------- iconModal ---------- ---------- ----------
+
+	var iconSelectSource = 'addModal';
+
 	$('.showIcon').click(function (){
-		// show
+		var $modal = $(this).closest('.modal');
+		iconSelectSource = $modal.length > 0 ? $modal.attr('id') : 'addModal';
 		$('#iconModal').modal({backdrop: true, keyboard: false}).modal('show');
+	});
+
+	$('#iconModal .col-md-3').dblclick(function(){
+		var iconName = $(this).text().trim().split(/\s+/)[0];
+		$('#' + iconSelectSource).find('input[name="icon"]').val(iconName);
+		$('#iconModal').modal('hide');
 	});
 
 });
