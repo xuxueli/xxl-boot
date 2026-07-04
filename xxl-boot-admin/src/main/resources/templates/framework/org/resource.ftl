@@ -1202,7 +1202,7 @@ $(function() {
 					var result = "";
 					$('#addModal .form input[name="type"]').each(function(){
 						if ( value.toString() === $(this).val() ) {
-							result = $(this).parent().text().trim();
+							result = $(this).parent().parent().text().trim();
 						}
 					});
 					return result;
@@ -1231,7 +1231,7 @@ $(function() {
 					var result = "";
 					$('#addModal .form input[name="status"]').each(function(){
 						if ( value.toString() === $(this).val() ) {
-							result = $(this).parent().text().trim();
+							result = $(this).parent().parent().text().trim();
 						}
 					});
 					return result;

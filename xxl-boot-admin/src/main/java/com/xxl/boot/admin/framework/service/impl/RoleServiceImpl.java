@@ -9,6 +9,8 @@ import com.xxl.boot.admin.framework.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 */
 @Service
 public class RoleServiceImpl implements RoleService {
+	private static final Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 
 	@Resource
 	private RoleMapper roleMapper;
@@ -138,7 +141,7 @@ public class RoleServiceImpl implements RoleService {
 					.map(resId -> new XxlBootRoleRes(roleId, resId))
 					.collect(Collectors.toList());
 			int ret = roleResMapper.batchInsert(roleResList);
-			System.out.println(ret);
+			logger.info("updateRoleRes roleId:{}, resourceIds:{}, ret:{}", roleId, resourceIds, ret);
 		}
 
 		return Response.ofSuccess();
