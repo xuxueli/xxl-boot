@@ -28,7 +28,7 @@ public class RoleMapperTest {
 
     @Test
     public void pageTest() throws Exception {
-        PageModel<XxlBootRole> result = roleService.pageList(0, 100, null);
+        PageModel<XxlBootRole> result = roleService.pageList(0, 100, null, -1);
         Assertions.assertNotNull(result);
     }
 
@@ -36,6 +36,8 @@ public class RoleMapperTest {
     public void insertTest() throws Exception {
         XxlBootRole role = new XxlBootRole();
         role.setName("admin22");
+        role.setCode("admin22");
+        role.setStatus(0);
         role.setOrder(22);
 
         Response<String> result = roleService.insert(role);

@@ -43,7 +43,7 @@ public class UserController {
     @XxlSso(permission = "org:user")
     public String index(Model model) {
 
-        PageModel<XxlBootRole> pageModel = roleService.pageList(0, 999, null);
+        PageModel<XxlBootRole> pageModel = roleService.pageList(0, 999, null, -1);
         List<XxlBootOrg> orgTree = orgService.treeList(null, -1);
 
         model.addAttribute("roleList", pageModel.getData());

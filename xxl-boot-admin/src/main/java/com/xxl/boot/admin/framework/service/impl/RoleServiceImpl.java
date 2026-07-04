@@ -38,6 +38,12 @@ public class RoleServiceImpl implements RoleService {
 		if (xxlBootRole == null) {
 			return Response.ofFail("必要参数缺失");
         }
+		if (xxlBootRole.getName() == null || xxlBootRole.getName().trim().isEmpty()) {
+			return Response.ofFail(I18nUtil.getString("system_please_input") + I18nUtil.getString("role_name"));
+		}
+		if (xxlBootRole.getCode() == null || xxlBootRole.getCode().trim().isEmpty()) {
+			return Response.ofFail(I18nUtil.getString("system_please_input") + I18nUtil.getString("role_code"));
+		}
 
 		int ret = roleMapper.insert(xxlBootRole);
 		return Response.ofSuccess();
@@ -67,6 +73,12 @@ public class RoleServiceImpl implements RoleService {
 	*/
 	@Override
 	public Response<String> update(XxlBootRole xxlBootRole) {
+		if (xxlBootRole.getName() == null || xxlBootRole.getName().trim().isEmpty()) {
+			return Response.ofFail(I18nUtil.getString("system_please_input") + I18nUtil.getString("role_name"));
+		}
+		if (xxlBootRole.getCode() == null || xxlBootRole.getCode().trim().isEmpty()) {
+			return Response.ofFail(I18nUtil.getString("system_please_input") + I18nUtil.getString("role_code"));
+		}
 		int ret = roleMapper.update(xxlBootRole);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
@@ -84,10 +96,10 @@ public class RoleServiceImpl implements RoleService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<XxlBootRole> pageList(int offset, int pagesize, String name) {
+	public PageModel<XxlBootRole> pageList(int offset, int pagesize, String name, int status) {
 
-		List<XxlBootRole> pageList = roleMapper.pageList(offset, pagesize, name);
-		int totalCount = roleMapper.pageListCount(offset, pagesize, name);
+		List<XxlBootRole> pageList = roleMapper.pageList(offset, pagesize, name, status);
+		int totalCount = roleMapper.pageListCount(offset, pagesize, name, status);
 
 		// result
 		PageModel<XxlBootRole> pageModel = new PageModel<>();

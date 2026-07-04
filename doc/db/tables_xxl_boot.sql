@@ -41,6 +41,8 @@ CREATE TABLE `xxl_boot_role`
 (
     `id`            INT             NOT NULL AUTO_INCREMENT      COMMENT '角色ID',
     `name`          VARCHAR(50)     NOT NULL                     COMMENT '角色名称',
+    `code`          VARCHAR(50)     NOT NULL                     COMMENT '角色标识',
+    `status`        TINYINT         NOT NULL                     COMMENT '状态：0-正常、1-禁用',
     `order`         INT             NOT NULL                     COMMENT '顺序',
     `add_time`      DATETIME        NOT NULL                     COMMENT '新增时间',
     `update_time`   DATETIME        NOT NULL                     COMMENT '更新时间',
@@ -128,9 +130,9 @@ INSERT INTO `xxl_boot_user` (`id`, `username`, `password`, `token`, `status`, `r
 VALUES (1, 'admin', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '', 0, '吴彦祖', now(), now()),
        (2, 'user', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '', 0, '张三', now(), now());
 
-INSERT INTO `xxl_boot_role` (`id`, `name`, `order`, `add_time`, `update_time`)
-VALUES (1, '管理员', 1, now(), now()),
-       (2, '普通用户', 2, now(), now());
+INSERT INTO `xxl_boot_role` (`id`, `name`, `code`, `status`, `order`, `add_time`, `update_time`)
+VALUES (1, '管理员', 'admin', 0, 1, now(), now()),
+       (2, '普通用户', 'user', 0, 2, now(), now());
 
 INSERT INTO `xxl_boot_user_role` (`id`, `user_id`, `role_id`, `add_time`, `update_time`)
 VALUES (1, 1, 1, now(), now()),

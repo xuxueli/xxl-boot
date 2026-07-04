@@ -36,7 +36,7 @@ public interface RoleService {
     /**
     * 分页查询
     */
-    public PageModel<XxlBootRole> pageList(int offset, int pagesize, String name);
+    public PageModel<XxlBootRole> pageList(int offset, int pagesize, String name, int status);
 
     /**
      * 角色资源查询

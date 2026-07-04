@@ -39,14 +39,16 @@ public interface RoleMapper {
     */
 	public List<XxlBootRole> pageList(@Param("offset") int offset,
                                       @Param("pagesize") int pagesize,
-                                      @Param("name") String name);
+                                      @Param("name") String name,
+                                      @Param("status") int status);
 
     /**
     * 分页查询Count
     */
     public int pageListCount(@Param("offset") int offset,
                              @Param("pagesize") int pagesize,
-                             @Param("name") String name);
+                             @Param("name") String name,
+                             @Param("status") int status);
 
     List<XxlBootRole> queryByRoleIds(@Param("roleIds") List<Integer> roleIds);
 

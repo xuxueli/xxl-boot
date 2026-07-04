@@ -11,31 +11,19 @@ import java.util.Date;
 public class XxlBootRoleDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    /**
-    * 角色ID
-    */
     private int id;
 
-    /**
-    * 角色名称
-    */
     private String name;
 
-    /**
-    * 排序
-    */
+    private String code;
+
+    private int status;
+
     private int order;
 
-    /**
-    * 新增时间
-    */
     private Date addTime;
 
-    /**
-    * 更新时间
-    */
     private Date updateTime;
-
 
     public int getId() {
         return id;
@@ -51,6 +39,22 @@ public class XxlBootRoleDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public int getOrder() {

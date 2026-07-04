@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.framework.controller.org;
 
-import com.xxl.boot.admin.framework.constant.enums.UserStatuEnum;
+import com.xxl.boot.admin.framework.constant.enums.RoleStatusEnum;
 import com.xxl.boot.admin.framework.model.entity.XxlBootRole;
 import com.xxl.boot.admin.framework.service.RoleService;
 import com.xxl.sso.core.annotation.XxlSso;
@@ -33,7 +33,7 @@ public class RoleController {
     public String index(Model model) {
 
         /*PageModel<XxlBootRole> pageModel = roleService.pageList(0, 100);*/
-        model.addAttribute("userStatuEnum", UserStatuEnum.values());
+        model.addAttribute("roleStatusEnum", RoleStatusEnum.values());
 
         return "/framework/org/role";
     }
@@ -46,8 +46,9 @@ public class RoleController {
     @XxlSso(permission = "org:role")
     public Response<PageModel<XxlBootRole>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                     String name) {
-        PageModel<XxlBootRole> pageModel = roleService.pageList(offset, pagesize, name);
+                                                     String name,
+                                                     @RequestParam(required = false, defaultValue = "-1") int status) {
+        PageModel<XxlBootRole> pageModel = roleService.pageList(offset, pagesize, name, status);
         return Response.ofSuccess(pageModel);
     }
 
