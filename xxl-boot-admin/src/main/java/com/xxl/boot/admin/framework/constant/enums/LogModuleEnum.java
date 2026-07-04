@@ -2,18 +2,28 @@ package com.xxl.boot.admin.framework.constant.enums;
 
 public enum LogModuleEnum {
 
+    // ---------------------- OPT_LOG ----------------------
+
     // 组织
-    USER_MANAGE("用户管理"),
-    ROLE_MANAGE("角色管理"),
-    RES_MANAGE("资源日志"),
-    ORG_MANAGE("组织管理"),
+    USER("用户管理"),
+    ROLE("角色管理"),
+    RESOURCE("资源管理"),
+    ORGANIZATION("组织管理"),
+
+    // 系统
+    MESSAGE("消息管理"),
+    DICT("字典管理"),
+    CONFIG("参数管理"),
+
+    // 工具
     CODE_GEN("代码生成"),
+    PAGE_GEN("表单构建"),
 
-    // 系统工具
-    SYS_LOGIN("系统登陆"),
 
-    // 登陆
-    LOGIN("登陆注销");
+    // ---------------------- LOGIN_LOG ----------------------
+
+    LOGIN("系统登录"),
+    LOGOUT("注销登录"),;
 
     private String code;
     private String desc;
