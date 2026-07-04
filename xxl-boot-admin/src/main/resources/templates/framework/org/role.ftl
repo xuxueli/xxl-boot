@@ -8,6 +8,7 @@
 	<@netCommon.commonStyle />
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/zTree/css/metroStyle/metroStyle.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/iCheck/square/blue.css">
 	<!-- 1-style end -->
 
 </head>
@@ -25,6 +26,17 @@
 						<div class="input-group">
 							<span class="input-group-addon">${I18n.role_tips}${I18n.role_name}</span>
 							<input type="text" class="form-control name" autocomplete="on" >
+						</div>
+					</div>
+					<div class="col-xs-3">
+						<div class="input-group">
+							<span class="input-group-addon">${I18n.role_tips}${I18n.role_status}</span>
+							<select class="form-control status" >
+								<option value="">${I18n.system_all}</option>
+								<#list roleStatusEnum as enum>
+									<option value="${enum.status}">${enum.desc}</option>
+								</#list>
+							</select>
 						</div>
 					</div>
 					<div class="col-xs-1">
@@ -101,8 +113,22 @@
 								<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">${I18n.role_tips}${I18n.role_order}<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
+								<label for="lastname" class="col-sm-2 control-label">${I18n.role_tips}${I18n.role_code}<font color="red">*</font></label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="code" placeholder="${I18n.system_please_input}${I18n.role_code}" maxlength="50" ></div>
+							</div>
+							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">${I18n.role_order}<font color="red">*</font></label>
+								<div class="col-sm-4"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
+							</div>
+							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">${I18n.role_tips}${I18n.role_status}<font color="red">*</font></label>
+								<div class="col-sm-8">
+									<#list roleStatusEnum as enum>
+										<span class="col-sm-4" style="padding-left: 0px;" >
+											<input type="radio" name="status" value="${enum.status}" > ${enum.desc}
+										</span>
+									</#list>
+								</div>
 							</div>
 
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -132,8 +158,22 @@
 								<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">${I18n.role_tips}${I18n.role_order}<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
+								<label for="lastname" class="col-sm-2 control-label">${I18n.role_tips}${I18n.role_code}<font color="red">*</font></label>
+								<div class="col-sm-8"><input type="text" class="form-control" name="code" placeholder="${I18n.system_please_input}${I18n.role_code}" maxlength="50" ></div>
+							</div>
+							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">${I18n.role_order}<font color="red">*</font></label>
+								<div class="col-sm-4"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
+							</div>
+							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">${I18n.role_tips}${I18n.role_status}<font color="red">*</font></label>
+								<div class="col-sm-8">
+									<#list roleStatusEnum as enum>
+										<span class="col-sm-4" style="padding-left: 0px;" >
+											<input type="radio" name="status" value="${enum.status}" > ${enum.desc}
+										</span>
+									</#list>
+								</div>
 							</div>
 
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -161,9 +201,15 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.core.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.excheck.js"></script>
+<script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
 <#-- admin table -->
 <script src="${request.contextPath}/static/framework/admin.table.js"></script>
 <script>
+var statusMap = {
+	<#list roleStatusEnum as enum>
+	${enum.status}: '${enum.desc}'<#sep>,</#sep>
+	</#list>
+};
 $(function() {
 
 	// ---------- ---------- ---------- table + curd  ---------- ---------- ----------
@@ -177,6 +223,7 @@ $(function() {
 		queryParams: function (params) {
 			var obj = {};
 			obj.name = $('#data_filter .name').val();
+			obj.status = $('#data_filter .status').val();
 			obj.offset = params.offset;
 			obj.pagesize = params.limit;
 			return obj;
@@ -192,13 +239,34 @@ $(function() {
 			}, {
 				title: I18n.role_tips + I18n.role_name,
 				field: 'name',
-				width: '40',
+				width: '25',
 				widthUnit: '%',
 				align: 'left'
 			},{
+				title: I18n.role_tips + I18n.role_code,
+				field: 'code',
+				width: '20',
+				widthUnit: '%',
+				align: 'left'
+			},{
+				title: I18n.role_tips + I18n.role_status,
+				field: 'status',
+				width: '15',
+				widthUnit: '%',
+				align: 'left',
+				formatter: function(value) {
+					var result = "";
+					$('#data_filter .status option').each(function(){
+						if ( value.toString() === $(this).val() ) {
+							result = $(this).text();
+						}
+					});
+					return result;
+				}
+			},{
 				title: I18n.role_tips + I18n.role_order,
 				field: 'order',
-				width: '30',
+				width: '15',
 				widthUnit: '%',
 				align: 'left'
 			}
@@ -218,10 +286,17 @@ $(function() {
 	 */
 	$.adminTable.initAdd( {
 		url: base_url + "/org/role/insert",
+		writeFormData: function() {
+			$('#addModal .form input[name="status"][value="0"]').iCheck('check');
+		},
 		rules : {
 			name : {
 				required : true,
 				rangelength:[2, 20]
+			},
+			code : {
+				required : true,
+				rangelength:[2, 50]
 			},
 			order : {
 				required : true,
@@ -233,6 +308,10 @@ $(function() {
 				required : I18n.system_please_input + I18n.role_name,
 				rangelength: I18n.system_lengh_limit + "[2-10]"
 			},
+			code : {
+				required : I18n.system_please_input + I18n.role_code,
+				rangelength: I18n.system_lengh_limit + "[2-50]"
+			},
 			order : {
 				required : I18n.system_please_input + I18n.role_order,
 				digits: I18n.role_order_valid
@@ -242,6 +321,8 @@ $(function() {
 			// request
 			return {
 				"name": $("#addModal .form input[name=name]").val(),
+				"code": $("#addModal .form input[name=code]").val(),
+				"status": $("#addModal .form input[name='status']:checked").val(),
 				"order": $("#addModal .form input[name=order]").val()
 			};
 		}
@@ -256,12 +337,18 @@ $(function() {
 			// base data
 			$("#updateModal .form input[name='id']").val( row.id );
 			$("#updateModal .form input[name='name']").val( row.name );
+			$("#updateModal .form input[name='code']").val( row.code );
+			$("#updateModal .form input[name='status'][value='" + row.status + "']").iCheck('check');
 			$("#updateModal .form input[name='order']").val( row.order );
 		},
 		rules : {
 			name : {
 				required : true,
 				rangelength:[2, 20]
+			},
+			code : {
+				required : true,
+				rangelength:[2, 50]
 			},
 			order : {
 				required : true,
@@ -273,6 +360,10 @@ $(function() {
 				required : I18n.system_please_input + I18n.role_name,
 				rangelength: I18n.system_lengh_limit + "[2-10]"
 			},
+			code : {
+				required : I18n.system_please_input + I18n.role_code,
+				rangelength: I18n.system_lengh_limit + "[2-50]"
+			},
 			order : {
 				required : I18n.system_please_input + I18n.role_order,
 				digits: I18n.role_order_valid
@@ -283,6 +374,8 @@ $(function() {
 			return {
 				"id": $("#updateModal .form input[name=id]").val(),
 				"name": $("#updateModal .form input[name=name]").val(),
+				"code": $("#updateModal .form input[name=code]").val(),
+				"status": $("#updateModal .form input[name='status']:checked").val(),
 				"order": $("#updateModal .form input[name=order]").val()
 			};
 		}
@@ -371,6 +464,14 @@ $(function() {
 			}
 		});
 
+	});
+
+	// ---------- ---------- ---------- iCheck ---------- ---------- ----------
+
+	// input iCheck
+	$('#updateModal, #addModal').find('input').iCheck({
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue',
 	});
 
 	// ———————————— ztree
