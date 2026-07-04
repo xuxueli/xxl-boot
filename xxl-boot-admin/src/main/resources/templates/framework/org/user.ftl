@@ -116,20 +116,21 @@
 								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_staus}</label>
 								<div class="col-sm-8">
 									<#list userStatuEnum as item>
-										<label class="radio-inline">
+										<span class="col-sm-4" style="padding-left: 0px;" >
 											<input type="radio" name="status" value="${item.status}" > ${item.desc}
-										</label>
+										</span>
 									</#list>
 								</div>
 							</div>
 
-							<br>
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>分配角色</label>
 								<div class="col-sm-8">
 									<#if roleList?? && roleList?size gt 0>
 									<#list roleList as role>
-										<span class="col-sm-4" style="padding-left: 0px;" ><input type="checkbox"  name="roleId" value="${role.id}"> ${role.name}</span>
+										<span class="col-sm-4" style="padding-left: 0px;" >
+											<input type="checkbox"  name="roleId" value="${role.id}"> ${role.name}
+										</span>
 									</#list>
 									</#if>
 								</div>
@@ -185,20 +186,21 @@
 								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_staus}</label>
 								<div class="col-sm-8">
 									<#list userStatuEnum as item>
-										<label class="radio-inline">
+										<span class="col-sm-4" style="padding-left: 0px;" >
 											<input type="radio" name="status" value="${item.status}" > ${item.desc}
-										</label>
+										</span>
 									</#list>
 								</div>
 							</div>
 
-							<br>
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>分配角色</label>
 								<div class="col-sm-8">
 									<#if roleList?? && roleList?size gt 0>
 										<#list roleList as role>
-											<span class="col-sm-4" style="padding-left: 0px;" ><input type="checkbox"  name="roleId" value="${role.id}"> ${role.name}</span>
+											<span class="col-sm-4" style="padding-left: 0px;" >
+												<input type="checkbox"  name="roleId" value="${role.id}"> ${role.name}
+											</span>
 										</#list>
 									</#if>
 								</div>
