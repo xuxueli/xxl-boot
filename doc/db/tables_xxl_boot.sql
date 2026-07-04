@@ -24,7 +24,7 @@ CREATE TABLE `xxl_boot_org`
 CREATE TABLE `xxl_boot_user`
 (
     `id`            INT             NOT NULL AUTO_INCREMENT      COMMENT '用户ID',
-    `org_id`        INT             NOT NULL                     COMMENT '组织ID',
+    `org_id`        INT             DEFAULT 0                    COMMENT '组织ID',
     `username`      VARCHAR(50)     NOT NULL                     COMMENT '账号',
     `password`      VARCHAR(100)    NOT NULL                     COMMENT '密码加密信息',
     `token`         VARCHAR(100)    DEFAULT NULL                 COMMENT '登录token',
@@ -126,9 +126,9 @@ CREATE TABLE `xxl_boot_message`
 
 START TRANSACTION;
 
-INSERT INTO `xxl_boot_user` (`id`, `username`, `password`, `token`, `status`, `real_name`, `add_time`, `update_time`)
-VALUES (1, 'admin', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '', 0, '吴彦祖', now(), now()),
-       (2, 'user', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '', 0, '张三', now(), now());
+INSERT INTO `xxl_boot_user` (`id`, `org_id`, `username`, `password`, `token`, `status`, `real_name`, `add_time`, `update_time`)
+VALUES (1, 0, 'admin', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '', 0, '吴彦祖', now(), now()),
+       (2, 0, 'user', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', '', 0, '张三', now(), now());
 
 INSERT INTO `xxl_boot_role` (`id`, `name`, `code`, `status`, `order`, `add_time`, `update_time`)
 VALUES (1, '管理员', 'admin', 0, 1, now(), now()),
@@ -146,11 +146,14 @@ VALUES (1, 0, '首页', 1, 'dashboard', '/dashboard', 'fa fa-home', 100, 0, now(
        (5, 2, '资源管理', 1, 'org:resource', '/org/resource', '', 903, 0, now(), now()),
        (6, 2, '组织管理', 1, 'org:org', '/org/org', '', 904, 0, now(), now()),
        (7, 0, '系统管理', 0, 'system', '/system', 'fa-cogs', 910, 0, now(), now()),
-       (8, 7, '通知管理', 1, 'system:message', '/system/message', 'fa-cogs', 911, 0, now(), now()),
-       (9, 7, '审计日志', 1, 'system:log', '/system/log', 'fa-cogs', 912, 0, now(), now()),
-       (10, 0, '系统工具', 0, 'tool', '/tool', 'fa-wrench', 920, 0, now(), now()),
-       (11, 10, '代码生成', 1, 'tool:codegen', '/tool/codegen', '', 921, 0, now(), now()),
-       (12, 0, '帮助中心', 1, 'help', '/help', 'fa-book', 930, 0, now(), now());
+       (8, 7, '通知管理', 1, 'system:message', '/system/message', '', 911, 0, now(), now()),
+       (9, 7, '字典管理', 1, 'system:dict', '/system/dict', '', 912, 0, now(), now()),
+       (10, 7, '参数管理', 1, 'system:config', '/system/config', '', 913, 0, now(), now()),
+       (11, 7, '审计日志', 1, 'system:log', '/system/log', '', 914, 0, now(), now()),
+       (12, 0, '系统工具', 0, 'tool', '/tool', 'fa-wrench', 920, 0, now(), now()),
+       (13, 12, '代码生成', 1, 'tool:codegen', '/tool/codegen', '', 921, 0, now(), now()),
+       (14, 12, '表单构建', 1, 'tool:pagegen', '/tool/pagegen', '', 922, 0, now(), now()),
+       (15, 0, '帮助中心', 1, 'help', '/help', 'fa-book', 930, 0, now(), now());
 
 INSERT INTO `xxl_boot_role_res` (`id`, `role_id`, `res_id`, `add_time`, `update_time`)
 VALUES (1, 1, 1, now(), now()),
@@ -165,10 +168,14 @@ VALUES (1, 1, 1, now(), now()),
        (10, 1, 10, now(), now()),
        (11, 1, 11, now(), now()),
        (12, 1, 12, now(), now()),
-       (13, 2, 1, now(), now()),
-       (14, 2, 10, now(), now()),
-       (15, 2, 11, now(), now()),
-       (16, 2, 12, now(), now());
+       (13, 1, 13, now(), now()),
+       (14, 1, 14, now(), now()),
+       (15, 1, 15, now(), now()),
+       (16, 2, 1, now(), now()),
+       (17, 2, 12, now(), now()),
+       (18, 2, 13, now(), now()),
+       (19, 2, 14, now(), now()),
+       (20, 2, 15, now(), now());
 
 INSERT INTO `xxl_boot_message` (`category`, `title`, `content`, `sender`, `status`, `add_time`, `update_time`)
 VALUES (0, 'XXL-BOOT | 快速开发平台', '<p><strong>XXL-BOOT </strong>是一个快速开发平台，易学易用、灵活扩展、开箱即用。内置安全登录、权限管控、端到端代码生成、响应式布局、多语言、通告触达&hellip;&hellip;等能力。整合前后端流行技术，致力为 中小企业、个人开发者 打造开箱即用的中后台解决方案。</p>', 'admin', 0, now(), now()),
