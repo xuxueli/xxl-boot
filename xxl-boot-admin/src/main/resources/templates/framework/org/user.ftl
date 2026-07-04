@@ -340,13 +340,16 @@ $(function() {
 				widthUnit: '%',
 				align: 'left',
 				formatter: function(value) {
-					var result = "";
+					// status text
+					var text = "";
 					$('#data_filter .status option').each(function(){
 						if ( value.toString() === $(this).val() ) {
-							result = $(this).text();
+							text = $(this).text();
 						}
 					});
-					return result;
+					// status badge class
+					var badgeClass = value === 0 ? 'label-success' : 'label-warning';
+					return '<span class="label ' + badgeClass + '">' + text + '</span>';
 				}
 			}
 		]
