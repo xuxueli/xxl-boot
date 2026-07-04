@@ -1,13 +1,14 @@
 
 
 1、admin 重构：
-    - 系统管理：
-        - 参数管理：config
     - 系统工具：
-        - 代码生成：丰富化，package、auther 等；
+        - 代码生成：
+            - 属性：
+                - Package路径：【com.xxx】controller/service/mapper/model-entity;;
+                - Mybatis路径：mapper/【xxx】;;】  
+                - 模板路径：/templates/【XX】 
+                - author：
         - 表单构建（ui-build）：纯前端
-        
-
 2、api 重构：
     - 登录相关：Login、用户信息管理、验证码；
     - 菜单权限：菜单查询、权限/角色列表；
