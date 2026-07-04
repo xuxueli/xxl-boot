@@ -61,13 +61,13 @@
                         <hr>
                         <strong><i class="fa fa-cogs margin-r-5"></i>系统管理</strong>
                         <p class="text-muted">
-                            提供通知触达、审计日志、系统监控……等相关能力，支持高校灵活进行系统监控及管理。
+                            提供站内消息、审计日志、字典管理、审计日志等相关能力，支持高校灵活进行系统监控及管理。
                         </p>
 
                         <hr>
                         <strong><i class="fa fa-wrench margin-r-5"></i>系统工具</strong>
                         <p class="text-muted">
-                            提供Entity、业务代码、SQL、页面交互等……前后端一站式代码生成工具，辅助快速进行敏捷迭代开发。
+                            提供前后端一站式代码生成工具、前端表单在线构建工具等，辅助快速进行敏捷迭代开发。
                         </p>
 
                         <hr>
@@ -79,11 +79,11 @@
                 </div>
             </div>
 
-            <#-- 通知消息 -->
+            <#-- 站内消息 -->
             <div class="col-md-4">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">通知消息</h3>
+                        <h3 class="box-title">站内消息</h3>
                     </div>
                     <div class="box-body" id="messageList">
                         <ul class="products-list product-list-in-box">
@@ -91,7 +91,11 @@
                             <#list messageList as item>
                                 <li class="item">
                                     <div class="product-info" style="margin-left: 10px;">
-                                            <a href="javascript:void(0)" class="product-title showdetail" data-title="${item.title}" data-content="${item.content?html}" data-addTime="${item.addTime}" >
+                                            <a href="javascript:void(0)" class="product-title showdetail"
+                                               data-title="${item.title}"
+                                               data-content="${item.content?html}"
+                                               data-sender="${item.sender}"
+                                               data-addTime="${item.addTime}" >
                                                 ${item.title}
                                                 <span class="label label-info pull-right">${item.sender}</span></a>
                                             </a>
@@ -110,26 +114,23 @@
         </div>
         <!-- 个人信息区域 end -->
 
-        <!-- 查看通知.模态框 start -->
+        <!-- 查看 站内消息.模态框 start -->
         <div class="modal fade" id="showMessageModal" tabindex="-1" role="dialog"  aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" >查看通知</h4>
+                        <h4 class="modal-title title" >查看站内消息</h4>
                     </div>
                     <div class="modal-body">
                         <form class="form-horizontal form" role="form" >
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">通知标题：</label>
-                                <div class="col-sm-10 title" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">发布时间：</label>
-                                <div class="col-sm-8 addTime" ></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">通知正文：</label>
-                                <div class="col-sm-8 content" style="overflow: hidden;" ></div>
+                                <div class="col-sm-12" style="overflow: hidden;padding: 0 30px 0 30px;" >
+                                    <div style="color: grey;">
+                                        <span class="sender"></span>: <span class="addTime"></span>
+                                    </div>
+                                    <br>
+                                    <div class="content2"></div>
+                                </div>
                             </div>
 
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
@@ -143,7 +144,7 @@
                 </div>
             </div>
         </div>
-        <!-- 查看通知.模态框 end -->
+        <!-- 查看 站内消息.模态框 end -->
 
         <#-- 2-biz end -->
 
@@ -157,15 +158,11 @@ $(function () {
 
     $("#messageList").on('click', '.showdetail',function() {
 
-        // data
-        let title = $(this).attr('data-title');
-        let content = $(this).attr('data-content');
-        let addTime = $(this).attr('data-addTime');
-
         // fill
-        $('#showMessageModal .title').text( title );
-        $('#showMessageModal .content').html( content );
-        $('#showMessageModal .addTime').text( addTime );
+        $('#showMessageModal .title').text( $(this).attr('data-title') );
+        $('#showMessageModal .content2').html( $(this).attr('data-content') );
+        $('#showMessageModal .sender').text( $(this).attr('data-sender') );
+        $('#showMessageModal .addTime').text( $(this).attr('data-addTime') );
 
         // show
         $('#showMessageModal').modal({backdrop: false, keyboard: false}).modal('show');

@@ -146,7 +146,7 @@ VALUES (1, 0, '首页', 1, 'dashboard', '/dashboard', 'fa fa-home', 100, 0, now(
        (5, 2, '资源管理', 1, 'org:resource', '/org/resource', '', 903, 0, now(), now()),
        (6, 2, '组织管理', 1, 'org:org', '/org/org', '', 904, 0, now(), now()),
        (7, 0, '系统管理', 0, 'system', '/system', 'fa-cogs', 910, 0, now(), now()),
-       (8, 7, '通知管理', 1, 'system:message', '/system/message', '', 911, 0, now(), now()),
+       (8, 7, '站内消息', 1, 'system:message', '/system/message', '', 911, 0, now(), now()),
        (9, 7, '字典管理', 1, 'system:dict', '/system/dict', '', 912, 0, now(), now()),
        (10, 7, '参数管理', 1, 'system:config', '/system/config', '', 913, 0, now(), now()),
        (11, 7, '审计日志', 1, 'system:log', '/system/log', '', 914, 0, now(), now()),

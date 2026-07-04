@@ -83,12 +83,12 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" >新增通知</h4>
+                            <h4 class="modal-title" >新增</h4>
                         </div>
                         <div class="modal-body">
                             <form class="form-horizontal form" role="form" >
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知分类<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-2 control-label">分类<font color="red">*</font></label>
                                     <div class="col-sm-4">
                                         <select class="form-control" name="category" >
                                             <#list MessageCategoryEnum as item>
@@ -98,7 +98,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知状态<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-2 control-label">状态<font color="red">*</font></label>
                                     <div class="col-sm-4">
                                         <select class="form-control" name="status" >
                                             <#list MessageStatusEnum as item>
@@ -108,11 +108,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知标题<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-2 control-label">标题<font color="red">*</font></label>
                                     <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="50" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知正文<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-2 control-label">正文<font color="red">*</font></label>
                                     <div class="col-sm-10">
                                         <textarea id="add_content" name="content" rows="10" cols="80"></textarea>
                                     </div>
@@ -137,12 +137,12 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" >更新通知</h4>
+                            <h4 class="modal-title" >更新</h4>
                         </div>
                         <div class="modal-body">
                             <form class="form-horizontal form" role="form" >
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知分类<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-2 control-label">分类<font color="red">*</font></label>
                                     <div class="col-sm-4">
                                         <select class="form-control" name="category" >
                                             <#list MessageCategoryEnum as item>
@@ -152,7 +152,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知状态<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-2 control-label">状态<font color="red">*</font></label>
                                     <div class="col-sm-4">
                                         <select class="form-control" name="status" >
                                             <#list MessageStatusEnum as item>
@@ -162,11 +162,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知标题<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-2 control-label">标题<font color="red">*</font></label>
                                     <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="50" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">通知正文<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-2 control-label">正文<font color="red">*</font></label>
                                     <div class="col-sm-10">
                                         <textarea id="update_content" name="content" rows="10" cols="80"></textarea>
                                     </div>
@@ -224,7 +224,7 @@ $(function() {
                 width: '5',
                 widthUnit: '%'
             }, {
-                title: '通知分类',
+                title: '分类',
                 field: 'category',
                 width: '15',
                 widthUnit: '%',
@@ -238,7 +238,7 @@ $(function() {
                     return result;
                 }
             }, {
-                title: '通知标题',
+                title: '标题',
                 field: 'title',
                 width: '35',
                 widthUnit: '%'
@@ -293,7 +293,7 @@ $(function() {
         },
         messages : {
             title : {
-                required : "请输入通知标题",
+                required : "请输入标题",
                 rangelength: I18n.system_lengh_limit + "[4-20]"
             }
         },
@@ -344,7 +344,7 @@ $(function() {
         },
         messages : {
             title : {
-                required : "请输入通知标题",
+                required : "请输入标题",
                 rangelength: I18n.system_lengh_limit + "[4-20]"
             }
         },
@@ -355,7 +355,7 @@ $(function() {
             if (!contentWithHTML) {
                 layer.open({title: I18n.system_tips ,
                     btn: [ I18n.system_ok ],
-                    content: "请输入通知正文",
+                    content: "请输入正文",
                     icon: '2'
                 });
                 return;

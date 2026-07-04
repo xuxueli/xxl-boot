@@ -17,7 +17,7 @@ public class XxlBootMessageDTO implements Serializable {
     private long id;
 
     /**
-    * 消息分类（如 通知、新闻 ）
+    * 分类（如 临时通知、正式公告 ）
     */
     private int category;
 

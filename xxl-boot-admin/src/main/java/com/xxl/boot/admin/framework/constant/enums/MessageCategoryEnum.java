@@ -2,8 +2,8 @@ package com.xxl.boot.admin.framework.constant.enums;
 
 public enum MessageCategoryEnum {
 
-    NOTIFICATION(0, "通知"),
-    NEWS(1, "新闻");
+    NOTICE(0, "通知"),
+    ANNOUNCEMENT(1, "公告");
 
     private int value;
     private String desc;

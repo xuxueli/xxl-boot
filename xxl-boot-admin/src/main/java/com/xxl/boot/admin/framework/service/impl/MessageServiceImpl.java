@@ -35,7 +35,7 @@ public class MessageServiceImpl implements MessageService {
 			return Response.ofFail("必要参数缺失");
         }
 		if (StringTool.isBlank(xxlBootMessage.getContent())){
-			return Response.ofFail("请输入通知正文");
+			return Response.ofFail("请输入正文内容");
 		}
 		xxlBootMessage.setSender(optUserName);
 
