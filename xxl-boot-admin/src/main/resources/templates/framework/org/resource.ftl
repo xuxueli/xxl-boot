@@ -82,7 +82,7 @@
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
 								<label class="col-sm-2 control-label">父资源<font color="red">*</font></label>
-								<div class="col-sm-10">
+								<div class="col-sm-6">
 									<div class="input-group">
 										<input type="text" class="form-control" name="parentName" readonly value="根资源" >
 										<input type="hidden" name="parentId" value="0" >
@@ -94,7 +94,7 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label">资源类型<font color="red">*</font></label>
-								<div class="col-sm-10">
+								<div class="col-sm-6">
 									<#list resourceTypeEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;">
 											<input type="radio" name="type" value="${item.value}" > ${item.desc}
@@ -114,7 +114,7 @@
 							</div>
 							<div class="form-group">
 								<label for="lastname" class="col-sm-2 control-label">图标</label>
-								<div class="col-sm-10">
+								<div class="col-sm-6">
 									<div class="input-group">
 										<input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" >
 										<span class="input-group-btn">
@@ -160,7 +160,7 @@
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
 								<label class="col-sm-2 control-label">父资源<font color="red">*</font></label>
-								<div class="col-sm-10">
+								<div class="col-sm-6">
 									<div class="input-group">
 										<input type="text" class="form-control" name="parentName" readonly value="根资源" >
 										<input type="hidden" name="parentId" value="0" >
@@ -172,7 +172,7 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label">资源类型<font color="red">*</font></label>
-								<div class="col-sm-10">
+								<div class="col-sm-6">
 									<#list resourceTypeEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;">
 											<input type="radio" name="type" value="${item.value}" > ${item.desc}
@@ -192,7 +192,7 @@
 							</div>
 							<div class="form-group">
 								<label for="lastname" class="col-sm-2 control-label">图标</label>
-								<div class="col-sm-10">
+								<div class="col-sm-6">
 									<div class="input-group">
 										<input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" >
 										<span class="input-group-btn">
@@ -247,6 +247,7 @@
 							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
 								<div style="margin-top: 10px;" >
 									<button type="button" class="btn btn-primary choose"  >${I18n.system_ok}</button>
+									<button type="button" class="btn btn-default treeClear"  >清除</button>
 									<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
 								</div>
 							</div>
@@ -1392,61 +1393,23 @@ $(function() {
 	// ---------- ---------- ---------- parent resource choose ---------- ---------- ----------
 
 	/**
-	 * open parent-treeModal
+	 * parent select source, default is addModal
 	 */
-	$(".selectParent").click(function(){
-		$('#treeModal').modal({backdrop: false, keyboard: false}).modal('show');
-	});
+	var parentSelectSource = 'addModal';
 
 	/**
-	 * choose parent-treeModal
+	 * zTree instance
 	 */
-	$('#treeModal .choose').click(function(){
-
-		// valid choose
-		if (zTreeObj.getSelectedNodes().length < 1) {
-			layer.msg( I18n.system_please_choose + I18n.resource_parent );
-			return;
-		}
-
-		// fill choose data, todo-
-		$("#addModal .form input[name=parentId]").val( zTreeObj.getSelectedNodes()[0].id );
-		$("#addModal .form input[name=parentName]").val( zTreeObj.getSelectedNodes()[0].name );
-
-		$("#updateModal .form input[name=parentId]").val( zTreeObj.getSelectedNodes()[0].id );
-		$("#updateModal .form input[name=parentName]").val( zTreeObj.getSelectedNodes()[0].name );
-
-		$('#treeModal').modal('hide');
-	});
+	var zTreeObj;
 
 	/**
 	 * parent resource tree
 	 */
-	var zTreeObj;
 	function initTree(){
 		var setting = {
-			view: {
-				dblClickExpand: false,
-				showLine: true,
-				selectedMulti: false
-			},
-			data: {
-				simpleData: {
-					enable: true,
-					idKey: "id",
-					pIdKey: "parentId",
-					rootPId: "0"
-				}
-			}
+			view: { dblClickExpand: false, showLine: true, selectedMulti: false },
+			data: { simpleData: { enable: true, idKey: "id", pIdKey: "parentId", rootPId: "0" } }
 		};
-		/*var zNodes = [
-			{id: 1, pId: 0, name: "资源A", open: true},
-			{id: 5, pId: 1, name: "资源A1"},
-			{id: 2, pId: 0, name: "资源B", open: false},
-			{id: 11, pId: 2, name: "资源B2"}
-		];*/
-
-		// post
 		$.ajax({
 			type : 'POST',
 			url : base_url + "/org/resource/simpleTreeList",
@@ -1464,6 +1427,51 @@ $(function() {
 				}
 			}
 		});
+	}
+
+	/**
+	 * open parent-treeModal
+	 */
+	$(".selectParent").click(function(){
+		var $modal = $(this).closest('.modal');
+		openParentTree($modal.length > 0 ? $modal.attr('id') : 'addModal');
+	});
+
+	function openParentTree(source) {
+		parentSelectSource = source;
+		initTree();
+		$('#treeModal').modal({backdrop: false, keyboard: false}).modal('show');
+	}
+
+	/**
+	 * choose parent-treeModal
+	 */
+	$('#treeModal .choose').click(function(){
+		if (!zTreeObj || zTreeObj.getSelectedNodes().length < 1) {
+			layer.msg( I18n.system_please_choose + I18n.resource_parent );
+			return;
+		}
+		var selNode = zTreeObj.getSelectedNodes()[0];
+		setParentData(selNode.name, selNode.id);
+		$('#treeModal').modal('hide');
+	});
+
+	/**
+	 * clear parent-treeModal
+	 */
+	$('#treeModal .treeClear').click(function(){
+		setParentData('根资源', 0);
+		if (zTreeObj) {
+			zTreeObj.cancelSelectedNode();
+		}
+		$('#treeModal').modal('hide');
+	});
+
+	/** fill parent data by current source */
+	function setParentData(parentName, parentId) {
+		var selector = '#' + parentSelectSource;
+		$(selector).find('input[name="parentName"]').val(parentName);
+		$(selector).find('input[name="parentId"]').val(parentId);
 	}
 
 	// ---------- ---------- ---------- iconModal ---------- ---------- ----------
