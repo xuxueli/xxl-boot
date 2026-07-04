@@ -106,7 +106,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>资源名称</label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>名称</label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
 								<label class="col-sm-2 control-label"><font color="red">*</font>权限标识</label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="permission" placeholder="${I18n.system_please_input}权限标识" maxlength="50" ></div>
@@ -121,7 +121,7 @@
 									<div class="input-group">
 										<input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" >
 										<span class="input-group-btn">
-											<a href="javascript:void(0);" class="btn btn-default showIcon" style="color: gray;">更多图标</a>
+											<a href="javascript:void(0);" class="btn btn-default showIcon" style="color: gray;">选择图标</a>
 										</span>
 									</div>
 								</div>
@@ -184,7 +184,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>资源名称</label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>名称</label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
 								<label class="col-sm-2 control-label"><font color="red">*</font>权限标识</label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="permission" placeholder="${I18n.system_please_input}权限标识" maxlength="50" ></div>
@@ -199,7 +199,7 @@
 									<div class="input-group">
 										<input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" >
 										<span class="input-group-btn">
-											<a href="javascript:void(0);" class="btn btn-default showIcon" style="color: gray;">更多图标</a>
+											<a href="javascript:void(0);" class="btn btn-default showIcon" style="color: gray;">选择图标</a>
 										</span>
 									</div>
 								</div>
