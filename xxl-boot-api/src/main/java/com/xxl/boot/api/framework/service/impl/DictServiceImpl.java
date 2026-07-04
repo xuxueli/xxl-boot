@@ -37,6 +37,9 @@ public class DictServiceImpl implements DictService {
         if (StringTool.isBlank(xxlBootDict.getCode())) {
             return Response.ofFail("请输入字典标识");
         }
+        if (!xxlBootDict.getCode().matches("^[a-zA-Z0-9_]+$")) {
+            return Response.ofFail("字典标识只允许字母、数字和下划线");
+        }
         dictMapper.insert(xxlBootDict);
         return Response.ofSuccess();
     }
@@ -50,6 +53,9 @@ public class DictServiceImpl implements DictService {
 
     @Override
     public Response<String> update(XxlBootDict xxlBootDict) {
+        if (StringTool.isNotBlank(xxlBootDict.getCode()) && !xxlBootDict.getCode().matches("^[a-zA-Z0-9_]+$")) {
+            return Response.ofFail("字典标识只允许字母、数字和下划线");
+        }
         int ret = dictMapper.update(xxlBootDict);
         return ret > 0 ? Response.ofSuccess() : Response.ofFail();
     }
@@ -85,6 +91,9 @@ public class DictServiceImpl implements DictService {
         if (StringTool.isBlank(xxlBootDictItem.getItemCode())) {
             return Response.ofFail("请输入字典项标识");
         }
+        if (!xxlBootDictItem.getItemCode().matches("^[a-zA-Z0-9_]+$")) {
+            return Response.ofFail("字典项标识只允许字母、数字和下划线");
+        }
         dictItemMapper.insert(xxlBootDictItem);
         return Response.ofSuccess();
     }
@@ -97,6 +106,9 @@ public class DictServiceImpl implements DictService {
 
     @Override
     public Response<String> updateItem(XxlBootDictItem xxlBootDictItem) {
+        if (StringTool.isNotBlank(xxlBootDictItem.getItemCode()) && !xxlBootDictItem.getItemCode().matches("^[a-zA-Z0-9_]+$")) {
+            return Response.ofFail("字典项标识只允许字母、数字和下划线");
+        }
         int ret = dictItemMapper.update(xxlBootDictItem);
         return ret > 0 ? Response.ofSuccess() : Response.ofFail();
     }

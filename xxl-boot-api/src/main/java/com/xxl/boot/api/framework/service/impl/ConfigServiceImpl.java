@@ -5,6 +5,7 @@ import com.xxl.boot.api.framework.model.adaptor.XxlBootConfigAdaptor;
 import com.xxl.boot.api.framework.model.dto.XxlBootConfigDTO;
 import com.xxl.boot.api.framework.model.entity.XxlBootConfig;
 import com.xxl.boot.api.framework.service.ConfigService;
+import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
@@ -24,6 +25,9 @@ public class ConfigServiceImpl implements ConfigService {
         if (xxlBootConfig == null) {
             return Response.ofFail("必要参数缺失");
         }
+        if (StringTool.isBlank(xxlBootConfig.getKey()) || !xxlBootConfig.getKey().matches("^[a-z][a-z0-9_]*$")) {
+            return Response.ofFail("配置Key需以小写字母开头，仅允许小写字母、数字和下划线");
+        }
 
         configMapper.insert(xxlBootConfig);
         return Response.ofSuccess();
@@ -37,6 +41,9 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public Response<String> update(XxlBootConfig xxlBootConfig) {
+        if (StringTool.isBlank(xxlBootConfig.getKey()) || !xxlBootConfig.getKey().matches("^[a-z][a-z0-9_]*$")) {
+            return Response.ofFail("配置Key需以小写字母开头，仅允许小写字母、数字和下划线");
+        }
         int ret = configMapper.update(xxlBootConfig);
         return ret>0? Response.ofSuccess() : Response.ofFail();
     }

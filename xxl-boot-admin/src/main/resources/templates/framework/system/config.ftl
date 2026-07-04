@@ -193,6 +193,12 @@
 <script>
 $(function() {
 
+    // valid: config key
+    $.validator.addMethod("configKeyRule", function(value, element) {
+        return this.optional(element) || /^[a-z][a-z0-9_]*$/.test(value);
+    }, "必须以小写字母开头，仅允许小写字母、数字和下划线");
+
+
     // ---------- ---------- ---------- table + curd  ---------- ---------- ----------
 
     /**
@@ -273,7 +279,8 @@ $(function() {
             },
             key : {
                 required : true,
-                rangelength:[2, 100]
+                rangelength:[2, 100],
+                configKeyRule: true
             },
             value : {
                 required : true,
@@ -328,7 +335,8 @@ $(function() {
             },
             key : {
                 required : true,
-                rangelength:[2, 100]
+                rangelength:[2, 100],
+                configKeyRule: true
             },
             value : {
                 required : true,

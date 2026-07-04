@@ -326,6 +326,11 @@
 <script>
 $(function() {
 
+    // valid: dict
+    $.validator.addMethod("dictCodeRule", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9_]+$/.test(value);
+    }, "只允许字母、数字和下划线");
+
     // ---------- ---------- ---------- dict table + curd  ---------- ---------- ----------
 
     var currentDictId = 0;
@@ -409,7 +414,8 @@ $(function() {
             },
             code : {
                 required : true,
-                rangelength:[1, 100]
+                rangelength:[1, 100],
+                dictCodeRule: true
             }
         },
         messages : {
@@ -454,7 +460,8 @@ $(function() {
             },
             code : {
                 required : true,
-                rangelength:[1, 100]
+                rangelength:[1, 100],
+                dictCodeRule: true
             }
         },
         messages : {
@@ -624,7 +631,8 @@ $(function() {
             },
             itemCode : {
                 required : true,
-                rangelength:[1, 100]
+                rangelength:[1, 100],
+                dictCodeRule: true
             }
         },
         messages : {
@@ -738,7 +746,8 @@ $(function() {
             },
             itemCode : {
                 required : true,
-                rangelength:[1, 100]
+                rangelength:[1, 100],
+                dictCodeRule: true
             }
         },
         messages : {
