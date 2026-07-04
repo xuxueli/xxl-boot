@@ -116,27 +116,29 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title title" >查看站内消息</h4>
+                        <h4 class="modal-title title">查看站内消息</h4>
                     </div>
                     <div class="modal-body">
-                        <form class="form-horizontal form" role="form" >
-                            <div class="form-group">
-                                <div class="col-sm-12" style="overflow: hidden;padding: 0 30px 0 30px;" >
-                                    <div style="color: grey;">
-                                        <span class="sender"></span>: <span class="addTime"></span>
-                                    </div>
-                                    <br>
-                                    <div class="content2"></div>
-                                </div>
-                            </div>
+                        <style>
+                            .msg-section { padding: 10px 0; }
+                            .msg-field { margin-bottom: 6px; font-size: 13px; }
+                            .msg-field .msg-label { color: #999; margin-right: 4px; }
+                            .msg-field .msg-value { color: #333; }
+                        </style>
 
-                            <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
-                                <div style="margin-top: 10px;" >
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal" >关闭</button>
-                                </div>
+                        <div class="msg-section">
+                            <div class="row">
+                                <div class="col-sm-4 msg-field"><span class="msg-label">发送人：</span><span class="msg-value sender"></span></div>
+                                <div class="col-sm-8 msg-field"><span class="msg-label">时间：</span><span class="msg-value addTime"></span></div>
                             </div>
+                            <div class="row" style="margin-top: 6px;">
+                                <div class="col-sm-12 msg-content" style="margin-top: 4px; padding: 8px 12px; background: #f9f9f9; border-radius: 4px; min-height: 60px;"></div>
+                            </div>
+                        </div>
 
-                        </form>
+                        <div style="text-align:center;border-top: 1px solid #e4e4e4;padding-top: 10px;">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" >关闭</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -157,7 +159,7 @@ $(function () {
 
         // fill
         $('#showMessageModal .title').text( $(this).attr('data-title') );
-        $('#showMessageModal .content2').html( $(this).attr('data-content') );
+        $('#showMessageModal .msg-content').html( $(this).attr('data-content') );
         $('#showMessageModal .sender').text( $(this).attr('data-sender') );
         $('#showMessageModal .addTime').text( $(this).attr('data-addTime') );
 
