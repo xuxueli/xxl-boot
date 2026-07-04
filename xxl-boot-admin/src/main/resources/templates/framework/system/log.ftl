@@ -87,41 +87,47 @@
                             <h4 class="modal-title" >日志详情</h4>
                         </div>
                         <div class="modal-body">
-                            <form class="form-horizontal form" role="form" >
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">操作人</label>
-                                    <div class="col-sm-8 operator" ></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">操作IP</label>
-                                    <div class="col-sm-8 ip" ></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">操作地址</label>
-                                    <div class="col-sm-8 ipAddress" ></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">操作时间</label>
-                                    <div class="col-sm-8 addTime" ></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">日志标题</label>
-                                    <div class="col-sm-8 title" ></div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label2">日志正文</label>
-                                    <div class="col-sm-8" >
-                                        <pre class="content2" style="width: 120%;"></pre>
-                                    </div>
-                                </div>
+                            <style>
+                                .log-section { padding: 10px 0; }
+                                .log-section + .log-section { border-top: 1px solid #e4e4e4; margin-top: 8px; }
+                                .log-section-header { margin-bottom: 10px; font-weight: 700; color: #3c8dbc; font-size: 14px; }
+                                .field-item { margin-bottom: 6px; font-size: 13px; }
+                                .field-item .field-label { color: #999; margin-right: 4px; }
+                                .field-item .field-value { color: #333; }
+                            </style>
 
-                                <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
-                                    <div style="margin-top: 10px;" >
-                                        <button type="button" class="btn btn-primary" data-dismiss="modal" >关闭</button>
-                                    </div>
+                            <div class="log-section">
+                                <div class="log-section-header">基本信息</div>
+                                <div class="row">
+                                    <div class="col-sm-4 field-item"><span class="field-label">日志类型：</span><span class="field-value type"></span></div>
+                                    <div class="col-sm-4 field-item"><span class="field-label">系统模块：</span><span class="field-value module"></span></div>
+                                    <div class="col-sm-4 field-item"><span class="field-label">操作时间：</span><span class="field-value addTime"></span></div>
                                 </div>
+                            </div>
 
-                            </form>
+                            <div class="log-section">
+                                <div class="log-section-header">操作人</div>
+                                <div class="row">
+                                    <div class="col-sm-4 field-item"><span class="field-label">操作人：</span><span class="field-value operator"></span></div>
+                                    <div class="col-sm-4 field-item"><span class="field-label">操作IP：</span><span class="field-value ip"></span></div>
+                                    <div class="col-sm-4 field-item"><span class="field-label">操作地址：</span><span class="field-value ipAddress"></span></div>
+                                </div>
+                            </div>
+
+                            <div class="log-section">
+                                <div class="log-section-header">日志信息</div>
+                                <div class="row">
+                                    <div class="col-sm-12 field-item"><span class="field-label">日志标题：</span><span class="field-value title"></span></div>
+                                </div>
+                                <div class="row" style="margin-top: 6px;">
+                                    <div class="col-sm-12 field-item"><span class="field-label">日志正文：</span></div>
+                                    <div class="col-sm-12" style="margin-top: 4px;"><pre class="content" style="white-space: pre-wrap; word-break: break-all; margin: 0; font-size: 13px;"></pre></div>
+                                </div>
+                            </div>
+
+                            <div style="text-align:center;border-top: 1px solid #e4e4e4;padding-top: 10px;">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" >关闭</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -242,9 +248,25 @@ $(function() {
         }
         var row = rows[0];
 
-        // fill
+        // fill type display
+        var typeText = "";
+        $('#data_filter .type option').each(function(){
+            if ( row.type.toString() === $(this).val() ) {
+                typeText = $(this).text();
+            }
+        });
+        // fill module display
+        var moduleText = "";
+        $('#data_filter .module option').each(function(){
+            if ( row.module === $(this).val() ) {
+                moduleText = $(this).text();
+            }
+        });
+
+        $('#showModal .type').text(typeText);
+        $('#showModal .module').text(moduleText);
         $('#showModal .title').text(row.title);
-        $('#showModal .content2').text(row.content);
+        $('#showModal .content').text(row.content);
         $('#showModal .operator').text(row.operator);
         $('#showModal .addTime').text(row.addTime);
         $('#showModal .ip').text(row.ip);
