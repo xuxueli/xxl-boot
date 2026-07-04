@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.admin.framework.mapper.ConfigMapper">
+
+    <resultMap id="XxlBootConfig" type="com.xxl.boot.admin.framework.model.entity.XxlBootConfig" >
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="key" property="key" />
+        <result column="value" property="value" />
+        <result column="status" property="status" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`name`,
+        t.`key`,
+        t.`value`,
+        t.`status`,
+        t.`add_time`,
+        t.`update_time`,
+        t.`remark`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_config (
+            `name`,
+            `key`,
+            `value`,
+            `status`,
+            `add_time`,
+            `update_time`,
+            `remark`
+        )
+        VALUES(
+                  #{xxlBootConfig.name} ,
+                  #{xxlBootConfig.key} ,
+                  #{xxlBootConfig.value} ,
+                  #{xxlBootConfig.status} ,
+                  NOW() ,
+                  NOW() ,
+                  #{xxlBootConfig.remark}
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_config
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_config
+        SET
+            `name` = #{xxlBootConfig.name},
+            `key` = #{xxlBootConfig.key},
+            `value` = #{xxlBootConfig.value},
+            `status` = #{xxlBootConfig.status},
+            `remark` = #{xxlBootConfig.remark},
+            update_time = NOW()
+        WHERE `id` = #{xxlBootConfig.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="XxlBootConfig">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_config AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootConfig">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_config AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+            <if test="key != null and key != ''">
+                AND t.`key` like CONCAT(CONCAT('%', #{key}), '%')
+            </if>
+            <if test="status gt -1">
+                AND t.`status` = #{status}
+            </if>
+        </trim>
+        ORDER BY t.`key` ASC
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_config AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+            <if test="key != null and key != ''">
+                AND t.`key` like CONCAT(CONCAT('%', #{key}), '%')
+            </if>
+            <if test="status gt -1">
+                AND t.`status` = #{status}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

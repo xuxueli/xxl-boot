@@ -90,7 +90,7 @@ CREATE TABLE `xxl_boot_role_res`
   DEFAULT CHARSET = utf8mb4;
 
 
--- ================== system：message and log ==================
+-- ================== system：message、log、dict、config ==================
 
 CREATE TABLE `xxl_boot_log`
 (
@@ -149,6 +149,22 @@ CREATE TABLE `xxl_boot_dict_item`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `xxl_boot_config`
+(
+    `id`                BIGINT          NOT NULL AUTO_INCREMENT     COMMENT '配置ID',
+    `name`              VARCHAR(100)    NOT NULL                    COMMENT '配置名称',
+    `key`               VARCHAR(100)    NOT NULL                    COMMENT '配置Key',
+    `value`             VARCHAR(500)    NOT NULL                    COMMENT '配置Value',
+    `status`            TINYINT         NOT NULL                    COMMENT '状态：0-正常、1-停用',
+    `add_time`          DATETIME        NOT NULL                    COMMENT '新增时间',
+    `update_time`       DATETIME        NOT NULL                    COMMENT '更新时间',
+    `remark`            VARCHAR(500)    DEFAULT NULL                COMMENT '备注',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `i_type` (`key`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
 
 -- ================== for default data ==================
 
