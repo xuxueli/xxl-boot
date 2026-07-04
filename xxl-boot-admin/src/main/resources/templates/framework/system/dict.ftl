@@ -35,7 +35,7 @@
                         </div>
                         <div class="col-xs-3">
                             <div class="input-group">
-                                <span class="input-group-addon">${I18n.dict_status}</span>
+                                <span class="input-group-addon">${I18n.system_status}</span>
                                 <select class="form-control status" >
                                     <option value="-1" >${I18n.system_all}</option>
                                     <#list DictStatusEnum as item>
@@ -93,7 +93,7 @@
                                     <div class="col-sm-10"><input type="text" class="form-control" name="code" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.dict_status}</label>
+                                    <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.system_status}</label>
                                     <div class="col-sm-8">
                                         <#list DictStatusEnum as item>
                                             <span class="col-sm-4" style="padding-left: 0px;">
@@ -141,7 +141,7 @@
                                     <div class="col-sm-10"><input type="text" class="form-control" name="code" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.dict_status}</label>
+                                    <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.system_status}</label>
                                     <div class="col-sm-8">
                                         <#list DictStatusEnum as item>
                                             <span class="col-sm-4" style="padding-left: 0px;">
@@ -223,7 +223,7 @@
                                     <div class="col-sm-9"><input type="text" class="form-control" name="itemCode" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.dict_status}</label>
+                                    <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.system_status}</label>
                                     <div class="col-sm-8">
                                         <#list DictStatusEnum as item>
                                             <span class="col-sm-4" style="padding-left: 0px;">
@@ -276,7 +276,7 @@
                                     <div class="col-sm-9"><input type="text" class="form-control" name="itemCode" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.dict_status}</label>
+                                    <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.system_status}</label>
                                     <div class="col-sm-8">
                                         <#list DictStatusEnum as item>
                                             <span class="col-sm-4" style="padding-left: 0px;">
@@ -363,7 +363,7 @@ $(function() {
                 width: '20',
                 widthUnit: '%'
             }, {
-                title: '${I18n.dict_status}',
+                title: '${I18n.system_status}',
                 field: 'status',
                 width: '10',
                 widthUnit: '%',
@@ -382,7 +382,7 @@ $(function() {
                 width: '25',
                 widthUnit: '%'
             }, {
-                title: '${I18n.dict_add_time}',
+                title: '${I18n.system_add_time}',
                 field: 'addTime',
                 width: '20',
                 widthUnit: '%'
@@ -537,7 +537,7 @@ $(function() {
                 width: '15',
                 widthUnit: '%'
             }, {
-                title: '${I18n.dict_status}',
+                title: '${I18n.system_status}',
                 field: 'status',
                 width: '10',
                 widthUnit: '%',
@@ -564,7 +564,7 @@ $(function() {
                     return (value && value.length>10) ? value.substring(0, 10) + '...' : value;
                 }
             }, {
-                title: '${I18n.dict_add_time}',
+                title: '${I18n.system_add_time}',
                 field: 'addTime',
                 width: '20',
                 widthUnit: '%'

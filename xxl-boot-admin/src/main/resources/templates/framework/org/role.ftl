@@ -30,7 +30,7 @@
 					</div>
 					<div class="col-xs-3">
 						<div class="input-group">
-							<span class="input-group-addon">${I18n.role_tips}${I18n.role_status}</span>
+							<span class="input-group-addon">${I18n.role_tips}${I18n.system_status}</span>
 							<select class="form-control status" >
 								<option value="">${I18n.system_all}</option>
 								<#list roleStatusEnum as enum>
@@ -121,7 +121,7 @@
 								<div class="col-sm-4"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.role_tips}${I18n.role_status}</label>
+								<label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.role_tips}${I18n.system_status}</label>
 								<div class="col-sm-8">
 									<#list roleStatusEnum as enum>
 										<span class="col-sm-4" style="padding-left: 0px;" >
@@ -166,7 +166,7 @@
 								<div class="col-sm-4"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.role_tips}${I18n.role_status}</label>
+								<label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.role_tips}${I18n.system_status}</label>
 								<div class="col-sm-8">
 									<#list roleStatusEnum as enum>
 										<span class="col-sm-4" style="padding-left: 0px;" >
@@ -249,7 +249,7 @@ $(function() {
 				widthUnit: '%',
 				align: 'left'
 			},{
-				title: I18n.role_tips + I18n.role_status,
+				title: I18n.role_tips + I18n.system_status,
 				field: 'status',
 				width: '15',
 				widthUnit: '%',

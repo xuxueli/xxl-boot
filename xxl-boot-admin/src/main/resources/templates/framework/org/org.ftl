@@ -283,7 +283,7 @@ $(function() {
 				width: '15',
 				widthUnit: '%'
 			},{
-				title: I18n.resource_status,
+				title: I18n.system_status,
 				field: 'status',
 				width: '15',
 				widthUnit: '%',

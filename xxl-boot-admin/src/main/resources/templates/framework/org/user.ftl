@@ -34,7 +34,7 @@
 					</div>
 					<div class="col-xs-3">
 						<div class="input-group">
-							<span class="input-group-addon">${I18n.user_tips}${I18n.user_staus}</span>
+							<span class="input-group-addon">${I18n.user_tips}${I18n.system_status}</span>
 							<select class="form-control status" >
 								<option value="-1" >${I18n.system_all}</option>
 								<#list userStatuEnum as item>
@@ -113,7 +113,7 @@
 								<div class="col-sm-8"><input type="text" class="form-control" name="realName" placeholder="${I18n.system_please_input}${I18n.user_real_name}" maxlength="20" ></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_staus}</label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.system_status}</label>
 								<div class="col-sm-8">
 									<#list userStatuEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;" >
@@ -183,7 +183,7 @@
 								<div class="col-sm-8"><input type="text" class="form-control" name="realName" placeholder="${I18n.system_please_input}${I18n.user_real_name}" maxlength="20" ></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.user_staus}</label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>${I18n.system_status}</label>
 								<div class="col-sm-8">
 									<#list userStatuEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;" >
