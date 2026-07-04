@@ -54,23 +54,20 @@
                     <!-- /.box-header -->
                     <div class="box-body">
                         <strong><i class="fa fa-users margin-r-5"></i>组织管理</strong>
-                        <p class="text-muted">
+                        <p class="text-muted" style="border-bottom: 1px solid #e4e4e4;padding-bottom: 20px;" >
                             针对组织、用户、角色及资源等进行管理，支持灵活的人员角色、菜单权限、人员授权等操作管理。
                         </p>
 
-                        <hr>
                         <strong><i class="fa fa-cogs margin-r-5"></i>系统管理</strong>
-                        <p class="text-muted">
+                        <p class="text-muted" style="border-bottom: 1px solid #e4e4e4;padding-bottom: 20px;" >
                             提供站内消息、审计日志、字典管理、审计日志等相关能力，支持高校灵活进行系统监控及管理。
                         </p>
 
-                        <hr>
                         <strong><i class="fa fa-wrench margin-r-5"></i>系统工具</strong>
-                        <p class="text-muted">
+                        <p class="text-muted" style="border-bottom: 1px solid #e4e4e4;padding-bottom: 20px;" >
                             提供前后端一站式代码生成工具、前端表单在线构建工具等，辅助快速进行敏捷迭代开发。
                         </p>
 
-                        <hr>
                         <strong><i class="fa fa-book margin-r-5"></i> 帮助中心</strong>
                         <p>提供内容丰富、干练易懂的操作文档，辅助快速上手项目。</p>
 
