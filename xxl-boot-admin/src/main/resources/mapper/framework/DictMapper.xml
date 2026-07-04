@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.admin.framework.mapper.DictMapper">
+
+    <resultMap id="XxlBootDict" type="com.xxl.boot.admin.framework.model.entity.XxlBootDict" >
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="code" property="code" />
+        <result column="status" property="status" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`name`,
+        t.`code`,
+        t.`status`,
+        t.`add_time`,
+        t.`update_time`,
+        t.`remark`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_dict (
+            `name`,
+            `code`,
+            `status`,
+            `remark`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{xxlBootDict.name} ,
+                  #{xxlBootDict.code} ,
+                  #{xxlBootDict.status} ,
+                  #{xxlBootDict.remark} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_dict
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_dict
+        SET
+            `name` = #{xxlBootDict.name},
+            `code` = #{xxlBootDict.code},
+            `status` = #{xxlBootDict.status},
+            `remark` = #{xxlBootDict.remark},
+            update_time = NOW()
+        WHERE `id` = #{xxlBootDict.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="XxlBootDict">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_dict AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootDict">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_dict AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+            <if test="code != null and code != ''">
+                AND t.`code` like CONCAT(CONCAT('%', #{code}), '%')
+            </if>
+            <if test="status gt -1">
+                AND t.`status` = #{status}
+            </if>
+        </trim>
+        ORDER BY t.`id` DESC
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_dict AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+            <if test="code != null and code != ''">
+                AND t.`code` like CONCAT(CONCAT('%', #{code}), '%')
+            </if>
+            <if test="status gt -1">
+                AND t.`status` = #{status}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

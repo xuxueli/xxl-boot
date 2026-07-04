@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.api.framework.mapper.DictItemMapper">
+
+    <resultMap id="XxlBootDictItem" type="com.xxl.boot.api.framework.model.entity.XxlBootDictItem" >
+        <result column="id" property="id" />
+        <result column="dict_id" property="dictId" />
+        <result column="item_name" property="itemName" />
+        <result column="item_code" property="itemCode" />
+        <result column="status" property="status" />
+        <result column="order" property="order" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`dict_id`,
+        t.`item_name`,
+        t.`item_code`,
+        t.`status`,
+        t.`order`,
+        t.`add_time`,
+        t.`update_time`,
+        t.`remark`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_dict_item (
+            `dict_id`,
+            `item_name`,
+            `item_code`,
+            `status`,
+            `order`,
+            `remark`,
+            `add_time`,
+            `update_time`
+        )
+        VALUES(
+                  #{xxlBootDictItem.dictId} ,
+                  #{xxlBootDictItem.itemName} ,
+                  #{xxlBootDictItem.itemCode} ,
+                  #{xxlBootDictItem.status} ,
+                  #{xxlBootDictItem.order} ,
+                  #{xxlBootDictItem.remark} ,
+                  NOW() ,
+                  NOW()
+              )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_dict_item
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByDictIds" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_dict_item
+        WHERE `dict_id` in
+        <foreach collection="dictIds" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map" >
+        UPDATE xxl_boot_dict_item
+        SET
+            `item_name` = #{xxlBootDictItem.itemName},
+            `item_code` = #{xxlBootDictItem.itemCode},
+            `status` = #{xxlBootDictItem.status},
+            `order` = #{xxlBootDictItem.order},
+            `remark` = #{xxlBootDictItem.remark},
+            update_time = NOW()
+        WHERE `id` = #{xxlBootDictItem.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="XxlBootDictItem">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_dict_item AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootDictItem">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_dict_item AS t
+        WHERE t.`dict_id` = #{dictId}
+        ORDER BY t.`order` ASC, t.`id` DESC
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_dict_item AS t
+        WHERE t.`dict_id` = #{dictId}
+    </select>
+
+    <select id="findByDictId" parameterType="java.util.Map" resultMap="XxlBootDictItem">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_dict_item AS t
+        WHERE t.`dict_id` = #{dictId}
+        ORDER BY t.`order` ASC, t.`id` DESC
+    </select>
+
+</mapper>
