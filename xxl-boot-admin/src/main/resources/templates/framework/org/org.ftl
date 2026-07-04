@@ -287,9 +287,11 @@ $(function() {
 				field: 'status',
 				width: '15',
 				widthUnit: '%',
-			formatter: function(value, row, index) {
-				return statusMap[value] || value;
-			}
+				formatter: function(value) {
+					var text = statusMap[value] || value;
+					var labelClass = value === 0 ? 'label-success' : 'label-warning';
+					return '<span class="label ' + labelClass + '">' + text + '</span>';
+				}
 			}
 		]
 	});

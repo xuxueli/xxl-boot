@@ -255,13 +255,14 @@ $(function() {
 				widthUnit: '%',
 				align: 'left',
 				formatter: function(value) {
-					var result = "";
+					var text = "";
 					$('#data_filter .status option').each(function(){
 						if ( value.toString() === $(this).val() ) {
-							result = $(this).text();
+							text = $(this).text();
 						}
 					});
-					return result;
+					var labelClass = value === 0 ? 'label-success' : 'label-warning';
+					return '<span class="label ' + labelClass + '">' + text + '</span>';
 				}
 			},{
 				title: I18n.system_order,

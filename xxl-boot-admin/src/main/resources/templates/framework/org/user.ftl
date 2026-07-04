@@ -347,9 +347,9 @@ $(function() {
 							text = $(this).text();
 						}
 					});
-					// status badge class
-					var badgeClass = value === 0 ? 'label-success' : 'label-warning';
-					return '<span class="label ' + badgeClass + '">' + text + '</span>';
+					// status label class
+					var labelClass = value === 0 ? 'label-success' : 'label-warning';
+					return '<span class="label ' + labelClass + '">' + text + '</span>';
 				}
 			}
 		]

@@ -1228,13 +1228,14 @@ $(function() {
 				width: '10',
 				widthUnit: '%',
 				formatter: function(value, row, index) {
-					var result = "";
+					var text = "";
 					$('#addModal .form input[name="status"]').each(function(){
 						if ( value.toString() === $(this).val() ) {
-							result = $(this).parent().parent().text().trim();
+							text = $(this).parent().parent().text().trim();
 						}
 					});
-					return result;
+					var labelClass = value === 0 ? 'label-success' : 'label-warning';
+					return '<span class="label ' + labelClass + '">' + text + '</span>';
 				}
 			}
 		]
