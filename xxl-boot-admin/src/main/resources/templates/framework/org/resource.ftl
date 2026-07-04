@@ -1208,7 +1208,7 @@ $(function() {
 				width: '20',
 				widthUnit: '%'
 			},{
-				title: I18n.resource_tips + I18n.resource_order,
+				title: I18n.system_order,
 				field: 'order',
 				width: '10',
 				widthUnit: '%'

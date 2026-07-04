@@ -117,7 +117,7 @@
 								<div class="col-sm-8"><input type="text" class="form-control" name="code" placeholder="${I18n.system_please_input}${I18n.role_code}" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">${I18n.role_order}<font color="red">*</font></label>
+								<label for="lastname" class="col-sm-2 control-label">${I18n.system_order}<font color="red">*</font></label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
 							</div>
 							<div class="form-group">
@@ -162,7 +162,7 @@
 								<div class="col-sm-8"><input type="text" class="form-control" name="code" placeholder="${I18n.system_please_input}${I18n.role_code}" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">${I18n.role_order}<font color="red">*</font></label>
+								<label for="lastname" class="col-sm-2 control-label">${I18n.system_order}<font color="red">*</font></label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="order" placeholder="${I18n.system_please_input}${I18n.role_name}" maxlength="10" ></div>
 							</div>
 							<div class="form-group">
@@ -264,7 +264,7 @@ $(function() {
 					return result;
 				}
 			},{
-				title: I18n.role_tips + I18n.role_order,
+				title: I18n.system_order,
 				field: 'order',
 				width: '15',
 				widthUnit: '%',
@@ -313,7 +313,7 @@ $(function() {
 				rangelength: I18n.system_lengh_limit + "[2-50]"
 			},
 			order : {
-				required : I18n.system_please_input + I18n.role_order,
+				required : I18n.system_please_input + I18n.system_order,
 				digits: I18n.role_order_valid
 			}
 		},
@@ -365,7 +365,7 @@ $(function() {
 				rangelength: I18n.system_lengh_limit + "[2-50]"
 			},
 			order : {
-				required : I18n.system_please_input + I18n.role_order,
+				required : I18n.system_please_input + I18n.system_order,
 				digits: I18n.role_order_valid
 			}
 		},

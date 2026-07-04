@@ -278,7 +278,7 @@ $(function() {
 					return iconAndName.replace("_icon_", icon);
 				}
 			},{
-				title: I18n.resource_order,
+				title: I18n.system_order,
 				field: 'order',
 				width: '15',
 				widthUnit: '%'
