@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/jquery-treegrid/jquery.treegrid.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/zTree/css/metroStyle/metroStyle.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/iCheck/square/blue.css">
 	<!-- 1-style end -->
 
 </head>
@@ -81,55 +82,57 @@
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
 								<label class="col-sm-2 control-label">父资源<font color="red">*</font></label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control"  name="parentName" readonly value="根资源" >
-									<input type="hidden" class="form-control" name="parentId" value="0" >
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" class="form-control" name="parentName" readonly value="根资源" >
+										<input type="hidden" name="parentId" value="0" >
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-default selectParent" ><i class="fa fa-search"></i></button>
+										</span>
+									</div>
 								</div>
-								<div class="col-sm-4">
-									<button type="button" class="btn btn-sm btn-default selectParent" >请选择</button>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">资源类型<font color="red">*</font></label>
+								<div class="col-sm-10">
+									<#list resourceTypeEnum as item>
+										<span class="col-sm-4" style="padding-left: 0px;">
+											<input type="radio" name="type" value="${item.value}" > ${item.desc}
+										</span>
+									</#list>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label">资源名称<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
+								<div class="col-sm-4"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
+								<label class="col-sm-2 control-label">权限标识<font color="red">*</font></label>
+								<div class="col-sm-4"><input type="text" class="form-control" name="permission" placeholder="${I18n.system_please_input}权限标识" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">资源类型<font color="red">*</font></label>
-								<div class="col-sm-4">
-									<select class="form-control" name="type" >
-										<#list resourceTypeEnum as item>
-											<option value="${item.value}" >${item.desc}</option>
-										</#list>
-									</select>
+								<label for="lastname" class="col-sm-2 control-label">菜单URL</label>
+								<div class="col-sm-10"><input type="text" class="form-control" name="url" placeholder="${I18n.system_please_input}菜单URL" maxlength="50" ></div>
+							</div>
+							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">图标</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" >
+										<span class="input-group-btn">
+											<a href="javascript:void(0);" class="btn btn-default showIcon" style="color: gray;">更多图标</a>
+										</span>
+									</div>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">权限标识<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="permission" placeholder="${I18n.system_please_input}权限标识" maxlength="50" ></div>
-							</div>
-							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">菜单URL<font color="black">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="url" placeholder="${I18n.system_please_input}菜单URL" maxlength="50" ></div>
-							</div>
-							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">图标<font color="black">*</font></label>
-								<div class="col-sm-4"><input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" ></div>
-								<div class="col-sm-4">
-									<a href="javascript:void(0);" class="showIcon" style="color: gray;">更多图标</a>
-								</div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-2 control-label">展示顺序<font color="red">*</font></label>
+								<label class="col-sm-2 control-label">顺序<font color="red">*</font></label>
 								<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-2 control-label">生效状态<font color="red">*</font></label>
+								<label class="col-sm-2 control-label">状态<font color="red">*</font></label>
 								<div class="col-sm-4">
-									<select class="form-control" name="status" >
-										<#list resourceStatuEnum as item>
-											<option value="${item.value}" >${item.desc}</option>
-										</#list>
-									</select>
+									<#list resourceStatuEnum as item>
+										<span class="col-sm-6" style="padding-left: 0px;">
+											<input type="radio" name="status" value="${item.value}" > ${item.desc}
+										</span>
+									</#list>
 								</div>
 							</div>
 
@@ -156,56 +159,58 @@
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label  class="col-sm-2 control-label">父资源ID<font color="red">*</font></label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control"  name="parentName" readonly value="根资源" >
-									<input type="hidden" class="form-control" name="parentId" value="0" >
-								</div>
-								<div class="col-sm-4">
-									<button type="button" class="btn btn-sm btn-default selectParent" >请选择</button>
-								</div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-2 control-label">资源名称<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-2 control-label">资源类型<font color="red">*</font></label>
-								<div class="col-sm-4">
-									<select class="form-control" name="type" >
-										<#list resourceTypeEnum as item>
-											<option value="${item.value}" >${item.desc}</option>
-										</#list>
-									</select>
+								<label class="col-sm-2 control-label">父资源<font color="red">*</font></label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" class="form-control" name="parentName" readonly value="根资源" >
+										<input type="hidden" name="parentId" value="0" >
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-default selectParent" ><i class="fa fa-search"></i></button>
+										</span>
+									</div>
 								</div>
 							</div>
 							<div class="form-group">
-								<label  class="col-sm-2 control-label">权限标识<font color="red">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="permission" placeholder="${I18n.system_please_input}权限标识" maxlength="50" ></div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-2 control-label">菜单URL<font color="black">*</font></label>
-								<div class="col-sm-8"><input type="text" class="form-control" name="url" placeholder="${I18n.system_please_input}菜单URL" maxlength="50" ></div>
-							</div>
-							<div class="form-group">
-								<label for="lastname" class="col-sm-2 control-label">图标<font color="black">*</font></label>
-								<div class="col-sm-4"><input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" ></div>
-								<div class="col-sm-4">
-									<a href="javascript:void(0);" class="showIcon" style="color: gray;">更多图标</a>
+								<label class="col-sm-2 control-label">资源类型<font color="red">*</font></label>
+								<div class="col-sm-10">
+									<#list resourceTypeEnum as item>
+										<span class="col-sm-4" style="padding-left: 0px;">
+											<input type="radio" name="type" value="${item.value}" > ${item.desc}
+										</span>
+									</#list>
 								</div>
 							</div>
 							<div class="form-group">
-								<label  class="col-sm-2 control-label">展示顺序<font color="red">*</font></label>
+								<label class="col-sm-2 control-label">资源名称<font color="red">*</font></label>
+								<div class="col-sm-4"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
+								<label class="col-sm-2 control-label">权限标识<font color="red">*</font></label>
+								<div class="col-sm-4"><input type="text" class="form-control" name="permission" placeholder="${I18n.system_please_input}权限标识" maxlength="50" ></div>
+							</div>
+							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">菜单URL</label>
+								<div class="col-sm-10"><input type="text" class="form-control" name="url" placeholder="${I18n.system_please_input}菜单URL" maxlength="50" ></div>
+							</div>
+							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">图标</label>
+								<div class="col-sm-10">
+									<div class="input-group">
+										<input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" >
+										<span class="input-group-btn">
+											<a href="javascript:void(0);" class="btn btn-default showIcon" style="color: gray;">更多图标</a>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">顺序<font color="red">*</font></label>
 								<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-2 control-label">生效状态<font color="red">*</font></label>
+								<label class="col-sm-2 control-label">状态<font color="red">*</font></label>
 								<div class="col-sm-4">
-									<select class="form-control" name="status" >
-										<#list resourceStatuEnum as item>
-											<option value="${item.value}" >${item.desc}</option>
-										</#list>
-									</select>
+									<#list resourceStatuEnum as item>
+										<span class="col-sm-6" style="padding-left: 0px;">
+											<input type="radio" name="status" value="${item.value}" > ${item.desc}
+										</span>
+									</#list>
 								</div>
 							</div>
 
@@ -1146,6 +1151,7 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.min.js"></script>
 <script src="${request.contextPath}/static/plugins/jquery-treegrid/jquery.treegrid.min.js"></script>
 <script src="${request.contextPath}/static/plugins/zTree/js/jquery.ztree.core.js"></script>
+<script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
 <#-- admin table -->
 <script src="${request.contextPath}/static/framework/admin.table.js"></script>
 <script>
@@ -1190,9 +1196,9 @@ $(function() {
 				widthUnit: '%',
 				formatter: function(value, row, index) {
 					var result = "";
-					$('#addModal select[name="type"] option').each(function(){
+					$('#addModal .form input[name="type"]').each(function(){
 						if ( value.toString() === $(this).val() ) {
-							result = $(this).text();
+							result = $(this).parent().text().trim();
 						}
 					});
 					return result;
@@ -1219,9 +1225,9 @@ $(function() {
 				widthUnit: '%',
 				formatter: function(value, row, index) {
 					var result = "";
-					$('#addModal select[name="status"] option').each(function(){
+					$('#addModal .form input[name="status"]').each(function(){
 						if ( value.toString() === $(this).val() ) {
-							result = $(this).text();
+							result = $(this).parent().text().trim();
 						}
 					});
 					return result;
@@ -1274,18 +1280,20 @@ $(function() {
 			// reset origin parent
 			initTree();
 			$("#addModal .form input[name=parentId]").val( 0 );
+			$('#addModal .form input[name="type"][value="0"]').iCheck('check');
+			$('#addModal .form input[name="status"][value="0"]').iCheck('check');
 		},
 		readFormData: function() {
 			// request
 			return {
 				"parentId": $("#addModal .form input[name=parentId]").val(),
 				"name": $("#addModal .form input[name=name]").val(),
-				"type": $("#addModal .form select[name=type]").val(),
+				"type": $("#addModal .form input[name='type']:checked").val(),
 				"permission": $("#addModal .form input[name=permission]").val(),
 				"url": $("#addModal .form input[name=url]").val(),
 				"icon": $("#addModal .form input[name=icon]").val(),
 				"order": $("#addModal .form input[name=order]").val(),
-				"status": $("#addModal .form select[name=status]").val()
+				"status": $("#addModal .form input[name='status']:checked").val()
 			};
 		}
 	});
@@ -1300,12 +1308,12 @@ $(function() {
 			$("#updateModal .form input[name=id]").val( row.id );
 			$("#updateModal .form input[name=parentId]").val( row.parentId );
 			$("#updateModal .form input[name=name]").val( row.name );
-			$("#updateModal .form select[name=type]").val( row.type );
+			$("#updateModal .form input[name='type'][value='" + row.type + "']").iCheck('check');
 			$("#updateModal .form input[name=permission]").val( row.permission );
 			$("#updateModal .form input[name=url]").val( row.url );
 			$("#updateModal .form input[name=icon]").val( row.icon );
 			$("#updateModal .form input[name=order]").val( row.order );
-			$("#updateModal .form select[name=status]").val( row.status );
+			$("#updateModal .form input[name='status'][value='" + row.status + "']").iCheck('check');
 
 			// 设置 tree 选中
 			initTree();
@@ -1351,16 +1359,24 @@ $(function() {
 				"id": $("#updateModal .form input[name=id]").val(),
 				"parentId": $("#updateModal .form input[name=parentId]").val(),
 				"name": $("#updateModal .form input[name=name]").val(),
-				"type": $("#updateModal .form select[name=type]").val(),
+				"type": $("#updateModal .form input[name='type']:checked").val(),
 				"permission": $("#updateModal .form input[name=permission]").val(),
 				"url": $("#updateModal .form input[name=url]").val(),
 				"icon": $("#updateModal .form input[name=icon]").val(),
 				"order": $("#updateModal .form input[name=order]").val(),
-				"status": $("#updateModal .form select[name=status]").val()
+				"status": $("#updateModal .form input[name='status']:checked").val()
 			};
 		}
 	});
 
+
+	// ---------- ---------- ---------- iCheck ---------- ---------- ----------
+
+	// input iCheck
+	$('#updateModal, #addModal').find('input').iCheck({
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue',
+	});
 
 	// ---------- ---------- ---------- tree collapseAll\expandAll ---------- ---------- ----------
 	var expandOrCollapse_val = 0;
