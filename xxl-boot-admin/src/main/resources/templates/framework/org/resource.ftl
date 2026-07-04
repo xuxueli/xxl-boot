@@ -10,6 +10,9 @@
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/jquery-treegrid/jquery.treegrid.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/zTree/css/metroStyle/metroStyle.css">
 	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/iCheck/square/blue.css">
+	<style>
+		#iconModal .col-md-3 { cursor: pointer; }
+	</style>
 	<!-- 1-style end -->
 
 </head>
