@@ -81,7 +81,7 @@
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label class="col-sm-2 control-label">父资源<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>父资源</label>
 								<div class="col-sm-6">
 									<div class="input-group">
 										<input type="text" class="form-control" name="parentName" readonly value="根资源" >
@@ -93,7 +93,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">资源类型<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>资源类型</label>
 								<div class="col-sm-6">
 									<#list resourceTypeEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;">
@@ -103,9 +103,9 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">资源名称<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>资源名称</label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
-								<label class="col-sm-2 control-label">权限标识<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>权限标识</label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="permission" placeholder="${I18n.system_please_input}权限标识" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
@@ -124,9 +124,9 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">顺序<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
 								<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
-								<label class="col-sm-2 control-label">状态<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
 								<div class="col-sm-4">
 									<#list resourceStatuEnum as item>
 										<span class="col-sm-6" style="padding-left: 0px;">
@@ -159,7 +159,7 @@
 					<div class="modal-body">
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
-								<label class="col-sm-2 control-label">父资源<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>父资源</label>
 								<div class="col-sm-6">
 									<div class="input-group">
 										<input type="text" class="form-control" name="parentName" readonly value="根资源" >
@@ -171,7 +171,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">资源类型<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>资源类型</label>
 								<div class="col-sm-6">
 									<#list resourceTypeEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;">
@@ -181,9 +181,9 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">资源名称<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>资源名称</label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="name" placeholder="${I18n.system_please_input}资源名称" maxlength="50" ></div>
-								<label class="col-sm-2 control-label">权限标识<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>权限标识</label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="permission" placeholder="${I18n.system_please_input}权限标识" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
@@ -202,9 +202,9 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">顺序<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
 								<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
-								<label class="col-sm-2 control-label">状态<font color="red">*</font></label>
+								<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
 								<div class="col-sm-4">
 									<#list resourceStatuEnum as item>
 										<span class="col-sm-6" style="padding-left: 0px;">
