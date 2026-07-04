@@ -1286,6 +1286,7 @@ $(function() {
 			$("#addModal .form input[name=parentId]").val( 0 );
 			$('#addModal .form input[name="type"][value="0"]').iCheck('check');
 			$('#addModal .form input[name="status"][value="0"]').iCheck('check');
+			toggleUrlIcon(0, '#addModal');
 		},
 		readFormData: function() {
 			// request
@@ -1319,7 +1320,7 @@ $(function() {
 			$("#updateModal .form input[name=order]").val( row.order );
 			$("#updateModal .form input[name='status'][value='" + row.status + "']").iCheck('check');
 
-			// 设置 tree 选中
+			// set tree selected
 			initTree();
 			if (row.id > 0) {
 				var chooseNode = zTreeObj.getNodeByParam("id", row.parentId, null);
@@ -1328,6 +1329,8 @@ $(function() {
 					$("#updateModal .form input[name=parentName]").val( chooseNode.name );
 				}
 			}
+
+			toggleUrlIcon(row.type, '#updateModal');
 		},
 		rules : {
 			name : {
@@ -1380,6 +1383,23 @@ $(function() {
 	$('#updateModal, #addModal').find('input').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
+	});
+
+	// toggle url/icon visibility by type
+	function toggleUrlIcon(type, modalSelector) {
+		var hide = type === 2;	// button, not support  url + icon
+		$(modalSelector).find('input[name="url"]').closest('.form-group').toggle(!hide);
+		$(modalSelector).find('input[name="icon"]').closest('.form-group').toggle(!hide);
+		if (hide) {
+			$(modalSelector).find('input[name="url"]').val('');
+			$(modalSelector).find('input[name="icon"]').val('');
+		}
+	}
+
+	// listen type change event, toggle url/icon visibility
+	$('#addModal, #updateModal').on('ifChecked', 'input[name="type"]', function(){
+		var $modal = $(this).closest('.modal');
+		toggleUrlIcon(parseInt($(this).val()), '#' + $modal.attr('id'));
 	});
 
 	// ---------- ---------- ---------- tree collapseAll\expandAll ---------- ---------- ----------
