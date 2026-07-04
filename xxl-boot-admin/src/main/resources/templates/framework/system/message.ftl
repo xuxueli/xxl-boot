@@ -7,6 +7,7 @@
     <!-- 1-style start -->
     <@netCommon.commonStyle />
     <link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
+    <link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/iCheck/square/blue.css">
     <!-- 1-style end -->
 
 </head>
@@ -88,8 +89,8 @@
                         <div class="modal-body">
                             <form class="form-horizontal form" role="form" >
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">分类<font color="red">*</font></label>
-                                    <div class="col-sm-4">
+                                    <label for="lastname" class="col-sm-1 control-label"><font color="red">*</font>分类</label>
+                                    <div class="col-sm-5">
                                         <select class="form-control" name="category" >
                                             <#list MessageCategoryEnum as item>
                                                 <option value="${item.value}" >${item.desc}</option>
@@ -98,21 +99,21 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">状态<font color="red">*</font></label>
-                                    <div class="col-sm-4">
-                                        <select class="form-control" name="status" >
-                                            <#list MessageStatusEnum as item>
-                                                <option value="${item.value}" >${item.desc}</option>
-                                            </#list>
-                                        </select>
+                                    <label for="lastname" class="col-sm-1 control-label"><font color="red">*</font>状态</label>
+                                    <div class="col-sm-6">
+                                        <#list MessageStatusEnum as item>
+                                            <span class="col-sm-3" style="padding-left: 0px;">
+                                                <input type="radio" name="status" value="${item.value}" > ${item.desc}
+                                            </span>
+                                        </#list>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">标题<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-1 control-label"><font color="red">*</font>标题</label>
                                     <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="50" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">正文<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-1 control-label"><font color="red">*</font>正文</label>
                                     <div class="col-sm-10">
                                         <textarea id="add_content" name="content" rows="10" cols="80"></textarea>
                                     </div>
@@ -142,8 +143,8 @@
                         <div class="modal-body">
                             <form class="form-horizontal form" role="form" >
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">分类<font color="red">*</font></label>
-                                    <div class="col-sm-4">
+                                    <label for="lastname" class="col-sm-1 control-label"><font color="red">*</font>分类</label>
+                                    <div class="col-sm-5">
                                         <select class="form-control" name="category" >
                                             <#list MessageCategoryEnum as item>
                                                 <option value="${item.value}" >${item.desc}</option>
@@ -152,21 +153,21 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">状态<font color="red">*</font></label>
-                                    <div class="col-sm-4">
-                                        <select class="form-control" name="status" >
-                                            <#list MessageStatusEnum as item>
-                                                <option value="${item.value}" >${item.desc}</option>
-                                            </#list>
-                                        </select>
+                                    <label for="lastname" class="col-sm-1 control-label"><font color="red">*</font>状态</label>
+                                    <div class="col-sm-6">
+                                        <#list MessageStatusEnum as item>
+                                            <span class="col-sm-3" style="padding-left: 0px;">
+                                                <input type="radio" name="status" value="${item.value}" > ${item.desc}
+                                            </span>
+                                        </#list>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">标题<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-1 control-label"><font color="red">*</font>标题</label>
                                     <div class="col-sm-10"><input type="text" class="form-control" name="title" placeholder="" maxlength="50" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label">正文<font color="red">*</font></label>
+                                    <label for="lastname" class="col-sm-1 control-label"><font color="red">*</font>正文</label>
                                     <div class="col-sm-10">
                                         <textarea id="update_content" name="content" rows="10" cols="80"></textarea>
                                     </div>
@@ -196,6 +197,7 @@
 <script src="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/bower_components/ckeditor/ckeditor.js"></script>
+<script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
 <#-- admin table -->
 <script src="${request.contextPath}/static/framework/admin.table.js"></script>
 <script>
@@ -301,6 +303,9 @@ $(function() {
             // add_content
             const updateEditorInstance = CKEDITOR.instances.add_content;
             updateEditorInstance.setData('');
+
+            // iCheck default status
+            $('#addModal .form input[name="status"][value="0"]').iCheck('check');
         },
         readFormData: function() {
             // add_content
@@ -310,7 +315,7 @@ $(function() {
             // request
             return {
                 "category": $("#addModal .form select[name=category]").val(),
-                "status": $("#addModal .form select[name=status]").val(),
+                "status": $("#addModal .form input[name='status']:checked").val(),
                 "title": $("#addModal .form input[name=title]").val(),
                 "content": contentWithHTML
             };
@@ -328,9 +333,8 @@ $(function() {
             // base data
             $("#updateModal .form input[name='id']").val( row.id );
             $("#updateModal .form select[name='category']").val( row.category );
-            $("#updateModal .form select[name='status']").val( row.status );
+            $("#updateModal .form input[name='status'][value='" + row.status + "']").iCheck('check');
             $("#updateModal .form input[name='title']").val( row.title );
-            $("#updateModal .form input[name='status']").val( row.status );
 
             // add_content
             const updateEditorInstance = CKEDITOR.instances.update_content;
@@ -365,11 +369,19 @@ $(function() {
             return {
                 "id": $("#updateModal .form input[name=id]").val(),
                 "category": $("#updateModal .form select[name=category]").val(),
-                "status": $("#updateModal .form select[name=status]").val(),
+                "status": $("#updateModal .form input[name='status']:checked").val(),
                 "title": $("#updateModal .form input[name=title]").val(),
                 "content": contentWithHTML
             };
         }
+    });
+
+    // ---------- ---------- ---------- iCheck ---------- ---------- ----------
+
+    // input iCheck
+    $('#updateModal, #addModal').find('input').iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass: 'iradio_square-blue',
     });
 
 });
