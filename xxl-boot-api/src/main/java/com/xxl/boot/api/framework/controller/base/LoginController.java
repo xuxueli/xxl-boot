@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * index controller
@@ -79,12 +80,16 @@ public class LoginController {
 		// 2、find permission + role
 		List<Resource> resourceList = resourceService.queryResourceByUserid(xxlBootUser.getId());
 		List<String> permissions = CollectionTool.isNotEmpty(resourceList) ?
-				resourceList.stream().map(Resource::getPermission).toList() :
+				resourceList.stream()
+						.map(Resource::getPermission)
+						.collect(Collectors.toCollection(ArrayList::new)) :
 				new ArrayList<>();
 
 		List<Role> roleList = roleService.queryRoleByUserid(xxlBootUser.getId());
 		List<String> roleIds = CollectionTool.isNotEmpty(roleList) ?
-				roleList.stream().map(Role::getName).toList() :		// TODO, change 角色Code
+				roleList.stream()
+						.map(Role::getCode)
+						.collect(Collectors.toCollection(ArrayList::new)) :
 				new ArrayList<>();
 
 		// 3、build LoginInfo
