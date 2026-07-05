@@ -32,10 +32,10 @@
                     <!-- right -->
                     <div class="col-md-6">
                         <div class="pull-right info" style="margin-top: 10px;margin-right: 30px;">
-                            <span style="color: #999;">用户浏览</span><br><span style="font-size: 30px;font-weight: 300;">900000</span>
+                            <span style="color: #999;">审计日志</span><br><span style="font-size: 30px;font-weight: 300;">${logTotal}</span>
                         </div>
                         <div class="pull-right info" style="margin-top: 10px;margin-right: 15px;padding-right: 15px;border-right: 1px solid #E5E5E5;">
-                            <span style="color: #999;">注册用户</span><br><span style="font-size: 30px;font-weight: 300;">5000</span>
+                            <span style="color: #999;">注册用户</span><br><span style="font-size: 30px;font-weight: 300;">${userTotal}</span>
                         </div>
                     </div>
                 </div>

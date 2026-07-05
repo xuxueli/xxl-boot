@@ -1,10 +1,14 @@
 package com.xxl.boot.admin.framework.controller.base;
 
 import com.xxl.boot.admin.framework.constant.enums.MessageStatusEnum;
+import com.xxl.boot.admin.framework.model.dto.LogDTO;
 import com.xxl.boot.admin.framework.model.dto.MessageDTO;
 import com.xxl.boot.admin.framework.model.dto.ResourceDTO;
+import com.xxl.boot.admin.framework.model.dto.UserDTO;
+import com.xxl.boot.admin.framework.service.LogService;
 import com.xxl.boot.admin.framework.service.MessageService;
 import com.xxl.boot.admin.framework.service.ResourceService;
+import com.xxl.boot.admin.framework.service.UserService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
@@ -35,9 +39,13 @@ public class IndexController {
 
 
 	@Resource
+	private ResourceService resourceService;
+	@Resource
 	private MessageService messageService;
 	@Resource
-	private ResourceService resourceService;
+	private UserService userService;
+	@Resource
+	private LogService logService;
 
 
     // ---------------------- index ----------------------
@@ -68,6 +76,15 @@ public class IndexController {
 			List<MessageDTO> messageList = pageModel.getData();
 			model.addAttribute("messageList", messageList);
 		}
+		// user total
+		PageModel<UserDTO> userPageModel = userService.pageList(0, 1, null, -1, -1);
+		int userTotal = userPageModel.getTotal();
+		model.addAttribute("userTotal", userTotal);
+		// log total
+		PageModel<LogDTO> logPageModel = logService.pageList(-1, null, null, 0, 1);
+		int logTotal = logPageModel.getTotal();
+		model.addAttribute("logTotal", logTotal);
+
 
 		return "/framework/base/dashboard";
 	}
