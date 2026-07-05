@@ -1,9 +1,9 @@
 package com.xxl.boot.api.framework.service;
 
-import com.xxl.boot.api.framework.model.dto.XxlBootDictDTO;
-import com.xxl.boot.api.framework.model.dto.XxlBootDictItemDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootDict;
-import com.xxl.boot.api.framework.model.entity.XxlBootDictItem;
+import com.xxl.boot.api.framework.model.dto.DictDTO;
+import com.xxl.boot.api.framework.model.dto.DictItemDTO;
+import com.xxl.boot.api.framework.model.entity.Dict;
+import com.xxl.boot.api.framework.model.entity.DictItem;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 
@@ -11,24 +11,24 @@ import java.util.List;
 
 public interface DictService {
 
-    public Response<String> insert(XxlBootDict xxlBootDict);
+    public Response<String> insert(Dict xxlBootDict);
 
     public Response<String> delete(List<Integer> ids);
 
-    public Response<String> update(XxlBootDict xxlBootDict);
+    public Response<String> update(Dict xxlBootDict);
 
-    public Response<XxlBootDict> load(int id);
+    public Response<Dict> load(int id);
 
-    public PageModel<XxlBootDictDTO> pageList(String name, String code, int status, int offset, int pagesize);
+    public PageModel<DictDTO> pageList(String name, String code, int status, int offset, int pagesize);
 
-    public Response<String> insertItem(XxlBootDictItem xxlBootDictItem);
+    public Response<String> insertItem(DictItem xxlBootDictItem);
 
     public Response<String> deleteItem(List<Integer> ids);
 
-    public Response<String> updateItem(XxlBootDictItem xxlBootDictItem);
+    public Response<String> updateItem(DictItem xxlBootDictItem);
 
-    public Response<XxlBootDictItem> loadItem(int id);
+    public Response<DictItem> loadItem(int id);
 
-    public PageModel<XxlBootDictItemDTO> itemPageList(long dictId, int offset, int pagesize);
+    public PageModel<DictItemDTO> itemPageList(long dictId, int offset, int pagesize);
 
 }

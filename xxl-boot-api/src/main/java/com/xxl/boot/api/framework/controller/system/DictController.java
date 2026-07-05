@@ -1,10 +1,10 @@
 package com.xxl.boot.api.framework.controller.system;
 
 import com.xxl.boot.api.framework.constant.enums.DictStatusEnum;
-import com.xxl.boot.api.framework.model.dto.XxlBootDictDTO;
-import com.xxl.boot.api.framework.model.dto.XxlBootDictItemDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootDict;
-import com.xxl.boot.api.framework.model.entity.XxlBootDictItem;
+import com.xxl.boot.api.framework.model.dto.DictDTO;
+import com.xxl.boot.api.framework.model.dto.DictItemDTO;
+import com.xxl.boot.api.framework.model.entity.Dict;
+import com.xxl.boot.api.framework.model.entity.DictItem;
 import com.xxl.boot.api.framework.service.DictService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.PageModel;
@@ -35,26 +35,26 @@ public class DictController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<XxlBootDictDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<DictDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                         @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                         @RequestParam(required = false, defaultValue = "-1") int status,
                                                         String name,
                                                         String code) {
-        PageModel<XxlBootDictDTO> pageModel = dictService.pageList(name, code, status, offset, pagesize);
+        PageModel<DictDTO> pageModel = dictService.pageList(name, code, status, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso
-    public Response<XxlBootDict> load(int id) {
+    public Response<Dict> load(int id) {
         return dictService.load(id);
     }
 
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(XxlBootDict xxlBootDict) {
+    public Response<String> insert(Dict xxlBootDict) {
         return dictService.insert(xxlBootDict);
     }
 
@@ -68,31 +68,31 @@ public class DictController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(XxlBootDict xxlBootDict) {
+    public Response<String> update(Dict xxlBootDict) {
         return dictService.update(xxlBootDict);
     }
 
     @RequestMapping("/itemPageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<XxlBootDictItemDTO>> itemPageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<DictItemDTO>> itemPageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                                 @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                                 long dictId) {
-        PageModel<XxlBootDictItemDTO> pageModel = dictService.itemPageList(dictId, offset, pagesize);
+        PageModel<DictItemDTO> pageModel = dictService.itemPageList(dictId, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
     @RequestMapping("/itemLoad")
     @ResponseBody
     @XxlSso
-    public Response<XxlBootDictItem> itemLoad(int id) {
+    public Response<DictItem> itemLoad(int id) {
         return dictService.loadItem(id);
     }
 
     @RequestMapping("/itemInsert")
     @ResponseBody
     @XxlSso
-    public Response<String> itemInsert(XxlBootDictItem xxlBootDictItem) {
+    public Response<String> itemInsert(DictItem xxlBootDictItem) {
         return dictService.insertItem(xxlBootDictItem);
     }
 
@@ -106,7 +106,7 @@ public class DictController {
     @RequestMapping("/itemUpdate")
     @ResponseBody
     @XxlSso
-    public Response<String> itemUpdate(XxlBootDictItem xxlBootDictItem) {
+    public Response<String> itemUpdate(DictItem xxlBootDictItem) {
         return dictService.updateItem(xxlBootDictItem);
     }
 

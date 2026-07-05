@@ -31,7 +31,7 @@ public class XxlSsoConfig implements WebMvcConfigurer {
 
 
     @Resource
-    private SimpleLoginStore loginStore;
+    private DBLoginStore loginStore;
 
 
     /**

@@ -3,8 +3,9 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.api.framework.mapper.UserMapper">
 
-	<resultMap id="XxlBootUser" type="com.xxl.boot.api.framework.model.entity.XxlBootUser" >
+	<resultMap id="User" type="com.xxl.boot.api.framework.model.entity.User" >
 		<result column="id" property="id" />
+		<result column="org_id" property="orgId" />
 		<result column="username" property="username" />
 	    <result column="password" property="password" />
 	    <result column="token" property="token" />
@@ -16,6 +17,7 @@
 
 	<sql id="Base_Column_List">
 		t.id,
+		t.org_id,
 		t.username,
 		t.password,
 		t.token,
@@ -25,8 +27,9 @@
 		t.update_time
 	</sql>
 
-	<insert id="insert" parameterType="com.xxl.boot.api.framework.model.entity.XxlBootUser" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="insert" parameterType="com.xxl.boot.api.framework.model.entity.User" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_boot_user (
+			org_id,
 			username,
 			password,
 			token,
@@ -35,6 +38,7 @@
 			add_time,
 			update_time
 		) VALUES (
+			 #{orgId},
 			 #{username},
 			 #{password},
 			 #{token},
@@ -60,32 +64,33 @@
 		</foreach>
 	</delete>
 
-	<update id="update" parameterType="com.xxl.boot.api.framework.model.entity.XxlBootUser" >
+	<update id="update" parameterType="com.xxl.boot.api.framework.model.entity.User" >
 		UPDATE xxl_boot_user
 		SET
 			<if test="password != null and password != ''">
 				password = #{password},
 			</if>
 			token = #{token},
+			org_id = #{orgId},
 			status = #{status},
 			real_name = #{realName},
 			update_time = NOW()
 		WHERE id = #{id}
 	</update>
 
-	<select id="loadByUserName" parameterType="java.util.HashMap" resultMap="XxlBootUser">
+	<select id="loadByUserName" parameterType="java.util.HashMap" resultMap="User">
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_boot_user AS t
 		WHERE t.username = #{username}
 	</select>
 
-	<select id="load" parameterType="java.util.HashMap" resultMap="XxlBootUser">
+	<select id="load" parameterType="java.util.HashMap" resultMap="User">
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_boot_user AS t
 		WHERE t.id = #{id}
 	</select>
 
-	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlBootUser">
+	<select id="pageList" parameterType="java.util.HashMap" resultMap="User">
 		SELECT <include refid="Base_Column_List" />
 		FROM xxl_boot_user AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
@@ -94,6 +99,9 @@
 			</if>
 			<if test="status gt -1">
 				AND t.status = #{status}
+			</if>
+			<if test="orgId gt 0">
+				AND t.org_id = #{orgId}
 			</if>
 		</trim>
 		ORDER BY username ASC
@@ -109,6 +117,9 @@
 			</if>
 			<if test="status gt -1">
 				AND t.status = #{status}
+			</if>
+			<if test="orgId gt 0">
+				AND t.org_id = #{orgId}
 			</if>
 		</trim>
 	</select>

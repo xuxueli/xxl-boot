@@ -2,9 +2,9 @@ package com.xxl.boot.api.framework.controller.base;
 
 import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
 import com.xxl.boot.api.framework.model.dto.LoginRequest;
-import com.xxl.boot.api.framework.model.entity.XxlBootResource;
-import com.xxl.boot.api.framework.model.entity.XxlBootRole;
-import com.xxl.boot.api.framework.model.entity.XxlBootUser;
+import com.xxl.boot.api.framework.model.entity.Resource;
+import com.xxl.boot.api.framework.model.entity.Role;
+import com.xxl.boot.api.framework.model.entity.User;
 import com.xxl.boot.api.framework.service.ResourceService;
 import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.boot.api.framework.service.UserService;
@@ -17,7 +17,6 @@ import com.xxl.tool.core.StringTool;
 import com.xxl.tool.crypto.Sha256Tool;
 import com.xxl.tool.id.UUIDTool;
 import com.xxl.tool.response.Response;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,11 +36,11 @@ import java.util.List;
 public class LoginController {
 
 
-	@Resource
+	@jakarta.annotation.Resource
 	private UserService userService;
-	@Resource
+	@jakarta.annotation.Resource
 	private ResourceService resourceService;
-	@Resource
+	@jakarta.annotation.Resource
 	private RoleService roleService;
 
 
@@ -57,11 +56,11 @@ public class LoginController {
 		}
 
 		// 1、verify login user, include userName, password, status
-		Response<XxlBootUser> xxlBootUserResponse = userService.loadByUserName(loginRequest.getUsername());
-		if (!xxlBootUserResponse.isSuccess()) {
+		Response<User> userResponse = userService.loadByUserName(loginRequest.getUsername());
+		if (!userResponse.isSuccess()) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
-		XxlBootUser xxlBootUser = xxlBootUserResponse.getData();
+		User xxlBootUser = userResponse.getData();
 		if (xxlBootUser.getStatus() != UserStatuEnum.NORMAL.getStatus()) {
 			return Response.ofFail( I18nUtil.getString("login_status_invalid") );
 		}
@@ -71,14 +70,14 @@ public class LoginController {
 		}
 
 		// 2、find permission + role
-		List<XxlBootResource> resourceList = resourceService.queryResourceByUserid(xxlBootUser.getId());
+		List<Resource> resourceList = resourceService.queryResourceByUserid(xxlBootUser.getId());
 		List<String> permissions = CollectionTool.isNotEmpty(resourceList) ?
-				resourceList.stream().map(XxlBootResource::getPermission).toList() :
+				resourceList.stream().map(Resource::getPermission).toList() :
 				new ArrayList<>();
 
-		List<XxlBootRole> roleList = roleService.queryRoleByUserid(xxlBootUser.getId());
+		List<Role> roleList = roleService.queryRoleByUserid(xxlBootUser.getId());
 		List<String> roleIds = CollectionTool.isNotEmpty(roleList) ?
-				roleList.stream().map(XxlBootRole::getName).toList() :		// TODO, change 角色Code
+				roleList.stream().map(Role::getName).toList() :		// TODO, change 角色Code
 				new ArrayList<>();
 
 		// 3、build LoginInfo

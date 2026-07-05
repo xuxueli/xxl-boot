@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.service;
 
-import com.xxl.boot.api.framework.model.entity.XxlBootRole;
+import com.xxl.boot.api.framework.model.entity.Role;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 
@@ -16,7 +16,7 @@ public interface RoleService {
     /**
     * 新增
     */
-    public Response<String> insert(XxlBootRole xxlBootRole);
+    public Response<String> insert(Role xxlBootRole);
 
     /**
     * 删除
@@ -26,17 +26,17 @@ public interface RoleService {
     /**
     * 更新
     */
-    public Response<String> update(XxlBootRole xxlBootRole);
+    public Response<String> update(Role xxlBootRole);
 
     /**
     * Load查询
     */
-    public Response<XxlBootRole> load(int id);
+    public Response<Role> load(int id);
 
     /**
     * 分页查询
     */
-    public PageModel<XxlBootRole> pageList(int offset, int pagesize, String name);
+    public PageModel<Role> pageList(int offset, int pagesize, String name, int status);
 
     /**
      * 角色资源查询
@@ -51,6 +51,6 @@ public interface RoleService {
     /**
      * 根据 用户ID 查询 角色列表（已授权）
      */
-    List<XxlBootRole> queryRoleByUserid(int userId);
+    List<Role> queryRoleByUserid(int userId);
 
 }

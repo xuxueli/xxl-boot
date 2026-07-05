@@ -1,13 +1,13 @@
 package com.xxl.boot.api.framework.mapper;
 
-import com.xxl.boot.api.framework.model.entity.XxlBootResource;
+import com.xxl.boot.api.framework.model.entity.Resource;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
-* XxlBootResource Mapper
+* Resource Mapper
 *
 * Created by xuxueli on '2024-07-28 12:52:39'.
 */
@@ -17,7 +17,7 @@ import java.util.List;
     /**
     * 新增
     */
-    public int insert(@Param("xxlBootResource") XxlBootResource xxlBootResource);
+    public int insert(@Param("xxlBootResource") Resource xxlBootResource);
 
     /**
     * 删除
@@ -27,17 +27,17 @@ import java.util.List;
     /**
     * 更新
     */
-    public int update(@Param("xxlBootResource") XxlBootResource xxlBootResource);
+    public int update(@Param("xxlBootResource") Resource xxlBootResource);
 
     /**
     * Load查询
     */
-    public XxlBootResource load(@Param("id") int id);
+    public Resource load(@Param("id") int id);
 
     /**
     * 分页查询Data
     */
-	public List<XxlBootResource> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<Resource> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
 
     /**
     * 分页查询Count
@@ -47,16 +47,16 @@ import java.util.List;
     /**
      * Tree查询
      */
-    public List<XxlBootResource> queryResource(@Param("name") String name, @Param("status") int status);
+    public List<Resource> queryResource(@Param("name") String name, @Param("status") int status);
 
     /**
      * queryByParentIds
      */
-    List<XxlBootResource> queryByParentIds(@Param("ids") List<Integer> ids);
+    List<Resource> queryByParentIds(@Param("ids") List<Integer> ids);
 
     /**
      * Tree查询（By User）
      */
-    List<XxlBootResource> queryResourceByUserId(@Param("userId") int userId, @Param("status") int status);
+    List<Resource> queryResourceByUserId(@Param("userId") int userId, @Param("status") int status);
 
 }

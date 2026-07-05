@@ -2,8 +2,8 @@ package com.xxl.boot.api.framework.controller.system;
 
 import com.xxl.boot.api.framework.constant.enums.MessageCategoryEnum;
 import com.xxl.boot.api.framework.constant.enums.MessageStatusEnum;
-import com.xxl.boot.api.framework.model.dto.XxlBootMessageDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootMessage;
+import com.xxl.boot.api.framework.model.dto.MessageDTO;
+import com.xxl.boot.api.framework.model.entity.Message;
 import com.xxl.boot.api.framework.service.MessageService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
- * XxlBootMessage Controller
+ * Message Controller
  *
  * Created by xuxueli on '2024-11-03 11:03:29'.
  */
@@ -51,11 +51,11 @@ public class MessageController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<XxlBootMessageDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<MessageDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                            @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                            int status,
                                                            String title) {
-        PageModel<XxlBootMessageDTO> pageModel = messageService.pageList(status, title, offset, pagesize);
+        PageModel<MessageDTO> pageModel = messageService.pageList(status, title, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
@@ -65,7 +65,7 @@ public class MessageController {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso
-    public Response<XxlBootMessage> load(int id){
+    public Response<Message> load(int id){
         return messageService.load(id);
     }
 
@@ -75,7 +75,7 @@ public class MessageController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(XxlBootMessage xxlBootMessage, HttpServletRequest request){
+    public Response<String> insert(Message xxlBootMessage, HttpServletRequest request){
 
         // xxl-sso, logincheck
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
@@ -99,7 +99,7 @@ public class MessageController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(XxlBootMessage xxlBootMessage){
+    public Response<String> update(Message xxlBootMessage){
         return messageService.update(xxlBootMessage);
     }
 

@@ -27,7 +27,7 @@ public class XxlSsoConfig implements WebMvcConfigurer {
 
 
     @Resource
-    private SimpleLoginStore simpleLoginStore;
+    private RedisLoginStore simpleLoginStore;
 
 
     /**

@@ -1,7 +1,7 @@
 package com.xxl.boot.api.framework.controller.org;
 
-import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
-import com.xxl.boot.api.framework.model.entity.XxlBootRole;
+import com.xxl.boot.api.framework.constant.enums.RoleStatusEnum;
+import com.xxl.boot.api.framework.model.entity.Role;
 import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.PageModel;
@@ -31,8 +31,8 @@ public class RoleController {
     @XxlSso(permission = "org:role")
     public String index(Model model) {
 
-        /*PageModel<XxlBootRole> pageModel = roleService.pageList(0, 100);*/
-        model.addAttribute("userStatuEnum", UserStatuEnum.values());
+        /*PageModel<Role> pageModel = roleService.pageList(0, 100);*/
+        model.addAttribute("roleStatusEnum", RoleStatusEnum.values());
 
         return "/framework/org/role";
     }
@@ -43,10 +43,11 @@ public class RoleController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso(permission = "org:role")
-    public Response<PageModel<XxlBootRole>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<Role>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                      @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                     String name) {
-        PageModel<XxlBootRole> pageModel = roleService.pageList(offset, pagesize, name);
+                                                     String name,
+                                                     @RequestParam(required = false, defaultValue = "-1") int status) {
+        PageModel<Role> pageModel = roleService.pageList(offset, pagesize, name, status);
         return Response.ofSuccess(pageModel);
     }
 
@@ -56,7 +57,7 @@ public class RoleController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso(permission = "org:role")
-    public Response<String> insert(XxlBootRole xxlBootRole){
+    public Response<String> insert(Role xxlBootRole){
         return roleService.insert(xxlBootRole);
     }
 
@@ -76,7 +77,7 @@ public class RoleController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso(permission = "org:role")
-    public Response<String> update(XxlBootRole xxlBootRole){
+    public Response<String> update(Role xxlBootRole){
         return roleService.update(xxlBootRole);
     }
 
@@ -86,7 +87,7 @@ public class RoleController {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso(permission = "org:role")
-    public Response<XxlBootRole> load(int id){
+    public Response<Role> load(int id){
         return roleService.load(id);
     }
 

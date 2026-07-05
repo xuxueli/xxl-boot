@@ -2,8 +2,8 @@ package com.xxl.boot.api.framework.controller.system;
 
 import com.xxl.boot.api.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.api.framework.constant.enums.LogTypeEnum;
-import com.xxl.boot.api.framework.model.dto.XxlBootLogDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootLog;
+import com.xxl.boot.api.framework.model.dto.LogDTO;
+import com.xxl.boot.api.framework.model.entity.Log;
 import com.xxl.boot.api.framework.service.LogService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.PageModel;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
- * XxlBootLog Controller
+ * Log Controller
  *
  * Created by xuxueli on '2024-10-27 12:19:06'.
  */
@@ -48,13 +48,13 @@ public class LogController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<XxlBootLogDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<LogDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                        @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                        @RequestParam(required = false, defaultValue = "-1") int type,
                                                        String module,
                                                        String title
                                                        ) {
-        PageModel<XxlBootLogDTO> pageModel = xxlBootLogService.pageList(type, module, title, offset, pagesize);
+        PageModel<LogDTO> pageModel = xxlBootLogService.pageList(type, module, title, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
@@ -64,7 +64,7 @@ public class LogController {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso
-    public Response<XxlBootLog> load(int id){
+    public Response<Log> load(int id){
         return xxlBootLogService.load(id);
     }
 
@@ -74,7 +74,7 @@ public class LogController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(XxlBootLog xxlBootLog){
+    public Response<String> insert(Log xxlBootLog){
         return xxlBootLogService.insert(xxlBootLog);
     }
 
@@ -94,7 +94,7 @@ public class LogController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(XxlBootLog xxlBootLog){
+    public Response<String> update(Log xxlBootLog){
         return xxlBootLogService.update(xxlBootLog);
     }
 

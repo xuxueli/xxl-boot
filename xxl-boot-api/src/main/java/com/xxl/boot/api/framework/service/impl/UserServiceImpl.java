@@ -1,13 +1,15 @@
 package com.xxl.boot.api.framework.service.impl;
 
+import com.xxl.boot.api.framework.mapper.OrgMapper;
 import com.xxl.boot.api.framework.mapper.RoleMapper;
 import com.xxl.boot.api.framework.mapper.UserMapper;
 import com.xxl.boot.api.framework.mapper.UserRoleMapper;
-import com.xxl.boot.api.framework.model.adaptor.XxlBootUserAdaptor;
-import com.xxl.boot.api.framework.model.dto.XxlBootUserDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootRole;
-import com.xxl.boot.api.framework.model.entity.XxlBootUser;
-import com.xxl.boot.api.framework.model.entity.XxlBootUserRole;
+import com.xxl.boot.api.framework.model.adaptor.UserAdaptor;
+import com.xxl.boot.api.framework.model.dto.UserDTO;
+import com.xxl.boot.api.framework.model.entity.Org;
+import com.xxl.boot.api.framework.model.entity.Role;
+import com.xxl.boot.api.framework.model.entity.User;
+import com.xxl.boot.api.framework.model.entity.UserRole;
 import com.xxl.boot.api.framework.service.UserService;
 import com.xxl.boot.api.framework.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
@@ -35,6 +37,8 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
     @Resource
+    private OrgMapper orgMapper;
+    @Resource
     private RoleMapper roleMapper;
     @Resource
     private UserRoleMapper userRoleMapper;
@@ -43,10 +47,10 @@ public class UserServiceImpl implements UserService {
      * 新增
      */
     @Override
-    public Response<String> insert(XxlBootUserDTO xxlJobUser) {
+    public Response<String> insert(UserDTO xxlJobUser) {
 
         // adapt
-        XxlBootUser user = XxlBootUserAdaptor.adapt(xxlJobUser);
+        User user = UserAdaptor.adapt(xxlJobUser);
         List<Integer> roleIds = xxlJobUser.getRoleIds();
 
 
@@ -76,14 +80,14 @@ public class UserServiceImpl implements UserService {
 
         // valid user role
         if (CollectionTool.isNotEmpty(roleIds)) {
-            List<XxlBootRole> roles = roleMapper.queryByRoleIds(roleIds);
+            List<Role> roles = roleMapper.queryByRoleIds(roleIds);
             if (!(roles!=null && roles.size()==roleIds.size())) {
                 return Response.ofFail("操作失败，角色ID非法");
             }
         }
 
         // check repeat
-        XxlBootUser existUser = userMapper.loadByUserName(user.getUsername());
+        User existUser = userMapper.loadByUserName(user.getUsername());
         if (existUser != null) {
             return Response.ofFail( I18nUtil.getString("user_username_repeat") );
         }
@@ -93,9 +97,9 @@ public class UserServiceImpl implements UserService {
 
         // save user-role
         if (CollectionTool.isNotEmpty(roleIds)) {
-            List<XxlBootUserRole> userRoleList = roleIds
+            List<UserRole> userRoleList = roleIds
                     .stream()
-                    .map(roleId-> new XxlBootUserRole(user.getId(), roleId))
+                    .map(roleId-> new UserRole(user.getId(), roleId))
                     .collect(Collectors.toList());
             userRoleMapper.batchInsert(userRoleList);
         }
@@ -129,7 +133,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // valid user role
-        List<XxlBootUserRole> userRoleList = userRoleMapper.queryByUserIds(userIds);
+        List<UserRole> userRoleList = userRoleMapper.queryByUserIds(userIds);
         if (CollectionTool.isNotEmpty(userRoleList)) {
             return Response.ofFail("无法删除，请先取消关联角色");
         }
@@ -143,10 +147,10 @@ public class UserServiceImpl implements UserService {
      * 更新
      */
     @Override
-    public Response<String> update(XxlBootUserDTO xxlJobUser, String loginUserName) {
+    public Response<String> update(UserDTO xxlJobUser, String loginUserName) {
 
         // adapt
-        XxlBootUser user = XxlBootUserAdaptor.adapt(xxlJobUser);
+        User user = UserAdaptor.adapt(xxlJobUser);
         List<Integer> roleIds = xxlJobUser.getRoleIds();
 
         // avoid opt login seft
@@ -169,7 +173,7 @@ public class UserServiceImpl implements UserService {
 
         // valid user role
         if (CollectionTool.isNotEmpty(roleIds)) {
-            List<XxlBootRole> roles = roleMapper.queryByRoleIds(roleIds);
+            List<Role> roles = roleMapper.queryByRoleIds(roleIds);
             if (!(roles!=null && roles.size()==roleIds.size())) {
                 return Response.ofFail("操作失败，角色ID非法");
             }
@@ -181,9 +185,9 @@ public class UserServiceImpl implements UserService {
         // update user-role
         userRoleMapper.deleteByUserId(user.getId());
         if (CollectionTool.isNotEmpty(roleIds)) {
-            List<XxlBootUserRole> userRoleList = roleIds
+            List<UserRole> userRoleList = roleIds
                     .stream()
-                    .map(roleId-> new XxlBootUserRole(user.getId(), roleId))
+                    .map(roleId-> new UserRole(user.getId(), roleId))
                     .collect(Collectors.toList());
             userRoleMapper.batchInsert(userRoleList);
         }
@@ -212,7 +216,7 @@ public class UserServiceImpl implements UserService {
         String passwordHash = Sha256Tool.sha256(password);
 
         // valid old pwd
-        XxlBootUser existUser = userMapper.loadByUserName(loginUserName);
+        User existUser = userMapper.loadByUserName(loginUserName);
         if (!oldPasswordHash.equals(existUser.getPassword())) {
             return Response.ofFail(I18nUtil.getString("change_pwd_field_oldpwd") + I18nUtil.getString("system_error"));
         }
@@ -228,14 +232,14 @@ public class UserServiceImpl implements UserService {
      * Load查询
      */
     @Override
-    public Response<XxlBootUser> loadByUserName(String username){
-        XxlBootUser record = userMapper.loadByUserName(username);
+    public Response<User> loadByUserName(String username){
+        User record = userMapper.loadByUserName(username);
         return record!=null ? Response.ofSuccess(record) : Response.ofFail();
     }
 
     @Override
-    public Response<XxlBootUser> loadByUserId(int id) {
-        XxlBootUser record = userMapper.load(id);
+    public Response<User> loadByUserId(int id) {
+        User record = userMapper.load(id);
         return record!=null ? Response.ofSuccess(record) : Response.ofFail();
     }
 
@@ -243,37 +247,48 @@ public class UserServiceImpl implements UserService {
      * 分页查询
      */
     @Override
-    public PageModel<XxlBootUserDTO> pageList(int offset, int pagesize, String username, int status) {
+    public PageModel<UserDTO> pageList(int offset, int pagesize, String username, int status, int orgId) {
 
         // data
-        List<XxlBootUser> pageList = userMapper.pageList(offset, pagesize, username, status);
-        int totalCount = userMapper.pageListCount(offset, pagesize, username, status);
+        List<User> pageList = userMapper.pageList(offset, pagesize, username, status, orgId);
+        int totalCount = userMapper.pageListCount(offset, pagesize, username, status, orgId);
 
         // adaptor
-        List<XxlBootUserDTO> pageListDto = new ArrayList<>();
+        List<UserDTO> pageListDto = new ArrayList<>();
         if (CollectionTool.isNotEmpty(pageList)) {
             // find role
-            List<Integer> userIds = pageList.stream().map(XxlBootUser::getId).collect(Collectors.toList());
-            List<XxlBootUserRole> userRoleList = userRoleMapper.queryByUserIds(userIds);
+            List<Integer> userIds = pageList.stream().map(User::getId).collect(Collectors.toList());
+            List<UserRole> userRoleList = userRoleMapper.queryByUserIds(userIds);
 
             // user-roleids map
             Map<Integer, List<Integer>> userIdToRoleIdsMap = Optional
                     .ofNullable(userRoleList)
                     .orElse(new ArrayList<>()).stream()
                     .collect(Collectors.groupingBy(
-                            XxlBootUserRole::getUserId,
-                            Collectors.mapping(XxlBootUserRole::getRoleId, Collectors.toList())
+                            UserRole::getUserId,
+                            Collectors.mapping(UserRole::getRoleId, Collectors.toList())
                     ));
 
             // dto list
             pageListDto = pageList
                     .stream()
-                    .map(item->XxlBootUserAdaptor.adapt2dto(item, false, userIdToRoleIdsMap))
+                    .map(item->UserAdaptor.adapt2dto(item, false, userIdToRoleIdsMap))
                     .collect(Collectors.toList());
         }
 
+        // fill orgName
+        if (CollectionTool.isNotEmpty(pageListDto)) {
+            List<Org> orgList = orgMapper.queryOrg(null, -1);
+            Map<Integer, String> orgMap = orgList.stream().collect(Collectors.toMap(Org::getId, Org::getName));
+            pageListDto.forEach(dto -> {
+                if (dto.getOrgId() > 0 && orgMap.containsKey(dto.getOrgId())) {
+                    dto.setOrgName(orgMap.get(dto.getOrgId()));
+                }
+            });
+        }
+
         // result
-        PageModel<XxlBootUserDTO> pageModel = new PageModel<>();
+        PageModel<UserDTO> pageModel = new PageModel<>();
         pageModel.setData(pageListDto);
         pageModel.setTotal(totalCount);
 

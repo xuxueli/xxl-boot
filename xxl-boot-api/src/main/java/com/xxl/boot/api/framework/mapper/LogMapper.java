@@ -1,13 +1,13 @@
 package com.xxl.boot.api.framework.mapper;
 
-import com.xxl.boot.api.framework.model.entity.XxlBootLog;
+import com.xxl.boot.api.framework.model.entity.Log;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
-* XxlBootLog Mapper
+* Log Mapper
 *
 * Created by xuxueli on '2024-10-27 12:19:06'.
 */
@@ -17,7 +17,7 @@ public interface LogMapper {
     /**
     * 新增
     */
-    public int insert(@Param("xxlBootLog") XxlBootLog xxlBootLog);
+    public int insert(@Param("xxlBootLog") Log xxlBootLog);
 
     /**
     * 删除
@@ -27,17 +27,17 @@ public interface LogMapper {
     /**
     * 更新
     */
-    public int update(@Param("xxlBootLog") XxlBootLog xxlBootLog);
+    public int update(@Param("xxlBootLog") Log xxlBootLog);
 
     /**
     * Load查询
     */
-    public XxlBootLog load(@Param("id") int id);
+    public Log load(@Param("id") int id);
 
     /**
     * 分页查询Data
     */
-	public List<XxlBootLog> pageList(@Param("type") int type,
+	public List<Log> pageList(@Param("type") int type,
                                      @Param("module") String module,
                                      @Param("title") String title,
                                      @Param("offset") int offset,

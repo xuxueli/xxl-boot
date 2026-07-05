@@ -1,7 +1,7 @@
 package com.xxl.boot.api.framework.service;
 
-import com.xxl.boot.api.framework.model.dto.XxlBootUserDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootUser;
+import com.xxl.boot.api.framework.model.dto.UserDTO;
+import com.xxl.boot.api.framework.model.entity.User;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 
@@ -17,7 +17,7 @@ public interface UserService {
     /**
      * 新增
      */
-    public Response<String> insert(XxlBootUserDTO xxlJobUser);
+    public Response<String> insert(UserDTO xxlJobUser);
 
     /**
      * 删除
@@ -32,7 +32,7 @@ public interface UserService {
     /**
      * 更新
      */
-    public Response<String> update(XxlBootUserDTO xxlJobUser, String loginUserName);
+    public Response<String> update(UserDTO xxlJobUser, String loginUserName);
 
     /**
      * 修改密码
@@ -42,17 +42,17 @@ public interface UserService {
     /**
      * Load查询
      */
-    public Response<XxlBootUser> loadByUserName(String username);
+    public Response<User> loadByUserName(String username);
 
     /**
      * Load查询
      */
-    public Response<XxlBootUser> loadByUserId(int id);
+    public Response<User> loadByUserId(int id);
 
     /**
      * 分页查询
      */
-    public PageModel<XxlBootUserDTO> pageList(int offset, int pagesize, String username, int status);
+    public PageModel<UserDTO> pageList(int offset, int pagesize, String username, int status, int orgId);
 
     /**
      * 更新登录token

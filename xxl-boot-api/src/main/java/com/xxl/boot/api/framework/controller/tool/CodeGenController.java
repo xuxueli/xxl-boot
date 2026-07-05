@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.controller.tool;
 
-import com.xxl.boot.api.framework.annotation.Log;
+import com.xxl.boot.api.framework.annotation.XxlLog;
 import com.xxl.boot.api.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.api.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.api.framework.util.codegen.ClassInfo;
@@ -40,16 +40,30 @@ public class CodeGenController {
     @RequestMapping("/genCode")
     @ResponseBody
     @XxlSso
-    @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "生成代码")
-    public Response<Map<String, String>> codeGenerate(String tableSql) {
+    @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "生成代码")
+    public Response<Map<String, String>> codeGenerate(String tableSql,
+                                                      String author,
+                                                      String packagePath,
+                                                      String businessName) {
 
         try {
             if (StringTool.isBlank(tableSql)) {
                 return Response.ofFail("表结构信息不可为空");
             }
+            if (StringTool.isBlank(author)) {
+                return Response.ofFail("Author不可为空");
+            }
+            if (StringTool.isBlank(packagePath)) {
+                return Response.ofFail("Package路径不可为空");
+            }
 
             // parse table
             ClassInfo classInfo = TableParseUtil.processTableIntoClassInfo(tableSql);
+            classInfo.setAuthor(author);
+            classInfo.setPackageName(packagePath);
+            if (StringTool.isNotBlank(businessName)) {
+                classInfo.setClassName(businessName);
+            }
 
             // code genarete
             Map<String, Object> params = new HashMap<String, Object>();

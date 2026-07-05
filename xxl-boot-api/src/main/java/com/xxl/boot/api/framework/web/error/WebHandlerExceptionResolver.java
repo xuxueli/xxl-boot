@@ -30,9 +30,6 @@ public class WebHandlerExceptionResolver implements HandlerExceptionResolver {
 			logger.error("WebExceptionResolver:{}", ex.getMessage(), ex);
 		}
 
-		// parse isJson
-		boolean isJson = true;
-
 		// process error: api server, only return json
 		try {
 			// errorMsg

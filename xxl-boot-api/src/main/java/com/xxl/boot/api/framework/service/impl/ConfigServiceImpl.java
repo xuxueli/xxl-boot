@@ -1,11 +1,10 @@
 package com.xxl.boot.api.framework.service.impl;
 
 import com.xxl.boot.api.framework.mapper.ConfigMapper;
-import com.xxl.boot.api.framework.model.adaptor.XxlBootConfigAdaptor;
-import com.xxl.boot.api.framework.model.dto.XxlBootConfigDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootConfig;
+import com.xxl.boot.api.framework.model.adaptor.ConfigAdaptor;
+import com.xxl.boot.api.framework.model.dto.ConfigDTO;
+import com.xxl.boot.api.framework.model.entity.Config;
 import com.xxl.boot.api.framework.service.ConfigService;
-import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
@@ -20,13 +19,10 @@ public class ConfigServiceImpl implements ConfigService {
     private ConfigMapper configMapper;
 
     @Override
-    public Response<String> insert(XxlBootConfig xxlBootConfig) {
+    public Response<String> insert(Config xxlBootConfig) {
 
         if (xxlBootConfig == null) {
             return Response.ofFail("必要参数缺失");
-        }
-        if (StringTool.isBlank(xxlBootConfig.getKey()) || !xxlBootConfig.getKey().matches("^[a-z][a-z0-9_]*$")) {
-            return Response.ofFail("配置Key需以小写字母开头，仅允许小写字母、数字和下划线");
         }
 
         configMapper.insert(xxlBootConfig);
@@ -40,29 +36,26 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Response<String> update(XxlBootConfig xxlBootConfig) {
-        if (StringTool.isBlank(xxlBootConfig.getKey()) || !xxlBootConfig.getKey().matches("^[a-z][a-z0-9_]*$")) {
-            return Response.ofFail("配置Key需以小写字母开头，仅允许小写字母、数字和下划线");
-        }
+    public Response<String> update(Config xxlBootConfig) {
         int ret = configMapper.update(xxlBootConfig);
         return ret>0? Response.ofSuccess() : Response.ofFail();
     }
 
     @Override
-    public Response<XxlBootConfig> load(int id) {
-        XxlBootConfig record = configMapper.load(id);
+    public Response<Config> load(int id) {
+        Config record = configMapper.load(id);
         return Response.ofSuccess(record);
     }
 
     @Override
-    public PageModel<XxlBootConfigDTO> pageList(int status, String name, String key, int offset, int pagesize) {
+    public PageModel<ConfigDTO> pageList(int status, String name, String key, int offset, int pagesize) {
 
-        List<XxlBootConfig> pageList = configMapper.pageList(status, name, key, offset, pagesize);
+        List<Config> pageList = configMapper.pageList(status, name, key, offset, pagesize);
         int totalCount = configMapper.pageListCount(status, name, key, offset, pagesize);
 
-        List<XxlBootConfigDTO> dtoList = XxlBootConfigAdaptor.adaptor(pageList);
+        List<ConfigDTO> dtoList = ConfigAdaptor.adaptor(pageList);
 
-        PageModel<XxlBootConfigDTO> pageModel = new PageModel<XxlBootConfigDTO>();
+        PageModel<ConfigDTO> pageModel = new PageModel<>();
         pageModel.setData(dtoList);
         pageModel.setTotal(totalCount);
 

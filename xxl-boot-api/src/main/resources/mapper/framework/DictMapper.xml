@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.api.framework.mapper.DictMapper">
 
-    <resultMap id="XxlBootDict" type="com.xxl.boot.api.framework.model.entity.XxlBootDict" >
+    <resultMap id="Dict" type="com.xxl.boot.api.framework.model.entity.Dict" >
         <result column="id" property="id" />
         <result column="name" property="name" />
         <result column="code" property="code" />
@@ -61,13 +61,13 @@
         WHERE `id` = #{xxlBootDict.id}
     </update>
 
-    <select id="load" parameterType="java.util.Map" resultMap="XxlBootDict">
+    <select id="load" parameterType="java.util.Map" resultMap="Dict">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_dict AS t
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootDict">
+    <select id="pageList" parameterType="java.util.Map" resultMap="Dict">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_dict AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR" >

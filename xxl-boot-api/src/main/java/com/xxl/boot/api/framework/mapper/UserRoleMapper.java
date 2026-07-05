@@ -1,13 +1,13 @@
 package com.xxl.boot.api.framework.mapper;
 
-import com.xxl.boot.api.framework.model.entity.XxlBootUserRole;
+import com.xxl.boot.api.framework.model.entity.UserRole;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
-* XxlBootUserRole Mapper
+* UserRole Mapper
 *
 * Created by xuxueli on '2024-09-30 12:53:32'.
 */
@@ -17,7 +17,7 @@ public interface UserRoleMapper {
     /**
     * 新增
     */
-    public int batchInsert(@Param("userRoleList") List<XxlBootUserRole> userRoleList);
+    public int batchInsert(@Param("userRoleList") List<UserRole> userRoleList);
 
     /**
     * 删除
@@ -27,8 +27,8 @@ public interface UserRoleMapper {
     /**
     * Load查询
     */
-    public List<XxlBootUserRole> queryByUserId(@Param("userId") int userId);
+    public List<UserRole> queryByUserId(@Param("userId") int userId);
 
-    public List<XxlBootUserRole> queryByUserIds(@Param("userIds") List<Integer> userIds);
+    public List<UserRole> queryByUserIds(@Param("userIds") List<Integer> userIds);
 
 }

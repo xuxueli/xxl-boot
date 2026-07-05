@@ -2,12 +2,12 @@ package com.xxl.boot.api.framework.service.impl;
 
 import com.xxl.boot.api.framework.mapper.DictItemMapper;
 import com.xxl.boot.api.framework.mapper.DictMapper;
-import com.xxl.boot.api.framework.model.adaptor.XxlBootDictAdaptor;
-import com.xxl.boot.api.framework.model.adaptor.XxlBootDictItemAdaptor;
-import com.xxl.boot.api.framework.model.dto.XxlBootDictDTO;
-import com.xxl.boot.api.framework.model.dto.XxlBootDictItemDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootDict;
-import com.xxl.boot.api.framework.model.entity.XxlBootDictItem;
+import com.xxl.boot.api.framework.model.adaptor.DictAdaptor;
+import com.xxl.boot.api.framework.model.adaptor.DictItemAdaptor;
+import com.xxl.boot.api.framework.model.dto.DictDTO;
+import com.xxl.boot.api.framework.model.dto.DictItemDTO;
+import com.xxl.boot.api.framework.model.entity.Dict;
+import com.xxl.boot.api.framework.model.entity.DictItem;
 import com.xxl.boot.api.framework.service.DictService;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
@@ -27,7 +27,7 @@ public class DictServiceImpl implements DictService {
     private DictItemMapper dictItemMapper;
 
     @Override
-    public Response<String> insert(XxlBootDict xxlBootDict) {
+    public Response<String> insert(Dict xxlBootDict) {
         if (xxlBootDict == null) {
             return Response.ofFail("必要参数缺失");
         }
@@ -36,9 +36,6 @@ public class DictServiceImpl implements DictService {
         }
         if (StringTool.isBlank(xxlBootDict.getCode())) {
             return Response.ofFail("请输入字典标识");
-        }
-        if (!xxlBootDict.getCode().matches("^[a-zA-Z0-9_]+$")) {
-            return Response.ofFail("字典标识只允许字母、数字和下划线");
         }
         dictMapper.insert(xxlBootDict);
         return Response.ofSuccess();
@@ -52,28 +49,25 @@ public class DictServiceImpl implements DictService {
     }
 
     @Override
-    public Response<String> update(XxlBootDict xxlBootDict) {
-        if (StringTool.isNotBlank(xxlBootDict.getCode()) && !xxlBootDict.getCode().matches("^[a-zA-Z0-9_]+$")) {
-            return Response.ofFail("字典标识只允许字母、数字和下划线");
-        }
+    public Response<String> update(Dict xxlBootDict) {
         int ret = dictMapper.update(xxlBootDict);
         return ret > 0 ? Response.ofSuccess() : Response.ofFail();
     }
 
     @Override
-    public Response<XxlBootDict> load(int id) {
-        XxlBootDict record = dictMapper.load(id);
+    public Response<Dict> load(int id) {
+        Dict record = dictMapper.load(id);
         return Response.ofSuccess(record);
     }
 
     @Override
-    public PageModel<XxlBootDictDTO> pageList(String name, String code, int status, int offset, int pagesize) {
-        List<XxlBootDict> pageList = dictMapper.pageList(name, code, status, offset, pagesize);
+    public PageModel<DictDTO> pageList(String name, String code, int status, int offset, int pagesize) {
+        List<Dict> pageList = dictMapper.pageList(name, code, status, offset, pagesize);
         int totalCount = dictMapper.pageListCount(name, code, status, offset, pagesize);
 
-        List<XxlBootDictDTO> dtoList = XxlBootDictAdaptor.adaptor(pageList);
+        List<DictDTO> dtoList = DictAdaptor.adaptor(pageList);
 
-        PageModel<XxlBootDictDTO> pageModel = new PageModel<XxlBootDictDTO>();
+        PageModel<DictDTO> pageModel = new PageModel<DictDTO>();
         pageModel.setData(dtoList);
         pageModel.setTotal(totalCount);
 
@@ -81,7 +75,7 @@ public class DictServiceImpl implements DictService {
     }
 
     @Override
-    public Response<String> insertItem(XxlBootDictItem xxlBootDictItem) {
+    public Response<String> insertItem(DictItem xxlBootDictItem) {
         if (xxlBootDictItem == null) {
             return Response.ofFail("必要参数缺失");
         }
@@ -90,9 +84,6 @@ public class DictServiceImpl implements DictService {
         }
         if (StringTool.isBlank(xxlBootDictItem.getItemCode())) {
             return Response.ofFail("请输入字典项标识");
-        }
-        if (!xxlBootDictItem.getItemCode().matches("^[a-zA-Z0-9_]+$")) {
-            return Response.ofFail("字典项标识只允许字母、数字和下划线");
         }
         dictItemMapper.insert(xxlBootDictItem);
         return Response.ofSuccess();
@@ -105,28 +96,25 @@ public class DictServiceImpl implements DictService {
     }
 
     @Override
-    public Response<String> updateItem(XxlBootDictItem xxlBootDictItem) {
-        if (StringTool.isNotBlank(xxlBootDictItem.getItemCode()) && !xxlBootDictItem.getItemCode().matches("^[a-zA-Z0-9_]+$")) {
-            return Response.ofFail("字典项标识只允许字母、数字和下划线");
-        }
+    public Response<String> updateItem(DictItem xxlBootDictItem) {
         int ret = dictItemMapper.update(xxlBootDictItem);
         return ret > 0 ? Response.ofSuccess() : Response.ofFail();
     }
 
     @Override
-    public Response<XxlBootDictItem> loadItem(int id) {
-        XxlBootDictItem record = dictItemMapper.load(id);
+    public Response<DictItem> loadItem(int id) {
+        DictItem record = dictItemMapper.load(id);
         return Response.ofSuccess(record);
     }
 
     @Override
-    public PageModel<XxlBootDictItemDTO> itemPageList(long dictId, int offset, int pagesize) {
-        List<XxlBootDictItem> pageList = dictItemMapper.pageList(dictId, offset, pagesize);
+    public PageModel<DictItemDTO> itemPageList(long dictId, int offset, int pagesize) {
+        List<DictItem> pageList = dictItemMapper.pageList(dictId, offset, pagesize);
         int totalCount = dictItemMapper.pageListCount(dictId, offset, pagesize);
 
-        List<XxlBootDictItemDTO> dtoList = XxlBootDictItemAdaptor.adaptor(pageList);
+        List<DictItemDTO> dtoList = DictItemAdaptor.adaptor(pageList);
 
-        PageModel<XxlBootDictItemDTO> pageModel = new PageModel<XxlBootDictItemDTO>();
+        PageModel<DictItemDTO> pageModel = new PageModel<DictItemDTO>();
         pageModel.setData(dtoList);
         pageModel.setTotal(totalCount);
 

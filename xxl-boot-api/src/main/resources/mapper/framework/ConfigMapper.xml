@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.api.framework.mapper.ConfigMapper">
 
-    <resultMap id="XxlBootConfig" type="com.xxl.boot.api.framework.model.entity.XxlBootConfig" >
+    <resultMap id="Config" type="com.xxl.boot.api.framework.model.entity.Config" >
         <result column="id" property="id" />
         <result column="name" property="name" />
         <result column="key" property="key" />
@@ -66,13 +66,13 @@
         WHERE `id` = #{xxlBootConfig.id}
     </update>
 
-    <select id="load" parameterType="java.util.Map" resultMap="XxlBootConfig">
+    <select id="load" parameterType="java.util.Map" resultMap="Config">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_config AS t
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootConfig">
+    <select id="pageList" parameterType="java.util.Map" resultMap="Config">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_config AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR" >

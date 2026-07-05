@@ -2,14 +2,16 @@ package com.xxl.boot.api.framework.service.impl;
 
 import com.xxl.boot.api.framework.mapper.RoleMapper;
 import com.xxl.boot.api.framework.mapper.RoleResMapper;
-import com.xxl.boot.api.framework.model.entity.XxlBootRole;
-import com.xxl.boot.api.framework.model.entity.XxlBootRoleRes;
+import com.xxl.boot.api.framework.model.entity.Role;
+import com.xxl.boot.api.framework.model.entity.RoleRes;
 import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.boot.api.framework.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 */
 @Service
 public class RoleServiceImpl implements RoleService {
+	private static final Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
 
 	@Resource
 	private RoleMapper roleMapper;
@@ -32,12 +35,18 @@ public class RoleServiceImpl implements RoleService {
     * 新增
     */
 	@Override
-	public Response<String> insert(XxlBootRole xxlBootRole) {
+	public Response<String> insert(Role xxlBootRole) {
 
 		// valid
 		if (xxlBootRole == null) {
 			return Response.ofFail("必要参数缺失");
         }
+		if (xxlBootRole.getName() == null || xxlBootRole.getName().trim().isEmpty()) {
+			return Response.ofFail(I18nUtil.getString("system_please_input") + I18nUtil.getString("role_name"));
+		}
+		if (xxlBootRole.getCode() == null || xxlBootRole.getCode().trim().isEmpty()) {
+			return Response.ofFail(I18nUtil.getString("system_please_input") + I18nUtil.getString("role_code"));
+		}
 
 		int ret = roleMapper.insert(xxlBootRole);
 		return Response.ofSuccess();
@@ -53,7 +62,7 @@ public class RoleServiceImpl implements RoleService {
 		if (CollectionTool.isEmpty(ids)) {
 			return Response.ofFail(I18nUtil.getString("system_please_choose") + I18nUtil.getString("role_tips"));
 		}
-		List<XxlBootRoleRes> roleResList = roleResMapper.queryRoleRes(ids);
+		List<RoleRes> roleResList = roleResMapper.queryRoleRes(ids);
 		if (CollectionTool.isNotEmpty(roleResList)) {
 			return Response.ofFail("无法删除，请先取消关联资源");
 		}
@@ -66,7 +75,13 @@ public class RoleServiceImpl implements RoleService {
 	* 更新
 	*/
 	@Override
-	public Response<String> update(XxlBootRole xxlBootRole) {
+	public Response<String> update(Role xxlBootRole) {
+		if (xxlBootRole.getName() == null || xxlBootRole.getName().trim().isEmpty()) {
+			return Response.ofFail(I18nUtil.getString("system_please_input") + I18nUtil.getString("role_name"));
+		}
+		if (xxlBootRole.getCode() == null || xxlBootRole.getCode().trim().isEmpty()) {
+			return Response.ofFail(I18nUtil.getString("system_please_input") + I18nUtil.getString("role_code"));
+		}
 		int ret = roleMapper.update(xxlBootRole);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
@@ -75,8 +90,8 @@ public class RoleServiceImpl implements RoleService {
 	* Load查询
 	*/
 	@Override
-	public Response<XxlBootRole> load(int id) {
-		XxlBootRole record = roleMapper.load(id);
+	public Response<Role> load(int id) {
+		Role record = roleMapper.load(id);
 		return Response.ofSuccess(record);
 	}
 
@@ -84,13 +99,13 @@ public class RoleServiceImpl implements RoleService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<XxlBootRole> pageList(int offset, int pagesize, String name) {
+	public PageModel<Role> pageList(int offset, int pagesize, String name, int status) {
 
-		List<XxlBootRole> pageList = roleMapper.pageList(offset, pagesize, name);
-		int totalCount = roleMapper.pageListCount(offset, pagesize, name);
+		List<Role> pageList = roleMapper.pageList(offset, pagesize, name, status);
+		int totalCount = roleMapper.pageListCount(offset, pagesize, name, status);
 
 		// result
-		PageModel<XxlBootRole> pageModel = new PageModel<>();
+		PageModel<Role> pageModel = new PageModel<>();
 		pageModel.setData(pageList);
 		pageModel.setTotal(totalCount);
 
@@ -99,14 +114,14 @@ public class RoleServiceImpl implements RoleService {
 
 	@Override
 	public Response<List<Integer>> loadRoleRes(int roleId) {
-		List<XxlBootRoleRes> roleResList = roleResMapper.loadRoleRes(roleId);
+		List<RoleRes> roleResList = roleResMapper.loadRoleRes(roleId);
 		if (CollectionTool.isEmpty(roleResList)) {
 			return Response.ofSuccess();
 		}
 
 		List<Integer> resIds = roleResList
 				.stream()
-				.map(XxlBootRoleRes::getResId)
+				.map(RoleRes::getResId)
 				.collect(Collectors.toList());
 		return Response.ofSuccess(resIds);
 	}
@@ -121,19 +136,19 @@ public class RoleServiceImpl implements RoleService {
 
 		// init new
 		if (CollectionTool.isNotEmpty(resourceIds)) {
-			List<XxlBootRoleRes> roleResList = resourceIds
+			List<RoleRes> roleResList = resourceIds
 					.stream()
-					.map(resId -> new XxlBootRoleRes(roleId, resId))
+					.map(resId -> new RoleRes(roleId, resId))
 					.collect(Collectors.toList());
 			int ret = roleResMapper.batchInsert(roleResList);
-			System.out.println(ret);
+			logger.info("updateRoleRes roleId:{}, resourceIds:{}, ret:{}", roleId, resourceIds, ret);
 		}
 
 		return Response.ofSuccess();
 	}
 
 	@Override
-	public List<XxlBootRole> queryRoleByUserid(int userId) {
+	public List<Role> queryRoleByUserid(int userId) {
 		return roleMapper.queryByUserid(userId);
 	}
 

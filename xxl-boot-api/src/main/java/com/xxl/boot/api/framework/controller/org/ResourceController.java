@@ -2,12 +2,11 @@ package com.xxl.boot.api.framework.controller.org;
 
 import com.xxl.boot.api.framework.constant.enums.ResourceStatuEnum;
 import com.xxl.boot.api.framework.constant.enums.ResourceTypeEnum;
-import com.xxl.boot.api.framework.model.dto.XxlBootResourceDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootResource;
+import com.xxl.boot.api.framework.model.dto.ResourceDTO;
+import com.xxl.boot.api.framework.model.entity.Resource;
 import com.xxl.boot.api.framework.service.ResourceService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.Response;
-import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
- * XxlBootResource Controller
+ * Resource Controller
  *
  * Created by xuxueli on '2024-07-28 12:52:39'.
  */
@@ -25,7 +24,7 @@ import java.util.List;
 @RequestMapping("/org/resource")
 public class ResourceController {
 
-    @Resource
+    @jakarta.annotation.Resource
     private ResourceService resourceService;
 
     /**
@@ -65,10 +64,10 @@ public class ResourceController {
     @RequestMapping("/treeList")
     @ResponseBody
     @XxlSso(permission = "org:resource")
-    public Response<List<XxlBootResourceDTO>> treeList(@RequestParam(required = false) String name,
+    public Response<List<ResourceDTO>> treeList(@RequestParam(required = false) String name,
                                                        @RequestParam(required = false, defaultValue = "-1") int status) {
 
-        List<XxlBootResourceDTO> treeListData = resourceService.treeList(name, status);
+        List<ResourceDTO> treeListData = resourceService.treeList(name, status);
         return Response.ofSuccess(treeListData);
     }
 
@@ -87,9 +86,9 @@ public class ResourceController {
     @RequestMapping("/simpleTreeList")
     @ResponseBody
     @XxlSso(permission = "org:resource")
-    public Response<List<XxlBootResourceDTO>> simpleTreeList(@RequestParam(required = false) String name,
+    public Response<List<ResourceDTO>> simpleTreeList(@RequestParam(required = false) String name,
                                                              @RequestParam(required = false, defaultValue = "-1") int status) {
-        List<XxlBootResourceDTO> treeListData = resourceService.simpleTreeList(name, status);
+        List<ResourceDTO> treeListData = resourceService.simpleTreeList(name, status);
         return Response.ofSuccess(treeListData);
     }
 
@@ -99,7 +98,7 @@ public class ResourceController {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso(permission = "org:resource")
-    public Response<XxlBootResource> load(int id){
+    public Response<Resource> load(int id){
         return resourceService.load(id);
     }
 
@@ -109,7 +108,7 @@ public class ResourceController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso(permission = "org:resource")
-    public Response<String> insert(XxlBootResource xxlBootResource){
+    public Response<String> insert(Resource xxlBootResource){
         return resourceService.insert(xxlBootResource);
     }
 
@@ -129,7 +128,7 @@ public class ResourceController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso(permission = "org:resource")
-    public Response<String> update(XxlBootResource xxlBootResource){
+    public Response<String> update(Resource xxlBootResource){
         return resourceService.update(xxlBootResource);
     }
 

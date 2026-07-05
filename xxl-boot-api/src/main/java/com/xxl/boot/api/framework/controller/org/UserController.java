@@ -1,11 +1,13 @@
 package com.xxl.boot.api.framework.controller.org;
 
-import com.xxl.boot.api.framework.annotation.Log;
+import com.xxl.boot.api.framework.annotation.XxlLog;
 import com.xxl.boot.api.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.api.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
-import com.xxl.boot.api.framework.model.dto.XxlBootUserDTO;
-import com.xxl.boot.api.framework.model.entity.XxlBootRole;
+import com.xxl.boot.api.framework.model.dto.UserDTO;
+import com.xxl.boot.api.framework.model.entity.Org;
+import com.xxl.boot.api.framework.model.entity.Role;
+import com.xxl.boot.api.framework.service.OrgService;
 import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.boot.api.framework.service.UserService;
 import com.xxl.sso.core.annotation.XxlSso;
@@ -34,15 +36,19 @@ public class UserController {
     private UserService userService;
     @Resource
     private RoleService roleService;
+    @Resource
+    private OrgService orgService;
 
     @RequestMapping
     @XxlSso(permission = "org:user")
     public String index(Model model) {
 
-        PageModel<XxlBootRole> pageModel = roleService.pageList(0, 999, null);
+        PageModel<Role> pageModel = roleService.pageList(0, 999, null, -1);
+        List<Org> orgTree = orgService.treeList(null, -1);
 
         model.addAttribute("roleList", pageModel.getData());
         model.addAttribute("userStatuEnum", UserStatuEnum.values());
+        model.addAttribute("orgTree", orgTree);
 
         return "/framework/org/user";
     }
@@ -50,28 +56,29 @@ public class UserController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso(permission = "org:user")
-    public Response<PageModel<XxlBootUserDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<UserDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                         @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                         String username,
-                                                        @RequestParam(required = false, defaultValue = "-1") int status) {
+                                                        @RequestParam(required = false, defaultValue = "-1") int status,
+                                                        @RequestParam(required = false, defaultValue = "0") int orgId) {
 
-        PageModel<XxlBootUserDTO> pageModel = userService.pageList(offset, pagesize, username, status);
+        PageModel<UserDTO> pageModel = userService.pageList(offset, pagesize, username, status, orgId);
         return Response.ofSuccess(pageModel);
     }
 
     @RequestMapping("/add")
     @ResponseBody
     @XxlSso(permission = "org:user")
-    @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER_MANAGE, title = "新增用户")
-    public Response<String> add(XxlBootUserDTO xxlJobUser) {
+    @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER, title = "新增用户")
+    public Response<String> add(UserDTO xxlJobUser) {
         return userService.insert(xxlJobUser);
     }
 
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso(permission = "org:user")
-    @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER_MANAGE, title = "更新用户")
-    public Response<String> update(HttpServletRequest request, XxlBootUserDTO xxlJobUser) {
+    @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER, title = "更新用户")
+    public Response<String> update(HttpServletRequest request, UserDTO xxlJobUser) {
         // xxl-sso, logincheck
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
@@ -81,7 +88,7 @@ public class UserController {
     @RequestMapping("/delete")
     @ResponseBody
     @XxlSso(permission = "org:user")
-    @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER_MANAGE, title = "删除用户")
+    @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER, title = "删除用户")
     public Response<String> delete(HttpServletRequest request,
                                    @RequestParam("ids[]") List<Integer> ids) {
         // xxl-sso, logincheck

@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.api.framework.mapper.DictItemMapper">
 
-    <resultMap id="XxlBootDictItem" type="com.xxl.boot.api.framework.model.entity.XxlBootDictItem" >
+    <resultMap id="DictItem" type="com.xxl.boot.api.framework.model.entity.DictItem" >
         <result column="id" property="id" />
         <result column="dict_id" property="dictId" />
         <result column="item_name" property="itemName" />
@@ -78,13 +78,13 @@
         WHERE `id` = #{xxlBootDictItem.id}
     </update>
 
-    <select id="load" parameterType="java.util.Map" resultMap="XxlBootDictItem">
+    <select id="load" parameterType="java.util.Map" resultMap="DictItem">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_dict_item AS t
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootDictItem">
+    <select id="pageList" parameterType="java.util.Map" resultMap="DictItem">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_dict_item AS t
         WHERE t.`dict_id` = #{dictId}
@@ -98,7 +98,7 @@
         WHERE t.`dict_id` = #{dictId}
     </select>
 
-    <select id="findByDictId" parameterType="java.util.Map" resultMap="XxlBootDictItem">
+    <select id="findByDictId" parameterType="java.util.Map" resultMap="DictItem">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_dict_item AS t
         WHERE t.`dict_id` = #{dictId}

@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.mapper;
 
-import com.xxl.boot.api.framework.model.entity.XxlBootRole;
+import com.xxl.boot.api.framework.model.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,7 +17,7 @@ public interface RoleMapper {
     /**
     * 新增
     */
-    public int insert(XxlBootRole xxlBootRole);
+    public int insert(Role xxlBootRole);
 
     /**
     * 删除
@@ -27,32 +27,34 @@ public interface RoleMapper {
     /**
     * 更新
     */
-    public int update(XxlBootRole xxlBootRole);
+    public int update(Role xxlBootRole);
 
     /**
     * Load查询
     */
-    public XxlBootRole load(@Param("id") int id);
+    public Role load(@Param("id") int id);
 
     /**
     * 分页查询Data
     */
-	public List<XxlBootRole> pageList(@Param("offset") int offset,
+	public List<Role> pageList(@Param("offset") int offset,
                                       @Param("pagesize") int pagesize,
-                                      @Param("name") String name);
+                                      @Param("name") String name,
+                                      @Param("status") int status);
 
     /**
     * 分页查询Count
     */
     public int pageListCount(@Param("offset") int offset,
                              @Param("pagesize") int pagesize,
-                             @Param("name") String name);
+                             @Param("name") String name,
+                             @Param("status") int status);
 
-    List<XxlBootRole> queryByRoleIds(@Param("roleIds") List<Integer> roleIds);
+    List<Role> queryByRoleIds(@Param("roleIds") List<Integer> roleIds);
 
     /**
      * 根据用户id查询角色
      */
-    List<XxlBootRole> queryByUserid(@Param("userId") int userId);
+    List<Role> queryByUserid(@Param("userId") int userId);
 
 }

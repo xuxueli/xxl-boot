@@ -1,3 +1,5 @@
+package ${classInfo.packageName}.controller;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,17 +13,22 @@ import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 import com.xxl.sso.core.annotation.XxlSso;
 
+import ${classInfo.packageName}.model.${classInfo.className};
+import ${classInfo.packageName}.service.${classInfo.className}Service;
+
+<#assign classNameLower = classInfo.className?uncap_first />
+
 /**
 * ${classInfo.className} Controller
 *
-* Created by xuxueli on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
 @Controller
-@RequestMapping("/${classInfo.className?uncap_first}")
+@RequestMapping("/${classNameLower}")
 public class ${classInfo.className}Controller {
 
     @Resource
-    private ${classInfo.className}Service ${classInfo.className?uncap_first}Service;
+    private ${classInfo.className}Service ${classNameLower}Service;
 
     /**
     * 页面
@@ -29,7 +36,7 @@ public class ${classInfo.className}Controller {
     @RequestMapping
     @XxlSso
     public String index(Model model) {
-        return "${classInfo.className?uncap_first}";
+        return "${classNameLower}";
     }
 
     /**
@@ -40,7 +47,7 @@ public class ${classInfo.className}Controller {
     @XxlSso
     public Response<PageModel<${classInfo.className}>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                     @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<${classInfo.className}> pageModel = ${classInfo.className?uncap_first}Service.pageList(offset, pagesize);
+        PageModel<${classInfo.className}> pageModel = ${classNameLower}Service.pageList(offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
@@ -51,7 +58,7 @@ public class ${classInfo.className}Controller {
     @ResponseBody
     @XxlSso
     public Response<${classInfo.className}> load(int id){
-        return ${classInfo.className?uncap_first}Service.load(id);
+        return ${classNameLower}Service.load(id);
     }
 
     /**
@@ -60,8 +67,8 @@ public class ${classInfo.className}Controller {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(${classInfo.className} ${classInfo.className?uncap_first}){
-        return ${classInfo.className?uncap_first}Service.insert(${classInfo.className?uncap_first});
+    public Response<String> insert(${classInfo.className} ${classNameLower}){
+        return ${classNameLower}Service.insert(${classNameLower});
     }
 
     /**
@@ -71,7 +78,7 @@ public class ${classInfo.className}Controller {
     @ResponseBody
     @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
-        return ${classInfo.className?uncap_first}Service.delete(ids);
+        return ${classNameLower}Service.delete(ids);
     }
 
     /**
@@ -80,8 +87,8 @@ public class ${classInfo.className}Controller {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(${classInfo.className} ${classInfo.className?uncap_first}){
-        return ${classInfo.className?uncap_first}Service.update(${classInfo.className?uncap_first});
+    public Response<String> update(${classInfo.className} ${classNameLower}){
+        return ${classNameLower}Service.update(${classNameLower});
     }
 
 }

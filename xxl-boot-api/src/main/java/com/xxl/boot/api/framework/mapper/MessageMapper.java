@@ -1,13 +1,13 @@
 package com.xxl.boot.api.framework.mapper;
 
-import com.xxl.boot.api.framework.model.entity.XxlBootMessage;
+import com.xxl.boot.api.framework.model.entity.Message;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
-* XxlBootMessage Mapper
+* Message Mapper
 *
 * Created by xuxueli on '2024-11-03 11:03:29'.
 */
@@ -17,7 +17,7 @@ public interface MessageMapper {
     /**
     * 新增
     */
-    public int insert(@Param("xxlBootMessage") XxlBootMessage xxlBootMessage);
+    public int insert(@Param("xxlBootMessage") Message xxlBootMessage);
 
     /**
     * 删除
@@ -27,17 +27,17 @@ public interface MessageMapper {
     /**
     * 更新
     */
-    public int update(@Param("xxlBootMessage") XxlBootMessage xxlBootMessage);
+    public int update(@Param("xxlBootMessage") Message xxlBootMessage);
 
     /**
     * Load查询
     */
-    public XxlBootMessage load(@Param("id") int id);
+    public Message load(@Param("id") int id);
 
     /**
     * 分页查询Data
     */
-	public List<XxlBootMessage> pageList(@Param("status") int status,
+	public List<Message> pageList(@Param("status") int status,
                                          @Param("title") String title,
                                          @Param("offset") int offset,
                                          @Param("pagesize") int pagesize);

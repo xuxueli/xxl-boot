@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.mapper;
 
-import com.xxl.boot.api.framework.model.entity.XxlBootRoleRes;
+import com.xxl.boot.api.framework.model.entity.RoleRes;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,7 +17,7 @@ public interface RoleResMapper {
     /**
      * 新增
      */
-    public int batchInsert(@Param("roleResList") List<XxlBootRoleRes> roleResList);
+    public int batchInsert(@Param("roleResList") List<RoleRes> roleResList);
 
     /**
      * 删除
@@ -27,11 +27,11 @@ public interface RoleResMapper {
     /**
      * 查询
      */
-    public List<XxlBootRoleRes> loadRoleRes(@Param("roleId") int roleId);
+    public List<RoleRes> loadRoleRes(@Param("roleId") int roleId);
 
     /**
      * 查询
      */
-    public List<XxlBootRoleRes> queryRoleRes(@Param("roleIds") List<Integer> roleIds);
+    public List<RoleRes> queryRoleRes(@Param("roleIds") List<Integer> roleIds);
 
 }

@@ -1,7 +1,7 @@
 package com.xxl.boot.api.framework.controller.org;
 
 import com.xxl.boot.api.framework.constant.enums.OrgStatuEnum;
-import com.xxl.boot.api.framework.model.entity.XxlBootOrg;
+import com.xxl.boot.api.framework.model.entity.Org;
 import com.xxl.boot.api.framework.service.OrgService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.Response;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 /**
- * XxlBootOrg Controller
+ * Org Controller
  *
  * Created by xuxueli on '2024-09-30 15:38:21'.
  */
@@ -40,22 +40,22 @@ public class OrgController {
     /**
      * tree数据查询
      *
-     * <pre>
+     *  <pre>
      *     [
      * 			  {id: 1, pId: 0, name: "资源A", open: true},
      *            {id: 5, pId: 1, name: "资源A1"},
      *            {id: 2, pId: 0, name: "资源B", open: false},
      *            {id: 11, pId: 2, name: "资源B2"}
      * 		]
-     * </pre>
+     *  </pre>
      */
     @RequestMapping("/treeList")
     @ResponseBody
     @XxlSso(permission = "org:org")
-    public Response<List<XxlBootOrg>> treeList(@RequestParam(required = false) String name,
+    public Response<List<Org>> treeList(@RequestParam(required = false) String name,
                                                @RequestParam(required = false, defaultValue = "-1") int status) {
 
-        List<XxlBootOrg> treeListData = orgService.treeList(name, status);
+        List<Org> treeListData = orgService.treeList(name, status);
         return Response.ofSuccess(treeListData);
     }
 
@@ -65,7 +65,7 @@ public class OrgController {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso(permission = "org:org")
-    public Response<XxlBootOrg> load(int id){
+    public Response<Org> load(int id){
         return orgService.load(id);
     }
 
@@ -75,7 +75,7 @@ public class OrgController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso(permission = "org:org")
-    public Response<String> insert(XxlBootOrg xxlBootOrg){
+    public Response<String> insert(Org xxlBootOrg){
         return orgService.insert(xxlBootOrg);
     }
 
@@ -95,7 +95,7 @@ public class OrgController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso(permission = "org:org")
-    public Response<String> update(XxlBootOrg xxlBootOrg){
+    public Response<String> update(Org xxlBootOrg){
         return orgService.update(xxlBootOrg);
     }
 

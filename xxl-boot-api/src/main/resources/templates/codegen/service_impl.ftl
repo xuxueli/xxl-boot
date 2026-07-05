@@ -1,3 +1,5 @@
+package ${classInfo.packageName}.service;
+
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
@@ -8,29 +10,34 @@ import java.util.Map;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
+import ${classInfo.packageName}.model.${classInfo.className};
+import ${classInfo.packageName}.mapper.${classInfo.className}Mapper;
+
+<#assign classNameLower = classInfo.className?uncap_first />
+
 /**
 * ${classInfo.className} Service Impl
 *
-* Created by xuxueli on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
 @Service
 public class ${classInfo.className}ServiceImpl implements ${classInfo.className}Service {
 
 	@Resource
-	private ${classInfo.className}Mapper ${classInfo.className?uncap_first}Mapper;
+	private ${classInfo.className}Mapper ${classNameLower}Mapper;
 
 	/**
     * 新增
     */
 	@Override
-	public Response<String> insert(${classInfo.className} ${classInfo.className?uncap_first}) {
+	public Response<String> insert(${classInfo.className} ${classNameLower}) {
 
 		// valid
-		if (${classInfo.className?uncap_first} == null) {
+		if (${classNameLower} == null) {
 			return Response.ofFail("必要参数缺失");
         }
 
-		${classInfo.className?uncap_first}Mapper.insert(${classInfo.className?uncap_first});
+		${classNameLower}Mapper.insert(${classNameLower});
 		return Response.ofSuccess();
 	}
 
@@ -39,7 +46,7 @@ public class ${classInfo.className}ServiceImpl implements ${classInfo.className}
 	*/
 	@Override
 	public Response<String> delete(List<Integer> ids) {
-		int ret = ${classInfo.className?uncap_first}Mapper.delete(ids);
+		int ret = ${classNameLower}Mapper.delete(ids);
 			return ret>0? Response.ofSuccess() : Response.ofFail() ;
 	}
 
@@ -47,8 +54,8 @@ public class ${classInfo.className}ServiceImpl implements ${classInfo.className}
 	* 更新
 	*/
 	@Override
-	public Response<String> update(${classInfo.className} ${classInfo.className?uncap_first}) {
-		int ret = ${classInfo.className?uncap_first}Mapper.update(${classInfo.className?uncap_first});
+	public Response<String> update(${classInfo.className} ${classNameLower}) {
+		int ret = ${classNameLower}Mapper.update(${classNameLower});
 		return ret>0? Response.ofSuccess() : Response.ofFail() ;
 	}
 
@@ -57,7 +64,7 @@ public class ${classInfo.className}ServiceImpl implements ${classInfo.className}
 	*/
 	@Override
 	public Response<${classInfo.className}> load(int id) {
-		${classInfo.className} record = ${classInfo.className?uncap_first}Mapper.load(id);
+		${classInfo.className} record = ${classNameLower}Mapper.load(id);
 		return Response.ofSuccess(record);
 	}
 
@@ -67,8 +74,8 @@ public class ${classInfo.className}ServiceImpl implements ${classInfo.className}
 	@Override
 	public PageModel<${classInfo.className}> pageList(int offset, int pagesize) {
 
-		List<${classInfo.className}> pageList = ${classInfo.className?uncap_first}Mapper.pageList(offset, pagesize);
-		int totalCount = ${classInfo.className?uncap_first}Mapper.pageListCount(offset, pagesize);
+		List<${classInfo.className}> pageList = ${classNameLower}Mapper.pageList(offset, pagesize);
+		int totalCount = ${classNameLower}Mapper.pageListCount(offset, pagesize);
 
 		// result
 		PageModel<${classInfo.className}> pageModel = new PageModel<${classInfo.className}>();
