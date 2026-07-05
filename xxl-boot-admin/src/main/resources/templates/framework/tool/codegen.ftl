@@ -89,38 +89,66 @@ CREATE TABLE `user` (
 				</ul>
 				<div class="tab-content no-padding">
 					<div class="chart tab-pane active" id="controller">
+						<div class="box-header with-border">
+							<h5 class="pull-left">Controller：</h5>
+							<button type="button" class="btn btn-default btn-xs copyBtn" data-target="controller_ide">Copy</button>
+						</div>
 						<div class="box-body">
-							Controller：<textarea id="controller_ide" ></textarea>
+							<textarea id="controller_ide" ></textarea>
 						</div>
 					</div>
-					<div class="chart tab-pane active" id="service">
+					<div class="chart tab-pane" id="service">
+						<div class="box-header with-border">
+							<h5 class="pull-left">Service：</h5>
+							<button type="button" class="btn btn-default btn-xs copyBtn" data-target="service_ide">Copy</button>
+						</div>
 						<div class="box-body">
-							Service：<textarea id="service_ide" ></textarea>
+							<textarea id="service_ide" ></textarea>
 						</div>
 					</div>
-					<div class="chart tab-pane active" id="service_impl">
+					<div class="chart tab-pane" id="service_impl">
+						<div class="box-header with-border">
+							<h5 class="pull-left">ServiceImpl：</h5>
+							<button type="button" class="btn btn-default btn-xs copyBtn" data-target="service_impl_ide">Copy</button>
+						</div>
 						<div class="box-body">
-							ServiceImpl：<textarea id="service_impl_ide" ></textarea>
+							<textarea id="service_impl_ide" ></textarea>
 						</div>
 					</div>
-					<div class="chart tab-pane active" id="mapper">
+					<div class="chart tab-pane" id="mapper">
+						<div class="box-header with-border">
+							<h5 class="pull-left">Mapper：</h5>
+							<button type="button" class="btn btn-default btn-xs copyBtn" data-target="mapper_ide">Copy</button>
+						</div>
 						<div class="box-body">
-							Mapper：<textarea id="mapper_ide" ></textarea>
+							<textarea id="mapper_ide" ></textarea>
 						</div>
 					</div>
-					<div class="chart tab-pane active" id="mapper_xml">
+					<div class="chart tab-pane" id="mapper_xml">
+						<div class="box-header with-border">
+							<h5 class="pull-left">Mapper(XML)：</h5>
+							<button type="button" class="btn btn-default btn-xs copyBtn" data-target="mapper_xml_ide">Copy</button>
+						</div>
 						<div class="box-body">
-							Mapper(XML)：<textarea id="mapper_xml_ide" ></textarea>
+							<textarea id="mapper_xml_ide" ></textarea>
 						</div>
 					</div>
-					<div class="chart tab-pane active" id="entity" >
-						<div class="box-body ">
-							Entity：<textarea id="entity_ide" ></textarea>
+					<div class="chart tab-pane" id="entity" >
+						<div class="box-header with-border">
+							<h5 class="pull-left">Entity：</h5>
+							<button type="button" class="btn btn-default btn-xs copyBtn" data-target="entity_ide">Copy</button>
+						</div>
+						<div class="box-body">
+							<textarea id="entity_ide" ></textarea>
 						</div>
 					</div>
-					<div class="chart tab-pane active" id="page" >
-						<div class="box-body ">
-							Page：<textarea id="page_ide" ></textarea>
+					<div class="chart tab-pane" id="page" >
+						<div class="box-header with-border">
+							<h5 class="pull-left">Page：</h5>
+							<button type="button" class="btn btn-default btn-xs copyBtn" data-target="page_ide">Copy</button>
+						</div>
+						<div class="box-body">
+							<textarea id="page_ide" ></textarea>
 						</div>
 					</div>
 				</div>
@@ -165,6 +193,7 @@ $(function () {
 	 * init code area
 	 */
 
+	var ideMap = {};
 	var controller_ide;
 	var service_ide;
 	var service_impl_ide;
@@ -253,8 +282,31 @@ $(function () {
 			readOnly:true
 		});
 		page_ide.setSize('auto','auto');
+
+		ideMap['controller_ide'] = controller_ide;
+		ideMap['service_ide'] = service_ide;
+		ideMap['service_impl_ide'] = service_impl_ide;
+		ideMap['mapper_ide'] = mapper_ide;
+		ideMap['mapper_xml_ide'] = mapper_xml_ide;
+		ideMap['entity_ide'] = entity_ide;
+		ideMap['page_ide'] = page_ide;
 	}
 	initCodeArea();
+
+	/**
+	 * copy code
+	 */
+	$(document).on('click', '.copyBtn', function() {
+		var targetId = $(this).data('target');
+		var ide = ideMap[targetId];
+		if (ide) {
+			navigator.clipboard.writeText(ide.getValue()).then(function() {
+				layer.msg('复制成功');
+			}).catch(function() {
+				layer.msg('复制失败');
+			});
+		}
+	});
 
 	/**
 	 * gen Code
