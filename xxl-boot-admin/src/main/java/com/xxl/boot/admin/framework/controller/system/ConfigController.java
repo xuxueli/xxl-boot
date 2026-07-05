@@ -1,8 +1,8 @@
 package com.xxl.boot.admin.framework.controller.system;
 
 import com.xxl.boot.admin.framework.constant.enums.ConfigStatusEnum;
-import com.xxl.boot.admin.framework.model.dto.XxlBootConfigDTO;
-import com.xxl.boot.admin.framework.model.entity.XxlBootConfig;
+import com.xxl.boot.admin.framework.model.dto.ConfigDTO;
+import com.xxl.boot.admin.framework.model.entity.Config;
 import com.xxl.boot.admin.framework.service.ConfigService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.PageModel;
@@ -35,26 +35,26 @@ public class ConfigController {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<XxlBootConfigDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<ConfigDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                            @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                            int status,
                                                            String name,
                                                            String key) {
-        PageModel<XxlBootConfigDTO> pageModel = configService.pageList(status, name, key, offset, pagesize);
+        PageModel<ConfigDTO> pageModel = configService.pageList(status, name, key, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso
-    public Response<XxlBootConfig> load(int id){
+    public Response<Config> load(int id){
         return configService.load(id);
     }
 
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(XxlBootConfig xxlBootConfig){
+    public Response<String> insert(Config xxlBootConfig){
         return configService.insert(xxlBootConfig);
     }
 
@@ -68,7 +68,7 @@ public class ConfigController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(XxlBootConfig xxlBootConfig){
+    public Response<String> update(Config xxlBootConfig){
         return configService.update(xxlBootConfig);
     }
 

@@ -1,17 +1,17 @@
 package com.xxl.boot.admin.framework.model.dto;
 
-import com.xxl.boot.admin.framework.model.entity.XxlBootResource;
+import com.xxl.boot.admin.framework.model.entity.Resource;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
- *  XxlBootResource DTO
+ *  Resource DTO
  *
  *  Created by xuxueli on 2024-08-04
  */
-public class XxlBootResourceDTO implements Serializable {
+public class ResourceDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**
@@ -72,11 +72,11 @@ public class XxlBootResourceDTO implements Serializable {
     /**
      * child data
      */
-    private List<XxlBootResourceDTO> children;
+    private List<ResourceDTO> children;
 
-    public XxlBootResourceDTO() {
+    public ResourceDTO() {
     }
-    public XxlBootResourceDTO(XxlBootResource resource, List<XxlBootResourceDTO> children) {
+    public ResourceDTO(Resource resource, List<ResourceDTO> children) {
         setId(resource.getId());
         setParentId(resource.getParentId());
         setName(resource.getName());
@@ -181,11 +181,11 @@ public class XxlBootResourceDTO implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public List<XxlBootResourceDTO> getChildren() {
+    public List<ResourceDTO> getChildren() {
         return children;
     }
 
-    public void setChildren(List<XxlBootResourceDTO> children) {
+    public void setChildren(List<ResourceDTO> children) {
         this.children = children;
     }
 }

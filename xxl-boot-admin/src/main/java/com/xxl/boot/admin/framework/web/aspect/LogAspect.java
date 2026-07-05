@@ -1,7 +1,6 @@
 package com.xxl.boot.admin.framework.web.aspect;
 
-import com.xxl.boot.admin.framework.annotation.Log;
-import com.xxl.boot.admin.framework.model.entity.XxlBootLog;
+import com.xxl.boot.admin.framework.annotation.XxlLog;
 import com.xxl.boot.admin.framework.service.LogService;
 import com.xxl.boot.admin.framework.util.Ip2regionUtil;
 import com.xxl.sso.core.helper.XxlSsoHelper;
@@ -41,7 +40,7 @@ public class LogAspect {
     /**
      * 定义切点，匹配所有标记了 @Log 注解的方法
      */
-    @Pointcut("@annotation(com.xxl.boot.admin.framework.annotation.Log)")
+    @Pointcut("@annotation(com.xxl.boot.admin.framework.annotation.XxlLog)")
     public void logPointcut() {}
 
     /**
@@ -70,7 +69,7 @@ public class LogAspect {
         logger.info("Arguments: {}", joinPoint.getArgs());*/
 
         // valid log
-        Log log = AnnotationUtils.findAnnotation(method, Log.class);
+        XxlLog log = AnnotationUtils.findAnnotation(method, XxlLog.class);
         if (log == null) {
             return joinPoint.proceed();
         }
@@ -106,7 +105,7 @@ public class LogAspect {
      * @param startTime
      * @param endTime
      */
-    private void doLog(Log log,
+    private void doLog(XxlLog log,
                        HttpServletRequest request,
                        Object result,
                        long startTime,
@@ -123,13 +122,13 @@ public class LogAspect {
         // content
         String content = log.content();
         if (StringTool.isBlank(content)) {
-            content += "【Request】:" + GsonTool.toJson(request.getParameterMap());     // joinPoint.getArgs()，大对象不符合预期
-            content += "\n\n【Response】:" + result;
-            content += "\n\n【CostTime】:" + (endTime - startTime) + "ms";
+            content += "【Request】:\n" + GsonTool.toJson(request.getParameterMap());     // joinPoint.getArgs()，大对象不符合预期
+            content += "\n\n【Response】:\n" + result;
+            content += "\n\n【CostTime】:\n" + (endTime - startTime) + "ms";
         }
 
         // generate
-        XxlBootLog xxlBootLog = new XxlBootLog();
+        com.xxl.boot.admin.framework.model.entity.Log xxlBootLog = new com.xxl.boot.admin.framework.model.entity.Log();
         xxlBootLog.setType(log.type().getCode());
         xxlBootLog.setModule(log.module().name());
         xxlBootLog.setTitle(log.title());

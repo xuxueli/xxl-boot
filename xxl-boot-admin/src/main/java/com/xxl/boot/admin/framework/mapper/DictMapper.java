@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.framework.mapper;
 
-import com.xxl.boot.admin.framework.model.entity.XxlBootDict;
+import com.xxl.boot.admin.framework.model.entity.Dict;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -9,15 +9,15 @@ import java.util.List;
 @Mapper
 public interface DictMapper {
 
-    public int insert(@Param("xxlBootDict") XxlBootDict xxlBootDict);
+    public int insert(@Param("xxlBootDict") Dict xxlBootDict);
 
     public int delete(@Param("ids") List<Integer> ids);
 
-    public int update(@Param("xxlBootDict") XxlBootDict xxlBootDict);
+    public int update(@Param("xxlBootDict") Dict xxlBootDict);
 
-    public XxlBootDict load(@Param("id") int id);
+    public Dict load(@Param("id") int id);
 
-    public List<XxlBootDict> pageList(@Param("name") String name,
+    public List<Dict> pageList(@Param("name") String name,
                                       @Param("code") String code,
                                       @Param("status") int status,
                                       @Param("offset") int offset,

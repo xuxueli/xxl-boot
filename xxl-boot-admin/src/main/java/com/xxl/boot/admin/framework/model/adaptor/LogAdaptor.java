@@ -1,21 +1,21 @@
 package com.xxl.boot.admin.framework.model.adaptor;
 
-import com.xxl.boot.admin.framework.model.dto.XxlBootLogDTO;
-import com.xxl.boot.admin.framework.model.entity.XxlBootLog;
+import com.xxl.boot.admin.framework.model.dto.LogDTO;
+import com.xxl.boot.admin.framework.model.entity.Log;
 import com.xxl.boot.admin.framework.util.Ip2regionUtil;
 import com.xxl.tool.core.DateTool;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class XxlBootLogAdaptor {
+public class LogAdaptor {
 
 
-    public static List<XxlBootLogDTO> adaptor(List<XxlBootLog> pageList) {
-        List<XxlBootLogDTO> dtoList = new ArrayList<XxlBootLogDTO>();
-        for (XxlBootLog xxlBootLog : pageList) {
+    public static List<LogDTO> adaptor(List<Log> pageList) {
+        List<LogDTO> dtoList = new ArrayList<LogDTO>();
+        for (Log xxlBootLog : pageList) {
             // adaptor
-            XxlBootLogDTO dto = new XxlBootLogDTO();
+            LogDTO dto = new LogDTO();
             dto.setId(xxlBootLog.getId());
             dto.setType(xxlBootLog.getType());
             dto.setModule(xxlBootLog.getModule());

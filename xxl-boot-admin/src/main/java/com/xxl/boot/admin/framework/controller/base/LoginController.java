@@ -3,8 +3,8 @@ package com.xxl.boot.admin.framework.controller.base;
 import com.xxl.boot.admin.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.admin.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.admin.framework.constant.enums.UserStatuEnum;
-import com.xxl.boot.admin.framework.model.entity.XxlBootLog;
-import com.xxl.boot.admin.framework.model.entity.XxlBootUser;
+import com.xxl.boot.admin.framework.model.entity.Log;
+import com.xxl.boot.admin.framework.model.entity.User;
 import com.xxl.boot.admin.framework.service.LogService;
 import com.xxl.boot.admin.framework.service.UserService;
 import com.xxl.boot.admin.framework.util.I18nUtil;
@@ -67,11 +67,11 @@ public class LoginController {
 		}
 
 		// valid user, empty、status、passowrd
-		Response<XxlBootUser> xxlBootUserResponse = userService.loadByUserName(userName);
+		Response<User> xxlBootUserResponse = userService.loadByUserName(userName);
 		if (!xxlBootUserResponse.isSuccess()) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
-		XxlBootUser xxlBootUser = xxlBootUserResponse.getData();
+		User xxlBootUser = xxlBootUserResponse.getData();
 		if (xxlBootUser.getStatus() != UserStatuEnum.NORMAL.getStatus()) {
 			return Response.ofFail( I18nUtil.getString("login_status_invalid") );
 		}
@@ -122,7 +122,7 @@ public class LoginController {
 		ip = ip!=null?ip:"";
 
 		// build log
-		XxlBootLog xxlBootLog = new XxlBootLog();
+		Log xxlBootLog = new Log();
 		xxlBootLog.setType(logTypeEnum.getCode());
 		xxlBootLog.setModule(logModuleEnum.name());
 		xxlBootLog.setTitle(title);

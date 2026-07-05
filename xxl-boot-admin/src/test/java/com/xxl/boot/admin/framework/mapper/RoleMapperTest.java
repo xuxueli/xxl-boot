@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.framework.mapper;
 
-import com.xxl.boot.admin.framework.model.entity.XxlBootRole;
+import com.xxl.boot.admin.framework.model.entity.Role;
 import com.xxl.boot.admin.framework.service.RoleService;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
@@ -22,19 +22,19 @@ public class RoleMapperTest {
 
     @Test
     public void loadTest() throws Exception {
-        Response<XxlBootRole> role = roleService.load(1);
+        Response<Role> role = roleService.load(1);
         Assertions.assertNotNull(role);
     }
 
     @Test
     public void pageTest() throws Exception {
-        PageModel<XxlBootRole> result = roleService.pageList(0, 100, null, -1);
+        PageModel<Role> result = roleService.pageList(0, 100, null, -1);
         Assertions.assertNotNull(result);
     }
 
     @Test
     public void insertTest() throws Exception {
-        XxlBootRole role = new XxlBootRole();
+        Role role = new Role();
         role.setName("admin22");
         role.setCode("admin22");
         role.setStatus(0);
@@ -46,7 +46,7 @@ public class RoleMapperTest {
 
     @Test
     public void updateTest() throws Exception {
-        XxlBootRole role = roleService.load(2).getData();
+        Role role = roleService.load(2).getData();
         if (role == null) {
             return;
         }

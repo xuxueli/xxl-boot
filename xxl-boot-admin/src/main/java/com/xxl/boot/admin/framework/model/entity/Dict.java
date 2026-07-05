@@ -3,15 +3,13 @@ package com.xxl.boot.admin.framework.model.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public class XxlBootDictItem implements Serializable {
+public class Dict implements Serializable {
     private static final long serialVersionUID = 42L;
 
     private long id;
-    private long dictId;
-    private String itemName;
-    private String itemCode;
+    private String name;
+    private String code;
     private int status;
-    private int order;
     private Date addTime;
     private Date updateTime;
     private String remark;
@@ -24,28 +22,20 @@ public class XxlBootDictItem implements Serializable {
         this.id = id;
     }
 
-    public long getDictId() {
-        return dictId;
+    public String getName() {
+        return name;
     }
 
-    public void setDictId(long dictId) {
-        this.dictId = dictId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getItemName() {
-        return itemName;
+    public String getCode() {
+        return code;
     }
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public String getItemCode() {
-        return itemCode;
-    }
-
-    public void setItemCode(String itemCode) {
-        this.itemCode = itemCode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public int getStatus() {
@@ -54,14 +44,6 @@ public class XxlBootDictItem implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
     }
 
     public Date getAddTime() {

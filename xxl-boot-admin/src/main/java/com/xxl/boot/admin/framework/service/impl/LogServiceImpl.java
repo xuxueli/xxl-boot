@@ -1,9 +1,9 @@
 package com.xxl.boot.admin.framework.service.impl;
 
 import com.xxl.boot.admin.framework.mapper.LogMapper;
-import com.xxl.boot.admin.framework.model.adaptor.XxlBootLogAdaptor;
-import com.xxl.boot.admin.framework.model.dto.XxlBootLogDTO;
-import com.xxl.boot.admin.framework.model.entity.XxlBootLog;
+import com.xxl.boot.admin.framework.model.adaptor.LogAdaptor;
+import com.xxl.boot.admin.framework.model.dto.LogDTO;
+import com.xxl.boot.admin.framework.model.entity.Log;
 import com.xxl.boot.admin.framework.service.LogService;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
-* XxlBootLog Service Impl
+* Log Service Impl
 *
 * Created by xuxueli on '2024-10-27 12:19:06'.
 */
@@ -27,7 +27,7 @@ public class LogServiceImpl implements LogService {
     * 新增
     */
 	@Override
-	public Response<String> insert(XxlBootLog xxlBootLog) {
+	public Response<String> insert(Log xxlBootLog) {
 
 		// valid
 		if (xxlBootLog == null) {
@@ -51,7 +51,7 @@ public class LogServiceImpl implements LogService {
 	* 更新
 	*/
 	@Override
-	public Response<String> update(XxlBootLog xxlBootLog) {
+	public Response<String> update(Log xxlBootLog) {
 		int ret = logMapper.update(xxlBootLog);
 		return ret>0? Response.ofSuccess() : Response.ofFail() ;
 	}
@@ -60,8 +60,8 @@ public class LogServiceImpl implements LogService {
 	* Load查询
 	*/
 	@Override
-	public Response<XxlBootLog> load(int id) {
-		XxlBootLog record = logMapper.load(id);
+	public Response<Log> load(int id) {
+		Log record = logMapper.load(id);
 		return Response.ofSuccess(record);
 	}
 
@@ -69,15 +69,15 @@ public class LogServiceImpl implements LogService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<XxlBootLogDTO> pageList(int type, String module, String title, int offset, int pagesize) {
+	public PageModel<LogDTO> pageList(int type, String module, String title, int offset, int pagesize) {
 
-		List<XxlBootLog> pageList = logMapper.pageList(type, module, title, offset, pagesize);
+		List<Log> pageList = logMapper.pageList(type, module, title, offset, pagesize);
 		int totalCount = logMapper.pageListCount(type, module, title, offset, pagesize);
 
-		List<XxlBootLogDTO> pageListDTO = XxlBootLogAdaptor.adaptor(pageList);
+		List<LogDTO> pageListDTO = LogAdaptor.adaptor(pageList);
 
 		// result
-		PageModel<XxlBootLogDTO> pageModel = new PageModel<>();
+		PageModel<LogDTO> pageModel = new PageModel<>();
 		pageModel.setData(pageListDTO);
 		pageModel.setTotal(totalCount);
 

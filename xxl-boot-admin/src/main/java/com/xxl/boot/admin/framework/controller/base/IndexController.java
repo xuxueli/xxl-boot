@@ -1,8 +1,8 @@
 package com.xxl.boot.admin.framework.controller.base;
 
 import com.xxl.boot.admin.framework.constant.enums.MessageStatusEnum;
-import com.xxl.boot.admin.framework.model.dto.XxlBootMessageDTO;
-import com.xxl.boot.admin.framework.model.dto.XxlBootResourceDTO;
+import com.xxl.boot.admin.framework.model.dto.MessageDTO;
+import com.xxl.boot.admin.framework.model.dto.ResourceDTO;
 import com.xxl.boot.admin.framework.service.MessageService;
 import com.xxl.boot.admin.framework.service.ResourceService;
 import com.xxl.sso.core.annotation.XxlSso;
@@ -48,7 +48,7 @@ public class IndexController {
 
 		// menu resource
 		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
-		List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(loginInfoResponse.getData().getUserId()));
+		List<ResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(loginInfoResponse.getData().getUserId()));
 		model.addAttribute("resourceList", resourceList);
 
 		return "/framework/base/index";
@@ -63,9 +63,9 @@ public class IndexController {
 	public String dashboard(HttpServletRequest request, Model model) {
 
         // message
-		PageModel<XxlBootMessageDTO>  pageModel = messageService.pageList(MessageStatusEnum.NORMAL.getValue(), null, 0, 10);
+		PageModel<MessageDTO>  pageModel = messageService.pageList(MessageStatusEnum.NORMAL.getValue(), null, 0, 10);
 		if (pageModel!=null && CollectionTool.isNotEmpty(pageModel.getData())) {
-			List<XxlBootMessageDTO> messageList = pageModel.getData();
+			List<MessageDTO> messageList = pageModel.getData();
 			model.addAttribute("messageList", messageList);
 		}
 

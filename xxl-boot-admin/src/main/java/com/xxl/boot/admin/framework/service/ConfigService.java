@@ -2,21 +2,21 @@ package com.xxl.boot.admin.framework.service;
 
 import java.util.List;
 
-import com.xxl.boot.admin.framework.model.dto.XxlBootConfigDTO;
-import com.xxl.boot.admin.framework.model.entity.XxlBootConfig;
+import com.xxl.boot.admin.framework.model.dto.ConfigDTO;
+import com.xxl.boot.admin.framework.model.entity.Config;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
 public interface ConfigService {
 
-    public Response<String> insert(XxlBootConfig xxlBootConfig);
+    public Response<String> insert(Config xxlBootConfig);
 
     public Response<String> delete(List<Integer> ids);
 
-    public Response<String> update(XxlBootConfig xxlBootConfig);
+    public Response<String> update(Config xxlBootConfig);
 
-    public Response<XxlBootConfig> load(int id);
+    public Response<Config> load(int id);
 
-    public PageModel<XxlBootConfigDTO> pageList(int status, String name, String key, int offset, int pagesize);
+    public PageModel<ConfigDTO> pageList(int status, String name, String key, int offset, int pagesize);
 
 }

@@ -1,28 +1,27 @@
 package com.xxl.boot.admin.framework.model.adaptor;
 
-import com.xxl.boot.admin.framework.model.dto.XxlBootConfigDTO;
-import com.xxl.boot.admin.framework.model.entity.XxlBootConfig;
+import com.xxl.boot.admin.framework.model.dto.DictDTO;
+import com.xxl.boot.admin.framework.model.entity.Dict;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class XxlBootConfigAdaptor {
+public class DictAdaptor {
 
-    public static List<XxlBootConfigDTO> adaptor(List<XxlBootConfig> entityList) {
+    public static List<DictDTO> adaptor(List<Dict> entityList) {
 
         if (CollectionTool.isEmpty(entityList)) {
             return new ArrayList<>();
         }
 
-        List<XxlBootConfigDTO> dtoList = new ArrayList<>();
-        for (XxlBootConfig entity : entityList) {
-            XxlBootConfigDTO dto = new XxlBootConfigDTO();
+        List<DictDTO> dtoList = new ArrayList<>();
+        for (Dict entity : entityList) {
+            DictDTO dto = new DictDTO();
             dto.setId(entity.getId());
             dto.setName(entity.getName());
-            dto.setKey(entity.getKey());
-            dto.setValue(entity.getValue());
+            dto.setCode(entity.getCode());
             dto.setStatus(entity.getStatus());
             dto.setRemark(entity.getRemark());
             dto.setAddTime(DateTool.formatDateTime(entity.getAddTime()));

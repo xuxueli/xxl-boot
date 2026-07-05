@@ -1,10 +1,10 @@
 package com.xxl.boot.admin.framework.model.adaptor;
 
-import com.xxl.boot.admin.framework.model.dto.XxlBootResourceDTO;
-import com.xxl.boot.admin.framework.model.dto.XxlBootRoleDTO;
-import com.xxl.boot.admin.framework.model.dto.XxlBootUserDTO;
-import com.xxl.boot.admin.framework.model.entity.XxlBootRole;
-import com.xxl.boot.admin.framework.model.entity.XxlBootUser;
+import com.xxl.boot.admin.framework.model.dto.ResourceDTO;
+import com.xxl.boot.admin.framework.model.dto.RoleDTO;
+import com.xxl.boot.admin.framework.model.dto.UserDTO;
+import com.xxl.boot.admin.framework.model.entity.Role;
+import com.xxl.boot.admin.framework.model.entity.User;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
@@ -12,14 +12,14 @@ import com.xxl.tool.core.StringTool;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class XxlBootUserAdaptor {
+public class UserAdaptor {
 
-    public static XxlBootUser adapt(XxlBootUserDTO xxlJobUser) {
+    public static User adapt(UserDTO xxlJobUser) {
         if (xxlJobUser == null) {
             return null;
         }
 
-        XxlBootUser xxlUser = new XxlBootUser();
+        User xxlUser = new User();
         xxlUser.setId(xxlJobUser.getId());
         xxlUser.setOrgId(xxlJobUser.getOrgId());
         xxlUser.setUsername(xxlJobUser.getUsername());
@@ -32,12 +32,12 @@ public class XxlBootUserAdaptor {
         return xxlUser;
     }
 
-    public static XxlBootUserDTO adapt2dto(XxlBootUser xxlJobUser, boolean withPwd, Map<Integer, List<Integer>> userIdToRoleIdsMap) {
+    public static UserDTO adapt2dto(User xxlJobUser, boolean withPwd, Map<Integer, List<Integer>> userIdToRoleIdsMap) {
         if (xxlJobUser == null) {
             return null;
         }
 
-        XxlBootUserDTO xxlUser = new XxlBootUserDTO();
+        UserDTO xxlUser = new UserDTO();
         xxlUser.setId(xxlJobUser.getId());
         xxlUser.setOrgId(xxlJobUser.getOrgId());
         xxlUser.setUsername(xxlJobUser.getUsername());
@@ -56,18 +56,18 @@ public class XxlBootUserAdaptor {
         return xxlUser;
     }
 
-    public static List<XxlBootRole> adaptRoleList(List<XxlBootRoleDTO> roleDTOList) {
+    public static List<Role> adaptRoleList(List<RoleDTO> roleDTOList) {
         if (CollectionTool.isEmpty(roleDTOList)) {
             return null;
         }
         return roleDTOList
                 .stream()
-                .map(XxlBootUserAdaptor::adaptRole)
+                .map(UserAdaptor::adaptRole)
                 .collect(Collectors.toList());
     }
 
-    public static XxlBootRole adaptRole(XxlBootRoleDTO roleDTO) {
-        XxlBootRole xxlRole = new XxlBootRole();
+    public static Role adaptRole(RoleDTO roleDTO) {
+        Role xxlRole = new Role();
         xxlRole.setId(roleDTO.getId());
         xxlRole.setName(roleDTO.getName());
         xxlRole.setOrder(roleDTO.getOrder());
@@ -83,13 +83,13 @@ public class XxlBootUserAdaptor {
      * @param resources
      * @return
      */
-    public static Set<String> extractPermissions(List<XxlBootResourceDTO> resources) {
+    public static Set<String> extractPermissions(List<ResourceDTO> resources) {
         Set<String> permissions = new HashSet<>();
         if (CollectionTool.isEmpty(resources)) {
             return permissions;
         }
 
-        for (XxlBootResourceDTO resource : resources) {
+        for (ResourceDTO resource : resources) {
             if (StringTool.isNotBlank(resource.getPermission())) {
                 permissions.add(resource.getPermission().trim());
             }

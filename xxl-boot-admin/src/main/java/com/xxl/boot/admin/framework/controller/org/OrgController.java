@@ -1,7 +1,7 @@
 package com.xxl.boot.admin.framework.controller.org;
 
 import com.xxl.boot.admin.framework.constant.enums.OrgStatuEnum;
-import com.xxl.boot.admin.framework.model.entity.XxlBootOrg;
+import com.xxl.boot.admin.framework.model.entity.Org;
 import com.xxl.boot.admin.framework.service.OrgService;
 import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
@@ -16,7 +16,7 @@ import jakarta.annotation.Resource;
 import com.xxl.tool.response.Response;
 
 /**
- * XxlBootOrg Controller
+ * Org Controller
  *
  * Created by xuxueli on '2024-09-30 15:38:21'.
  */
@@ -53,10 +53,10 @@ public class OrgController {
     @RequestMapping("/treeList")
     @ResponseBody
     @XxlSso(permission = "org:org")
-    public Response<List<XxlBootOrg>> treeList(@RequestParam(required = false) String name,
+    public Response<List<Org>> treeList(@RequestParam(required = false) String name,
                                                @RequestParam(required = false, defaultValue = "-1") int status) {
 
-        List<XxlBootOrg> treeListData = orgService.treeList(name, status);
+        List<Org> treeListData = orgService.treeList(name, status);
         return Response.ofSuccess(treeListData);
     }
 
@@ -66,7 +66,7 @@ public class OrgController {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso(permission = "org:org")
-    public Response<XxlBootOrg> load(int id){
+    public Response<Org> load(int id){
         return orgService.load(id);
     }
 
@@ -76,7 +76,7 @@ public class OrgController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso(permission = "org:org")
-    public Response<String> insert(XxlBootOrg xxlBootOrg){
+    public Response<String> insert(Org xxlBootOrg){
         return orgService.insert(xxlBootOrg);
     }
 
@@ -96,7 +96,7 @@ public class OrgController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso(permission = "org:org")
-    public Response<String> update(XxlBootOrg xxlBootOrg){
+    public Response<String> update(Org xxlBootOrg){
         return orgService.update(xxlBootOrg);
     }
 

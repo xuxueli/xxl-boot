@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.admin.framework.mapper.ResourceMapper">
 
-    <resultMap id="XxlBootResource" type="com.xxl.boot.admin.framework.model.entity.XxlBootResource" >
+    <resultMap id="Resource" type="com.xxl.boot.admin.framework.model.entity.Resource" >
         <result column="id" property="id" />
         <result column="parent_id" property="parentId" />
         <result column="name" property="name" />
@@ -81,13 +81,13 @@
         WHERE `id` = #{xxlBootResource.id}
     </update>
 
-    <select id="load" parameterType="java.util.Map" resultMap="XxlBootResource">
+    <select id="load" parameterType="java.util.Map" resultMap="Resource">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_resource AS t
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootResource">
+    <select id="pageList" parameterType="java.util.Map" resultMap="Resource">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_resource AS t
         LIMIT #{offset}, #{pagesize}
@@ -98,7 +98,7 @@
         FROM xxl_boot_resource AS t
     </select>
 
-    <select id="queryResource" parameterType="java.util.Map" resultMap="XxlBootResource">
+    <select id="queryResource" parameterType="java.util.Map" resultMap="Resource">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_resource AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR" >
@@ -112,7 +112,7 @@
         ORDER BY t.`order` ASC
     </select>
 
-    <select id="queryByParentIds" parameterType="java.util.Map" resultMap="XxlBootResource">
+    <select id="queryByParentIds" parameterType="java.util.Map" resultMap="Resource">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_resource AS t
         WHERE t.`parent_id` in
@@ -121,7 +121,7 @@
         </foreach>
     </select>
 
-    <select id="queryResourceByUserId" parameterType="java.util.Map" resultMap="XxlBootResource">
+    <select id="queryResourceByUserId" parameterType="java.util.Map" resultMap="Resource">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_resource AS t
         WHERE   t.`status` = #{status}

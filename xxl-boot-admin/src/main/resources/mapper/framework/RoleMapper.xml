@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.admin.framework.mapper.RoleMapper">
 
-    <resultMap id="XxlBootRole" type="com.xxl.boot.admin.framework.model.entity.XxlBootRole" >
+    <resultMap id="Role" type="com.xxl.boot.admin.framework.model.entity.Role" >
         <result column="id" property="id" />
         <result column="name" property="name" />
         <result column="code" property="code" />
@@ -23,7 +23,7 @@
         t.`update_time`
     </sql>
 
-    <insert id="insert" parameterType="com.xxl.boot.admin.framework.model.entity.XxlBootRole" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="com.xxl.boot.admin.framework.model.entity.Role" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO xxl_boot_role (`name`,
                                    `code`,
                                    `status`,
@@ -46,7 +46,7 @@
         </foreach>
     </delete>
 
-    <update id="update" parameterType="com.xxl.boot.admin.framework.model.entity.XxlBootRole" >
+    <update id="update" parameterType="com.xxl.boot.admin.framework.model.entity.Role" >
         UPDATE xxl_boot_role
         SET
             `name` = #{name},
@@ -58,13 +58,13 @@
     </update>
 
 
-    <select id="load" parameterType="java.util.Map" resultMap="XxlBootRole">
+    <select id="load" parameterType="java.util.Map" resultMap="Role">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_role AS t
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootRole">
+    <select id="pageList" parameterType="java.util.Map" resultMap="Role">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_role AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR" >
@@ -92,7 +92,7 @@
         </trim>
     </select>
 
-    <select id="queryByRoleIds" parameterType="java.util.Map" resultMap="XxlBootRole">
+    <select id="queryByRoleIds" parameterType="java.util.Map" resultMap="Role">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_role AS t
         WHERE t.`id` in

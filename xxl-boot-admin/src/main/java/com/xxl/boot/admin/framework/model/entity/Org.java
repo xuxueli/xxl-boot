@@ -4,20 +4,20 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-*  XxlBootResource Entity
+*  Org Entity
 *
-*  Created by xuxueli on '2024-07-28 12:52:39'.
+*  Created by xuxueli on '2024-09-30 15:38:21'.
 */
-public class XxlBootResource implements Serializable {
+public class Org implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**
-    * 资源ID
+    * 组织ID
     */
     private int id;
 
     /**
-    * 父节点ID
+    * 父组织ID
     */
     private int parentId;
 
@@ -25,26 +25,6 @@ public class XxlBootResource implements Serializable {
     * 名称
     */
     private String name;
-
-    /**
-    * 类型
-    */
-    private int type;
-
-    /**
-    * 权限标识
-    */
-    private String permission;
-
-    /**
-    * 菜单地址
-    */
-    private String url;
-
-    /**
-     * ICON
-     */
-    private String icon;
 
     /**
     * 顺序
@@ -57,6 +37,11 @@ public class XxlBootResource implements Serializable {
     private int status;
 
     /**
+    * 负责人
+    */
+    private String manager;
+
+    /**
     * 新增时间
     */
     private Date addTime;
@@ -66,13 +51,6 @@ public class XxlBootResource implements Serializable {
     */
     private Date updateTime;
 
-    public XxlBootResource() {
-    }
-    public XxlBootResource(int parentId, int Id, String name) {
-        setId(Id);
-        setParentId(parentId);
-        setName(name);
-    }
 
     public int getId() {
         return id;
@@ -98,38 +76,6 @@ public class XxlBootResource implements Serializable {
         this.name = name;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public String getPermission() {
-        return permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
     public int getOrder() {
         return order;
     }
@@ -144,6 +90,14 @@ public class XxlBootResource implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getManager() {
+        return manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
     }
 
     public Date getAddTime() {

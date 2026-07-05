@@ -4,47 +4,42 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-*  XxlBootLog Entity
+*  Message Entity
 *
-*  Created by xuxueli on '2024-10-27 12:19:06'.
+*  Created by xuxueli on '2024-11-03 11:03:29'.
 */
-public class XxlBootLog implements Serializable {
+public class Message implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**
-    * 日志ID
+    * 消息ID
     */
     private long id;
 
     /**
-    * 日志类型（如操作日志、登陆日志）
+    * 分类（如 临时通知、正式公告 ）
     */
-    private int type;
+    private int category;
 
     /**
-    * 系统模块（如用户管理）
-    */
-    private String module;
-
-    /**
-    * 日志标题
+    * 标题
     */
     private String title;
 
     /**
-    * 日志内容
+    * 内容
     */
     private String content;
 
     /**
-    * 操作人
+    * 发送人
     */
-    private String operator;
+    private String sender;
 
     /**
-    * 操作IP
+    * 状态：0-正常、1-下线
     */
-    private String ip;
+    private int status;
 
     /**
     * 新增时间
@@ -65,20 +60,12 @@ public class XxlBootLog implements Serializable {
         this.id = id;
     }
 
-    public int getType() {
-        return type;
+    public int getCategory() {
+        return category;
     }
 
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
+    public void setCategory(int category) {
+        this.category = category;
     }
 
     public String getTitle() {
@@ -97,20 +84,20 @@ public class XxlBootLog implements Serializable {
         this.content = content;
     }
 
-    public String getOperator() {
-        return operator;
+    public String getSender() {
+        return sender;
     }
 
-    public void setOperator(String operator) {
-        this.operator = operator;
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
-    public String getIp() {
-        return ip;
+    public int getStatus() {
+        return status;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public Date getAddTime() {

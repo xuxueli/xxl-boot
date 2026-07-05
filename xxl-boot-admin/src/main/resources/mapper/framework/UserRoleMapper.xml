@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.admin.framework.mapper.UserRoleMapper">
 
-    <resultMap id="XxlBootUserRole" type="com.xxl.boot.admin.framework.model.entity.XxlBootUserRole" >
+    <resultMap id="UserRole" type="com.xxl.boot.admin.framework.model.entity.UserRole" >
         <result column="id" property="id" />
         <result column="user_id" property="userId" />
         <result column="role_id" property="roleId" />
@@ -36,13 +36,13 @@
         WHERE `user_id` =  #{userId}
     </delete>
 
-    <select id="queryByUserId" parameterType="java.util.Map" resultMap="XxlBootUserRole">
+    <select id="queryByUserId" parameterType="java.util.Map" resultMap="UserRole">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_user_role AS t
         WHERE t.`user_id` = #{userId}
     </select>
 
-    <select id="queryByUserIds" parameterType="java.util.Map" resultMap="XxlBootUserRole">
+    <select id="queryByUserIds" parameterType="java.util.Map" resultMap="UserRole">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_user_role AS t
         WHERE t.`user_id` in

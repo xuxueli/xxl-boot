@@ -1,11 +1,12 @@
-package com.xxl.boot.admin.framework.model.entity;
+package com.xxl.boot.admin.framework.model.dto;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author xuxueli 2019-05-04 16:43:12
  */
-public class XxlBootUser {
+public class UserDTO {
 
 	private int id;
 	private int orgId;				// 组织ID
@@ -16,6 +17,10 @@ public class XxlBootUser {
 	private String realName;		// 真实姓名
 	private Date addTime;
 	private Date updateTime;
+
+	// other
+	private List<Integer> roleIds;
+	private String orgName;			// 组织名称（非DB字段）
 
 
 	public int getId() {
@@ -32,6 +37,14 @@ public class XxlBootUser {
 
 	public void setOrgId(int orgId) {
 		this.orgId = orgId;
+	}
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
 	}
 
 	public String getUsername() {
@@ -89,5 +102,14 @@ public class XxlBootUser {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
+
+	public List<Integer> getRoleIds() {
+		return roleIds;
+	}
+
+	public void setRoleIds(List<Integer> roleIds) {
+		this.roleIds = roleIds;
+	}
+
 
 }

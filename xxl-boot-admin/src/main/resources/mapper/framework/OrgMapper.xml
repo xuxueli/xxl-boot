@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.admin.framework.mapper.OrgMapper">
 
-    <resultMap id="XxlBootOrg" type="com.xxl.boot.admin.framework.model.entity.XxlBootOrg" >
+    <resultMap id="Org" type="com.xxl.boot.admin.framework.model.entity.Org" >
         <result column="id" property="id" />
         <result column="parent_id" property="parentId" />
         <result column="name" property="name" />
@@ -67,13 +67,13 @@
     </update>
 
 
-    <select id="load" parameterType="java.util.Map" resultMap="XxlBootOrg">
+    <select id="load" parameterType="java.util.Map" resultMap="Org">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_org AS t
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootOrg">
+    <select id="pageList" parameterType="java.util.Map" resultMap="Org">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_org AS t
         LIMIT #{offset}, #{pagesize}
@@ -84,7 +84,7 @@
         FROM xxl_boot_org AS t
     </select>
 
-    <select id="queryOrg" parameterType="java.util.Map" resultMap="XxlBootOrg">
+    <select id="queryOrg" parameterType="java.util.Map" resultMap="Org">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_org AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR" >
@@ -98,7 +98,7 @@
         ORDER BY t.`order` ASC
     </select>
 
-    <select id="queryByParentIds" parameterType="java.util.Map" resultMap="XxlBootOrg">
+    <select id="queryByParentIds" parameterType="java.util.Map" resultMap="Org">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_org AS t
         WHERE t.`parent_id` in

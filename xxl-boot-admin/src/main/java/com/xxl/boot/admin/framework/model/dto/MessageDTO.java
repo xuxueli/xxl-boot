@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-*  XxlBootMessage DTO
+*  Message DTO
 *
 *  Created by xuxueli on '2024-11-03 11:03:29'.
 */
-public class XxlBootMessageDTO implements Serializable {
+public class MessageDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**

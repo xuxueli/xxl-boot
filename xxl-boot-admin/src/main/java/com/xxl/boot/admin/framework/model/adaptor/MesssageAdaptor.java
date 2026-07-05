@@ -1,9 +1,9 @@
 package com.xxl.boot.admin.framework.model.adaptor;
 
-import com.xxl.boot.admin.framework.model.dto.XxlBootLogDTO;
-import com.xxl.boot.admin.framework.model.dto.XxlBootMessageDTO;
-import com.xxl.boot.admin.framework.model.entity.XxlBootLog;
-import com.xxl.boot.admin.framework.model.entity.XxlBootMessage;
+import com.xxl.boot.admin.framework.model.dto.LogDTO;
+import com.xxl.boot.admin.framework.model.dto.MessageDTO;
+import com.xxl.boot.admin.framework.model.entity.Log;
+import com.xxl.boot.admin.framework.model.entity.Message;
 import com.xxl.boot.admin.framework.util.Ip2regionUtil;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.DateTool;
@@ -12,18 +12,18 @@ import com.xxl.tool.response.PageModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XxlBootMesssageAdaptor {
+public class MesssageAdaptor {
 
 
-    public static List<XxlBootMessageDTO> adaptor(List<XxlBootMessage> entityList) {
+    public static List<MessageDTO> adaptor(List<Message> entityList) {
 
         if (CollectionTool.isEmpty(entityList)) {
             return new ArrayList<>();
         }
 
-        List<XxlBootMessageDTO> dtoList = new ArrayList<>();
-        for (XxlBootMessage entity : entityList) {
-            XxlBootMessageDTO dto = new XxlBootMessageDTO();
+        List<MessageDTO> dtoList = new ArrayList<>();
+        for (Message entity : entityList) {
+            MessageDTO dto = new MessageDTO();
             dto.setId(entity.getId());
             dto.setCategory(entity.getCategory());
             dto.setTitle(entity.getTitle());

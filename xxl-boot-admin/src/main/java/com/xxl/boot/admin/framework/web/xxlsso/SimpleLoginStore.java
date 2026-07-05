@@ -1,8 +1,8 @@
 package com.xxl.boot.admin.framework.web.xxlsso;
 
-import com.xxl.boot.admin.framework.model.adaptor.XxlBootUserAdaptor;
-import com.xxl.boot.admin.framework.model.dto.XxlBootResourceDTO;
-import com.xxl.boot.admin.framework.model.entity.XxlBootUser;
+import com.xxl.boot.admin.framework.model.adaptor.UserAdaptor;
+import com.xxl.boot.admin.framework.model.dto.ResourceDTO;
+import com.xxl.boot.admin.framework.model.entity.User;
 import com.xxl.boot.admin.framework.service.ResourceService;
 import com.xxl.boot.admin.framework.service.UserService;
 import com.xxl.sso.core.model.LoginInfo;
@@ -61,14 +61,14 @@ public class SimpleLoginStore implements LoginStore {
     public Response<LoginInfo> get(String userId) {
 
         // load login-user
-        Response<XxlBootUser> userResponse = userService.loadByUserId(Integer.parseInt(userId));
+        Response<User> userResponse = userService.loadByUserId(Integer.parseInt(userId));
         if (!userResponse.isSuccess()) {
             return Response.ofFail("userId invalid.");
         }
 
         // find permission
-        List<XxlBootResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(userId));
-        Set<String> permissions = XxlBootUserAdaptor.extractPermissions(resourceList);
+        List<ResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(userId));
+        Set<String> permissions = UserAdaptor.extractPermissions(resourceList);
 
         // build LoginInfo
         LoginInfo loginInfo = new LoginInfo(userId, userResponse.getData().getToken());

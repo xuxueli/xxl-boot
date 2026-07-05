@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.admin.framework.mapper.LogMapper">
 
-    <resultMap id="XxlBootLog" type="com.xxl.boot.admin.framework.model.entity.XxlBootLog" >
+    <resultMap id="Log" type="com.xxl.boot.admin.framework.model.entity.Log" >
         <result column="id" property="id" />
         <result column="type" property="type" />
         <result column="module" property="module" />
@@ -71,13 +71,13 @@
         WHERE `id` = #{xxlBootLog.id}
     </update>
 
-    <select id="load" parameterType="java.util.Map" resultMap="XxlBootLog">
+    <select id="load" parameterType="java.util.Map" resultMap="Log">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_log AS t
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootLog">
+    <select id="pageList" parameterType="java.util.Map" resultMap="Log">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_log AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR" >

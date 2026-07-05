@@ -1,13 +1,13 @@
 package com.xxl.boot.admin.framework.mapper;
 
-import com.xxl.boot.admin.framework.model.entity.XxlBootOrg;
+import com.xxl.boot.admin.framework.model.entity.Org;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
 /**
-* XxlBootOrg Mapper
+* Org Mapper
 *
 * Created by xuxueli on '2024-09-30 15:38:21'.
 */
@@ -17,7 +17,7 @@ public interface OrgMapper {
     /**
     * 新增
     */
-    public int insert(@Param("xxlBootOrg") XxlBootOrg xxlBootOrg);
+    public int insert(@Param("xxlBootOrg") Org xxlBootOrg);
 
     /**
     * 删除
@@ -27,17 +27,17 @@ public interface OrgMapper {
     /**
     * 更新
     */
-    public int update(@Param("xxlBootOrg")  XxlBootOrg xxlBootOrg);
+    public int update(@Param("xxlBootOrg")  Org xxlBootOrg);
 
     /**
     * Load查询
     */
-    public XxlBootOrg load(@Param("id") int id);
+    public Org load(@Param("id") int id);
 
     /**
     * 分页查询Data
     */
-	public List<XxlBootOrg> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
+	public List<Org> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
 
     /**
     * 分页查询Count
@@ -47,11 +47,11 @@ public interface OrgMapper {
     /**
      * queryOrg
      */
-    List<XxlBootOrg> queryOrg(@Param("name") String name, @Param("status") int status);
+    List<Org> queryOrg(@Param("name") String name, @Param("status") int status);
 
     /**
      * 查询子节点
      */
-    List<XxlBootOrg> queryByParentIds(@Param("ids") List<Integer> ids);
+    List<Org> queryByParentIds(@Param("ids") List<Integer> ids);
 
 }

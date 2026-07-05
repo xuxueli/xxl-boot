@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.framework.controller.tool;
 
-import com.xxl.boot.admin.framework.annotation.Log;
+import com.xxl.boot.admin.framework.annotation.XxlLog;
 import com.xxl.boot.admin.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.admin.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.admin.framework.util.codegen.ClassInfo;
@@ -40,7 +40,7 @@ public class CodeGenController {
     @RequestMapping("/genCode")
     @ResponseBody
     @XxlSso
-    @Log(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "生成代码")
+    @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "生成代码")
     public Response<Map<String, String>> codeGenerate(String tableSql) {
 
         try {

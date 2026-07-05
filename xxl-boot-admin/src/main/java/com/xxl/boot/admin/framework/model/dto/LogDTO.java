@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-*  XxlBootLog Entity
+*  Log Entity
 *
 *  Created by xuxueli on '2024-10-27 12:19:06'.
 */
-public class XxlBootLogDTO implements Serializable {
+public class LogDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**

@@ -1,33 +1,35 @@
-package com.xxl.boot.admin.framework.model.entity;
+package com.xxl.boot.admin.framework.model.dto;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class XxlBootConfig implements Serializable {
+/**
+ * role
+ *
+ * Created by xuxueli on '2024-07-21 02:06:59'.
+ */
+public class RoleDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private long id;
+    private int id;
 
     private String name;
 
-    private String key;
-
-    private String value;
+    private String code;
 
     private int status;
+
+    private int order;
 
     private Date addTime;
 
     private Date updateTime;
 
-    private String remark;
-
-
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -39,20 +41,12 @@ public class XxlBootConfig implements Serializable {
         this.name = name;
     }
 
-    public String getKey() {
-        return key;
+    public String getCode() {
+        return code;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public int getStatus() {
@@ -61,6 +55,14 @@ public class XxlBootConfig implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public Date getAddTime() {
@@ -77,14 +79,6 @@ public class XxlBootConfig implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
     }
 
 }

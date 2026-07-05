@@ -1,9 +1,9 @@
 package com.xxl.boot.admin.framework.service.impl;
 
 import com.xxl.boot.admin.framework.mapper.MessageMapper;
-import com.xxl.boot.admin.framework.model.adaptor.XxlBootMesssageAdaptor;
-import com.xxl.boot.admin.framework.model.dto.XxlBootMessageDTO;
-import com.xxl.boot.admin.framework.model.entity.XxlBootMessage;
+import com.xxl.boot.admin.framework.model.adaptor.MesssageAdaptor;
+import com.xxl.boot.admin.framework.model.dto.MessageDTO;
+import com.xxl.boot.admin.framework.model.entity.Message;
 import com.xxl.boot.admin.framework.service.MessageService;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
-* XxlBootMessage Service Impl
+* Message Service Impl
 *
 * Created by xuxueli on '2024-11-03 11:03:29'.
 */
@@ -28,7 +28,7 @@ public class MessageServiceImpl implements MessageService {
     * 新增
     */
 	@Override
-	public Response<String> insert(XxlBootMessage xxlBootMessage, String optUserName) {
+	public Response<String> insert(Message xxlBootMessage, String optUserName) {
 
 		// valid
 		if (xxlBootMessage == null) {
@@ -56,7 +56,7 @@ public class MessageServiceImpl implements MessageService {
 	* 更新
 	*/
 	@Override
-	public Response<String> update(XxlBootMessage xxlBootMessage) {
+	public Response<String> update(Message xxlBootMessage) {
 		int ret = messageMapper.update(xxlBootMessage);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
@@ -65,8 +65,8 @@ public class MessageServiceImpl implements MessageService {
 	* Load查询
 	*/
 	@Override
-	public Response<XxlBootMessage> load(int id) {
-		XxlBootMessage record = messageMapper.load(id);
+	public Response<Message> load(int id) {
+		Message record = messageMapper.load(id);
 		return Response.ofSuccess(record);
 	}
 
@@ -74,16 +74,16 @@ public class MessageServiceImpl implements MessageService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<XxlBootMessageDTO> pageList(int status, String title, int offset, int pagesize) {
+	public PageModel<MessageDTO> pageList(int status, String title, int offset, int pagesize) {
 
-		List<XxlBootMessage> pageList = messageMapper.pageList(status, title, offset, pagesize);
+		List<Message> pageList = messageMapper.pageList(status, title, offset, pagesize);
 		int totalCount = messageMapper.pageListCount(status, title, offset, pagesize);
 
 		// adaptor
-		List<XxlBootMessageDTO> dtoList = XxlBootMesssageAdaptor.adaptor(pageList);
+		List<MessageDTO> dtoList = MesssageAdaptor.adaptor(pageList);
 
 		// result
-		PageModel<XxlBootMessageDTO> pageModel = new PageModel<XxlBootMessageDTO>();
+		PageModel<MessageDTO> pageModel = new PageModel<MessageDTO>();
 		pageModel.setData(dtoList);
 		pageModel.setTotal(totalCount);
 

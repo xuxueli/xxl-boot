@@ -3,22 +3,33 @@ package com.xxl.boot.admin.framework.model.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public class XxlBootDict implements Serializable {
+/**
+ * role
+ *
+ * Created by xuxueli on '2024-07-21 02:06:59'.
+ */
+public class Role implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private long id;
-    private String name;
-    private String code;
-    private int status;
-    private Date addTime;
-    private Date updateTime;
-    private String remark;
+    private int id;
 
-    public long getId() {
+    private String name;
+
+    private String code;
+
+    private int status;
+
+    private int order;
+
+    private Date addTime;
+
+    private Date updateTime;
+
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -46,6 +57,14 @@ public class XxlBootDict implements Serializable {
         this.status = status;
     }
 
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
     public Date getAddTime() {
         return addTime;
     }
@@ -62,11 +81,4 @@ public class XxlBootDict implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
 }

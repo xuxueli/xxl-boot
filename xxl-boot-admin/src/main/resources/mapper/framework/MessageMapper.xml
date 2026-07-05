@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.admin.framework.mapper.MessageMapper">
 
-    <resultMap id="XxlBootMessage" type="com.xxl.boot.admin.framework.model.entity.XxlBootMessage" >
+    <resultMap id="Message" type="com.xxl.boot.admin.framework.model.entity.Message" >
         <result column="id" property="id" />
         <result column="category" property="category" />
         <result column="title" property="title" />
@@ -66,13 +66,13 @@
     </update>
 
 
-    <select id="load" parameterType="java.util.Map" resultMap="XxlBootMessage">
+    <select id="load" parameterType="java.util.Map" resultMap="Message">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_message AS t
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="pageList" parameterType="java.util.Map" resultMap="XxlBootMessage">
+    <select id="pageList" parameterType="java.util.Map" resultMap="Message">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_message AS t
         <trim prefix="WHERE" prefixOverrides="AND | OR" >

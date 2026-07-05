@@ -3,50 +3,49 @@ package com.xxl.boot.admin.framework.model.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * role
- *
- * Created by xuxueli on '2024-07-21 02:06:59'.
- */
-public class XxlBootRole implements Serializable {
+public class DictItem implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private int id;
-
-    private String name;
-
-    private String code;
-
+    private long id;
+    private long dictId;
+    private String itemName;
+    private String itemCode;
     private int status;
-
     private int order;
-
     private Date addTime;
-
     private Date updateTime;
+    private String remark;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public long getDictId() {
+        return dictId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDictId(long dictId) {
+        this.dictId = dictId;
     }
 
-    public String getCode() {
-        return code;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getItemCode() {
+        return itemCode;
+    }
+
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
     }
 
     public int getStatus() {
@@ -81,4 +80,11 @@ public class XxlBootRole implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }

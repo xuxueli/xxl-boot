@@ -2,7 +2,7 @@ package com.xxl.boot.admin.framework.model.dto;
 
 import java.io.Serializable;
 
-public class XxlBootDictDTO implements Serializable {
+public class DictDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
     private long id;

@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.framework.mapper;
 
-import com.xxl.boot.admin.framework.model.entity.XxlBootUser;
+import com.xxl.boot.admin.framework.model.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -11,19 +11,19 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-	int insert(XxlBootUser xxlJobUser);
+	int insert(User xxlJobUser);
 
 	int delete(@Param("id") int id);
 
 	int deleteByIds(@Param("ids") List<Integer> ids);
 
-	int update(XxlBootUser xxlJobUser);
+	int update(User xxlJobUser);
 
-	XxlBootUser loadByUserName(@Param("username") String username);
+	User loadByUserName(@Param("username") String username);
 
-	XxlBootUser load(@Param("id") int id);
+	User load(@Param("id") int id);
 
-	List<XxlBootUser> pageList(@Param("offset") int offset,
+	List<User> pageList(@Param("offset") int offset,
 							   @Param("pagesize") int pagesize,
 							   @Param("username") String username,
 							   @Param("status") int status,

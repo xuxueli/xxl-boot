@@ -8,7 +8,7 @@ import java.util.Date;
  *
  * Created by xuxueli on '2024-07-21 02:06:59'.
  */
-public class XxlBootUserRole implements Serializable {
+public class UserRole implements Serializable {
     private static final long serialVersionUID = 42L;
 
     /**
@@ -36,9 +36,9 @@ public class XxlBootUserRole implements Serializable {
     */
     private Date updateTime;
 
-    public XxlBootUserRole() {
+    public UserRole() {
     }
-    public XxlBootUserRole(int userId, int roleId) {
+    public UserRole(int userId, int roleId) {
         this.userId = userId;
         this.roleId = roleId;
     }
