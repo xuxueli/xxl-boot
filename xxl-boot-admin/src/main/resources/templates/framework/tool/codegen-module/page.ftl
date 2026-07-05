@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
     <!-- 1-style end -->
 </#noparse>
+<#assign classNameLower = classInfo.className?uncap_first />
 
 </head>
 <body class="hold-transition" style="background-color: #ecf0f5;">
@@ -154,7 +155,7 @@
          */
         $.adminTable.initTable({
             table: '#data_list',
-            url: base_url + "/${classInfo.className?uncap_first}/pageList",
+            url: base_url + "/${classNameLower}/pageList",
             queryParams: function (params) {
                 var obj = {};
                 obj.param = $('#data_filter .param').val();
@@ -186,7 +187,7 @@
          * init delete
          */
         $.adminTable.initDelete({
-            url: base_url + "/${classInfo.className?uncap_first}/delete"
+            url: base_url + "/${classNameLower}/delete"
         });
 
 
@@ -195,7 +196,7 @@
          */
         // init add editor
         $.adminTable.initAdd( {
-            url: base_url + "/${classInfo.className?uncap_first}/insert",
+            url: base_url + "/${classNameLower}/insert",
             rules : {
             },
             messages : {
@@ -218,7 +219,7 @@
          * init update
          */
         $.adminTable.initUpdate( {
-            url: base_url + "/${classInfo.className?uncap_first}/update",
+            url: base_url + "/${classNameLower}/update",
             writeFormData: function(row) {
                 // base data
 

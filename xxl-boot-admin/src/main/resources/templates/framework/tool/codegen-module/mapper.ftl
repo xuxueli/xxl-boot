@@ -1,12 +1,16 @@
+package ${classInfo.packageName}.mapper;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
+<#assign classNameLower = classInfo.className?uncap_first />
+
 /**
 * ${classInfo.className} Mapper
 *
-* Created by xuxueli on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
 @Mapper
 public interface ${classInfo.className}Mapper {
@@ -14,7 +18,7 @@ public interface ${classInfo.className}Mapper {
     /**
     * 新增
     */
-    public int insert(@Param("${classInfo.className?uncap_first}") ${classInfo.className} ${classInfo.className?uncap_first});
+    public int insert(@Param("${classNameLower}") ${classInfo.className} ${classNameLower});
 
     /**
     * 删除
@@ -24,7 +28,7 @@ public interface ${classInfo.className}Mapper {
     /**
     * 更新
     */
-    public int update(@Param("${classInfo.className?uncap_first}") ${classInfo.className} ${classInfo.className?uncap_first});
+    public int update(@Param("${classNameLower}") ${classInfo.className} ${classNameLower});
 
     /**
     * Load查询

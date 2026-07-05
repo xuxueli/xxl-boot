@@ -2,12 +2,6 @@
 
 1、admin 重构：
     - 系统工具：
-        - Model：Entity、DTO、Adaptor 下的类，移除 XxlBoot 前缀          
-        - 代码生成：
-            - 属性：
-                - Package路径：【com.xxl.boot.admin.business】controller/service/mapper/model; // AbcController
-                - 业务标识：【abc】// 默认表名
-                - author：
         - 表单构建（ui-build）：纯前端
 2、api 重构：
     - 登录相关：Login、用户信息管理、验证码；

@@ -5,6 +5,8 @@
         </#if>
     </#list>
 </#if>
+package ${classInfo.packageName}.model;
+
 import java.io.Serializable;
 <#if importDdate?? && importDdate>
 import java.util.Date;
@@ -13,7 +15,7 @@ import java.util.Date;
 /**
 *  ${classInfo.className} Entity
 *
-*  Created by xuxueli on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+*  Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
 public class ${classInfo.className} implements Serializable {
     private static final long serialVersionUID = 42L;

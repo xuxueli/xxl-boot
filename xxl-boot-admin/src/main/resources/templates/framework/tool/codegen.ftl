@@ -46,6 +46,32 @@ CREATE TABLE `user` (
 				</div>
 			</div>
 
+			<#-- 额外参数 -->
+			<div class="box box-default">
+				<div class="box-body">
+					<div class="row">
+						<div class="col-xs-4">
+							<div class="input-group">
+								<span class="input-group-addon">Author</span>
+								<input type="text" class="form-control" id="author" autocomplete="off" value="xuxueli" >
+							</div>
+						</div>
+						<div class="col-xs-4">
+							<div class="input-group">
+								<span class="input-group-addon">Package路径</span>
+								<input type="text" class="form-control" id="packagePath" value="com.xxl.boot.admin.business" autocomplete="off" >
+							</div>
+						</div>
+						<div class="col-xs-4">
+							<div class="input-group">
+								<span class="input-group-addon">业务实体名</span>
+								<input type="text" class="form-control" id="businessName" placeholder="为空取默认类名" autocomplete="off" >
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<#-- 生成代码 -->
 			<div class="nav-tabs-custom" >
 				<!-- Tabs within a box -->
@@ -236,12 +262,18 @@ $(function () {
 	$('#codeGenerate').click(function () {
 
 		var tableSql = tableSqlIDE.getValue();
+		var author = $('#author').val();
+		var packagePath = $('#packagePath').val();
+		var businessName = $('#businessName').val();
 
 		$.ajax({
 			type : 'POST',
 			url : base_url + "/tool/codegen/genCode",
 			data : {
-				"tableSql" : tableSql
+				"tableSql" : tableSql,
+				"author" : author,
+				"packagePath" : packagePath,
+				"businessName" : businessName
 			},
 			dataType : "json",
 			success : function(data){

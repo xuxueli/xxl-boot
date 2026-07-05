@@ -24,6 +24,21 @@ public class ClassInfo {
 	 */
 	private String classComment;
 
+	/**
+	 * author for java class comment
+	 */
+	private String author;
+
+	/**
+	 * package name for java class
+	 */
+	private String packageName;
+
+	/**
+	 * business name, override className
+	 */
+	private String businessName;
+
 	private List<FieldInfo> fieldList;
 
 	public String getTableName() {
@@ -48,6 +63,30 @@ public class ClassInfo {
 
 	public void setClassComment(String classComment) {
 		this.classComment = classComment;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
+	}
+
+	public String getBusinessName() {
+		return businessName;
+	}
+
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
 	}
 
 	public List<FieldInfo> getFieldList() {

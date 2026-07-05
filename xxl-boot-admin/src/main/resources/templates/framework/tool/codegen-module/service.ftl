@@ -1,20 +1,24 @@
+package ${classInfo.packageName}.service;
+
 import java.util.Map;
 import java.util.List;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
+<#assign classNameLower = classInfo.className?uncap_first />
+
 /**
 * ${classInfo.className} Service
 *
-* Created by xuxueli on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
 public interface ${classInfo.className}Service {
 
     /**
     * 新增
     */
-    public Response<String> insert(${classInfo.className} ${classInfo.className?uncap_first});
+    public Response<String> insert(${classInfo.className} ${classNameLower});
 
     /**
     * 删除
@@ -24,7 +28,7 @@ public interface ${classInfo.className}Service {
     /**
     * 更新
     */
-    public Response<String> update(${classInfo.className} ${classInfo.className?uncap_first});
+    public Response<String> update(${classInfo.className} ${classNameLower});
 
     /**
     * Load查询
