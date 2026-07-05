@@ -3,6 +3,7 @@ package com.xxl.boot.api.framework.controller.base;
 import com.xxl.boot.api.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.api.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
+import com.xxl.boot.api.framework.model.dto.CaptchaDTO;
 import com.xxl.boot.api.framework.model.dto.LoginRequest;
 import com.xxl.boot.api.framework.model.entity.Log;
 import com.xxl.boot.api.framework.model.entity.Resource;
@@ -17,9 +18,11 @@ import com.xxl.boot.api.framework.web.xxllog.XxlLogQueueHelper;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
+import com.xxl.tool.captcha.CaptchaTool;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.crypto.Sha256Tool;
+import com.xxl.tool.id.RandomIdTool;
 import com.xxl.tool.id.UUIDTool;
 import com.xxl.tool.response.Response;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +31,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +65,7 @@ public class LoginController {
 	 */
 	@RequestMapping("/login")
 	@XxlSso(login = false)
+	/*@ResponseBody*/
 	public Response<String> login(@RequestBody(required = false) LoginRequest loginRequest, HttpServletRequest request) {
 		// base valid
 		if (loginRequest == null) {
@@ -155,7 +164,6 @@ public class LoginController {
 	 * updatePwd
 	 */
 	@RequestMapping("/updatePwd")
-	@ResponseBody
 	@XxlSso
 	public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String password){
 
@@ -191,5 +199,51 @@ public class LoginController {
 		// write
 		logQueueHelper.push(xxlBootLog);
 	}
+
+	/**
+	 * CaptchaTool
+	 */
+	private static CaptchaTool captchaTool;
+	static {
+		captchaTool = CaptchaTool
+				.build()
+				.setTextCreator(new CaptchaTool.ArithmeticTextCreator());
+	}
+
+	/**
+	 * captcha
+	 */
+	@RequestMapping("/captcha")
+	@XxlSso(login = false)
+	public Response<CaptchaDTO> captcha(HttpServletRequest request){
+
+		// 1、generate captcha text
+		CaptchaTool.TextResult textResult = captchaTool.createText();
+
+		// 2、generate captcha image, and convert to base64
+		BufferedImage image = captchaTool.createImage(textResult);
+		String base64Image = null;
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			ImageIO.write(image, "png", baos);
+			byte[] imageBytes = baos.toByteArray();
+			base64Image = Base64.getEncoder().encodeToString(imageBytes);
+		} catch (IOException e) {
+			return Response.ofFail("Failed to generate captcha image, error: " + e.getMessage());
+		}
+		base64Image = "data:image/png;base64," + base64Image;
+
+		// 3、store captcha result
+		String uuid = RandomIdTool.getAlphaNumeric();
+		String result = textResult.getResult();
+		// TODO: redis: uuid -> result, 5min; valid: uuid + result
+
+		// 4、build response
+		CaptchaDTO captchaDTO = new CaptchaDTO();
+		captchaDTO.setUuid(uuid);
+		captchaDTO.setImg(base64Image);
+
+		return Response.ofSuccess(captchaDTO);
+	}
+
 
 }
