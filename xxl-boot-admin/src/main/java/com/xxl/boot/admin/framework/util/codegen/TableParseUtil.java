@@ -7,7 +7,6 @@ import com.xxl.tool.error.BizException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,31 +39,28 @@ public class TableParseUtil {
         if (StringTool.isBlank(tableSql)) {
             throw new BizException("Table structure can not be empty.");
         }
-        tableSql = tableSql.trim();
 
-        // 1、table Name
+        // 1、lower case
+        tableSql = tableSql.trim().toLowerCase();
+
+        // 2、table Name
         String tableName = null;
-        if (tableSql.contains("TABLE") && tableSql.contains("(")) {
-            tableName = tableSql.substring(tableSql.indexOf("TABLE")+5, tableSql.indexOf("("));
-        } else if (tableSql.contains("table") && tableSql.contains("(")) {
+        if (tableSql.contains("table") && tableSql.contains("(")) {
             tableName = tableSql.substring(tableSql.indexOf("table")+5, tableSql.indexOf("("));
         } else {
-            throw new BizException("Table structure anomaly.");
+            throw new BizException("Table structure (table name) anomaly.");
         }
         if (tableName.contains("`")) {
             tableName = tableName.substring(tableName.indexOf("`")+1, tableName.lastIndexOf("`"));
         }
 
-        // 2、class Name
+        // 3、class Name
         String className = StringTool.upperCaseFirst(StringTool.underlineToCamelCase(tableName));
-        if (className.contains("_")) {
-            className = className.replace("_", "");
-        }
 
-        // 3、class Comment
+        // 4、class Comment
         String classComment = "";
-        if (tableSql.contains("COMMENT=")) {
-            String classCommentTmp = tableSql.substring(tableSql.lastIndexOf("COMMENT=")+8).trim();
+        if (tableSql.contains("comment=")) {
+            String classCommentTmp = tableSql.substring(tableSql.lastIndexOf("comment=")+8).trim();
             if (classCommentTmp.contains("'") || classCommentTmp.indexOf("'")!=classCommentTmp.lastIndexOf("'")) {
                 classCommentTmp = classCommentTmp.substring(classCommentTmp.indexOf("'")+1, classCommentTmp.lastIndexOf("'"));
             }
@@ -73,33 +69,18 @@ public class TableParseUtil {
             }
         }
 
-        // 4、field List
+        // 5、field List
         List<FieldInfo> fieldList = new ArrayList<>();
 
         String fieldListTmp = tableSql.substring(tableSql.indexOf("(")+1, tableSql.lastIndexOf(")"));
 
         // replace "," by "，" in comment
-        Matcher matcher = Pattern.compile("\\ COMMENT '(.*?)\\'").matcher(fieldListTmp);     // "\\{(.*?)\\}"
+        Matcher matcher = Pattern.compile("\\ comment '(.*?)\\'").matcher(fieldListTmp);
         while(matcher.find()){
-
-            String commentTmp = matcher.group();
-            commentTmp = commentTmp.replaceAll("\\ COMMENT '|\\'", "");         // "\\{|\\}"
-
-            if (commentTmp.contains(",")) {
-                String commentTmpFinal = commentTmp.replace(",", "，");
-                fieldListTmp = fieldListTmp.replace(commentTmp, commentTmpFinal);
-            }
-        }
-
-        // remove invalid data
-        for (Pattern pattern: Arrays.asList(
-                Pattern.compile("[\\s]*PRIMARY KEY .*(\\),|\\))"),      // remove PRIMARY KEY
-                Pattern.compile("[\\s]*UNIQUE KEY .*(\\),|\\))"),       // remove UNIQUE KEY
-                Pattern.compile("[\\s]*KEY .*(\\),|\\))")               // remove KEY
-        )) {
-            Matcher patternMatcher = pattern.matcher(fieldListTmp);
-            while(patternMatcher.find()){
-                fieldListTmp = fieldListTmp.replace(patternMatcher.group(),"");
+            String commentFull = matcher.group();
+            if (commentFull.contains(",")) {
+                String commentFinal = commentFull.replace(",", "，");
+                fieldListTmp = fieldListTmp.replace(commentFull, commentFinal);
             }
         }
 
@@ -108,22 +89,31 @@ public class TableParseUtil {
         for (String columnLine : fieldLineList) {
             columnLine = columnLine.trim();                                                 // `userid` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
 
-            // 4.1、column Name
+            // 5.1、skip non-field lines
+            if (columnLine.isEmpty()
+                    || columnLine.startsWith("primary")
+                    || columnLine.startsWith("unique")
+                    || columnLine.startsWith("key")
+                    || columnLine.startsWith("index")) {
+                continue;
+            }
+
+            // 5.2、column Name
             int firstSpace = columnLine.indexOf(" ");
             if (firstSpace == -1) continue;
             String columnName = columnLine.substring(0, firstSpace);
             if (columnName.startsWith("`")) {
                 columnName = columnName.replace("`", "");
             }
-            columnLine = columnLine.substring(firstSpace + 1).trim().toLowerCase();
+            columnLine = columnLine.substring(firstSpace + 1).trim();
 
-            // 4.2、field Name
+            // 5.3、field Name
             String fieldName = StringTool.lowerCaseFirst(StringTool.underlineToCamelCase(columnName));
             if (fieldName.contains("_")) {
                 fieldName = fieldName.replace("_", "");
             }
 
-            // 4.3、field class
+            // 5.4、field class
             String fieldClass = Object.class.getSimpleName();
             if (columnLine.startsWith("int")
                     || columnLine.startsWith("tinyint")
@@ -146,7 +136,7 @@ public class TableParseUtil {
                 fieldClass = BigDecimal.class.getSimpleName();
             }
 
-            // field comment
+            // 5.5、field comment
             String fieldComment = "";
             if (columnLine.contains("comment")) {
                 String commentTmp = columnLine.substring(columnLine.indexOf("comment") + 7).trim();
