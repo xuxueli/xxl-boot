@@ -7,7 +7,6 @@
     <!-- 1-style start -->
     <@netCommon.commonStyle />
     <style>
-        .droppable-active { background-color: #ffe !important; }
         .tools a { cursor: pointer; font-size: 80%; }
         .draggable { cursor: move; }
         .form-body .col-md-6, .form-body .col-md-12 { min-height: 400px; }
@@ -198,6 +197,11 @@ $(function () {
         var $copy = $(".form-body").clone().appendTo(document.body);
         $copy.find('.col-md-12, .col-md-6').show();
 
+        // 移除空列
+        $copy.find('.col-md-12, .col-md-6').filter(function () {
+            return !$(this).children().length;
+        }).remove();
+
         // 移除工具链接、辅助 class 和内联样式
         $copy.find(".tools").remove();
         $.each(
@@ -228,18 +232,17 @@ $(function () {
 // 4. jQuery UI 拖拽 + 放置 + 排序
 // =============================================
 var setup_draggable = function () {
-    // 4-1. 左侧调色板元素可拖拽（clone 模式保留原模板）
+    // 4-1. 左侧调色板元素可拖拽（取消默认 cancel 使 textarea 也可拖拽）
     $(".draggable").draggable({
         appendTo: "body",
-        helper: "clone"
+        helper: "clone",
+        cancel: ""
     });
 
     // 4-2. 右侧设计区可放置
     $(".droppable").droppable({
         accept: ".draggable",
         helper: "clone",
-        hoverClass: "droppable-active",
-
         drop: function (event, ui) {
             $(".empty-form").remove();
             var $orig = $(ui.draggable);
@@ -290,7 +293,7 @@ var setup_draggable = function () {
 // 5. 创建编辑弹窗
 // =============================================
 var get_modal = function (content) {
-    return $(
+    var $modal = $(
         '<div class="modal" style="overflow: auto;" tabindex="-1">' +
           '<div class="modal-dialog">' +
             '<div class="modal-content">' +
@@ -299,15 +302,15 @@ var get_modal = function (content) {
                 '<h4 class="modal-title">编辑HTML</h4>' +
               '</div>' +
               '<div class="modal-body ui-front">' +
-                '<textarea class="form-control" style="min-height:300px;margin-bottom:10px;font-family:Monaco,Fixed;">' +
-                  content +
-                '</textarea>' +
+                '<textarea class="form-control" style="min-height:300px;margin-bottom:10px;font-family:Monaco,Fixed;"></textarea>' +
                 '<button class="btn btn-success">更新HTML</button>' +
               '</div>' +
             '</div>' +
           '</div>' +
         '</div>'
     ).appendTo(document.body);
+    $modal.find('textarea').val(content);
+    return $modal;
 };
 
 // =============================================
