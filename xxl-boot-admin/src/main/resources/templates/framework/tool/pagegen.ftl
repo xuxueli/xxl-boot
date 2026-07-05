@@ -23,7 +23,7 @@
         <#-- biz start（4/5 content） -->
         <div class="row">
             <!-- 操作区域 -->
-            <div class="col-sm-4">
+            <div class="col-sm-5">
                 <div class="box box-default">
                     <div class="box-header with-border">
                         <h5 class="pull-left">元素</h5>
@@ -52,7 +52,7 @@
                                 </div>
                             </div>
                             <div class="form-group draggable">
-                                <label class="col-sm-3 control-label">下拉列表：</label>
+                                <label class="col-sm-3 control-label">下拉框：</label>
                                 <div class="col-sm-9">
                                     <select class="form-control" name="">
                                         <option>选项1</option>
@@ -113,7 +113,7 @@
             </div>
 
             <!-- 渲染区域 -->
-            <div class="col-sm-8">
+            <div class="col-sm-7">
                 <div class="box box-default">
                     <div class="box-header with-border">
                         <h5 class="pull-left">拖拽左侧表单元素到此区域</h5>
@@ -150,41 +150,82 @@
 <script src="${request.contextPath}/static/plugins/jsbeautify/beautify-html.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
 <script>
-$(function () {
+/**
+ * xxl-boot 表单构建器 (pagegen)
+ *
+ * 功能：
+ *   1. 左侧调色板元素可拖拽（jQuery UI draggable）
+ *   2. 右侧设计区可放置（jQuery UI droppable），内部可排序（sortable）
+ *   3. 列数切换（1列 / 2列），元素在列之间重新分配
+ *   4. checkbox / radio 使用 iCheck 美化
+ *   5. 生成的 HTML 代码自动格式化并弹窗展示
+ *   6. 每个已拖入元素支持"编辑HTML"（弹窗修改源码）和"移除"
+ */
 
+$(function () {
+    // =========================================
+    // 1. 初始化：启用拖拽 + 排序
+    // =========================================
     setup_draggable();
 
+    // =========================================
+    // 2. 列数切换（1列 / 2列）
+    // =========================================
     $("#n-columns").on("change", function () {
+        var $formBody = $('.form-body');
+        var $col12 = $formBody.find('.col-md-12');
+        var $col6  = $formBody.find('.col-md-6');
         var v = $(this).val();
+
         if (v === "1") {
-            var $col = $('.form-body .col-md-12').show();
-            $('.form-body .col-md-6 .draggable').each(function (i, el) {
-                $(this).remove().appendTo($col);
+            $col12.show();
+            $col6.each(function () {
+                $(this).find('.draggable').remove().appendTo($col12);
             });
-            $('.form-body .col-md-6').hide();
+            $col6.hide();
         } else {
-            var $col = $('.form-body .col-md-6').show();
-            $(".form-body .col-md-12 .draggable").each(function (i, el) {
-                $(this).remove().appendTo(i % 2 ? $col[1] : $col[0]);
+            $col6.show();
+            $col12.find('.draggable').each(function (i) {
+                $(this).remove().appendTo(i % 2 ? $col6[1] : $col6[0]);
             });
-            $('.form-body .col-md-12').hide();
+            $col12.hide();
         }
     });
 
+    // =========================================
+    // 3. 生成并复制代码
+    // =========================================
     $("#copy-to-clipboard").on("click", function () {
         if ($('.form-body .droppable').children().length === 0) {
             layer.msg('请先拖拽表单元素到右侧区域');
             return;
         }
 
+        // 3-1. 克隆设计区 DOM
         var $copy = $(".form-body").clone().appendTo(document.body);
-        $copy.find(".tools, :hidden").remove();
-        $.each(["draggable", "droppable", "sortable", "dropped", "ui-sortable", "ui-draggable", "ui-droppable", "form-body"], function (i, c) {
-            $copy.find("." + c).removeClass(c).removeAttr("style");
+
+        // 3-2. 销毁 iCheck，恢复原生 input 标记
+        $copy.find('input[type="checkbox"], input[type="radio"]').each(function () {
+            if ($(this).parent().is('.icheckbox_square-blue, .iradio_square-blue')) {
+                $(this).iCheck('destroy');
+            }
         });
+
+        // 3-3. 移除工具链接、辅助 class 和内联样式
+        $copy.find(".tools, :hidden").remove();
+        $.each(
+            ["draggable", "droppable", "sortable", "dropped",
+             "ui-sortable", "ui-draggable", "ui-droppable", "form-body"],
+            function (i, c) {
+                $copy.find("." + c).removeClass(c).removeAttr("style");
+            }
+        );
+
+        // 3-4. 格式化 + 清理
         var html = html_beautify($copy.html());
         $copy.remove();
 
+        // 3-5. 弹窗展示
         var $modal = get_modal(html).modal("show");
         $modal.find(".btn").remove();
         $modal.find(".modal-title").html("复制HTML代码");
@@ -195,41 +236,62 @@ $(function () {
 
 });
 
+// =============================================
+// 4. jQuery UI 拖拽 + 放置 + 排序
+// =============================================
 var setup_draggable = function () {
+    // 4-1. 左侧调色板元素可拖拽（clone 模式保留原模板）
     $(".draggable").draggable({
         appendTo: "body",
         helper: "clone"
     });
+
+    // 4-2. 右侧设计区可放置 + 内部排序
     $(".droppable").droppable({
         accept: ".draggable",
         helper: "clone",
         hoverClass: "droppable-active",
+
+        // 4-3. 放置事件
         drop: function (event, ui) {
             $(".empty-form").remove();
             var $orig = $(ui.draggable);
+
             if (!$orig.hasClass("dropped")) {
+                // ==== 首次拖入（从左侧调色板） ====
                 var $el = $orig
                     .clone()
                     .addClass("dropped")
                     .css({ "position": "static", "left": null, "right": null })
                     .appendTo(this);
 
+                // 递增 id 避免设计区内重复
                 var id = $orig.find(":input").attr("id");
                 if (id) {
-                    id = id.split("-").slice(0, -1).join("-") + "-" + (parseInt(id.split("-").slice(-1)[0]) + 1);
-                    $orig.find(":input").attr("id", id);
-                    $orig.find("label").attr("for", id);
+                    var parts = id.split("-");
+                    var base  = parts.slice(0, -1).join("-");
+                    var num   = parseInt(parts.slice(-1)) + 1;
+                    $orig.find(":input").attr("id", base + "-" + num);
+                    $orig.find("label").attr("for", base + "-" + num);
                 }
 
+                // iCheck 美化
+                $el.find('input[type="checkbox"], input[type="radio"]').iCheck({
+                    checkboxClass: 'icheckbox_square-blue',
+                    radioClass:    'iradio_square-blue'
+                });
+
+                // 附加编辑 / 移除工具
                 $('<p class="tools col-sm-12 col-sm-offset-3">' +
-                    '<a class="edit-link">编辑HTML</a> | ' +
-                    '<a class="remove-link">移除</a></p>').appendTo($el);
+                  '<a class="edit-link">编辑HTML</a> | ' +
+                  '<a class="remove-link">移除</a></p>').appendTo($el);
+
             } else {
+                // ==== 在设计区之间移动已有元素 ====
                 if ($(this)[0] !== $orig.parent()[0]) {
-                    var $el = $orig
-                        .clone()
-                        .css({ "position": "static", "left": null, "right": null })
-                        .appendTo(this);
+                    $orig.clone()
+                         .css({ "position": "static", "left": null, "right": null })
+                         .appendTo(this);
                     $orig.remove();
                 }
             }
@@ -237,46 +299,58 @@ var setup_draggable = function () {
     }).sortable();
 };
 
+// =============================================
+// 5. 创建编辑弹窗
+// =============================================
 var get_modal = function (content) {
-    var modal = $('<div class="modal" style="overflow: auto;" tabindex="-1">' +
-        '<div class="modal-dialog">' +
+    return $(
+        '<div class="modal" style="overflow: auto;" tabindex="-1">' +
+          '<div class="modal-dialog">' +
             '<div class="modal-content">' +
-                '<div class="modal-header">' +
-                    '<a type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>' +
-                    '<h4 class="modal-title">编辑HTML</h4>' +
-                '</div>' +
-                '<div class="modal-body ui-front">' +
-                    '<textarea class="form-control" style="min-height: 300px; margin-bottom: 10px; font-family: Monaco, Fixed;">' + content + '</textarea>' +
-                    '<button class="btn btn-success">更新HTML</button>' +
-                '</div>' +
+              '<div class="modal-header">' +
+                '<a type="button" class="close" data-dismiss="modal">&times;</a>' +
+                '<h4 class="modal-title">编辑HTML</h4>' +
+              '</div>' +
+              '<div class="modal-body ui-front">' +
+                '<textarea class="form-control" style="min-height:300px;margin-bottom:10px;font-family:Monaco,Fixed;">' +
+                  content +
+                '</textarea>' +
+                '<button class="btn btn-success">更新HTML</button>' +
+              '</div>' +
             '</div>' +
-        '</div>' +
-    '</div>').appendTo(document.body);
-
-    return modal;
+          '</div>' +
+        '</div>'
+    ).appendTo(document.body);
 };
 
-$(document).on("click", ".edit-link", function (ev) {
-    var $el = $(this).parent().parent();
-    var $el_copy = $el.clone();
-    var $edit_btn = $el_copy.find(".edit-link").parent().remove();
+// =============================================
+// 6. 编辑链接 → 弹窗修改元素 HTML 源码
+// =============================================
+$(document).on("click", ".edit-link", function () {
+    var $el    = $(this).parent().parent();       // div.form-group
+    var $clone = $el.clone();
+    var $tools = $clone.find(".edit-link").parent().remove();  // 剥离工具条
 
-    var $modal = get_modal(html_beautify($el_copy.html())).modal("show");
+    var $modal = get_modal(html_beautify($clone.html())).modal("show");
     $modal.find("textarea").focus();
-    $modal.find(".btn-success").click(function (ev2) {
+
+    $modal.find(".btn-success").click(function () {
         var html = $modal.find("textarea").val();
         if (!html) {
-            $el.remove();
+            $el.remove();                         // 清空内容 → 删除元素
         } else {
             $el.html(html);
-            $edit_btn.appendTo($el);
+            $tools.appendTo($el);                 // 重新挂载工具条
         }
         $modal.modal("hide");
         return false;
     });
 });
 
-$(document).on("click", ".remove-link", function (ev) {
+// =============================================
+// 7. 移除链接 → 删除该表单元素
+// =============================================
+$(document).on("click", ".remove-link", function () {
     $(this).parent().parent().remove();
 });
 </script>
