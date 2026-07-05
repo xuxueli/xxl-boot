@@ -10,6 +10,9 @@ import java.util.Map;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
+import ${classInfo.packageName}.model.${classInfo.className};
+import ${classInfo.packageName}.mapper.${classInfo.className}Mapper;
+
 <#assign classNameLower = classInfo.className?uncap_first />
 
 /**

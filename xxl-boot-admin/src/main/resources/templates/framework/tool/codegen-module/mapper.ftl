@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
+import ${classInfo.packageName}.model.${classInfo.className};
+
 <#assign classNameLower = classInfo.className?uncap_first />
 
 /**

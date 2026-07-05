@@ -13,6 +13,9 @@ import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 import com.xxl.sso.core.annotation.XxlSso;
 
+import ${classInfo.packageName}.model.${classInfo.className};
+import ${classInfo.packageName}.service.${classInfo.className}Service;
+
 <#assign classNameLower = classInfo.className?uncap_first />
 
 /**

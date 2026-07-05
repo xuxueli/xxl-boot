@@ -6,6 +6,8 @@ import java.util.List;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
+import ${classInfo.packageName}.model.${classInfo.className};
+
 <#assign classNameLower = classInfo.className?uncap_first />
 
 /**
