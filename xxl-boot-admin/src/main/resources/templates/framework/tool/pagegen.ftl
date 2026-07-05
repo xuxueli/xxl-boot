@@ -23,14 +23,14 @@
         <#-- biz start（4/5 content） -->
         <div class="row">
             <!-- 操作区域 -->
-            <div class="col-sm-5">
+            <div class="col-sm-4">
                 <div class="box box-default">
                     <div class="box-header with-border">
-                        <h5 class="pull-left">元素</h5>
+                        <h5 class="pull-left">表单元素</h5>
                     </div>
                     <div class="box-body">
                         <div class="alert alert-info">
-                            拖拽表单元素到右侧区域，即可生成HTML表单代码 ！
+                            拖拽元素到右侧区域，即可生成表单代码 ！
                         </div>
                         <form role="form" class="form-horizontal m-t">
                             <div class="form-group draggable">
@@ -88,9 +88,6 @@
                                     <label class="checkbox-inline">
                                         <input type="checkbox" value="option2" id="inlineCheckbox2">选项2
                                     </label>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" value="option3" id="inlineCheckbox3">选项3
-                                    </label>
                                 </div>
                             </div>
                             <div class="form-group draggable">
@@ -113,7 +110,7 @@
             </div>
 
             <!-- 渲染区域 -->
-            <div class="col-sm-7">
+            <div class="col-sm-8">
                 <div class="box box-default">
                     <div class="box-header with-border">
                         <h5 class="pull-left">拖拽左侧表单元素到此区域</h5>
@@ -150,26 +147,22 @@
 <script src="${request.contextPath}/static/plugins/jsbeautify/beautify-html.min.js"></script>
 <script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
 <script>
-/**
- * xxl-boot 表单构建器 (pagegen)
- *
- * 功能：
- *   1. 左侧调色板元素可拖拽（jQuery UI draggable）
- *   2. 右侧设计区可放置（jQuery UI droppable），内部可排序（sortable）
- *   3. 列数切换（1列 / 2列），元素在列之间重新分配
- *   4. checkbox / radio 使用 iCheck 美化
- *   5. 生成的 HTML 代码自动格式化并弹窗展示
- *   6. 每个已拖入元素支持"编辑HTML"（弹窗修改源码）和"移除"
- */
-
 $(function () {
     // =========================================
-    // 1. 初始化：启用拖拽 + 排序
+    // 1. iCheck 美化（仅左侧调色板，右侧保持原生）
+    // =========================================
+    $('.col-sm-4 input[type="checkbox"], .col-sm-4 input[type="radio"]').iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass:    'iradio_square-blue'
+    });
+
+    // =========================================
+    // 2. 初始化：启用拖拽 + 排序
     // =========================================
     setup_draggable();
 
     // =========================================
-    // 2. 列数切换（1列 / 2列）
+    // 3. 列数切换（1列 / 2列）
     // =========================================
     $("#n-columns").on("change", function () {
         var $formBody = $('.form-body');
@@ -201,31 +194,26 @@ $(function () {
             return;
         }
 
-        // 3-1. 克隆设计区 DOM
+        // 克隆设计区 DOM，先展开所有列确保内容完整
         var $copy = $(".form-body").clone().appendTo(document.body);
+        $copy.find('.col-md-12, .col-md-6').show();
 
-        // 3-2. 销毁 iCheck，恢复原生 input 标记
-        $copy.find('input[type="checkbox"], input[type="radio"]').each(function () {
-            if ($(this).parent().is('.icheckbox_square-blue, .iradio_square-blue')) {
-                $(this).iCheck('destroy');
-            }
-        });
-
-        // 3-3. 移除工具链接、辅助 class 和内联样式
-        $copy.find(".tools, :hidden").remove();
+        // 移除工具链接、辅助 class 和内联样式
+        $copy.find(".tools").remove();
         $.each(
             ["draggable", "droppable", "sortable", "dropped",
-             "ui-sortable", "ui-draggable", "ui-droppable", "form-body"],
+             "ui-sortable", "ui-draggable", "ui-draggable-handle",
+             "ui-droppable", "form-body"],
             function (i, c) {
                 $copy.find("." + c).removeClass(c).removeAttr("style");
             }
         );
 
-        // 3-4. 格式化 + 清理
+        // 格式化
         var html = html_beautify($copy.html());
         $copy.remove();
 
-        // 3-5. 弹窗展示
+        // 弹窗展示
         var $modal = get_modal(html).modal("show");
         $modal.find(".btn").remove();
         $modal.find(".modal-title").html("复制HTML代码");
@@ -246,13 +234,12 @@ var setup_draggable = function () {
         helper: "clone"
     });
 
-    // 4-2. 右侧设计区可放置 + 内部排序
+    // 4-2. 右侧设计区可放置
     $(".droppable").droppable({
         accept: ".draggable",
         helper: "clone",
         hoverClass: "droppable-active",
 
-        // 4-3. 放置事件
         drop: function (event, ui) {
             $(".empty-form").remove();
             var $orig = $(ui.draggable);
@@ -265,21 +252,16 @@ var setup_draggable = function () {
                     .css({ "position": "static", "left": null, "right": null })
                     .appendTo(this);
 
-                // 递增 id 避免设计区内重复
-                var id = $orig.find(":input").attr("id");
-                if (id) {
-                    var parts = id.split("-");
-                    var base  = parts.slice(0, -1).join("-");
-                    var num   = parseInt(parts.slice(-1)) + 1;
-                    $orig.find(":input").attr("id", base + "-" + num);
-                    $orig.find("label").attr("for", base + "-" + num);
-                }
-
-                // iCheck 美化
-                $el.find('input[type="checkbox"], input[type="radio"]').iCheck({
-                    checkboxClass: 'icheckbox_square-blue',
-                    radioClass:    'iradio_square-blue'
+                // 剥离调色板的 iCheck 包装，右侧保持原生样式
+                $el.find('.icheckbox_square-blue, .iradio_square-blue').each(function () {
+                    var $wrap  = $(this);
+                    var $input = $wrap.find('input[type="checkbox"], input[type="radio"]').first();
+                    if ($input.length) {
+                        $input.removeAttr('style').insertAfter($wrap);
+                        $wrap.remove();
+                    }
                 });
+                $el.find('.iCheck-helper').remove();
 
                 // 附加编辑 / 移除工具
                 $('<p class="tools col-sm-12 col-sm-offset-3">' +
@@ -296,7 +278,12 @@ var setup_draggable = function () {
                 }
             }
         }
-    }).sortable();
+    });
+
+    // 4-3. 支持内部排序
+    $(".droppable").sortable({
+        cancel: "input,textarea,select,button,label,.tools"
+    });
 };
 
 // =============================================
