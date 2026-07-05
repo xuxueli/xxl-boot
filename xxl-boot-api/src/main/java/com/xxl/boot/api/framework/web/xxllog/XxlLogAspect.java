@@ -1,15 +1,19 @@
 package com.xxl.boot.api.framework.web.xxllog;
 
 import com.xxl.boot.api.framework.annotation.XxlLog;
-import com.xxl.boot.api.framework.service.LogService;
 import com.xxl.boot.api.framework.util.Ip2regionUtil;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
@@ -34,7 +35,7 @@ public class XxlLogAspect {
     private static final Logger logger = LoggerFactory.getLogger(XxlLogAspect.class);
 
     @Resource
-    private LogService logService;
+    private XxlLogQueueHelper xxlLogQueueHelper;
 
 
     /**
@@ -85,7 +86,7 @@ public class XxlLogAspect {
         } catch (Throwable e) {
             throw e;
         } finally {
-            // TODO 待改造，推送队列，异步消费。
+            // push log message-queue
             try {
                 doLog(log, request, result, startTime, endTime);
             } catch (Exception e) {
@@ -136,7 +137,7 @@ public class XxlLogAspect {
         xxlBootLog.setOperator(operator);
         xxlBootLog.setIp(ip);
 
-        logService.insert(xxlBootLog);
+        xxlLogQueueHelper.push(xxlBootLog);
     }
 
 }

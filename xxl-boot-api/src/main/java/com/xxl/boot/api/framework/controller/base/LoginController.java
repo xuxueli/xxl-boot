@@ -1,7 +1,10 @@
 package com.xxl.boot.api.framework.controller.base;
 
+import com.xxl.boot.api.framework.constant.enums.LogModuleEnum;
+import com.xxl.boot.api.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
 import com.xxl.boot.api.framework.model.dto.LoginRequest;
+import com.xxl.boot.api.framework.model.entity.Log;
 import com.xxl.boot.api.framework.model.entity.Resource;
 import com.xxl.boot.api.framework.model.entity.Role;
 import com.xxl.boot.api.framework.model.entity.User;
@@ -9,6 +12,8 @@ import com.xxl.boot.api.framework.service.ResourceService;
 import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.boot.api.framework.service.UserService;
 import com.xxl.boot.api.framework.util.I18nUtil;
+import com.xxl.boot.api.framework.util.Ip2regionUtil;
+import com.xxl.boot.api.framework.web.xxllog.XxlLogQueueHelper;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
@@ -42,6 +47,8 @@ public class LoginController {
 	private ResourceService resourceService;
 	@jakarta.annotation.Resource
 	private RoleService roleService;
+	@jakarta.annotation.Resource
+	private XxlLogQueueHelper logQueueHelper;
 
 
 	/**
@@ -49,7 +56,7 @@ public class LoginController {
 	 */
 	@RequestMapping("/login")
 	@XxlSso(login = false)
-	public Response<String> login(@RequestBody(required = false) LoginRequest loginRequest) {
+	public Response<String> login(@RequestBody(required = false) LoginRequest loginRequest, HttpServletRequest request) {
 		// base valid
 		if (loginRequest == null) {
 			return Response.ofFail("username or password is invalid.");
@@ -96,6 +103,10 @@ public class LoginController {
 		if (!loginResult.isSuccess()) {
 			return loginResult;
 		}
+		// add log
+		addLog(LogTypeEnum.LOGIN_LOG, LogModuleEnum.LOGIN, "系统登录", "登录成功",xxlBootUser.getUsername(), request);
+
+		// response
 		String token = loginResult.getData();
 		return Response.ofSuccess(token);
 	}
@@ -147,6 +158,33 @@ public class LoginController {
 		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
 		return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, password);
+	}
+
+	/**
+	 * add log
+	 */
+	private void addLog(LogTypeEnum logTypeEnum,
+                        LogModuleEnum logModuleEnum,
+                        String title,
+                        String content,
+                        String operator,
+                        HttpServletRequest request) {
+
+		// param
+		String ip = Ip2regionUtil.getIp(request);
+		ip = ip!=null?ip:"";
+
+		// build log
+		Log xxlBootLog = new Log();
+		xxlBootLog.setType(logTypeEnum.getCode());
+		xxlBootLog.setModule(logModuleEnum.name());
+		xxlBootLog.setTitle(title);
+		xxlBootLog.setContent(content);
+		xxlBootLog.setOperator(operator);
+		xxlBootLog.setIp(ip);
+
+		// write
+		logQueueHelper.push(xxlBootLog);
 	}
 
 }
