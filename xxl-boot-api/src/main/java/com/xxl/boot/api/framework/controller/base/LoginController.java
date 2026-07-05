@@ -236,6 +236,7 @@ public class LoginController {
 		String uuid = RandomIdTool.getAlphaNumeric();
 		String result = textResult.getResult();
 		// TODO: redis: uuid -> result, 5min; valid: uuid + result
+		// TODO：CaptchaTool 生成，除法不要有余数
 
 		// 4、build response
 		CaptchaDTO captchaDTO = new CaptchaDTO();
