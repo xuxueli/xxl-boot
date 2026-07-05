@@ -22,7 +22,7 @@
         <#-- biz start（4/5 content） -->
         <div class="row">
             <!-- 操作区域 -->
-            <div class="col-sm-5">
+            <div class="col-sm-4">
                 <div class="box box-default">
                     <div class="box-header with-border">
                         <h5 class="pull-left">元素</h5>
@@ -36,6 +36,12 @@
                                 <label class="col-sm-3 control-label">文本框：</label>
                                 <div class="col-sm-9">
                                     <input type="text" name="" class="form-control" placeholder="请输入文本">
+                                </div>
+                            </div>
+                            <div class="form-group draggable">
+                                <label class="col-sm-3 control-label">多行文本框：</label>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" rows="3" placeholder="请输入内容"></textarea>
                                 </div>
                             </div>
                             <div class="form-group draggable">
@@ -53,12 +59,6 @@
                                         <option>选项3</option>
                                         <option>选项4</option>
                                     </select>
-                                </div>
-                            </div>
-                            <div class="form-group draggable">
-                                <label class="col-sm-3 control-label">文件域：</label>
-                                <div class="col-sm-9">
-                                    <input type="file" name="" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group draggable">
@@ -92,6 +92,12 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="form-group draggable">
+                                <label class="col-sm-3 control-label">日期：</label>
+                                <div class="col-sm-9">
+                                    <input type="date" class="form-control" name="">
+                                </div>
+                            </div>
                             <div class="hr-line-dashed"></div>
                             <div class="form-group draggable">
                                 <div class="col-sm-12 col-sm-offset-3">
@@ -106,7 +112,7 @@
             </div>
 
             <!-- 渲染区域 -->
-            <div class="col-sm-7">
+            <div class="col-sm-8">
                 <div class="box box-default">
                     <div class="box-header with-border">
                         <h5 class="pull-left">拖拽左侧表单元素到此区域</h5>
