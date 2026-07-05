@@ -12,6 +12,7 @@
         .draggable { cursor: move; }
         .form-body .col-md-6, .form-body .col-md-12 { min-height: 400px; }
     </style>
+    <link rel="stylesheet" href="${request.contextPath}/static/adminlte/plugins/iCheck/square/blue.css">
     <!-- 1-style end -->
 
 </head>
@@ -29,19 +30,19 @@
                     </div>
                     <div class="box-body">
                         <div class="alert alert-info">
-                            拖拽左侧的表单元素到右侧区域，即可生成相应的HTML表单代码 ！
+                            拖拽表单元素到右侧区域，即可生成HTML表单代码 ！
                         </div>
                         <form role="form" class="form-horizontal m-t">
                             <div class="form-group draggable">
-                                <label class="col-sm-3 control-label">文本框：</label>
+                                <label class="col-sm-3 control-label">输入框：</label>
                                 <div class="col-sm-9">
                                     <input type="text" name="" class="form-control" placeholder="请输入文本">
                                 </div>
                             </div>
                             <div class="form-group draggable">
-                                <label class="col-sm-3 control-label">多行文本框：</label>
+                                <label class="col-sm-3 control-label">文本框：</label>
                                 <div class="col-sm-9">
-                                    <textarea class="form-control" rows="3" placeholder="请输入内容"></textarea>
+                                    <textarea class="form-control" rows="3" placeholder="请输入多行文本"></textarea>
                                 </div>
                             </div>
                             <div class="form-group draggable">
@@ -101,8 +102,8 @@
                             <div class="hr-line-dashed"></div>
                             <div class="form-group draggable">
                                 <div class="col-sm-12 col-sm-offset-3">
-                                    <button class="btn btn-primary" type="submit">保存内容</button>
-                                    <button class="btn btn-default" type="submit">取消</button>
+                                    <button class="btn btn-primary" type="button">保存内容</button>
+                                    <button class="btn btn-default" type="button">取消</button>
                                 </div>
                             </div>
                         </form>
@@ -147,6 +148,7 @@
 <@netCommon.commonScript />
 <script src="${request.contextPath}/static/plugins/jquery-ui/jquery-ui.min.js"></script>
 <script src="${request.contextPath}/static/plugins/jsbeautify/beautify-html.min.js"></script>
+<script src="${request.contextPath}/static/adminlte/plugins/iCheck/icheck.min.js"></script>
 <script>
 $(function () {
 
