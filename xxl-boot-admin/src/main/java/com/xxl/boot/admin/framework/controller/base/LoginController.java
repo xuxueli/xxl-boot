@@ -5,10 +5,10 @@ import com.xxl.boot.admin.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.admin.framework.constant.enums.UserStatuEnum;
 import com.xxl.boot.admin.framework.model.entity.Log;
 import com.xxl.boot.admin.framework.model.entity.User;
-import com.xxl.boot.admin.framework.service.LogService;
 import com.xxl.boot.admin.framework.service.UserService;
 import com.xxl.boot.admin.framework.util.I18nUtil;
 import com.xxl.boot.admin.framework.util.Ip2regionUtil;
+import com.xxl.boot.admin.framework.web.xxllog.XxlLogQueueHelper;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
@@ -38,7 +38,7 @@ public class LoginController {
 	@Resource
 	private UserService userService;
 	@Resource
-	private LogService logService;
+	private XxlLogQueueHelper logQueueHelper;
 
 
 	@RequestMapping("/login")
@@ -131,7 +131,7 @@ public class LoginController {
 		xxlBootLog.setIp(ip);
 
 		// write
-		logService.insert(xxlBootLog);
+		logQueueHelper.push(xxlBootLog);
 	}
 
 }

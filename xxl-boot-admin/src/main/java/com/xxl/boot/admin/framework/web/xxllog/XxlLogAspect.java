@@ -34,7 +34,7 @@ public class XxlLogAspect {
     private static final Logger logger = LoggerFactory.getLogger(XxlLogAspect.class);
 
     @Resource
-    private LogService logService;
+    private XxlLogQueueHelper logQueueHelper;
 
 
     /**
@@ -85,7 +85,7 @@ public class XxlLogAspect {
         } catch (Throwable e) {
             throw e;
         } finally {
-            // TODO 待改造，推送队列，异步消费。
+            // push log message-queue
             try {
                 doLog(log, request, result, startTime, endTime);
             } catch (Exception e) {
@@ -98,12 +98,6 @@ public class XxlLogAspect {
 
     /**
      * do log
-     *
-     * @param log
-     * @param request
-     * @param result
-     * @param startTime
-     * @param endTime
      */
     private void doLog(XxlLog log,
                        HttpServletRequest request,
@@ -136,7 +130,7 @@ public class XxlLogAspect {
         xxlBootLog.setOperator(operator);
         xxlBootLog.setIp(ip);
 
-        logService.insert(xxlBootLog);
+        logQueueHelper.push(xxlBootLog);
     }
 
 }
