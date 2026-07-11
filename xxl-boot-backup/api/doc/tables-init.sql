@@ -233,6 +233,12 @@ insert into sys_menu values('1058', '导入代码', '116', '4', '#', '', '', '',
 insert into sys_menu values('1059', '预览代码', '116', '5', '#', '', '', '', 1, 0, 'F', '0', '0', 'tool:gen:preview',           '#', 'admin', sysdate(), '', null, '');
 insert into sys_menu values('1060', '生成代码', '116', '6', '#', '', '', '', 1, 0, 'F', '0', '0', 'tool:gen:code',              '#', 'admin', sysdate(), '', null, '');
 
+-- 隐藏路由菜单（侧栏不显示，支持 URL 直达）
+insert into sys_menu values('2000', '分配角色', '1', '11', 'user/authRole',  'system/user/authRole', '', 'AuthRole', 1, 0, 'C', '1', '0', 'system:user:edit', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2001', '分配用户', '1', '12', 'role/authUser',  'system/role/authUser', '', 'AuthUser', 1, 0, 'C', '1', '0', 'system:role:edit', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2002', '字典数据', '2', '11', 'dict/data', 'sys/dict/data',       '', 'Data',     1, 0, 'C', '1', '0', 'system:dict:list', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2003', '修改生成配置', '3', '11', 'gen/editTable', 'tool/gen/editTable', '', 'GenEdit', 1, 0, 'C', '1', '0', 'tool:gen:edit', '#', 'admin', sysdate(), '', null, '');
+
 
 -- ----------------------------
 -- 6、用户和角色关联表  用户N-1角色

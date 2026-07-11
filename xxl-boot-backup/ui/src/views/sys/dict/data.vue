@@ -365,6 +365,6 @@ function handleExport() {
   }, `dict_data_${new Date().getTime()}.xlsx`)
 }
 
-getTypes(route.params && route.params.dictId)
+getTypes(route.query && route.query.dictId)
 getTypeList()
 </script>

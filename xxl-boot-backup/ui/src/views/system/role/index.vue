@@ -379,7 +379,7 @@ function handleCommand(command, row) {
 
 /** 分配用户 */
 function handleAuthUser(row) {
-  router.push("/system/role-auth/user/" + row.roleId)
+  router.push("/system/role/authUser?roleId=" + row.roleId)
 }
 
 /** 查询菜单树结构 */

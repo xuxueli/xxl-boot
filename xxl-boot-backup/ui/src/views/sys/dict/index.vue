@@ -289,7 +289,7 @@ function handleViewData(row) {
 
 /** 字典数据列表页面 */
 function handleDataList(row) {
-  tab.openPage("字典数据", '/sys/dict-data/index/' + row.dictId)
+  tab.openPage("字典数据", '/monitor/dict/data',{dictId: row.dictId} )
 }
 
 /** 修改按钮操作 */

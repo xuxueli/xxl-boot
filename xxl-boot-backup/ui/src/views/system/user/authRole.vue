@@ -107,7 +107,7 @@ function submitForm() {
 }
 
 (() => {
-  const userId = route.params && route.params.userId
+  const userId = route.query && route.query.userId    //route.params && route.params.userId
   if (userId) {
     loading.value = true
     getAuthRole(userId).then(response => {

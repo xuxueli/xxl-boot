@@ -5,11 +5,10 @@
  * 职责划分：
  * 1. state：保存不同场景下的路由集合；
  * 2. actions：负责生成并分发路由数据；
- * 3. helpers：负责路由组件映射、子路由拍平和权限过滤；
+ * 3. helpers：负责路由组件映射和子路由拍平；
  * 4. getters：当前模块未定义 getters，调用方直接读取 state。
  */
-import auth from '@/utils/permission'
-import router, { constantRoutes, dynamicRoutes } from '@/router'
+import router, { constantRoutes } from '@/router'
 import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'
 import ParentView from '@/components/ParentView'
@@ -80,12 +79,11 @@ const usePermissionStore = defineStore(
        * 1. 请求后端菜单数据；
        * 2. 深拷贝多份路由数据，避免不同转换过程互相影响；
        * 3. 生成侧边栏、重写路由、默认路由等不同结果；
-       * 4. 过滤本地动态路由并注册到 router 实例；
-       * 5. 回填 store 中的多套路由状态。
+       * 4. 回填 store 中的多套路由状态。
        */
       generateRoutes(roles) {
         /**
-         * 这里显式返回 Promise，目的是把“菜单请求 + 路由转换 + 动态注册”这整套异步初始化流程
+         * 这里显式返回 Promise，目的是把"菜单请求 + 路由转换 + 动态注册"这整套异步初始化流程
          * 暴露给外部调用方（通常是路由守卫或应用启动流程）统一等待；
          * 当全部路由都整理完成后，再通过 resolve(rewriteRoutes) 把最终可用的动态路由返回出去，
          * 这样调用方就可以在路由已准备就绪的前提下继续执行后续导航逻辑，避免出现页面跳转早于路由注册完成的问题。
@@ -99,8 +97,6 @@ const usePermissionStore = defineStore(
             const sidebarRoutes = filterAsyncRouter(sdata)
             const rewriteRoutes = filterAsyncRouter(rdata, false, true)
             const defaultRoutes = filterAsyncRouter(defaultData)
-            const asyncRoutes = filterDynamicRoutes(dynamicRoutes)
-            asyncRoutes.forEach(route => { router.addRoute(route) })
             this.setRoutes(rewriteRoutes)
             this.setSidebarRouters(constantRoutes.concat(sidebarRoutes))
             this.setDefaultRoutes(sidebarRoutes)
@@ -167,30 +163,6 @@ function filterChildren(childrenMap, lastRouter = false) {
     }
   })
   return children
-}
-
-/**
- * 动态路由遍历，验证当前用户是否具备访问权限。
- *
- * 这里只处理本地预定义的 dynamicRoutes，通过 permissions / roles 两种方式做过滤。
- *
- * @param {Array} routes 本地动态路由集合
- * @returns {Array}
- */
-export function filterDynamicRoutes(routes) {
-  const res = []
-  routes.forEach(route => {
-    if (route.permissions) {
-      if (auth.hasPermiOr(route.permissions)) {
-        res.push(route)
-      }
-    } else if (route.roles) {
-      if (auth.hasRoleOr(route.roles)) {
-        res.push(route)
-      }
-    }
-  })
-  return res
 }
 
 /**

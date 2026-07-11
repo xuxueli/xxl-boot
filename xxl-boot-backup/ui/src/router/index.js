@@ -3,9 +3,8 @@
  *
  * 职责：
  *   1. 声明静态路由（constantRoutes）——登录、错误页、首页、个人中心等，启动即注册；
- *   2. 声明动态路由（dynamicRoutes）——带权限标记，登录后按角色筛选并动态注入；
- *   3. 创建全局 router 实例（HTML5 history 模式）；
- *   4. 定义全局守卫（beforeEach/afterEach）——鉴权、路由注入、进度条控制。
+ *   2. 创建全局 router 实例（HTML5 history 模式）；
+ *   3. 定义全局守卫（beforeEach/afterEach）——鉴权、路由注入、进度条控制。
  *
  * 路由配置项说明：
  *   hidden       - true 时侧边栏不显示（登录、错误页、编辑页等）
@@ -103,75 +102,15 @@ export const constantRoutes = [
 
 
 /**
- * 动态路由 ——带 permissions 字段，登录后由权限模块按角色注入
- * 用于"侧栏隐藏但允许直达"的授权页面
+ * 路由实例：初始仅加载静态路由，动态路由后续 addRoute 注入
  */
-export const dynamicRoutes = [
-  {
-    path: '/system/user-auth',
-    component: Layout,
-    hidden: true,
-    permissions: ['system:user:edit'],
-    children: [
-      {
-        path: 'role/:userId(\\d+)',
-        component: () => import('@/views/system/user/authRole'),
-        name: 'AuthRole',
-        meta: { title: '分配角色', activeMenu: '/system/user' }
-      }
-    ]
-  },
-  {
-    path: '/system/role-auth',
-    component: Layout,
-    hidden: true,
-    permissions: ['system:role:edit'],
-    children: [
-      {
-        path: 'user/:roleId(\\d+)',
-        component: () => import('@/views/system/role/authUser'),
-        name: 'AuthUser',
-        meta: { title: '分配用户', activeMenu: '/system/role' }
-      }
-    ]
-  },
-  {
-    path: '/sys/dict-data',
-    component: Layout,
-    hidden: true,
-    permissions: ['system:dict:list'],
-    children: [
-      {
-        path: 'index/:dictId(\\d+)',
-        component: () => import('@/views/sys/dict/data'),
-        name: 'Data',
-        meta: { title: '字典数据', activeMenu: '/system/dict' }
-      }
-    ]
-  },
-  {
-    path: '/tool/gen-edit',
-    component: Layout,
-    hidden: true,
-    permissions: ['tool:gen:edit'],
-    children: [
-      {
-        path: 'index/:tableId(\\d+)',
-        component: () => import('@/views/tool/gen/editTable'),
-        name: 'GenEdit',
-        meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
-      }
-    ]
-  }
-]
-
-
-// 路由实例：初始仅加载静态路由，动态路由后续 addRoute 注入
 const router = createRouter({
+  // HTML5 history 模式
   history: createWebHistory(),
+  // 加载静态路由
   routes: constantRoutes,
   scrollBehavior(to, from, savedPosition) {
-    // 前进/后退恢复历史位置，否则回到顶部
+    // 前进/后退：恢复历史位置，否则回到顶部
     return savedPosition || { top: 0 }
   },
 })

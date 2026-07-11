@@ -183,7 +183,7 @@ function close() {
 }
 
 (() => {
-  const tableId = route.params && route.params.tableId
+  const tableId = route.query && route.query.tableId
   if (tableId) {
     // 获取表详细信息
     getGenTable(tableId).then(res => {

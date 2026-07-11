@@ -1,16 +1,16 @@
 
 1、api 重构：
     - 模块代码重构：
-        - api:              xtodo  
+        - api:              x-03  
         - assets:           done
-        - components:       x   
+        - components:       x-02   
         - directives:       done      
-        - layouts:          x
+        - layouts:          x-01
         - router:           ing：除了 404 等基础全面，全部页面后端获取；dynamicRoutes全部 + 
         - store:            x
         - utils:            x
-        - views:            xtodo
-      - 登录相关：Login、用户信息管理、验证码；
+        - views:            x-03
+    - 登录相关：Login、用户信息管理、验证码；
     - 菜单权限：菜单查询、权限/角色列表；
     - API平移：
         - 管理端 API；

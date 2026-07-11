@@ -299,8 +299,8 @@ function handleSortChange(column, prop, order) {
 function handleEditTable(row) {
   const tableId = row.tableId || ids.value[0]
   const tableName = row.tableName || tableNames.value[0]
-  const params = { pageNum: queryParams.value.pageNum }
-  tab.openPage("修改[" + tableName + "]生成配置", '/tool/gen-edit/index/' + tableId, params)
+  const params = { pageNum: queryParams.value.pageNum, tableId: tableId }
+  tab.openPage("修改[" + tableName + "]生成配置", '/tool/gen/editTable', params)
 }
 
 /** 删除按钮操作 */
