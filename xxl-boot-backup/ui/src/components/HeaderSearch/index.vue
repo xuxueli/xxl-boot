@@ -14,7 +14,7 @@
         ref="headerSearchSelectRef"
         size="large"
         @input="querySearch"
-        prefix-icon="Search"
+        :prefix-icon="Search"
         placeholder="菜单搜索，支持标题、URL模糊查询"
         clearable
         @keyup.enter="selectActiveResult"
@@ -77,6 +77,7 @@
 </template>
 
 <script setup>
+import { Search } from '@element-plus/icons-vue'
 import Fuse from 'fuse.js'
 import { getNormalPath } from '@/utils/common'
 import { isHttp } from '@/utils/validate'

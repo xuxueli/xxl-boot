@@ -21,8 +21,8 @@
             />
          </el-form-item>
          <el-form-item>
-            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
          </el-form-item>
       </el-form>
 
@@ -31,7 +31,7 @@
             <el-button
                type="primary"
                plain
-               icon="Plus"
+               :icon="Plus"
                @click="openSelectUser"
                v-hasPermi="['system:role:add']"
             >添加用户</el-button>
@@ -40,7 +40,7 @@
             <el-button
                type="danger"
                plain
-               icon="CircleClose"
+:icon="CircleClose"
                :disabled="multiple"
                @click="cancelAuthUserAll"
                v-hasPermi="['system:role:remove']"
@@ -50,7 +50,7 @@
             <el-button 
                type="warning" 
                plain 
-               icon="Close"
+               :icon="Close"
                @click="handleClose"
             >关闭</el-button>
          </el-col>
@@ -92,6 +92,7 @@
 </template>
 
 <script setup name="AuthUser">
+import { CircleClose, Close, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import selectUser from "./selectUser"
 import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/system/role"
 import { useDict } from '@/utils/hooks/useDict'

@@ -58,13 +58,13 @@
     </div>
     <div class="center-board">
       <div class="action-bar">
-        <el-button icon="Download" type="primary" text @click="download">
+        <el-button :icon="DownloadIcon" type="primary" text @click="download">
           导出vue文件
         </el-button>
-        <el-button class="copy-btn-main" icon="DocumentCopy" type="primary" text @click="copy">
+        <el-button class="copy-btn-main" :icon="DocumentCopy" type="primary" text @click="copy">
           复制代码
         </el-button>
-        <el-button class="delete-btn" icon="Delete" text @click="empty" type="danger">
+        <el-button class="delete-btn" :icon="Delete" text @click="empty" type="danger">
           清空
         </el-button>
       </div>
@@ -113,6 +113,7 @@ import DraggableItem from './DraggableItem'
 import RightPanel from './RightPanel'
 import CodeTypeDialog from './CodeTypeDialog'
 import { onMounted, watch } from 'vue'
+import { Delete, Download as DownloadIcon, DocumentCopy, Search } from '@element-plus/icons-vue'
 
 initDrawingDefaultValue()
 

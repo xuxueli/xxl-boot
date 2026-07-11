@@ -69,6 +69,7 @@
 </template>
 
 <script setup>
+import { ArrowDown, ArrowLeft, ArrowRight, RefreshRight } from '@element-plus/icons-vue'
 import ScrollPane from './ScrollPane'
 import { getNormalPath } from '@/utils/common'
 import useTagsViewStore from '@/store/modules/tagsView'

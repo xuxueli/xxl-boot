@@ -88,7 +88,7 @@
           <el-form-item v-if="activeData['prefix-icon'] !== undefined" label="前图标">
             <el-input v-model="activeData['prefix-icon']" placeholder="请输入前图标名称">
               <template #append>
-                <el-button icon="Pointer" @click="openIconsDialog('prefix-icon')">
+                <el-button :icon="Pointer" @click="openIconsDialog('prefix-icon')">
                   选择
                 </el-button>
               </template>
@@ -97,7 +97,7 @@
           <el-form-item v-if="activeData['suffix-icon'] !== undefined" label="后图标">
             <el-input v-model="activeData['suffix-icon']" placeholder="请输入后图标名称">
               <template #append>
-                <el-button icon="Pointer" @click="openIconsDialog('suffix-icon')">
+                <el-button :icon="Pointer" @click="openIconsDialog('suffix-icon')">
                   选择
                 </el-button>
               </template>
@@ -234,7 +234,7 @@
               </template>
             </draggable>
             <div>
-              <el-button icon="CirclePlus" style="margin-left: 8px; margin-top: 10px;" text bg type="primary"
+              <el-button :icon="CirclePlus" style="margin-left: 8px; margin-top: 10px;" text bg type="primary"
                 @click="addSelectItem">
                 添加选项
               </el-button>
@@ -270,7 +270,7 @@
             <el-tree v-if="activeData.dataType === 'static'" draggable :data="activeData.options" node-key="id"
               :expand-on-click-node="false" :render-content="renderContent" />
             <div v-if="activeData.dataType === 'static'">
-              <el-button icon="CirclePlus" style="margin-left: 0; margin-top: 10px;" type="primary" text bg
+              <el-button :icon="CirclePlus" style="margin-left: 0; margin-top: 10px;" type="primary" text bg
                 @click="addTreeItem">
                 添加父级
               </el-button>
@@ -407,7 +407,7 @@
               </el-form-item>
             </div>
             <div>
-              <el-button icon="CirclePlus" style="margin-left: 0; margin-top: 10px;" type="primary" text bg
+              <el-button :icon="CirclePlus" style="margin-left: 0; margin-top: 10px;" type="primary" text bg
                 @click="addReg">
                 添加规则
               </el-button>
@@ -464,6 +464,7 @@
 </template>
 
 <script setup>
+import { CirclePlus, Close, Delete, Link, Plus, Pointer, Remove } from '@element-plus/icons-vue'
 import draggable from "vuedraggable/dist/vuedraggable.common"
 import { isNumberStr } from '@/utils/index'
 import IconsDialog from './IconsDialog'
@@ -636,7 +637,7 @@ function renderContent(h, { node, data, store }) {
     }, [
       h(resolveComponent('el-link'), {
         type: "primary",
-        icon: "Plus",
+        icon: Plus,
         underline: false,
         onClick: () => {
           append(data)
@@ -645,7 +646,7 @@ function renderContent(h, { node, data, store }) {
       }),
       h(resolveComponent('el-link'), {
         type: "danger",
-        icon: "Delete",
+        icon: Delete,
         underline: false,
         style: "margin-left: 5px;",
         onClick: () => {

@@ -53,6 +53,7 @@
 </template>
 
 <script setup>
+import { Bell, Clock, Document, Message, User } from '@element-plus/icons-vue'
 import { getNotice } from '@/api/sys/notice'
 
 const visible = ref(false)

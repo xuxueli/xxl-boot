@@ -26,7 +26,7 @@ import directive from '@/directive'                         // 自定义指令
 import '@/assets/styles/index.scss'                         // 全局样式
 import 'virtual:svg-icons-register'                         // 关键副作用导入/side-effect import: SVG sprite 注册
 import SvgIcon from '@/components/SvgIcon'                  // 自定义图标
-import elementIcons from '@/components/SvgIcon/svgicon'
+
 
 // 业务组件：分页、上传、编辑器等；
 import RightToolbar from '@/components/RightToolbar'        // 工具栏组件
@@ -44,7 +44,7 @@ const app = createApp(App)
 // ==================== 安装核心插件 ====================
 app.use(router)                     // 路由系统：router 安装 + 副作用导入 “路由守卫 / guards”；
 app.use(store)                      // 状态管理：Pinia安装；Store实例懒加载方式生成并缓存；
-app.use(elementIcons)               // Element Plus 图标组件 全量注册
+
 app.use(ElementPlus, {      // UI组件库：element-plus，配置语言和尺寸
     locale,                                 // 语言
     size: Cookies.get('size') || 'default'  // 支持 large、default、small

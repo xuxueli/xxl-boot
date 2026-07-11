@@ -48,6 +48,7 @@
 </template>
 
 <script setup>
+import { Plus } from '@element-plus/icons-vue'
 import { getToken } from "@/utils/auth"
 import { isExternal } from "@/utils/validate"
 import Sortable from 'sortablejs'
