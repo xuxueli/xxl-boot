@@ -1,8 +1,12 @@
 /**
-* 全局 SCSS 变量定义：包括主题颜色、布局尺寸等。
+ * SCSS 变量 + CSS 自定义属性
+ *
+ * - SCSS 变量通过 :export 暴露给 JS（Sidebar/Logo 组件使用）
+ * - CSS 变量定义亮色 / 暗色两套主题
+ * - .module.scss 后缀为 Vite :export 功能所需，不可更改
  */
 
-// 默认主题变量
+// 菜单暗色主题
 $menuText: #bfcbd9;
 $menuActiveText: #409eff;
 $menuBg: #1a1f2e;
