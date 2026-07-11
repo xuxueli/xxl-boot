@@ -93,7 +93,7 @@ public class IndexController {
     // ---------------------- help ----------------------
 
 	@RequestMapping("/help")
-	@XxlSso
+	@XxlSso(permission = "help")
 	public String help() {
 		return "/framework/base/help";
 	}
