@@ -62,20 +62,18 @@ public class TokenService
     {
         // 获取请求携带的令牌
         String token = getToken(request);
-        if (StringUtils.isNotEmpty(token))
-        {
-            try
-            {
+        if (StringUtils.isNotEmpty(token)) {
+            String userKey = null;
+            try {
                 Claims claims = parseToken(token);
                 // 解析对应的权限以及用户信息
                 String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
-                String userKey = getTokenKey(uuid);
+                userKey = getTokenKey(uuid);
                 LoginUser user = redisCache.getCacheObject(userKey);
                 return user;
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 log.error("获取用户信息异常'{}'", e.getMessage());
+                redisCache.deleteObject(userKey);
             }
         }
         return null;
