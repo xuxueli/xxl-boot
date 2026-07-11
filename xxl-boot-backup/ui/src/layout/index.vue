@@ -322,6 +322,7 @@ function setLayout() {
           background-color: var(--current-color-light, #ecf5ff);
           pointer-events: none;
           z-index: 1;
+          border-right: 3px solid var(--current-color,#409eff);
         }
       }
 
