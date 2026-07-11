@@ -2,7 +2,7 @@
  * 路由定义与守卫模块
  *
  * 职责：
- *   1. 声明静态路由（constantRoutes）——登录、错误页、首页、个人中心等，启动即注册；
+ *   1. 声明静态路由（constantRoutes）——登录、错误页、个人中心等，启动即注册；
  *   2. 创建全局 router 实例（HTML5 history 模式）；
  *   3. 定义全局守卫（beforeEach/afterEach）——鉴权、路由注入、进度条控制。
  *
@@ -36,7 +36,7 @@ import usePermissionStore from '@/store/modules/permission'
 
 /**
  * 静态路由 ——无权限门槛，启动即注册
- * 包含：登录、首页、个人中心、重定向页、404 兜底、401、
+ * 包含：登录、个人中心、重定向页、404 兜底、401、
  */
 export const constantRoutes = [
   {
@@ -45,7 +45,7 @@ export const constantRoutes = [
     component: () => import('@/views/login'),
     hidden: true
   },
-  {
+  /*{
     // 首页：根路径默认跳转
     path: '',
     component: Layout,
@@ -58,7 +58,7 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
-  },
+  },*/
   {
     // 个人中心：hidden 控制侧栏不显示
     path: '/user',
@@ -149,7 +149,7 @@ router.beforeEach(async (to, from) => {
         await useUserStore().getInfo()
         isRelogin.show = false
 
-        // 后端菜单 → 前端路由，过滤 http 链接后逐条注入
+        // a、初始化动态路由：后端菜单 → 前端路由，过滤 http 链接后逐条注入
         const accessRoutes = await usePermissionStore().generateRoutes()
         accessRoutes.forEach(route => {
           if (!isHttp(route.path)) {
@@ -157,9 +157,10 @@ router.beforeEach(async (to, from) => {
           }
         })
 
-        // replace: true —— 注入的路由需当前导航重新匹配，同时避免历史记录残留空路由条目
+        // b、replace: true：注入的路由需当前导航重新匹配，同时避免历史记录残留 “空路由条目”
         return { ...to, replace: true }
       } catch (err) {
+        // 路由初始化异常：退出登录
         await useUserStore().logOut()
         ElMessage.error(err)
         return { path: '/' }
