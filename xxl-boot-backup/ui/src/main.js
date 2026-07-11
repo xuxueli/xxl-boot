@@ -14,17 +14,14 @@ import Cookies from 'js-cookie'
 
 // ==================== 核心模块 ====================
 import App from '@/App'                                     // 根组件
-import router from '@/router'                               // 路由
-import '@/router/guards'                                    // 关键副作用导入/side-effect import: 全局路由权限守卫，模块加载时自动注册全局路由权限守卫，无需引入具体变量；
+import router from '@/router'                               // 路由实例（含全局守卫注册）
 import store from '@/store'                                 // 状态管理
-
 import directive from '@/directive'                         // 自定义指令
 
 // ==================== 全局资源 ====================
 import '@/assets/styles/index.scss'                         // 全局样式
 import 'virtual:svg-icons-register'                         // 关键副作用导入/side-effect import: SVG sprite 注册
 import SvgIcon from '@/components/SvgIcon'                  // 自定义图标
-
 
 // 业务组件：分页、上传、编辑器等；
 import RightToolbar from '@/components/RightToolbar'        // 工具栏组件
@@ -46,8 +43,6 @@ app.use(ElementPlus, {                              // UI组件库：element-plu
     locale,
     size: Cookies.get('size') || 'default'
 })
-
-// ==================== 注册自定义指令 ====================
 directive(app)                                              // 注册自定义指令: directive(app) → v-hasRole, v-hasPermi, v-copyText；示例 v-hasRole="['admin','editor']"
 
 // ==================== 注册全局业务组件 ====================

@@ -15,6 +15,16 @@
 import { createWebHistory, createRouter } from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
+/* for Guard */
+import { ElMessage } from 'element-plus'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import { getToken } from '@/utils/auth'
+import { isHttp, isPathMatch } from '@/utils/validate'
+import { isRelogin } from '@/utils/request'
+import useUserStore from '@/store/modules/user'
+import useSettingsStore from '@/store/modules/settings'
+import usePermissionStore from '@/store/modules/permission'
 
 /**
  * Note: 路由配置项
@@ -193,6 +203,60 @@ const router = createRouter({
     // 常规路由跳转默认回到页面顶部，避免沿用上个页面滚动状态。
     return { top: 0 }
   },
+})
+
+
+// ==================== 全局路由守卫 ====================
+
+NProgress.configure({ showSpinner: false })
+
+const whiteList = ['/login']
+
+const isWhiteList = (path) => {
+  return whiteList.some(pattern => isPathMatch(pattern, path))
+}
+
+router.beforeEach(async (to, from) => {
+  NProgress.start()
+  if (getToken()) {
+    to.meta.title && useSettingsStore().setMenuTitle(to.meta.title)
+    if (to.path === '/login') {
+      NProgress.done()
+      return { path: '/' }
+    }
+    if (isWhiteList(to.path)) {
+      return true
+    }
+    if (useUserStore().roles.length === 0) {
+      isRelogin.show = true
+      try {
+        await useUserStore().getInfo()
+        isRelogin.show = false
+        const accessRoutes = await usePermissionStore().generateRoutes()
+        accessRoutes.forEach(route => {
+          if (!isHttp(route.path)) {
+            router.addRoute(route)
+          }
+        })
+        return { ...to, replace: true }
+      } catch (err) {
+        await useUserStore().logOut()
+        ElMessage.error(err)
+        return { path: '/' }
+      }
+    }
+    return true
+  } else {
+    if (isWhiteList(to.path)) {
+      return true
+    }
+    NProgress.done()
+    return `/login?redirect=${to.fullPath}`
+  }
+})
+
+router.afterEach(() => {
+  NProgress.done()
 })
 
 export default router
