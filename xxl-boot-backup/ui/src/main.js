@@ -19,7 +19,7 @@ import store from '@/store'                                 // 状态管理
 import directive from '@/directive'                         // 自定义指令
 
 // ==================== 全局资源 ====================
-import '@/assets/styles/index.scss'                         // 全局样式
+import '@/assets/styles/index.scss'                         // 全局样式（布局、主题、通用类）
 import 'virtual:svg-icons-register'                         // 关键副作用导入/side-effect import: SVG sprite 注册
 import SvgIcon from '@/components/SvgIcon'                  // 自定义图标
 
