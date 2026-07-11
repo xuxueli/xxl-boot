@@ -169,6 +169,7 @@ import { useDict } from '@/utils/hooks/useDict'
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/utils/hooks/useFormReset'
 import modal from '@/utils/modal'
+import Editor from '@/components/Editor'
 
 const { sys_notice_status, sys_notice_type } = useDict("sys_notice_status", "sys_notice_type")
 const resetForm = useFormReset()
