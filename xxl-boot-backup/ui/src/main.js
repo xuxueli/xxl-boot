@@ -1,6 +1,4 @@
-/**
- * Description: 引导文件
- */
+
 // ==================== 核心依赖库 ====================
 // Vue 核心
 import {createApp} from 'vue'
@@ -19,17 +17,15 @@ import Cookies from 'js-cookie'
 import App from '@/App'
 import router from '@/router'
 import store from '@/store'
-import '@/router/guards'                                    // 全局路由权限守卫：“副作用导入/side-effect import”方式，模块加载时自动注册全局路由权限守卫，无需引入具体变量；
+import '@/router/guards'                                    // 关键副作用导入/side-effect import: 全局路由权限守卫，模块加载时自动注册全局路由权限守卫，无需引入具体变量；
 
 // 全局配置
 import directive from '@/directive'                         // 自定义指令
 import plugins from '@/plugins'                             // 全局插件
 
 // ==================== 全局资源 ====================
-// 全局样式
-import '@/assets/styles/index.scss'
-// svg 图标
-import 'virtual:svg-icons-register'                         // svg 图标
+import '@/assets/styles/index.scss'                         // 全局样式
+import 'virtual:svg-icons-register'                         // 关键副作用导入/side-effect import: SVG sprite 注册
 import SvgIcon from '@/components/SvgIcon'                  // 自定义图标
 import elementIcons from '@/components/SvgIcon/svgicon'
 
@@ -55,8 +51,8 @@ const app = createApp(App)
 // ==================== 安装核心插件 ====================
 app.use(router)                     // 路由系统：router 安装 + 副作用导入 “路由守卫 / guards”；
 app.use(store)                      // 状态管理：Pinia安装；Store实例懒加载方式生成并缓存；
-app.use(plugins)                    // 全局插件
-app.use(elementIcons)               // 图标组件
+app.use(plugins)                    // 全局插件：$tab/$auth/$cache/$modal/$download
+app.use(elementIcons)               // Element Plus 图标组件 全量注册
 app.use(ElementPlus, {      // UI组件库：element-plus，配置语言和尺寸
     locale,                                 // 语言
     size: Cookies.get('size') || 'default'  // 支持 large、default、small
@@ -75,8 +71,7 @@ app.config.globalProperties.selectDictLabel = selectDictLabel
 app.config.globalProperties.selectDictLabels = selectDictLabels
 
 // ==================== 注册自定义指令 ====================
-// 自定义指令：注册 v-hasRole、v-hasPermi 等权限指令，示例 v-hasRole="['admin','editor']"
-directive(app)
+directive(app)                      // 注册自定义指令: directive(app) → v-hasRole, v-hasPermi, v-copyText；示例 v-hasRole="['admin','editor']"
 
 // ==================== 注册全局业务组件 ====================
 // 页面业务组件：可直接使用，无需重复 import；例如 <RightToolbar />
