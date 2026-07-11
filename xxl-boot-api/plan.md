@@ -1,6 +1,16 @@
 
 1、api 重构：
-    - 登录相关：Login、用户信息管理、验证码；
+    - 模块代码重构：
+        - api:          
+        - assets:       done
+        - components:
+        - directives:      
+        - layouts:
+        - router
+        - store
+        - utils
+        - views
+      - 登录相关：Login、用户信息管理、验证码；
     - 菜单权限：菜单查询、权限/角色列表；
     - API平移：
         - 管理端 API；
