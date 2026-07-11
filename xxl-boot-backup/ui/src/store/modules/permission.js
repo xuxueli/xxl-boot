@@ -105,11 +105,14 @@ const usePermissionStore = defineStore(
               }
             })
 
-            // 设置第一个Tab 固定：设置 affix: true，TagsView 初始化时固定显示: TODO，待替换新版菜单
+            // 首页固定标签：isMenuFrame 生成 Layout 父路由 + 子路由结构，需在子路由上设置 affix
             const setFirstAffix = (routes) => {
-              // 如果 routes[0] 存在，则修改其 meta；否则什么都不做
-              if (routes?.[0]) {
-                routes[0].meta = { ...routes[0].meta, affix: true };
+              const first = routes?.[0];
+              if (!first) return;
+              if (first.children?.[0]) {
+                first.children[0].meta = { ...first.children[0].meta, affix: true };
+              } else if (first.meta) {
+                first.meta = { ...first.meta, affix: true };
               }
             };
             setFirstAffix(sidebarRoutes);
