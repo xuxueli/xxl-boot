@@ -1,5 +1,5 @@
 /**
- * 通用css样式布局处理
+ * 通用css样式布局处理：工具类 + Element Plus 覆盖 + 详情卡片
  */
 
 /** 基础通用 **/
@@ -388,4 +388,60 @@
 /* 表格右侧工具栏样式 */
 .top-right-btn {
   margin-left: auto;
+}
+
+/* ==================== Element Plus 覆盖 ==================== */
+
+.el-breadcrumb__inner,
+.el-breadcrumb__inner a {
+  font-weight: 400 !important;
+}
+
+.el-upload {
+  input[type="file"] {
+    display: none !important;
+  }
+}
+
+.el-upload__input {
+  display: none;
+}
+
+.cell {
+  .el-tag {
+    margin-right: 0px;
+  }
+}
+
+.el-dialog {
+  transform: none;
+  left: 0;
+  position: relative;
+  margin: 0 auto;
+}
+
+.el-dropdown-menu {
+  a {
+    display: block
+  }
+}
+
+.el-range-editor.el-input__inner {
+  display: inline-flex !important;
+}
+
+.el-range-separator {
+  box-sizing: content-box;
+}
+
+.el-menu--collapse
+  > div
+  > .el-submenu
+  > .el-submenu__title
+  .el-submenu__icon-arrow {
+  display: none;
+}
+
+.el-dropdown .el-dropdown-link{
+  color: var(--el-color-primary) !important;
 }

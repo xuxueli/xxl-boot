@@ -1,6 +1,7 @@
-@use './mixin.scss';
-@use './transition.scss';
-@use './element-ui.scss';
+/**
+* 入口 + 全局基础 + 过渡动画
+*/
+
 @use './sidebar.scss';
 @use './boot.scss';
 
@@ -77,4 +78,81 @@ div:focus {
   &:hover {
     color: rgb(32, 160, 255);
   }
+}
+
+/* ==================== 过渡动画 ==================== */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.28s;
+}
+
+.fade-enter-from,
+.fade-leave-active {
+  opacity: 0;
+}
+
+.fade-transform--move,
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all .2s;
+}
+
+.fade-transform-enter-from {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.breadcrumb-enter-active,
+.breadcrumb-leave-active {
+  transition: all .5s;
+}
+
+.breadcrumb-enter-from,
+.breadcrumb-leave-active {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.breadcrumb-move {
+  transition: all .5s;
+}
+
+.breadcrumb-leave-active {
+  position: absolute;
+}
+
+::view-transition-new(root), ::view-transition-old(root) {
+  animation: none !important;
+  backface-visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.dark::view-transition-old(root) {
+  z-index: 2147483646;
+  background: var(--bg-color-dark);
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+  background: var(--bg-color);
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+  background: var(--bg-color);
+}
+
+::view-transition-new(root) {
+  z-index: 2147483646;
+  background: var(--bg-color-dark);
 }

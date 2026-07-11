@@ -85,11 +85,14 @@ function setLayout() {
 </script>
 
 <style lang="scss" scoped>
-@use "@/assets/styles/mixin.scss" as mix;
 @use "@/assets/styles/variables.module.scss" as vars;
 
 .app-wrapper {
-  @include mix.clearfix;
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
   position: relative;
   height: 100%;
   width: 100%;
