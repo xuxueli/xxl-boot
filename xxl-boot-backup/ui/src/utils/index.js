@@ -18,7 +18,7 @@
  *   8. 函数工具             - debounce
  *   9. 代码生成器配置       - makeMap, exportDefault, beautifierConf
  */
-import { parseTime } from './boot'
+import { parseTime } from './common'
 
 // ─────────────────────────────────────────────
 // 1. 日期 / 时间格式化

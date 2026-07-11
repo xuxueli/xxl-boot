@@ -155,9 +155,16 @@
 <script setup name="Operlog">
 import OperlogDetail from './detail'
 import { list, delOperlog, cleanOperlog } from "@/api/sys/operlog"
+import { useDict } from '@/utils/hooks/useDict'
+import { parseTime, addDateRange } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import { download } from '@/utils/request'
+import modal from '@/utils/modal'
 
-const { proxy } = getCurrentInstance()
 const { sys_oper_type, sys_common_status } = useDict("sys_oper_type", "sys_common_status")
+const resetForm = useFormReset()
+
+const operlogRef = ref(null)
 
 const operlogList = ref([])
 const detailVisible = ref(false)
@@ -190,7 +197,7 @@ const { queryParams, form } = toRefs(data)
 /** 查询登录日志 */
 function getList() {
   loading.value = true
-  list(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
+  list(addDateRange(queryParams.value, dateRange.value)).then(response => {
     operlogList.value = response.rows
     total.value = response.total
     loading.value = false
@@ -206,9 +213,9 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   queryParams.value.pageNum = 1
-  proxy.$refs["operlogRef"].sort(defaultSort.value.prop, defaultSort.value.order)
+  operlogRef.value.sort(defaultSort.value.prop, defaultSort.value.order)
 }
 
 /** 多选框选中数据 */
@@ -233,27 +240,27 @@ function handleDetail(row) {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const operIds = row.operId || ids.value
-  proxy.$modal.confirm('是否确认删除日志编号为"' + operIds + '"的数据项?').then(function () {
+  modal.confirm('是否确认删除日志编号为"' + operIds + '"的数据项?').then(function () {
     return delOperlog(operIds)
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("删除成功")
+    modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
 
 /** 清空按钮操作 */
 function handleClean() {
-  proxy.$modal.confirm("是否确认清空所有操作日志数据项?").then(function () {
+  modal.confirm("是否确认清空所有操作日志数据项?").then(function () {
     return cleanOperlog()
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("清空成功")
+    modal.msgSuccess("清空成功")
   }).catch(() => {})
 }
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("monitor/operlog/export",{
+  download("monitor/operlog/export",{
     ...queryParams.value,
   }, `config_${new Date().getTime()}.xlsx`)
 }

@@ -188,11 +188,22 @@
 import TreePanel from "@/components/TreePanel"
 import ExcelImportDialog from "@/components/ExcelImportDialog"
 import UserViewDrawer from "./view"
-import { usePasswordRule } from "@/utils/passwordRule"
+import { usePasswordRule } from "@/utils/hooks/usePasswordRule"
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user"
+import { useDict } from '@/utils/hooks/useDict'
+import { parseTime, addDateRange } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import { download } from '@/utils/request'
+import { getConfigKey } from '@/api/sys/config'
+import modal from '@/utils/modal'
+import { ElMessageBox } from 'element-plus'
 
 const router = useRouter()
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
+const deptTreeRef = ref()
+const userViewRef = ref()
+const importUserRef = ref()
+const userRef = ref()
 const { pwdValidator, pwdPromptValidator } = usePasswordRule()
 const { sys_normal_disable, sys_user_sex } = useDict("sys_normal_disable", "sys_user_sex")
 
@@ -245,7 +256,7 @@ const { queryParams, form, rules } = toRefs(data)
 /** 查询用户列表 */
 function getList() {
   loading.value = true
-  listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  listUser(addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false
     userList.value = res.rows
     total.value = res.total
@@ -288,26 +299,26 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   queryParams.value.deptId = undefined
-  proxy.$refs.deptTreeRef.setCurrentKey(null)
+  deptTreeRef.value.setCurrentKey(null)
   handleQuery()
 }
 
 /** 删除按钮操作 */
 function handleDelete(row) {
   const userIds = row.userId || ids.value
-  proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
+  modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
     return delUser(userIds)
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("删除成功")
+    modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("system/user/export", {
+  download("system/user/export", {
     ...queryParams.value,
   },`user_${new Date().getTime()}.xlsx`)
 }
@@ -315,10 +326,10 @@ function handleExport() {
 /** 用户状态修改  */
 function handleStatusChange(row) {
   let text = row.status === "0" ? "启用" : "停用"
-  proxy.$modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
+  modal.confirm('确认要"' + text + '""' + row.userName + '"用户吗?').then(function () {
     return changeUserStatus(row.userId, row.status)
   }).then(() => {
-    proxy.$modal.msgSuccess(text + "成功")
+    modal.msgSuccess(text + "成功")
   }).catch(function () {
     row.status = row.status === "0" ? "1" : "0"
   })
@@ -346,14 +357,14 @@ function handleAuthRole(row) {
 
 /** 重置密码按钮操作 */
 function handleResetPwd(row) {
-  proxy.$prompt(`请输入「${row.userName}」的新密码`, "重置密码", {
+  ElMessageBox.prompt(`请输入「${row.userName}」的新密码`, "重置密码", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     closeOnClickModal: false,
     inputValidator: pwdPromptValidator
   }).then(({ value }) => {
     resetUserPwd(row.userId, value).then(() => {
-      proxy.$modal.msgSuccess("修改成功，新密码是：" + value)
+      modal.msgSuccess("修改成功，新密码是：" + value)
     })
   }).catch(() => {})
 }
@@ -367,12 +378,12 @@ function handleSelectionChange(selection) {
 
 /** 详情按钮操作 */
 function handleViewData(row) {
-  proxy.$refs["userViewRef"].open(row.userId)
+  userViewRef.value.open(row.userId)
 }
 
 /** 导入按钮操作 */
 function handleImport() {
-  proxy.$refs["importUserRef"].open()
+  importUserRef.value.open()
 }
 
 /** 重置操作表单 */
@@ -391,7 +402,7 @@ function reset() {
     postIds: [],
     roleIds: []
   }
-  proxy.resetForm("userRef")
+  resetForm("userRef")
 }
 
 /** 取消按钮 */
@@ -430,17 +441,17 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["userRef"].validate(valid => {
+  userRef.value.validate(valid => {
     if (valid) {
       if (form.value.userId != undefined) {
         updateUser(form.value).then(() => {
-          proxy.$modal.msgSuccess("修改成功")
+          modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
         addUser(form.value).then(() => {
-          proxy.$modal.msgSuccess("新增成功")
+          modal.msgSuccess("新增成功")
           open.value = false
           getList()
         })
@@ -452,7 +463,7 @@ function submitForm() {
 onMounted(() => {
   getDeptTree()
   getList()
-  proxy.getConfigKey("sys.user.initPassword").then(response => {
+  getConfigKey("sys.user.initPassword").then(response => {
     initPassword.value = response.msg
   })
 })

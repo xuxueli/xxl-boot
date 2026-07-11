@@ -17,10 +17,12 @@
 </template>
 
 <script setup>
-import { usePasswordRule } from "@/utils/passwordRule"
+import { usePasswordRule } from "@/utils/hooks/usePasswordRule"
 import { updateUserPwd } from "@/api/system/user"
+import modal from '@/utils/modal'
+import tab from '@/utils/tab'
 
-const { proxy } = getCurrentInstance()
+const pwdRef = ref(null)
 const { infoPwdValidator } = usePasswordRule()
 
 const user = reactive({
@@ -44,10 +46,10 @@ const rules = ref({
 
 /** 提交按钮 */
 function submit() {
-  proxy.$refs.pwdRef.validate(valid => {
+  pwdRef.value.validate(valid => {
     if (valid) {
       updateUserPwd(user.oldPassword, user.newPassword).then(() => {
-        proxy.$modal.msgSuccess("修改成功")
+        modal.msgSuccess("修改成功")
       })
     }
   })
@@ -55,6 +57,6 @@ function submit() {
 
 /** 关闭按钮 */
 function close() {
-  proxy.$tab.closePage()
+  tab.closePage()
 }
 </script>

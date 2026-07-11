@@ -60,10 +60,6 @@ export default defineConfig(({ mode, command }) => {
           'vue',                                      // 引入 Vue 官方组件
           'vue-router',                               // 引入 Vue 路由
           'pinia',                                    // 引入 Pinia 官方状态管理
-          {                                           // 引入自定义字典
-            '@/utils/dict': ['useDict'],
-            '@/utils/boot': ['selectDictLabel']
-          }
         ],
         dts: false
       }),

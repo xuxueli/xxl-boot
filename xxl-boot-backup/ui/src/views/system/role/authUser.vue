@@ -94,9 +94,15 @@
 <script setup name="AuthUser">
 import selectUser from "./selectUser"
 import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/system/role"
+import { useDict } from '@/utils/hooks/useDict'
+import { parseTime } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import modal from '@/utils/modal'
+import tab from '@/utils/tab'
 
 const route = useRoute()
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
+const selectRef = ref(null)
 const { sys_normal_disable } = useDict("sys_normal_disable")
 
 const userList = ref([])
@@ -127,7 +133,7 @@ function getList() {
 /** 返回按钮 */
 function handleClose() {
   const obj = { path: "/system/role" }
-  proxy.$tab.closeOpenPage(obj)
+  tab.closeOpenPage(obj)
 }
 
 /** 搜索按钮操作 */
@@ -138,7 +144,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   handleQuery()
 }
 
@@ -150,16 +156,16 @@ function handleSelectionChange(selection) {
 
 /** 打开授权用户表弹窗 */
 function openSelectUser() {
-  proxy.$refs["selectRef"].show()
+  selectRef.value.show()
 }
 
 /** 取消授权按钮操作 */
 function cancelAuthUser(row) {
-  proxy.$modal.confirm('确认要取消该用户"' + row.userName + '"角色吗？').then(function () {
+  modal.confirm('确认要取消该用户"' + row.userName + '"角色吗？').then(function () {
     return authUserCancel({ userId: row.userId, roleId: queryParams.roleId })
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("取消授权成功")
+    modal.msgSuccess("取消授权成功")
   }).catch(() => {})
 }
 
@@ -167,11 +173,11 @@ function cancelAuthUser(row) {
 function cancelAuthUserAll() {
   const roleId = queryParams.roleId
   const uIds = userIds.value.join(",")
-  proxy.$modal.confirm("是否取消选中用户授权数据项?").then(function () {
+  modal.confirm("是否取消选中用户授权数据项?").then(function () {
     return authUserCancelAll({ roleId: roleId, userIds: uIds })
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("取消授权成功")
+    modal.msgSuccess("取消授权成功")
   }).catch(() => {})
 }
 

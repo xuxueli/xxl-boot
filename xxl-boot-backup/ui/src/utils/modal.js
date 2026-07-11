@@ -41,7 +41,7 @@ import { ElMessage, ElMessageBox, ElNotification, ElLoading } from 'element-plus
  * 1) 默认导出对象（本文件采用）
  * ```js
  * export default { msgSuccess() {} }
- * import modal from '@/plugins/modal'
+ * import modal from '@/utils/modal'
  * ```
  *    - 优势：语义直观、调用简单，适合作为单模块默认入口。
  *    - 适合场景：`modal.js` 这类“一个文件对应一个能力对象”的插件文件。

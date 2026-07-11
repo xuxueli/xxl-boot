@@ -124,12 +124,15 @@
 <script setup name="GenEdit">
 import { getGenTable, updateGenTable } from "@/api/tool/gen"
 import { optionselect as getDictOptionselect } from "@/api/sys/dict/type"
+import modal from '@/utils/modal'
+import tab from '@/utils/tab'
 import basicInfoForm from "./basicInfoForm"
 import genInfoForm from "./genInfoForm"
 import Sortable from 'sortablejs'
 
 const route = useRoute()
-const { proxy } = getCurrentInstance()
+const basicInfo = ref(null)
+const genInfo = ref(null)
 
 const activeName = ref("columnInfo")
 const tableHeight = ref(document.documentElement.scrollHeight - 245 + "px")
@@ -140,8 +143,8 @@ const info = ref({})
 
 /** 提交按钮 */
 function submitForm() {
-  const basicForm = proxy.$refs.basicInfo.$refs.basicInfoForm
-  const genForm = proxy.$refs.genInfo.$refs.genInfoForm
+  const basicForm = basicInfo.value.$refs.basicInfoForm
+  const genForm = genInfo.value.$refs.genInfoForm
   Promise.all([basicForm, genForm].map(getFormPromise)).then(res => {
     const validateResult = res.every(item => !!item)
     if (validateResult) {
@@ -155,13 +158,13 @@ function submitForm() {
         parentMenuId: info.value.parentMenuId
       }
       updateGenTable(genTable).then(res => {
-        proxy.$modal.msgSuccess(res.msg)
+        modal.msgSuccess(res.msg)
         if (res.code === 200) {
           close()
         }
       })
     } else {
-      proxy.$modal.msgError("表单校验未通过，请重新检查提交内容")
+      modal.msgError("表单校验未通过，请重新检查提交内容")
     }
   })
 }
@@ -176,7 +179,7 @@ function getFormPromise(form) {
 
 function close() {
   const obj = { path: "/tool/gen", query: { t: Date.now(), pageNum: route.query.pageNum } }
-  proxy.$tab.closeOpenPage(obj)
+  tab.closeOpenPage(obj)
 }
 
 (() => {

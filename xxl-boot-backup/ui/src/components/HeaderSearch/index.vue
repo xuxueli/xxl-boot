@@ -78,7 +78,7 @@
 
 <script setup>
 import Fuse from 'fuse.js'
-import { getNormalPath } from '@/utils/boot'
+import { getNormalPath } from '@/utils/common'
 import { isHttp } from '@/utils/validate'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'

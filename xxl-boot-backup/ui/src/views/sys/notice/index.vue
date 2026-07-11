@@ -164,9 +164,17 @@
 import NoticeDetailView from "@/layout/components/HeaderNotice/DetailView"
 import ReadUsersDialog from "./ReadUsers"
 import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/sys/notice"
+import { useDict } from '@/utils/hooks/useDict'
+import { parseTime } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import modal from '@/utils/modal'
 
-const { proxy } = getCurrentInstance()
 const { sys_notice_status, sys_notice_type } = useDict("sys_notice_status", "sys_notice_type")
+const resetForm = useFormReset()
+
+const noticeRef = ref(null)
+const noticeViewRef = ref(null)
+const readUsersRef = ref(null)
 
 const noticeList = ref([])
 const open = ref(false)
@@ -220,7 +228,7 @@ function reset() {
     noticeContent: undefined,
     status: "0"
   }
-  proxy.resetForm("noticeRef")
+  resetForm("noticeRef")
 }
 
 /** 搜索按钮操作 */
@@ -231,7 +239,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   handleQuery()
 }
 
@@ -262,17 +270,17 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["noticeRef"].validate(valid => {
+  noticeRef.value.validate(valid => {
     if (valid) {
       if (form.value.noticeId != undefined) {
         updateNotice(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功")
+          modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
         addNotice(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功")
+          modal.msgSuccess("新增成功")
           open.value = false
           getList()
         })
@@ -283,22 +291,22 @@ function submitForm() {
 
 /** 查看公告详情 */
 function handleViewData(row) {
-  proxy.$refs["noticeViewRef"].open(row)
+  noticeViewRef.value.open(row)
 }
 
 /** 查看已读用户 */
 function handleReadUsers(row) {
-   proxy.$refs["readUsersRef"].open(row)
+   readUsersRef.value.open(row)
 }
 
 /** 删除按钮操作 */
 function handleDelete(row) {
   const noticeIds = row.noticeId || ids.value
-  proxy.$modal.confirm('是否确认删除公告编号为"' + noticeIds + '"的数据项？').then(function() {
+  modal.confirm('是否确认删除公告编号为"' + noticeIds + '"的数据项？').then(function() {
     return delNotice(noticeIds)
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("删除成功")
+    modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
 

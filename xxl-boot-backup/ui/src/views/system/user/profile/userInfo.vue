@@ -24,6 +24,8 @@
 
 <script setup>
 import { updateUserProfile } from "@/api/system/user"
+import modal from '@/utils/modal'
+import tab from '@/utils/tab'
 
 const props = defineProps({
   user: {
@@ -31,8 +33,7 @@ const props = defineProps({
   }
 })
 
-const { proxy } = getCurrentInstance()
-
+const userRef = ref(null)
 const form = ref({})
 const rules = ref({
   nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
@@ -42,10 +43,10 @@ const rules = ref({
 
 /** 提交按钮 */
 function submit() {
-  proxy.$refs.userRef.validate(valid => {
+  userRef.value.validate(valid => {
     if (valid) {
       updateUserProfile(form.value).then(() => {
-        proxy.$modal.msgSuccess("修改成功")
+        modal.msgSuccess("修改成功")
         props.user.phonenumber = form.value.phonenumber
         props.user.email = form.value.email
       })
@@ -55,7 +56,7 @@ function submit() {
 
 /** 关闭按钮 */
 function close() {
-  proxy.$tab.closePage()
+  tab.closePage()
 }
 
 // 回显当前登录用户信息

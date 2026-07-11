@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { parseStrEmpty } from "@/utils/boot";
+import { parseStrEmpty } from "@/utils/common";
 
 /**
  * 名称：用户管理 API

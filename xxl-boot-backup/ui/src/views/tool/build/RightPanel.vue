@@ -470,7 +470,7 @@ import IconsDialog from './IconsDialog'
 import TreeNodeDialog from './TreeNodeDialog'
 import { inputComponents, selectComponents } from '@/utils/generator/config'
 
-const { proxy } = getCurrentInstance()
+const idGlobal = inject('idGlobal')
 const dateTimeFormat = {
   date: 'YYYY-MM-DD',
   week: 'YYYY 第 ww 周',
@@ -621,7 +621,7 @@ function addSelectItem() {
 }
 
 function addTreeItem() {
-  ++proxy.idGlobal
+  ++idGlobal.value
   dialogVisible.value = true
   currentNode.value = props.activeData.options
 }

@@ -8,7 +8,7 @@
  *   - 大部分函数为纯函数，少数（如 resetForm）依赖 Vue 组件实例上下文（this）。
  *
  * 典型用法：
- *   import { parseTime, handleTree, tansParams } from '@/utils/boot'
+ *   import { parseTime, handleTree, tansParams } from '@/utils/common'
  */
 
 // ─────────────────────────────────────────────

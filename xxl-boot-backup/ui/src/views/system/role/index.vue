@@ -244,9 +244,14 @@
 <script setup name="Role">
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/system/role"
 import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/menu"
+import { useDict } from '@/utils/hooks/useDict'
+import { parseTime, addDateRange } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import { download } from '@/utils/request'
+import modal from '@/utils/modal'
 
 const router = useRouter()
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
 const { sys_normal_disable } = useDict("sys_normal_disable")
 
 const roleList = ref([])
@@ -268,6 +273,7 @@ const deptOptions = ref([])
 const openDataScope = ref(false)
 const menuRef = ref(null)
 const deptRef = ref(null)
+const roleRef = ref(null)
 
 /** 数据范围选项*/
 const dataScopeOptions = ref([
@@ -299,7 +305,7 @@ const { queryParams, form, rules } = toRefs(data)
 /** 查询角色列表 */
 function getList() {
   loading.value = true
-  listRole(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
+  listRole(addDateRange(queryParams.value, dateRange.value)).then(response => {
     roleList.value = response.rows
     total.value = response.total
     loading.value = false
@@ -315,24 +321,24 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   handleQuery()
 }
 
 /** 删除按钮操作 */
 function handleDelete(row) {
   const roleIds = row.roleId || ids.value
-  proxy.$modal.confirm('是否确认删除角色编号为"' + roleIds + '"的数据项?').then(function () {
+  modal.confirm('是否确认删除角色编号为"' + roleIds + '"的数据项?').then(function () {
     return delRole(roleIds)
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("删除成功")
+    modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("system/role/export", {
+  download("system/role/export", {
     ...queryParams.value,
   }, `role_${new Date().getTime()}.xlsx`)
 }
@@ -347,10 +353,10 @@ function handleSelectionChange(selection) {
 /** 角色状态修改 */
 function handleStatusChange(row) {
   let text = row.status === "0" ? "启用" : "停用"
-  proxy.$modal.confirm('确认要"' + text + '""' + row.roleName + '"角色吗?').then(function () {
+  modal.confirm('确认要"' + text + '""' + row.roleName + '"角色吗?').then(function () {
     return changeRoleStatus(row.roleId, row.status)
   }).then(() => {
-    proxy.$modal.msgSuccess(text + "成功")
+    modal.msgSuccess(text + "成功")
   }).catch(function () {
     row.status = row.status === "0" ? "1" : "0"
   })
@@ -413,7 +419,7 @@ function reset() {
     deptCheckStrictly: true,
     remark: undefined
   }
-  proxy.resetForm("roleRef")
+  resetForm("roleRef")
 }
 
 /** 添加角色 */
@@ -508,19 +514,19 @@ function getMenuAllCheckedKeys() {
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["roleRef"].validate(valid => {
+  roleRef.value.validate(valid => {
     if (valid) {
       if (form.value.roleId != undefined) {
         form.value.menuIds = getMenuAllCheckedKeys()
         updateRole(form.value).then(() => {
-          proxy.$modal.msgSuccess("修改成功")
+          modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
         form.value.menuIds = getMenuAllCheckedKeys()
         addRole(form.value).then(() => {
-          proxy.$modal.msgSuccess("新增成功")
+          modal.msgSuccess("新增成功")
           open.value = false
           getList()
         })
@@ -567,7 +573,7 @@ function submitDataScope() {
   if (form.value.roleId != undefined) {
     form.value.deptIds = getDeptAllCheckedKeys()
     dataScope(form.value).then(() => {
-      proxy.$modal.msgSuccess("修改成功")
+      modal.msgSuccess("修改成功")
       openDataScope.value = false
       getList()
     })

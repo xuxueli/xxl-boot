@@ -136,9 +136,8 @@ import useAppStore from '@/store/modules/app'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
 import useTagsViewStore from '@/store/modules/tagsView'
+import modal from '@/utils/modal'
 
-// Vue 实例代理对象：用于访问全局方法（如 $modal、$cache）
-const {proxy} = getCurrentInstance()
 /**
  * 应用Store：
  * 1、appStore：应用Store，用于应用级别的数据处理，如：侧边栏、字体 等；
@@ -230,7 +229,7 @@ onMounted(() => {
  */
 function saveSetting() {
   // 弹框提示：Open
-  proxy.$modal.loading("正在保存到本地，请稍候...")
+  modal.loading("正在保存到本地，请稍候...")
 
   // 若不保存标签页，主动清除 - 标签页缓存
   if (!tagsViewPersist.value) {
@@ -242,7 +241,7 @@ function saveSetting() {
 
   // 弹框提示： Close
   setTimeout(function () {
-    proxy.$modal.closeLoading();
+    modal.closeLoading();
     closeSetting();
   }, 500)
 }
@@ -255,7 +254,7 @@ function resetSetting() {
   tagsViewStore.clearVisitedViews();
 
   // 弹框提示：Open
-  proxy.$modal.loading("正在清除设置缓存并刷新，请稍候...")
+  modal.loading("正在清除设置缓存并刷新，请稍候...")
 
   // Setting设置：持久化
   settingsStore.resetSetting()

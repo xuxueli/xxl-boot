@@ -62,6 +62,10 @@
 
 <script setup name="SelectUser">
 import { authUserSelectAll, unallocatedUserList } from "@/api/system/role"
+import { useDict } from '@/utils/hooks/useDict'
+import { parseTime } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import modal from '@/utils/modal'
 
 const props = defineProps({
   roleId: {
@@ -69,7 +73,8 @@ const props = defineProps({
   }
 })
 
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
+const refTable = ref(null)
 const { sys_normal_disable } = useDict("sys_normal_disable")
 
 const userList = ref([])
@@ -94,7 +99,7 @@ function show() {
 
 /**选择行 */
 function clickRow(row) {
-  proxy.$refs["refTable"].toggleRowSelection(row)
+  refTable.value.toggleRowSelection(row)
 }
 
 // 多选框选中数据
@@ -118,7 +123,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   handleQuery()
 }
 
@@ -128,11 +133,11 @@ function handleSelectUser() {
   const roleId = queryParams.roleId
   const uIds = userIds.value.join(",")
   if (uIds == "") {
-    proxy.$modal.msgError("请选择要分配的用户")
+    modal.msgError("请选择要分配的用户")
     return
   }
   authUserSelectAll({ roleId: roleId, userIds: uIds }).then(res => {
-    proxy.$modal.msgSuccess(res.msg)
+    modal.msgSuccess(res.msg)
     visible.value = false
     emit("ok")
   })

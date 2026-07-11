@@ -31,10 +31,10 @@ import axios from 'axios'
 import { QuillEditor } from "@vueup/vue-quill"
 import "@vueup/vue-quill/dist/vue-quill.snow.css"
 import { getToken } from "@/utils/auth"
-
-const { proxy } = getCurrentInstance()
+import modal from '@/utils/modal'
 
 const quillEditorRef = ref()
+const uploadRef = ref(null)
 const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + "/common/upload") // 上传的图片服务器地址
 const headers = ref({
   Authorization: "Bearer " + getToken()
@@ -120,7 +120,7 @@ onMounted(() => {
     let toolbar = quill.getModule("toolbar")
     toolbar.addHandler("image", (value) => {
       if (value) {
-        proxy.$refs.uploadRef.click()
+        uploadRef.value.click()
       } else {
         quill.format("image", false)
       }
@@ -135,14 +135,14 @@ function handleBeforeUpload(file) {
   const isJPG = type.includes(file.type)
   //检验文件格式
   if (!isJPG) {
-    proxy.$modal.msgError(`图片格式错误!`)
+    modal.msgError(`图片格式错误!`)
     return false
   }
   // 校检文件大小
   if (props.fileSize) {
     const isLt = file.size / 1024 / 1024 < props.fileSize
     if (!isLt) {
-      proxy.$modal.msgError(`上传文件大小不能超过 ${props.fileSize} MB!`)
+      modal.msgError(`上传文件大小不能超过 ${props.fileSize} MB!`)
       return false
     }
   }
@@ -162,13 +162,13 @@ function handleUploadSuccess(res, file) {
     // 调整光标到最后
     quill.setSelection(length + 1)
   } else {
-    proxy.$modal.msgError("图片插入失败")
+    modal.msgError("图片插入失败")
   }
 }
 
 // 上传失败处理
 function handleUploadError() {
-  proxy.$modal.msgError("图片插入失败")
+  modal.msgError("图片插入失败")
 }
 
 // 复制粘贴图片处理

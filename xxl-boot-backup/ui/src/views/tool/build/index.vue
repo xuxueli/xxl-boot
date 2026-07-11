@@ -106,7 +106,8 @@ import { drawingDefaultValue, initDrawingDefaultValue, cleanDrawingDefaultValue 
 import { makeUpHtml, vueTemplate, vueScript, cssStyle } from '@/utils/generator/html'
 import { makeUpJs } from '@/utils/generator/js'
 import { makeUpCss } from '@/utils/generator/css'
-import Download from '@/plugins/download'
+import Download from '@/utils/download'
+import modal from '@/utils/modal'
 import { ElNotification } from 'element-plus'
 import DraggableItem from './DraggableItem'
 import RightPanel from './RightPanel'
@@ -116,11 +117,11 @@ import { onMounted, watch } from 'vue'
 initDrawingDefaultValue()
 
 const drawingList = ref(drawingDefaultValue)
-const { proxy } = getCurrentInstance()
 const dialogVisible = ref(false)
 const showFileName = ref(false)
 const operationType = ref('')
 const idGlobal = ref(100)
+provide('idGlobal', idGlobal)
 const activeData = ref(drawingDefaultValue[0])
 const activeId = ref(drawingDefaultValue[0].formId)
 const generateConf = ref(null)
@@ -144,7 +145,7 @@ function download() {
   operationType.value = 'download'
 }
 function empty() {
-  proxy.$modal.confirm('确定要清空所有组件吗？', '提示', { type: 'warning' }).then(() => {
+  modal.confirm('确定要清空所有组件吗？', '提示', { type: 'warning' }).then(() => {
       idGlobal.value = 100
       drawingList.value = []
       cleanDrawingDefaultValue()
@@ -305,7 +306,7 @@ onMounted(() => {
     }
   })
   clipboard.on('error', e => {
-    proxy.$modal.msgError('代码复制失败')
+    modal.msgError('代码复制失败')
   })
 })
 onUnmounted(() => {

@@ -1,5 +1,5 @@
 <template>
-  <div class="top-right-btn" :style="style">
+  <div ref="rightToolbarRef" class="top-right-btn" :style="style">
     <el-row>
       <el-tooltip class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" v-if="search">
         <el-button circle icon="Search" @click="toggleSearch()" />
@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import cache from '@/plugins/cache'
+import cache from '@/utils/cache'
 
 const props = defineProps({
   /* 是否显示检索条件 */
@@ -101,9 +101,9 @@ const isIndeterminate = computed(() => Array.isArray(props.columns) ? props.colu
 const transferData = computed(() => Array.isArray(props.columns) ? props.columns.map((item, index) => ({ key: index, label: item.label })) : Object.keys(props.columns).map((key, index) => ({ key: index, label: props.columns[key].label })))
 
 // 搜索
-const { proxy } = getCurrentInstance()
+const rightToolbarRef = ref(null)
 function toggleSearch() {
-  let el = proxy.$el
+  let el = rightToolbarRef.value
   let formEl = null
   while ((el = el.parentElement) && el !== document.body) {
     if ((formEl = el.querySelector('.el-form'))) break

@@ -38,7 +38,7 @@ import { ElLoading, ElMessage } from 'element-plus'
 import { saveAs } from 'file-saver'
 import { getToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
-import { blobValidate } from '@/utils/boot'
+import { blobValidate } from '@/utils/common'
 
 // 接口请求的基础 URL，从 Vite 环境变量中读取（对应 .env 文件中的 VITE_APP_BASE_API）
 const baseURL = import.meta.env.VITE_APP_BASE_API
