@@ -1,5 +1,5 @@
 
-// ==================== 依赖引入 ====================
+// ==================== 组件引入 ====================
 // 核心依赖库
 import {createApp} from 'vue'
 
@@ -23,7 +23,7 @@ import '@/assets/styles/index.scss'
 import 'virtual:svg-icons-register'
 import registerComponents from '@/components'
 
-// ==================== 创建 Vue 应用实例 ====================
+// ==================== 创建 Vue 应用 ====================
 const app = createApp(App)
 
 // 安装核心插件
@@ -34,7 +34,7 @@ app.use(ElementPlus, { locale, size: Cookies.get('size') || 'default' })
 // 全局注册自定义指令
 directive(app)
 
-// 注册全局组件
+// 全局注册组件
 registerComponents(app)
 
 // 挂载应用到 DOM
