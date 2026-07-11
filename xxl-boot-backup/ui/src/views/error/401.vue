@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import errImage from "@/assets/401_images/401.gif"
+import errImage from "@/assets/images/401.gif"
 
 const route = useRoute()
 const router = useRouter()
