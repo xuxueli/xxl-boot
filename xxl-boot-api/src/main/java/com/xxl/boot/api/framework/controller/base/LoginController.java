@@ -1,5 +1,6 @@
 package com.xxl.boot.api.framework.controller.base;
 
+import com.xxl.boot.api.framework.constant.consts.Consts;
 import com.xxl.boot.api.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.api.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
@@ -14,6 +15,7 @@ import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.boot.api.framework.service.UserService;
 import com.xxl.boot.api.framework.util.I18nUtil;
 import com.xxl.boot.api.framework.util.Ip2regionUtil;
+import com.xxl.boot.api.framework.util.RedisCacheUtil;
 import com.xxl.boot.api.framework.web.xxllog.XxlLogQueueHelper;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
@@ -28,7 +30,6 @@ import com.xxl.tool.response.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +60,8 @@ public class LoginController {
 	private RoleService roleService;
 	@jakarta.annotation.Resource
 	private XxlLogQueueHelper logQueueHelper;
+	@jakarta.annotation.Resource
+	private RedisCacheUtil redisCacheUtil;
 
 
 	/**
@@ -70,6 +74,15 @@ public class LoginController {
 		// base valid
 		if (loginRequest == null) {
 			return Response.ofFail("username or password is invalid.");
+		}
+
+		// valid
+		if (StringTool.isBlank(loginRequest.getCaptchaUuid())) {
+			return Response.ofFail("captcha empty.");
+		}
+		String captchaResult = redisCacheUtil.getObject(Consts.getLoginCaptchaKey(loginRequest.getCaptchaUuid()));
+		if (StringTool.isBlank(captchaResult) || !captchaResult.equals(loginRequest.getCaptchaResult())) {
+			return Response.ofFail("captcha invalid.");
 		}
 
 		// 1、verify login user, include userName, password, status
@@ -140,7 +153,7 @@ public class LoginController {
 	private static Response<String> logoutWithHeader(HttpServletRequest request) {
 
 		// get header
-		String token = request.getHeader(XxlSsoHelper.getInstance().getTokenKey());
+		String token = request.getHeader(XxlSsoHelper.getInstance().getTokenKey());		// todo, will replace by new version
 		if (StringTool.isBlank(token)) {
 			return Response.ofSuccess();    // not login; no need to logout.
 		}
@@ -215,7 +228,7 @@ public class LoginController {
 	 */
 	@RequestMapping("/captcha")
 	@XxlSso(login = false)
-	public Response<CaptchaDTO> captcha(HttpServletRequest request){
+	public Response<CaptchaDTO> captcha(){
 
 		// 1、generate captcha text
 		CaptchaTool.TextResult textResult = captchaTool.createText();
@@ -235,13 +248,12 @@ public class LoginController {
 		// 3、store captcha result
 		String uuid = RandomIdTool.getAlphaNumeric();
 		String result = textResult.getResult();
-		// TODO: redis: uuid -> result, 5min; valid: uuid + result
-		// TODO：CaptchaTool 生成，除法不要有余数
+		redisCacheUtil.setObject(Consts.getLoginCaptchaKey(uuid), result, 3, TimeUnit.MINUTES);
 
 		// 4、build response
 		CaptchaDTO captchaDTO = new CaptchaDTO();
 		captchaDTO.setUuid(uuid);
-		captchaDTO.setImg(base64Image);
+		captchaDTO.setImage(base64Image);
 
 		return Response.ofSuccess(captchaDTO);
 	}

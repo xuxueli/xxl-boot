@@ -1,11 +1,15 @@
 package com.xxl.boot.api.framework.model.dto;
 
+/**
+ * Captcha DTO
+ *
+ * @author xuxueli 2015-12-19
+ */
 public class CaptchaDTO {
 
     private String uuid;
 
-    private String img;
-
+    private String image;
 
     public String getUuid() {
         return uuid;
@@ -15,12 +19,12 @@ public class CaptchaDTO {
         this.uuid = uuid;
     }
 
-    public String getImg() {
-        return img;
+    public String getImage() {
+        return image;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setImage(String image) {
+        this.image = image;
     }
 
 }

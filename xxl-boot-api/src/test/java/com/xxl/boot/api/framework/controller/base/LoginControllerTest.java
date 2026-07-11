@@ -46,4 +46,12 @@ public class LoginControllerTest {
         assertTrue(response.isSuccess());
     }
 
+    @Test
+    void captcha_test() {
+        HttpResponse response = HttpTool.createGet(API_SERVICE_URL + "/auth/captcha")
+                .execute();
+        logger.info("Response: {}", response.response());
+        assertTrue(response.isSuccess());
+    }
+
 }

@@ -15,6 +15,16 @@ public class LoginRequest {
      */
     private String password;
 
+    /**
+     * captcha uuid
+     */
+    private String captchaUuid;
+
+    /**
+     * captcha result
+     */
+    private String captchaResult;
+
     public LoginRequest() {
     }
     public LoginRequest(String username, String password) {
@@ -36,6 +46,22 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getCaptchaUuid() {
+        return captchaUuid;
+    }
+
+    public void setCaptchaUuid(String captchaUuid) {
+        this.captchaUuid = captchaUuid;
+    }
+
+    public String getCaptchaResult() {
+        return captchaResult;
+    }
+
+    public void setCaptchaResult(String captchaResult) {
+        this.captchaResult = captchaResult;
     }
 
 }
