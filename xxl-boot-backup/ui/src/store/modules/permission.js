@@ -100,10 +100,25 @@ const usePermissionStore = defineStore(
 
             // isMenuFrame 生成的根 Layout 路由（path="/"）无 redirect，补充后访问 "/" 才能跳转到 "/index"
             rewriteRoutes.forEach(route => {
-              if (route.path === '/' && route.component === Layout && !route.redirect) {
+              if (route.path === '/') {
+                route.component = Layout
                 route.redirect = '/index'
               }
             })
+
+            /**
+             * path: '',
+             * component: Layout,
+             * redirect: '/index',
+             * children: [
+             *   {
+             *     path: '/index',
+             *     component: () => import('@/views/index'),
+             *     name: 'Index',
+             *     meta: { title: '首页', icon: 'dashboard', affix: true }
+             *   }
+             * ]
+             */
 
             // 首页固定标签：isMenuFrame 生成 Layout 父路由 + 子路由结构，需在子路由上设置 affix
             const setFirstAffix = (routes) => {
