@@ -24,8 +24,9 @@
 
 <script setup>
 import { getToken } from '@/utils/auth'
-
-const { proxy } = getCurrentInstance()
+import { download } from '@/utils/request'
+import modal from '@/utils/modal'
+import { ElMessageBox } from 'element-plus'
 
 const props = defineProps({
   // 对话框标题
@@ -95,7 +96,7 @@ function handleClose() {
 
 // 下载模板
 function handleDownloadTemplate() {
-  proxy.download(props.templateAction, {}, `${props.templateFileName}_${new Date().getTime()}.xlsx`)
+  download(props.templateAction, {}, `${props.templateFileName}_${new Date().getTime()}.xlsx`)
 }
 
 // 上传进度
@@ -119,7 +120,7 @@ function handleSuccess(response) {
   isUploading.value = false
   selectedFile.value = null
   uploadRef.value?.clearFiles()
-  proxy.$alert("<div style='overflow:auto;overflow-x:hidden;max-height:70vh;padding:10px 20px 0;'>" + response.msg + '</div>', '导入结果', { dangerouslyUseHTMLString: true })
+  ElMessageBox.alert("<div style='overflow:auto;overflow-x:hidden;max-height:70vh;padding:10px 20px 0;'>" + response.msg + '</div>', '导入结果', { dangerouslyUseHTMLString: true })
   emit('success')
 }
 
@@ -127,7 +128,7 @@ function handleSuccess(response) {
 function handleSubmit() {
   const file = selectedFile.value
   if (!file || file.length === 0 || !file.name.toLowerCase().endsWith('.xls') && !file.name.toLowerCase().endsWith('.xlsx')) {
-    proxy.$modal.msgError("请选择后缀为 “xls”或“xlsx”的文件。")
+    modal.msgError("请选择后缀为 “xls”或“xlsx”的文件。")
     return
   }
   uploadRef.value.submit()

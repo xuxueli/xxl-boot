@@ -309,8 +309,12 @@
 import { addMenu, delMenu, getMenu, listMenu, updateMenu, updateMenuSort } from "@/api/system/menu"
 import SvgIcon from "@/components/SvgIcon"
 import IconSelect from "@/components/IconSelect"
+import { useDict } from '@/utils/hooks/useDict'
+import { handleTree } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import modal from '@/utils/modal'
 
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
 const { sys_show_hide, sys_normal_disable } = useDict("sys_show_hide", "sys_normal_disable")
 
 const menuList = ref([])
@@ -321,6 +325,7 @@ const title = ref("")
 const menuOptions = ref([])
 const isExpandAll = ref(false)
 const refreshTable = ref(true)
+const menuRef = ref(null)
 const iconSelectRef = ref(null)
 const originalOrders = ref({})
 
@@ -343,7 +348,7 @@ const { queryParams, form, rules } = toRefs(data)
 function getList() {
   loading.value = true
   listMenu(queryParams.value).then(response => {
-    menuList.value = proxy.handleTree(response.data, "menuId")
+    menuList.value = handleTree(response.data, "menuId")
     recordOriginalOrders(menuList.value)
     loading.value = false
   })
@@ -354,7 +359,7 @@ function getTreeselect() {
   menuOptions.value = []
   listMenu().then(response => {
     const menu = { menuId: 0, menuName: "主类目", children: [] }
-    menu.children = proxy.handleTree(response.data, "menuId")
+    menu.children = handleTree(response.data, "menuId")
     menuOptions.value.push(menu)
   })
 }
@@ -379,7 +384,7 @@ function reset() {
     visible: "0",
     status: "0"
   }
-  proxy.resetForm("menuRef")
+  resetForm("menuRef")
 }
 
 /** 展示下拉图标 */
@@ -399,7 +404,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   handleQuery()
 }
 
@@ -438,17 +443,17 @@ async function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["menuRef"].validate(valid => {
+  menuRef.value.validate(valid => {
     if (valid) {
       if (form.value.menuId != undefined) {
         updateMenu(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功")
+          modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
         addMenu(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功")
+          modal.msgSuccess("新增成功")
           open.value = false
           getList()
         })
@@ -485,22 +490,22 @@ function handleSaveSort() {
   }
   collectChanged(menuList.value)
   if (changedMenuIds.length === 0) {
-   proxy.$modal.msgWarning("未检测到排序修改")
+   modal.msgWarning("未检测到排序修改")
     return
   }
   updateMenuSort({ menuIds: changedMenuIds.join(","), orderNums: changedOrderNums.join(",") }).then(() => {
-   proxy.$modal.msgSuccess("排序保存成功")
+   modal.msgSuccess("排序保存成功")
     recordOriginalOrders(menuList.value)
   })
 }
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除名称为"' + row.menuName + '"的数据项?').then(function() {
+  modal.confirm('是否确认删除名称为"' + row.menuName + '"的数据项?').then(function() {
     return delMenu(row.menuId)
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("删除成功")
+    modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
 

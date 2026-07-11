@@ -148,11 +148,19 @@
 <script setup name="Gen">
 import { listTable, previewTable, delTable, genCode, synchDb } from "@/api/tool/gen"
 import router from "@/router"
+import { addDateRange } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import modal from '@/utils/modal'
+import tab from '@/utils/tab'
+import downloadPlugin from '@/utils/download'
 import importTable from "./importTable"
 import createTable from "./createTable"
 
 const route = useRoute()
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
+const importRef = ref(null)
+const createRef = ref(null)
+const genRef = ref(null)
 
 const tableList = ref([])
 const loading = ref(true)
@@ -191,7 +199,7 @@ onActivated(() => {
     uniqueId.value = time
     queryParams.value.pageNum = Number(route.query.pageNum)
     dateRange.value = []
-    proxy.resetForm("queryForm")
+    resetForm("queryForm")
     getList()
   }
 })
@@ -199,7 +207,7 @@ onActivated(() => {
 /** 查询表集合 */
 function getList() {
   loading.value = true
-  listTable(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
+  listTable(addDateRange(queryParams.value, dateRange.value)).then(response => {
     tableList.value = response.rows
     total.value = response.total
     loading.value = false
@@ -216,45 +224,45 @@ function handleQuery() {
 function handleGenTable(row) {
   const tbNames = row.tableName || tableNames.value
   if (tbNames == "") {
-    proxy.$modal.msgError("请选择要生成的数据")
+    modal.msgError("请选择要生成的数据")
     return
   }
   if (row.genType === "1") {
     genCode(row.tableName).then(response => {
-      proxy.$modal.msgSuccess("成功生成到自定义路径：" + row.genPath)
+      modal.msgSuccess("成功生成到自定义路径：" + row.genPath)
     })
   } else {
     const zipName = Array.isArray(tbNames) ? "boot.zip" : tbNames + ".zip"
-    proxy.$download.zip("/tool/gen/batchGenCode?tables=" + tbNames, zipName)
+    downloadPlugin.zip("/tool/gen/batchGenCode?tables=" + tbNames, zipName)
   }
 }
 
 /** 同步数据库操作 */
 function handleSynchDb(row) {
   const tableName = row.tableName
-  proxy.$modal.confirm('确认要强制同步"' + tableName + '"表结构吗？').then(function () {
+  modal.confirm('确认要强制同步"' + tableName + '"表结构吗？').then(function () {
     return synchDb(tableName)
   }).then(() => {
-    proxy.$modal.msgSuccess("同步成功")
+    modal.msgSuccess("同步成功")
   }).catch(() => {})
 }
 
 /** 打开导入表弹窗 */
 function openImportTable() {
-  proxy.$refs["importRef"].show()
+  importRef.value.show()
 }
 
 /** 打开创建表弹窗 */
 function openCreateTable() {
-  proxy.$refs["createRef"].show()
+  createRef.value.show()
 }
 
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   queryParams.value.pageNum = 1
-  proxy.$refs["genRef"].sort(defaultSort.value.prop, defaultSort.value.order)
+  genRef.value.sort(defaultSort.value.prop, defaultSort.value.order)
 }
 
 /** 预览按钮 */
@@ -268,7 +276,7 @@ function handlePreview(row) {
 
 /** 复制代码成功 */
 function copyTextSuccess() {
-  proxy.$modal.msgSuccess("复制成功")
+  modal.msgSuccess("复制成功")
 }
 
 // 多选框选中数据
@@ -291,17 +299,17 @@ function handleEditTable(row) {
   const tableId = row.tableId || ids.value[0]
   const tableName = row.tableName || tableNames.value[0]
   const params = { pageNum: queryParams.value.pageNum }
-  proxy.$tab.openPage("修改[" + tableName + "]生成配置", '/tool/gen-edit/index/' + tableId, params)
+  tab.openPage("修改[" + tableName + "]生成配置", '/tool/gen-edit/index/' + tableId, params)
 }
 
 /** 删除按钮操作 */
 function handleDelete(row) {
   const tableIds = row.tableId || ids.value
-  proxy.$modal.confirm('是否确认删除表编号为"' + tableIds + '"的数据项？').then(function () {
+  modal.confirm('是否确认删除表编号为"' + tableIds + '"的数据项？').then(function () {
     return delTable(tableIds)
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("删除成功")
+    modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
 

@@ -112,6 +112,8 @@
 </template>
 
 <script setup>
+import { useDict } from '@/utils/hooks/useDict'
+import { selectDictLabel } from '@/utils/common'
 const props = defineProps({
   visible: { type: Boolean, default: false },
   row: { type: Object, default: () => ({}) }

@@ -47,10 +47,15 @@
 
 <script setup name="AuthRole">
 import { getAuthRole, updateAuthRole } from "@/api/system/user"
+import { parseTime } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import modal from '@/utils/modal'
+import tab from '@/utils/tab'
 
 const route = useRoute()
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
 
+const roleRef = ref(null)
 const loading = ref(true)
 const total = ref(0)
 const pageNum = ref(1)
@@ -66,7 +71,7 @@ const form = ref({
 /** 单击选中行数据 */
 function clickRow(row) {
   if (checkSelectable(row)) {
-    proxy.$refs["roleRef"].toggleRowSelection(row)
+    roleRef.value.toggleRowSelection(row)
   }
 }
 
@@ -88,7 +93,7 @@ function checkSelectable(row) {
 /** 关闭按钮 */
 function close() {
   const obj = { path: "/system/user" }
-  proxy.$tab.closeOpenPage(obj)
+  tab.closeOpenPage(obj)
 }
 
 /** 提交按钮 */
@@ -96,7 +101,7 @@ function submitForm() {
   const userId = form.value.userId
   const rIds = roleIds.value.join(",")
   updateAuthRole({ userId: userId, roleIds: rIds }).then(() => {
-    proxy.$modal.msgSuccess("授权成功")
+    modal.msgSuccess("授权成功")
     close()
   })
 }
@@ -112,7 +117,7 @@ function submitForm() {
       nextTick(() => {
         roles.value.forEach(row => {
           if (row.flag) {
-            proxy.$refs["roleRef"].toggleRowSelection(row)
+            roleRef.value.toggleRowSelection(row)
           }
         })
       })

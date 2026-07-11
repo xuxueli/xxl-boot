@@ -155,8 +155,14 @@
 
 <script setup name="Dept">
 import { listDept, getDept, delDept, addDept, updateDept, updateDeptSort, listDeptExcludeChild } from "@/api/system/dept"
+import { useDict } from '@/utils/hooks/useDict'
+import { parseTime } from '@/utils/common'
+import { handleTree } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import modal from '@/utils/modal'
 
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
+const deptRef = ref(null)
 const { sys_normal_disable } = useDict("sys_normal_disable")
 
 const deptList = ref([])
@@ -190,7 +196,7 @@ const { queryParams, form, rules } = toRefs(data)
 function getList() {
   loading.value = true
   listDept(queryParams.value).then(response => {
-    deptList.value = proxy.handleTree(response.data, "deptId")
+    deptList.value = handleTree(response.data, "deptId")
     recordOriginalOrders(deptList.value)
     loading.value = false
   })
@@ -214,7 +220,7 @@ function reset() {
     email: undefined,
     status: "0"
   }
-  proxy.resetForm("deptRef")
+  resetForm("deptRef")
 }
 
 /** 搜索按钮操作 */
@@ -224,7 +230,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   handleQuery()
 }
 
@@ -232,7 +238,7 @@ function resetQuery() {
 function handleAdd(row) {
   reset()
   listDept().then(response => {
-    deptOptions.value = proxy.handleTree(response.data, "deptId")
+    deptOptions.value = handleTree(response.data, "deptId")
   })
   if (row != undefined) {
     form.value.parentId = row.deptId
@@ -254,7 +260,7 @@ function toggleExpandAll() {
 function handleUpdate(row) {
   reset()
   listDeptExcludeChild(row.deptId).then(response => {
-    deptOptions.value = proxy.handleTree(response.data, "deptId")
+    deptOptions.value = handleTree(response.data, "deptId")
   })
   getDept(row.deptId).then(response => {
     form.value = response.data
@@ -265,17 +271,17 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["deptRef"].validate(valid => {
+  deptRef.value.validate(valid => {
     if (valid) {
       if (form.value.deptId != undefined) {
         updateDept(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功")
+          modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
         addDept(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功")
+          modal.msgSuccess("新增成功")
           open.value = false
           getList()
         })
@@ -311,22 +317,22 @@ function handleSaveSort() {
   }
   collectChanged(deptList.value)
   if (changedDeptIds.length === 0) {
-   proxy.$modal.msgWarning("未检测到排序修改")
+   modal.msgWarning("未检测到排序修改")
     return
   }
   updateDeptSort({ deptIds: changedDeptIds.join(","), orderNums: changedOrderNums.join(",") }).then(() => {
-   proxy.$modal.msgSuccess("排序保存成功")
+   modal.msgSuccess("排序保存成功")
     recordOriginalOrders(deptList.value)
   })
 }
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除名称为"' + row.deptName + '"的数据项?').then(function() {
+  modal.confirm('是否确认删除名称为"' + row.deptName + '"的数据项?').then(function() {
     return delDept(row.deptId)
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("删除成功")
+    modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
 

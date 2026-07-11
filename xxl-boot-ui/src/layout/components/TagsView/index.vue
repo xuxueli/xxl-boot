@@ -70,10 +70,11 @@
 
 <script setup>
 import ScrollPane from './ScrollPane'
-import { getNormalPath } from '@/utils/boot'
+import { getNormalPath } from '@/utils/common'
 import useTagsViewStore from '@/store/modules/tagsView'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
+import tab from '@/utils/tab'
 
 const visible = ref(false)
 const top = ref(0)
@@ -86,7 +87,6 @@ const canScrollRight = ref(false)
 const isFullscreen = ref(false)
 const hiddenElements = ref([])
 
-const { proxy } = getCurrentInstance()
 const route = useRoute()
 const router = useRouter()
 const settingsStore = useSettingsStore()
@@ -293,14 +293,14 @@ function handleDropdownCommand(command) {
 }
 
 function refreshSelectedTag(view) {
-  proxy.$tab.refreshPage(view)
+  tab.refreshPage(view)
   if (route.meta.link) {
     useTagsViewStore().delIframeView(route)
   }
 }
 
 function closeSelectedTag(view) {
-  proxy.$tab.closePage(view).then(({ visitedViews }) => {
+  tab.closePage(view).then(({ visitedViews }) => {
     if (isActive(view)) {
       toLastView(visitedViews, view)
     }
@@ -308,7 +308,7 @@ function closeSelectedTag(view) {
 }
 
 function closeRightTags() {
-  proxy.$tab.closeRightPage(selectedTag.value).then(visitedViews => {
+  tab.closeRightPage(selectedTag.value).then(visitedViews => {
     if (!visitedViews.find(i => i.fullPath === route.fullPath)) {
       toLastView(visitedViews)
     }
@@ -316,7 +316,7 @@ function closeRightTags() {
 }
 
 function closeLeftTags() {
-  proxy.$tab.closeLeftPage(selectedTag.value).then(visitedViews => {
+  tab.closeLeftPage(selectedTag.value).then(visitedViews => {
     if (!visitedViews.find(i => i.fullPath === route.fullPath)) {
       toLastView(visitedViews)
     }
@@ -325,13 +325,13 @@ function closeLeftTags() {
 
 function closeOthersTags() {
   router.push(selectedTag.value).catch(() => { })
-  proxy.$tab.closeOtherPage(selectedTag.value).then(() => {
+  tab.closeOtherPage(selectedTag.value).then(() => {
     moveToCurrentTag()
   })
 }
 
 function closeAllTags(view) {
-  proxy.$tab.closeAllPage().then(({ visitedViews }) => {
+  tab.closeAllPage().then(({ visitedViews }) => {
     if (affixTags.value.some(tag => tag.path === route.path)) {
       return
     }

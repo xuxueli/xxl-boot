@@ -63,9 +63,10 @@ import "vue-cropper/dist/index.css"
 import { VueCropper } from "vue-cropper"
 import { uploadAvatar } from "@/api/system/user"
 import useUserStore from "@/store/modules/user"
+import modal from '@/utils/modal'
 
 const userStore = useUserStore()
-const { proxy } = getCurrentInstance()
+const cropper = ref(null)
 
 const open = ref(false)
 const visible = ref(false)
@@ -98,24 +99,24 @@ function requestUpload() {}
 
 /** 向左旋转 */
 function rotateLeft() {
-  proxy.$refs.cropper.rotateLeft()
+  cropper.value.rotateLeft()
 }
 
 /** 向右旋转 */
 function rotateRight() {
-  proxy.$refs.cropper.rotateRight()
+  cropper.value.rotateRight()
 }
 
 /** 图片缩放 */
 function changeScale(num) {
   num = num || 1
-  proxy.$refs.cropper.changeScale(num)
+  cropper.value.changeScale(num)
 }
 
 /** 上传预处理 */
 function beforeUpload(file) {
   if (file.type.indexOf("image/") == -1) {
-    proxy.$modal.msgError("文件格式错误，请上传图片类型,如：JPG，PNG后缀的文件。")
+    modal.msgError("文件格式错误，请上传图片类型,如：JPG，PNG后缀的文件。")
   } else {
     const reader = new FileReader()
     reader.readAsDataURL(file)
@@ -128,14 +129,14 @@ function beforeUpload(file) {
 
 /** 上传图片 */
 function uploadImg() {
-  proxy.$refs.cropper.getCropBlob(data => {
+  cropper.value.getCropBlob(data => {
     let formData = new FormData()
     formData.append("avatarfile", data, options.filename)
     uploadAvatar(formData).then(response => {
       open.value = false
       options.img = import.meta.env.VITE_APP_BASE_API + response.imgUrl
       userStore.avatar = options.img
-      proxy.$modal.msgSuccess("修改成功")
+      modal.msgSuccess("修改成功")
       visible.value = false
     })
   })

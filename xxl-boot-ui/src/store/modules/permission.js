@@ -8,7 +8,7 @@
  * 3. helpers：负责路由组件映射、子路由拍平和权限过滤；
  * 4. getters：当前模块未定义 getters，调用方直接读取 state。
  */
-import auth from '@/plugins/auth'
+import auth from '@/utils/permission'
 import router, { constantRoutes, dynamicRoutes } from '@/router'
 import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'

@@ -52,12 +52,15 @@
 
 <script setup>
 import { listDbTable, importTable } from "@/api/tool/gen"
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import modal from '@/utils/modal'
 
 const total = ref(0)
 const visible = ref(false)
 const tables = ref([])
 const dbTableList = ref([])
-const { proxy } = getCurrentInstance()
+const table = ref(null)
+const resetForm = useFormReset()
 
 const queryParams = reactive({
   pageNum: 1,
@@ -76,7 +79,7 @@ function show() {
 
 /** 单击选择行 */
 function clickRow(row) {
-  proxy.$refs.table.toggleRowSelection(row)
+  table.value.toggleRowSelection(row)
 }
 
 /** 多选框选中数据 */
@@ -100,7 +103,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   handleQuery()
 }
 
@@ -108,11 +111,11 @@ function resetQuery() {
 function handleImportTable() {
   const tableNames = tables.value.join(",")
   if (tableNames == "") {
-    proxy.$modal.msgError("请选择要导入的表")
+    modal.msgError("请选择要导入的表")
     return
   }
   importTable({ tables: tableNames, tplWebType: 'element-plus' }).then(res => {
-    proxy.$modal.msgSuccess(res.msg)
+    modal.msgSuccess(res.msg)
     if (res.code === 200) {
       visible.value = false
       emit("ok")

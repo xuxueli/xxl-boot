@@ -179,10 +179,17 @@
 import useDictStore from '@/store/modules/dict'
 import { optionselect as getDictOptionselect, getType } from "@/api/sys/dict/type"
 import { listData, getData, delData, addData, updateData } from "@/api/sys/dict/data"
+import { useDict } from '@/utils/hooks/useDict'
+import { parseTime } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import { download } from '@/utils/request'
+import modal from '@/utils/modal'
+import tab from '@/utils/tab'
 
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
 const { sys_normal_disable } = useDict("sys_normal_disable")
 
+const dataRef = ref(null)
 const dataList = ref([])
 const open = ref(false)
 const loading = ref(true)
@@ -267,7 +274,7 @@ function reset() {
     status: "0",
     remark: undefined
   }
-  proxy.resetForm("dataRef")
+  resetForm("dataRef")
 }
 
 /** 搜索按钮操作 */
@@ -279,12 +286,12 @@ function handleQuery() {
 /** 返回按钮操作 */
 function handleClose() {
   const obj = { path: "/system/dict" }
-  proxy.$tab.closeOpenPage(obj)
+  tab.closeOpenPage(obj)
 }
 
 /** 重置按钮操作 */
 function resetQuery() {
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   queryParams.value.dictType = defaultDictType.value
   handleQuery()
 }
@@ -317,19 +324,19 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["dataRef"].validate(valid => {
+  dataRef.value.validate(valid => {
     if (valid) {
       if (form.value.dictCode != undefined) {
         updateData(form.value).then(response => {
           useDictStore().removeDict(queryParams.value.dictType)
-          proxy.$modal.msgSuccess("修改成功")
+          modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
         addData(form.value).then(response => {
           useDictStore().removeDict(queryParams.value.dictType)
-          proxy.$modal.msgSuccess("新增成功")
+          modal.msgSuccess("新增成功")
           open.value = false
           getList()
         })
@@ -341,18 +348,18 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const dictCodes = row.dictCode || ids.value
-  proxy.$modal.confirm('是否确认删除字典编码为"' + dictCodes + '"的数据项？').then(function() {
+  modal.confirm('是否确认删除字典编码为"' + dictCodes + '"的数据项？').then(function() {
     return delData(dictCodes)
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("删除成功")
+    modal.msgSuccess("删除成功")
     useDictStore().removeDict(queryParams.value.dictType)
   }).catch(() => {})
 }
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("system/dict/data/export", {
+  download("system/dict/data/export", {
     ...queryParams.value
   }, `dict_data_${new Date().getTime()}.xlsx`)
 }

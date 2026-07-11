@@ -8,7 +8,7 @@
  * 3. getters：当前模块未定义 getters，页面直接读取 state 中的响应式数据。
  */
 import router from '@/router'
-import cache from '@/plugins/cache'
+import cache from '@/utils/cache'
 import { ElMessageBox, } from 'element-plus'
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'

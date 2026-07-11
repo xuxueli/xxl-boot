@@ -184,10 +184,17 @@
 import DictDataDrawer from './detail'
 import useDictStore from '@/store/modules/dict'
 import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/sys/dict/type"
+import { useDict } from '@/utils/hooks/useDict'
+import { parseTime, addDateRange } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
+import { download } from '@/utils/request'
+import modal from '@/utils/modal'
+import tab from '@/utils/tab'
 
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
 const { sys_normal_disable } = useDict("sys_normal_disable")
 
+const dictRef = ref(null)
 const typeList = ref([])
 const open = ref(false)
 const loading = ref(true)
@@ -221,7 +228,7 @@ const { queryParams, form, rules } = toRefs(data)
 /** 查询字典类型列表 */
 function getList() {
   loading.value = true
-  listType(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
+  listType(addDateRange(queryParams.value, dateRange.value)).then(response => {
     typeList.value = response.rows
     total.value = response.total
     loading.value = false
@@ -243,7 +250,7 @@ function reset() {
     status: "0",
     remark: undefined
   }
-  proxy.resetForm("dictRef")
+  resetForm("dictRef")
 }
 
 /** 搜索按钮操作 */
@@ -255,7 +262,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = []
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   handleQuery()
 }
 
@@ -281,7 +288,7 @@ function handleViewData(row) {
 
 /** 字典数据列表页面 */
 function handleDataList(row) {
-  proxy.$tab.openPage("字典数据", '/system/dict-data/index/' + row.dictId)
+  tab.openPage("字典数据", '/sys/dict-data/index/' + row.dictId)
 }
 
 /** 修改按钮操作 */
@@ -297,17 +304,17 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["dictRef"].validate(valid => {
+  dictRef.value.validate(valid => {
     if (valid) {
       if (form.value.dictId != undefined) {
         updateType(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功")
+          modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
         addType(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功")
+          modal.msgSuccess("新增成功")
           open.value = false
           getList()
         })
@@ -319,17 +326,17 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const dictIds = row.dictId || ids.value
-  proxy.$modal.confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？').then(function() {
+  modal.confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？').then(function() {
     return delType(dictIds)
   }).then(() => {
     getList()
-    proxy.$modal.msgSuccess("删除成功")
+    modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("system/dict/type/export", {
+  download("system/dict/type/export", {
     ...queryParams.value
   }, `dict_${new Date().getTime()}.xlsx`)
 }
@@ -337,7 +344,7 @@ function handleExport() {
 /** 刷新缓存按钮操作 */
 function handleRefreshCache() {
   refreshCache().then(() => {
-    proxy.$modal.msgSuccess("刷新成功")
+    modal.msgSuccess("刷新成功")
     useDictStore().cleanDict()
   })
 }

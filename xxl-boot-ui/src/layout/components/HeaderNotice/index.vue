@@ -47,7 +47,7 @@ const unreadCount = ref(0)
 const noticeLoading = ref(false)
 const noticeVisible = ref(false)
 const noticeLeaveTimer = ref(null)
-const { proxy } = getCurrentInstance()
+const noticeViewRef = ref(null)
 
 // 加载顶部公告列表
 function loadNoticeTop() {
@@ -91,7 +91,7 @@ function previewNotice(item) {
     if (idx !== -1) noticeList.value[idx] = { ...item, isRead: true }
     unreadCount.value = Math.max(0, unreadCount.value - 1)
   }
-  proxy.$refs["noticeViewRef"].open(item.noticeId)
+  noticeViewRef.value.open(item.noticeId)
 }
 
 // 全部已读

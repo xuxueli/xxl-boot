@@ -48,8 +48,10 @@
 <script setup name="ReadUsers">
 import { Search } from "@element-plus/icons-vue"
 import { listNoticeReadUsers } from "@/api/sys/notice"
+import { parseTime } from '@/utils/common'
+import { useFormReset } from '@/utils/hooks/useFormReset'
 
-const { proxy } = getCurrentInstance()
+const resetForm = useFormReset()
 
 const visible = ref(false)
 const loading = ref(false)
@@ -89,7 +91,7 @@ function handleQuery() {
 }
 
 function resetQuery() {
-  proxy.resetForm("queryRef")
+  resetForm("queryRef")
   handleQuery()
 }
 
