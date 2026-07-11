@@ -97,10 +97,30 @@ const usePermissionStore = defineStore(
             const sidebarRoutes = filterAsyncRouter(sdata)
             const rewriteRoutes = filterAsyncRouter(rdata, false, true)
             const defaultRoutes = filterAsyncRouter(defaultData)
-            this.setRoutes(rewriteRoutes)
-            this.setSidebarRouters(constantRoutes.concat(sidebarRoutes))
-            this.setDefaultRoutes(sidebarRoutes)
-            this.setTopbarRoutes(defaultRoutes)
+
+            // isMenuFrame 生成的根 Layout 路由（path="/"）无 redirect，补充后访问 "/" 才能跳转到 "/index"
+            rewriteRoutes.forEach(route => {
+              if (route.path === '/' && route.component === Layout && !route.redirect) {
+                route.redirect = '/index'
+              }
+            })
+
+            // 设置第一个Tab 固定：设置 affix: true，TagsView 初始化时固定显示: TODO，待替换新版菜单
+            const setFirstAffix = (routes) => {
+              // 如果 routes[0] 存在，则修改其 meta；否则什么都不做
+              if (routes?.[0]) {
+                routes[0].meta = { ...routes[0].meta, affix: true };
+              }
+            };
+            setFirstAffix(sidebarRoutes);
+            setFirstAffix(rewriteRoutes);
+
+            // 设置路由
+            this.setRoutes(rewriteRoutes)                                   // 设置完整权限路由
+            this.setSidebarRouters(constantRoutes.concat(sidebarRoutes))    // 设置侧边栏路由
+            this.setDefaultRoutes(sidebarRoutes)                            // 设置默认路由
+            this.setTopbarRoutes(defaultRoutes)                             // 设置顶栏路由
+
             resolve(rewriteRoutes)
           })
         })
