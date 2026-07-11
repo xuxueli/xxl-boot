@@ -121,59 +121,60 @@ const router = createRouter({
 
 NProgress.configure({ showSpinner: false })
 
+// 登录白名单
 const whiteList = ['/login']
 const isWhiteList = (path) => whiteList.some(pattern => isPathMatch(pattern, path))
 
+// 全局前置拦截
 router.beforeEach(async (to, from) => {
   NProgress.start()
-  const hasToken = getToken()
 
-  // 已登录
+  // 1、白名单：直接放行（登录页、404 等无需鉴权的页面）
+  if (isWhiteList(to.path)) return true
+
+  // 2、已登录：动态路由初始化
+  const hasToken = getToken()
   if (hasToken) {
-    // 已登录访问登录页 → 重定向首页
+
+    // 2.1、已登录 & 访问登录页： → 踢回首页
     if (to.path === '/login') {
       NProgress.done()
       return { path: '/' }
     }
-    // 白名单直接放行
-    if (isWhiteList(to.path)) {
-      return true
-    }
-    // 未获取用户信息 → 拉取用户信息 + 动态路由注入
+
+    // 2.2、已登录 & roles 为空：说明尚未拉取用户信息（首次登录或刷新页面后），需要初始化动态路由
     if (useUserStore().roles.length === 0) {
       isRelogin.show = true
       try {
         await useUserStore().getInfo()
         isRelogin.show = false
-        // 生成并注入动态路由
+
+        // 后端菜单 → 前端路由，过滤 http 链接后逐条注入
         const accessRoutes = await usePermissionStore().generateRoutes()
         accessRoutes.forEach(route => {
           if (!isHttp(route.path)) {
             router.addRoute(route)
           }
         })
-        // replace: true 避免历史记录残留
+
+        // replace: true —— 注入的路由需当前导航重新匹配，同时避免历史记录残留空路由条目
         return { ...to, replace: true }
       } catch (err) {
-        // 获取信息失败 → 清除 token 并跳转登录
         await useUserStore().logOut()
         ElMessage.error(err)
         return { path: '/' }
       }
     }
-    // 已有用户信息，直接放行
     return true
   }
 
-  // 未登录
-  // 白名单放行，否则重定向登录页并携带原路径
-  if (isWhiteList(to.path)) {
-    return true
-  }
+  // 3、未登录：跳转登录页并回传原路径供登录后重定向
+
   NProgress.done()
   return `/login?redirect=${to.fullPath}`
 })
 
+// 全局后置拦截
 router.afterEach(() => {
   NProgress.done()
 })
