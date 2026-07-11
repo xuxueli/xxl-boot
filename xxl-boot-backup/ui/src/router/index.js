@@ -109,6 +109,7 @@ const router = createRouter({
   history: createWebHistory(),
   // 加载静态路由
   routes: constantRoutes,
+  // 自定义路由切换时的页面滚动行为
   scrollBehavior(to, from, savedPosition) {
     // 前进/后退：恢复历史位置，否则回到顶部
     return savedPosition || { top: 0 }
