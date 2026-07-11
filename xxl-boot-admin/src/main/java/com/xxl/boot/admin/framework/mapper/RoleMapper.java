@@ -52,4 +52,9 @@ public interface RoleMapper {
 
     List<Role> queryByRoleIds(@Param("roleIds") List<Integer> roleIds);
 
+    /**
+     * 根据用户id查询角色
+     */
+    List<Role> queryByUserid(@Param("userId") int userId);
+
 }

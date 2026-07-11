@@ -48,4 +48,9 @@ public interface RoleService {
      */
     Response<String> updateRoleRes(int roleId, List<Integer> resourceIds);
 
+    /**
+     * 根据 用户ID 查询 角色列表（已授权）
+     */
+    List<Role> queryRoleByUserid(int userId);
+
 }

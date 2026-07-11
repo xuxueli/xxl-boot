@@ -147,4 +147,9 @@ public class RoleServiceImpl implements RoleService {
 		return Response.ofSuccess();
 	}
 
+	@Override
+	public List<Role> queryRoleByUserid(int userId) {
+		return roleMapper.queryByUserid(userId);
+	}
+
 }

@@ -101,4 +101,19 @@
         </foreach>
     </select>
 
+    <select id="queryByUserid" parameterType="java.util.Map" resultMap="Role">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        WHERE t.id IN (
+        SELECT role_id
+        FROM xxl_boot_user_role
+        WHERE user_id = #{userId}
+        )
+        <!--SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        INNER JOIN xxl_boot_user_role AS ur
+            ON t.id = ur.role_id
+        WHERE ur.user_id = #{userId}-->
+    </select>
+
 </mapper>

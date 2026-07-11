@@ -108,7 +108,7 @@ public class LoginController {
 				new ArrayList<>();
 
 		List<Role> roleList = roleService.queryRoleByUserid(xxlBootUser.getId());
-		List<String> roleIds = CollectionTool.isNotEmpty(roleList) ?
+		List<String> roles = CollectionTool.isNotEmpty(roleList) ?
 				roleList.stream()
 						.map(Role::getCode)
 						.collect(Collectors.toCollection(ArrayList::new)) :
@@ -120,7 +120,7 @@ public class LoginController {
 				xxlBootUser.getUsername(),
 				xxlBootUser.getRealName(),
 				null,
-				roleIds,
+				roles,
 				permissions,
 				-1,
 				UUIDTool.getSimpleUUID());
