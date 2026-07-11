@@ -13,6 +13,7 @@
         <result column="icon" property="icon" />
         <result column="order" property="order" />
         <result column="status" property="status" />
+        <result column="visible" property="visible" />
         <result column="add_time" property="addTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
@@ -27,6 +28,7 @@
         t.`icon`,
         t.`order`,
         t.`status`,
+        t.`visible`,
         t.`add_time`,
         t.`update_time`
     </sql>
@@ -41,6 +43,7 @@
             `icon`,
             `order`,
             `status`,
+            `visible`,
             `add_time`,
             `update_time`
         )
@@ -53,6 +56,7 @@
                   #{xxlBootResource.icon} ,
                   #{xxlBootResource.order} ,
                   #{xxlBootResource.status} ,
+                  #{xxlBootResource.visible} ,
                   NOW() ,
                   NOW()
               )
@@ -77,6 +81,7 @@
             `icon` = #{xxlBootResource.icon},
             `order` = #{xxlBootResource.order},
             `status` = #{xxlBootResource.status},
+            `visible` = #{xxlBootResource.visible},
             update_time = NOW()
         WHERE `id` = #{xxlBootResource.id}
     </update>

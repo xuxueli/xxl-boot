@@ -57,6 +57,11 @@ public class Resource implements Serializable {
     private int status;
 
     /**
+    * 显示状态：0-显示、1-隐藏
+    */
+    private int visible;
+
+    /**
     * 新增时间
     */
     private Date addTime;
@@ -144,6 +149,14 @@ public class Resource implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getVisible() {
+        return visible;
+    }
+
+    public void setVisible(int visible) {
+        this.visible = visible;
     }
 
     public Date getAddTime() {

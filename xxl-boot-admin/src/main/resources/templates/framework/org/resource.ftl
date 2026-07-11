@@ -126,33 +126,43 @@
 									</div>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
-								<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
-								<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
-								<div class="col-sm-4">
-									<#list resourceStatuEnum as item>
-										<span class="col-sm-6" style="padding-left: 0px;">
-											<input type="radio" name="status" value="${item.value}" > ${item.desc}
-										</span>
-									</#list>
-								</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
+							<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
+							<div class="col-sm-4">
+								<#list resourceStatuEnum as item>
+									<span class="col-sm-6" style="padding-left: 0px;">
+										<input type="radio" name="status" value="${item.value}" > ${item.desc}
+									</span>
+								</#list>
 							</div>
-
-							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
-								<div style="margin-top: 10px;" >
-									<button type="submit" class="btn btn-primary" >${I18n.system_save}</button>
-									<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
-								</div>
+							<label class="col-sm-2 control-label"><font color="red">*</font>显示状态</label>
+							<div class="col-sm-4">
+								<#list resourceVisibleEnum as item>
+									<span class="col-sm-6" style="padding-left: 0px;">
+										<input type="radio" name="visible" value="${item.value}" > ${item.desc}
+									</span>
+								</#list>
 							</div>
+						</div>
 
-						</form>
-					</div>
+						<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
+							<div style="margin-top: 10px;" >
+								<button type="submit" class="btn btn-primary" >${I18n.system_save}</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
+							</div>
+						</div>
+
+					</form>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<!-- 更新.模态框 -->
+	<!-- 更新.模态框 -->
 		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog"  aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -204,24 +214,34 @@
 									</div>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
-								<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
-								<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
-								<div class="col-sm-4">
-									<#list resourceStatuEnum as item>
-										<span class="col-sm-6" style="padding-left: 0px;">
-											<input type="radio" name="status" value="${item.value}" > ${item.desc}
-										</span>
-									</#list>
-								</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
+							<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
+							<div class="col-sm-4">
+								<#list resourceStatuEnum as item>
+									<span class="col-sm-6" style="padding-left: 0px;">
+										<input type="radio" name="status" value="${item.value}" > ${item.desc}
+									</span>
+								</#list>
 							</div>
+							<label class="col-sm-2 control-label"><font color="red">*</font>显示状态</label>
+							<div class="col-sm-4">
+								<#list resourceVisibleEnum as item>
+									<span class="col-sm-6" style="padding-left: 0px;">
+										<input type="radio" name="visible" value="${item.value}" > ${item.desc}
+									</span>
+								</#list>
+							</div>
+						</div>
 
-							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
-								<div style="margin-top: 10px;" >
-									<button type="submit" class="btn btn-primary"  >${I18n.system_save}</button>
-									<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
-									<input type="hidden" name="id" >
+						<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
+							<div style="margin-top: 10px;" >
+								<button type="submit" class="btn btn-primary"  >${I18n.system_save}</button>
+								<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
+								<input type="hidden" name="id" >
 								</div>
 							</div>
 
@@ -1281,31 +1301,33 @@ $(function() {
 				range: I18n.system_num_range + " 1~99999999"
 			}
 		},
-		writeFormData:function (){
-			// reset origin parent
-			initTree();
-			$("#addModal .form input[name=parentId]").val( 0 );
-			$('#addModal .form input[name="type"][value="0"]').iCheck('check');
-			$('#addModal .form input[name="status"][value="0"]').iCheck('check');
-			toggleUrlIcon(0, '#addModal');
-		},
-		readFormData: function() {
-			// request
-			return {
-				"parentId": $("#addModal .form input[name=parentId]").val(),
-				"name": $("#addModal .form input[name=name]").val(),
-				"type": $("#addModal .form input[name='type']:checked").val(),
-				"permission": $("#addModal .form input[name=permission]").val(),
-				"url": $("#addModal .form input[name=url]").val(),
-				"icon": $("#addModal .form input[name=icon]").val(),
-				"order": $("#addModal .form input[name=order]").val(),
-				"status": $("#addModal .form input[name='status']:checked").val()
-			};
-		}
-	});
+	writeFormData:function (){
+		// reset origin parent
+		initTree();
+		$("#addModal .form input[name=parentId]").val( 0 );
+		$('#addModal .form input[name="type"][value="0"]').iCheck('check');
+		$('#addModal .form input[name="status"][value="0"]').iCheck('check');
+		$('#addModal .form input[name="visible"][value="0"]').iCheck('check');
+		toggleUrlIcon(0, '#addModal');
+	},
+	readFormData: function() {
+		// request
+		return {
+			"parentId": $("#addModal .form input[name=parentId]").val(),
+			"name": $("#addModal .form input[name=name]").val(),
+			"type": $("#addModal .form input[name='type']:checked").val(),
+			"permission": $("#addModal .form input[name=permission]").val(),
+			"url": $("#addModal .form input[name=url]").val(),
+			"icon": $("#addModal .form input[name=icon]").val(),
+			"order": $("#addModal .form input[name=order]").val(),
+			"status": $("#addModal .form input[name='status']:checked").val(),
+			"visible": $("#addModal .form input[name='visible']:checked").val()
+		};
+	}
+});
 
-	/**
-	 * init update
+/**
+ * init update
 	 */
 	$.adminTable.initUpdate( {
 		url: base_url + "/org/resource/update",
@@ -1320,6 +1342,7 @@ $(function() {
 			$("#updateModal .form input[name=icon]").val( row.icon );
 			$("#updateModal .form input[name=order]").val( row.order );
 			$("#updateModal .form input[name='status'][value='" + row.status + "']").iCheck('check');
+			$("#updateModal .form input[name='visible'][value='" + row.visible + "']").iCheck('check');
 
 			// set tree selected
 			initTree();
@@ -1361,20 +1384,21 @@ $(function() {
 				range: I18n.system_num_range + " 1~99999999"
 			}
 		},
-		readFormData: function() {
-			// request
-			return {
-				"id": $("#updateModal .form input[name=id]").val(),
-				"parentId": $("#updateModal .form input[name=parentId]").val(),
-				"name": $("#updateModal .form input[name=name]").val(),
-				"type": $("#updateModal .form input[name='type']:checked").val(),
-				"permission": $("#updateModal .form input[name=permission]").val(),
-				"url": $("#updateModal .form input[name=url]").val(),
-				"icon": $("#updateModal .form input[name=icon]").val(),
-				"order": $("#updateModal .form input[name=order]").val(),
-				"status": $("#updateModal .form input[name='status']:checked").val()
-			};
-		}
+	readFormData: function() {
+		// request
+		return {
+			"id": $("#updateModal .form input[name=id]").val(),
+			"parentId": $("#updateModal .form input[name=parentId]").val(),
+			"name": $("#updateModal .form input[name=name]").val(),
+			"type": $("#updateModal .form input[name='type']:checked").val(),
+			"permission": $("#updateModal .form input[name=permission]").val(),
+			"url": $("#updateModal .form input[name=url]").val(),
+			"icon": $("#updateModal .form input[name=icon]").val(),
+			"order": $("#updateModal .form input[name=order]").val(),
+			"status": $("#updateModal .form input[name='status']:checked").val(),
+			"visible": $("#updateModal .form input[name='visible']:checked").val()
+		};
+	}
 	});
 
 
@@ -1388,12 +1412,14 @@ $(function() {
 
 	// toggle url/icon visibility by type
 	function toggleUrlIcon(type, modalSelector) {
-		var hide = type === 2;	// button, not support  url + icon
+		var hide = type === 2;	// type = "button", not support url + icon + status + visible
 		$(modalSelector).find('input[name="url"]').closest('.form-group').toggle(!hide);
 		$(modalSelector).find('input[name="icon"]').closest('.form-group').toggle(!hide);
+		$(modalSelector).find('input[name="visible"]').closest('.form-group').toggle(!hide);
 		if (hide) {
 			$(modalSelector).find('input[name="url"]').val('');
 			$(modalSelector).find('input[name="icon"]').val('');
+			$(modalSelector).find('input[name="visible"][value="0"]').iCheck('check');
 		}
 	}
 

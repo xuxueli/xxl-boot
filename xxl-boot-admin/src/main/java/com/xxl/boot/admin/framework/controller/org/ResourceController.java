@@ -1,6 +1,7 @@
 package com.xxl.boot.admin.framework.controller.org;
 import com.xxl.boot.admin.framework.constant.enums.ResourceStatuEnum;
 import com.xxl.boot.admin.framework.constant.enums.ResourceTypeEnum;
+import com.xxl.boot.admin.framework.constant.enums.ResourceVisibleEnum;
 import com.xxl.boot.admin.framework.model.dto.ResourceDTO;
 import com.xxl.boot.admin.framework.model.entity.Resource;
 import com.xxl.boot.admin.framework.service.ResourceService;
@@ -36,6 +37,7 @@ public class ResourceController {
 
         model.addAttribute("resourceStatuEnum", ResourceStatuEnum.values());
         model.addAttribute("resourceTypeEnum", ResourceTypeEnum.values());
+        model.addAttribute("resourceVisibleEnum", ResourceVisibleEnum.values());
 
         return "/framework/org/resource";
     }

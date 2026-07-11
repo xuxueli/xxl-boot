@@ -60,6 +60,11 @@ public class ResourceDTO implements Serializable {
     private int status;
 
     /**
+     * 显示状态：0-显示、1-隐藏
+     */
+    private int visible;
+
+    /**
      * 新增时间
      */
     private Date addTime;
@@ -86,6 +91,7 @@ public class ResourceDTO implements Serializable {
         setIcon(resource.getIcon());
         setOrder(resource.getOrder());
         setStatus(resource.getStatus());
+        setVisible(resource.getVisible());
         setAddTime(resource.getAddTime());
         setUpdateTime(resource.getUpdateTime());
 
@@ -163,6 +169,14 @@ public class ResourceDTO implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getVisible() {
+        return visible;
+    }
+
+    public void setVisible(int visible) {
+        this.visible = visible;
     }
 
     public Date getAddTime() {
