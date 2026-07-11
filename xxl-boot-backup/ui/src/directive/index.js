@@ -1,6 +1,9 @@
-import hasRole from './permission/hasRole'
-import hasPermi from './permission/hasPermi'
-import copyText from './common/copyText'
+/**
+ * 全局注册自定义指令
+  */
+import hasRole from './hasRole'
+import hasPermi from './hasPermi'
+import copyText from './copyText'
 
 export default function directive(app){
   app.directive('hasRole', hasRole)
