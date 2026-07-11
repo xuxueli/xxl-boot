@@ -45,13 +45,15 @@ public interface ResourceService {
     public List<ResourceDTO> treeList(String name, int status);
 
     /**
-     * 简单Tree查询
+     * 简单Tree查询（全部数据）
      */
     public List<ResourceDTO> simpleTreeList(String name, int status);
 
     /**
-     * Tree查询（已授权）
+     * Tree查询（已授权 & 正常状态数据）
+     * @param userId 用户ID
+     * @param visible 显示状态：0-显示、1-隐藏、-1-不过滤
      */
-    public List<ResourceDTO> treeListByUserId(int userId);
+    public List<ResourceDTO> treeListByUserId(int userId, int visible);
 
 }

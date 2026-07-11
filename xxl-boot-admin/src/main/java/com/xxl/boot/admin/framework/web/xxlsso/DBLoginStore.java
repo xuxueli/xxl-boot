@@ -67,7 +67,7 @@ public class DBLoginStore implements LoginStore {
         }
 
         // find permission
-        List<ResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(userId));
+        List<ResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(userId), -1);
         Set<String> permissions = UserAdaptor.extractPermissions(resourceList);
 
         // build LoginInfo

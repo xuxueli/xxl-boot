@@ -56,7 +56,9 @@ public interface ResourceService {
 
     /**
      * 根据 用户ID 获取 资源列表（已授权）
+     * @param userId 用户ID
+     * @param visible 显示状态：0-显示、1-隐藏、-1-不过滤
      */
-    List<Resource> queryResourceByUserid(int userId);
+    List<Resource> queryResourceByUserid(int userId, int visible);
 
 }

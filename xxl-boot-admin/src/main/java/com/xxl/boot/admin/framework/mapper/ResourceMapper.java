@@ -57,6 +57,6 @@ import java.util.List;
     /**
      * Tree查询（By User）
      */
-    List<Resource> queryResourceByUserId(@Param("userId") int userId, @Param("status") int status);
+    List<Resource> queryResourceByUserId(@Param("userId") int userId, @Param("status") int status, @Param("visible") int visible);
 
 }

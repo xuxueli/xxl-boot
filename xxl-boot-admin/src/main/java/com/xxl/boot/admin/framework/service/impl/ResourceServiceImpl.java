@@ -130,8 +130,8 @@ public class ResourceServiceImpl implements ResourceService {
 	}
 
 	@Override
-	public List<ResourceDTO> treeListByUserId(int userId) {
-		List<Resource> resourceList = resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getValue());
+	public List<ResourceDTO> treeListByUserId(int userId, int visible) {
+		List<Resource> resourceList = resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getValue(), visible);
 		return generateTreeList(resourceList);
 	}
 

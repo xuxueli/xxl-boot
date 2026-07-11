@@ -136,8 +136,8 @@ public class ResourceServiceImpl implements ResourceService {
 	}*/
 
 	@Override
-	public List<Resource> queryResourceByUserid(int userId) {
-        return resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getValue());
+	public List<Resource> queryResourceByUserid(int userId, int visible) {
+        return resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getValue(), visible);
 	}
 
 	/**

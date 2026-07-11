@@ -130,6 +130,9 @@
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_resource AS t
         WHERE   t.`status` = #{status}
+                <if test="visible gt -1">
+                    AND t.`visible` = #{visible}
+                </if>
                 AND t.`id` in (
                     SELECT res_id
                     FROM xxl_boot_role_res

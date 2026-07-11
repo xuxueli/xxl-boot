@@ -100,7 +100,7 @@ public class LoginController {
 		}
 
 		// 2、find permission + role
-		List<Resource> resourceList = resourceService.queryResourceByUserid(xxlBootUser.getId());
+		List<Resource> resourceList = resourceService.queryResourceByUserid(xxlBootUser.getId(), -1);
 		List<String> permissions = CollectionTool.isNotEmpty(resourceList) ?
 				resourceList.stream()
 						.map(Resource::getPermission)

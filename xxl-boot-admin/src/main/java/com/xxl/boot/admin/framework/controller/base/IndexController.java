@@ -56,7 +56,7 @@ public class IndexController {
 
 		// menu resource
 		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
-		List<ResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(loginInfoResponse.getData().getUserId()));
+		List<ResourceDTO> resourceList = resourceService.treeListByUserId(Integer.parseInt(loginInfoResponse.getData().getUserId()), 0);
 		model.addAttribute("resourceList", resourceList);
 
 		return "/framework/base/index";
