@@ -6,7 +6,10 @@
         - components:       x-02   
         - directives:       done      
         - layouts:          x-01
-        - router:           ing：除了 404 等基础全面，全部页面后端获取；dynamicRoutes全部 + 
+        - router:           ing：
+            - 除了 404 等基础全面，全部页面后端获取；dynamicRoutes全部 +
+            - 菜单配置：url，绝对地址；映射 view 文件地址；
+            - 后端地址：默认 Layout 打开，第一个固定；
         - store:            x
         - utils:            x
         - views:            x-03
