@@ -11,14 +11,14 @@
  *   - 密钥对生成工具参考：http://web.chacuo.net/netrsakeypair
  *
  * 依赖：
- *   - jsencrypt  轻量级 RSA 加解密库（使用精简版 bin/jsencrypt.min）
+ *   - jsencrypt  轻量级 RSA 加解密库
  *
  * 典型用法：
  *   import { encrypt, decrypt } from '@/utils/jsencrypt'
  *   const cipherText = encrypt(password)   // 加密后发送给后端
  *   const plainText  = decrypt(cipherText)  // 解密（调试用）
  */
-import JSEncrypt from 'jsencrypt/bin/jsencrypt.min'
+import JSEncrypt from 'jsencrypt'
 
 // 密钥对生成 http://web.chacuo.net/netrsakeypair
 

@@ -1,15 +1,15 @@
 
 1、api 重构：
     - 模块代码重构：
-        - api:          
+        - api:                  todo  
         - assets:       done
-        - components:
-        - directives:      
+        - components:   
+        - directives:   done      
         - layouts:
         - router
         - store
         - utils
-        - views
+        - views                 todo
       - 登录相关：Login、用户信息管理、验证码；
     - 菜单权限：菜单查询、权限/角色列表；
     - API平移：
