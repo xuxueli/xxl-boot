@@ -8,7 +8,6 @@
         - layouts:          x-01
         - router:           ing：
             - 菜单配置：url，绝对地址；映射 view 文件地址；
-            - 后端地址：默认 Layout 打开，第一个固定；
         - store:            x
         - utils:            x
         - views:            x-03
