@@ -31,7 +31,7 @@ import { getToken } from '@/utils/auth'
 import { isHttp, isPathMatch } from '@/utils/validate'
 import { isRelogin } from '@/utils/request'
 import useUserStore from '@/store/modules/user'
-import usePermissionStore from '@/store/modules/routes'
+import useRoutesStore from '@/store/modules/routes'
 
 
 /**
@@ -150,7 +150,7 @@ router.beforeEach(async (to, from) => {
         isRelogin.show = false
 
         // a、初始化动态路由：后端菜单 → 前端路由，过滤 http 链接后逐条注入
-        const accessRoutes = await usePermissionStore().generateRoutes()
+        const accessRoutes = await useRoutesStore().generateRoutes()
         accessRoutes.forEach(route => {
           if (!isHttp(route.path)) {
             router.addRoute(route)

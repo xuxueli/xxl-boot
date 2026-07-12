@@ -1,7 +1,7 @@
 /**
- * 路由权限 Store 模块
+ * 路由 Store 模块
  *
- * 名称：permission.js
+ * 名称：routes.js
  * 描述：负责把后端返回的菜单路由转换为前端可用的路由对象，并维护侧边栏、顶栏、默认路由等多套路由视图数据。
  *
  * 核心职责：
@@ -29,8 +29,8 @@ import InnerLink from '@/layout/components/InnerLink'
 // 匹配规则：从完整文件路径提取 `views/` 之后、`.vue` 之前的相对路径（如 system/user/index）。
 const modules = import.meta.glob('./../../views/**/*.vue')
 
-const usePermissionStore = defineStore(
-  'permission',
+const useRoutesStore = defineStore(
+  'routes',
   {
     /**
      * 状态定义
@@ -250,4 +250,4 @@ export const loadView = (view) => {
   return res
 }
 
-export default usePermissionStore
+export default useRoutesStore

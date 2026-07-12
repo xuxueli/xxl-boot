@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import usePermissionStore from '@/store/modules/routes'
+import useRoutesStore from '@/store/modules/routes'
 
 /**
  * 结构说明（总 -> 分）：
@@ -34,7 +34,6 @@ import usePermissionStore from '@/store/modules/routes'
  */
 const route = useRoute()
 const router = useRouter()
-const permissionStore = usePermissionStore()
 // 面包屑展示数据：每项通常包含 path、meta.title、redirect 等路由字段。
 const levelList = ref([])
 
@@ -50,7 +49,7 @@ function getBreadcrumb() {
       if (index !== 0) item = item.slice(1)
       return item
     })
-    getMatched(pathList, permissionStore.defaultRoutes, matched)
+    getMatched(pathList, useRoutesStore().defaultRoutes, matched)
   } else {
     matched = route.matched.filter((item) => item.meta && item.meta.title)
   }

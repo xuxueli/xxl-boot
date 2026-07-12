@@ -82,7 +82,7 @@ import Fuse from 'fuse.js'
 import { getNormalPath } from '@/utils/common'
 import { isHttp } from '@/utils/validate'
 import useSettingsStore from '@/store/modules/settings'
-import usePermissionStore from '@/store/modules/routes'
+import useRoutesStore from '@/store/modules/routes'
 
 const search = ref('')
 const options = ref([])
@@ -93,7 +93,7 @@ const fuse = ref(undefined)
 const headerSearchSelectRef = ref(null)
 const router = useRouter()
 const theme = computed(() => useSettingsStore().theme)
-const routes = computed(() => usePermissionStore().defaultRoutes)
+const routes = computed(() => useRoutesStore().defaultRoutes)
 
 function click() {
   show.value = !show.value

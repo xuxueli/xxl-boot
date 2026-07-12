@@ -135,7 +135,7 @@
 import { DocumentAdd, Refresh } from '@element-plus/icons-vue'
 import useAppStore from '@/store/modules/app'
 import useSettingsStore from '@/store/modules/settings'
-import usePermissionStore from '@/store/modules/routes'
+import useRoutesStore from '@/store/modules/routes'
 import useTagsViewStore from '@/store/modules/tagsView'
 import modal from '@/utils/modal'
 
@@ -148,7 +148,6 @@ import modal from '@/utils/modal'
  */
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
-const permissionStore = usePermissionStore()
 const tagsViewStore = useTagsViewStore()
 
 /**
@@ -214,7 +213,7 @@ function handleNavType(type) {
 
   // 只有左侧/顶部需要设置侧边栏路由
   if ([1, 3].includes(type)) {
-    permissionStore.setSidebarRouters(permissionStore.defaultRoutes)
+    useRoutesStore().setSidebarRouters(useRoutesStore().defaultRoutes)
   }
 }
 

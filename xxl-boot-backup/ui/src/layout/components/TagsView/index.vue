@@ -74,7 +74,7 @@ import ScrollPane from './ScrollPane'
 import { getNormalPath } from '@/utils/common'
 import useTagsViewStore from '@/store/modules/tagsView'
 import useSettingsStore from '@/store/modules/settings'
-import usePermissionStore from '@/store/modules/routes'
+import useRoutesStore from '@/store/modules/routes'
 import tab from '@/utils/tab'
 
 const visible = ref(false)
@@ -93,7 +93,7 @@ const router = useRouter()
 const settingsStore = useSettingsStore()
 
 const visitedViews = computed(() => useTagsViewStore().visitedViews)
-const routes = computed(() => usePermissionStore().routes)
+const routes = computed(() => useRoutesStore().routes)
 const theme = computed(() => useSettingsStore().theme)
 const tagsIcon = computed(() => useSettingsStore().tagsIcon)
 const tagsViewPersist = computed(() => useSettingsStore().tagsViewPersist)
