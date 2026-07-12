@@ -82,7 +82,7 @@ import Fuse from 'fuse.js'
 import { getNormalPath } from '@/utils/common'
 import { isHttp } from '@/utils/validate'
 import useSettingsStore from '@/store/modules/settings'
-import usePermissionStore from '@/store/modules/permission'
+import usePermissionStore from '@/store/modules/routes'
 
 const search = ref('')
 const options = ref([])

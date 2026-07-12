@@ -7,7 +7,7 @@
         - directives:       done      
         - layouts:          x-01
         - router:           ing：
-            - 菜单配置：url，绝对地址；映射 view 文件地址；
+            - 逻辑待重构；
         - store:            x
         - utils:            x
         - views:            x-03

@@ -135,7 +135,7 @@
 import { DocumentAdd, Refresh } from '@element-plus/icons-vue'
 import useAppStore from '@/store/modules/app'
 import useSettingsStore from '@/store/modules/settings'
-import usePermissionStore from '@/store/modules/permission'
+import usePermissionStore from '@/store/modules/routes'
 import useTagsViewStore from '@/store/modules/tagsView'
 import modal from '@/utils/modal'
 

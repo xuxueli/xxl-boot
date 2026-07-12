@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import usePermissionStore from '@/store/modules/permission'
+import usePermissionStore from '@/store/modules/routes'
 
 /**
  * 结构说明（总 -> 分）：

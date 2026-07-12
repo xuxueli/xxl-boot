@@ -74,7 +74,7 @@ import ScrollPane from './ScrollPane'
 import { getNormalPath } from '@/utils/common'
 import useTagsViewStore from '@/store/modules/tagsView'
 import useSettingsStore from '@/store/modules/settings'
-import usePermissionStore from '@/store/modules/permission'
+import usePermissionStore from '@/store/modules/routes'
 import tab from '@/utils/tab'
 
 const visible = ref(false)
