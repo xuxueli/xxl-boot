@@ -77,11 +77,23 @@ function hasOneShowingChild(children = [], parent) {
 }
 
 function resolvePath(routePath, routeQuery) {
+
   if (isExternal(routePath)) {
     return routePath
   }
   if (isExternal(props.basePath)) {
     return props.basePath
+  }
+
+  // TODO：待整理盘点逻辑
+  // 后端返回的子路由 path 已是完整绝对路径（以 / 开头，已包含父级段），
+  // 直接作为完整路径使用，避免再与 basePath 拼接导致 /system/system/... 重复。
+  if (routePath && routePath.startsWith('/')) {
+    if (routeQuery) {
+      let query = JSON.parse(routeQuery)
+      return { path: getNormalPath(routePath), query: query }
+    }
+    return getNormalPath(routePath)
   }
   if (routeQuery) {
     let query = JSON.parse(routeQuery)

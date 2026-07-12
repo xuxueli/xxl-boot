@@ -168,7 +168,7 @@ function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
       } else if (route.component === 'InnerLink') {
         route.component = InnerLink
       } else {
-        route.component = loadView(route.component)
+        route.component = loadView(route.path)
       }
     }
     if (route.children != null && route.children && route.children.length) {
@@ -217,10 +217,10 @@ export const loadView = (view) => {
     /**
      * import.meta.glob 收集到的是完整文件路径，例如：
      * `../views/system/user/index.vue`
-     * 这里统一截取 `views/` 之后、`.vue` 之前的相对路径，转换成 `system/user/index`，
+     * 这里统一截取 `/views` 之后、`.vue` 之前的相对路径，转换成 `system/user/index`，
      * 以便与后端路由里返回的 view 字段直接对比；两边约定一致时，才能定位到正确的页面组件。
      */
-    const dir = path.split('views/')[1].split('.vue')[0]
+    const dir = path.split('/views')[1].split('.vue')[0]
     if (dir === view) {
       res = () => modules[path]()
     }
