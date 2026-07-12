@@ -7,7 +7,17 @@
         - directives:       done      
         - layouts:          x-01
         - router:           ing：
-            - 逻辑待重构；
+            - route逻辑待整理重构：菜单 path、componet 统一；左侧+顶部+搜索，逻辑统一；
+                - router/index.js
+                - store/modules/routes.js
+                - store/modules/tagsView.js
+                - layout/components/Sidebar/SidebarItem.vue
+                - layout/components/Sidebar/index.vue
+                - layout/components/IframeToggle
+                - layout/components/TopNav/index.vue
+                - layout/components/TagsView
+                - components/Breadcrumb/index.vue
+                - components/HeaderSearch/index.vue
         - store:            x
         - utils:            x
         - views:            x-03

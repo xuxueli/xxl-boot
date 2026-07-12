@@ -171,37 +171,32 @@ public class SysMenuServiceImpl implements ISysMenuService
     public List<RouterVo> buildMenus(List<SysMenu> menus)
     {
         List<RouterVo> routers = new LinkedList<RouterVo>();
-        for (SysMenu menu : menus)
-        {
+        for (SysMenu menu : menus) {
             RouterVo router = new RouterVo();
-            router.setHidden("1".equals(menu.getVisible()));
             router.setName(getRouteName(menu));
             router.setPath(getRouterPath(menu));
-            router.setComponent(getComponent(menu));
-            router.setQuery(menu.getQuery());
-            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
+            router.setHidden("1".equals(menu.getVisible()));
+            router.setComponent(getComponent(menu));    // TODO, remove
+            //router.setQuery(menu.getQuery());
+            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), true/*StringUtils.equals("1", menu.getIsCache())*/, menu.getPath()));
+
             List<SysMenu> cMenus = menu.getChildren();
-            if (StringUtils.isNotEmpty(cMenus) && UserConstants.TYPE_DIR.equals(menu.getMenuType()))
-            {
+            if (StringUtils.isNotEmpty(cMenus) && UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
                 router.setAlwaysShow(true);
                 router.setRedirect("noRedirect");
                 router.setChildren(buildMenus(cMenus));
-            }
-            else if (isMenuFrame(menu))
-            {
+            } else if (isMenuFrame(menu)) {
                 router.setMeta(null);
                 List<RouterVo> childrenList = new ArrayList<RouterVo>();
                 RouterVo children = new RouterVo();
                 children.setPath(menu.getPath());
                 children.setComponent(menu.getComponent());
                 children.setName(getRouteName(menu.getRouteName(), menu.getPath()));
-                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
-                children.setQuery(menu.getQuery());
+                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), true/*StringUtils.equals("1", menu.getIsCache())*/, menu.getPath()));
+                //children.setQuery(menu.getQuery());
                 childrenList.add(children);
                 router.setChildren(childrenList);
-            }
-            else if (menu.getParentId().intValue() == MENU_ROOT_ID && isInnerLink(menu))
-            {
+            } else if (menu.getParentId().intValue() == MENU_ROOT_ID && isInnerLink(menu)) {
                 router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
                 router.setPath("/");
                 List<RouterVo> childrenList = new ArrayList<RouterVo>();
@@ -214,6 +209,7 @@ public class SysMenuServiceImpl implements ISysMenuService
                 childrenList.add(children);
                 router.setChildren(childrenList);
             }
+
             routers.add(router);
         }
         return routers;
