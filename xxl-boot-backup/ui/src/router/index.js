@@ -142,7 +142,7 @@ router.beforeEach(async (to, from) => {
         return { ...to, replace: true }
       } catch (err) {
         // 路由初始化异常：退出登录
-        await useUserStore().logOut()
+        await useUserStore().logout()
         ElMessage.error('Error:' + JSON.stringify(err))
         return { path: '/' }
       }

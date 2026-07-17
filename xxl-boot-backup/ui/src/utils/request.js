@@ -132,7 +132,7 @@ service.interceptors.response.use(res => {
         ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', { confirmButtonText: '重新登录', cancelButtonText: '取消', type: 'warning' }).then(() => {
           isRelogin.show = false
           // 调用用户 store 的退出逻辑（清除 token 等状态），然后跳转到登录页
-          useUserStore().logOut().then(() => {
+          useUserStore().logout().then(() => {
             location.href = '/index'
           })
       }).catch(() => {
