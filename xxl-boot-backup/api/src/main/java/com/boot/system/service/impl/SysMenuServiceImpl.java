@@ -182,7 +182,6 @@ public class SysMenuServiceImpl implements ISysMenuService
 
             List<SysMenu> cMenus = menu.getChildren();
             if (StringUtils.isNotEmpty(cMenus) && UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
-                router.setAlwaysShow(true);
                 router.setRedirect("noRedirect");
                 router.setChildren(buildMenus(cMenus));
             } else if (isMenuFrame(menu)) {

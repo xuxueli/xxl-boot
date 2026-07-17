@@ -16,7 +16,6 @@ import java.util.List;
  *     meta: {                                              // 6. 元信息：不会干涉其内容，但会将其附加到路由记录上，常用于权限判断、标题设置、KeepAlive缓存标识等。
  *       icon: user,                                            // 自定义：用于菜单图标展示
  *       title: '首页',
- *       requiresAuth: false,
  *       keepAlive: true,                                       // 自定义：通常配合 <keep-alive> 使用，由业务代码判断是否缓存组件
  *       noCache:true
  *     },
@@ -27,12 +26,11 @@ import java.util.List;
  *         name: 'UserProfile',                                     // 命名路由
  *         component: () => import('@/views/UserProfile.vue'),      // 组件映射
  *         meta: {                                                  // 元信息
- *           requiresAuth: true,
- *           roles: ['admin', 'editor']
+ *           icon: user,
+ *           title: '用户管理'
  *         }
  *       }
  *     ],
- *     alwaysShow: true,                                    // 自定义：用于控制当只有一个子路由时，是否仍然显示父级菜单。
  *     hidden:false                                         // 自定义：用于控制该路由是否在侧边栏菜单中隐藏
  *   }
  * </pre>
@@ -69,11 +67,6 @@ public class RouterVo
      * 路由参数：如 {"id": 1, "name": "ry"}
      */
     /*private String query;*/
-
-    /**
-     * 当你一个路由下面的 children 声明的路由大于1个时，自动会变成嵌套的模式--如组件页面
-     */
-    private Boolean alwaysShow;
 
     /**
      * 其他元素
@@ -144,16 +137,6 @@ public class RouterVo
     {
         this.query = query;
     }*/
-
-    public Boolean getAlwaysShow()
-    {
-        return alwaysShow;
-    }
-
-    public void setAlwaysShow(Boolean alwaysShow)
-    {
-        this.alwaysShow = alwaysShow;
-    }
 
     public MetaVo getMeta()
     {
