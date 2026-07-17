@@ -170,9 +170,10 @@ router.beforeEach(async (to, from) => {
         // b、replace: true：注入的路由需当前导航重新匹配，同时避免历史记录残留 “空路由条目”
         return { ...to, replace: true }
       } catch (err) {
+        ElMessage.error(JSON.stringify(err))
+
         // 路由初始化异常：退出登录
         await useUserStore().logOut()
-        ElMessage.error(err)
         return { path: '/' }
       }
     }
