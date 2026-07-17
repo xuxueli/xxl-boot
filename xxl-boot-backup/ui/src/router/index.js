@@ -5,19 +5,6 @@
  *   1. 声明静态路由（constantRoutes）——登录、错误页、个人中心等，启动即注册；
  *   2. 创建全局 router 实例（HTML5 history 模式）；
  *   3. 定义全局守卫（beforeEach/afterEach）——鉴权、路由注入、进度条控制。
- *
- * 路由配置项说明：
- *   hidden       - true 时侧边栏不显示（登录、错误页、编辑页等）
- *   name         - 路由名称，keep-alive 依赖此字段
- *   permissions  - 菜单权限标识数组，动态路由筛选依据
- *   meta.title   - 侧边栏/面包屑显示名
- *   meta.icon    - 侧边栏图标，对应 src/assets/icons/svg
- *   meta.breadcrumb - false 时面包屑不显示
- *   meta.activeMenu - 高亮指定侧边栏菜单
- *
- * 协作：
- *   - store/modules/permission ——后端菜单转路由 + 权限筛选
- *   - utils/request.js isRelogin ——重复登录弹窗控制
  */
 import { createWebHistory, createRouter } from 'vue-router'
 import Layout from '@/layout'
@@ -97,9 +84,10 @@ const router = createRouter({
   history: createWebHistory(),
   // 加载静态路由
   routes: constantRoutes,
-  // 自定义路由切换时的页面滚动行为
-  scrollBehavior(to, from, savedPosition) {
-    // 前进/后退：恢复历史位置，否则回到顶部
+  // 自定义路由切换时的页面滚动行为：前进/后退 恢复历史位置，否则回到顶部
+  scrollBehavior(to,
+                 from,
+                 savedPosition) {
     return savedPosition || { top: 0 }
   },
 })
