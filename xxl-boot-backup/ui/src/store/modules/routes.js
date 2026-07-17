@@ -183,7 +183,7 @@ function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
       } else if (route.component === 'InnerLink') {
         route.component = InnerLink
       } else {
-        route.component = loadView(route.path)
+        route.component = loadView(route.component || route.path)
       }
     }
     // 递归处理子路由或清理叶子节点
@@ -243,7 +243,9 @@ export const loadView = (view) => {
   let res
   for (const path in modules) {
     const dir = path.split('/views')[1].split('.vue')[0]
-    if (dir === view) {
+    const a = dir.startsWith('/') ? dir.slice(1) : dir
+    const b = view.startsWith('/') ? view.slice(1) : view
+    if (a === b) {
       res = () => modules[path]()
     }
   }

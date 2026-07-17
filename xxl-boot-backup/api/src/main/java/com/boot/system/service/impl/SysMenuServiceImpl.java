@@ -462,7 +462,7 @@ public class SysMenuServiceImpl implements ISysMenuService
         if (MENU_ROOT_ID == menu.getParentId().intValue() && UserConstants.TYPE_DIR.equals(menu.getMenuType())
                 && UserConstants.NO_FRAME.equals(menu.getIsFrame()))
         {
-            routerPath = "/" + menu.getPath();
+            routerPath = menu.getPath().startsWith("/") ? menu.getPath() : "/" + menu.getPath();
         }
         // 非外链并且是一级目录（类型为菜单）
         else if (isMenuFrame(menu))

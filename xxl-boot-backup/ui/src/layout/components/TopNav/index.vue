@@ -78,13 +78,6 @@ const childrenMenus = computed(() => {
   routers.value.map((router) => {
     for (let item in router.children) {
       if (router.children[item].parentPath === undefined) {
-        if(router.path === "/") {
-          router.children[item].path = "/" + router.children[item].path
-        } else {
-          if(!isHttp(router.children[item].path)) {
-            router.children[item].path = router.path + "/" + router.children[item].path
-          }
-        }
         router.children[item].parentPath = router.path
       }
       childrenMenus.push(router.children[item])
@@ -149,7 +142,7 @@ function activeRoutes(key) {
     })
   }
   if(routes.length > 0) {
-    permissionStore.setSidebarRouters(routes)
+    useRoutesStore().setSidebarRouters(routes)
   } else {
     appStore.hideSideBar(true)
   }
