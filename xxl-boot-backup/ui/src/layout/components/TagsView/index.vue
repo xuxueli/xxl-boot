@@ -295,9 +295,6 @@ function handleDropdownCommand(command) {
 
 function refreshSelectedTag(view) {
   tab.refreshPage(view)
-  if (route.meta.link) {
-    useTagsViewStore().delIframeView(route)
-  }
 }
 
 function closeSelectedTag(view) {

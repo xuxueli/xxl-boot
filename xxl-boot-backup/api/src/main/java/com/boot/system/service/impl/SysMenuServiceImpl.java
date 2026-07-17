@@ -185,7 +185,7 @@ public class SysMenuServiceImpl implements ISysMenuService
             router.setName("menu_" + menu.getMenuId());
             router.setPath(menu.getPath());
             router.setHidden("1".equals(menu.getVisible()));
-            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
+            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
 
             // router node
             if (UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
@@ -221,7 +221,7 @@ public class SysMenuServiceImpl implements ISysMenuService
                     children.setName("child_menu_" + menu.getMenuId());
                     children.setPath(menu.getPath());
                     children.setComponent(menu.getComponent());
-                    children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
+                    children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
 
                     router.setChildren(List.of(children));
 

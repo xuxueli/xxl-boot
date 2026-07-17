@@ -1,7 +1,5 @@
 package com.boot.system.domain.vo;
 
-import com.boot.common.utils.StringUtils;
-
 /**
  * 路由显示信息
  */
@@ -17,25 +15,12 @@ public class MetaVo
      */
     private String icon;
 
-    /**
-     * 内链地址（http(s)://开头）
-     */
-    private String link;
-
     public MetaVo() {
     }
 
     public MetaVo(String title, String icon) {
         this.title = title;
         this.icon = icon;
-    }
-
-    public MetaVo(String title, String icon, String link) {
-        this.title = title;
-        this.icon = icon;
-        if (StringUtils.ishttp(link)) {
-            this.link = link;
-        }
     }
 
     public String getTitle()
@@ -56,15 +41,5 @@ public class MetaVo
     public void setIcon(String icon)
     {
         this.icon = icon;
-    }
-
-    public String getLink()
-    {
-        return link;
-    }
-
-    public void setLink(String link)
-    {
-        this.link = link;
     }
 }
