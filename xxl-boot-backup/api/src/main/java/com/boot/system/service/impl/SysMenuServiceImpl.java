@@ -190,6 +190,7 @@ public class SysMenuServiceImpl implements ISysMenuService
                     && menu.getParentId().intValue() == MENU_ROOT_ID
                     && menu.getIsFrame().equals(UserConstants.NO_FRAME)) {
 
+                // 父容器：
                 router.setMeta(null);
 
                 List<RouterVo> childrenList = new ArrayList<RouterVo>();

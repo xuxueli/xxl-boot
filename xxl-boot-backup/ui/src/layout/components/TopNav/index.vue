@@ -61,8 +61,8 @@ const topMenus = computed(() => {
   let topMenus = []
   routers.value.map((menu) => {
     if (menu.hidden !== true) {
-      // 兼容顶部栏一级菜单内部跳转
-      if (menu.path === '/' && menu.children) {
+      // meta=null 的菜单是 Layout 父容器（如 isMenuFrame），用其子路由替代
+      if (!menu.meta && menu.children && menu.children.length > 0) {
           topMenus.push(menu.children[0])
       } else {
           topMenus.push(menu)
