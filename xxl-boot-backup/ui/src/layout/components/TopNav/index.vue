@@ -90,19 +90,51 @@ const childrenMenus = computed(() => {
 const activeMenu = computed(() => {
   const path = route.path
   let activePath = path
-  if (path !== undefined && path.lastIndexOf("/") > 0 && hideList.indexOf(path) === -1) {
-    const tmpPath = path.substring(1, path.length)
-    if (!route.meta.link) {
-      activePath = "/" + tmpPath.substring(0, tmpPath.indexOf("/"))
+
+  if (hideList.indexOf(path) !== -1) {
+    appStore.hideSideBar(true)
+  } else if (path !== undefined && path.lastIndexOf("/") > 0) {
+    const matchedTopMenu = findActiveTopMenu(path)
+    if (matchedTopMenu) {
+      activePath = matchedTopMenu
+      appStore.hideSideBar(false)
+    } else {
       appStore.hideSideBar(false)
     }
-  } else if(!route.children) {
-    activePath = path
+  } else {
     appStore.hideSideBar(true)
   }
+
   activeRoutes(activePath)
   return activePath
 })
+
+// 在顶级菜单树中递归查找匹配当前路由的顶级菜单 path
+function findActiveTopMenu(currentPath) {
+  if (!routers.value) return null
+  for (const menu of routers.value) {
+    if (menu.hidden) continue
+    if (menu.path === '/') continue
+    if (descendantMatches(menu, currentPath)) {
+      return menu.path
+    }
+  }
+  return null
+}
+
+function descendantMatches(route, targetPath) {
+  if (!route.children) return false
+  for (const child of route.children) {
+    if (!child.path) continue
+    if (targetPath === child.path || targetPath.startsWith(child.path + '/') || targetPath.startsWith(child.path + '?')) {
+      return true
+    }
+    if (child.children && descendantMatches(child, targetPath)) {
+      return true
+    }
+  }
+  return false
+}
 
 function setVisibleNumber() {
   const width = document.body.getBoundingClientRect().width / 3
