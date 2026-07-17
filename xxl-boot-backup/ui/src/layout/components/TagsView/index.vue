@@ -176,7 +176,7 @@ function filterAffixTags(routes, basePath = '') {
   let tags = []
   routes.forEach(route => {
     if (route.meta && route.meta.affix) {
-      const tagPath = getNormalPath(basePath + '/' + route.path)
+      const tagPath = route.path.startsWith('/') ? getNormalPath(route.path) : getNormalPath(basePath + '/' + route.path)
       tags.push({
         fullPath: tagPath,
         path: tagPath,

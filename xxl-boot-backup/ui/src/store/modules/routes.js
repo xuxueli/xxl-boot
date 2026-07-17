@@ -121,12 +121,12 @@ const useRoutesStore = defineStore(
             const defaultRoutes = filterAsyncRouter(defaultData)
 
             // 首页路由补救：isMenuFrame 生成的根 Layout 路由（path="/"）无 redirect，访问 "/" 需跳转到 "/index"
-            rewriteRoutes.forEach(route => {
+            /*rewriteRoutes.forEach(route => {
               if (route.path === '/') {
                 route.component = Layout
                 route.redirect = '/index'
               }
-            })
+            })*/
 
             // 首页固定标签：为首个路由的首个子路由设置 affix
             const setFirstAffix = (routes) => {
