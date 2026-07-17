@@ -13,7 +13,6 @@
  *   permissions  - 菜单权限标识数组，动态路由筛选依据
  *   meta.title   - 侧边栏/面包屑显示名
  *   meta.icon    - 侧边栏图标，对应 src/assets/icons/svg
- *   meta.noCache - true 时不被 keep-alive 缓存
  *   meta.breadcrumb - false 时面包屑不显示
  *   meta.activeMenu - 高亮指定侧边栏菜单
  *

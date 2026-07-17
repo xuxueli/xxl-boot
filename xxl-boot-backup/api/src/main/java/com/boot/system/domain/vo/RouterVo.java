@@ -16,8 +16,7 @@ import java.util.List;
  *     meta: {                                              // 6. 元信息：不会干涉其内容，但会将其附加到路由记录上，常用于权限判断、标题设置、KeepAlive缓存标识等。
  *       icon: user,                                            // 自定义：用于菜单图标展示
  *       title: '首页',
- *       keepAlive: true,                                       // 自定义：通常配合 <keep-alive> 使用，由业务代码判断是否缓存组件
- *       noCache:true
+
  *     },
  *     // props: true,                                      // 7. Props 解耦：是否将 params 作为 props 传递给组件。
  *     children: [                                          // 8. 子路由 (嵌套路由)

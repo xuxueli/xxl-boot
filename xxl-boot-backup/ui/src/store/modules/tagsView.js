@@ -145,11 +145,11 @@ const useTagsViewStore = defineStore(
       /**
        * 新增缓存标签。
        *
-       * 只有页面声明了 name 且未设置 meta.noCache 时，才会进入 keep-alive 缓存列表。
+       * 页面声明了 name 即可进入 keep-alive 缓存列表。
        */
       addCachedView(view) {
         if (this.cachedViews.includes(view.name)) return
-        if (!view.meta.noCache) {
+        if (false) {
           this.cachedViews.push(view.name)
         }
       },

@@ -170,15 +170,14 @@ public class SysMenuServiceImpl implements ISysMenuService
     @Override
     public List<RouterVo> buildMenus(List<SysMenu> menus)
     {
-        List<RouterVo> routers = new LinkedList<RouterVo>();
+        List<RouterVo> routers = new LinkedList<>();
         for (SysMenu menu : menus) {
             RouterVo router = new RouterVo();
             router.setName(getRouteName(menu));
             router.setPath(getRouterPath(menu));
             router.setHidden("1".equals(menu.getVisible()));
-            router.setComponent(getComponent(menu));    // TODO, remove
-            //router.setQuery(menu.getQuery());
-            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), true/*StringUtils.equals("1", menu.getIsCache())*/, menu.getPath()));
+            router.setComponent(getComponent(menu));
+            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
 
             List<SysMenu> cMenus = menu.getChildren();
             if (StringUtils.isNotEmpty(cMenus) && UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
@@ -191,7 +190,7 @@ public class SysMenuServiceImpl implements ISysMenuService
                 children.setPath(menu.getPath());
                 children.setComponent(menu.getComponent());
                 children.setName(getRouteName(menu.getRouteName(), menu.getPath()));
-                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), true/*StringUtils.equals("1", menu.getIsCache())*/, menu.getPath()));
+                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
                 //children.setQuery(menu.getQuery());
                 childrenList.add(children);
                 router.setChildren(childrenList);
