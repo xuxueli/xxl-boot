@@ -28,6 +28,7 @@ import com.boot.system.mapper.SysMenuMapper;
 import com.boot.system.mapper.SysRoleMapper;
 import com.boot.system.mapper.SysRoleMenuMapper;
 import com.boot.system.service.ISysMenuService;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 菜单 业务层处理
@@ -173,6 +174,9 @@ public class SysMenuServiceImpl implements ISysMenuService
      */
     @Override
     public List<RouterVo> buildMenus(List<SysMenu> menus) {
+        if (CollectionUtils.isEmpty(menus)) {
+            return null;
+        }
         List<RouterVo> routers = new LinkedList<>();
         for (SysMenu menu : menus) {
 
@@ -181,22 +185,34 @@ public class SysMenuServiceImpl implements ISysMenuService
             router.setName("menu_" + menu.getMenuId());
             router.setPath(menu.getPath());
             router.setHidden("1".equals(menu.getVisible()));
+            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
 
             // router node
-            if (menu.getParentId().intValue() == MENU_ROOT_ID) {
-                // 1、根节点：
-                if (UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
+            if (UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
 
-                    // 1.1、目录-根节点
+                /**
+                 * 1.1、目录：
+                 *  - 根节点：Layout
+                 *  - 子节点：ParentView
+                 */
+                if (menu.getParentId().intValue() == MENU_ROOT_ID) {
                     router.setComponent(UserConstants.LAYOUT);
-                    router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
+                } else  {
+                    router.setComponent(UserConstants.PARENT_VIEW);
+                }
 
-                    // children
-                    router.setChildren(buildMenus(menu.getChildren()));
+                // 1.2、目录children：
+                router.setChildren(buildMenus(menu.getChildren()));
 
-                } else if (UserConstants.TYPE_MENU.equals(menu.getMenuType())) {
+            } else if (UserConstants.TYPE_MENU.equals(menu.getMenuType())) {
 
-                    // 1.2、菜单-根节点
+                /**
+                 * 2、菜单：
+                 *  - 根节点：Layout（拆分子节点）
+                 *  - 子节点：Component / InnerLink(外链)
+                 */
+                if (menu.getParentId().intValue() == MENU_ROOT_ID) {
+                    // 2.1、菜单-根节点
                     router.setComponent(UserConstants.LAYOUT);
                     router.setMeta(null);
 
@@ -208,25 +224,14 @@ public class SysMenuServiceImpl implements ISysMenuService
                     children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
 
                     router.setChildren(List.of(children));
-                }
-            } else {
-                // 2、子节点：
-                if (UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
 
-                    // 2.1、目录-子节点
-                    router.setComponent(UserConstants.PARENT_VIEW);
-                    router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
-
-                } else if (UserConstants.TYPE_MENU.equals(menu.getMenuType())) {
-
+                } else {
                     // 2.2、菜单-子节点
                     if (StringUtils.ishttp(menu.getPath())) {
                         router.setComponent(UserConstants.INNER_LINK);
                     } else {
                         router.setComponent(menu.getComponent());
                     }
-                    router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
-
                 }
             }
 
