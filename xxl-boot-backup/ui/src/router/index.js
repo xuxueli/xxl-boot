@@ -100,7 +100,7 @@ NProgress.configure({ showSpinner: false })
 
 // 登录白名单
 const whiteList = ['/login']
-const isWhiteList = (path) => whiteList.some(pattern => isPathMatch(pattern, path))
+const isWhiteList = (path) => whiteList.includes(path)
 
 // 全局前置拦截
 router.beforeEach(async (to, from) => {
@@ -113,23 +113,24 @@ router.beforeEach(async (to, from) => {
   const hasToken = getToken()
   if (hasToken) {
 
-    // 动态标题：设置浏览器标签页标题
-    to.meta && to.meta.title && useSettingsStore().setMenuTitle(to.meta.title)
-
-    // 2.1、已登录 & 访问登录页： → 踢回首页
+    // 2.1、已登录 & 访问登录页： 踢回首页
     if (to.path === '/login') {
       NProgress.done()
       return { path: '/' }
     }
 
+    // 2.2、已登录：设置浏览器标签页标题（动态标题）
+    to.meta && to.meta.title && useSettingsStore().setMenuTitle(to.meta.title)
+
     // 2.2、已登录 & roles 为空：说明尚未拉取用户信息（首次登录或刷新页面后），需要初始化动态路由
     if (useUserStore().roles.length === 0) {
-      isRelogin.show = true
       try {
+        // a、获取用户信息：用户 + 角色权限信息
+        isRelogin.show = true
         await useUserStore().getInfo()
         isRelogin.show = false
 
-        // a、初始化动态路由：后端菜单 → 前端路由，过滤 http 链接后逐条注入
+        // b、初始化动态路由：后端菜单 → 前端路由，过滤 http 链接后逐条注入
         const accessRoutes = await useRoutesStore().generateRoutes()
         accessRoutes.forEach(route => {
           if (!isHttp(route.path)) {
@@ -137,26 +138,12 @@ router.beforeEach(async (to, from) => {
           }
         })
 
-
-        // log
-        /*accessRoutes.forEach(route => {
-          console.log('route: ' + route.path);
-
-          if (route.children) {
-            route.children.forEach(child => {
-              console.log('child route: ' + child.path);
-            })
-          }
-
-        })*/
-
-        // b、replace: true：注入的路由需当前导航重新匹配，同时避免历史记录残留 “空路由条目”
+        // c、replace: true：注入的路由需当前导航重新匹配，同时避免历史记录残留 “空路由条目”
         return { ...to, replace: true }
       } catch (err) {
-        ElMessage.error(JSON.stringify(err))
-
         // 路由初始化异常：退出登录
         await useUserStore().logOut()
+        ElMessage.error('Error:' + JSON.stringify(err))
         return { path: '/' }
       }
     }
