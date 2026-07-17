@@ -8,7 +8,6 @@
  *
  * 路由配置项说明：
  *   hidden       - true 时侧边栏不显示（登录、错误页、编辑页等）
- *   redirect     - 'noredirect' 时面包屑不可点击
  *   name         - 路由名称，keep-alive 依赖此字段
  *   permissions  - 菜单权限标识数组，动态路由筛选依据
  *   meta.title   - 侧边栏/面包屑显示名

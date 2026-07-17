@@ -191,7 +191,6 @@ function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
       route.children = filterAsyncRouter(route.children, route, type)
     } else {
       delete route['children']
-      delete route['redirect']
     }
     return true
   })

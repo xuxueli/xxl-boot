@@ -10,7 +10,7 @@
       <!-- 三级结构：按 levelList 渲染每一个导航节点 -->
       <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
         <!-- 当前页或显式 noRedirect 节点仅展示文本，不可点击 -->
-        <span v-if="item.redirect === 'noRedirect' || index == levelList.length - 1" class="no-redirect">{{ item.meta.title }}</span>
+        <span v-if="(item.children && item.children.length > 0) || index == levelList.length - 1" class="no-redirect">{{ item.meta.title }}</span>
         <!-- 其他节点提供跳转能力，点击后交给 handleLink 统一处理 -->
         <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
       </el-breadcrumb-item>
@@ -92,14 +92,8 @@ function isDashboard(route) {
   return name.trim() === 'Index'
 }
 
-// 统一处理节点跳转：优先 redirect，其次 path。
 function handleLink(item) {
-  const { redirect, path } = item
-  if (redirect) {
-    router.push(redirect)
-    return
-  }
-  router.push(path)
+  router.push(item.path)
 }
 
 // 【watchEffect 用法说明】

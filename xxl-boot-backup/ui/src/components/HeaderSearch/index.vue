@@ -166,7 +166,7 @@ function generateRoutes(routes, basePath = '', prefixTitle = []) {
     if (r.meta && r.meta.title) {
       data.title = [...data.title, r.meta.title]
       data.icon = r.meta.icon
-      if (r.redirect !== "noRedirect") {
+      if (!r.children || r.children.length === 0) {
         res.push(data)
       }
     }

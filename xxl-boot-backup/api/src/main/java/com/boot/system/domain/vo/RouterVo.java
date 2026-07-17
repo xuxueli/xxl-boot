@@ -53,11 +53,6 @@ public class RouterVo
     private boolean hidden;
 
     /**
-     * 重定向地址，当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
-     */
-    private String redirect;
-
-    /**
      * 组件地址
      */
     private String component;
@@ -105,16 +100,6 @@ public class RouterVo
     public void setHidden(boolean hidden)
     {
         this.hidden = hidden;
-    }
-
-    public String getRedirect()
-    {
-        return redirect;
-    }
-
-    public void setRedirect(String redirect)
-    {
-        this.redirect = redirect;
     }
 
     public String getComponent()
