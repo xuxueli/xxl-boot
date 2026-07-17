@@ -16,6 +16,7 @@ import { isHttp, isPathMatch } from '@/utils/validate'
 import { isRelogin } from '@/utils/request'
 import useUserStore from '@/store/modules/user'
 import useRoutesStore from '@/store/modules/routes'
+import useSettingsStore from '@/store/modules/settings'
 
 
 /**
@@ -112,6 +113,9 @@ router.beforeEach(async (to, from) => {
   const hasToken = getToken()
   if (hasToken) {
 
+    // 动态标题：设置浏览器标签页标题
+    to.meta && to.meta.title && useSettingsStore().setMenuTitle(to.meta.title)
+
     // 2.1、已登录 & 访问登录页： → 踢回首页
     if (to.path === '/login') {
       NProgress.done()
@@ -166,8 +170,9 @@ router.beforeEach(async (to, from) => {
 })
 
 // 全局后置拦截
-router.afterEach(() => {
+router.afterEach((to) => {
   NProgress.done()
+  to.meta && to.meta.title && useSettingsStore().setMenuTitle(to.meta.title)
 })
 
 export default router
