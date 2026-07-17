@@ -163,62 +163,71 @@ public class SysMenuServiceImpl implements ISysMenuService
 
     /**
      * 构建前端路由所需要的菜单
-     * 
+     *
+     * 将后端菜单列表（SysMenu）转换为前端路由器可识别的 RouterVo 结构。
+     * 根据菜单类型（目录/菜单）、层级（一级目录/子菜单）、是否外链等属性，
+     * 生成对应的路由组件和嵌套关系。
+     *
      * @param menus 菜单列表
-     * @return 路由列表
+     * @return 路由表（RouterVo 列表）
      */
     @Override
     public List<RouterVo> buildMenus(List<SysMenu> menus) {
         List<RouterVo> routers = new LinkedList<>();
         for (SysMenu menu : menus) {
 
-            // router
+            // build router
             RouterVo router = new RouterVo();
             router.setName("menu_" + menu.getMenuId());
-            router.setPath(menu.getPath());                       // getRouterPath(menu)
-            router.setComponent(getComponent(menu));
+            router.setPath(menu.getPath());
             router.setHidden("1".equals(menu.getVisible()));
-            router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
 
-            List<SysMenu> cMenus = menu.getChildren();
-            if (UserConstants.TYPE_DIR.equals(menu.getMenuType())
-                    && StringUtils.isNotEmpty(cMenus)) {
+            // router node
+            if (menu.getParentId().intValue() == MENU_ROOT_ID) {
+                // 1、根节点：
+                if (UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
 
-                router.setChildren(buildMenus(cMenus));
+                    // 1.1、目录-根节点
+                    router.setComponent(UserConstants.LAYOUT);
+                    router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
 
-            } else if (UserConstants.TYPE_MENU.equals(menu.getMenuType())
-                    && menu.getParentId().intValue() == MENU_ROOT_ID
-                    && menu.getIsFrame().equals(UserConstants.NO_FRAME)) {
+                    // children
+                    router.setChildren(buildMenus(menu.getChildren()));
 
-                // 父容器：
-                router.setMeta(null);
+                } else if (UserConstants.TYPE_MENU.equals(menu.getMenuType())) {
 
-                List<RouterVo> childrenList = new ArrayList<RouterVo>();
-                RouterVo children = new RouterVo();
-                children.setName("child_menu_" + menu.getMenuId());
-                children.setPath(menu.getPath());
-                children.setComponent(menu.getComponent());
-                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
-                childrenList.add(children);
+                    // 1.2、菜单-根节点
+                    router.setComponent(UserConstants.LAYOUT);
+                    router.setMeta(null);
 
-                router.setChildren(childrenList);
-            } else if (menu.getParentId().intValue() == MENU_ROOT_ID
-                    && menu.getIsFrame().equals(UserConstants.NO_FRAME)
-                    && StringUtils.ishttp(menu.getPath())) {
+                    // children node
+                    RouterVo children = new RouterVo();
+                    children.setName("child_menu_" + menu.getMenuId());
+                    children.setPath(menu.getPath());
+                    children.setComponent(menu.getComponent());
+                    children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
 
-                router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
-                router.setPath("/");
+                    router.setChildren(List.of(children));
+                }
+            } else {
+                // 2、子节点：
+                if (UserConstants.TYPE_DIR.equals(menu.getMenuType())) {
 
-                List<RouterVo> childrenList = new ArrayList<>();
-                RouterVo children = new RouterVo();
-                String routerPath = innerLinkReplaceEach(menu.getPath());
-                children.setPath(routerPath);
-                children.setComponent(UserConstants.INNER_LINK);
-                children.setName("child_menu_" + menu.getMenuId());
-                children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
-                childrenList.add(children);
+                    // 2.1、目录-子节点
+                    router.setComponent(UserConstants.PARENT_VIEW);
+                    router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
 
-                router.setChildren(childrenList);
+                } else if (UserConstants.TYPE_MENU.equals(menu.getMenuType())) {
+
+                    // 2.2、菜单-子节点
+                    if (StringUtils.ishttp(menu.getPath())) {
+                        router.setComponent(UserConstants.INNER_LINK);
+                    } else {
+                        router.setComponent(menu.getComponent());
+                    }
+                    router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
+
+                }
             }
 
             routers.add(router);
