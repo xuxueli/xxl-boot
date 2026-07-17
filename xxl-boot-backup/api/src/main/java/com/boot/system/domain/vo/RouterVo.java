@@ -5,6 +5,37 @@ import java.util.List;
 
 /**
  * 路由配置信息
+ *
+ * <pre>
+ *   {
+ *     path: '/',                                           // 1. 基础路径：必需‌，路由的路径字符串，支持动态参数（如 :id）
+ *     name: 'Home',                                        // 2. 命名路由：路由的唯一标识名称，用于编程式导航（router.push({ name: 'Home' })）
+ *     component: () => import('@/views/HomeView.vue'),     // 3. 组件映射：当路由匹配时渲染的组件，支持懒加载写法 () => import(...)
+ *     // redirect: '/dashboard',                           // 4. 重定向 (可选)：重定向目标。当访问该路由时，自动跳转到指定路径。如 '/target-path'、'{ name: 'UserProfile' }'
+ *     // alias: '/home',                                   // 5. 别名 (可选）：允许通过别名路径访问该路由，但 URL 保持为别名，且匹配规则与原路径一致。
+ *     meta: {                                              // 6. 元信息：不会干涉其内容，但会将其附加到路由记录上，常用于权限判断、标题设置、KeepAlive缓存标识等。
+ *       icon: user,                                            // 自定义：用于菜单图标展示
+ *       title: '首页',
+ *       requiresAuth: false,
+ *       keepAlive: true,                                       // 自定义：通常配合 <keep-alive> 使用，由业务代码判断是否缓存组件
+ *       noCache:true
+ *     },
+ *     // props: true,                                      // 7. Props 解耦：是否将 params 作为 props 传递给组件。
+ *     children: [                                          // 8. 子路由 (嵌套路由)
+ *       {
+ *         path: 'user/:id',                                        // 基础路径
+ *         name: 'UserProfile',                                     // 命名路由
+ *         component: () => import('@/views/UserProfile.vue'),      // 组件映射
+ *         meta: {                                                  // 元信息
+ *           requiresAuth: true,
+ *           roles: ['admin', 'editor']
+ *         }
+ *       }
+ *     ],
+ *     alwaysShow: true,                                    // 自定义：用于控制当只有一个子路由时，是否仍然显示父级菜单。
+ *     hidden:false                                         // 自定义：用于控制该路由是否在侧边栏菜单中隐藏
+ *   }
+ * </pre>
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RouterVo
@@ -37,7 +68,7 @@ public class RouterVo
     /**
      * 路由参数：如 {"id": 1, "name": "ry"}
      */
-    private String query;
+    /*private String query;*/
 
     /**
      * 当你一个路由下面的 children 声明的路由大于1个时，自动会变成嵌套的模式--如组件页面
@@ -104,7 +135,7 @@ public class RouterVo
         this.component = component;
     }
 
-    public String getQuery()
+    /*public String getQuery()
     {
         return query;
     }
@@ -112,7 +143,7 @@ public class RouterVo
     public void setQuery(String query)
     {
         this.query = query;
-    }
+    }*/
 
     public Boolean getAlwaysShow()
     {
