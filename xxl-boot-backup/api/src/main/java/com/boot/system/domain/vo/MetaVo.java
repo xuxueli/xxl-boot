@@ -22,22 +22,18 @@ public class MetaVo
      */
     private String link;
 
-    public MetaVo()
-    {
+    public MetaVo() {
     }
 
-    public MetaVo(String title, String icon)
-    {
+    public MetaVo(String title, String icon) {
         this.title = title;
         this.icon = icon;
     }
 
-    public MetaVo(String title, String icon, String link)
-    {
+    public MetaVo(String title, String icon, String link) {
         this.title = title;
         this.icon = icon;
-        if (StringUtils.ishttp(link))
-        {
+        if (StringUtils.ishttp(link)) {
             this.link = link;
         }
     }

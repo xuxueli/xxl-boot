@@ -18,7 +18,6 @@ import java.util.List;
  *       title: '首页',
 
  *     },
- *     // props: true,                                      // 7. Props 解耦：是否将 params 作为 props 传递给组件。
  *     children: [                                          // 8. 子路由 (嵌套路由)
  *       {
  *         path: 'user/:id',                                        // 基础路径
@@ -57,10 +56,6 @@ public class RouterVo
      */
     private String component;
 
-    /**
-     * 路由参数：如 {"id": 1, "name": "ry"}
-     */
-    /*private String query;*/
 
     /**
      * 其他元素
@@ -112,16 +107,6 @@ public class RouterVo
         this.component = component;
     }
 
-    /*public String getQuery()
-    {
-        return query;
-    }
-
-    public void setQuery(String query)
-    {
-        this.query = query;
-    }*/
-
     public MetaVo getMeta()
     {
         return meta;
@@ -141,4 +126,5 @@ public class RouterVo
     {
         this.children = children;
     }
+
 }

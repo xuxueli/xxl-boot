@@ -168,10 +168,10 @@ public class SysMenuServiceImpl implements ISysMenuService
      * @return 路由列表
      */
     @Override
-    public List<RouterVo> buildMenus(List<SysMenu> menus)
-    {
+    public List<RouterVo> buildMenus(List<SysMenu> menus) {
         List<RouterVo> routers = new LinkedList<>();
         for (SysMenu menu : menus) {
+
             RouterVo router = new RouterVo();
             router.setName(getRouteName(menu));
             router.setPath(getRouterPath(menu));
@@ -422,8 +422,7 @@ public class SysMenuServiceImpl implements ISysMenuService
     public String getRouteName(SysMenu menu)
     {
         // 非外链并且是一级目录（类型为目录）
-        if (isMenuFrame(menu))
-        {
+        if (isMenuFrame(menu)) {
             return StringUtils.EMPTY;
         }
         return getRouteName(menu.getRouteName(), menu.getPath());
@@ -500,9 +499,9 @@ public class SysMenuServiceImpl implements ISysMenuService
      * @param menu 菜单信息
      * @return 结果
      */
-    public boolean isMenuFrame(SysMenu menu)
-    {
-        return menu.getParentId().intValue() == MENU_ROOT_ID && UserConstants.TYPE_MENU.equals(menu.getMenuType())
+    public boolean isMenuFrame(SysMenu menu) {
+        return menu.getParentId().intValue() == MENU_ROOT_ID
+                && UserConstants.TYPE_MENU.equals(menu.getMenuType())
                 && menu.getIsFrame().equals(UserConstants.NO_FRAME);
     }
 
