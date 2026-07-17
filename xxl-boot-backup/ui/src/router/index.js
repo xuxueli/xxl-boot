@@ -42,20 +42,11 @@ export const constantRoutes = [
     component: () => import('@/views/login'),
     hidden: true
   },
-  /*{
-    // 首页：根路径默认跳转
+  {
+    // 首页：默认跳转 “/index”
     path: '',
-    component: Layout,
-    redirect: '/index',
-    children: [
-      {
-        path: '/index',
-        component: () => import('@/views/index'),
-        name: 'Index',
-        meta: { title: '首页', icon: 'dashboard', affix: true }
-      }
-    ]
-  },*/
+    redirect: '/index'
+  },
   {
     // 个人中心：hidden 控制侧栏不显示
     path: '/user',

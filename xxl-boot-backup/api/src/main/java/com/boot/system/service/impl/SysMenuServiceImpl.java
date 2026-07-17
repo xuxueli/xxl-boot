@@ -172,12 +172,9 @@ public class SysMenuServiceImpl implements ISysMenuService
         List<RouterVo> routers = new LinkedList<>();
         for (SysMenu menu : menus) {
 
-            // param
-            String routeName = "menu_" + menu.getMenuId();
-
             // router
             RouterVo router = new RouterVo();
-            router.setName(routeName);
+            router.setName("menu_" + menu.getMenuId());
             router.setPath(menu.getPath());                       // getRouterPath(menu)
             router.setComponent(getComponent(menu));
             router.setHidden("1".equals(menu.getVisible()));
@@ -197,7 +194,7 @@ public class SysMenuServiceImpl implements ISysMenuService
 
                 List<RouterVo> childrenList = new ArrayList<RouterVo>();
                 RouterVo children = new RouterVo();
-                children.setName(routeName);
+                children.setName("child_menu_" + menu.getMenuId());
                 children.setPath(menu.getPath());
                 children.setComponent(menu.getComponent());
                 children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
@@ -216,7 +213,7 @@ public class SysMenuServiceImpl implements ISysMenuService
                 String routerPath = innerLinkReplaceEach(menu.getPath());
                 children.setPath(routerPath);
                 children.setComponent(UserConstants.INNER_LINK);
-                children.setName(getRouteName(menu.getRouteName(), routerPath));
+                children.setName("child_menu_" + menu.getMenuId());
                 children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), menu.getPath()));
                 childrenList.add(children);
 
