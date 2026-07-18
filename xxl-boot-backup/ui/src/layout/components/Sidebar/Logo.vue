@@ -15,7 +15,7 @@
 
 <script setup>
 import logo from '@/assets/images/logo.png'
-import useSettingsStore from '@/store/modules/settings'
+import { useSettingsStore } from '@/store'
 import variables from '@/assets/styles/variables.module.scss'
 import defaultSettings from "@/settings";
 

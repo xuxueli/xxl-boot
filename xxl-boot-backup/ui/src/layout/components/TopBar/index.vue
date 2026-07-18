@@ -13,9 +13,7 @@
 
 <script setup>
 import SidebarItem from '../Sidebar/SidebarItem'
-import useAppStore from '@/store/modules/app'
-import useSettingsStore from '@/store/modules/settings'
-import useRoutesStore from '@/store/modules/routes'
+import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
 
 const route = useRoute()
 const appStore = useAppStore()

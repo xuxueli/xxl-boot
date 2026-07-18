@@ -32,7 +32,7 @@ import errorCode from '@/utils/errorCode'
 import { tansParams, blobValidate } from '@/utils/common'
 import cache from '@/utils/cache'
 import { saveAs } from 'file-saver'
-import useUserStore from '@/store/modules/user'
+import { useUserStore } from '@/store'
 
 // 文件下载时的全局 Loading 实例，下载完成或出错后关闭
 let downloadLoadingInstance

@@ -63,7 +63,7 @@ import { Minus, Plus, RefreshLeft, RefreshRight } from '@element-plus/icons-vue'
 import "vue-cropper/dist/index.css"
 import { VueCropper } from "vue-cropper"
 import { uploadAvatar } from "@/api/system/user"
-import useUserStore from "@/store/modules/user"
+import { useUserStore } from '@/store'
 import modal from '@/utils/modal'
 
 const userStore = useUserStore()

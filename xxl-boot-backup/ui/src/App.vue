@@ -7,7 +7,7 @@
 
 <script setup>
 // 系统设置Store模块
-import useSettingsStore from '@/store/modules/settings'
+import { useSettingsStore } from '@/store'
 
 /**
  * 组件挂载后的生命周期钩子

@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import useTagsViewStore from '@/store/modules/tagsView'
+import { useTagsViewStore } from '@/store'
 
 const tagAndTagSpacing = ref(4)
 const scrollContainer = ref(null)

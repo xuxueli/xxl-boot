@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import useAppStore from "@/store/modules/app"
+import { useAppStore } from '@/store'
 import modal from '@/utils/modal'
 
 const appStore = useAppStore()

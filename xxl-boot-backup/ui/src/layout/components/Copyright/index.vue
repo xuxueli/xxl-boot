@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import useSettingsStore from '@/store/modules/settings'
+import { useSettingsStore } from '@/store'
 
 // 获取全局设置状态仓库（Pinia）
 const settingsStore = useSettingsStore()

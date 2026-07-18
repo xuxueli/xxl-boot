@@ -16,7 +16,7 @@
  *   const { sys_user_sex, sys_normal_disable } = useDict('sys_user_sex', 'sys_normal_disable')
  *   // 在模板中直接使用 sys_user_sex 作为 el-select 选项数据源
  */
-import useDictStore from '@/store/modules/dict'
+import { useDictStore } from '@/store'
 import { getDicts } from '@/api/sys/dict/data'
 
 /**

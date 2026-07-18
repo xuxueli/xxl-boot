@@ -81,8 +81,7 @@ import { Search } from '@element-plus/icons-vue'
 import Fuse from 'fuse.js'
 import { getNormalPath } from '@/utils/common'
 import { isHttp } from '@/utils/validate'
-import useSettingsStore from '@/store/modules/settings'
-import useRoutesStore from '@/store/modules/routes'
+import { useSettingsStore, useRoutesStore } from '@/store'
 
 const search = ref('')
 const options = ref([])

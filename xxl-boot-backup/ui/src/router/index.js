@@ -14,9 +14,7 @@ import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
 import { isHttp, isPathMatch } from '@/utils/validate'
 import { isRelogin } from '@/utils/request'
-import useUserStore from '@/store/modules/user'
-import useRoutesStore from '@/store/modules/routes'
-import useSettingsStore from '@/store/modules/settings'
+import { useUserStore, useRoutesStore, useSettingsStore } from '@/store'
 
 
 /**

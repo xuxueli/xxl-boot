@@ -13,7 +13,7 @@
 
 <script setup>
 import copyright from "./Copyright/index"
-import useTagsViewStore from '@/store/modules/tagsView'
+import { useTagsViewStore } from '@/store'
 
 const tagsViewStore = useTagsViewStore()
 </script>

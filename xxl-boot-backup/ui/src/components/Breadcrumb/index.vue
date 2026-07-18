@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import useRoutesStore from '@/store/modules/routes'
+import { useRoutesStore } from '@/store'
 
 /**
  * 结构说明（总 -> 分）：

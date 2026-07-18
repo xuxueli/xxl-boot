@@ -177,7 +177,7 @@
 
 <script setup name="Data">
 import { Close, Delete, Download, Edit, Plus, Refresh } from '@element-plus/icons-vue'
-import useDictStore from '@/store/modules/dict'
+import { useDictStore } from '@/store'
 import { optionselect as getDictOptionselect, getType } from "@/api/sys/dict/type"
 import { listData, getData, delData, addData, updateData } from "@/api/sys/dict/data"
 import { useDict } from '@/utils/hooks/useDict'

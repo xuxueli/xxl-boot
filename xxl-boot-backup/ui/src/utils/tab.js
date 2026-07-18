@@ -47,7 +47,7 @@
  * app.config.globalProperties.$tab = tab
  * ```
  */
-import useTagsViewStore from '@/store/modules/tagsView'
+import { useTagsViewStore } from '@/store'
 import router from '@/router'
 
 export default {

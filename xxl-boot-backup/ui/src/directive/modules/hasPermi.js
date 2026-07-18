@@ -1,4 +1,4 @@
-import useUserStore from '@/store/modules/user'
+import { useUserStore } from '@/store'
 
 /**
  * 操作权限指令

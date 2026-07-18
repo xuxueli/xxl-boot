@@ -73,9 +73,7 @@ import SizeSelect from '@/components/SizeSelect'
 import HeaderSearch from '@/components/HeaderSearch'
 import BootGit from '@/components/Boot/Git'
 import BootDoc from '@/components/Boot/Doc'
-import useAppStore from '@/store/modules/app'
-import useUserStore from '@/store/modules/user'
-import useSettingsStore from '@/store/modules/settings'
+import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 import HeaderNotice from './HeaderNotice'
 
 const route = useRoute()

@@ -15,7 +15,7 @@
  *   - 方法：checkPermi(['system:user:add', 'system:user:edit'])
  */
 
-import useUserStore from '@/store/modules/user'
+import { useUserStore } from '@/store'
 
 /**
  * 内部权限校验函数

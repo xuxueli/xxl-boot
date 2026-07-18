@@ -28,9 +28,7 @@
 import Logo from './Logo'
 import SidebarItem from './SidebarItem'
 import variables from '@/assets/styles/variables.module.scss'
-import useAppStore from '@/store/modules/app'
-import useSettingsStore from '@/store/modules/settings'
-import useRoutesStore from '@/store/modules/routes'
+import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
 
 const route = useRoute()
 const appStore = useAppStore()

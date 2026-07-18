@@ -72,9 +72,7 @@
 import { ArrowDown, ArrowLeft, ArrowRight, Back, CircleClose, Close, FullScreen, RefreshRight, Right } from '@element-plus/icons-vue'
 import ScrollPane from './ScrollPane'
 import { getNormalPath } from '@/utils/common'
-import useTagsViewStore from '@/store/modules/tagsView'
-import useSettingsStore from '@/store/modules/settings'
-import useRoutesStore from '@/store/modules/routes'
+import { useTagsViewStore, useRoutesStore, useSettingsStore } from '@/store'
 import tab from '@/utils/tab'
 
 const visible = ref(false)

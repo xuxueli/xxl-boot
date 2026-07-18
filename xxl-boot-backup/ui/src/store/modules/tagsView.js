@@ -9,7 +9,7 @@
  * 4. getters：当前模块未定义 getters，组件直接消费状态数据。
  */
 import cache from '@/utils/cache'
-import useSettingsStore from '@/store/modules/settings'
+import { useSettingsStore } from '@/store'
 
 // 持久化 key：用于保存普通访问标签页，affix 固定标签不参与持久化。
 const PERSIST_KEY = 'tags-view-visited'
