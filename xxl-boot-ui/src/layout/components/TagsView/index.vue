@@ -13,6 +13,7 @@
 
     <!--  scroll pane  -->
     <ScrollPane ref="scrollPaneRef" class="tags-view-wrapper" @scroll="handleScroll" @update-arrows="updateArrowState">
+      <!-- 标签列表循环渲染 -->
       <router-link
         v-for="tag in visitedViews"
         :key="tag.path"
@@ -24,8 +25,11 @@
         @click.middle="!isAffix(tag) ? closeSelectedTag(tag) : ''"
         @contextmenu.prevent="openMenu(tag, $event)"
       >
+        <!-- icon -->
         <svg-icon v-if="tagsIcon && tag.meta && tag.meta.icon && tag.meta.icon !== '#'" :icon-class="tag.meta.icon" style="margin-right: 3px;" />
+        <!-- title -->
         {{ tag.title }}
+        <!-- close -->
         <span v-if="!isAffix(tag)" @click.prevent.stop="closeSelectedTag(tag)" class="tags-close-btn">
           <close class="el-icon-close" />
         </span>

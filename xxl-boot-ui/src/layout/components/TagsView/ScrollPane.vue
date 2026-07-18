@@ -4,12 +4,21 @@
         自动定位标签使目标标签完整可见
 -->
 <template>
+  <!--
+    el-scrollbar: Element Plus 提供的自定义滚动条组件。封装了原生滚动条，提供了更美观且可定制的滚动体验。
+  -->
   <el-scrollbar
     ref="scrollContainer"
     :vertical="false"
     class="scroll-container"
     @wheel.prevent="handleScroll"
   >
+    <!--
+      slot: 默认插槽。
+      父组件传入的内容（如一系列标签、卡片等）将渲染在此处。
+      为了实现横向滚动，插槽内的根元素通常需要设置为 display: inline-block 或 flex 布局，
+      且总宽度需超过 el-scrollbar 的可视宽度。
+    -->
     <slot />
   </el-scrollbar>
 </template>
@@ -139,8 +148,20 @@ function getScrollState() {
   }
 }
 
+/**
+ * defineExpose：‌显式地向父组件暴露子组件内部属性或方法的编译宏。
+ *
+ *  <pre>
+ *      <ScrollPane ref="scrollPaneRef" />
+ *      ...
+ *      const scrollPaneRef = ref(null)
+ *      ...
+ *      scrollPaneRef.value.xxx(param)
+ *  </pre>
+ */
 defineExpose({ moveToTarget, scrollToStart, scrollToEnd, getScrollState })
 </script>
+
 
 <style lang='scss' scoped>
 .scroll-container {

@@ -3,13 +3,13 @@
     - 模块代码重构：
             - api:              done
             - assets:           done
-            - components:       x-02   
-            - directives:       done      
+            - directives:       done
+            - router:        done：              
             - layouts:          x-01
                 - Navbar
                 - Sidebar
                 - TagsView
-            - router:        done：
+            - components:       x-02
             - store:            x
                 - 非必须合并；
             - utils:            x
@@ -19,6 +19,7 @@
         - 菜单权限：菜单查询、权限/角色列表；
         - API平移：
             - 管理端 API；
+        - 升级TS；
 
 2、API + VUE新开发：
     - 登录相关： 登录 + 验证码；
