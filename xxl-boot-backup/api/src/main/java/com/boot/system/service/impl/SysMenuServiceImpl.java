@@ -225,7 +225,7 @@ public class SysMenuServiceImpl implements ISysMenuService
                     children.setName("child_menu_" + menu.getMenuId());
                     children.setPath(menu.getPath());
                     if (StringUtils.ishttp(menu.getPath())) {
-                        router.setComponent(UserConstants.INNER_LINK);
+                        children.setComponent(UserConstants.INNER_LINK);
                     } else {
                         children.setComponent(menu.getComponent()); // component > path : find page view
                     }
