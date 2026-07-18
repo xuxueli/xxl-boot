@@ -4,6 +4,8 @@
 -->
 <template>
   <el-drawer v-model="showSettingsRef" :withHeader="false" :lock-scroll="false" direction="rtl" size="300px">
+
+    <!-- 菜单导航设置 -->
     <div class="setting-drawer-title">
       <h3 class="drawer-title">菜单导航设置</h3>
     </div>
@@ -25,6 +27,8 @@
         </div>
       </el-tooltip>
     </div>
+
+    <!-- 主题风格设置 -->
     <div class="setting-drawer-title">
       <h3 class="drawer-title">主题风格设置</h3>
     </div>
@@ -62,6 +66,7 @@
     </div>
     <el-divider/>
 
+    <!-- 系统布局配置 -->
     <h3 class="drawer-title">系统布局配置</h3>
 
     <div class="drawer-item">
@@ -131,6 +136,7 @@
 
 </template>
 
+
 <script setup>
 import { DocumentAdd, Refresh } from '@element-plus/icons-vue'
 import { useAppStore, useRoutesStore, useSettingsStore, useTagsViewStore } from '@/store'
@@ -141,6 +147,7 @@ const settingsStore = useSettingsStore()
 const tagsViewStore = useTagsViewStore()
 
 const showSettingsRef = ref(false)
+
 /*
 * 导航模式：1=左侧，2=混合，3=顶部
 */
@@ -148,6 +155,7 @@ const navType = computed({
   get: () => settingsStore.navType,
   set: v => settingsStore.setNavType(v)
 })
+
 /*
 * 主题色
 */
@@ -157,6 +165,7 @@ const theme = computed({
 })
 // 主题色：预设颜色
 const predefineColors = ref(["#409EFF", "#ff4500", "#ff8c00", "#ffd700", "#90ee90", "#00ced1", "#1e90ff", "#c71585"])
+
 /*
 * 侧边栏主题：theme-dark / theme-light
 */
@@ -164,6 +173,7 @@ const sideTheme = computed({
   get: () => settingsStore.sideTheme,
   set: v => settingsStore.setSideTheme(v)
 })
+
 /*
 * 标签页持久化：关闭时清除已保存标签
 */
@@ -178,6 +188,7 @@ const tagsViewPersist = computed({
     }
   }
 })
+
 /*
 * 动态标题
 */
@@ -280,6 +291,7 @@ defineExpose({
   openSetting
 })
 </script>
+
 
 <style lang='scss' scoped>
 .setting-drawer-title {

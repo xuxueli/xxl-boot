@@ -6,8 +6,9 @@
             - components:       x-02   
             - directives:       done      
             - layouts:          x-01
-                - 合并 5 个模块：
-                - 
+                - Navbar
+                - Sidebar
+                - TagsView
             - router:        done：
             - store:            x
                 - 非必须合并；

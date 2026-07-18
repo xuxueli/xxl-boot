@@ -8,6 +8,7 @@
   </footer>
 </template>
 
+
 <script setup>
 import { useSettingsStore } from '@/store'
 
@@ -15,6 +16,7 @@ const settingsStore = useSettingsStore()
 const visible = computed(() => settingsStore.footerVisible)
 const content = computed(() => settingsStore.footerContent)
 </script>
+
 
 <style scoped>
 .copyright {

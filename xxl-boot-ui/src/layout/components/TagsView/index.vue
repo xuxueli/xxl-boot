@@ -5,10 +5,13 @@
 -->
 <template>
   <div id="tags-view-container" class="tags-view-container" :class="{ 'tags-view-container--chrome': tagsViewStyle === 'chrome' }">
+
+    <!--  左箭头  -->
     <span class="tags-nav-btn tags-nav-btn--left" :class="{ disabled: !canScrollLeft }" @click="scrollLeft">
       <el-icon><arrow-left /></el-icon>
     </span>
 
+    <!--  scroll pane  -->
     <ScrollPane ref="scrollPaneRef" class="tags-view-wrapper" @scroll="handleScroll" @update-arrows="updateArrowState">
       <router-link
         v-for="tag in visitedViews"
@@ -29,7 +32,7 @@
       </router-link>
     </ScrollPane>
 
-    <!-- 右切换箭头 -->
+    <!-- 右箭头 -->
     <span class="tags-nav-btn tags-nav-btn--right" :class="{ disabled: !canScrollRight }" @click="scrollRight">
       <el-icon><arrow-right /></el-icon>
     </span>
@@ -78,20 +81,25 @@ import { getNormalPath } from '@/utils/common'
 import { useTagsViewStore, useRoutesStore, useSettingsStore } from '@/store'
 import tab from '@/utils/tab'
 
+// 右键上下文菜单
 const visible = ref(false)
 const top = ref(0)
 const left = ref(0)
 const selectedTag = ref({})
+// 持久化Tab
 const affixTags = ref([])
+// Tab数据
 const scrollPaneRef = ref(null)
+// 左右箭头状态：是否可点击
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
+// 页内全屏状态
 const isFullscreen = ref(false)
+// 全屏隐藏/恢复元素列表：记录隐藏的 navbar/sidebar 信息，退出时恢复
 const hiddenElements = ref([])
 
 const route = useRoute()
 const router = useRouter()
-const settingsStore = useSettingsStore()
 
 const visitedViews = computed(() => useTagsViewStore().visitedViews)
 const routes = computed(() => useRoutesStore().fullRoutes)
@@ -444,6 +452,7 @@ function handleScroll() {
   updateArrowState()
 }
 </script>
+
 
 <style lang="scss" scoped>
 $tags-bar-height: 34px;
