@@ -212,7 +212,11 @@ public class SysMenuServiceImpl implements ISysMenuService
                  *  - 子节点：Component / InnerLink(外链)
                  */
                 if (menu.getParentId().intValue() == MENU_ROOT_ID) {
-                    // 2.1、菜单-根节点
+                    /**
+                     * 2.1、菜单-根节点
+                     *  - 外链：InnerLink
+                     *  - 普通页面：非空，定制组件；默认空，使用path；
+                     */
                     router.setComponent(UserConstants.LAYOUT);
                     router.setMeta(null);
 
@@ -220,13 +224,21 @@ public class SysMenuServiceImpl implements ISysMenuService
                     RouterVo children = new RouterVo();
                     children.setName("child_menu_" + menu.getMenuId());
                     children.setPath(menu.getPath());
-                    children.setComponent(menu.getComponent());
+                    if (StringUtils.ishttp(menu.getPath())) {
+                        router.setComponent(UserConstants.INNER_LINK);
+                    } else {
+                        children.setComponent(menu.getComponent()); // component > path : find page view
+                    }
                     children.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
 
                     router.setChildren(List.of(children));
 
                 } else {
-                    // 2.2、菜单-子节点
+                    /**
+                     * 2.2、菜单-子节点
+                     *  - 外链：InnerLink
+                     *  - 普通页面：非空，定制组件；默认空，使用path；
+                     */
                     if (StringUtils.ishttp(menu.getPath())) {
                         router.setComponent(UserConstants.INNER_LINK);
                     } else {

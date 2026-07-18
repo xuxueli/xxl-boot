@@ -41,9 +41,9 @@ export const constantRoutes = [
     redirect: 'noredirect',
     children: [
       {
+        name: 'Profile',
         path: 'profile/:activeTab?',
         component: () => import('@/views/system/user/profile/index'),
-        name: 'Profile',
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
@@ -119,7 +119,6 @@ router.beforeEach(async (to, from) => {
 
     // 2.2、已登录：设置浏览器标签页标题（动态标题）
     to.meta && to.meta.title && useSettingsStore().setMenuTitle(to.meta.title)
-
     // 2.2、已登录 & roles 为空：说明尚未拉取用户信息（首次登录或刷新页面后），需要初始化动态路由
     if (useUserStore().roles.length === 0) {
       try {

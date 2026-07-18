@@ -14,8 +14,8 @@
     </el-form>
 
     <template #footer>
-      <el-button @click="onClose">取消</el-button>
       <el-button type="primary" @click="handelConfirm">确定</el-button>
+      <el-button @click="onClose">取消</el-button>
     </template>
   </el-dialog>
 </template>

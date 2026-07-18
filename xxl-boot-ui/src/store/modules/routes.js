@@ -87,13 +87,16 @@ function setFirstAffix(routes) {
 /**
  * 转换路由：字符串组件名 → 真实组件对象，递归处理子路由
  */
-function transformRoutes(asyncRouterMap, flatten = false) {
-  return asyncRouterMap.filter(route => {
+function transformRoutes(routerMap, flatten = false) {
+
+  return routerMap.filter(route => {
     try {
+
       // flatten=true 时拍平 ParentView 层级（用于 router.addRoute）
       if (flatten && route.children) {
         route.children = filterChildren(route.children)
       }
+
       // 组件映射：Layout/ParentView/InnerLink 用固定组件，其余按路径懒加载
       if (route.component) {
         if (route.component === 'Layout') {
@@ -103,22 +106,39 @@ function transformRoutes(asyncRouterMap, flatten = false) {
         } else if (route.component === 'InnerLink') {
           route.component = markRaw(InnerLink)
         } else {
-          // 普通页面：定制 component 定位组件位置，通过 loadView 异步加载
-          route.component = markRaw(loadView(route.component))
+
+          // 普通页面-1：定制 component 定位组件位置，通过 loadView 异步加载
+          let _component = loadView(route.component)
+          if (typeof _component === 'undefined') {
+            console.error(`transformRoutes loadView fail, route.component：[${route.component}]`)
+            return false;
+          }
+          route.component = markRaw(_component);
+
         }
+
       } else if (route.path) {
-        // 普通页面：默认通过 path 匹配组件位置
-        route.component = markRaw(loadView(route.path))
+
+        // 普通页面-2：默认通过 path 匹配组件位置
+        let _component = loadView(route.path)
+        if (typeof _component === 'undefined') {
+          console.error(`transformRoutes loadView fail, route.path：[${route.path}]`)
+          return false;
+        }
+        route.component = markRaw(_component);
+
       }
+
       // 有子节点则递归转换，无子节点则删除 children 使叶子闭合
       if (route.children != null && route.children && route.children.length) {
         route.children = transformRoutes(route.children, flatten)
       } else {
         delete route['children']
       }
+
       return true
     } catch (error) {
-      throw error
+      throw new Error(`transformRoutes error：${error} \n route：[${JSON.stringify(route)}]`)
     }
   })
 }
@@ -145,6 +165,11 @@ function filterChildren(childrenMap) {
  * 按 view 路径匹配页面组件
  */
 export const loadView = (view) => {
+
+  /*if (view === 'http://www.baidu.com') {
+    debugger
+  }*/
+
   let res
   // 去掉 view 可能携带的前导 "/"，统一匹配格式
   const key = view.replace(/^\//, '')
