@@ -11,6 +11,7 @@
 import cache from '@/utils/cache'
 import { useSettingsStore } from '@/store'
 
+
 // 持久化 key：用于保存普通访问标签页，affix 固定标签不参与持久化。
 const PERSIST_KEY = 'tags-view-visited'
 
@@ -58,6 +59,10 @@ function clearVisitedViews() {
   cache.local.remove(PERSIST_KEY)
 }
 
+
+/**
+ * 标签页视图 Store
+ */
 const useTagsViewStore = defineStore(
   'tags-view',
   {
@@ -123,7 +128,7 @@ const useTagsViewStore = defineStore(
        */
       addCachedView(view) {
         if (this.cachedViews.includes(view.name)) return
-        if (false) {
+        if (['Dashboard'].includes(view.name)) {
           this.cachedViews.push(view.name)
         }
       },
