@@ -33,7 +33,7 @@
 
 <script setup>
 import { isExternal } from '@/utils/validate'
-import { AppLink } from '../'
+import AppLink from './Link.vue'
 import { getNormalPath } from '@/utils/common'
 
 const props = defineProps({

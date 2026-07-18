@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { SidebarItem } from '../'
+import SidebarItem from '../Sidebar/SidebarItem.vue'
 import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
 
 const route = useRoute()

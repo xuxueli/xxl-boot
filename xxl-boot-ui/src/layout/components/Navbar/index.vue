@@ -72,8 +72,17 @@
 
 <script setup>
 import { ElMessageBox } from 'element-plus'
-import { Breadcrumb, TopNav, TopBar, Logo, Hamburger, Screenfull,
-         SizeSelect, HeaderSearch, HeaderNotice, Git, Doc } from '../'
+import Breadcrumb from './Breadcrumb.vue'
+import TopNav from './TopNav.vue'
+import TopBar from './TopBar.vue'
+import Logo from '../Sidebar/Logo.vue'
+import Hamburger from './Hamburger.vue'
+import Screenfull from './Screenfull.vue'
+import SizeSelect from './SizeSelect.vue'
+import HeaderSearch from './HeaderSearch.vue'
+import HeaderNotice from './HeaderNotice.vue'
+import Git from './Git.vue'
+import Doc from './Doc.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 
 const route = useRoute()

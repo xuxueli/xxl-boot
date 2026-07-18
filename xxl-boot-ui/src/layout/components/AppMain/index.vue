@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { Copyright } from '..'
+import Copyright from './Copyright.vue'
 import { useTagsViewStore } from '@/store'
 
 const tagsViewStore = useTagsViewStore()
