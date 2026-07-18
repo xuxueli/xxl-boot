@@ -34,13 +34,13 @@
       </template>
     </el-popover>
 
-    <notice-detail-view ref="noticeViewRef" />
+    <HeaderNoticeDetail ref="noticeViewRef" />
   </div>
 </template>
 
 <script setup>
 import { Loading, Postcard } from '@element-plus/icons-vue'
-import { NoticeDetailView } from '..'
+import { HeaderNoticeDetail } from '..'
 import { listNoticeTop, markNoticeRead, markNoticeReadAll } from '@/api/sys/notice'
 
 const noticePopover = ref(null)

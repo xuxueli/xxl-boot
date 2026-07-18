@@ -21,11 +21,11 @@
         <HeaderSearch id="header-search" class="right-menu-item" />
 
         <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <BootGit id="boot-git" class="right-menu-item hover-effect" />
+          <Git id="boot-git" class="right-menu-item hover-effect" />
         </el-tooltip>
 
         <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <BootDoc id="boot-doc" class="right-menu-item hover-effect" />
+          <Doc id="boot-doc" class="right-menu-item hover-effect" />
         </el-tooltip>
 
         <Screenfull id="screenfull" class="right-menu-item hover-effect" />
@@ -73,7 +73,7 @@
 <script setup>
 import { ElMessageBox } from 'element-plus'
 import { Breadcrumb, TopNav, TopBar, Logo, Hamburger, Screenfull,
-         SizeSelect, HeaderSearch, HeaderNotice, BootGit, BootDoc } from '../'
+         SizeSelect, HeaderSearch, HeaderNotice, Git, Doc } from '../'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 
 const route = useRoute()

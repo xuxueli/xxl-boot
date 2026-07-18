@@ -1,5 +1,5 @@
 <!--
-  组件：NoticeDetailView（公告详情抽屉）
+  组件：HeaderNoticeDetail（公告详情抽屉）
   功能：从右侧滑出抽屉展示公告完整详情内容
 -->
 <template>
