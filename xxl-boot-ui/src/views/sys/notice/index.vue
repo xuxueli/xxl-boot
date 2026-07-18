@@ -162,7 +162,7 @@
 
 <script setup name="Notice">
 import { Delete, Edit, Plus, Refresh, Search, User } from '@element-plus/icons-vue'
-import NoticeDetailView from "@/layout/components/HeaderNotice/DetailView"
+import { NoticeDetailView } from "@/layout/components"
 import ReadUsersDialog from "./ReadUsers"
 import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/sys/notice"
 import { useDict } from '@/utils/hooks/useDict'

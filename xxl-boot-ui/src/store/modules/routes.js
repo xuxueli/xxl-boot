@@ -6,8 +6,7 @@ import { markRaw } from 'vue'
 import { constantRoutes } from '@/router'
 import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'
-import ParentView from '@/layout/components/ParentView'
-import InnerLink from '@/layout/components/InnerLink'
+import { ParentView, InnerLink } from '@/layout/components'
 
 // 预先收集 views 目录下所有 .vue 文件，供后端路由字符串按需映射
 const modules = import.meta.glob('./../../views/**/*.vue')

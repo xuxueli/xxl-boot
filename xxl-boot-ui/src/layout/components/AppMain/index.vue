@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import Copyright from "./Copyright/index"
+import { Copyright } from '..'
 import { useTagsViewStore } from '@/store'
 
 const tagsViewStore = useTagsViewStore()

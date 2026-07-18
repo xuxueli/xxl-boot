@@ -72,18 +72,9 @@
 
 <script setup>
 import { ElMessageBox } from 'element-plus'
-import Breadcrumb from './Breadcrumb'
-import TopNav from './TopNav'
-import TopBar from './TopBar'
-import Logo from './Sidebar/Logo'
-import Hamburger from './Hamburger'
-import Screenfull from './Screenfull'
-import SizeSelect from './SizeSelect'
-import HeaderSearch from './HeaderSearch'
-import BootGit from './Boot/Git'
-import BootDoc from './Boot/Doc'
+import { Breadcrumb, TopNav, TopBar, Logo, Hamburger, Screenfull,
+         SizeSelect, HeaderSearch, HeaderNotice, BootGit, BootDoc } from '../'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
-import HeaderNotice from './HeaderNotice'
 
 const route = useRoute()
 const router = useRouter()

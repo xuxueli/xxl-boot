@@ -36,8 +36,7 @@
 
 <script setup>
 import { useWindowSize } from '@vueuse/core'
-import Sidebar from './components/Sidebar/index'
-import { AppMain, Navbar, Settings, TagsView } from './components'
+import { AppMain, Navbar, Settings, TagsView, Sidebar } from './components'
 import { useAppStore, useSettingsStore } from '@/store'
 
 const settingsStore = useSettingsStore()

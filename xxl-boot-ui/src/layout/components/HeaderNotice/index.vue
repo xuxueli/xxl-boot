@@ -40,7 +40,7 @@
 
 <script setup>
 import { Loading, Postcard } from '@element-plus/icons-vue'
-import NoticeDetailView from './DetailView'
+import { NoticeDetailView } from '..'
 import { listNoticeTop, markNoticeRead, markNoticeReadAll } from '@/api/sys/notice'
 
 const noticePopover = ref(null)

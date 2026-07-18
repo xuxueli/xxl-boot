@@ -73,7 +73,7 @@
 
 <script setup>
 import { ArrowDown, ArrowLeft, ArrowRight, Back, CircleClose, Close, FullScreen, RefreshRight, Right } from '@element-plus/icons-vue'
-import ScrollPane from './ScrollPane'
+import { ScrollPane } from '..'
 import { getNormalPath } from '@/utils/common'
 import { useTagsViewStore, useRoutesStore, useSettingsStore } from '@/store'
 import tab from '@/utils/tab'

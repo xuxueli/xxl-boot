@@ -33,7 +33,7 @@
 
 <script setup>
 import { isExternal } from '@/utils/validate'
-import AppLink from './Link'
+import { AppLink } from '../'
 import { getNormalPath } from '@/utils/common'
 
 const props = defineProps({

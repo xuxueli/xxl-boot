@@ -30,8 +30,7 @@
 </template>
 
 <script setup>
-import Logo from './Logo'
-import SidebarItem from './SidebarItem'
+import { Logo, SidebarItem } from '../'
 import variables from '@/assets/styles/variables.module.scss'
 import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
 

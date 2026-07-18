@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import SidebarItem from '../Sidebar/SidebarItem'
+import { SidebarItem } from '../'
 import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
 
 const route = useRoute()
