@@ -10,7 +10,7 @@
 
 <script setup>
 /* 源码仓库 URL */
-const url = ref('https://gitee.com/xxx/x')
+const url = ref('https://github.com/xuxueli/xxl-boot')
 
 /*
 * 新窗口打开源码仓库

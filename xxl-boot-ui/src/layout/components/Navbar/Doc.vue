@@ -10,7 +10,7 @@
 
 <script setup>
 /* 项目文档 URL */
-const url = ref('http://xxx.xxx/xxx')
+const url = ref('https://www.xuxueli.com/xxl-boot/')
 
 /*
 * 新窗口打开项目文档

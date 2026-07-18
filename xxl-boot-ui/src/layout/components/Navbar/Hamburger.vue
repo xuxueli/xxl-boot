@@ -4,7 +4,7 @@
 -->
 <template>
   <div style="padding: 0 15px;" @click="toggleClick">
-    <!-- isActive=true 时箭头旋转 180° === 收起状态 -->
+    <!-- 图标：isActive=true 时箭头旋转 180° === 收起状态 -->
     <svg
       :class="{'is-active':isActive}"
       class="hamburger"
@@ -29,7 +29,7 @@ defineProps({
 })
 
 /*
-* emit: toggleClick - 通知父组件切换侧边栏折叠状态
+* emit: 通知父组件切换侧边栏折叠状态，通知事件 “toggleClick”
 */
 const emit = defineEmits()
 const toggleClick = () => {

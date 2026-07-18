@@ -6,7 +6,12 @@
             - directives:       done
             - router:        done：              
             - layouts:          x-01
-                - Navbar
+                Breadcrumb
+                HeaderNotice
+                HeaderNoticeDetail
+                HeaderSearch
+                TopBar
+                TopNav
             - components:       x-02
             - store:            x
                 - 非必须合并；

@@ -5,9 +5,11 @@
 <template>
   <div>
     <el-dropdown trigger="click" @command="handleSetSize">
+      <!-- icon -->
       <div class="size-icon--style">
         <svg-icon class-name="size-icon" icon-class="size" />
       </div>
+      <!-- 下拉菜单 -->
       <template #dropdown>
         <el-dropdown-menu>
           <!-- 当前选中项 disabled，不可再点击 -->
@@ -39,7 +41,9 @@ const sizeOptions = ref([
 function handleSetSize(size) {
   modal.loading("正在设置布局大小，请稍候...")
   appStore.setSize(size)
-  setTimeout("window.location.reload()", 1000)
+  setTimeout(function () {
+    window.location.reload()
+  }, 500)
 }
 </script>
 
