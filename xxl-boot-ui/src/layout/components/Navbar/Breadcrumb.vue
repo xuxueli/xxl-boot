@@ -10,7 +10,7 @@
       <!-- 导航节点：按 levelList 渲染每一个导航节点 -->
       <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
         <!-- 纯文本节点：当前页或显式 noRedirect 节点仅展示文本，不可点击 -->
-        <span v-if="(item.children && item.children.length > 0) || index == levelList.length - 1" class="no-redirect">{{ item.meta.title }}</span>
+        <span v-if="(item.children && item.children.length > 0) || index === levelList.length - 1" class="no-redirect">{{ item.meta.title }}</span>
         <!-- 可点击节点：点击后交给 handleLink 统一处理 -->
         <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
       </el-breadcrumb-item>
@@ -20,85 +20,24 @@
 
 
 <script setup>
-import { useRoutesStore } from '@/store'
-
 const route = useRoute()
 const router = useRouter()
 /* 面包屑层级列表 */
 const levelList = ref([])
 
 /*
-* 生成面包屑列表：
-*   - 路径层级 > 2 时在路由树中递归匹配
-*   - 否则取 route.matched
+* 生成面包屑列表：从 route.matched 取 Vue Router 已解析的完整匹配链路
 */
 function getBreadcrumb() {
-  let matched = []
-  const pathNum = findPathNum(route.path)
-
-  /* 多级菜单分支（pathNum > 2）：按 '/' 分段，在路由树中逐层查找匹配链路 */
-  if (pathNum > 2) {
-    const reg = /\/\w+/gi
-    const pathList = route.path.match(reg).map((item, index) => {
-      if (index !== 0) item = item.slice(1)
-      return item
-    })
-    getMatched(pathList, useRoutesStore().fullRoutes, matched)
-
-    console.log("1>>>：", JSON.stringify(route.path))
-    console.log("2>>>：", JSON.stringify(pathList))
-    console.log("3>>>：", JSON.stringify(matched))
-
-  } else {
-    /* 一级/二级菜单分支：直接从 route.matched（从‌根路由到当前激活路由‌） 取可见节点 */
-    matched = route.matched.filter((item) => item.meta && item.meta.title)
-  }
+  /* 取 Vue Router 已解析的完整匹配链路，过滤无 title 的容器节点 */
+  let matched = route.matched.filter((item) => item.meta && item.meta.title)
 
   /* 首节点不是"首页"时自动补 home 项 */
-  if (!isDashboard(matched[0])) {
+  /*if (!isDashboard(matched[0])) {
     matched = [{ path: "/index", meta: { title: "首页" } }].concat(matched)
-  }
+  }*/
 
-  /* 过滤掉 meta.breadcrumb === false 的隐藏项 */
-  levelList.value = matched.filter(item => item.meta && item.meta.title)
-}
-
-/*
-* 统计路径中 char 出现次数，判断路由层级深度
-*/
-function findPathNum(str, char = "/") {
-  let index = str.indexOf(char)
-  let num = 0
-  while (index !== -1) {
-    num++;
-    index = str.indexOf(char, index + 1)
-  }
-  return num
-}
-
-/*
-* 递归遍历路由配置树‌：在路由树（routeList）中按 pathList 逐段递归匹配，将链路存入 matched 数组
-*/
-function getMatched(pathList, routeList, matched) {
-  // 遍历当前层级的路由列表
-  let data = routeList.find(item => item.path === pathList[0] || (item.name ?? '').toLowerCase() === pathList[0])
-  if (data) {
-    matched.push(data)
-    /* 有子路由且还有剩余 path 时继续深入递归 */
-    if (data.children && pathList.length) {
-      // 移除第一个元素，下一层开始匹配
-      pathList.shift()
-      getMatched(pathList, data.children, matched)
-    }
-  }
-}
-
-/*
-* 判断首节点是否为首页（path === '/index'）
-*/
-function isDashboard(route) {
-  const path = route && route.path
-  return path ? path.trim() === '/index' : false
+  levelList.value = matched
 }
 
 /*

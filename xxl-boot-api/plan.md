@@ -6,10 +6,9 @@
             - directives:       done
             - router:        done：              
             - layouts:          x-01
-                Breadcrumb
+                HeaderSearch
                 HeaderNotice
                 HeaderNoticeDetail
-                HeaderSearch
                 TopBar
                 TopNav
             - components:       x-02
