@@ -8,7 +8,6 @@
             - layouts:          x-01
                 - Navbar
                 - Sidebar
-                - TagsView
             - components:       x-02
             - store:            x
                 - 非必须合并；
