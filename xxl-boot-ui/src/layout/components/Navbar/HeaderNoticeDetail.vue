@@ -3,13 +3,17 @@
   功能：从右侧滑出抽屉展示公告完整详情内容
 -->
 <template>
+  <!-- 右侧滑出抽屉，半屏展示 -->
   <el-drawer v-model="visible" title="公告详情" direction="rtl" size="50%" append-to-body :before-close="handleClose" class="notice-detail-drawer">
     <div v-loading="loading" class="notice-detail-drawer__body">
+      <!-- 无数据状态 -->
       <div v-if="!detail" class="notice-empty">
         <el-icon><Document /></el-icon>
         <span>暂无数据</span>
       </div>
+      <!-- 详情内容 -->
       <div v-else class="notice-page">
+        <!-- 类型标签：通知 / 公告 / 消息 -->
         <div class="notice-type-wrap">
           <span v-if="detail.noticeType === '1'" class="notice-type-tag type-notify">
             <el-icon><Bell /></el-icon> 通知
@@ -22,8 +26,10 @@
           </span>
         </div>
 
+        <!-- 公告标题 -->
         <h1 class="notice-title">{{ detail.noticeTitle }}</h1>
 
+        <!-- 元数据：发布人 / 发布时间 / 状态 -->
         <div class="notice-meta">
           <span class="meta-item">
             <el-icon><User /></el-icon>
@@ -39,12 +45,14 @@
           </span>
         </div>
 
+        <!-- 装饰分隔线 -->
         <div class="notice-divider">
           <span class="notice-divider-dot"></span>
           <span class="notice-divider-dot"></span>
           <span class="notice-divider-dot"></span>
         </div>
 
+        <!-- 公告正文 -->
         <div class="notice-body">
           <div v-if="hasContent" class="notice-content" v-html="detail.noticeContent" />
           <div v-else class="notice-empty notice-empty--inner">
@@ -60,9 +68,9 @@
 import { Bell, Clock, Document, Message, User } from '@element-plus/icons-vue'
 import { getNotice } from '@/api/sys/notice'
 
-const visible = ref(false)
-const loading = ref(false)
-const detail = ref(null)
+const visible = ref(false)  /* 抽屉显隐 */
+const loading = ref(false)  /* 接口加载状态 */
+const detail = ref(null)    /* 公告详情数据 */
 
 /*
 * 公告状态：'0' 为正常
@@ -82,6 +90,9 @@ const hasContent = computed(() => {
 
 /*
 * 打开详情：支持传入完整公告对象（直接展示）或 noticeId（请求接口加载）
+*  payload 类型分支：
+*    object → 含 noticeContent 则直接展示（预设模式），否则只取 id 发请求
+*    string/number → 视为 noticeId 请求接口加载
 */
 function open(payload) {
   let id = null
@@ -93,14 +104,17 @@ function open(payload) {
     id = payload
   }
   visible.value = true
+  /* 直接展示模式：已有完整数据，跳过请求 */
   if (preset) {
     detail.value = preset
     return
   }
+  /* 无有效 id 时置空返回 */
   if (id == null || id === '') {
     detail.value = null
     return
   }
+  /* 请求模式：调接口获取详情 */
   loading.value = true
   detail.value = null
   getNotice(id).then(res => {

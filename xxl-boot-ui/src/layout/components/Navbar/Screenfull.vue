@@ -4,13 +4,14 @@
 -->
 <template>
   <div>
+    <!-- isFullscreen 为 true 时显示"退出全屏"图标，否则显示"全屏"图标 -->
     <svg-icon :icon-class="isFullscreen ? 'exit-fullscreen' : 'fullscreen'" @click="toggle" />
   </div>
 </template>
 
 <script setup>
 import { useFullscreen } from '@vueuse/core'
-
+/* 解构：isFullscreen 当前全屏状态，toggle 切换方法 */
 const { isFullscreen, toggle } = useFullscreen()
 </script>
 

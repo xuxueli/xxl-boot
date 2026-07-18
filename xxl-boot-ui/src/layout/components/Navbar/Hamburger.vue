@@ -4,6 +4,7 @@
 -->
 <template>
   <div style="padding: 0 15px;" @click="toggleClick">
+    <!-- isActive=true 时箭头旋转 180° === 收起状态 -->
     <svg
       :class="{'is-active':isActive}"
       class="hamburger"
@@ -19,6 +20,7 @@
 </template>
 
 <script setup>
+/* 是否展开：父组件传入，true=展开，false=收起 */
 defineProps({
   isActive: {
     type: Boolean,
@@ -26,10 +28,10 @@ defineProps({
   }
 })
 
-const emit = defineEmits()
 /*
-* 点击触发折叠事件
+* emit: toggleClick - 通知父组件切换侧边栏折叠状态
 */
+const emit = defineEmits()
 const toggleClick = () => {
   emit('toggleClick')
 }

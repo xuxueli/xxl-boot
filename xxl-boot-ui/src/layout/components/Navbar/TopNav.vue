@@ -9,6 +9,7 @@
     @select="handleSelect"
     :ellipsis="false"
   >
+    <!-- 可见的一级菜单项（前 visibleNumber 条） -->
     <template v-for="(item, index) in topMenus">
       <el-menu-item :style="{'--theme': theme}" :index="item.path" :key="index" v-if="index < visibleNumber">
         <svg-icon
@@ -18,7 +19,7 @@
       </el-menu-item>
     </template>
 
-    <!-- 顶部菜单超出数量折叠 -->
+    <!-- 顶部菜单超出数量折叠到"更多菜单" -->
     <el-sub-menu :style="{'--theme': theme}" index="more" v-if="topMenus.length > visibleNumber">
       <template #title>更多菜单</template>
       <template v-for="(item, index) in topMenus">
@@ -41,8 +42,9 @@ import { constantRoutes } from "@/router"
 import { isHttp } from '@/utils/validate'
 import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
 
-const visibleNumber = ref(null)
-const currentIndex = ref(null)
+const visibleNumber = ref(null)  /* 可见菜单数量阈值，动态计算 */
+const currentIndex = ref(null)  /* 当前选中菜单索引 */
+/* 路由列表中不显示侧边栏的路径 */
 const hideList = ['/index', '/user/profile']
 
 const appStore = useAppStore()
@@ -60,7 +62,7 @@ const topMenus = computed(() => {
   let topMenus = []
   routers.value.map((menu) => {
     if (menu.hidden !== true) {
-      // meta=null 的菜单是 Layout 父容器（如 isMenuFrame），用其子路由替代
+      /* meta=null 的菜单是 Layout 父容器（如 isMenuFrame），直接取其第一个子路由替代父级 */
       if (!menu.meta && menu.children && menu.children.length > 0) {
           topMenus.push(menu.children[0])
       } else {
@@ -73,6 +75,7 @@ const topMenus = computed(() => {
 
 /*
 * 所有子路由扁平列表，用于左侧侧边栏联动
+* 将 routers 下所有 children 拍平，并补充 parentPath 指向父级路由
 */
 const childrenMenus = computed(() => {
   let childrenMenus = []
@@ -89,14 +92,19 @@ const childrenMenus = computed(() => {
 
 /*
 * 根据当前路由自动激活对应顶级菜单，并联动侧边栏
+*   hideList 路径 → 隐藏侧边栏
+*   非根路径 → 在顶级菜单中递归查找匹配项
+*   根路径 → 隐藏侧边栏
 */
 const activeMenu = computed(() => {
   const path = route.path
   let activePath = path
 
+  /* hideList 中的页面强制隐藏侧边栏（首页 / 个人中心） */
   if (hideList.indexOf(path) !== -1) {
     appStore.hideSideBar(true)
   } else if (path !== undefined && path.lastIndexOf("/") > 0) {
+    /* 多级路径：查找匹配的顶级菜单，找到则联动显示，未找到也显示侧边栏（容错） */
     const matchedTopMenu = findActiveTopMenu(path)
     if (matchedTopMenu) {
       activePath = matchedTopMenu
@@ -105,6 +113,7 @@ const activeMenu = computed(() => {
       appStore.hideSideBar(false)
     }
   } else {
+    /* 根路径：隐藏侧边栏 */
     appStore.hideSideBar(true)
   }
 
@@ -114,6 +123,7 @@ const activeMenu = computed(() => {
 
 /*
 * 在顶级菜单树中递归查找包含当前路由的顶级菜单
+*  遍历 routers，对每个菜单调用 descendantMatches 判断当前路径是否在其子孙中
 */
 function findActiveTopMenu(currentPath) {
   if (!routers.value) return null
@@ -129,14 +139,18 @@ function findActiveTopMenu(currentPath) {
 
 /*
 * 判断 targetPath 是否匹配 route 的子孙路由路径
+*  递归：先查直接子路由，再查孙子路由
+*  匹配条件：targetPath === child.path 或 targetPath 以 child.path + '/' 或 '?' 开头
 */
 function descendantMatches(route, targetPath) {
   if (!route.children) return false
   for (const child of route.children) {
     if (!child.path) continue
+    /* 精确匹配 | 子路径匹配（含 / 和 ? 两种情况） */
     if (targetPath === child.path || targetPath.startsWith(child.path + '/') || targetPath.startsWith(child.path + '?')) {
       return true
     }
+    /* 递归查找孙子路由 */
     if (child.children && descendantMatches(child, targetPath)) {
       return true
     }
@@ -158,11 +172,11 @@ function setVisibleNumber() {
 function handleSelect(key, keyPath) {
   currentIndex.value = key
   const route = routers.value.find(item => item.path === key)
+  /* 外部链接分支：新窗口打开 */
   if (isHttp(key)) {
-    // http(s):// 路径新窗口打开
     window.open(key, "_blank")
   } else if (!route || !route.children) {
-    // 无子路由：直接跳转，隐藏侧边栏
+    /* 无子路由分支：直接 router.push 跳转，携带 query，隐藏侧边栏 */
     const routeMenu = childrenMenus.value.find(item => item.path === key)
     if (routeMenu && routeMenu.query) {
       let query = JSON.parse(routeMenu.query)
@@ -172,7 +186,7 @@ function handleSelect(key, keyPath) {
     }
     appStore.hideSideBar(true)
   } else {
-    // 有子路由：联动显示侧边栏子菜单
+    /* 有子路由分支：联动显示侧边栏子菜单 */
     activeRoutes(key)
     appStore.hideSideBar(false)
   }
@@ -180,11 +194,14 @@ function handleSelect(key, keyPath) {
 
 /*
 * 设置侧边栏联动作用域，存在子路由时 setScope，否则隐藏侧栏
+*  key：当前选中顶级菜单 path
+*  作用：通过 useRoutesStore().setScope 写入 _scope，Sidebar 的 sidebarRouters 据此过滤菜单
 */
 function activeRoutes(key) {
   let routes = []
   if (childrenMenus.value && childrenMenus.value.length > 0) {
     childrenMenus.value.map((item) => {
+      /* 匹配条件：parentPath 等于 key，或首页（index）对应空 path */
       if (key == item.parentPath || (key == "index" && "" == item.path)) {
         routes.push(item)
       }

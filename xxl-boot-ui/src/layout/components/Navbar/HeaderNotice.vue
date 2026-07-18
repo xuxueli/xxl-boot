@@ -4,18 +4,23 @@
 -->
 <template>
   <div>
+    <!-- popover 面板：鼠标悬停触发 -->
     <el-popover ref="noticePopover" placement="bottom-end" :width="320" trigger="manual" v-model:visible="noticeVisible" popper-class="notice-popover">
+      <!-- 面板头部：标题 + 全部已读按钮 -->
       <div class="notice-header">
         <span class="notice-title">通知公告</span>
         <span class="notice-mark-all" @click="markAllRead">全部已读</span>
       </div>
+      <!-- 加载中 -->
       <div v-if="noticeLoading" class="notice-loading">
         <el-icon class="is-loading"><Loading /></el-icon> 加载中...
       </div>
+      <!-- 空状态 -->
       <div v-else-if="noticeList.length === 0" class="notice-empty">
         <el-icon style="font-size:24px;display:block;margin-bottom:6px;"><Postcard /></el-icon>
         暂无公告
       </div>
+      <!-- 公告列表 -->
       <div v-else>
         <div v-for="item in noticeList" :key="item.noticeId" class="notice-item" :class="{ 'is-read': item.isRead }" @click="previewNotice(item)">
           <el-tag size="small" :type="item.noticeType === '1' ? 'warning' : 'success'" class="notice-tag">
@@ -29,11 +34,13 @@
       <template #reference>
         <div class="right-menu-item hover-effect notice-trigger" @mouseenter="onNoticeEnter" @mouseleave="onNoticeLeave">
           <svg-icon icon-class="bell" />
+          <!-- 未读数量角标 -->
           <span v-if="unreadCount > 0" class="notice-badge">{{ unreadCount }}</span>
         </div>
       </template>
     </el-popover>
 
+    <!-- 公告详情抽屉 -->
     <HeaderNoticeDetail ref="noticeViewRef" />
   </div>
 </template>
@@ -43,13 +50,13 @@ import { Loading, Postcard } from '@element-plus/icons-vue'
 import HeaderNoticeDetail from './HeaderNoticeDetail.vue'
 import { listNoticeTop, markNoticeRead, markNoticeReadAll } from '@/api/sys/notice'
 
-const noticePopover = ref(null)
-const noticeList = ref([])
-const unreadCount = ref(0)
-const noticeLoading = ref(false)
-const noticeVisible = ref(false)
-const noticeLeaveTimer = ref(null)
-const noticeViewRef = ref(null)
+const noticePopover = ref(null)    /* popover 实例引用 */
+const noticeList = ref([])         /* 公告列表 */
+const unreadCount = ref(0)         /* 未读数量 */
+const noticeLoading = ref(false)   /* 加载状态 */
+const noticeVisible = ref(false)   /* popover 显隐 */
+const noticeLeaveTimer = ref(null) /* 延时关闭定时器 */
+const noticeViewRef = ref(null)    /* 抽屉组件引用 */
 
 /*
 * 加载顶部公告列表，统计未读数

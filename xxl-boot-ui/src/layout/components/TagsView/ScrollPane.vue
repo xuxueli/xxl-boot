@@ -43,14 +43,14 @@ const scrollWrapper = computed(() => scrollContainer.value.$refs.wrapRef)
 *   - 子组件向父组件传递数据 / 通知。
 *
 *   <pre>
-      子组件：
-*     const emit = defineEmits(['my-event', 'submit'])
-*     ...
-*     const handleClick = () => {   emit('my-event', 'Hello Parent!')    }   // 触发 'my-event' 事件
 *     父组件：
 *     <Child @my-event="handleEvent" />
 *     ...
 *     const handleEvent = (msg) => {    console.log(msg)  }
+*     子组件：
+*     const emit = defineEmits(['my-event', 'submit'])
+*     ...
+*     const handleClick = () => {   emit('my-event', 'Hello Parent!')    }   // 触发 'my-event' 事件
 *   </pre>
 */
 const emits = defineEmits(['scroll', 'updateArrows'])

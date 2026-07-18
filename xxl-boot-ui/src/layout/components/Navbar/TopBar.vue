@@ -4,9 +4,12 @@
         点击切换左侧联动侧边栏子菜单。
 -->
 <template>
+  <!-- 水平 el-menu，不启用溢出省略，通过 visibleNumber 手动折叠 -->
   <el-menu class="topbar-menu" :ellipsis="false" :default-active="activeMenu" :active-text-color="theme" mode="horizontal">
+    <!-- 可见的一级菜单项（前 N 条） -->
     <SidebarItem :key="route.path + index" v-for="(route, index) in topMenus" :item="route" :base-path="route.path" />
 
+    <!-- 超出的菜单折叠到"更多菜单"下拉中 -->
     <el-sub-menu index="more" class="el-sub-menu__hide-arrow" v-if="moreRoutes.length > 0">
       <template #title>
         <span>更多菜单</span>
@@ -18,17 +21,14 @@
 
 <script setup>
 import SidebarItem from '../Sidebar/SidebarItem.vue'
-import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
+import { useRoutesStore, useSettingsStore } from '@/store'
 
 const route = useRoute()
-const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 
-const sidebarRouters = computed(() => useRoutesStore().fullRoutes)
 const theme = computed(() => settingsStore.theme)
-const device = computed(() => appStore.device)
 /*
-* 当前激活菜单：优先取 meta.activeMenu，否则取 route.path
+* 当前激活菜单：优先取 meta.activeMenu（路由配置的激活项），否则取 route.path
 */
 const activeMenu = computed(() => {
   const { meta, path } = route
@@ -38,15 +38,15 @@ const activeMenu = computed(() => {
   return path
 })
 
-const visibleNumber = ref(5)
+const visibleNumber = ref(5)  /* 可见菜单数量阈值，动态计算 */
 /*
-* 顶部一级菜单：取前 N 条可见路由
+* 顶部一级菜单：取前 N 条可见路由（N 由容器宽度动态计算）
 */
 const topMenus = computed(() => {
   return useRoutesStore().fullRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value)
 })
 /*
-* 超出折叠的更多菜单
+* 超出折叠的更多菜单：取 visibleNumber 之后的路由
 */
 const moreRoutes = computed(() => {
   return useRoutesStore().fullRoutes.filter((f) => !f.hidden).slice(visibleNumber.value)

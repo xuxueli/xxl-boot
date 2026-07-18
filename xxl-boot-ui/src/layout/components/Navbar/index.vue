@@ -1,46 +1,61 @@
 <!--
   组件：Navbar（顶部导航栏）
   功能：根据 navType 切换不同导航模式（左侧菜单/混合菜单/顶部菜单），
-        右侧渲染搜索、全屏、主题切换、语言、通知、用户菜单等操作项
+        右侧渲染搜索、全屏、主题切换、布局尺寸、通知、用户菜单等操作项
 -->
 <template>
   <div class="navbar" :class="'nav' + settingsStore.navType">
-    <!-- 侧边栏折叠 -->
+
+    <!-- 侧边栏折叠按钮 -->
     <Hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-    <!-- 导航模式：1=左侧菜单，2=混合菜单，3=顶部菜单 -->
-    <Breadcrumb v-if="settingsStore.navType == 1" id="breadcrumb-container" class="breadcrumb-container" />
-    <TopNav v-if="settingsStore.navType == 2" id="topmenu-container" class="topmenu-container" />
-    <template v-if="settingsStore.navType == 3">
+
+    <!-- 面包屑导航：导航模式：
+        1=左侧菜单（显示面包屑）
+        2=混合模式（显示 TopNav）
+        3=顶部菜单模式（显示 SidebarLogo + TopBar）
+    -->
+
+    <!-- 面包屑导航（左侧菜单模式-1） -->
+    <Breadcrumb v-if="settingsStore.navType === 1" id="breadcrumb-container" class="breadcrumb-container" />
+
+    <!-- 顶部导航（混合模式-2） -->
+    <TopNav v-if="settingsStore.navType === 2" id="topmenu-container" class="topmenu-container" />
+
+    <!-- 顶部导航+Logo（顶部菜单模式-3） -->
+    <template v-if="settingsStore.navType === 3">
+      <!-- 侧边栏 Logo -->
       <SidebarLogo v-show="settingsStore.sidebarLogo" :collapse="false"></SidebarLogo>
+      <!-- 顶部菜单栏（顶部菜单模式-3） -->
       <TopBar id="topbar-container" class="topbar-container" />
     </template>
 
+    <!-- 右侧操作区 -->
     <div class="right-menu">
-      <!-- 非移动端显示额外操作项 -->
       <template v-if="appStore.device !== 'mobile'">
+        <!-- 搜索 -->
         <HeaderSearch id="header-search" class="right-menu-item" />
-
+        <!-- 源码 -->
         <el-tooltip content="源码地址" effect="dark" placement="bottom">
           <Git id="boot-git" class="right-menu-item hover-effect" />
         </el-tooltip>
-
+        <!-- 文档 -->
         <el-tooltip content="文档地址" effect="dark" placement="bottom">
           <Doc id="boot-doc" class="right-menu-item hover-effect" />
         </el-tooltip>
-
+        <!-- 全屏 -->
         <Screenfull id="screenfull" class="right-menu-item hover-effect" />
-
+        <!-- 主题 -->
         <el-tooltip content="主题模式" effect="dark" placement="bottom">
           <div class="right-menu-item hover-effect theme-switch-wrapper" @click="toggleTheme">
             <svg-icon v-if="settingsStore.isDark" icon-class="sunny" />
             <svg-icon v-if="!settingsStore.isDark" icon-class="moon" />
           </div>
         </el-tooltip>
-
+        <!-- 布局尺寸 -->
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
           <SizeSelect id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
-
+        <!-- 通知 -->
         <el-tooltip content="消息通知" effect="dark" placement="bottom">
           <HeaderNotice id="header-notice" class="right-menu-item hover-effect" />
         </el-tooltip>
@@ -48,24 +63,30 @@
 
       <!-- 用户头像与下拉菜单 -->
       <el-dropdown @command="handleCommand" class="avatar-container right-menu-item hover-effect" trigger="hover">
+        <!-- 用户信息  -->
         <div class="avatar-wrapper">
           <img :src="userStore.avatar" class="user-avatar" />
           <span class="user-nickname"> {{ userStore.nickName }} </span>
         </div>
+        <!-- 下拉框  -->
         <template #dropdown>
           <el-dropdown-menu>
+            <!-- 个人中心  -->
             <router-link to="/user/profile">
               <el-dropdown-item>个人中心</el-dropdown-item>
             </router-link>
+            <!-- 布局设置  -->
             <el-dropdown-item command="setLayout" v-if="settingsStore.showSettings">
                 <span>布局设置</span>
             </el-dropdown-item>
+            <!-- 退出登录  -->
             <el-dropdown-item divided command="logout">
               <span>退出登录</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
+
     </div>
   </div>
 </template>
@@ -85,8 +106,6 @@ import Git from './Git.vue'
 import Doc from './Doc.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 
-const route = useRoute()
-const router = useRouter()
 const appStore = useAppStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
@@ -121,16 +140,20 @@ function logout() {
   }).catch(() => {})
 }
 
-const emits = defineEmits(['setLayout'])
 /*
 * 触发布局设置面板打开
+* emit: setLayout（由 layout/index.vue 父组件监听，控制右侧设置面板显隐）
 */
+const emits = defineEmits(['setLayout'])
 function setLayout() {
   emits('setLayout')
 }
 
 /*
-* 主题切换：支持 View Transition API 实现圆形扩散动画
+* 主题切换：浅色、暗色
+*   - 支持 View Transition API 实现圆形扩散动画
+*   - fallback 分支（无 API / 减少动效模式）：直接切换
+*   - animation 分支：startViewTransition + clipPath 圆形过渡
 */
 async function toggleTheme(event) {
   const x = event?.clientX || window.innerWidth / 2
@@ -140,11 +163,13 @@ async function toggleTheme(event) {
   const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
   const isSupported = document.startViewTransition && !isReducedMotion
 
+  /* fallback：降级到直接切换 */
   if (!isSupported) {
     settingsStore.toggleTheme()
     return
   }
 
+  /* animation：圆形扩散过渡动画 */
   try {
     const transition = document.startViewTransition(async () => {
       await new Promise((resolve) => setTimeout(resolve, 10))
@@ -153,6 +178,7 @@ async function toggleTheme(event) {
     })
     await transition.ready
 
+    /* 从点击位置向外扩散的 clipPath 动画 */
     const endRadius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
     const clipPath = [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`]
     document.documentElement.animate(

@@ -9,6 +9,7 @@
 </template>
 
 <script setup>
+/* 源码仓库 URL */
 const url = ref('https://gitee.com/xxx/x')
 
 /*
