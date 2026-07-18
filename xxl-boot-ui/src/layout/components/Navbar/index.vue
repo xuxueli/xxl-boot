@@ -11,7 +11,7 @@
     <Breadcrumb v-if="settingsStore.navType == 1" id="breadcrumb-container" class="breadcrumb-container" />
     <TopNav v-if="settingsStore.navType == 2" id="topmenu-container" class="topmenu-container" />
     <template v-if="settingsStore.navType == 3">
-      <Logo v-show="settingsStore.sidebarLogo" :collapse="false"></Logo>
+      <SidebarLogo v-show="settingsStore.sidebarLogo" :collapse="false"></SidebarLogo>
       <TopBar id="topbar-container" class="topbar-container" />
     </template>
 
@@ -75,7 +75,7 @@ import { ElMessageBox } from 'element-plus'
 import Breadcrumb from './Breadcrumb.vue'
 import TopNav from './TopNav.vue'
 import TopBar from './TopBar.vue'
-import Logo from '../Sidebar/Logo.vue'
+import SidebarLogo from '../Sidebar/SidebarLogo.vue'
 import Hamburger from './Hamburger.vue'
 import Screenfull from './Screenfull.vue'
 import SizeSelect from './SizeSelect.vue'

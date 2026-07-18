@@ -12,16 +12,26 @@
 import { isExternal } from '@/utils/validate'
 
 const props = defineProps({
+  /*
+  * 路由路径或路由对象。
+  * 外部链接传入字符串 URL，内部路由传入字符串 path 或 { path, query }。
+  */
   to: {
     type: [String, Object],
     required: true
   }
 })
 
+/*
+* 是否为外部链接（http/https/mailto 等）
+*/
 const isExt = computed(() => {
   return isExternal(props.to)
 })
 
+/*
+* 动态标签类型：外部链接用 a，内部路由用 router-link
+*/
 const type = computed(() => {
   if (isExt.value) {
     return 'a'
@@ -30,7 +40,9 @@ const type = computed(() => {
 })
 
 /*
-* 外部链接 -> a 标签新窗口；内部路由 -> router-link
+* 根据链接类型返回对应标签的绑定属性。
+* 外部链接：href + target="_blank" + rel="noopener" 防止 tab 页劫持。
+* 内部路由：to 对象直接传给 router-link。
 */
 function linkProps() {
   if (isExt.value) {

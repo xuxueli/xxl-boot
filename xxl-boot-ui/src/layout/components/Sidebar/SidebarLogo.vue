@@ -23,6 +23,13 @@ import { useSettingsStore } from '@/store'
 import variables from '@/assets/styles/variables.module.scss'
 import defaultSettings from "@/settings";
 
+/*
+* collapse：侧边栏是否折叠，折叠时只显示 Logo 图片，标题隐藏
+*
+* defineProps：“父传子”通信工具：
+*   - 子组件声明组件接收的 props
+*   - 父组件向子组件传递数据
+*/
 defineProps({
   collapse: {
     type: Boolean,
