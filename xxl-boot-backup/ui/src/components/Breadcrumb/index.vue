@@ -49,7 +49,7 @@ function getBreadcrumb() {
       if (index !== 0) item = item.slice(1)
       return item
     })
-    getMatched(pathList, useRoutesStore().defaultRoutes, matched)
+    getMatched(pathList, useRoutesStore().fullRoutes, matched)
   } else {
     matched = route.matched.filter((item) => item.meta && item.meta.title)
   }

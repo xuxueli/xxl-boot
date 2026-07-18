@@ -93,7 +93,7 @@ const router = useRouter()
 const settingsStore = useSettingsStore()
 
 const visitedViews = computed(() => useTagsViewStore().visitedViews)
-const routes = computed(() => useRoutesStore().routes)
+const routes = computed(() => useRoutesStore().fullRoutes)
 const theme = computed(() => useSettingsStore().theme)
 const tagsIcon = computed(() => useSettingsStore().tagsIcon)
 const tagsViewPersist = computed(() => useSettingsStore().tagsViewPersist)

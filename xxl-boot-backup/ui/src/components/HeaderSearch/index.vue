@@ -93,7 +93,7 @@ const fuse = ref(undefined)
 const headerSearchSelectRef = ref(null)
 const router = useRouter()
 const theme = computed(() => useSettingsStore().theme)
-const routes = computed(() => useRoutesStore().defaultRoutes)
+const routes = computed(() => useRoutesStore().fullRoutes)
 
 function click() {
   show.value = !show.value
