@@ -5,13 +5,13 @@
 <template>
   <div v-if="!item.hidden">
     <!--
-      只有一个可见子路由 -> 直接展开为 el-menu-item（不包裹 el-sub-menu），
-      减少一级菜单深度。无子路由时用父级自身的 title/icon 作为叶子结点。
+      只有一个可见子路由：直接展开为 el-menu-item（不包裹 el-sub-menu），减少一级菜单深度。无子路由时用父级自身的 title/icon 作为叶子结点。
     -->
-    <template v-if="hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren)">
+    <template v-if="hasOneShowingChild(item.children, item) && !onlyOneChild.children">
+      <!-- 菜单链接组件 -->
       <SidebarLink v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
-          <!-- 图标优先取子菜单自身的 icon，没有则继承父级 -->
+          <!-- 图标：优先取子菜单自身的 icon，没有则继承父级 -->
           <svg-icon :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"/>
           <template #title><span class="menu-title" :title="hasTitle(onlyOneChild.meta.title)">{{ onlyOneChild.meta.title }}</span></template>
         </el-menu-item>
@@ -19,15 +19,15 @@
     </template>
 
     <!--
-      多个可见子路由 -> 渲染为 el-sub-menu 下拉菜单，
-      递归用 SidebarItem 渲染每一级子菜单。
+      多个可见子路由：渲染为 el-sub-menu 下拉菜单，递归用 SidebarItem 渲染每一级子菜单。
     -->
     <el-sub-menu v-else ref="subMenu" :index="resolvePath(item.path)" teleported>
+      <!-- 父菜单 -->
       <template v-if="item.meta" #title>
         <svg-icon :icon-class="item.meta && item.meta.icon" />
         <span class="menu-title" :title="hasTitle(item.meta.title)">{{ item.meta.title }}</span>
       </template>
-
+      <!-- 子菜单列表 -->
       <SidebarItem
         v-for="(child, index) in item.children"
         :key="child.path + index"
@@ -63,10 +63,10 @@ const props = defineProps({
   /*
   * 父级路由路径基准，子路由的相对路径据此拼接为绝对路径
   */
-  basePath: {
+  /*basePath: {
     type: String,
     default: ''
-  }
+  }*/
 })
 
 /*
@@ -101,10 +101,15 @@ function hasOneShowingChild(children = [], parent) {
   }
   /*
   * 无可见子菜单：把父级自身当叶子结点展示。
-  * 设 path='' 避免跳转到无效路由，noShowingChildren 标记防止模板中触到子元素条件。
+  * 设 path='' 避免跳转到无效路由
+  *
+  *
+  * 对象展开运算符（Spread Operator）‌：
+  *   - 作用：创建一个新对象，该对象包含了 oldObject 对象的所有可枚举属性，并将 filed01 属性设置为新值；
+  *   - 格式：{ ...oldObject, filed01: '' }
   */
   if (showingChildren.length === 0) {
-    onlyOneChild.value = { ...parent, path: '', noShowingChildren: true }
+    onlyOneChild.value = { ...parent, path: '' }
     return true
   }
   /* 多个可见子菜单：需要 el-sub-menu 包裹展开 */
@@ -113,36 +118,45 @@ function hasOneShowingChild(children = [], parent) {
 
 /*
 * 解析路由路径，返回值类型可能是 string 或 { path, query }。
-* 外部链接 → 原样返回；
-* 绝对路径（以 / 开头）→ 直接使用；
-* 相对路径 → 拼接 basePath 前缀。
-* routeQuery 存在时一并返回，用于携带路由参数。
+*   - 外部链接：原样返回；
+*   - 非外部链接：默认仅支持 绝对地址
+*   - // 简化废弃：绝对路径（以 / 开头）→ 直接使用；相对路径 → 拼接 basePath 前缀。
+*   - routeQuery 存在时一并返回，用于携带路由参数。
 */
 function resolvePath(routePath, routeQuery) {
   /* 子路由本身是外部链接 → 直接返回，不走内部路由拼接 */
   if (isExternal(routePath)) {
     return routePath
   }
-  /* 父级基准路径是外部链接 → 子路由也无法拼接，直接返回父级路径 */
+
+  /* routeQuery 是 JSON 字符串，解析为对象后和 path 一起返回 */
+  if (routeQuery) {
+    let query = JSON.parse(routeQuery)
+    return { path: getNormalPath(routePath), query: query }
+  }
+  return getNormalPath(routePath)
+
+  /*
+  /!* 父级基准路径是外部链接 → 子路由也无法拼接，直接返回父级路径 *!/
   if (isExternal(props.basePath)) {
     return props.basePath
   }
 
-  /* 以 / 开头的是绝对路径，无需拼接 basePath */
+  /!* 以 / 开头的是绝对路径，无需拼接 basePath *!/
   if (routePath && routePath.startsWith('/')) {
-    /* routeQuery 是 JSON 字符串，解析为对象后和 path 一起返回 */
+    /!* routeQuery 是 JSON 字符串，解析为对象后和 path 一起返回 *!/
     if (routeQuery) {
       let query = JSON.parse(routeQuery)
       return { path: getNormalPath(routePath), query: query }
     }
     return getNormalPath(routePath)
   }
-  /* 相对路径：拼接 basePath/routePath，有 query 时一并携带 */
+  /!* 相对路径：拼接 basePath/routePath，有 query 时一并携带 *!/
   if (routeQuery) {
     let query = JSON.parse(routeQuery)
     return { path: getNormalPath(props.basePath + '/' + routePath), query: query }
   }
-  return getNormalPath(props.basePath + '/' + routePath)
+  return getNormalPath(props.basePath + '/' + routePath)*/
 }
 
 /*

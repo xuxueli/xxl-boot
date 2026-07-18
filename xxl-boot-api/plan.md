@@ -7,7 +7,6 @@
             - router:        done：              
             - layouts:          x-01
                 - Navbar
-                - Sidebar
             - components:       x-02
             - store:            x
                 - 非必须合并；

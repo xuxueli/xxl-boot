@@ -29,6 +29,19 @@ import defaultSettings from "@/settings";
 * defineProps：“父传子”通信工具：
 *   - 子组件声明组件接收的 props
 *   - 父组件向子组件传递数据
+*
+*   <pre>
+*     父组件：
+*       <SidebarLogo v-if="showLogo" :collapse="isCollapse" />
+*       ...
+*       const isCollapse = computed(() => !appStore.sidebar.opened)
+*     子组件：SidebarLogo.vue
+*       defineProps({   collapse: { type: Boolean, required: true }   })
+*       ...
+*       <template>
+*         <div :class="{ 'collapse': collapse }"></div>
+*       <template>
+*   </pre>>
 */
 defineProps({
   collapse: {
@@ -48,7 +61,8 @@ const getLogoBackground = computed(() => {
   if (settingsStore.isDark) {
     return 'var(--sidebar-bg)'
   }
-  if (settingsStore.navType == 3) {
+  // 顶部导航模式下，侧边栏背景色固定为浅色
+  if (settingsStore.navType === 3) {
     return variables.menuLightBg
   }
   return sideTheme.value === 'theme-dark' ? variables.menuBg : variables.menuLightBg
@@ -61,7 +75,8 @@ const getLogoTextColor = computed(() => {
   if (settingsStore.isDark) {
     return 'var(--sidebar-logo-text)'
   }
-  if (settingsStore.navType == 3) {
+  // 顶部导航模式下，侧边栏文字色固定为浅色
+  if (settingsStore.navType === 3) {
     return variables.menuLightText
   }
   return sideTheme.value === 'theme-dark' ? '#fff' : variables.menuLightText

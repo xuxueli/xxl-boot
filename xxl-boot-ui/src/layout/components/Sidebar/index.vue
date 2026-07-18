@@ -5,7 +5,9 @@
 -->
 <template>
   <div :class="['sidebar-theme-wrapper', {'has-logo':showLogo}, sideTheme]" class="sidebar-container">
+    <!-- Logo -->
     <SidebarLogo v-if="showLogo" :collapse="isCollapse" />
+    <!-- 菜单滚动容器 -->
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         :default-active="activeMenu"
@@ -18,6 +20,7 @@
         mode="vertical"
         :class="sideTheme"
       >
+        <!-- 菜单项 -->
         <SidebarItem
           v-for="(route, index) in sidebarRouters"
           :key="route.path + index"
@@ -42,33 +45,28 @@ const store = useRoutesStore()
 
 /*
 * 侧边栏路由列表。
-* 混合模式（navType=2）且存在顶级作用域 _scope 时，只显示该顶级菜单下的子路由；
-* 否则全量展示。
+*   - 混合模式（navType=2）且存在顶级作用域 _scope 时，只显示该顶级菜单下的子路由；
+*   - 否则全量展示。
+*
+* computed：
+*   - 自动追踪依赖（现有的响应式数据），当依赖变化时自动重新计算
 */
 const sidebarRouters = computed(() => {
   const routes = store.fullRoutes
-  /* _scope 由 TopNav 的 setScope 设置，标识当前激活的顶级菜单 path */
+  /*
+  * _scope 由 TopNav 的 setScope 设置，标识当前激活的顶级菜单 path。
+  * 默认scope为 ''/假值，不会过滤。
+  */
   if (settingsStore.navType === 2 && store._scope) {
     const menu = routes.find(r => r.path === store._scope)
     if (menu?.children) return menu.children
   }
   return routes
 })
-/*
-* 是否显示侧边栏 Logo：由系统设置开关控制
-*/
+
 const showLogo = computed(() => settingsStore.sidebarLogo)
-/*
-* 侧边栏主题：theme-dark / theme-light
-*/
 const sideTheme = computed(() => settingsStore.sideTheme)
-/*
-* 当前主题色，用于激活菜单高亮
-*/
 const theme = computed(() => settingsStore.theme)
-/*
-* 侧边栏折叠状态：侧栏收起时只显示图标
-*/
 const isCollapse = computed(() => !appStore.sidebar.opened)
 
 /*
