@@ -130,8 +130,9 @@ router.beforeEach(async (to, from) => {
         await useUserStore().getInfo()
         isRelogin.show = false
 
-        // b、初始化动态路由：后端菜单 → 前端路由，过滤 http 链接后逐条注入
-        const accessRoutes = await useRoutesStore().generateRoutes()
+        // b、初始化动态路由：初始化路由（后端菜单 → 前端路由） -> 获取拍平后数据 -> 过滤 http 链接后逐条注入
+        await useRoutesStore().initRoutes()
+        const accessRoutes = useRoutesStore().getFlattenRoutes()
         accessRoutes.forEach(route => {
           if (!isHttp(route.path)) {
             router.addRoute(route)
@@ -143,7 +144,7 @@ router.beforeEach(async (to, from) => {
       } catch (err) {
         // 路由初始化异常：退出登录
         await useUserStore().logout()
-        ElMessage.error('Error:' + JSON.stringify(err))
+        ElMessage.error('Init Router Error:' + JSON.stringify(err))
         return { path: '/' }
       }
     }
