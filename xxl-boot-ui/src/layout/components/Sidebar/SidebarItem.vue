@@ -47,7 +47,7 @@ import { getNormalPath } from '@/utils/common'
 
 const props = defineProps({
   /*
-  * 当前路由对象，包含 path / meta / children / hidden 等属性
+  * 父路由对象：包含 path / meta / children / hidden 等属性
   */
   item: {
     type: Object,
@@ -61,12 +61,12 @@ const props = defineProps({
     default: false
   },
   /*
-  * 父级路由路径基准，子路由的相对路径据此拼接为绝对路径
+  * 父路由path：子路由若为相对路径，据此拼接为绝对路径
   */
-  /*basePath: {
+  basePath: {
     type: String,
     default: ''
-  }*/
+  }
 })
 
 /*
@@ -118,45 +118,39 @@ function hasOneShowingChild(children = [], parent) {
 
 /*
 * 解析路由路径，返回值类型可能是 string 或 { path, query }。
-*   - 外部链接：原样返回；
-*   - 非外部链接：默认仅支持 绝对地址
-*   - // 简化废弃：绝对路径（以 / 开头）→ 直接使用；相对路径 → 拼接 basePath 前缀。
+*   - 外部链接 → 原样返回；
+*   - 绝对路径（以 / 开头）→ 直接使用；
+*   - 相对路径 → 拼接 basePath 前缀。
 *   - routeQuery 存在时一并返回，用于携带路由参数。
 */
 function resolvePath(routePath, routeQuery) {
-  /* 子路由本身是外部链接 → 直接返回，不走内部路由拼接 */
+
+  /* 子路由本身是外部链接：直接返回，不走内部路由拼接 */
   if (isExternal(routePath)) {
     return routePath
   }
 
-  /* routeQuery 是 JSON 字符串，解析为对象后和 path 一起返回 */
-  if (routeQuery) {
-    let query = JSON.parse(routeQuery)
-    return { path: getNormalPath(routePath), query: query }
-  }
-  return getNormalPath(routePath)
-
-  /*
-  /!* 父级基准路径是外部链接 → 子路由也无法拼接，直接返回父级路径 *!/
+  /* 父级基准路径是外部链接：子路由也无法拼接，直接返回父级路径 */
   if (isExternal(props.basePath)) {
     return props.basePath
   }
 
-  /!* 以 / 开头的是绝对路径，无需拼接 basePath *!/
+  /* 以 / 开头的是绝对路径，无需拼接 basePath */
   if (routePath && routePath.startsWith('/')) {
-    /!* routeQuery 是 JSON 字符串，解析为对象后和 path 一起返回 *!/
+    /* routeQuery 是 JSON 字符串，解析为对象后和 path 一起返回 */
     if (routeQuery) {
       let query = JSON.parse(routeQuery)
       return { path: getNormalPath(routePath), query: query }
     }
     return getNormalPath(routePath)
   }
-  /!* 相对路径：拼接 basePath/routePath，有 query 时一并携带 *!/
+
+  /* 相对路径：拼接 basePath / routePath；有 query 时一并携带 */
   if (routeQuery) {
     let query = JSON.parse(routeQuery)
     return { path: getNormalPath(props.basePath + '/' + routePath), query: query }
   }
-  return getNormalPath(props.basePath + '/' + routePath)*/
+  return getNormalPath(props.basePath + '/' + routePath)
 }
 
 /*
