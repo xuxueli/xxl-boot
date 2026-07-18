@@ -1,3 +1,14 @@
+/**
+ * 名称：Store 入口
+ * 功能：创建 Pinia 实例并集中导出所有 store 模块
+ *
+ * 用法：
+ *   import store from '@/store'
+ *   app.use(store)
+ *
+ *   import { useUserStore, useRoutesStore } from '@/store'
+ *   const userStore = useUserStore()
+ */
 import { createPinia } from 'pinia'
 
 const store = createPinia()
