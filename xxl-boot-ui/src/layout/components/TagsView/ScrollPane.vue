@@ -26,9 +26,31 @@
 <script setup>
 import { useTagsViewStore } from '@/store'
 
+const tagsViewStore = useTagsViewStore()
+const visitedViews = computed(() => tagsViewStore.visitedViews)
+
+// 标签与相邻标签之间的间隔（px）。用于计算目标标签是否超出左右边界。
 const tagAndTagSpacing = ref(4)
+// el-scrollbar 组件实例引用。
 const scrollContainer = ref(null)
+// el-scrollbar 内部原生滚动容器 DOM（el-scrollbar__wrap）。
 const scrollWrapper = computed(() => scrollContainer.value.$refs.wrapRef)
+/*
+* 通知父组件：通过 emits 触发 “scroll、updateArrows” 等自定义事件
+*
+* defineEmits：“子传父”通信工具。
+*
+*   <pre>
+      子组件：
+*     const emit = defineEmits(['my-event', 'submit'])
+*     ...
+*     const handleClick = () => {   emit('my-event', 'Hello Parent!')    }   // 触发 'my-event' 事件
+*     父组件：
+*     <Child @my-event="handleEvent" />
+*     ...
+*     const handleEvent = (msg) => {    console.log(msg)  }
+*   </pre>
+*/
 const emits = defineEmits(['scroll', 'updateArrows'])
 
 onMounted(() => {
@@ -44,16 +66,6 @@ onBeforeUnmount(() => {
 const emitScroll = () => {
   emits('scroll')
   emits('updateArrows')
-}
-
-/*
-* 缓动函数：easeInOutQuad
-*/
-function ease(t, b, c, d) {
-  t /= d / 2
-  if (t < 1) return c / 2 * t * t + b
-  t--
-  return -c / 2 * (t * (t - 2) - 1) + b
 }
 
 /*
@@ -81,6 +93,16 @@ function smoothScrollTo(target) {
 }
 
 /*
+* 缓动函数：easeInOutQuad
+*/
+function ease(t, b, c, d) {
+  t /= d / 2
+  if (t < 1) return c / 2 * t * t + b
+  t--
+  return -c / 2 * (t * (t - 2) - 1) + b
+}
+
+/*
 * 滚轮事件：累积 scrollLeft
 */
 function handleScroll(e) {
@@ -89,8 +111,6 @@ function handleScroll(e) {
   emits('updateArrows')
 }
 
-const tagsViewStore = useTagsViewStore()
-const visitedViews = computed(() => tagsViewStore.visitedViews)
 
 /*
 * 将目标标签滚动到可视区域
@@ -135,8 +155,13 @@ function moveToTarget(currentTag) {
 /*
 * 滚动到最左 / 最右
 */
-function scrollToStart() { smoothScrollTo(0) }
-function scrollToEnd() { smoothScrollTo(scrollWrapper.value.scrollWidth - scrollWrapper.value.clientWidth) }
+function scrollToStart() {
+  smoothScrollTo(0)
+}
+function scrollToEnd() {
+  smoothScrollTo(scrollWrapper.value.scrollWidth - scrollWrapper.value.clientWidth)
+}
+
 /*
 * 返回左右箭头是否可用
 */
@@ -149,14 +174,19 @@ function getScrollState() {
 }
 
 /**
- * defineExpose：‌显式地向父组件暴露子组件内部属性或方法的编译宏。
+ * defineExpose：‌“父传子”通信工具。显式地向父组件暴露子组件内部属性或方法的编译宏。
  *
  *  <pre>
+ *      父组件：
  *      <ScrollPane ref="scrollPaneRef" />
  *      ...
  *      const scrollPaneRef = ref(null)
  *      ...
- *      scrollPaneRef.value.xxx(param)
+ *      scrollPaneRef.value.abc()
+ *      子组件：ScrollPane.vue
+ *      defineExpose({ scrollToStart })
+ *      ...
+ *      function abc() {    ...  }
  *  </pre>
  */
 defineExpose({ moveToTarget, scrollToStart, scrollToEnd, getScrollState })

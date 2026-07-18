@@ -292,6 +292,7 @@ function scrollRight() {
 * 更新左右箭头可用状态
 */
 function updateArrowState() {
+  // 下次 DOM 更新循环结束之后执行延迟回调‌
   nextTick(() => {
     if (scrollPaneRef.value) {
       const state = scrollPaneRef.value.getScrollState()
