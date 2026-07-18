@@ -2,6 +2,7 @@
  * 名称：路由 Store
  * 功能：将后端菜单数据转换为前端路由
  */
+import { markRaw } from 'vue'
 import { constantRoutes } from '@/router'
 import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'
@@ -97,18 +98,18 @@ function transformRoutes(asyncRouterMap, flatten = false) {
       // 组件映射：Layout/ParentView/InnerLink 用固定组件，其余按路径懒加载
       if (route.component) {
         if (route.component === 'Layout') {
-          route.component = Layout
+          route.component = markRaw(Layout)
         } else if (route.component === 'ParentView') {
-          route.component = ParentView
+          route.component = markRaw(ParentView)
         } else if (route.component === 'InnerLink') {
-          route.component = InnerLink
+          route.component = markRaw(InnerLink)
         } else {
           // 普通页面：定制 component 定位组件位置，通过 loadView 异步加载
-          route.component = loadView(route.component)
+          route.component = markRaw(loadView(route.component))
         }
       } else if (route.path) {
         // 普通页面：默认通过 path 匹配组件位置
-        route.component = loadView(route.path)
+        route.component = markRaw(loadView(route.path))
       }
       // 有子节点则递归转换，无子节点则删除 children 使叶子闭合
       if (route.children != null && route.children && route.children.length) {
