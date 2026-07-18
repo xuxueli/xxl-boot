@@ -213,7 +213,7 @@ function handleNavType(type) {
 
   // 只有左侧/顶部需要设置侧边栏路由
   if ([1, 3].includes(type)) {
-    useRoutesStore().resetDynamicRoutes()
+    useRoutesStore().setScope('')
   }
 }
 

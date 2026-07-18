@@ -21,7 +21,7 @@ const route = useRoute()
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 
-const sidebarRouters = computed(() => useRoutesStore().sidebarRoutes)
+const sidebarRouters = computed(() => useRoutesStore().fullRoutes)
 const theme = computed(() => settingsStore.theme)
 const device = computed(() => appStore.device)
 const activeMenu = computed(() => {
@@ -34,10 +34,10 @@ const activeMenu = computed(() => {
 
 const visibleNumber = ref(5)
 const topMenus = computed(() => {
-  return useRoutesStore().sidebarRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value)
+  return useRoutesStore().fullRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value)
 })
 const moreRoutes = computed(() => {
-  return useRoutesStore().sidebarRoutes.filter((f) => !f.hidden).slice(visibleNumber.value)
+  return useRoutesStore().fullRoutes.filter((f) => !f.hidden).slice(visibleNumber.value)
 })
 function setVisibleNumber() {
   const width = document.body.getBoundingClientRect().width / 3

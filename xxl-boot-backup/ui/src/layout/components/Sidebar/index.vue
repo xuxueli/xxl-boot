@@ -35,8 +35,17 @@ import useRoutesStore from '@/store/modules/routes'
 const route = useRoute()
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
+const store = useRoutesStore()
 
-const sidebarRouters = computed(() => useRoutesStore().sidebarRoutes)
+const sidebarRouters = computed(() => {
+  const routes = store.fullRoutes
+  // 混合模式（navType=2）：只显示当前顶级菜单下的子路由
+  if (settingsStore.navType === 2 && store._scope) {
+    const menu = routes.find(r => r.path === store._scope)
+    if (menu?.children) return menu.children
+  }
+  return routes
+})
 const showLogo = computed(() => settingsStore.sidebarLogo)
 const sideTheme = computed(() => settingsStore.sideTheme)
 const theme = computed(() => settingsStore.theme)
