@@ -182,7 +182,7 @@
 
 <script setup name="Dict">
 import DictDataDrawer from './detail'
-import { Delete, Download, Edit, Operation, Plus, Refresh, Search } from '@element-plus/icons-vue'
+import { Delete, Download, Edit, Operation, Plus, QuestionFilled, Refresh, Search } from '@element-plus/icons-vue'
 import { useDictStore } from '@/store'
 import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/sys/dict/type"
 import { useDict } from '@/utils/hooks/useDict'

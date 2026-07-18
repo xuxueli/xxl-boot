@@ -113,7 +113,7 @@
 
 <script setup>
 import { useDict } from '@/utils/hooks/useDict'
-import { CopyDocument, Document, Upload } from '@element-plus/icons-vue'
+import { CopyDocument, Document, Download, InfoFilled, Sort, Upload, User, Warning } from '@element-plus/icons-vue'
 import { selectDictLabel } from '@/utils/common'
 const props = defineProps({
   visible: { type: Boolean, default: false },
