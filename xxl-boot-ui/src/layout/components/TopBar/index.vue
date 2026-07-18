@@ -1,12 +1,17 @@
+<!--
+  组件：TopBar（顶部菜单栏 - 导航模式 3）
+  功能：navType=3 时在顶部渲染一级菜单，超出数量折叠到"更多菜单"。
+        点击切换左侧联动侧边栏子菜单。
+-->
 <template>
   <el-menu class="topbar-menu" :ellipsis="false" :default-active="activeMenu" :active-text-color="theme" mode="horizontal">
-    <sidebar-item :key="route.path + index" v-for="(route, index) in topMenus" :item="route" :base-path="route.path" />
+    <SidebarItem :key="route.path + index" v-for="(route, index) in topMenus" :item="route" :base-path="route.path" />
 
     <el-sub-menu index="more" class="el-sub-menu__hide-arrow" v-if="moreRoutes.length > 0">
       <template #title>
         <span>更多菜单</span>
       </template>
-      <sidebar-item :key="route.path + index" v-for="(route, index) in moreRoutes" :item="route" :base-path="route.path" />
+      <SidebarItem :key="route.path + index" v-for="(route, index) in moreRoutes" :item="route" :base-path="route.path" />
     </el-sub-menu>
   </el-menu>
 </template>
@@ -22,6 +27,9 @@ const settingsStore = useSettingsStore()
 const sidebarRouters = computed(() => useRoutesStore().fullRoutes)
 const theme = computed(() => settingsStore.theme)
 const device = computed(() => appStore.device)
+/*
+* 当前激活菜单：优先取 meta.activeMenu，否则取 route.path
+*/
 const activeMenu = computed(() => {
   const { meta, path } = route
   if (meta.activeMenu) {
@@ -31,26 +39,33 @@ const activeMenu = computed(() => {
 })
 
 const visibleNumber = ref(5)
+/*
+* 顶部一级菜单：取前 N 条可见路由
+*/
 const topMenus = computed(() => {
   return useRoutesStore().fullRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value)
 })
+/*
+* 超出折叠的更多菜单
+*/
 const moreRoutes = computed(() => {
   return useRoutesStore().fullRoutes.filter((f) => !f.hidden).slice(visibleNumber.value)
 })
+
+/*
+* 根据容器宽度计算可显示的菜单数量
+*/
 function setVisibleNumber() {
   const width = document.body.getBoundingClientRect().width / 3
   visibleNumber.value = Math.max(1, parseInt(width / 85))
 }
 
 onMounted(() => {
+  setVisibleNumber()
   window.addEventListener('resize', setVisibleNumber)
 })
 onBeforeUnmount(() => {
   window.removeEventListener('resize', setVisibleNumber)
-})
-
-onMounted(() => {
-  setVisibleNumber()
 })
 </script>
 

@@ -1,12 +1,15 @@
+<!--
+  组件：TagsView（多标签页）
+  功能：顶部多标签页管理，支持标签切换、关闭、刷新、全屏显示，以及右键/下拉菜单操作。
+        支持 card 和 chrome 两种标签样式。
+-->
 <template>
   <div id="tags-view-container" class="tags-view-container" :class="{ 'tags-view-container--chrome': tagsViewStyle === 'chrome' }">
-    <!-- 左切换箭头 -->
     <span class="tags-nav-btn tags-nav-btn--left" :class="{ disabled: !canScrollLeft }" @click="scrollLeft">
       <el-icon><arrow-left /></el-icon>
     </span>
 
-    <!-- 标签滚动区 -->
-    <scroll-pane ref="scrollPaneRef" class="tags-view-wrapper" @scroll="handleScroll" @update-arrows="updateArrowState">
+    <ScrollPane ref="scrollPaneRef" class="tags-view-wrapper" @scroll="handleScroll" @update-arrows="updateArrowState">
       <router-link
         v-for="tag in visitedViews"
         :key="tag.path"
@@ -24,14 +27,14 @@
           <close class="el-icon-close" />
         </span>
       </router-link>
-    </scroll-pane>
+    </ScrollPane>
 
     <!-- 右切换箭头 -->
     <span class="tags-nav-btn tags-nav-btn--right" :class="{ disabled: !canScrollRight }" @click="scrollRight">
       <el-icon><arrow-right /></el-icon>
     </span>
 
-    <!-- 下拉操作菜单 -->
+    <!-- 下拉操作菜单：关闭、刷新、全屏等 -->
     <el-dropdown class="tags-action-dropdown" trigger="click" placement="bottom-end" @command="handleDropdownCommand">
       <span class="tags-action-btn">
         <el-icon><arrow-down /></el-icon>
@@ -100,11 +103,17 @@ const tagsViewStyle = computed(() => useSettingsStore().tagsViewStyle)
 // 下拉菜单针对当前激活的 tag
 const selectedDropdownTag = computed(() => visitedViews.value.find(v => isActive(v)) || {})
 
+/*
+* 路由变化时添加新标签并滚动到当前标签
+*/
 watch(route, () => {
   addTags()
   moveToCurrentTag()
 })
 
+/*
+* 右键菜单显隐时切换 body 点击监听
+*/
 watch(visible, (value) => {
   if (value) {
     document.body.addEventListener('click', closeMenu)
@@ -129,17 +138,25 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeyDown)
 })
 
+/*
+* Esc 退出全屏
+*/
 function handleKeyDown(event) {
-  // 当按下Esc键且处于全屏状态时，退出全屏
   if (event.key === 'Escape' && isFullscreen.value) {
     toggleFullscreen()
   }
 }
 
+/*
+* 当前路由是否为标签页
+*/
 function isActive(r) {
   return r.path === route.path
 }
 
+/*
+* 激活标签高亮样式（card 模式下）
+*/
 function tagActiveStyle(tag) {
   if (!isActive(tag) || tagsViewStyle.value !== 'card') return {}
   return {
@@ -148,10 +165,16 @@ function tagActiveStyle(tag) {
   }
 }
 
+/*
+* 是否为固定标签（不可关闭）
+*/
 function isAffix(tag) {
   return tag && tag.meta && tag.meta.affix
 }
 
+/*
+* 是否为最左标签（首页索引为 1 的标签）
+*/
 function isFirstView() {
   try {
     const tag = selectedTag.value && selectedTag.value.fullPath ? selectedTag.value : selectedDropdownTag.value
@@ -161,6 +184,9 @@ function isFirstView() {
   }
 }
 
+/*
+* 是否为最右标签
+*/
 function isLastView() {
   try {
     const tag = selectedTag.value && selectedTag.value.fullPath ? selectedTag.value : selectedDropdownTag.value
@@ -170,6 +196,9 @@ function isLastView() {
   }
 }
 
+/*
+* 递归收集带 affix 标记的固定标签（首页/特殊页面）
+*/
 function filterAffixTags(routes, basePath = '') {
   let tags = []
   routes.forEach(route => {
@@ -192,6 +221,9 @@ function filterAffixTags(routes, basePath = '') {
   return tags
 }
 
+/*
+* 初始化：持久化恢复 + 固定标签注册
+*/
 function initTags() {
   if (tagsViewPersist.value) {
     useTagsViewStore().loadPersistedViews()
@@ -205,6 +237,9 @@ function initTags() {
   }
 }
 
+/*
+* 当前路由加入标签页
+*/
 function addTags() {
   const { name } = route
   if (name) {
@@ -212,6 +247,9 @@ function addTags() {
   }
 }
 
+/*
+* 滚动到当前标签，同步路由更新
+*/
 function moveToCurrentTag() {
   nextTick(() => {
     for (const r of visitedViews.value) {
@@ -225,6 +263,9 @@ function moveToCurrentTag() {
   })
 }
 
+/*
+* 左 / 右箭头滚动标签栏
+*/
 function scrollLeft() {
   if (!canScrollLeft.value) return
   scrollPaneRef.value.scrollToStart()
@@ -235,6 +276,9 @@ function scrollRight() {
   scrollPaneRef.value.scrollToEnd()
 }
 
+/*
+* 更新左右箭头可用状态
+*/
 function updateArrowState() {
   nextTick(() => {
     if (scrollPaneRef.value) {
@@ -245,6 +289,9 @@ function updateArrowState() {
   })
 }
 
+/*
+* 全屏模式：隐藏 navbar/sidebar 使内容区占满视口
+*/
 function toggleFullscreen() {
   const mainContainer = document.querySelector('.main-container')
   const navbar = document.querySelector('.navbar')
@@ -277,6 +324,9 @@ function toggleFullscreen() {
   }
 }
 
+/*
+* 下拉菜单命令分发
+*/
 function handleDropdownCommand(command) {
   const tag = selectedDropdownTag.value
   selectedTag.value = tag
@@ -291,10 +341,16 @@ function handleDropdownCommand(command) {
   }
 }
 
+/*
+* 刷新指定标签页
+*/
 function refreshSelectedTag(view) {
   tab.refreshPage(view)
 }
 
+/*
+* 关闭标签：若关闭的是当前标签则跳转到最后标签
+*/
 function closeSelectedTag(view) {
   tab.closePage(view).then(({ visitedViews }) => {
     if (isActive(view)) {
@@ -303,6 +359,9 @@ function closeSelectedTag(view) {
   })
 }
 
+/*
+* 关闭右侧标签，若当前标签被关则回退
+*/
 function closeRightTags() {
   tab.closeRightPage(selectedTag.value).then(visitedViews => {
     if (!visitedViews.find(i => i.fullPath === route.fullPath)) {
@@ -311,6 +370,9 @@ function closeRightTags() {
   })
 }
 
+/*
+* 关闭左侧标签，若当前标签被关则回退
+*/
 function closeLeftTags() {
   tab.closeLeftPage(selectedTag.value).then(visitedViews => {
     if (!visitedViews.find(i => i.fullPath === route.fullPath)) {
@@ -319,6 +381,9 @@ function closeLeftTags() {
   })
 }
 
+/*
+* 关闭其他标签：先跳转到目标标签再关闭其他
+*/
 function closeOthersTags() {
   router.push(selectedTag.value).catch(() => { })
   tab.closeOtherPage(selectedTag.value).then(() => {
@@ -326,6 +391,9 @@ function closeOthersTags() {
   })
 }
 
+/*
+* 关闭全部标签（固定标签保留），若当前页被关则回退
+*/
 function closeAllTags(view) {
   tab.closeAllPage().then(({ visitedViews }) => {
     if (affixTags.value.some(tag => tag.path === route.path)) {
@@ -335,6 +403,9 @@ function closeAllTags(view) {
   })
 }
 
+/*
+* 跳转到最后标签。无标签时：Dashboard 走 redirect 刷新，其他跳首页
+*/
 function toLastView(visitedViews, view) {
   const latestView = visitedViews.slice(-1)[0]
   if (latestView) {
@@ -348,6 +419,9 @@ function toLastView(visitedViews, view) {
   }
 }
 
+/*
+* 右键菜单：记录位置和选中标签
+*/
 function openMenu(tag, e) {
   left.value = e.clientX
   top.value = e.clientY
@@ -355,10 +429,16 @@ function openMenu(tag, e) {
   selectedTag.value = tag
 }
 
+/*
+* 关闭右键菜单
+*/
 function closeMenu() {
   visible.value = false
 }
 
+/*
+* 滚动时关闭右键菜单，更新箭头状态
+*/
 function handleScroll() {
   closeMenu()
   updateArrowState()

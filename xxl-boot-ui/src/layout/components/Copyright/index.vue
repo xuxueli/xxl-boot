@@ -1,10 +1,8 @@
 <!--
-  组件名称：Copyright（布局页脚版权组件）
-  整体功能：
-  - 在系统布局底部展示统一的版权信息；
-  - 通过全局设置动态控制显隐与展示文案；
-  - 保持纯展示职责，不处理业务请求与副作用。
+  组件：Copyright（底部版权）
+  功能：系统布局底部版权信息，通过 settingsStore 控制显隐与文案
 -->
+
 <!--
   【通用说明】新组件如何开发与引入（与本组件业务无关）：
   1）开发规范
@@ -34,6 +32,7 @@
      - 使用示例（父组件）：
        `<MyBadge text="新组件" />`
 -->
+
 <template>
   <!--
     页脚容器：
@@ -49,34 +48,24 @@
 <script setup>
 import { useSettingsStore } from '@/store'
 
-// 获取全局设置状态仓库（Pinia）
 const settingsStore = useSettingsStore()
-
-// 是否显示页脚：响应式读取 store 中的 footerVisible 配置
 const visible = computed(() => settingsStore.footerVisible)
-// 页脚展示文本：响应式读取 store 中的 footerContent 配置
 const content = computed(() => settingsStore.footerContent)
 </script>
 
 <style scoped>
-/* 页脚固定在视口底部，横向铺满并保持浅灰背景风格 */
 .copyright {
-  /* 固定定位：滚动页面时始终贴底显示 */
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  /* 高度与内边距：保证单行文案可读且与布局留白一致 */
   height: 36px;
   padding: 10px 20px;
-  /* 文案右对齐，符合管理后台常见页脚布局 */
   text-align: right;
-  /* 视觉样式：浅色背景 + 灰色文字 + 顶部细边框分隔 */
   background-color: #f8f8f8;
   color: #666;
   font-size: 14px;
   border-top: 1px solid #e7e7e7;
-  /* 层级提升：避免被普通内容遮挡 */
   z-index: 999;
 }
 </style>

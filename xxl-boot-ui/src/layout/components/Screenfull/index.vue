@@ -1,3 +1,7 @@
+<!--
+  组件：Screenfull（全屏切换）
+  功能：点击切换浏览器全屏/退出全屏模式
+-->
 <template>
   <div>
     <svg-icon :icon-class="isFullscreen ? 'exit-fullscreen' : 'fullscreen'" @click="toggle" />

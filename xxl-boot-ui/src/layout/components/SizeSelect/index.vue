@@ -1,3 +1,7 @@
+<!--
+  组件：SizeSelect（布局尺寸选择器）
+  功能：顶部导航栏下拉菜单，切换 large / default / small 三种布局尺寸
+-->
 <template>
   <div>
     <el-dropdown trigger="click" @command="handleSetSize">
@@ -27,6 +31,9 @@ const sizeOptions = ref([
   { label: "稍小", value: "small" },
 ])
 
+/*
+* 切换布局尺寸：保存后刷新页面生效
+*/
 function handleSetSize(size) {
   modal.loading("正在设置布局大小，请稍候...")
   appStore.setSize(size)

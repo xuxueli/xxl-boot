@@ -1,3 +1,7 @@
+<!--
+  组件：Hamburger（侧边栏折叠按钮）
+  功能：点击切换侧边栏展开/收起，箭头旋转 180° 表示收起状态
+-->
 <template>
   <div style="padding: 0 15px;" @click="toggleClick">
     <svg
@@ -23,6 +27,9 @@ defineProps({
 })
 
 const emit = defineEmits()
+/*
+* 点击触发折叠事件
+*/
 const toggleClick = () => {
   emit('toggleClick')
 }

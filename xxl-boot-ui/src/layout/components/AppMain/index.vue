@@ -1,3 +1,7 @@
+<!--
+  组件：AppMain（主内容区）
+  功能：路由页面渲染容器，含 keep-alive 缓存、过渡动画、底部版权
+-->
 <template>
   <section class="app-main">
     <router-view v-slot="{ Component, route }">
@@ -7,12 +11,12 @@
         </keep-alive>
       </transition>
     </router-view>
-    <copyright />
+    <Copyright />
   </section>
 </template>
 
 <script setup>
-import copyright from "./Copyright/index"
+import Copyright from "./Copyright/index"
 import { useTagsViewStore } from '@/store'
 
 const tagsViewStore = useTagsViewStore()
@@ -20,13 +24,13 @@ const tagsViewStore = useTagsViewStore()
 
 <style lang="scss" scoped>
 .app-main {
-  /* 50= navbar  50  */
   min-height: calc(100vh - 50px);
   width: 100%;
   position: relative;
   overflow: hidden;
 }
 
+/* 固定 header 时，app-main 自身滚动 */
 .fixed-header + .app-main {
   overflow-y: auto;
   scrollbar-gutter: auto;
@@ -42,9 +46,9 @@ const tagsViewStore = useTagsViewStore()
   margin-top: 50px;
 }
 
+/* 开启页签时，减去 tagsView 高度 */
 .hasTagsView {
   .app-main {
-    /* 84 = navbar + tags-view = 50 + 34 */
     min-height: calc(100vh - 84px);
   }
 
@@ -55,7 +59,7 @@ const tagsViewStore = useTagsViewStore()
   }
 }
 
-/* 移动端fixed-header优化 */
+/* 移动端安全区域适配 */
 @media screen and (max-width: 991px) {
   .fixed-header + .app-main {
     padding-bottom: max(60px, calc(constant(safe-area-inset-bottom) + 40px));
@@ -70,6 +74,7 @@ const tagsViewStore = useTagsViewStore()
   }
 }
 
+/* iOS Safari 底部安全区修正 */
 @supports (-webkit-touch-callout: none) {
   @media screen and (max-width: 991px) {
     .fixed-header + .app-main {
@@ -90,6 +95,7 @@ const tagsViewStore = useTagsViewStore()
 </style>
 
 <style lang="scss">
+/* 全局滚动条样式 */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

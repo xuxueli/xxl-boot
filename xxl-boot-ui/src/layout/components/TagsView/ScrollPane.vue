@@ -1,3 +1,8 @@
+<!--
+  组件：ScrollPane（标签页滚动容器）
+  功能：水平滚动容器，支持滚轮/按钮滚动、平滑滚动到指定标签、
+        自动定位标签使目标标签完整可见
+-->
 <template>
   <el-scrollbar
     ref="scrollContainer"
@@ -14,37 +19,43 @@ import { useTagsViewStore } from '@/store'
 
 const tagAndTagSpacing = ref(4)
 const scrollContainer = ref(null)
-
 const scrollWrapper = computed(() => scrollContainer.value.$refs.wrapRef)
-
 const emits = defineEmits(['scroll', 'updateArrows'])
 
 onMounted(() => {
   scrollWrapper.value.addEventListener('scroll', emitScroll, true)
 })
-
 onBeforeUnmount(() => {
   scrollWrapper.value.removeEventListener('scroll', emitScroll)
 })
 
+/*
+* 触发父组件箭头状态更新
+*/
 const emitScroll = () => {
   emits('scroll')
   emits('updateArrows')
 }
 
+/*
+* 缓动函数：easeInOutQuad
+*/
+function ease(t, b, c, d) {
+  t /= d / 2
+  if (t < 1) return c / 2 * t * t + b
+  t--
+  return -c / 2 * (t * (t - 2) - 1) + b
+}
+
+/*
+* 平滑滚动到指定位置，300ms 动画
+*/
 function smoothScrollTo(target) {
   const $scrollWrapper = scrollWrapper.value
   const start = $scrollWrapper.scrollLeft
   const distance = target - start
   const duration = 300
   let startTime = null
-
-  function ease(t, b, c, d) {
-    t /= d / 2
-    if (t < 1) return c / 2 * t * t + b
-    t--
-    return -c / 2 * (t * (t - 2) - 1) + b
-  }
 
   function step(timestamp) {
     if (!startTime) startTime = timestamp
@@ -57,71 +68,69 @@ function smoothScrollTo(target) {
       emits('updateArrows')
     }
   }
-
   requestAnimationFrame(step)
 }
 
+/*
+* 滚轮事件：累积 scrollLeft
+*/
 function handleScroll(e) {
   const eventDelta = e.wheelDelta || -e.deltaY * 40
-  const $scrollWrapper = scrollWrapper.value
-  $scrollWrapper.scrollLeft = $scrollWrapper.scrollLeft + eventDelta / 4
+  scrollWrapper.value.scrollLeft += eventDelta / 4
   emits('updateArrows')
 }
 
 const tagsViewStore = useTagsViewStore()
 const visitedViews = computed(() => tagsViewStore.visitedViews)
 
+/*
+* 将目标标签滚动到可视区域
+*/
 function moveToTarget(currentTag) {
   const $container = scrollContainer.value.$el
   const $containerWidth = $container.offsetWidth
   const $scrollWrapper = scrollWrapper.value
 
-  let firstTag = null
-  let lastTag = null
+  if (visitedViews.value.length === 0) return
+  const firstTag = visitedViews.value[0]
+  const lastTag = visitedViews.value[visitedViews.value.length - 1]
 
-  if (visitedViews.value.length > 0) {
-    firstTag = visitedViews.value[0]
-    lastTag = visitedViews.value[visitedViews.value.length - 1]
-  }
-
+  /* 首尾标签直接滚动到起点/终点 */
   if (firstTag === currentTag) {
     smoothScrollTo(0)
   } else if (lastTag === currentTag) {
     smoothScrollTo($scrollWrapper.scrollWidth - $containerWidth)
   } else {
+    /* 中间标签：计算前后相邻标签位置，确保目标完整可见 */
     const tagListDom = document.getElementsByClassName('tags-view-item')
     const currentIndex = visitedViews.value.findIndex(item => item === currentTag)
     let prevTag = null
     let nextTag = null
     for (const k in tagListDom) {
       if (k !== 'length' && Object.hasOwnProperty.call(tagListDom, k)) {
-        if (tagListDom[k].dataset.path === visitedViews.value[currentIndex - 1].path) {
-          prevTag = tagListDom[k]
-        }
-        if (tagListDom[k].dataset.path === visitedViews.value[currentIndex + 1].path) {
-          nextTag = tagListDom[k]
-        }
+        if (tagListDom[k].dataset.path === visitedViews.value[currentIndex - 1].path) prevTag = tagListDom[k]
+        if (tagListDom[k].dataset.path === visitedViews.value[currentIndex + 1].path) nextTag = tagListDom[k]
       }
     }
-    const afterNextTagOffsetLeft = nextTag.offsetLeft + nextTag.offsetWidth + tagAndTagSpacing.value
-    const beforePrevTagOffsetLeft = prevTag.offsetLeft - tagAndTagSpacing.value
-    if (afterNextTagOffsetLeft > $scrollWrapper.scrollLeft + $containerWidth) {
-      smoothScrollTo(afterNextTagOffsetLeft - $containerWidth)
-    } else if (beforePrevTagOffsetLeft < $scrollWrapper.scrollLeft) {
-      smoothScrollTo(beforePrevTagOffsetLeft)
+    /* 目标超出右侧可见区 -> 向右滚；超出左侧 -> 向左滚 */
+    const afterNext = nextTag.offsetLeft + nextTag.offsetWidth + tagAndTagSpacing.value
+    const beforePrev = prevTag.offsetLeft - tagAndTagSpacing.value
+    if (afterNext > $scrollWrapper.scrollLeft + $containerWidth) {
+      smoothScrollTo(afterNext - $containerWidth)
+    } else if (beforePrev < $scrollWrapper.scrollLeft) {
+      smoothScrollTo(beforePrev)
     }
   }
 }
 
-function scrollToStart() {
-  smoothScrollTo(0)
-}
-
-function scrollToEnd() {
-  const $scrollWrapper = scrollWrapper.value
-  smoothScrollTo($scrollWrapper.scrollWidth - $scrollWrapper.clientWidth)
-}
-
+/*
+* 滚动到最左 / 最右
+*/
+function scrollToStart() { smoothScrollTo(0) }
+function scrollToEnd() { smoothScrollTo(scrollWrapper.value.scrollWidth - scrollWrapper.value.clientWidth) }
+/*
+* 返回左右箭头是否可用
+*/
 function getScrollState() {
   const $scrollWrapper = scrollWrapper.value
   return {
@@ -130,12 +139,7 @@ function getScrollState() {
   }
 }
 
-defineExpose({
-  moveToTarget,
-  scrollToStart,
-  scrollToEnd,
-  getScrollState
-})
+defineExpose({ moveToTarget, scrollToStart, scrollToEnd, getScrollState })
 </script>
 
 <style lang='scss' scoped>

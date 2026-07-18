@@ -1,7 +1,10 @@
+<!--
+  组件：HeaderNotice（通知公告）
+  功能：顶部导航栏铃铛图标，hover 弹出未读公告列表，支持标记已读、全部已读、预览详情
+-->
 <template>
   <div>
     <el-popover ref="noticePopover" placement="bottom-end" :width="320" trigger="manual" v-model:visible="noticeVisible" popper-class="notice-popover">
-      <!-- 弹出内容 -->
       <div class="notice-header">
         <span class="notice-title">通知公告</span>
         <span class="notice-mark-all" @click="markAllRead">全部已读</span>
@@ -23,7 +26,6 @@
         </div>
       </div>
 
-      <!-- 触发器 -->
       <template #reference>
         <div class="right-menu-item hover-effect notice-trigger" @mouseenter="onNoticeEnter" @mouseleave="onNoticeLeave">
           <svg-icon icon-class="bell" />
@@ -32,7 +34,6 @@
       </template>
     </el-popover>
 
-    <!-- 预览弹窗 -->
     <notice-detail-view ref="noticeViewRef" />
   </div>
 </template>
@@ -50,7 +51,9 @@ const noticeVisible = ref(false)
 const noticeLeaveTimer = ref(null)
 const noticeViewRef = ref(null)
 
-// 加载顶部公告列表
+/*
+* 加载顶部公告列表，统计未读数
+*/
 function loadNoticeTop() {
   noticeLoading.value = true
   listNoticeTop().then(res => {
@@ -63,7 +66,9 @@ function loadNoticeTop() {
 
 onMounted(() => loadNoticeTop())
 
-// 鼠标移入铃铛区域
+/*
+* 鼠标移入铃铛：显示 popover，绑定 popover 内的 hover 事件实现延时关闭
+*/
 function onNoticeEnter() {
   clearTimeout(noticeLeaveTimer.value)
   noticeVisible.value = true
@@ -79,12 +84,16 @@ function onNoticeEnter() {
   })
 }
 
-// 鼠标离开铃铛区域
+/*
+* 鼠标移出铃铛：延迟关闭，给移入 popover 留出时间
+*/
 function onNoticeLeave() {
   noticeLeaveTimer.value = setTimeout(() => { noticeVisible.value = false }, 150)
 }
 
-// 预览公告详情
+/*
+* 点击公告：未读则标记已读，预览详情
+*/
 function previewNotice(item) {
   if (!item.isRead) {
     markNoticeRead(item.noticeId).catch(() => {})
@@ -95,7 +104,9 @@ function previewNotice(item) {
   noticeViewRef.value.open(item.noticeId)
 }
 
-// 全部已读
+/*
+* 全部已读：批量标记并更新本地状态
+*/
 function markAllRead() {
   const ids = noticeList.value.map(n => n.noticeId).join(',')
   if (!ids) return

@@ -1,26 +1,34 @@
+<!--
+  组件：Navbar（顶部导航栏）
+  功能：根据 navType 切换不同导航模式（左侧菜单/混合菜单/顶部菜单），
+        右侧渲染搜索、全屏、主题切换、语言、通知、用户菜单等操作项
+-->
 <template>
   <div class="navbar" :class="'nav' + settingsStore.navType">
-    <hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-    <breadcrumb v-if="settingsStore.navType == 1" id="breadcrumb-container" class="breadcrumb-container" />
-    <top-nav v-if="settingsStore.navType == 2" id="topmenu-container" class="topmenu-container" />
+    <!-- 侧边栏折叠 -->
+    <Hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <!-- 导航模式：1=左侧菜单，2=混合菜单，3=顶部菜单 -->
+    <Breadcrumb v-if="settingsStore.navType == 1" id="breadcrumb-container" class="breadcrumb-container" />
+    <TopNav v-if="settingsStore.navType == 2" id="topmenu-container" class="topmenu-container" />
     <template v-if="settingsStore.navType == 3">
-      <logo v-show="settingsStore.sidebarLogo" :collapse="false"></logo>
-      <top-bar id="topbar-container" class="topbar-container" />
+      <Logo v-show="settingsStore.sidebarLogo" :collapse="false"></Logo>
+      <TopBar id="topbar-container" class="topbar-container" />
     </template>
 
     <div class="right-menu">
+      <!-- 非移动端显示额外操作项 -->
       <template v-if="appStore.device !== 'mobile'">
-        <header-search id="header-search" class="right-menu-item" />
+        <HeaderSearch id="header-search" class="right-menu-item" />
 
         <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <boot-git id="boot-git" class="right-menu-item hover-effect" />
+          <BootGit id="boot-git" class="right-menu-item hover-effect" />
         </el-tooltip>
 
         <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <boot-doc id="boot-doc" class="right-menu-item hover-effect" />
+          <BootDoc id="boot-doc" class="right-menu-item hover-effect" />
         </el-tooltip>
 
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
+        <Screenfull id="screenfull" class="right-menu-item hover-effect" />
 
         <el-tooltip content="主题模式" effect="dark" placement="bottom">
           <div class="right-menu-item hover-effect theme-switch-wrapper" @click="toggleTheme">
@@ -30,14 +38,15 @@
         </el-tooltip>
 
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
+          <SizeSelect id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
 
         <el-tooltip content="消息通知" effect="dark" placement="bottom">
-          <header-notice id="header-notice" class="right-menu-item hover-effect" />
+          <HeaderNotice id="header-notice" class="right-menu-item hover-effect" />
         </el-tooltip>
       </template>
 
+      <!-- 用户头像与下拉菜单 -->
       <el-dropdown @command="handleCommand" class="avatar-container right-menu-item hover-effect" trigger="hover">
         <div class="avatar-wrapper">
           <img :src="userStore.avatar" class="user-avatar" />
@@ -82,41 +91,47 @@ const appStore = useAppStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
 
+/*
+* 切换侧边栏展开/收起
+*/
 function toggleSideBar() {
   appStore.toggleSideBar()
 }
 
+/*
+* 用户下拉菜单命令处理
+*/
 function handleCommand(command) {
   switch (command) {
-    case "setLayout":
-      setLayout()
-      break
-    case "logout":
-      logout()
-      break
-    default:
-      break
+    case "setLayout": setLayout(); break
+    case "logout":    logout(); break
   }
 }
 
+/*
+* 退出登录：二次确认后清除登录态并跳转首页
+*/
 function logout() {
   ElMessageBox.confirm('确定注销并退出系统吗？', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    userStore.logout().then(() => {
-      location.href = '/index'
-    })
-  }).catch(() => { })
+    userStore.logout().then(() => { location.href = '/index' })
+  }).catch(() => {})
 }
 
 const emits = defineEmits(['setLayout'])
+/*
+* 触发布局设置面板打开
+*/
 function setLayout() {
   emits('setLayout')
 }
 
-
+/*
+* 主题切换：支持 View Transition API 实现圆形扩散动画
+*/
 async function toggleTheme(event) {
   const x = event?.clientX || window.innerWidth / 2
   const y = event?.clientY || window.innerHeight / 2

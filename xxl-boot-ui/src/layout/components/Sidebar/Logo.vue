@@ -1,3 +1,7 @@
+<!--
+  组件：SidebarLogo（侧边栏 Logo）
+  功能：侧边栏顶部 Logo + 标题，展开/收起状态切换显示
+-->
 <template>
   <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
     <transition name="sidebarLogoFade">
@@ -30,7 +34,9 @@ const title = defaultSettings.title
 const settingsStore = useSettingsStore()
 const sideTheme = computed(() => settingsStore.sideTheme)
 
-// 获取Logo背景色
+/*
+* Logo 背景色：深色模式 / 顶部导航 / theme-dark / theme-light
+*/
 const getLogoBackground = computed(() => {
   if (settingsStore.isDark) {
     return 'var(--sidebar-bg)'
@@ -41,7 +47,9 @@ const getLogoBackground = computed(() => {
   return sideTheme.value === 'theme-dark' ? variables.menuBg : variables.menuLightBg
 })
 
-// 获取Logo文字颜色
+/*
+* Logo 文字色：深色模式 / 顶部导航 / theme-dark / theme-light
+*/
 const getLogoTextColor = computed(() => {
   if (settingsStore.isDark) {
     return 'var(--sidebar-logo-text)'

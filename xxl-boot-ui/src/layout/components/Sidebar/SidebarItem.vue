@@ -1,12 +1,16 @@
+<!--
+  组件：SidebarItem（递归菜单项）
+  功能：递归渲染侧边栏菜单树，单子路由时自动展开，多子路由时显示为 el-sub-menu
+-->
 <template>
   <div v-if="!item.hidden">
     <template v-if="hasOneShowingChild(item.children, item) && (!onlyOneChild.children || onlyOneChild.noShowingChildren)">
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
+      <AppLink v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
           <svg-icon :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"/>
           <template #title><span class="menu-title" :title="hasTitle(onlyOneChild.meta.title)">{{ onlyOneChild.meta.title }}</span></template>
         </el-menu-item>
-      </app-link>
+      </AppLink>
     </template>
 
     <el-sub-menu v-else ref="subMenu" :index="resolvePath(item.path)" teleported>
@@ -15,7 +19,7 @@
         <span class="menu-title" :title="hasTitle(item.meta.title)">{{ item.meta.title }}</span>
       </template>
 
-      <sidebar-item
+      <SidebarItem
         v-for="(child, index) in item.children"
         :key="child.path + index"
         :is-nest="true"
@@ -50,32 +54,36 @@ const props = defineProps({
 
 const onlyOneChild = ref({})
 
+/*
+* 判断是否只有一个可见子菜单：单子菜单直接展开，无子菜单则展示父级自身
+*/
 function hasOneShowingChild(children = [], parent) {
   if (!children) {
     children = []
   }
   const showingChildren = children.filter(item => {
+    /* 隐藏菜单不参与计数 */
     if (item.hidden) {
       return false
     }
     onlyOneChild.value = item
     return true
   })
-
-  // When there is only one child router, the child router is displayed by default
+  /* 刚好一个子菜单 -> 直接展开（不显示父级 el-sub-menu） */
   if (showingChildren.length === 1) {
     return true
   }
-
-  // Show parent if there are no child router to display
+  /* 无可见子菜单 -> 把父级当叶子结点展示 */
   if (showingChildren.length === 0) {
     onlyOneChild.value = { ...parent, path: '', noShowingChildren: true }
     return true
   }
-
   return false
 }
 
+/*
+* 解析路由路径：外部链接 -> 原样返回；绝对路径 -> 直接使用；相对路径 -> 拼接 basePath
+*/
 function resolvePath(routePath, routeQuery) {
 
   if (isExternal(routePath)) {
@@ -85,9 +93,7 @@ function resolvePath(routePath, routeQuery) {
     return props.basePath
   }
 
-  // TODO：待整理盘点逻辑
-  // 后端返回的子路由 path 已是完整绝对路径（以 / 开头，已包含父级段），
-  // 直接作为完整路径使用，避免再与 basePath 拼接导致 /system/system/... 重复。
+  /* 绝对路径：有 query 时拼接 query 参数返回 */
   if (routePath && routePath.startsWith('/')) {
     if (routeQuery) {
       let query = JSON.parse(routeQuery)
@@ -95,6 +101,7 @@ function resolvePath(routePath, routeQuery) {
     }
     return getNormalPath(routePath)
   }
+  /* 相对路径：拼接 basePath，有 query 时一并返回 */
   if (routeQuery) {
     let query = JSON.parse(routeQuery)
     return { path: getNormalPath(props.basePath + '/' + routePath), query: query }
@@ -102,7 +109,10 @@ function resolvePath(routePath, routeQuery) {
   return getNormalPath(props.basePath + '/' + routePath)
 }
 
-function hasTitle(title){
+/*
+* 标题超长时显示 tooltip
+*/
+function hasTitle(title) {
   if (title.length > 5) {
     return title
   } else {

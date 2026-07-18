@@ -1,3 +1,7 @@
+<!--
+  组件：TopNav（混合模式顶部导航 - 导航模式 2）
+  功能：navType=2 时在顶部渲染一级菜单，选中后左侧侧边栏联动显示对应子菜单
+-->
 <template>
   <el-menu
     :default-active="activeMenu"
@@ -37,11 +41,8 @@ import { constantRoutes } from "@/router"
 import { isHttp } from '@/utils/validate'
 import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
 
-// 顶部栏初始数
 const visibleNumber = ref(null)
-// 当前激活菜单的 index
 const currentIndex = ref(null)
-// 隐藏侧边栏路由
 const hideList = ['/index', '/user/profile']
 
 const appStore = useAppStore()
@@ -49,12 +50,12 @@ const settingsStore = useSettingsStore()
 const route = useRoute()
 const router = useRouter()
 
-// 主题颜色
 const theme = computed(() => settingsStore.theme)
-// 所有的路由信息
 const routers = computed(() => useRoutesStore().dynamicRoutes)
 
-// 顶部显示菜单
+/*
+* 顶部菜单列表，meta=null 的 Layout 容器用子路由替代
+*/
 const topMenus = computed(() => {
   let topMenus = []
   routers.value.map((menu) => {
@@ -70,7 +71,9 @@ const topMenus = computed(() => {
   return topMenus
 })
 
-// 设置子路由
+/*
+* 所有子路由扁平列表，用于左侧侧边栏联动
+*/
 const childrenMenus = computed(() => {
   let childrenMenus = []
   routers.value.map((router) => {
@@ -84,7 +87,9 @@ const childrenMenus = computed(() => {
   return constantRoutes.concat(childrenMenus)
 })
 
-// 默认激活的菜单
+/*
+* 根据当前路由自动激活对应顶级菜单，并联动侧边栏
+*/
 const activeMenu = computed(() => {
   const path = route.path
   let activePath = path
@@ -107,7 +112,9 @@ const activeMenu = computed(() => {
   return activePath
 })
 
-// 在顶级菜单树中递归查找匹配当前路由的顶级菜单 path
+/*
+* 在顶级菜单树中递归查找包含当前路由的顶级菜单
+*/
 function findActiveTopMenu(currentPath) {
   if (!routers.value) return null
   for (const menu of routers.value) {
@@ -120,6 +127,9 @@ function findActiveTopMenu(currentPath) {
   return null
 }
 
+/*
+* 判断 targetPath 是否匹配 route 的子孙路由路径
+*/
 function descendantMatches(route, targetPath) {
   if (!route.children) return false
   for (const child of route.children) {
@@ -134,11 +144,17 @@ function descendantMatches(route, targetPath) {
   return false
 }
 
+/*
+* 根据容器宽度计算可显示的菜单数量
+*/
 function setVisibleNumber() {
   const width = document.body.getBoundingClientRect().width / 3
   visibleNumber.value = Math.max(1, parseInt(width / 85))
 }
 
+/*
+* 顶部菜单选中：外部链接新窗口 / 无子路由直接跳转并隐藏侧栏 / 有子路由联动左侧菜单
+*/
 function handleSelect(key, keyPath) {
   currentIndex.value = key
   const route = routers.value.find(item => item.path === key)
@@ -146,7 +162,7 @@ function handleSelect(key, keyPath) {
     // http(s):// 路径新窗口打开
     window.open(key, "_blank")
   } else if (!route || !route.children) {
-    // 没有子路由路径内部打开
+    // 无子路由：直接跳转，隐藏侧边栏
     const routeMenu = childrenMenus.value.find(item => item.path === key)
     if (routeMenu && routeMenu.query) {
       let query = JSON.parse(routeMenu.query)
@@ -156,12 +172,15 @@ function handleSelect(key, keyPath) {
     }
     appStore.hideSideBar(true)
   } else {
-    // 显示左侧联动菜单
+    // 有子路由：联动显示侧边栏子菜单
     activeRoutes(key)
     appStore.hideSideBar(false)
   }
 }
 
+/*
+* 设置侧边栏联动作用域，存在子路由时 setScope，否则隐藏侧栏
+*/
 function activeRoutes(key) {
   let routes = []
   if (childrenMenus.value && childrenMenus.value.length > 0) {
@@ -171,7 +190,7 @@ function activeRoutes(key) {
       }
     })
   }
-  if(routes.length > 0) {
+  if (routes.length > 0) {
     useRoutesStore().setScope(key)
   } else {
     appStore.hideSideBar(true)
@@ -180,15 +199,11 @@ function activeRoutes(key) {
 }
 
 onMounted(() => {
+  setVisibleNumber()
   window.addEventListener('resize', setVisibleNumber)
 })
-
 onBeforeUnmount(() => {
   window.removeEventListener('resize', setVisibleNumber)
-})
-
-onMounted(() => {
-  setVisibleNumber()
 })
 </script>
 

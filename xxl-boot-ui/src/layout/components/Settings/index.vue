@@ -1,6 +1,6 @@
 <!--
-  组件：布局设置
-  功能：菜单导航、布局风格、页签图标、页签样式、页签持久化 …… 等。
+  组件：Settings（布局设置抽屉）
+  功能：菜单导航模式、主题风格、页签配置、固定 Header、Logo 显隐、动态标题、底部版权等布局偏好设置
 -->
 <template>
   <el-drawer v-model="showSettingsRef" :withHeader="false" :lock-scroll="false" direction="rtl" size="300px">
@@ -136,40 +136,37 @@ import { DocumentAdd, Refresh } from '@element-plus/icons-vue'
 import { useAppStore, useRoutesStore, useSettingsStore, useTagsViewStore } from '@/store'
 import modal from '@/utils/modal'
 
-/**
- * 应用Store：
- * 1、appStore：应用Store，用于应用级别的数据处理，如：侧边栏、字体 等；
- * 2、settingsStore：设置Store，用于设置级别数据处理，如：菜单导航、页签图标、主题色 等；
- * 3、permissionStore：权限Store，用于权限级别数据处理，如：动态路由、动态菜单 等；
- * 4、tagsViewStore：标签Store，用于标签级别数据处理，如：标签页缓存；
- */
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const tagsViewStore = useTagsViewStore()
 
-/**
- * 配置项
- */
-// 布局设置：组件是否显示
-const showSettingsRef = ref(false);
-// 菜单导航：左侧、混合、顶部
+const showSettingsRef = ref(false)
+/*
+* 导航模式：1=左侧，2=混合，3=顶部
+*/
 const navType = computed({
   get: () => settingsStore.navType,
-  set: v  => settingsStore.setNavType(v)
-});
-// 主题色：使用 computed getter/setter 与 store 同步
+  set: v => settingsStore.setNavType(v)
+})
+/*
+* 主题色
+*/
 const theme = computed({
   get: () => settingsStore.theme,
   set: v => settingsStore.setTheme(v)
 })
 // 主题色：预设颜色
 const predefineColors = ref(["#409EFF", "#ff4500", "#ff8c00", "#ffd700", "#90ee90", "#00ced1", "#1e90ff", "#c71585"])
-// 主题风格：暗色、浅色
+/*
+* 侧边栏主题：theme-dark / theme-light
+*/
 const sideTheme = computed({
   get: () => settingsStore.sideTheme,
   set: v => settingsStore.setSideTheme(v)
 })
-// 持久化标签页：开关设置
+/*
+* 标签页持久化：关闭时清除已保存标签
+*/
 const tagsViewPersist = computed({
   get: () => settingsStore.tagsViewPersist,
   set: function (val) {
@@ -181,8 +178,9 @@ const tagsViewPersist = computed({
     }
   }
 })
-
-// 动态标题：
+/*
+* 动态标题
+*/
 const dynamicTitle = computed({
   get: () => settingsStore.dynamicTitle,
   set: v => settingsStore.setDynamicTitle(v)        // 联动更新：动态标题刷新
@@ -214,18 +212,19 @@ function handleNavType(type) {
   }
 }
 
-// 页面初始化：顶部导航时，隐藏侧边栏（若其它模块直接修改 settingsStore.navType，建议改为 watch）
+/*
+* 页面初始化：顶部导航时，隐藏侧边栏（若其它模块直接修改 settingsStore.navType，建议改为 watch）
+* */
 onMounted(() => {
   if (settingsStore.navType === 3) {
     appStore.hideSideBar(true)
   }
 })
 
-/**
- * 保存设置
- */
+/*
+* 保存设置到 localStorage
+*/
 function saveSetting() {
-  // 弹框提示：Open
   modal.loading("正在保存到本地，请稍候...")
 
   // 若不保存标签页，主动清除 - 标签页缓存
@@ -243,9 +242,9 @@ function saveSetting() {
   }, 500)
 }
 
-/**
- * 重置设置
- */
+/*
+* 重置设置：清除缓存并刷新页面
+*/
 function resetSetting() {
   // 主动清除 - 标签页缓存
   tagsViewStore.clearVisitedViews();

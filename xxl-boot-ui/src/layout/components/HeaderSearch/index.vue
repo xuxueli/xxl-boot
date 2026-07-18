@@ -1,3 +1,7 @@
+<!--
+  组件：HeaderSearch（菜单搜索）
+  功能：顶部导航栏搜索图标，点击弹出搜索弹窗，支持按菜单标题/路径模糊搜索并跳转
+-->
 <template>
   <div class="header-search">
     <svg-icon class-name="search-icon" icon-class="search" @click.stop="click" />
@@ -94,6 +98,9 @@ const router = useRouter()
 const theme = computed(() => useSettingsStore().theme)
 const routes = computed(() => useRoutesStore().fullRoutes)
 
+/*
+* 切换搜索弹窗显隐
+*/
 function click() {
   show.value = !show.value
   if (show.value) {
@@ -101,12 +108,18 @@ function click() {
   }
 }
 
+/*
+* 弹窗打开后自动聚焦输入框
+*/
 function onDialogOpened() {
   nextTick(() => {
     headerSearchSelectRef.value && headerSearchSelectRef.value.focus()
   })
 }
 
+/*
+* 关闭弹窗：重置搜索状态
+*/
 function close() {
   headerSearchSelectRef.value && headerSearchSelectRef.value.blur()
   search.value = ''
@@ -115,6 +128,9 @@ function close() {
   activeIndex.value = -1
 }
 
+/*
+* 选中搜索结果：外部链接新窗口打开，内部路由 router.push 跳转
+*/
 function change(val) {
   const p = val.path
   const query = val.query
@@ -123,6 +139,7 @@ function change(val) {
     const pindex = p.indexOf("http")
     window.open(p.substr(pindex, p.length), "_blank")
   } else {
+    /* 路由存在 query 参数时一并带入 */
     if (query) {
       router.push({ path: p, query: JSON.parse(query) })
     } else {
@@ -136,6 +153,9 @@ function change(val) {
   })
 }
 
+/*
+* 初始化 Fuse 模糊搜索实例
+*/
 function initFuse(list) {
   fuse.value = new Fuse(list, {
     shouldSort: true,
@@ -152,6 +172,9 @@ function initFuse(list) {
   })
 }
 
+/*
+* 递归遍历路由树，生成可搜索列表
+*/
 function generateRoutes(routes, basePath = '', prefixTitle = []) {
   let res = []
   for (const r of routes) {
@@ -202,6 +225,9 @@ function querySearch(query) {
   }
 }
 
+/*
+* 当前激活项高亮样式
+*/
 function activeStyle(index) {
   if (index !== activeIndex.value) return {}
   return {
@@ -210,6 +236,9 @@ function activeStyle(index) {
   }
 }
 
+/*
+* 键盘上下键切换选中项
+*/
 function navigateResult(direction) {
   if (direction === "up") {
     activeIndex.value = activeIndex.value <= 0 ? options.value.length - 1 : activeIndex.value - 1
@@ -218,12 +247,18 @@ function navigateResult(direction) {
   }
 }
 
+/*
+* 回车确认选中项
+*/
 function selectActiveResult() {
   if (options.value.length > 0 && activeIndex.value >= 0) {
     change(options.value[activeIndex.value])
   }
 }
 
+/*
+* 高亮搜索结果中的匹配关键词
+*/
 function highlightText(text) {
   if (!text) return ''
   if (!search.value) return text
@@ -232,6 +267,9 @@ function highlightText(text) {
   return text.replace(reg, '<span class="highlight">$1</span>')
 }
 
+/*
+* 转义正则特殊字符
+*/
 function escapeRegExp(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }

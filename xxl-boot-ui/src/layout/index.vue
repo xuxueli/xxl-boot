@@ -1,37 +1,42 @@
 <!--
-  名称：Layout 主框架布局组件（src/layout/index.vue）
-  功能项摘要：
-    1. 统一后台整体骨架（侧边栏 / 顶部导航 / 标签页 / 主内容 / 设置面板）。
-    2. 处理桌面端与移动端的布局切换与侧边栏收展联动。
-    3. 按主题与布局状态输出动态样式类与 CSS 变量。
+  Layout：布局主框架
+  功能：整体页面骨架，组合侧边栏/顶部导航/标签页/主内容区/设置面板，
+        处理桌面端与移动端布局切换、侧边栏收展联动、主题变量注入
 -->
 <template>
-  <!-- 布局骨架：根容器汇总布局状态类与主题变量，作为页面主承载区。 -->
   <div :class="classObj" class="app-wrapper" :style="{ '--current-color': theme, '--current-color-light': theme + '1a', '--current-color-dark-bg': theme + '33' }">
-    <!-- 实现细节：移动端侧栏展开时显示遮罩，点击遮罩触发侧栏关闭。 -->
+
+    <!-- 移动端遮罩：侧栏展开时显示，点击关闭侧栏 -->
     <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
-    <!-- 实现细节：侧边栏按 hide 状态按需渲染，避免无效节点。 -->
-    <sidebar v-if="!sidebar.hide" class="sidebar-container" />
-    <!-- 主内容区：根据标签页和侧栏隐藏状态切换容器样式。 -->
+
+    <!-- 侧边栏（左侧） -->
+    <Sidebar v-if="!sidebar.hide" class="sidebar-container" />
+
+    <!-- 主内容区（中间） -->
     <div :class="{ hasTagsView: needTagsView, sidebarHide: sidebar.hide }" class="main-container">
-      <!-- 实现细节：头部固定样式由 fixedHeader 控制。 -->
+
+      <!-- 固定头部（中间：顶部）：含导航栏和标签页 -->
       <div :class="{ 'fixed-header': fixedHeader }">
-        <!-- 实现细节：导航栏通过 setLayout 事件打开设置面板。 -->
-        <navbar @setLayout="setLayout" />
-        <!-- 实现细节：标签页按配置开关显示。 -->
-        <tags-view v-if="needTagsView" />
+        <!-- 导航栏：含面包屑/菜单搜索/用户菜单等 -->
+        <Navbar @setLayout="setLayout" />
+        <!-- 多标签页 -->
+        <TagsView v-if="needTagsView" />
       </div>
-      <!-- 实现细节：路由页面主体出口。 -->
-      <app-main />
-      <!-- 实现细节：设置面板通过 ref 暴露打开方法。 -->
-      <settings ref="settingRef" />
+
+      <!-- 路由页面出口（中间：主内容区） -->
+      <AppMain />
+
+      <!-- 布局设置面板（中间：右侧边栏） -->
+      <Settings ref="settingRef" />
+
     </div>
+
   </div>
 </template>
 
 <script setup>
 import { useWindowSize } from '@vueuse/core'
-import Sidebar from './components/Sidebar/index.vue'
+import Sidebar from './components/Sidebar/index'
 import { AppMain, Navbar, Settings, TagsView } from './components'
 import { useAppStore, useSettingsStore } from '@/store'
 
@@ -42,7 +47,9 @@ const device = computed(() => useAppStore().device)
 const needTagsView = computed(() => settingsStore.tagsView)
 const fixedHeader = computed(() => settingsStore.fixedHeader)
 
-// 布局状态映射：将 store 状态映射为容器 class，统一驱动页面样式。
+/*
+* 布局 CSS 类名组合：侧栏收展状态 + 设备类型
+*/
 const classObj = computed(() => ({
   hideSidebar: !sidebar.value.opened,
   openSidebar: sidebar.value.opened,
@@ -53,17 +60,20 @@ const classObj = computed(() => ({
 const { width, height } = useWindowSize()
 const WIDTH = 992 // refer to Bootstrap's responsive design
 
-// 设备切换处理：切换到 mobile 时，若侧栏已展开则主动收起，避免遮挡内容。
+/*
+* 设备切换：切换到 mobile 时收起侧栏
+*/
 watch(() => device.value, () => {
   if (device.value === 'mobile' && sidebar.value.opened) {
     useAppStore().closeSideBar({ withoutAnimation: false })
   }
 })
 
-// 窗口响应式处理：根据宽度阈值切换设备类型，并同步侧栏状态。
+/*
+* 窗口响应式：宽度 < 992 切换 mobile，无动画收起侧栏
+*/
 watchEffect(() => {
   if (width.value - 1 < WIDTH) {
-    // 实现细节：移动端采用无动画收起，减少窗口缩放时的抖动。
     useAppStore().toggleDevice('mobile')
     useAppStore().closeSideBar({ withoutAnimation: true })
   } else {
@@ -71,21 +81,23 @@ watchEffect(() => {
   }
 })
 
+/*
+* 移动端遮罩点击 -> 关闭侧栏
+*/
 function handleClickOutside() {
-  // 交互细节：遮罩点击只执行侧栏关闭，不影响其他布局状态。
   useAppStore().closeSideBar({ withoutAnimation: false })
 }
 
 const settingRef = ref(null)
-// 设置面板入口：响应导航栏事件，通过组件实例方法打开设置抽屉。
+/*
+* 打开布局设置面板
+*/
 function setLayout() {
   settingRef.value.openSetting()
 }
 </script>
 
-<!--
-  布局组件专属样式：组件私有样式
--->
+<!-- 组件私有样式 -->
 <style lang="scss" scoped>
 @use "@/assets/styles/variables.module.scss" as vars;
 

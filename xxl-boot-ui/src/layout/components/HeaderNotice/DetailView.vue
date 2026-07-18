@@ -1,3 +1,7 @@
+<!--
+  组件：NoticeDetailView（公告详情抽屉）
+  功能：从右侧滑出抽屉展示公告完整详情内容
+-->
 <template>
   <el-drawer v-model="visible" title="公告详情" direction="rtl" size="50%" append-to-body :before-close="handleClose" class="notice-detail-drawer">
     <div v-loading="loading" class="notice-detail-drawer__body">
@@ -60,24 +64,31 @@ const visible = ref(false)
 const loading = ref(false)
 const detail = ref(null)
 
+/*
+* 公告状态：'0' 为正常
+*/
 const isStatusNormal = computed(() => {
   const status = detail.value && detail.value.status
   return status === '0' || status === 0
 })
 
+/*
+* 是否有正文内容（非空字符串）
+*/
 const hasContent = computed(() => {
   const content = detail.value && detail.value.noticeContent
   return content != null && String(content).trim() !== ''
 })
 
+/*
+* 打开详情：支持传入完整公告对象（直接展示）或 noticeId（请求接口加载）
+*/
 function open(payload) {
   let id = null
   let preset = null
   if (payload != null && typeof payload === 'object') {
     id = payload.noticeId
-    if (payload.noticeContent != null) {
-      preset = payload
-    }
+    if (payload.noticeContent != null) preset = payload
   } else {
     id = payload
   }
@@ -101,6 +112,9 @@ function open(payload) {
   })
 }
 
+/*
+* 关闭抽屉：清空详情数据
+*/
 function handleClose() {
   visible.value = false
   detail.value = null
