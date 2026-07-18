@@ -16,11 +16,11 @@ const useRoutesStore = defineStore(
   {
     state: () => ({
       /**
-       * 纯动态路由（不含 constantRoutes），初始化后不变
+       * 纯动态路由（不含 constantRoutes）：初始化菜单入口
        */
       dynamicRoutes: [],
       /**
-       * dynamicRoutes 拍平处理后版本：用于路由初始化
+       * dynamicRoutes 拍平处理后版本：供路由初始化 router.addRoute 取用
        */
       flattenRoutes: [],
       /**

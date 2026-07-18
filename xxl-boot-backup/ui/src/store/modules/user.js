@@ -29,7 +29,9 @@ const useUserStore = defineStore(
     }),
     // actions — 登录 / 获取用户信息 / 退出
     actions: {
-      /** 登录：提交凭证，保存 token */
+      /**
+       * 登录：提交凭证，保存 token
+       */
       login(userInfo) {
         const username = userInfo.username.trim()
         const password = userInfo.password
@@ -49,7 +51,9 @@ const useUserStore = defineStore(
           })
         })
       },
-      /** 获取用户信息：拉取资料、角色、权限，检查密码状态 */
+      /**
+       * 获取用户信息：拉取资料、角色、权限，检查密码状态
+       */
       getInfo() {
         return new Promise((resolve, reject) => {
           getInfo().then(res => {
@@ -96,7 +100,9 @@ const useUserStore = defineStore(
           })
         })
       },
-      /** 退出：服务端登出，清空本地 token 与用户状态 */
+      /**
+       * 退出：服务端登出，清空本地 token 与用户状态
+       */
       logout() {
         return new Promise((resolve, reject) => {
           logout(this.token).then(() => {
