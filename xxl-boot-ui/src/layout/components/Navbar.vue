@@ -63,16 +63,16 @@
 
 <script setup>
 import { ElMessageBox } from 'element-plus'
-import Breadcrumb from '@/components/Breadcrumb'
+import Breadcrumb from './Breadcrumb'
 import TopNav from './TopNav'
 import TopBar from './TopBar'
 import Logo from './Sidebar/Logo'
-import Hamburger from '@/components/Hamburger'
-import Screenfull from '@/components/Screenfull'
-import SizeSelect from '@/components/SizeSelect'
-import HeaderSearch from '@/components/HeaderSearch'
-import BootGit from '@/components/Boot/Git'
-import BootDoc from '@/components/Boot/Doc'
+import Hamburger from './Hamburger'
+import Screenfull from './Screenfull'
+import SizeSelect from './SizeSelect'
+import HeaderSearch from './HeaderSearch'
+import BootGit from './Boot/Git'
+import BootDoc from './Boot/Doc'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 import HeaderNotice from './HeaderNotice'
 
