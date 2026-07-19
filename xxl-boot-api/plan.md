@@ -19,11 +19,16 @@
             - utils:            x
                 - 非必须合并；
             - views:            x-03
-                - 登录、注销
-                - 权限、角色列表
-                - 菜单：
-                - 个人信息：
-                - 用户管理：
+                - 框架：
+                  - 验证码：captchaImage
+                  - 登录：login
+                  - 个人信息（权限、角色列表）：getInfo
+                  - 菜单路由：getRouters
+                  - 公告：listTop
+                  - 注销：logout
+                  - 个人管理：profile查询、 profile修改、updatePwd修改；
+                - 功能：
+                    - 组织管理：用户
 
 2、UI 集成 API 服务；
     - 框架：

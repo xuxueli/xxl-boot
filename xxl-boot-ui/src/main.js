@@ -9,9 +9,6 @@ import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import locale from 'element-plus/es/locale/lang/zh-cn'
 
-// 工具库（cookie）
-import Cookies from 'js-cookie'
-
 // 核心模块
 import App from '@/App'
 import router from '@/router'
@@ -23,13 +20,16 @@ import '@/assets/styles/index.scss'
 import 'virtual:svg-icons-register'
 import registerComponents from '@/components'
 
+// 持久化存储Key：localStorage key constant（字体大小）
+const FONTSIZE_KEY = 'boot-fontsize'
+
 // ==================== 创建 Vue 应用 ====================
 const app = createApp(App)
 
 // 安装核心插件
 app.use(router)
 app.use(store)
-app.use(ElementPlus, { locale, size: Cookies.get('size') || 'default' })
+app.use(ElementPlus, { locale, size: localStorage.getItem(FONTSIZE_KEY) || 'default' })
 
 // 全局注册：自定义指令
 directive(app)
