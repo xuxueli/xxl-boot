@@ -40,7 +40,7 @@
           <el-col :span="1.5">
             <el-button type="warning" plain :icon="Download" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
           </el-col>
-          <RightToolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" storageKey="view_user_list"></RightToolbar>
+          <RightToolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns" storageKey="boot-table-field-userlist"></RightToolbar>
         </el-row>
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
