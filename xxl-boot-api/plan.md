@@ -7,19 +7,18 @@
             - router:           done：              
             - layouts:          done
             - components:       x-02
-                - DictTag
-                - Editor
-                - ExcelImportDialog
-                - IconSelect
-                - Pagination
-                - RightToolbar
-                - SvgIcon
-                - TreePanel
-                - index // 
-                - iFrame   【未使用】
+                - SvgIcon 
+                - RightToolbar 
+                - Pagination 
+                - DictTag 
+                - IconSelect 
+                - TreePanel 
+                - Editor 
+                - ExcelImportDialog 
                 - FileUpload
                 - ImagePreview
-                - ImageUpload
+                - ImageUpload 
+                - IFrame 
             - store:            x
                 - 非必须合并；
             - utils:            x

@@ -1,3 +1,9 @@
+<!--
+  组件：ExcelImportDialog（Excel 导入弹窗）
+  功能：Excel 文件导入对话框，支持文件拖拽上传、模板下载、覆盖更新选项。
+  用法：<ExcelImportDialog ref="importRef" title="用户导入" action="/system/user/importData"
+          @success="getList" />
+-->
 <template>
   <el-dialog :title="title" v-model="visible" :width="width" append-to-body @close="handleClose">
     <el-upload ref="uploadRef" :limit="1" accept=".xlsx, .xls" :headers="headers" :action="uploadUrl" :disabled="isUploading" :on-progress="handleProgress" :on-change="handleFileChange" :on-remove="handleFileRemove" :on-success="handleSuccess" :auto-upload="false" drag>
@@ -88,34 +94,34 @@ function open() {
   })
 }
 
-// 关闭时清理
+// 关闭时清理上传状态
 function handleClose() {
   isUploading.value = false
   selectedFile.value = null
   uploadRef.value?.clearFiles()
 }
 
-// 下载模板
+// 下载导入模板文件
 function handleDownloadTemplate() {
   download(props.templateAction, {}, `${props.templateFileName}_${new Date().getTime()}.xlsx`)
 }
 
-// 上传进度
+// 上传进度中：禁用提交按钮
 function handleProgress() {
   isUploading.value = true
 }
 
-/** 文件选择处理 */
+// 文件选择处理：记录选中文件
 const handleFileChange = (file, fileList) => {
   selectedFile.value = file
 }
 
-/** 文件删除处理 */
+// 文件删除处理：清空选中文件
 const handleFileRemove = (file, fileList) => {
   selectedFile.value = null
 }
 
-// 上传成功
+// 上传成功：关闭弹窗，弹出导入结果消息
 function handleSuccess(response) {
   visible.value = false
   isUploading.value = false
@@ -125,7 +131,7 @@ function handleSuccess(response) {
   emit('success')
 }
 
-// 提交上传
+// 提交上传：校验文件格式后执行上传
 function handleSubmit() {
   const file = selectedFile.value
   if (!file || file.length === 0 || !file.name.toLowerCase().endsWith('.xls') && !file.name.toLowerCase().endsWith('.xlsx')) {

@@ -1,3 +1,9 @@
+<!--
+  组件：DictTag（字典标签）
+  功能：根据字典选项数组，将字典值渲染为 el-tag 或纯文本。
+        支持单值、数组、逗号分隔字符串三种输入格式。
+  用法：<DictTag :options="sys_normal_disable" :value="scope.row.status" />
+-->
 <template>
   <div>
     <template v-for="(item, index) in options">
@@ -25,34 +31,37 @@
 </template>
 
 <script setup>
-// 记录未匹配的项
+// 未匹配字典项的 key 集合
 const unmatchArray = ref([])
 
 const props = defineProps({
-  // 数据
+  // 字典选项列表：[{ value, label, elTagType, elTagClass }]
   options: {
     type: Array,
     default: null,
   },
-  // 当前的值
+  // 当前值：支持 Number / String / Array 三种类型
   value: [Number, String, Array],
-  // 当未找到匹配的数据时，显示value
+  // 未匹配时是否显示原始 value
   showValue: {
     type: Boolean,
     default: true,
   },
+  // 字符串分隔符：value 为逗号分隔字符串时使用
   separator: {
     type: String,
     default: ",",
   }
 })
 
+// 将 props.value 统一转为字符串数组，方便后续匹配
 const values = computed(() => {
   if (props.value === null || typeof props.value === 'undefined' || props.value === '') return []
   if (typeof props.value === 'number' || typeof props.value === 'boolean') return [props.value]
   return Array.isArray(props.value) ? props.value.map(item => '' + item) : String(props.value).split(props.separator)
 })
 
+// 检测是否存在未匹配的字典项，存在时记录到 unmatchArray
 const unmatch = computed(() => {
   unmatchArray.value = []
   // 没有value不显示
@@ -68,6 +77,7 @@ const unmatch = computed(() => {
   return unmatch // 返回标志的值
 })
 
+// 数组转空格分隔字符串，用于显示未匹配项
 function handleArray(array) {
   if (array.length === 0) return ""
   return array.reduce((pre, cur) => {
@@ -75,6 +85,7 @@ function handleArray(array) {
   })
 }
 
+// 判断某个字典值是否与当前 value 匹配
 function isValueMatch(itemValue) {
   return values.value.some(val => val == itemValue)
 }

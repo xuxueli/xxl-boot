@@ -1,6 +1,10 @@
 <template>
   <!--
-    分页组件视图层（分）：
+    组件：Pagination（分页组件）
+    功能：封装 el-pagination，通过 v-model 代理 page/limit，变化时派发 pagination 事件。
+    用法：<Pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+
+    视图层（分）：
     1）容器支持 hidden 状态控制整体显隐；
     2）内部复用 Element Plus 的 el-pagination；
     3）通过 v-model 将当前页与每页条数和外部状态双向同步；

@@ -1,3 +1,8 @@
+<!--
+  组件：FileUpload（文件上传）
+  功能：通用文件上传组件，支持多文件、拖拽排序、类型/大小校验、可下载文件列表。
+  用法：<FileUpload v-model="form.files" :limit="5" :file-size="10" />
+-->
 <template>
   <div class="upload-file">
     <el-upload
@@ -43,51 +48,51 @@
 <script setup>
 import { getToken } from "@/utils/auth"
 import Sortable from 'sortablejs'
+import modal from '@/utils/modal'
 
 const props = defineProps({
+  // v-model 双向绑定值：文件 URL 逗号分隔字符串 / 数组
   modelValue: [String, Object, Array],
-  // 上传接口地址
+  // 上传接口地址（相对于 base API）
   action: {
     type: String,
     default: "/common/upload"
   },
-  // 上传携带的参数
+  // 上传时携带的额外参数
   data: {
     type: Object
   },
-  // 数量限制
+  // 文件数量上限
   limit: {
     type: Number,
     default: 5
   },
-  // 大小限制(MB)
+  // 单个文件大小上限（MB）
   fileSize: {
     type: Number,
     default: 5
   },
-  // 文件类型, 例如['png', 'jpg', 'jpeg']
+  // 允许的文件后缀列表，例：['png', 'jpg', 'pdf']
   fileType: {
     type: Array,
     default: () => ["doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "pdf"]
   },
-  // 是否显示提示
+  // 是否显示文件格式/大小提示
   isShowTip: {
     type: Boolean,
     default: true
   },
-  // 禁用组件（仅查看文件）
+  // 禁用上传（仅展示已上传文件列表）
   disabled: {
     type: Boolean,
     default: false
   },
-  // 拖动排序
+  // 是否启用拖拽排序
   drag: {
     type: Boolean,
     default: true
   }
 })
-
-import modal from '@/utils/modal'
 
 const emit = defineEmits()
 const fileUpload = ref(null)
@@ -95,13 +100,14 @@ const uploadFileList = ref(null)
 const number = ref(0)
 const uploadList = ref([])
 const baseUrl = import.meta.env.VITE_APP_BASE_API
-const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action) // 上传文件服务器地址
+const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)
 const headers = ref({ Authorization: "Bearer " + getToken() })
 const fileList = ref([])
 const showTip = computed(
   () => props.isShowTip && (props.fileType || props.fileSize)
 )
 
+// 监听外部 modelValue 变化，同步到文件列表
 watch(() => props.modelValue, val => {
   if (val) {
     let temp = 1
@@ -121,7 +127,7 @@ watch(() => props.modelValue, val => {
   }
 },{ deep: true, immediate: true })
 
-// 上传前校检格式和大小
+// 上传前置校验：文件类型、文件名、文件大小，全部通过后显示 loading
 function handleBeforeUpload(file) {
   // 校检文件类型
   if (props.fileType.length) {
@@ -151,18 +157,18 @@ function handleBeforeUpload(file) {
   return true
 }
 
-// 文件个数超出
+// 文件数量超出限制提示
 function handleExceed() {
   modal.msgError(`上传文件数量不能超过 ${props.limit} 个!`)
 }
 
-// 上传失败
+// 上传失败处理
 function handleUploadError(err) {
   modal.msgError("上传文件失败")
   modal.closeLoading()
 }
 
-// 上传成功回调
+// 上传成功回调：添加记录或回滚
 function handleUploadSuccess(res, file) {
   if (res.code === 200) {
     uploadList.value.push({ name: res.fileName, url: res.fileName })
@@ -176,13 +182,13 @@ function handleUploadSuccess(res, file) {
   }
 }
 
-// 删除文件
+// 删除文件列表中的指定项
 function handleDelete(index) {
   fileList.value.splice(index, 1)
   emit("update:modelValue", listToString(fileList.value))
 }
 
-// 上传结束处理
+// 全部上传完成：合并文件列表，输出最终值
 function uploadedSuccessfully() {
   if (number.value > 0 && uploadList.value.length === number.value) {
     fileList.value = fileList.value.filter(f => f.url !== undefined).concat(uploadList.value)
@@ -193,7 +199,7 @@ function uploadedSuccessfully() {
   }
 }
 
-// 获取文件名称
+// 从 URL 中提取文件名
 function getFileName(name) {
   // 如果是url那么取最后的名字 如果不是直接返回
   if (name.lastIndexOf("/") > -1) {
@@ -203,7 +209,7 @@ function getFileName(name) {
   }
 }
 
-// 对象转成指定字符串分隔
+// 文件 URL 列表转逗号分隔字符串
 function listToString(list, separator) {
   let strs = ""
   separator = separator || ","
@@ -215,7 +221,7 @@ function listToString(list, separator) {
   return strs != '' ? strs.substr(0, strs.length - 1) : ''
 }
 
-// 初始化拖拽排序
+// 初始化拖拽排序（sortablejs）
 onMounted(() => {
   if (props.drag && !props.disabled) {
     nextTick(() => {

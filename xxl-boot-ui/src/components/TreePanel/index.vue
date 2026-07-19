@@ -1,3 +1,8 @@
+<!--
+  组件：TreePanel（树形侧栏面板）
+  功能：可折叠/拖拽调整宽度的树形侧栏，支持搜索过滤、展开/收起全部、自定义节点插槽、宽度持久化。
+  用法：<TreePanel title="组织机构" :tree-data="deptOptions" @node-click="handleNodeClick" />
+-->
 <template>
   <div class="tree-sidebar" :class="{ collapsed: collapsed, resizing: isResizing, 'no-initial-transition': isLoadingFromStorage}" :style="{ width: sidebarWidth + 'px' }">
     <!-- 右侧拖动条 -->

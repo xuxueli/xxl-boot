@@ -1,3 +1,8 @@
+<!--
+  组件：IconSelect（SVG 图标选择器）
+  功能：按名称搜索并选择 SVG 图标，选中后通过 selected 事件返回图标名称。
+  用法：<IconSelect ref="iconSelectRef" @selected="selected" />
+-->
 <template>
   <div class="icon-body">
     <el-input
@@ -27,15 +32,20 @@
 import icons from './requireIcons'
 
 const props = defineProps({
+  // 当前选中图标名称（用于高亮）
   activeIcon: {
     type: String
   }
 })
 
-const iconName = ref('')
-const iconList = ref(icons)
 const emit = defineEmits(['selected'])
 
+// 搜索关键词
+const iconName = ref('')
+// 筛选后的图标列表
+const iconList = ref(icons)
+
+// 按名称过滤图标列表
 function filterIcons() {
   iconList.value = icons
   if (iconName.value) {
@@ -43,11 +53,13 @@ function filterIcons() {
   }
 }
 
+// 选中图标：派发事件并关闭弹窗
 function selectedIcon(name) {
   emit('selected', name)
   document.body.click()
 }
 
+// 重置搜索状态（供父组件调用）
 function reset() {
   iconName.value = ''
   iconList.value = icons

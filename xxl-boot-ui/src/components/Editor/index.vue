@@ -1,3 +1,9 @@
+<!--
+  组件：Editor（富文本编辑器）
+  功能：基于 Quill 的富文本编辑器，支持工具栏、图片上传（url/base64）、粘贴图片、
+        自定义高度/只读模式。
+  用法：<Editor v-model="form.content" :min-height="192" />
+-->
 <template>
   <div>
     <el-upload
@@ -35,60 +41,60 @@ import modal from '@/utils/modal'
 
 const quillEditorRef = ref()
 const uploadRef = ref(null)
-const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + "/common/upload") // 上传的图片服务器地址
+const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + "/common/upload")
 const headers = ref({
   Authorization: "Bearer " + getToken()
 })
 
 const props = defineProps({
-  /* 编辑器的内容 */
+  // 编辑器的内容（v-model 双向绑定）
   modelValue: {
     type: String,
   },
-  /* 高度 */
+  // 编辑器高度（px），不传则自适应
   height: {
     type: Number,
     default: null,
   },
-  /* 最小高度 */
+  // 编辑器最小高度（px）
   minHeight: {
     type: Number,
     default: null,
   },
-  /* 只读 */
+  // 是否只读
   readOnly: {
     type: Boolean,
     default: false,
   },
-  /* 上传文件大小限制(MB) */
+  // 上传文件大小限制（MB）
   fileSize: {
     type: Number,
     default: 5,
   },
-  /* 类型（base64格式、url格式） */
+  // 图片上传方式：url（上传到服务器拿链接）/ base64（转 base64 直接嵌入）
   type: {
     type: String,
     default: "url",
   }
 })
 
+// Quill 编辑器配置：主题、工具栏、只读模式
 const options = ref({
   theme: "snow",
   bounds: document.body,
   debug: "warn",
   modules: {
-    // 工具栏配置
     toolbar: [
-      ["bold", "italic", "underline", "strike"],      // 加粗 斜体 下划线 删除线
-      ["blockquote", "code-block"],                   // 引用  代码块
-      [{ list: "ordered" }, { list: "bullet" }],      // 有序、无序列表
-      [{ indent: "-1" }, { indent: "+1" }],           // 缩进
-      [{ size: ["small", false, "large", "huge"] }],  // 字体大小
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],        // 标题
-      [{ color: [] }, { background: [] }],            // 字体颜色、字体背景颜色
-      [{ align: [] }],                                // 对齐方式
-      ["clean"],                                      // 清除文本格式
-      ["link", "image", "video"]                      // 链接、图片、视频
+      ["bold", "italic", "underline", "strike"],
+      ["blockquote", "code-block"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ size: ["small", false, "large", "huge"] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{ color: [] }, { background: [] }],
+      [{ align: [] }],
+      ["clean"],
+      ["link", "image", "video"]
     ],
   },
   placeholder: "请输入内容",
@@ -113,7 +119,7 @@ watch(() => props.modelValue, (v) => {
   }
 }, { immediate: true })
 
-// 如果设置了上传地址则自定义图片上传事件
+// url 模式下：劫持图片上传按钮（触发隐藏 file input）+ 监听粘贴图片事件
 onMounted(() => {
   if (props.type == 'url') {
     let quill = quillEditorRef.value.getQuill()
@@ -129,7 +135,7 @@ onMounted(() => {
   }
 })
 
-// 上传前校检格式和大小
+// 上传前校验格式和大小
 function handleBeforeUpload(file) {
   const type = ["image/jpeg", "image/jpg", "image/png", "image/svg"]
   const isJPG = type.includes(file.type)
@@ -149,11 +155,9 @@ function handleBeforeUpload(file) {
   return true
 }
 
-// 上传成功处理
+// 上传成功：在光标位置插入图片
 function handleUploadSuccess(res, file) {
-  // 如果上传成功
   if (res.code == 200) {
-    // 获取富文本实例
     let quill = toRaw(quillEditorRef.value).getQuill()
     // 获取光标位置
     let length = quill.selection.savedRange.index
@@ -171,7 +175,7 @@ function handleUploadError() {
   modal.msgError("图片插入失败")
 }
 
-// 复制粘贴图片处理
+// 粘贴板包含图片时：阻止默认粘贴，改为直接上传图片
 function handlePasteCapture(e) {
   const clipboard = e.clipboardData || window.clipboardData
   if (clipboard && clipboard.items) {

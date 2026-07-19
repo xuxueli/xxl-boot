@@ -1,3 +1,8 @@
+<!--
+  组件：ImageUpload（图片上传）
+  功能：图片墙模式上传，支持多图、拖拽排序、预览大图、类型/大小校验。
+  用法：<ImageUpload v-model="form.images" :limit="5" />
+-->
 <template>
   <div class="component-upload-image">
     <el-upload
@@ -52,51 +57,51 @@ import { Plus } from '@element-plus/icons-vue'
 import { getToken } from "@/utils/auth"
 import { isExternal } from "@/utils/validate"
 import Sortable from 'sortablejs'
+import modal from '@/utils/modal'
 
 const props = defineProps({
+  // v-model 双向绑定值：图片 URL 逗号分隔字符串 / 数组
   modelValue: [String, Object, Array],
-  // 上传接口地址
+  // 上传接口地址（相对于 base API）
   action: {
     type: String,
     default: "/common/upload"
   },
-  // 上传携带的参数
+  // 上传时携带的额外参数
   data: {
     type: Object
   },
-  // 图片数量限制
+  // 图片数量上限
   limit: {
     type: Number,
     default: 5
   },
-  // 大小限制(MB)
+  // 单张图片大小上限（MB）
   fileSize: {
     type: Number,
     default: 5
   },
-  // 文件类型, 例如['png', 'jpg', 'jpeg']
+  // 允许的图片后缀，例：['png', 'jpg', 'jpeg']
   fileType: {
     type: Array,
     default: () => ["png", "jpg", "jpeg"]
   },
-  // 是否显示提示
+  // 是否显示格式/大小提示
   isShowTip: {
     type: Boolean,
     default: true
   },
-  // 禁用组件（仅查看图片）
+  // 禁用上传（仅展示已上传图片）
   disabled: {
     type: Boolean,
     default: false
   },
-  // 拖动排序
+  // 是否启用拖拽排序
   drag: {
     type: Boolean,
     default: true
   }
 })
-
-import modal from '@/utils/modal'
 
 const emit = defineEmits()
 const imageUpload = ref(null)
@@ -105,18 +110,17 @@ const uploadList = ref([])
 const dialogImageUrl = ref("")
 const dialogVisible = ref(false)
 const baseUrl = import.meta.env.VITE_APP_BASE_API
-const uploadImgUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action) // 上传的图片服务器地址
+const uploadImgUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)
 const headers = ref({ Authorization: "Bearer " + getToken() })
 const fileList = ref([])
 const showTip = computed(
   () => props.isShowTip && (props.fileType || props.fileSize)
 )
 
+// 监听外部 modelValue 变化，同步到文件列表，自动补齐 baseUrl
 watch(() => props.modelValue, val => {
   if (val) {
-    // 首先将值转为数组
     const list = Array.isArray(val) ? val : props.modelValue.split(",")
-    // 然后将数组转为对象数组
     fileList.value = list.map(item => {
       if (typeof item === "string") {
         if (item.indexOf(baseUrl) === -1 && !isExternal(item)) {
@@ -133,7 +137,7 @@ watch(() => props.modelValue, val => {
   }
 },{ deep: true, immediate: true })
 
-// 上传前loading加载
+// 上传前校验：图片格式、文件名、文件大小，通过后显示 loading
 function handleBeforeUpload(file) {
   let isImg = false
   if (props.fileType.length) {
@@ -168,12 +172,12 @@ function handleBeforeUpload(file) {
   number.value++
 }
 
-// 文件个数超出
+// 图片数量超出限制提示
 function handleExceed() {
   modal.msgError(`上传文件数量不能超过 ${props.limit} 个!`)
 }
 
-// 上传成功回调
+// 上传成功回调：添加记录或回滚
 function handleUploadSuccess(res, file) {
   if (res.code === 200) {
     uploadList.value.push({ name: res.fileName, url: res.fileName })
@@ -187,7 +191,7 @@ function handleUploadSuccess(res, file) {
   }
 }
 
-// 删除图片
+// 删除图片：从文件列表中移除
 function handleDelete(file) {
   const findex = fileList.value.map(f => f.name).indexOf(file.name)
   if (findex > -1 && uploadList.value.length === number.value) {
@@ -197,7 +201,7 @@ function handleDelete(file) {
   }
 }
 
-// 上传结束处理
+// 全部上传完成：合并文件列表并输出最终值
 function uploadedSuccessfully() {
   if (number.value > 0 && uploadList.value.length === number.value) {
     fileList.value = fileList.value.filter(f => f.url !== undefined).concat(uploadList.value)
@@ -208,19 +212,19 @@ function uploadedSuccessfully() {
   }
 }
 
-// 上传失败
+// 上传失败处理
 function handleUploadError() {
   modal.msgError("上传图片失败")
   modal.closeLoading()
 }
 
-// 预览
+// 预览大图对话框
 function handlePictureCardPreview(file) {
   dialogImageUrl.value = file.url
   dialogVisible.value = true
 }
 
-// 对象转成指定字符串分隔
+// 图片 URL 列表转逗号分隔字符串（去掉 baseUrl 前缀和 blob 临时路径）
 function listToString(list, separator) {
   let strs = ""
   separator = separator || ","
@@ -232,7 +236,7 @@ function listToString(list, separator) {
   return strs != "" ? strs.substr(0, strs.length - 1) : ""
 }
 
-// 初始化拖拽排序
+// 初始化拖拽排序（sortablejs）
 onMounted(() => {
   if (props.drag && !props.disabled) {
     nextTick(() => {

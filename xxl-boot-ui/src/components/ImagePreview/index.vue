@@ -1,3 +1,8 @@
+<!--
+  组件：ImagePreview（图片预览）
+  功能：基于 el-image 的图片预览组件，支持单张/多张图片（逗号分隔），自动拼接 API 基础路径。
+  用法：<ImagePreview :src="item.url" width="100px" height="100px" />
+-->
 <template>
   <el-image
     :src="`${realSrc}`"
@@ -19,20 +24,24 @@ import { PictureFilled } from '@element-plus/icons-vue'
 import { isExternal } from "@/utils/validate"
 
 const props = defineProps({
+  // 图片 URL，多张用逗号分隔（第一张为主图，全部进入预览列表）
   src: {
     type: String,
     default: ""
   },
+  // 显示宽度，如 "100px" 或 100
   width: {
     type: [Number, String],
     default: ""
   },
+  // 显示高度，如 "100px" 或 100
   height: {
     type: [Number, String],
     default: ""
   }
 })
 
+// 主图 src：取第一张，外部 URL 不拼接 base API
 const realSrc = computed(() => {
   if (!props.src) {
     return
@@ -44,6 +53,7 @@ const realSrc = computed(() => {
   return import.meta.env.VITE_APP_BASE_API + real_src
 })
 
+// 预览列表：所有图片，外部 URL 原样保留，内部路径拼接 base API
 const realSrcList = computed(() => {
   if (!props.src) {
     return
