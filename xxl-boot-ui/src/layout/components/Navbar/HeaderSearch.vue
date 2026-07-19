@@ -98,6 +98,9 @@ import {getNormalPath} from '@/utils/common'
 import {isHttp} from '@/utils/validate'
 import {useSettingsStore, useRoutesStore} from '@/store'
 
+const settingsStore = useSettingsStore()
+const routesStore = useRoutesStore()
+
 const search = ref('')                    /* 搜索关键词 */
 const options = ref([])                   /* 当前搜索结果列表 */
 const searchPool = ref([])                /* 所有可搜索菜单的完整索引 */
@@ -106,8 +109,8 @@ const show = ref(false)                   /* 弹窗显隐 */
 const fuse = ref(undefined)               /* Fuse 模糊搜索实例 */
 const headerSearchSelectRef = ref(null)   /* 输入框 DOM 引用 */
 const router = useRouter()
-const theme = computed(() => useSettingsStore().theme)
-const routes = computed(() => useRoutesStore().fullRoutes)
+const theme = computed(() => settingsStore.theme)
+const routes = computed(() => routesStore.fullRoutes)
 
 /*
 * 切换搜索弹窗显隐

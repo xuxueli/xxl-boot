@@ -9,6 +9,8 @@
 // 系统设置Store模块
 import { useSettingsStore } from '@/store'
 
+const settingsStore = useSettingsStore()
+
 /**
  * 组件挂载后的生命周期钩子
  *
@@ -18,7 +20,7 @@ import { useSettingsStore } from '@/store'
  */
 onMounted(() => {
   nextTick(() => {
-    useSettingsStore().initSetting()
+    settingsStore.initSetting()
   })
 })
 </script>

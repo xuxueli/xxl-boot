@@ -40,9 +40,10 @@ import { AppMain, Navbar, Settings, TagsView, Sidebar } from './components'
 import { useAppStore, useSettingsStore } from '@/store'
 
 const settingsStore = useSettingsStore()
+const appStore = useAppStore()
 const theme = computed(() => settingsStore.theme)
-const sidebar = computed(() => useAppStore().sidebar)
-const device = computed(() => useAppStore().device)
+const sidebar = computed(() => appStore.sidebar)
+const device = computed(() => appStore.device)
 const needTagsView = computed(() => settingsStore.tagsView)
 const fixedHeader = computed(() => settingsStore.fixedHeader)
 
@@ -64,7 +65,7 @@ const WIDTH = 992 // refer to Bootstrap's responsive design
 */
 watch(() => device.value, () => {
   if (device.value === 'mobile' && sidebar.value.opened) {
-    useAppStore().closeSideBar({ withoutAnimation: false })
+    appStore.closeSideBar({ withoutAnimation: false })
   }
 })
 
@@ -73,10 +74,10 @@ watch(() => device.value, () => {
 */
 watchEffect(() => {
   if (width.value - 1 < WIDTH) {
-    useAppStore().toggleDevice('mobile')
-    useAppStore().closeSideBar({ withoutAnimation: true })
+    appStore.toggleDevice('mobile')
+    appStore.closeSideBar({ withoutAnimation: true })
   } else {
-    useAppStore().toggleDevice('desktop')
+    appStore.toggleDevice('desktop')
   }
 })
 
@@ -84,7 +85,7 @@ watchEffect(() => {
 * 移动端遮罩点击 -> 关闭侧栏
 */
 function handleClickOutside() {
-  useAppStore().closeSideBar({ withoutAnimation: false })
+  appStore.closeSideBar({ withoutAnimation: false })
 }
 
 const settingRef = ref(null)

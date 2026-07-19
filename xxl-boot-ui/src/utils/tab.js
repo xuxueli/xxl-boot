@@ -47,6 +47,7 @@
  * app.config.globalProperties.$tab = tab
  * ```
  */
+// 这里import后直接应用，使用时再实时获取。不支持别名用法，该工具在Pinia初始化前使用，别名会导致找不到store。
 import { useTagsViewStore } from '@/store'
 import router from '@/router'
 

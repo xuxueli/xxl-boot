@@ -47,11 +47,12 @@ import settings from '@/settings'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
+const routesStore = useRoutesStore()
 const route = useRoute()                        /* 读取‌当前路由信息 */
 const router = useRouter()                      /* 控制‌路由跳转、后退、添加路由等 */
 
 const theme = computed(() => settingsStore.theme)
-const routers = computed(() => useRoutesStore().dynamicRoutes)
+const routers = computed(() => routesStore.dynamicRoutes)
 
 const visibleNumber = ref(null)                 /* 可见菜单数量阈值，动态计算 */
 const currentIndex = ref(null)                  /* 当前选中菜单索引 */
@@ -210,7 +211,7 @@ function handleSelect(key, keyPath) {
 /*
 * 设置侧边栏联动作用域（存在子路由时 setScope，否则隐藏侧栏）
 *   - key：当前选中顶级菜单 path
-*   - 作用：通过 useRoutesStore().setScope 写入 _scope，Sidebar 的 sidebarRouters 据此过滤菜单
+*   - 作用：通过 routesStore.setScope 写入 _scope，Sidebar 的 sidebarRouters 据此过滤菜单
 */
 function activeRoutes(key) {
   // 匹配子菜单
@@ -226,7 +227,7 @@ function activeRoutes(key) {
 
   // 侧边栏联动
   if (routes.length > 0) {
-    useRoutesStore().setScope(key)
+    routesStore.setScope(key)
   } else {
     appStore.hideSideBar(true)
   }

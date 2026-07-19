@@ -11,7 +11,6 @@
 import cache from '@/utils/cache'
 import { useSettingsStore } from '@/store'
 
-
 // 持久化 key：用于保存普通访问标签页，affix 固定标签不参与持久化。
 const PERSIST_KEY = 'tags-view-visited'
 

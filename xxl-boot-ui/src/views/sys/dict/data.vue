@@ -179,6 +179,9 @@
 import { Search, Refresh, Plus, Edit, Delete, Download, Close } from '@element-plus/icons-vue'
 import { useDictStore } from '@/store'
 import { optionselect as getDictOptionselect, getType } from "@/api/sys/dict/type"
+
+const dictStore = useDictStore()
+
 import { listData, getData, delData, addData, updateData } from "@/api/sys/dict/data"
 import { useDict } from '@/utils/hooks/useDict'
 import { parseTime } from '@/utils/common'
@@ -329,14 +332,14 @@ function submitForm() {
     if (valid) {
       if (form.value.dictCode != undefined) {
         updateData(form.value).then(response => {
-          useDictStore().removeDict(queryParams.value.dictType)
+          dictStore.removeDict(queryParams.value.dictType)
           modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
         addData(form.value).then(response => {
-          useDictStore().removeDict(queryParams.value.dictType)
+          dictStore.removeDict(queryParams.value.dictType)
           modal.msgSuccess("新增成功")
           open.value = false
           getList()
@@ -354,7 +357,7 @@ function handleDelete(row) {
   }).then(() => {
     getList()
     modal.msgSuccess("删除成功")
-    useDictStore().removeDict(queryParams.value.dictType)
+    dictStore.removeDict(queryParams.value.dictType)
   }).catch(() => {})
 }
 

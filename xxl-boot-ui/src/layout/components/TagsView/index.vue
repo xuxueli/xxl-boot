@@ -86,6 +86,10 @@ import { useTagsViewStore, useRoutesStore, useSettingsStore } from '@/store'
 import tab from '@/utils/tab'
 import settings from '@/settings'
 
+const tagsViewStore = useTagsViewStore()
+const routesStore = useRoutesStore()
+const settingsStore = useSettingsStore()
+
 // 右键上下文菜单
 const visible = ref(false)
 const top = ref(0)
@@ -106,12 +110,12 @@ const hiddenElements = ref([])
 const route = useRoute()
 const router = useRouter()
 
-const visitedViews = computed(() => useTagsViewStore().visitedViews)
-const routes = computed(() => useRoutesStore().fullRoutes)
-const theme = computed(() => useSettingsStore().theme)
-const tagsIcon = computed(() => useSettingsStore().tagsIcon)
-const tagsViewPersist = computed(() => useSettingsStore().tagsViewPersist)
-const tagsViewStyle = computed(() => useSettingsStore().tagsViewStyle)
+const visitedViews = computed(() => tagsViewStore.visitedViews)
+const routes = computed(() => routesStore.fullRoutes)
+const theme = computed(() => settingsStore.theme)
+const tagsIcon = computed(() => settingsStore.tagsIcon)
+const tagsViewPersist = computed(() => settingsStore.tagsViewPersist)
+const tagsViewStyle = computed(() => settingsStore.tagsViewStyle)
 
 // 下拉菜单针对当前激活的 tag
 const selectedDropdownTag = computed(() => visitedViews.value.find(v => isActive(v)) || {})
@@ -239,13 +243,13 @@ function filterAffixTags(routes, basePath = '') {
 */
 function initTags() {
   if (tagsViewPersist.value) {
-    useTagsViewStore().loadPersistedViews()
+    tagsViewStore.loadPersistedViews()
   }
   const res = filterAffixTags(routes.value)
   affixTags.value = res
   for (const tag of res) {
     if (tag.name) {
-      useTagsViewStore().addAffixView(tag)
+      tagsViewStore.addAffixView(tag)
     }
   }
 }
@@ -256,7 +260,7 @@ function initTags() {
 function addTags() {
   const { name } = route
   if (name) {
-    useTagsViewStore().addView(route)
+    tagsViewStore.addView(route)
   }
 }
 
@@ -269,7 +273,7 @@ function moveToCurrentTag() {
       if (r.path === route.path) {
         scrollPaneRef.value.moveToTarget(r)
         if (r.fullPath !== route.fullPath) {
-          useTagsViewStore().updateVisitedView(route)
+          tagsViewStore.updateVisitedView(route)
         }
       }
     }

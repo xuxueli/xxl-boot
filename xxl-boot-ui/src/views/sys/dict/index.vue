@@ -185,6 +185,9 @@ import { Search, Refresh, Plus, Edit, Delete, Download, QuestionFilled, Operatio
 import DictDataDrawer from './detail'
 import { useDictStore } from '@/store'
 import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/sys/dict/type"
+
+const dictStore = useDictStore()
+
 import { useDict } from '@/utils/hooks/useDict'
 import { parseTime, addDateRange } from '@/utils/common'
 import { useFormReset } from '@/utils/hooks/useFormReset'
@@ -346,7 +349,7 @@ function handleExport() {
 function handleRefreshCache() {
   refreshCache().then(() => {
     modal.msgSuccess("刷新成功")
-    useDictStore().cleanDict()
+    dictStore.cleanDict()
   })
 }
 

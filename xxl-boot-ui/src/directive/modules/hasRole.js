@@ -13,11 +13,12 @@ import { useUserStore } from '@/store'
  */
 export default {
   mounted(el, binding) {
+    const userStore = useUserStore()
     // role data
     const { value } = binding
     if (value && Array.isArray(value) && value.length > 0) {
       // 无角色，移除元素
-      if (!useUserStore().checkRole(value)) {
+      if (!userStore.checkRole(value)) {
         el.parentNode && el.parentNode.removeChild(el)
       }
     } else {

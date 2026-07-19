@@ -19,6 +19,8 @@
 import { useDictStore } from '@/store'
 import { getDicts } from '@/api/sys/dict/data'
 
+const dictStore = useDictStore()
+
 /**
  * 批量获取字典数据（组合式 API 钩子）
  *
@@ -38,7 +40,7 @@ export function useDict(...args) {
       // 初始化该字典类型对应的响应式数组（空数组占位，避免模板访问报错）
       res.value[dictType] = []
       // 优先读取 store 缓存
-      const dicts = useDictStore().getDict(dictType)
+      const dicts = dictStore.getDict(dictType)
       if (dicts) {
         // 缓存命中，直接赋值
         res.value[dictType] = dicts
@@ -48,7 +50,7 @@ export function useDict(...args) {
           // 规范化字段：将后端字段映射为前端通用字段名，适配 el-select / el-tag 等组件
           res.value[dictType] = resp.data.map(p => ({ label: p.dictLabel, value: p.dictValue, elTagType: p.listClass, elTagClass: p.cssClass }))
           // 写入 store 缓存，下次同类型请求直接命中
-          useDictStore().setDict(dictType, res.value[dictType])
+          dictStore.setDict(dictType, res.value[dictType])
         })
       }
     })

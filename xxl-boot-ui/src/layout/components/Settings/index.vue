@@ -145,6 +145,7 @@ import modal from '@/utils/modal'
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const tagsViewStore = useTagsViewStore()
+const routesStore = useRoutesStore()
 
 const showSettingsRef = ref(false)
 
@@ -219,7 +220,7 @@ function handleNavType(type) {
 
   // 只有左侧/顶部需要设置侧边栏路由
   if ([1, 3].includes(type)) {
-    useRoutesStore().setScope('')
+    routesStore.setScope('')
   }
 }
 

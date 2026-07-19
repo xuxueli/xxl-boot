@@ -13,9 +13,10 @@ import { useUserStore } from '@/store'
  */
 export default {
   mounted(el, binding) {
+    const userStore = useUserStore()
     const { value } = binding
     if (value && Array.isArray(value) && value.length > 0) {
-      if (!useUserStore().checkPermi(value)) {
+      if (!userStore.checkPermi(value)) {
         // 无权限，移除元素
         el.parentNode && el.parentNode.removeChild(el)
       }

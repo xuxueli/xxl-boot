@@ -26,6 +26,7 @@ import { useRoutesStore, useSettingsStore } from '@/store'
 
 const route = useRoute()
 const settingsStore = useSettingsStore()
+const routesStore = useRoutesStore()
 const theme = computed(() => settingsStore.theme)
 
 const visibleNumber = ref(5)  /* 可见菜单数量阈值，动态计算 */
@@ -45,14 +46,14 @@ const activeMenu = computed(() => {
 * 顶部一级菜单：取前 N 条可见路由（N 由容器宽度动态计算）
 */
 const topMenus = computed(() => {
-  return useRoutesStore().fullRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value)
+  return routesStore.fullRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value)
 })
 
 /*
 * 超出折叠的更多菜单：取 visibleNumber 之后的路由
 */
 const moreRoutes = computed(() => {
-  return useRoutesStore().fullRoutes.filter((f) => !f.hidden).slice(visibleNumber.value)
+  return routesStore.fullRoutes.filter((f) => !f.hidden).slice(visibleNumber.value)
 })
 
 /*
