@@ -13,22 +13,16 @@ import { useUserStore } from '@/store'
  */
 export default {
   mounted(el, binding) {
+    // role data
     const { value } = binding
-    const super_admin = "admin"
-    const roles = useUserStore().roles
-
-    if (value && value instanceof Array && value.length > 0) {
-      // admin 直接通过，否则任一匹配即通过
-      const hasRole = roles.some(role => {
-        return super_admin === role || value.includes(role)
-      })
-      if (!hasRole) {
-        // 无角色，移除元素
+    if (value && Array.isArray(value) && value.length > 0) {
+      // 无角色，移除元素
+      if (!useUserStore().checkRole(value)) {
         el.parentNode && el.parentNode.removeChild(el)
       }
     } else {
       // 参数非法，抛出错误
-      throw new Error(`请设置角色权限标签值`)
+      throw new Error('请设置角色权限标签值')
     }
   }
 }

@@ -14,21 +14,14 @@ import { useUserStore } from '@/store'
 export default {
   mounted(el, binding) {
     const { value } = binding
-    const all_permission = "*:*:*"
-    const permissions = useUserStore().permissions
-
-    if (value && value instanceof Array && value.length > 0) {
-      // 通配符直接通过，否则任一匹配即通过
-      const hasPermissions = permissions.some(permission => {
-        return all_permission === permission || value.includes(permission)
-      })
-      if (!hasPermissions) {
+    if (value && Array.isArray(value) && value.length > 0) {
+      if (!useUserStore().checkPermi(value)) {
         // 无权限，移除元素
         el.parentNode && el.parentNode.removeChild(el)
       }
     } else {
       // 参数非法，抛出错误
-      throw new Error(`请设置操作权限标签值`)
+      throw new Error('请设置操作权限标签值')
     }
   }
 }

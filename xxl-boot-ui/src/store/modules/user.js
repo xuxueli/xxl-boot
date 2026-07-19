@@ -17,7 +17,11 @@ import defAva from '@/assets/images/profile.jpg'
 const useUserStore = defineStore(
   'user',
   {
-    // state — 登录凭证与用户身份
+    /**
+     * state —
+     *    - 登录凭证、用户身份
+     *    - 角色/权限数据
+     */
     state: () => ({
       token: getToken(),       // 登录令牌，页面刷新后恢复
       id: '',                  // 用户 ID
@@ -27,7 +31,11 @@ const useUserStore = defineStore(
       roles: [],               // 角色标识集合
       permissions: []          // 权限标识集合
     }),
-    // actions — 登录 / 获取用户信息 / 退出
+    /**
+     * actions
+     *    — 登录 / 获取登录用户信息 / 退出登录
+     *    - 权限校验
+      */
     actions: {
       /**
        * 登录：提交凭证，保存 token
@@ -52,7 +60,7 @@ const useUserStore = defineStore(
         })
       },
       /**
-       * 获取用户信息：拉取资料、角色、权限，检查密码状态
+       * 获取登录用户信息：拉取资料、角色、权限，检查密码状态
        */
       getInfo() {
         return new Promise((resolve, reject) => {
@@ -101,7 +109,7 @@ const useUserStore = defineStore(
         })
       },
       /**
-       * 退出：服务端登出，清空本地 token 与用户状态
+       * 退出登录：服务端登出，清空本地 token 与用户状态
        */
       logout() {
         return new Promise((resolve, reject) => {
@@ -115,6 +123,72 @@ const useUserStore = defineStore(
             reject(error)
           })
         })
+      },
+      /**
+       * 校验单个权限
+       */
+      hasPermi(permission) {
+        const all_permission = "*:*:*"
+        if (permission && permission.length > 0) {
+          return this.permissions.some(v => all_permission === v || v === permission)
+        }
+        return false
+      },
+      /**
+       * 校验多个权限（或逻辑）
+       */
+      hasPermiOr(permissions) {
+        return permissions.some(item => this.hasPermi(item))
+      },
+      /**
+       * 校验多个权限（与逻辑）
+       */
+      hasPermiAnd(permissions) {
+        return permissions.every(item => this.hasPermi(item))
+      },
+      /**
+       * 校验角色
+       */
+      hasRole(role) {
+        const super_admin = "admin"
+        if (role && role.length > 0) {
+          return this.roles.some(v => super_admin === v || v === role)
+        }
+        return false
+      },
+      /**
+       * 校验多个角色（或逻辑）
+       */
+      hasRoleOr(roles) {
+        return roles.some(item => this.hasRole(item))
+      },
+      /**
+       * 校验多个角色（与逻辑）
+       */
+      hasRoleAnd(roles) {
+        return roles.every(item => this.hasRole(item))
+      },
+      /**
+       * 校验权限数组（或逻辑），供指令使用
+       */
+      checkPermi(value) {
+        if (value && Array.isArray(value) && value.length > 0) {
+          const all_permission = "*:*:*"
+          return this.permissions.some(permission =>
+            all_permission === permission || value.includes(permission)
+          )
+        }
+        return false
+      },
+      /**
+       * 校验角色数组（或逻辑），供指令使用
+       */
+      checkRole(value) {
+        if (value && Array.isArray(value) && value.length > 0) {
+          const super_admin = "admin"
+          return this.roles.some(role => super_admin === role || value.includes(role))
+        }
+        return false
       }
     }
   })
