@@ -25,6 +25,7 @@
       ref="quillEditorRef"
       v-model:content="content"
       contentType="html"
+      @ready="onEditorReady"
       @textChange="(e) => $emit('update:modelValue', content)"
       :options="options"
       :style="styles"
@@ -120,9 +121,8 @@ watch(() => props.modelValue, (v) => {
 }, { immediate: true })
 
 // url 模式下：劫持图片上传按钮（触发隐藏 file input）+ 监听粘贴图片事件
-onMounted(() => {
-  if (props.type == 'url') {
-    let quill = quillEditorRef.value.getQuill()
+function onEditorReady(quill) {
+  if (props.type === 'url') {
     let toolbar = quill.getModule("toolbar")
     toolbar.addHandler("image", (value) => {
       if (value) {
@@ -132,6 +132,16 @@ onMounted(() => {
       }
     })
     quill.root.addEventListener('paste', handlePasteCapture, true)
+  }
+}
+
+// 编辑器销毁时移除粘贴监听
+onBeforeUnmount(() => {
+  if (props.type == 'url' && quillEditorRef.value) {
+    try {
+      let quill = quillEditorRef.value.getQuill()
+      quill.root.removeEventListener('paste', handlePasteCapture, true)
+    } catch { /* editor may not have been initialized */ }
   }
 })
 
