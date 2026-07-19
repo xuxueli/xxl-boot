@@ -212,7 +212,7 @@ function handleNavType(type) {
 
   // 菜单导航-级联变更：type: 1 = 左侧, 2 = 混合, 3 = 顶部
   if (type === 1 || type === 2) {
-    appStore.openSideBar(true)
+    appStore.openSideBar({ withoutAnimation: true })
   } else if (type === 3) {
     appStore.hideSideBar(true)
   }

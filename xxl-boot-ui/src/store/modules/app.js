@@ -10,9 +10,12 @@ const useAppStore = defineStore(
         state: () => ({
             // 侧边栏状态
             sidebar: {
-                opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,    // 是否展开：0-折叠 1-展开
-                withoutAnimation: false,                                                          // 是否无切换动画：true-无动画 false-有动画
-                hide: false                                                                       // 是否隐藏：true-隐藏 false-显示
+                // 是否展开：0-折叠 1-展开
+                opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
+                // 是否无切换动画：true-无动画 false-有动画
+                withoutAnimation: false,
+                // 是否隐藏：true-隐藏 false-显示
+                hide: false
             },
             // 设备状态
             device: 'desktop',
@@ -22,6 +25,7 @@ const useAppStore = defineStore(
         actions: {
             /**
              * 侧边栏 - 切换状态
+             *
              * @param withoutAnimation   切换动画
              */
             toggleSideBar(withoutAnimation) {
@@ -41,7 +45,8 @@ const useAppStore = defineStore(
             },
             /**
              * 侧边栏 - 折叠
-             * @param param0.withoutAnimation  设置是否无动画
+             *
+             * @param withoutAnimation  设置是否无动画
              */
             closeSideBar({withoutAnimation}) {
                 // 取消隐藏
@@ -56,7 +61,7 @@ const useAppStore = defineStore(
             },
             /**
              * 侧边栏 - 展开
-             * @param param0.withoutAnimation  设置是否无动画
+             * @param withoutAnimation  设置是否无动画
              */
             openSideBar({withoutAnimation}) {
                 // 取消隐藏
@@ -71,6 +76,7 @@ const useAppStore = defineStore(
             },
             /**
              * 侧边栏 - 隐藏/关闭
+             *
              * @param status  侧边栏隐藏状态
              */
             hideSideBar(status) {
@@ -78,6 +84,7 @@ const useAppStore = defineStore(
             },
             /**
              * 设备 - 切换状态
+             *
              * @param device  设备状态
              */
             toggleDevice(device) {
@@ -85,6 +92,7 @@ const useAppStore = defineStore(
             },
             /**
              * 设置字体大小
+             *
              * @param size  字体大小
              */
             setSize(size) {

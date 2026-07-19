@@ -4,14 +4,14 @@
 export default {
 
   /**
-   * 首页路径
-   */
-  homePath: '/index',
-
-  /**
    * 网页标题
    */
   title: 'Boot管理系统',
+
+  /**
+   * 首页路径
+   */
+  homePath: '/index',
 
   /**
    * 布局配置：启用开关
@@ -87,4 +87,5 @@ export default {
    * 底部版权文本内容
    */
   footerContent: 'Copyright © 2015-' + new Date().getFullYear() + ' Boot. All Rights Reserved.'
+
 }
