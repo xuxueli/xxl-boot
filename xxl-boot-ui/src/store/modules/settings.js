@@ -103,7 +103,6 @@ const useSettingsStore = defineStore(
             // 暗黑模式-是否
             isDark: isDark.value,
             // 系统配置：
-            homePath: defaultSettings.homePath,
             showSettings: defaultSettings.showSettings,
             navType: storageSetting.navType === undefined ? defaultSettings.navType : storageSetting.navType,
             sideTheme: storageSetting.sideTheme || defaultSettings.sideTheme,
@@ -139,7 +138,6 @@ const useSettingsStore = defineStore(
              */
             saveSetting() {
                 const layoutSetting = {
-                    homePath: this.homePath,
                     showSettings: this.showSettings,
                     navType: this.navType,
                     sideTheme: this.sideTheme,
@@ -163,7 +161,6 @@ const useSettingsStore = defineStore(
                 localStorage.removeItem(LAYOUT_SETTING_KEY)
 
                 // 恢复到默认配置
-                this.homePath =  defaultSettings.homePath
                 this.showSettings = defaultSettings.showSettings
                 this.navType = defaultSettings.navType
                 this.sideTheme = defaultSettings.sideTheme

@@ -16,7 +16,6 @@
             - store:            x
                 - 非必须合并；
                     - dict
-                    - settings
             - utils:            x
                 - 非必须合并；
             - views:            x-03
