@@ -34,7 +34,7 @@ app.use(ElementPlus, { locale, size: Cookies.get('size') || 'default' })
 // 全局注册：自定义指令
 directive(app)
 
-// 全局注册：自定义业务组件 + Element Plus图标
+// 全局注册：自定义业务组件
 registerComponents(app)
 
 // 挂载应用到 DOM
