@@ -102,9 +102,8 @@ const useSettingsStore = defineStore(
             menuTitle: '',
             // 暗黑模式-是否
             isDark: isDark.value,
-            // 首页路径
+            // 系统配置：
             homePath: defaultSettings.homePath,
-            // 布局配置：启用开关
             showSettings: defaultSettings.showSettings,
             navType: storageSetting.navType === undefined ? defaultSettings.navType : storageSetting.navType,
             sideTheme: storageSetting.sideTheme || defaultSettings.sideTheme,
@@ -140,6 +139,8 @@ const useSettingsStore = defineStore(
              */
             saveSetting() {
                 const layoutSetting = {
+                    homePath: this.homePath,
+                    showSettings: this.showSettings,
                     navType: this.navType,
                     sideTheme: this.sideTheme,
                     theme: this.theme,
@@ -150,7 +151,8 @@ const useSettingsStore = defineStore(
                     fixedHeader: this.fixedHeader,
                     sidebarLogo: this.sidebarLogo,
                     dynamicTitle: this.dynamicTitle,
-                    footerVisible: this.footerVisible
+                    footerVisible: this.footerVisible,
+                    footerContent: this.footerContent
                 }
                 localStorage.setItem(LAYOUT_SETTING_KEY, JSON.stringify(layoutSetting))
             },
@@ -161,7 +163,8 @@ const useSettingsStore = defineStore(
                 localStorage.removeItem(LAYOUT_SETTING_KEY)
 
                 // 恢复到默认配置
-                this.showSettingsRef = defaultSettings.showSettings
+                this.homePath =  defaultSettings.homePath
+                this.showSettings = defaultSettings.showSettings
                 this.navType = defaultSettings.navType
                 this.sideTheme = defaultSettings.sideTheme
                 this.theme = defaultSettings.theme
