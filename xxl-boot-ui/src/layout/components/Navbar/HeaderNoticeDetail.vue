@@ -11,8 +11,10 @@
         <el-icon><Document /></el-icon>
         <span>暂无数据</span>
       </div>
+
       <!-- 详情内容 -->
       <div v-else class="notice-page">
+
         <!-- 类型标签：通知 / 公告 / 消息 -->
         <div class="notice-type-wrap">
           <span v-if="detail.noticeType === '1'" class="notice-type-tag type-notify">
@@ -29,7 +31,7 @@
         <!-- 公告标题 -->
         <h1 class="notice-title">{{ detail.noticeTitle }}</h1>
 
-        <!-- 元数据：发布人 / 发布时间 / 状态 -->
+        <!-- 公告元数据：发布人 / 发布时间 / 状态 -->
         <div class="notice-meta">
           <span class="meta-item">
             <el-icon><User /></el-icon>
@@ -59,6 +61,7 @@
             <el-icon><Document /></el-icon> 暂无内容
           </div>
         </div>
+
       </div>
     </div>
   </el-drawer>
@@ -90,11 +93,12 @@ const hasContent = computed(() => {
 
 /*
 * 打开详情：支持传入完整公告对象（直接展示）或 noticeId（请求接口加载）
-*  payload 类型分支：
-*    object → 含 noticeContent 则直接展示（预设模式），否则只取 id 发请求
-*    string/number → 视为 noticeId 请求接口加载
+*   payload 类型分支：
+*     - object → 含 noticeContent 则直接展示（预设模式），否则只取 id 发请求
+*     - string/number → 视为 noticeId 请求接口加载
 */
 function open(payload) {
+  /* 处理入参 */
   let id = null
   let preset = null
   if (payload != null && typeof payload === 'object') {
@@ -104,17 +108,20 @@ function open(payload) {
     id = payload
   }
   visible.value = true
-  /* 直接展示模式：已有完整数据，跳过请求 */
+
+  /* 传入 object，直接展示模式：已有完整数据，跳过请求 */
   if (preset) {
     detail.value = preset
     return
   }
+
   /* 无有效 id 时置空返回 */
   if (id == null || id === '') {
     detail.value = null
     return
   }
-  /* 请求模式：调接口获取详情 */
+
+  /* 传入 noticeId：调接口获取详情 */
   loading.value = true
   detail.value = null
   getNotice(id).then(res => {
@@ -124,6 +131,7 @@ function open(payload) {
   }).finally(() => {
     loading.value = false
   })
+
 }
 
 /*
