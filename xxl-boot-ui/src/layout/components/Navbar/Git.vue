@@ -4,7 +4,7 @@
 -->
 <template>
   <div>
-    <svg-icon icon-class="github" @click="goto" />
+    <SvgIcon icon-class="github" @click="goto" />
   </div>
 </template>
 

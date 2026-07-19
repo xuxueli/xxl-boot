@@ -47,8 +47,8 @@
         <!-- 主题 -->
         <el-tooltip content="主题模式" effect="dark" placement="bottom">
           <div class="right-menu-item hover-effect theme-switch-wrapper" @click="toggleTheme">
-            <svg-icon v-if="settingsStore.isDark" icon-class="sunny" />
-            <svg-icon v-if="!settingsStore.isDark" icon-class="moon" />
+            <SvgIcon v-if="settingsStore.isDark" icon-class="sunny" />
+            <SvgIcon v-if="!settingsStore.isDark" icon-class="moon" />
           </div>
         </el-tooltip>
         <!-- 布局尺寸 -->

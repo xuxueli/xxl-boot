@@ -12,7 +12,7 @@
     <!-- 可见的一级菜单项：前 visibleNumber 条 -->
     <template v-for="(item, index) in topMenus">
       <el-menu-item :style="{'--theme': theme}" :index="item.path" :key="index" v-if="index < visibleNumber">
-        <svg-icon
+        <SvgIcon
             v-if="item.meta && item.meta.icon && item.meta.icon !== '#'"
             :icon-class="item.meta.icon"/>
         {{ item.meta.title }}
@@ -28,7 +28,7 @@
             :key="index"
             v-if="index >= visibleNumber">
           <!-- icon -->
-          <svg-icon
+          <SvgIcon
               v-if="item.meta && item.meta.icon && item.meta.icon !== '#'"
               :icon-class="item.meta.icon"/>
           <!-- title -->

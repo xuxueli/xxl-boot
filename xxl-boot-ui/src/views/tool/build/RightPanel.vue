@@ -18,7 +18,7 @@
             <el-select v-model="activeData.tagIcon" placeholder="请选择组件类型" :style="{ width: '100%' }" @change="tagChange">
               <el-option-group v-for="group in tagList" :key="group.label" :label="group.label">
                 <el-option v-for="item in group.options" :key="item.label" :label="item.label" :value="item.tagIcon">
-                  <svg-icon class="node-icon" :icon-class="item.tagIcon" style="margin-right: 10px;" />
+                  <SvgIcon class="node-icon" :icon-class="item.tagIcon" style="margin-right: 10px;" />
                   <span> {{ item.label }}</span>
                 </el-option>
               </el-option-group>
@@ -384,7 +384,7 @@
             <el-tree :data="[activeData]" :props="layoutTreeProps" node-key="renderKey" default-expand-all draggable>
               <template #default="{ node, data }">
                 <span class="node-label">
-                  <svg-icon class="node-icon" :icon-class="data.tagIcon" style="margin-right: 5px;" />
+                  <SvgIcon class="node-icon" :icon-class="data.tagIcon" style="margin-right: 5px;" />
                   {{ node.label }}
                 </span>
               </template>

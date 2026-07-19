@@ -4,10 +4,21 @@
             - api:              done
             - assets:           done
             - directives:       done
-            - router:        done：              
-            - layouts:          x-01
-                TopNav
+            - router:           done：              
+            - layouts:          done
             - components:       x-02
+                - DictTag
+                - Editor
+                - ExcelImportDialog
+                - FileUpload
+                - IconSelect
+                - iFrame
+                - ImagePreview
+                - ImageUpload
+                - Pagination
+                - RightToolbar
+                - SvgIcon
+                - TreePanel
             - store:            x
                 - 非必须合并；
             - utils:            x

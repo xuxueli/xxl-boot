@@ -5,7 +5,7 @@
 <template>
   <div class="header-search">
     <!-- 图标：搜索触发 -->
-    <svg-icon class-name="search-icon" icon-class="search" @click.stop="click"/>
+    <SvgIcon class-name="search-icon" icon-class="search" @click.stop="click"/>
     <!-- 搜索弹窗 -->
     <el-dialog
         v-model="show"
@@ -52,7 +52,7 @@
             >
               <!-- icon -->
               <div class="left">
-                <svg-icon class="menu-icon" :icon-class="item.icon"/>
+                <SvgIcon class="menu-icon" :icon-class="item.icon"/>
               </div>
               <!-- menu -->
               <div class="search-info" @click="change(item)">
@@ -60,7 +60,7 @@
                 <div class="menu-path" v-html="highlightText(item.path)"></div>
               </div>
               <!-- enter icon -->
-              <svg-icon icon-class="enter" v-show="index === activeIndex"/>
+              <SvgIcon icon-class="enter" v-show="index === activeIndex"/>
             </div>
           </template>
 

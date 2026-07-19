@@ -9,7 +9,7 @@
       <el-scrollbar class="left-scrollbar">
         <div class="components-list">
           <div class="components-title">
-            <svg-icon icon-class="component" />输入型组件
+            <SvgIcon icon-class="component" />输入型组件
           </div>
           <draggable class="components-draggable" :list="inputComponents"
             :group="{ name: 'componentsGroup', pull: 'clone', put: false }" :clone="cloneComponent"
@@ -17,14 +17,14 @@
             <template #item="{ element, index }">
               <div :key="index" class="components-item" @click="addComponent(element)">
                 <div class="components-body">
-                  <svg-icon :icon-class="element.tagIcon" />
+                  <SvgIcon :icon-class="element.tagIcon" />
                   {{ element.label }}
                 </div>
               </div>
             </template>
           </draggable>
           <div class="components-title">
-            <svg-icon icon-class="component" />选择型组件
+            <SvgIcon icon-class="component" />选择型组件
           </div>
           <draggable class="components-draggable" :list="selectComponents"
             :group="{ name: 'componentsGroup', pull: 'clone', put: false }" :clone="cloneComponent"
@@ -32,14 +32,14 @@
             <template #item="{ element, index }">
               <div :key="index" class="components-item" @click="addComponent(element)">
                 <div class="components-body">
-                  <svg-icon :icon-class="element.tagIcon" />
+                  <SvgIcon :icon-class="element.tagIcon" />
                   {{ element.label }}
                 </div>
               </div>
             </template>
           </draggable>
           <div class="components-title">
-            <svg-icon icon-class="component" /> 布局型组件
+            <SvgIcon icon-class="component" /> 布局型组件
           </div>
           <draggable class="components-draggable" :list="layoutComponents"
             :group="{ name: 'componentsGroup', pull: 'clone', put: false }" :clone="cloneComponent"
@@ -47,7 +47,7 @@
             <template #item="{ element, index }">
               <div :key="index" class="components-item" @click="addComponent(element)">
                 <div class="components-body">
-                  <svg-icon :icon-class="element.tagIcon" />
+                  <SvgIcon :icon-class="element.tagIcon" />
                   {{ element.label }}
                 </div>
               </div>

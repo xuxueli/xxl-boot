@@ -5,7 +5,7 @@
 <template>
   <div>
     <!-- isFullscreen 为 true 时显示"退出全屏"图标，否则显示"全屏"图标 -->
-    <svg-icon :icon-class="isFullscreen ? 'exit-fullscreen' : 'fullscreen'" @click="toggle" />
+    <SvgIcon :icon-class="isFullscreen ? 'exit-fullscreen' : 'fullscreen'" @click="toggle" />
   </div>
 </template>
 

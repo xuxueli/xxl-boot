@@ -26,7 +26,7 @@
         @contextmenu.prevent="openMenu(tag, $event)"
       >
         <!-- icon -->
-        <svg-icon v-if="tagsIcon && tag.meta && tag.meta.icon && tag.meta.icon !== '#'" :icon-class="tag.meta.icon" style="margin-right: 3px;" />
+        <SvgIcon v-if="tagsIcon && tag.meta && tag.meta.icon && tag.meta.icon !== '#'" :icon-class="tag.meta.icon" style="margin-right: 3px;" />
         <!-- title -->
         {{ tag.title }}
         <!-- close -->

@@ -66,7 +66,7 @@
       >
          <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="220">
             <template #default="scope">
-               <svg-icon :icon-class="scope.row.icon" />
+               <SvgIcon :icon-class="scope.row.icon" />
                <span class="ml5">{{ scope.row.menuName }}</span>
             </template>
          </el-table-column>
@@ -135,7 +135,7 @@
                         <template #reference>
                            <el-input v-model="form.icon" placeholder="点击选择图标" @blur="showSelectIcon" readonly>
                               <template #prefix>
-                                 <svg-icon
+                                 <SvgIcon
                                     v-if="form.icon"
                                     :icon-class="form.icon"
                                     class="el-input__icon"

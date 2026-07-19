@@ -13,7 +13,7 @@
         <div class="right-menu-item hover-effect notice-trigger" @mouseenter="onNoticeEnter"
              @mouseleave="onNoticeLeave">
           <!-- 图标：铃铛 -->
-          <svg-icon icon-class="bell"/>
+          <SvgIcon icon-class="bell"/>
           <!-- 未读数量角标 -->
           <span v-if="unreadCount > 0" class="notice-badge">{{ unreadCount }}</span>
         </div>
