@@ -153,6 +153,7 @@
 </template>
 
 <script setup name="Operlog">
+import { Search, Refresh, Delete, Download, View } from '@element-plus/icons-vue'
 import OperlogDetail from './detail'
 import { list, delOperlog, cleanOperlog } from "@/api/sys/operlog"
 import { useDict } from '@/utils/hooks/useDict'

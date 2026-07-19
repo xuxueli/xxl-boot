@@ -149,7 +149,7 @@
                <template #label>
                   <span>
                      <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)" placement="top">
-                        <el-icon><question-filled /></el-icon>
+                        <el-icon><QuestionFilled /></el-icon>
                      </el-tooltip>
                      权限字符
                   </span>
@@ -242,6 +242,7 @@
 </template>
 
 <script setup name="Role">
+import { Search, Refresh, Plus, Edit, Delete, Download, CircleCheck, User, QuestionFilled } from '@element-plus/icons-vue'
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/system/role"
 import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/menu"
 import { useDict } from '@/utils/hooks/useDict'

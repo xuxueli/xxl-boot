@@ -149,7 +149,7 @@
                <template #label>
                  <span>
                    <el-tooltip content='数据存储中的Key值，如：sys_user_sex' placement="top">
-                     <el-icon><question-filled /></el-icon>
+                     <el-icon><QuestionFilled /></el-icon>
                    </el-tooltip>
                    字典类型
                  </span>
@@ -181,6 +181,7 @@
 </template>
 
 <script setup name="Dict">
+import { Search, Refresh, Plus, Edit, Delete, Download, QuestionFilled, Operation } from '@element-plus/icons-vue'
 import DictDataDrawer from './detail'
 import { useDictStore } from '@/store'
 import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/sys/dict/type"

@@ -96,6 +96,7 @@
 </template>
 
 <script setup>
+import { Download as DownloadIcon, DocumentCopy, Delete } from '@element-plus/icons-vue'
 import draggable from "vuedraggable/dist/vuedraggable.common"
 import ClipboardJS from 'clipboard'
 import beautifier from 'js-beautify'

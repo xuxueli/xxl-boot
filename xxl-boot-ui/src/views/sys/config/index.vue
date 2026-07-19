@@ -165,6 +165,7 @@
 </template>
 
 <script setup name="Config">
+import { Search, Refresh, Plus, Edit, Delete, Download } from '@element-plus/icons-vue'
 import { listConfig, getConfig, delConfig, addConfig, updateConfig, refreshCache } from "@/api/sys/config"
 import { useDict } from '@/utils/hooks/useDict'
 import { parseTime, addDateRange } from '@/utils/common'

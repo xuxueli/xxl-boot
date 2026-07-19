@@ -13,13 +13,14 @@
   >
     <template #error>
       <div class="image-slot">
-        <el-icon><picture-filled /></el-icon>
+        <el-icon><PictureFilled /></el-icon>
       </div>
     </template>
   </el-image>
 </template>
 
 <script setup>
+import { PictureFilled } from '@element-plus/icons-vue'
 import { isExternal } from "@/utils/validate"
 
 const props = defineProps({

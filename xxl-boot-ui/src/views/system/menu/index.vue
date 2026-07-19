@@ -141,7 +141,7 @@
                                     class="el-input__icon"
                                     style="height: 32px;width: 16px;"
                                  />
-                                 <el-icon v-else style="height: 32px;width: 16px;"><search /></el-icon>
+                                 <el-icon v-else style="height: 32px;width: 16px;"><Search /></el-icon>
                               </template>
                            </el-input>
                         </template>
@@ -164,7 +164,7 @@
                      <template #label>
                         <span>
                            <el-tooltip content="默认不填则和路由地址相同：如地址为：`user`，则名称为`User`（注意：因为router会删除名称相同路由，为避免名字的冲突，特殊情况下请自定义，保证唯一性）" placement="top">
-                              <el-icon><question-filled /></el-icon>
+                              <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>
                            路由名称
                         </span>
@@ -177,7 +177,7 @@
                      <template #label>
                         <span>
                            <el-tooltip content="选择是外链则路由地址需要以`http(s)://`开头" placement="top">
-                              <el-icon><question-filled /></el-icon>
+                              <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>是否外链
                         </span>
                      </template>
@@ -192,7 +192,7 @@
                      <template #label>
                         <span>
                            <el-tooltip content="访问的路由地址，如：`user`，如外网地址需内链访问则以`http(s)://`开头" placement="top">
-                              <el-icon><question-filled /></el-icon>
+                              <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>
                            路由地址
                         </span>
@@ -205,7 +205,7 @@
                      <template #label>
                         <span>
                            <el-tooltip content="访问的组件路径，如：`system/user/index`，默认在`views`目录下" placement="top">
-                              <el-icon><question-filled /></el-icon>
+                              <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>
                            组件路径
                         </span>
@@ -219,7 +219,7 @@
                      <template #label>
                         <span>
                            <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)" placement="top">
-                              <el-icon><question-filled /></el-icon>
+                              <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>
                            权限字符
                         </span>
@@ -232,7 +232,7 @@
                      <template #label>
                         <span>
                            <el-tooltip content='访问路由的默认传递参数，如：`{"id": 1, "name": "ry"}`' placement="top">
-                              <el-icon><question-filled /></el-icon>
+                              <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>
                            路由参数
                         </span>
@@ -244,7 +244,7 @@
                      <template #label>
                         <span>
                            <el-tooltip content="选择是则会被`keep-alive`缓存，需要匹配组件的`name`和地址保持一致" placement="top">
-                              <el-icon><question-filled /></el-icon>
+                              <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>
                            是否缓存
                         </span>
@@ -260,7 +260,7 @@
                      <template #label>
                         <span>
                            <el-tooltip content="选择隐藏则路由将不会出现在侧边栏，但仍然可以访问" placement="top">
-                              <el-icon><question-filled /></el-icon>
+                              <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>
                            显示状态
                         </span>
@@ -279,7 +279,7 @@
                      <template #label>
                         <span>
                            <el-tooltip content="选择停用则路由将不会出现在侧边栏，也不能被访问" placement="top">
-                              <el-icon><question-filled /></el-icon>
+                              <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>
                            菜单状态
                         </span>
@@ -306,6 +306,7 @@
 </template>
 
 <script setup name="Menu">
+import { Search, Refresh, Plus, Check, Sort, Edit, Delete, QuestionFilled } from '@element-plus/icons-vue'
 import { addMenu, delMenu, getMenu, listMenu, updateMenu, updateMenuSort } from "@/api/system/menu"
 
 import { useDict } from '@/utils/hooks/useDict'

@@ -50,6 +50,7 @@
 </template>
 
 <script setup>
+import { Search, Refresh, Menu } from '@element-plus/icons-vue'
 import cache from '@/utils/cache'
 
 const props = defineProps({

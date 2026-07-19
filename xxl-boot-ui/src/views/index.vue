@@ -142,6 +142,7 @@
 </template>
 
 <script setup name="Index">
+import { Cloudy, HomeFilled } from '@element-plus/icons-vue'
 
 const version = ref('3.9.2')
 

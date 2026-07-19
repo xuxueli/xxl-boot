@@ -185,7 +185,7 @@
 </template>
 
 <script setup name="User">
-
+import { Search, Refresh, Plus, Edit, Delete, Upload, Download, Key, CircleCheck } from '@element-plus/icons-vue'
 import UserViewDrawer from "./view"
 import { usePasswordRule } from "@/utils/hooks/usePasswordRule"
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user"

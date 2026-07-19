@@ -464,6 +464,7 @@
 </template>
 
 <script setup>
+import { Pointer, CirclePlus, Plus, Delete, Link, Remove, Close } from '@element-plus/icons-vue'
 import draggable from "vuedraggable/dist/vuedraggable.common"
 import { isNumberStr } from '@/utils/index'
 import IconsDialog from './IconsDialog'

@@ -20,7 +20,7 @@
 */
 export default defineComponent({
   props: {
-    // 图标名称（对应 svg-sprite 的 id，会拼为 #icon-xxx）
+    // 图标名称：对应 svg-sprite 的 id，会拼为 #icon-xxx
     iconClass: {
       type: String,
       required: true

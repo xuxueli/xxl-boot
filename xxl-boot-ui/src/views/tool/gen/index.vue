@@ -146,6 +146,7 @@
 </template>
 
 <script setup name="Gen">
+import { Search, Refresh, Download, Plus, Upload, Edit, Delete, View, DocumentCopy } from '@element-plus/icons-vue'
 import { listTable, previewTable, delTable, genCode, synchDb } from "@/api/tool/gen"
 import router from "@/router"
 import { addDateRange } from '@/utils/common'
