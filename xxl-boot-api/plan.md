@@ -15,9 +15,7 @@
                 - ImageUpload 
             - store:            x
                 - 非必须合并；
-                    - app
                     - dict
-                    - routes
                     - settings
             - utils:            x
                 - 非必须合并；

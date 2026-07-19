@@ -1,29 +1,9 @@
 /**
  * 名称：系统设置状态Store
  * 描述：系统全局设置状态管理，包括 菜单导航、标签页、主题色 ... 等
- */
-import defaultSettings from '@/settings'
-import {useDark, useToggle} from '@vueuse/core'
-import {handleThemeStyle} from '@/utils/theme'
-
-// 持久化存储Key：localStorage key constant
-const LAYOUT_SETTING_KEY = 'layout-setting'
-
-// 初始化暗黑模式：跟随系统
-const isDark = useDark()
-// 切换暗黑模式：联动更新
-const toggleDark = useToggle(isDark)
-
-// 持久化存储数据：从 localStorage 读取已有配置（如果有）
-const storageSetting = JSON.parse(localStorage.getItem(LAYOUT_SETTING_KEY)) || {}
-
-/**
- * 系统设置状态管理 Store
- *
- * 功能说明：
- * - 管理系统的全局配置项，包括主题、布局、标签页等设置
- * - 支持从本地存储恢复用户偏好设置
- * - 提供暗黑模式切换和动态标题更新功能
+ *      - 管理系统的全局配置项，包括主题、布局、标签页等设置
+ *      - 支持从本地存储恢复用户偏好设置
+ *      - 提供暗黑模式切换和动态标题更新功能
  *
  *
  * Pinia 简介：提供简洁、模块化且类型友好的状态管理能力。
@@ -32,8 +12,9 @@ const storageSetting = JSON.parse(localStorage.getItem(LAYOUT_SETTING_KEY)) || {
  *      - 生命周期：Store 生命周期与 Vue 组件生命周期一致，当Vue 组件销毁时，Store 也会自动销毁。
  *      - 跨组件同步‌：在组件 A 中修改了 Store 的状态，组件 B 中读取到的状态会立即更新，因为它们引用的是内存中的同一个对象。
  *      - 注意：虽然 Store 实例是单例且响应式的，但直接解构 State 或 Getters 会导致‌失去响应性‌（因为解构出来的是普通变量，不再是 Proxy 对象）。
- * Pinia 定义：
+ *
  * <pre>
+ *      Pinia 定义：
  *      import { defineStore } from 'pinia'
  *
  *      export const useCounterStore = defineStore('counter', {
@@ -75,23 +56,35 @@ const storageSetting = JSON.parse(localStorage.getItem(LAYOUT_SETTING_KEY)) || {
  *      <script setup>
  *      import { useCounterStore } from '@/stores/counter'
  *
- *      // 1. 初始化 Store
- *      const counterStore = useCounterStore()
- *
- *      // 2. 直接使用
- *      console.log(counterStore.count)
- *      counterStore.increment()
+ *      // 直接使用
+ *      useCounterStore().increment()
  *      </script>
  *
  *      <template>
  *        <div>
- *          <p>Count: {{ counterStore.count }}</p>
- *          <p>Double: {{ counterStore.doubleCount }}</p>
- *          <button @click="counterStore.increment">+1</button>
+ *          <p>Count: {{ useCounterStore().count }}</p>
+ *          <p>Double: {{ useCounterStore().doubleCount }}</p>
+ *          <button @click="useCounterStore().increment">+1</button>
  *        </div>
  *      </template>
- *      </pre>
+ * </pre>
  */
+
+import defaultSettings from '@/settings'
+import {useDark, useToggle} from '@vueuse/core'
+import {handleThemeStyle} from '@/utils/theme'
+
+// 初始化暗黑模式：跟随系统
+const isDark = useDark()
+// 切换暗黑模式：联动更新
+const toggleDark = useToggle(isDark)
+
+// 持久化存储Key：localStorage key constant
+const LAYOUT_SETTING_KEY = 'layout-setting'
+// 持久化存储数据：从 localStorage 读取已有配置（如果有）
+const storageSetting = JSON.parse(localStorage.getItem(LAYOUT_SETTING_KEY)) || {}
+
+
 const useSettingsStore = defineStore(
     /**
      * 存储名称：用于在 localStorage 中存储和检索设置数据
@@ -105,8 +98,13 @@ const useSettingsStore = defineStore(
          * 如果不存在则使用默认配置
          */
         state: () => ({
-            menuTitle: '',                  // 菜单标题
-            isDark: isDark.value,           // 暗黑模式-是否
+            // 菜单标题
+            menuTitle: '',
+            // 暗黑模式-是否
+            isDark: isDark.value,
+            // 首页路径
+            homePath: defaultSettings.homePath,
+            // 布局配置：启用开关
             showSettings: defaultSettings.showSettings,
             navType: storageSetting.navType === undefined ? defaultSettings.navType : storageSetting.navType,
             sideTheme: storageSetting.sideTheme || defaultSettings.sideTheme,
@@ -192,15 +190,13 @@ const useSettingsStore = defineStore(
                 })
             },
             /**
-             * 设置：侧边主题（例如 'theme-dark'/'theme-light'），集中处理更新逻辑
-             * @param {string} val
+             * 设置：侧边主题（ 'theme-dark'/'theme-light'），集中处理更新逻辑
              */
             setSideTheme(val) {
                 this.sideTheme = val
             },
             /**
              * 设置：主题色
-             * @param {string} themeVal
              */
             setTheme(themeVal) {
                 this.theme = themeVal
@@ -212,7 +208,6 @@ const useSettingsStore = defineStore(
             },
             /**
              * 设置：标签页持久化选项，并在关闭持久化时清理标签页缓存
-             * @param {boolean} val true-开启持久化，false-关闭持久化，并清理缓存
              */
             setTagsViewPersist(val) {
                 this.tagsViewPersist = val
