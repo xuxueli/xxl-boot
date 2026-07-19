@@ -7,8 +7,6 @@
             - router:           done：              
             - layouts:          done
             - components:       x-02
-                - RightToolbar 
-                - Pagination 
                 - DictTag 
                 - IconSelect 
                 - TreePanel 
