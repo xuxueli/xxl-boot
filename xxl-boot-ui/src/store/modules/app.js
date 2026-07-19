@@ -4,6 +4,9 @@
  */
 import Cookies from 'js-cookie'
 
+// 持久化存储Key：localStorage key constant （侧边栏状态）
+const SIDEBAR_STATUS_KEY = 'boot-sidebar-status'
+
 const useAppStore = defineStore(
     'app',
     {
@@ -11,7 +14,7 @@ const useAppStore = defineStore(
             // 侧边栏状态
             sidebar: {
                 // 是否展开：0-折叠 1-展开
-                opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
+                opened: localStorage.getItem(SIDEBAR_STATUS_KEY) ? localStorage.getItem(SIDEBAR_STATUS_KEY) === '1' : true,
                 // 是否无切换动画：true-无动画 false-有动画
                 withoutAnimation: false,
                 // 是否隐藏：true-隐藏 false-显示
@@ -38,9 +41,9 @@ const useAppStore = defineStore(
                 this.sidebar.withoutAnimation = withoutAnimation
                 // 设置侧边栏状态
                 if (this.sidebar.opened) {
-                    Cookies.set('sidebarStatus', 1)
+                    localStorage.setItem(SIDEBAR_STATUS_KEY, '1')
                 } else {
-                    Cookies.set('sidebarStatus', 0)
+                    localStorage.setItem(SIDEBAR_STATUS_KEY, '0')
                 }
             },
             /**
@@ -55,7 +58,7 @@ const useAppStore = defineStore(
                 }
 
                 // 修改状态
-                Cookies.set('sidebarStatus', 0)
+                localStorage.setItem(SIDEBAR_STATUS_KEY, '0')
                 this.sidebar.opened = false
                 this.sidebar.withoutAnimation = withoutAnimation
             },
@@ -70,7 +73,7 @@ const useAppStore = defineStore(
                 }
 
                 // 修改状态
-                Cookies.set('sidebarStatus', 1)
+                localStorage.setItem(SIDEBAR_STATUS_KEY, '1')
                 this.sidebar.opened = true
                 this.sidebar.withoutAnimation = withoutAnimation
             },

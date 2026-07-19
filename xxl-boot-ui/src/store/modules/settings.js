@@ -79,8 +79,8 @@ const isDark = useDark()
 // 切换暗黑模式：联动更新
 const toggleDark = useToggle(isDark)
 
-// 持久化存储Key：localStorage key constant
-const LAYOUT_SETTING_KEY = 'layout-setting'
+// 持久化存储Key：localStorage key constant （部署设置）
+const LAYOUT_SETTING_KEY = 'boot-layout-setting'
 // 持久化存储数据：从 localStorage 读取已有配置（如果有）
 const storageSetting = JSON.parse(localStorage.getItem(LAYOUT_SETTING_KEY)) || {}
 
