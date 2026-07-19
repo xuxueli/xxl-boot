@@ -145,7 +145,7 @@
                               </template>
                            </el-input>
                         </template>
-                        <icon-select ref="iconSelectRef" @selected="selected" :active-icon="form.icon" />
+                         <IconSelect ref="iconSelectRef" @selected="selected" :active-icon="form.icon" />
                      </el-popover>
                   </el-form-item>
                </el-col>
@@ -308,8 +308,7 @@
 <script setup name="Menu">
 import { addMenu, delMenu, getMenu, listMenu, updateMenu, updateMenuSort } from "@/api/system/menu"
 import { Check, Delete, Edit, Plus, QuestionFilled, Refresh, Search, Sort } from '@element-plus/icons-vue'
-import SvgIcon from "@/components/SvgIcon"
-import IconSelect from "@/components/IconSelect"
+
 import { useDict } from '@/utils/hooks/useDict'
 import { handleTree } from '@/utils/common'
 import { useFormReset } from '@/utils/hooks/useFormReset'

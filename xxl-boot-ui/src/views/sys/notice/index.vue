@@ -143,7 +143,7 @@
                </el-col>
                <el-col :span="24">
                   <el-form-item label="内容">
-                    <editor v-model="form.noticeContent" :min-height="192"/>
+                    <Editor v-model="form.noticeContent" :min-height="192"/>
                   </el-form-item>
                </el-col>
             </el-row>
@@ -169,7 +169,6 @@ import { useDict } from '@/utils/hooks/useDict'
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/utils/hooks/useFormReset'
 import modal from '@/utils/modal'
-import Editor from '@/components/Editor'
 
 const { sys_notice_status, sys_notice_type } = useDict("sys_notice_status", "sys_notice_type")
 const resetForm = useFormReset()
