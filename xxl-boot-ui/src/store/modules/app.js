@@ -2,10 +2,9 @@
  * 名称：应用状态Store
  * 描述：用于管理全局状态，包括 侧边栏状态、字体大小 ... 等。
  */
-import Cookies from 'js-cookie'
-
-// 持久化存储Key：localStorage key constant （侧边栏状态）
+// 持久化存储Key：localStorage key constant
 const SIDEBAR_STATUS_KEY = 'boot-sidebar-status'
+const FONTSIZE_KEY = 'boot-fontsize'
 
 const useAppStore = defineStore(
     'app',
@@ -23,7 +22,7 @@ const useAppStore = defineStore(
             // 设备状态
             device: 'desktop',
             // 字体大小
-            size: Cookies.get('size') || 'default'
+            size: localStorage.getItem(FONTSIZE_KEY) || 'default'
         }),
         actions: {
             /**
@@ -100,7 +99,7 @@ const useAppStore = defineStore(
              */
             setSize(size) {
                 this.size = size
-                Cookies.set('size', size)
+                localStorage.setItem(FONTSIZE_KEY, size)
             }
         }
     })
