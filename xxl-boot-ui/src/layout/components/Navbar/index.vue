@@ -105,6 +105,7 @@ import HeaderNotice from './HeaderNotice.vue'
 import Git from './Git.vue'
 import Doc from './Doc.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
+import settings from '@/settings'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -136,7 +137,7 @@ function logout() {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    userStore.logout().then(() => { location.href = '/index' })
+    userStore.logout().then(() => { location.href = settings.homePath })
   }).catch(() => {})
 }
 

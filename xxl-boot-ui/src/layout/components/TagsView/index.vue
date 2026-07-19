@@ -84,6 +84,7 @@ import ScrollPane from './ScrollPane.vue'
 import { getNormalPath } from '@/utils/common'
 import { useTagsViewStore, useRoutesStore, useSettingsStore } from '@/store'
 import tab from '@/utils/tab'
+import settings from '@/settings'
 
 // 右键上下文菜单
 const visible = ref(false)
@@ -190,7 +191,7 @@ function isAffix(tag) {
 function isFirstView() {
   try {
     const tag = selectedTag.value && selectedTag.value.fullPath ? selectedTag.value : selectedDropdownTag.value
-    return tag.fullPath === '/index' || tag.fullPath === visitedViews.value[1].fullPath
+    return tag.fullPath === settings.homePath || tag.fullPath === visitedViews.value[1].fullPath
   } catch (err) {
     return false
   }

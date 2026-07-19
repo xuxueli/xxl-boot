@@ -15,6 +15,7 @@ import { getToken } from '@/utils/auth'
 import { isHttp, isPathMatch } from '@/utils/validate'
 import { isRelogin } from '@/utils/request'
 import { useUserStore, useRoutesStore, useSettingsStore } from '@/store'
+import settings from '@/settings'
 
 
 /**
@@ -31,7 +32,7 @@ export const constantRoutes = [
   {
     // 首页：默认跳转 “/index”
     path: '',
-    redirect: '/index'
+    redirect: settings.homePath
   },
   {
     // 个人中心：hidden 控制侧栏不显示
@@ -42,7 +43,7 @@ export const constantRoutes = [
     children: [
       {
         name: 'Profile',
-        path: 'profile/:activeTab?',
+        path: '/user/profile/:activeTab?',
         component: () => import('@/views/system/user/profile/index'),
         meta: { title: '个人中心', icon: 'user' }
       }

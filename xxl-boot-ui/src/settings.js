@@ -4,6 +4,11 @@
 export default {
 
   /**
+   * 首页路径
+   */
+  homePath: '/index',
+
+  /**
    * 网页标题
    */
   title: 'Boot管理系统',

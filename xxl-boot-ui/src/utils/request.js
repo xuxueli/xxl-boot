@@ -33,6 +33,7 @@ import { tansParams, blobValidate } from '@/utils/common'
 import cache from '@/utils/cache'
 import { saveAs } from 'file-saver'
 import { useUserStore } from '@/store'
+import settings from '@/settings'
 
 // 文件下载时的全局 Loading 实例，下载完成或出错后关闭
 let downloadLoadingInstance
@@ -133,7 +134,7 @@ service.interceptors.response.use(res => {
           isRelogin.show = false
           // 调用用户 store 的退出逻辑（清除 token 等状态），然后跳转到登录页
           useUserStore().logout().then(() => {
-            location.href = '/index'
+            location.href = settings.homePath
           })
       }).catch(() => {
         isRelogin.show = false

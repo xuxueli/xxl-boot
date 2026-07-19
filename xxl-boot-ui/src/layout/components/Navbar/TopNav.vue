@@ -43,6 +43,7 @@
 import {constantRoutes} from "@/router"
 import {isHttp} from '@/utils/validate'
 import {useAppStore, useRoutesStore, useSettingsStore} from '@/store'
+import settings from '@/settings'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
@@ -54,7 +55,7 @@ const routers = computed(() => useRoutesStore().dynamicRoutes)
 
 const visibleNumber = ref(null)                 /* 可见菜单数量阈值，动态计算 */
 const currentIndex = ref(null)                  /* 当前选中菜单索引 */
-const hideList = ['/index', '/user/profile']    /* 路由列表中不显示侧边栏的路径 */
+const hideList = [settings.homePath]            /* 路由列表中不显示侧边栏的路径 */
 
 /*
 * 顶部菜单列表

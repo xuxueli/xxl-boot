@@ -20,6 +20,8 @@
 
 
 <script setup>
+import settings from '@/settings'
+
 const route = useRoute()
 const router = useRouter()
 /* 面包屑层级列表 */
@@ -34,7 +36,7 @@ function getBreadcrumb() {
 
   /* 首节点不是"首页"时自动补 home 项 */
   /*if (!isDashboard(matched[0])) {
-    matched = [{ path: "/index", meta: { title: "首页" } }].concat(matched)
+    matched = [{ path: settings.homePath, meta: { title: "首页" } }].concat(matched)
   }*/
 
   levelList.value = matched
