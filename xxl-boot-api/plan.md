@@ -6,7 +6,6 @@
             - directives:       done
             - router:        done：              
             - layouts:          x-01
-                TopBar
                 TopNav
             - components:       x-02
             - store:            x
