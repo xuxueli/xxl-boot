@@ -35,13 +35,13 @@
         <!-- 搜索 -->
         <HeaderSearch id="header-search" class="right-menu-item" />
         <!-- 源码 -->
-        <el-tooltip content="源码地址" effect="dark" placement="bottom">
+        <!--<el-tooltip content="源码地址" effect="dark" placement="bottom">
           <Git id="boot-git" class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip>-->
         <!-- 文档 -->
-        <el-tooltip content="文档地址" effect="dark" placement="bottom">
+        <!--<el-tooltip content="文档地址" effect="dark" placement="bottom">
           <Doc id="boot-doc" class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip>-->
         <!-- 全屏 -->
         <Screenfull id="screenfull" class="right-menu-item hover-effect" />
         <!-- 主题 -->

@@ -342,7 +342,7 @@ export function tansParams(params) {
  * @returns {string} 规范化后的路径
  */
 export function getNormalPath(p) {
-  if (p.length === 0 || !p || p == 'undefined') {
+  if (p.length === 0 || !p || p === 'undefined') {
     return p
   }
   let res = p.replace('//', '/')  // 去除重复斜杠
