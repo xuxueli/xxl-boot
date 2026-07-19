@@ -1,6 +1,7 @@
 <!--
   组件：IFrame（iframe 内嵌页面容器）
   功能：在系统页面内嵌加载外部 url，显示 loading 直至页面加载完成。
+
   用法：<IFrame src="https://example.com" />
 -->
 <template>
@@ -29,9 +30,12 @@ const loading = ref(true)
 const url = computed(() => props.src)
 
 onMounted(() => {
+
+  // 加载状态，300ms 后自动关闭（给 iframe 加载缓冲时间）
   setTimeout(() => {
     loading.value = false
   }, 300)
+
   // 窗口大小变化时重新计算 iframe 高度
   window.onresize = function temp() {
     height.value = document.documentElement.clientHeight - 94.5 + "px;"

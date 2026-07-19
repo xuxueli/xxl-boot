@@ -38,8 +38,8 @@ const scrollWrapper = computed(() => scrollContainer.value.$refs.wrapRef)
 /*
 * 通知父组件：通过 emits 触发 “scroll、updateArrows” 等自定义事件
 *
-* defineEmits：“子传父”通信工具。
-*   - 子组件声明组件触发的事件，返回 emit 函数。
+* defineEmits用法：“子传父”通信工具。
+*   - 子组件声明组件触发的事件，返回 emit 函数（方法）。
 *   - 子组件向父组件传递数据 / 通知。
 *
 *   <pre>
@@ -176,7 +176,7 @@ function getScrollState() {
 }
 
 /**
- * defineExpose：‌“父传子”通信工具：
+ * defineExpose用法：‌“父传子”通信工具：
  *    - 子组件向父组件暴露组件内部成员（属性 / 方法）
  *    - 父组件直接访问子组件内部状态
  *
