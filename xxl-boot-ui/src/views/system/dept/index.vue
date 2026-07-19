@@ -159,7 +159,6 @@ import { useDict } from '@/utils/hooks/useDict'
 import { parseTime } from '@/utils/common'
 import { handleTree } from '@/utils/common'
 import { useFormReset } from '@/utils/hooks/useFormReset'
-import { Check, Delete, Download, Edit, Plus, Refresh, Search, Sort } from '@element-plus/icons-vue'
 import modal from '@/utils/modal'
 
 const resetForm = useFormReset()

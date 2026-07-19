@@ -14,7 +14,11 @@ import ImagePreview from '@/components/ImagePreview'
 import ImageUpload from '@/components/ImageUpload'
 import IFrame from '@/components/iFrame'
 
+// Element Plus 图标（300+ 个，模板中可直接使用 <Search /> <Delete /> 等）
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
 export default function registerComponents(app) {
+  // 自定义业务组件
   app.component('SvgIcon', SvgIcon)                         // SVG 图标
   app.component('RightToolbar', RightToolbar)               // 表格工具栏（搜索/刷新/列显隐）
   app.component('Pagination', Pagination)                   // 分页
@@ -27,4 +31,9 @@ export default function registerComponents(app) {
   app.component('ImagePreview', ImagePreview)               // 图片预览
   app.component('ImageUpload', ImageUpload)                 // 图片上传
   app.component('IFrame', IFrame)                           // iframe 内嵌页面容器
+
+  // Element Plus图标（批量注册）
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
 }

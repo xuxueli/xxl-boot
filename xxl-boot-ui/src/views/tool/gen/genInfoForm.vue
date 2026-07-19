@@ -260,7 +260,6 @@
 <script setup>
 import { listMenu } from "@/api/system/menu"
 import { handleTree } from '@/utils/common'
-import { QuestionFilled } from '@element-plus/icons-vue'
 
 const subColumns = ref([])
 const menuOptions = ref([])

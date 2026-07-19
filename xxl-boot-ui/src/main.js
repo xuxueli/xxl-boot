@@ -9,7 +9,7 @@ import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import locale from 'element-plus/es/locale/lang/zh-cn'
 
-// 工具库
+// 工具库（cookie）
 import Cookies from 'js-cookie'
 
 // 核心模块
@@ -31,10 +31,10 @@ app.use(router)
 app.use(store)
 app.use(ElementPlus, { locale, size: Cookies.get('size') || 'default' })
 
-// 全局注册自定义指令
+// 全局注册：自定义指令
 directive(app)
 
-// 全局注册组件
+// 全局注册：自定义业务组件 + Element Plus图标
 registerComponents(app)
 
 // 挂载应用到 DOM

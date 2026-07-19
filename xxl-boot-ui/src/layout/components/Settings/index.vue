@@ -138,7 +138,6 @@
 
 
 <script setup>
-import { DocumentAdd, Refresh } from '@element-plus/icons-vue'
 import { useAppStore, useRoutesStore, useSettingsStore, useTagsViewStore } from '@/store'
 import modal from '@/utils/modal'
 

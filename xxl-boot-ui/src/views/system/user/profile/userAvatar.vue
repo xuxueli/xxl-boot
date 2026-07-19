@@ -59,7 +59,6 @@
 </template>
 
 <script setup>
-import { Minus, Plus, RefreshLeft, RefreshRight, Upload } from '@element-plus/icons-vue'
 import "vue-cropper/dist/index.css"
 import { VueCropper } from "vue-cropper"
 import { uploadAvatar } from "@/api/system/user"

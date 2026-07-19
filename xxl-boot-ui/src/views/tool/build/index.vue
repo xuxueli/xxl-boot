@@ -113,7 +113,6 @@ import DraggableItem from './DraggableItem'
 import RightPanel from './RightPanel'
 import CodeTypeDialog from './CodeTypeDialog'
 import { onMounted, watch } from 'vue'
-import { Delete, Download as DownloadIcon, DocumentCopy, Search } from '@element-plus/icons-vue'
 
 initDrawingDefaultValue()
 

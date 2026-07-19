@@ -25,7 +25,6 @@
   </el-col>
 </template>
 <script setup name="DraggableItem">
-import { CopyDocument, Delete } from '@element-plus/icons-vue'
 import draggable from "vuedraggable/dist/vuedraggable.common"
 import render from '@/utils/generator/render'
 

@@ -242,7 +242,6 @@
 </template>
 
 <script setup name="Role">
-import { CircleCheck, Delete, Download, Edit, Plus, QuestionFilled, Refresh, Search, User } from '@element-plus/icons-vue'
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/system/role"
 import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/menu"
 import { useDict } from '@/utils/hooks/useDict'

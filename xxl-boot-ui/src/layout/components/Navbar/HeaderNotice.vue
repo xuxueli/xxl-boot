@@ -64,7 +64,6 @@
 </template>
 
 <script setup>
-import {Loading, Postcard} from '@element-plus/icons-vue'
 import HeaderNoticeDetail from './HeaderNoticeDetail.vue'
 import {listNoticeTop, markNoticeRead, markNoticeReadAll} from '@/api/sys/notice'
 

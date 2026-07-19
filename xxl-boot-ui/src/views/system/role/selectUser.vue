@@ -61,7 +61,6 @@
 </template>
 
 <script setup name="SelectUser">
-import { Refresh, Search } from '@element-plus/icons-vue'
 import { authUserSelectAll, unallocatedUserList } from "@/api/system/role"
 import { useDict } from '@/utils/hooks/useDict'
 import { parseTime } from '@/utils/common'

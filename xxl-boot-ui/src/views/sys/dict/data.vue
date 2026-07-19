@@ -176,7 +176,6 @@
 </template>
 
 <script setup name="Data">
-import { Close, Delete, Download, Edit, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import { useDictStore } from '@/store'
 import { optionselect as getDictOptionselect, getType } from "@/api/sys/dict/type"
 import { listData, getData, delData, addData, updateData } from "@/api/sys/dict/data"

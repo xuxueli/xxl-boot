@@ -92,7 +92,6 @@
 </template>
 
 <script setup name="AuthUser">
-import { CircleClose, Close, Plus, Refresh, Search } from '@element-plus/icons-vue'
 import selectUser from "./selectUser"
 import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/system/role"
 import { useDict } from '@/utils/hooks/useDict'

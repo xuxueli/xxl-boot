@@ -185,7 +185,6 @@
 </template>
 
 <script setup name="User">
-import { CircleCheck, Delete, Download, Edit, Key, Plus, Refresh, Search, Upload, View } from '@element-plus/icons-vue'
 
 import UserViewDrawer from "./view"
 import { usePasswordRule } from "@/utils/hooks/usePasswordRule"

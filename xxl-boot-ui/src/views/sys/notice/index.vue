@@ -161,7 +161,6 @@
 </template>
 
 <script setup name="Notice">
-import { Delete, Edit, Plus, Refresh, Search, User } from '@element-plus/icons-vue'
 import ReadUsersDialog from "./ReadUsers"
 import NoticeDetailView from '@/layout/components/Navbar/HeaderNoticeDetail.vue'
 import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/sys/notice"

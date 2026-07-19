@@ -155,7 +155,6 @@ import tab from '@/utils/tab'
 import downloadPlugin from '@/utils/download'
 import importTable from "./importTable"
 import createTable from "./createTable"
-import { Delete, Download, DocumentCopy, Edit, Plus, Refresh, Search, Upload, View } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const resetForm = useFormReset()

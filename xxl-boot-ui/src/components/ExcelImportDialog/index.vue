@@ -29,7 +29,6 @@
 </template>
 
 <script setup>
-import { UploadFilled } from '@element-plus/icons-vue'
 import { getToken } from '@/utils/auth'
 import { download } from '@/utils/request'
 import modal from '@/utils/modal'

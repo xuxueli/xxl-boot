@@ -92,7 +92,6 @@
 </template>
 
 <script setup>
-import {Search} from '@element-plus/icons-vue'
 import Fuse from 'fuse.js'
 import {getNormalPath} from '@/utils/common'
 import {isHttp} from '@/utils/validate'

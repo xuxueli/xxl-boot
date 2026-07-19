@@ -160,7 +160,6 @@ import { parseTime, addDateRange } from '@/utils/common'
 import { useFormReset } from '@/utils/hooks/useFormReset'
 import { download } from '@/utils/request'
 import modal from '@/utils/modal'
-import { Delete, Download, InfoFilled, Refresh, Search, Sort, User, View, Warning, Document } from '@element-plus/icons-vue'
 
 const { sys_oper_type, sys_common_status } = useDict("sys_oper_type", "sys_common_status")
 const resetForm = useFormReset()

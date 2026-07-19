@@ -307,7 +307,6 @@
 
 <script setup name="Menu">
 import { addMenu, delMenu, getMenu, listMenu, updateMenu, updateMenuSort } from "@/api/system/menu"
-import { Check, Delete, Edit, Plus, QuestionFilled, Refresh, Search, Sort } from '@element-plus/icons-vue'
 
 import { useDict } from '@/utils/hooks/useDict'
 import { handleTree } from '@/utils/common'

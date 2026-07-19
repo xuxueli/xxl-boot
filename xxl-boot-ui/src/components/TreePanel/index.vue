@@ -77,7 +77,6 @@
 </template>
 
 <script setup>
-import { ArrowDown, ArrowUp, DArrowLeft, DArrowRight, Document, Folder, OfficeBuilding, Refresh, Search } from '@element-plus/icons-vue'
 
 const props = defineProps({
   // 树形数据
