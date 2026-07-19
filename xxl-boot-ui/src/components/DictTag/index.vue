@@ -2,18 +2,22 @@
   组件：DictTag（字典标签）
   功能：根据字典选项数组，将字典值渲染为 el-tag 或纯文本。
         支持单值、数组、逗号分隔字符串三种输入格式。
+
   用法：<DictTag :options="sys_normal_disable" :value="scope.row.status" />
 -->
 <template>
   <div>
+    <!-- 遍历字典选项，匹配当前值则渲染标签 -->
     <template v-for="(item, index) in options">
       <template v-if="isValueMatch(item.value)">
+        <!-- 默认样式(tagType=default 且无自定义class)时使用纯文本，免去多余 el-tag 结构 -->
         <span
-          v-if="(item.elTagType == 'default' || item.elTagType == '') && (item.elTagClass == '' || item.elTagClass == null)"
+          v-if="(item.elTagType === 'default' || item.elTagType === '') && (item.elTagClass === '' || item.elTagClass === null)"
           :key="item.value"
           :index="index"
           :class="item.elTagClass"
         >{{ item.label + " " }}</span>
+        <!-- 有自定义样式时用 el-tag 渲染 -->
         <el-tag
           v-else
           :disable-transitions="true"
@@ -24,8 +28,9 @@
         >{{ item.label + " " }}</el-tag>
       </template>
     </template>
+    <!-- 存在未匹配项且 showValue 开启时，显示原始值 -->
     <template v-if="unmatch && showValue">
-      {{ unmatchArray | handleArray }}
+      {{ handleArray(unmatchArray) }}
     </template>
   </div>
 </template>
@@ -64,17 +69,16 @@ const values = computed(() => {
 // 检测是否存在未匹配的字典项，存在时记录到 unmatchArray
 const unmatch = computed(() => {
   unmatchArray.value = []
-  // 没有value不显示
   if (props.value === null || typeof props.value === 'undefined' || props.value === '' || !Array.isArray(props.options) || props.options.length === 0) return false
-  // 传入值为数组
-  let unmatch = false // 添加一个标志来判断是否有未匹配项
+  // 遍历 value 中的每一项，检查是否在 options 中存在
+  let unmatch = false
   values.value.forEach(item => {
     if (!props.options.some(v => v.value == item)) {
       unmatchArray.value.push(item)
-      unmatch = true // 如果有未匹配项，将标志设置为true
+      unmatch = true
     }
   })
-  return unmatch // 返回标志的值
+  return unmatch
 })
 
 // 数组转空格分隔字符串，用于显示未匹配项

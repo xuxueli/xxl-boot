@@ -12,7 +12,6 @@
                 - Editor 
                 - ExcelImportDialog 
                 - FileUpload
-                - ImagePreview
                 - ImageUpload 
             - store:            x
                 - 非必须合并；
