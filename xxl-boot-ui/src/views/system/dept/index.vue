@@ -53,7 +53,7 @@
                @click="toggleExpandAll"
             >展开/折叠</el-button>
          </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+         <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
       </el-row>
 
       <el-table
@@ -72,7 +72,7 @@
          </el-table-column>
          <el-table-column prop="status" label="状态" width="100">
             <template #default="scope">
-               <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+               <DictTag :options="sys_normal_disable" :value="scope.row.status" />
             </template>
          </el-table-column>
          <el-table-column label="创建时间" align="center" prop="createTime" width="200">

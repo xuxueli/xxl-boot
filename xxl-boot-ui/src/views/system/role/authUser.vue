@@ -54,7 +54,7 @@
                @click="handleClose"
             >关闭</el-button>
          </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+         <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
       </el-row>
 
       <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
@@ -65,7 +65,7 @@
          <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
          <el-table-column label="状态" align="center" prop="status">
             <template #default="scope">
-               <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+               <DictTag :options="sys_normal_disable" :value="scope.row.status" />
             </template>
          </el-table-column>
          <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -80,7 +80,7 @@
          </el-table-column>
       </el-table>
 
-      <pagination
+      <Pagination
          v-show="total > 0"
          :total="total"
          v-model:page="queryParams.pageNum"

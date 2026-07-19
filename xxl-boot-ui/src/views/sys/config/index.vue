@@ -93,7 +93,7 @@
                v-hasPermi="['system:config:remove']"
             >刷新缓存</el-button>
          </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+         <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
       </el-row>
 
       <el-table v-loading="loading" :data="configList" @selection-change="handleSelectionChange">
@@ -104,7 +104,7 @@
          <el-table-column label="参数键值" align="center" prop="configValue" :show-overflow-tooltip="true" />
          <el-table-column label="系统内置" align="center" prop="configType">
             <template #default="scope">
-               <dict-tag :options="sys_yes_no" :value="scope.row.configType" />
+               <DictTag :options="sys_yes_no" :value="scope.row.configType" />
             </template>
          </el-table-column>
          <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
@@ -121,7 +121,7 @@
          </el-table-column>
       </el-table>
 
-      <pagination
+      <Pagination
          v-show="total > 0"
          :total="total"
          v-model:page="queryParams.pageNum"

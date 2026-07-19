@@ -88,7 +88,7 @@
                v-hasPermi="['system:role:export']"
             >导出</el-button>
          </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+         <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
       </el-row>
 
       <!-- 表格数据 -->
@@ -131,7 +131,7 @@
          </el-table-column>
       </el-table>
 
-      <pagination
+      <Pagination
          v-show="total > 0"
          :total="total"
          v-model:page="queryParams.pageNum"

@@ -83,7 +83,7 @@
                @click="handleClose"
             >关闭</el-button>
          </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+         <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
       </el-row>
 
       <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
@@ -99,7 +99,7 @@
          <el-table-column label="字典排序" align="center" prop="dictSort" />
          <el-table-column label="状态" align="center" prop="status">
             <template #default="scope">
-               <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+               <DictTag :options="sys_normal_disable" :value="scope.row.status" />
             </template>
          </el-table-column>
          <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
@@ -116,7 +116,7 @@
          </el-table-column>
       </el-table>
 
-      <pagination
+      <Pagination
          v-show="total > 0"
          :total="total"
          v-model:page="queryParams.pageNum"

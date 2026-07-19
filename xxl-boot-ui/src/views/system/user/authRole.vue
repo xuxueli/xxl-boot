@@ -34,7 +34,7 @@
          </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" :total="total" v-model:page="pageNum" v-model:limit="pageSize" />
+      <Pagination v-show="total > 0" :total="total" v-model:page="pageNum" v-model:limit="pageSize" />
 
       <el-form label-width="100px">
          <div style="text-align: center;margin-left:-120px;margin-top:30px;">

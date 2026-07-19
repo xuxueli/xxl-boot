@@ -65,7 +65,7 @@
                v-hasPermi="['system:notice:remove']"
             >删除</el-button>
          </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+         <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
       </el-row>
 
       <el-table v-loading="loading" :data="noticeList" @selection-change="handleSelectionChange">
@@ -78,12 +78,12 @@
          </el-table-column>
          <el-table-column label="公告类型" align="center" prop="noticeType" width="100">
             <template #default="scope">
-               <dict-tag :options="sys_notice_type" :value="scope.row.noticeType" />
+               <DictTag :options="sys_notice_type" :value="scope.row.noticeType" />
             </template>
          </el-table-column>
          <el-table-column label="状态" align="center" prop="status" width="100">
             <template #default="scope">
-               <dict-tag :options="sys_notice_status" :value="scope.row.status" />
+               <DictTag :options="sys_notice_status" :value="scope.row.status" />
             </template>
          </el-table-column>
          <el-table-column label="创建者" align="center" prop="createBy" width="100" />
@@ -101,7 +101,7 @@
          </el-table-column>
       </el-table>
 
-      <pagination
+      <Pagination
          v-show="total > 0"
          :total="total"
          v-model:page="queryParams.pageNum"

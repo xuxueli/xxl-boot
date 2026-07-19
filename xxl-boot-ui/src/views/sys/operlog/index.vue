@@ -104,7 +104,7 @@
                v-hasPermi="['monitor:operlog:export']"
             >导出</el-button>
          </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+         <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
       </el-row>
 
       <el-table ref="operlogRef" v-loading="loading" :data="operlogList" @selection-change="handleSelectionChange" :default-sort="defaultSort" @sort-change="handleSortChange">
@@ -113,14 +113,14 @@
          <el-table-column label="系统模块" align="center" prop="title" :show-overflow-tooltip="true" />
          <el-table-column label="操作类型" align="center" prop="businessType">
             <template #default="scope">
-               <dict-tag :options="sys_oper_type" :value="scope.row.businessType" />
+               <DictTag :options="sys_oper_type" :value="scope.row.businessType" />
             </template>
          </el-table-column>
          <el-table-column label="操作人员" align="center" width="110" prop="operName" :show-overflow-tooltip="true" sortable="custom" :sort-orders="['descending', 'ascending']" />
          <el-table-column label="操作地址" align="center" prop="operIp" width="130" :show-overflow-tooltip="true" />
          <el-table-column label="操作状态" align="center" prop="status">
             <template #default="scope">
-               <dict-tag :options="sys_common_status" :value="scope.row.status" />
+               <DictTag :options="sys_common_status" :value="scope.row.status" />
             </template>
          </el-table-column>
          <el-table-column label="操作日期" align="center" prop="operTime" width="180" sortable="custom" :sort-orders="['descending', 'ascending']">
@@ -140,7 +140,7 @@
          </el-table-column>
       </el-table>
 
-      <pagination
+      <Pagination
          v-show="total > 0"
          :total="total"
          v-model:page="queryParams.pageNum"

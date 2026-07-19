@@ -53,7 +53,7 @@
                @click="toggleExpandAll"
             >展开/折叠</el-button>
          </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+         <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
       </el-row>
 
       <el-table
@@ -88,7 +88,7 @@
          <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true" />
          <el-table-column prop="status" label="状态" width="80">
             <template #default="scope">
-               <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
+               <DictTag :options="sys_normal_disable" :value="scope.row.status" />
             </template>
          </el-table-column>
          <el-table-column label="操作" align="center" width="210" class-name="small-padding fixed-width">

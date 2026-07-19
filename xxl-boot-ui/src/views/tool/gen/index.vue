@@ -84,7 +84,7 @@
           v-hasPermi="['tool:gen:remove']"
         >删除</el-button>
       </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+      <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
     <el-table ref="genRef" v-loading="loading" :data="tableList" @selection-change="handleSelectionChange" :default-sort="defaultSort" @sort-change="handleSortChange">
@@ -119,7 +119,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <pagination
+    <Pagination
       v-show="total>0"
       :total="total"
       v-model:page="queryParams.pageNum"
