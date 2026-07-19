@@ -1,6 +1,7 @@
 <!--
   组件：SvgIcon（SVG 图标）
   功能：通过 <use> 引用 sprite 图标，支持自定义 class 和填充色。
+
   用法：<SvgIcon icon-class="user" class-name="icon" />
 -->
 <template>
@@ -10,6 +11,13 @@
 </template>
 
 <script>
+/*
+* defineComponent：标准组件导出
+*   - props：定义组件接收的外部参数
+*   - setup：入口函数
+*     - 它接收 props 作为第一个参数。
+*     - 此函数中定义的返回值（暴露给模板的数据和方法），可以在 <template> 中直接使用。
+*/
 export default defineComponent({
   props: {
     // 图标名称（对应 svg-sprite 的 id，会拼为 #icon-xxx）
