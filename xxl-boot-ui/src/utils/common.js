@@ -1,366 +1,796 @@
 /**
- * 通用 JS 工具方法封装模块（boot.js）
+ * common - 通用工具函数
  *
- * 职责：
- *   - 集中提供与业务逻辑无关、可在全局复用的基础工具函数。
- *   - 包含：日期格式化、表单重置、日期范围处理、字典回显、
- *     字符串格式化、参数序列化、树形结构构建、路径规范化、blob 校验等。
- *   - 大部分函数为纯函数，少数（如 resetForm）依赖 Vue 组件实例上下文（this）。
+ * 工具列表：
+ *   1. parseTime          - 日期格式化（支持多种输入和自定义模板）
+ *   2. formatDate         - 表格列日期格式化（YYY-MM-DD HH:mm:ss 固定格式）
+ *   3. formatTime         - 相对时间描述（刚刚/N分钟前/小时前/天前）
+ *   4. getTime            - 获取时间范围边界（90天前/今日起始）
+ *   5. sprintf            - printf 风格字符串格式化（%s 占位符）
+ *   6. parseStrEmpty      - 无效值转空字符串
+ *   7. byteLength         - 计算 UTF-8 字符串字节长度
+ *   8. html2Text          - HTML 转纯文本
+ *   9. titleCase          - 首字母大写
+ *  10. camelCase          - 下划线转驼峰
+ *  11. isNumberStr        - 判断是否为合法数字
+ *  12. cleanArray         - 过滤数组假值
+ *  13. uniqueArr          - 数组去重
+ *  14. createUniqueString - 生成唯一字符串 ID
+ *  15. mergeRecursive     - 递归合并对象（target 覆盖 source）
+ *  16. objectMerge        - 深度合并对象（source 覆盖 target）
+ *  17. deepClone          - 简易深克隆
+ *  18. toggleClass        - 切换 DOM 元素 CSS 类名
+ *  19. hasClass           - 检测 DOM 元素是否包含指定类名
+ *  20. addClass           - 添加 CSS 类名
+ *  21. removeClass        - 移除 CSS 类名
+ *  22. debounce           - 防抖函数
+ *  23. getQueryObject     - URL 查询参数解析为对象
+ *  24. param              - 对象转 URL 查询字符串
+ *  25. param2Obj          - URL 查询字符串解析为对象
+ *  26. tansParams         - 参数序列化（支持嵌套对象展开）
+ *  27. getNormalPath      - 规范化路径（去除重复/末尾斜杠）
+ *  28. resetForm          - 重置 el-form 表单（Options API）
+ *  29. addDateRange       - 添加日期范围到查询参数
+ *  30. selectDictLabel    - 字典回显单值
+ *  31. selectDictLabels   - 字典回显多值
+ *  32. handleTree         - 扁平数组转树形结构
+ *  33. blobValidate       - 验证 blob 是否为合法文件数据
  *
- * 典型用法：
- *   import { parseTime, handleTree, tansParams } from '@/utils/common'
+ * 用法：
+ *   import { parseTime, handleTree } from '@/utils/common'
+ *   parseTime(new Date(), '{y}-{m}-{d}')  // 日期格式化
+ *   handleTree(list)                        // 扁平数组转树形
  */
 
-// ─────────────────────────────────────────────
-// 1. 日期 / 时间处理
-// ─────────────────────────────────────────────
+// ==================== 日期 / 时间 ====================
 
 /**
  * 日期格式化
  *
- * 将时间值转换为格式化字符串，支持 Date 对象、时间戳（秒/毫秒）、
- * ISO 字符串等多种输入形式。
+ * @param {Date|number|string} time    - Date 对象 / 时间戳 / ISO 字符串
+ * @param {string}             [pattern] - 模板，默认 '{y}-{m}-{d} {h}:{i}:{s}'
+ *   占位符：{y}年 {m}月 {d}日 {h}时 {i}分 {s}秒 {a}星期
+ * @returns {string|null}
  *
- * 格式占位符：
- *   {y} 年  {m} 月  {d} 日  {h} 时  {i} 分  {s} 秒  {a} 星期（中文）
- *
- * @param {Date|number|string} time    - 时间来源（Date 对象 / 时间戳 / 字符串）
- * @param {string}             [pattern] - 格式模板，默认 '{y}-{m}-{d} {h}:{i}:{s}'
- * @returns {string|null} 格式化后的时间字符串；time 为空时返回 null
+ * 示例：
+ *   parseTime('2024-01-15', '{y}/{m}/{d}')   // '2024/01/15'
+ *   parseTime(1705315200000)                   // '2024-01-15 12:00:00'
  */
 export function parseTime(time, pattern) {
-  if (arguments.length === 0 || !time) {
-    return null
-  }
-  const format = pattern || '{y}-{m}-{d} {h}:{i}:{s}'
-  let date
-  if (typeof time === 'object') {
-    // 直接使用 Date 对象
-    date = time
-  } else {
-    if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
-      // 纯数字字符串 → 转为整数时间戳
-      time = parseInt(time)
-    } else if (typeof time === 'string') {
-      // ISO 格式字符串兼容处理：替换连字符、T 分隔符、毫秒部分
-      time = time.replace(new RegExp(/-/gm), '/').replace('T', ' ').replace(new RegExp(/\.[\d]{3}/gm), '')
+    if (arguments.length === 0 || !time) {
+        return null
     }
-    if ((typeof time === 'number') && (time.toString().length === 10)) {
-      // 10 位时间戳（秒级）→ 转为毫秒级
-      time = time * 1000
+    const format = pattern || '{y}-{m}-{d} {h}:{i}:{s}'
+    let date
+    if (typeof time === 'object') {
+        date = time
+    } else {
+        if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
+            time = parseInt(time)
+        } else if (typeof time === 'string') {
+            time = time.replace(new RegExp(/-/gm), '/').replace('T', ' ').replace(new RegExp(/\.[\d]{3}/gm), '')
+        }
+        if ((typeof time === 'number') && (time.toString().length === 10)) {
+            time = time * 1000
+        }
+        date = new Date(time)
     }
-    date = new Date(time)
-  }
-  const formatObj = {
-    y: date.getFullYear(),
-    m: date.getMonth() + 1,
-    d: date.getDate(),
-    h: date.getHours(),
-    i: date.getMinutes(),
-    s: date.getSeconds(),
-    a: date.getDay()
-  }
-  const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
-    let value = formatObj[key]
-    // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
-    // 补零：单个字符的数字前面补 '0'
-    if (result.length > 0 && value < 10) {
-      value = '0' + value
+    const formatObj = {
+        y: date.getFullYear(),
+        m: date.getMonth() + 1,
+        d: date.getDate(),
+        h: date.getHours(),
+        i: date.getMinutes(),
+        s: date.getSeconds(),
+        a: date.getDay()
     }
-    return value || 0
-  })
-  return time_str
-}
-
-// ─────────────────────────────────────────────
-// 2. 表单处理
-// ─────────────────────────────────────────────
-
-/**
- * 表单重置
- *
- * 通过 Vue 模板 ref 调用 Element Plus 表单组件的 resetFields 方法，
- * 将表单字段恢复到初始值并清除校验状态。
- * 注意：此函数需在 Vue 组件方法上下文中调用（依赖 this.$refs）。
- *
- * @param {string} refName - 表单组件的 ref 名称
- */
-export function resetForm(refName) {
-  if (this.$refs[refName]) {
-    this.$refs[refName].resetFields()
-  }
-}
-
-/**
- * 添加日期范围到查询参数
- *
- * 将日期范围数组拆分为 beginTime/endTime（或自定义字段名）并挂载到
- * params.params 对象中，便于后端统一接收日期范围查询参数。
- *
- * @param {Object}   params      - 查询参数对象（会被修改并返回）
- * @param {Array}    dateRange   - 日期范围数组：[startDate, endDate]
- * @param {string}   [propName]  - 自定义字段名前缀（如 'Create' → beginCreate/endCreate）
- * @returns {Object} 附加了日期范围的查询参数对象
- */
-export function addDateRange(params, dateRange, propName) {
-  let search = params
-  search.params = typeof (search.params) === 'object' && search.params !== null && !Array.isArray(search.params) ? search.params : {}
-  dateRange = Array.isArray(dateRange) ? dateRange : []
-  if (typeof (propName) === 'undefined') {
-    search.params['beginTime'] = dateRange[0]
-    search.params['endTime'] = dateRange[1]
-  } else {
-    search.params['begin' + propName] = dateRange[0]
-    search.params['end' + propName] = dateRange[1]
-  }
-  return search
-}
-
-// ─────────────────────────────────────────────
-// 3. 数据字典回显
-// ─────────────────────────────────────────────
-
-/**
- * 回显数据字典（单值）
- *
- * 根据字典项数组和目标值，查找并返回对应的显示标签（label）。
- * 未找到匹配项时，直接返回原始 value 作为兜底展示。
- *
- * @param {Array}  datas - 字典项数组（每项含 value / label 字段）
- * @param {*}      value - 待回显的字典值
- * @returns {string} 对应的字典标签；无匹配时返回原始值字符串
- */
-export function selectDictLabel(datas, value) {
-  if (value === undefined) {
-    return ""
-  }
-  const actions = []
-  Object.keys(datas).some((key) => {
-    if (datas[key].value == ('' + value)) {
-      actions.push(datas[key].label)
-      return true
-    }
-  })
-  if (actions.length === 0) {
-    actions.push(value)
-  }
-  return actions.join('')
-}
-
-/**
- * 回显数据字典（多值，支持字符串和数组两种输入形式）
- *
- * 将逗号分隔的多值字符串或数组，逐一查找对应 label 并拼接返回。
- * 支持自定义分隔符，默认为英文逗号。
- *
- * @param {Array}   datas        - 字典项数组（每项含 value / label 字段）
- * @param {string|Array} value   - 待回显的字典值（逗号分隔字符串或数组）
- * @param {string}  [separator]  - 分隔符，默认 ','
- * @returns {string} 拼接好的标签字符串（末尾分隔符已去除）
- */
-export function selectDictLabels(datas, value, separator) {
-  if (value === undefined || value.length ===0) {
-    return ""
-  }
-  if (Array.isArray(value)) {
-    value = value.join(",")
-  }
-  const actions = []
-  const currentSeparator = undefined === separator ? "," : separator
-  const temp = value.split(currentSeparator)
-  Object.keys(value.split(currentSeparator)).some((val) => {
-    let match = false
-    Object.keys(datas).some((key) => {
-      if (datas[key].value == ('' + temp[val])) {
-        actions.push(datas[key].label + currentSeparator)
-        match = true
-      }
+    const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+        let value = formatObj[key]
+        if (key === 'a') {
+            return ['日', '一', '二', '三', '四', '五', '六'][value]
+        }
+        if (result.length > 0 && value < 10) {
+            value = '0' + value
+        }
+        return value || 0
     })
-    if (!match) {
-      actions.push(temp[val] + currentSeparator)
-    }
-  })
-  return actions.join('').substring(0, actions.join('').length - 1)
+    return time_str
 }
 
-// ─────────────────────────────────────────────
-// 4. 字符串处理
-// ─────────────────────────────────────────────
+/**
+ * 表格列时间格式化（parseTime 的简化版，固定 YYYY-MM-DD HH:mm:ss）
+ *
+ * 适用于 Element Plus el-table-column 的 formatter 属性。
+ *
+ * @param {number|string} cellValue - 时间值
+ * @returns {string}
+ *
+ * 示例：
+ *   formatDate('2024-01-15T12:00:00')  // '2024-01-15 12:00:00'
+ */
+export function formatDate(cellValue) {
+    if (cellValue == null || cellValue === "") return ""
+    return parseTime(cellValue)
+}
+
+/**
+ * 相对时间描述（刚刚 / N分钟前 / N小时前 / N天前 / 具体日期）
+ *
+ * @param {number} time     - 时间戳（10 位秒级或 13 位毫秒级）
+ * @param {string} [option] - 超过 2 天时的格式模板，默认 'M月D日H时I分'
+ * @returns {string}
+ *
+ * 示例：
+ *   formatTime(Date.now() - 300000)   // '5分钟前'
+ *   formatTime(1700000000)             // 超过 2 天时 → '11月15日3时33分'
+ */
+export function formatTime(time, option) {
+    if (('' + time).length === 10) {
+        time = parseInt(time) * 1000
+    } else {
+        time = +time
+    }
+    const d = new Date(time)
+    const now = Date.now()
+    const diff = (now - d) / 1000
+    if (diff < 30) {
+        return '刚刚'
+    } else if (diff < 3600) {
+        return Math.ceil(diff / 60) + '分钟前'
+    } else if (diff < 3600 * 24) {
+        return Math.ceil(diff / 3600) + '小时前'
+    } else if (diff < 3600 * 24 * 2) {
+        return '1天前'
+    }
+    if (option) {
+        return parseTime(time, option)
+    } else {
+        return d.getMonth() + 1 + '月' + d.getDate() + '日' + d.getHours() + '时' + d.getMinutes() + '分'
+    }
+}
+
+/**
+ * 获取时间范围边界
+ *
+ * @param {string} type - 'start' 返回 90 天前时间戳，其他返回今日起始
+ * @returns {number|Date}
+ *
+ * 示例：
+ *   getTime('start')   // 90 天前的时间戳
+ *   getTime()           // 今日 00:00:00 Date 对象
+ */
+export function getTime(type) {
+    if (type === 'start') {
+        return new Date().getTime() - 3600 * 1000 * 24 * 90
+    } else {
+        return new Date(new Date().toDateString())
+    }
+}
+
+// ==================== 字符串 ====================
 
 /**
  * printf 风格字符串格式化（%s 占位符）
  *
- * 将字符串中的 %s 占位符依次替换为后续参数，若参数不足则返回空字符串。
+ * @param {string} str - 含 %s 的模板
+ * @param {...*}   args - 替换值
+ * @returns {string} 参数不足时返回 ''
  *
- * @param {string} str    - 含 %s 占位符的模板字符串
- * @param {...*}   [args] - 替换占位符的实际参数列表
- * @returns {string} 格式化后的字符串；参数不足时返回 ''
+ * 示例：
+ *   sprintf('hello %s', 'world')   // 'hello world'
  */
 export function sprintf(str) {
-  let flag = true, i = 1
-  str = str.replace(/%s/g, function () {
-    const arg = args[i++]
-    if (typeof arg === 'undefined') {
-      flag = false
-      return ''
-    }
-    return arg
-  })
-  return flag ? str : ''
+    let flag = true, i = 1
+    str = str.replace(/%s/g, function () {
+        const arg = args[i++]
+        if (typeof arg === 'undefined') {
+            flag = false
+            return ''
+        }
+        return arg
+    })
+    return flag ? str : ''
 }
 
 /**
- * 将 undefined / null / "undefined" / "null" 等无效字符串转换为空字符串
+ * 将无效值转为空字符串
  *
- * 用于安全地展示可能为空的字段值，避免页面渲染 "undefined" 或 "null" 文本。
+ * @param {*} str - 待处理值
+ * @returns {string}
  *
- * @param {*} str - 待处理的值
- * @returns {string} 有效字符串原样返回；无效值返回 ''
+ * 示例：
+ *   parseStrEmpty(null)        // ''
+ *   parseStrEmpty('hello')     // 'hello'
  */
 export function parseStrEmpty(str) {
-  if (!str || str == "undefined" || str == "null") {
-    return ""
-  }
-  return str
+    if (!str || str === "undefined" || str === "null") {
+        return ""
+    }
+    return str
 }
 
-// ─────────────────────────────────────────────
-// 5. 对象 / 树形数据处理
-// ─────────────────────────────────────────────
+/**
+ * 计算 UTF-8 字符串字节长度
+ *
+ * @param {string} str
+ * @returns {number}
+ *
+ * 示例：
+ *   byteLength('hello')     // 5
+ *   byteLength('你好')       // 6
+ */
+export function byteLength(str) {
+    let s = str.length
+    for (let i = str.length - 1; i >= 0; i--) {
+        const code = str.charCodeAt(i)
+        if (code > 0x7f && code <= 0x7ff) s++
+        else if (code > 0x7ff && code <= 0xffff) s += 2
+        if (code >= 0xDC00 && code <= 0xDFFF) i--
+    }
+    return s
+}
 
 /**
- * 递归合并两个对象（target 被 target 中的同名字段覆盖）
+ * HTML 转纯文本
  *
- * 深度遍历 target 的每个属性，若 source 中存在同名属性且为对象类型，
- * 则递归合并；否则直接用 source 的值覆盖 target。
+ * @param {string} val - 含 HTML 标签的字符串
+ * @returns {string}
  *
- * @param {Object} source - 被合并的目标对象（会被直接修改）
- * @param {Object} target - 提供新值的来源对象
- * @returns {Object} 合并后的 source 对象
+ * 示例：
+ *   html2Text('<p>hello</p>')  // 'hello'
+ */
+export function html2Text(val) {
+    const div = document.createElement('div')
+    div.innerHTML = val
+    return div.textContent || div.innerText
+}
+
+/**
+ * 首字母大写
+ *
+ * @param {string} str
+ * @returns {string}
+ *
+ * 示例：
+ *   titleCase('hello world')  // 'Hello World'
+ */
+export function titleCase(str) {
+    return str.replace(/( |^)[a-z]/g, L => L.toUpperCase())
+}
+
+/**
+ * 下划线转驼峰
+ *
+ * @param {string} str
+ * @returns {string}
+ *
+ * 示例：
+ *   camelCase('some_field')  // 'someField'
+ */
+export function camelCase(str) {
+    return str.replace(/_[a-z]/g, str1 => str1.substr(-1).toUpperCase())
+}
+
+/**
+ * 判断是否为合法数字
+ *
+ * @param {string} str
+ * @returns {boolean}
+ *
+ * 示例：
+ *   isNumberStr('123')    // true
+ *   isNumberStr('12.3')   // true
+ *   isNumberStr('abc')    // false
+ */
+export function isNumberStr(str) {
+    return /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g.test(str)
+}
+
+// ==================== 数组 ====================
+
+/**
+ * 过滤假值（null / undefined / 0 / '' / false）
+ *
+ * @param {Array} actual
+ * @returns {Array}
+ *
+ * 示例：
+ *   cleanArray([0, 1, '', null, 2])  // [1, 2]
+ */
+export function cleanArray(actual) {
+    const newArray = []
+    for (let i = 0; i < actual.length; i++) {
+        if (actual[i]) {
+            newArray.push(actual[i])
+        }
+    }
+    return newArray
+}
+
+/**
+ * 数组去重（Set，保留首次出现顺序）
+ *
+ * @param {Array} arr
+ * @returns {Array}
+ *
+ * 示例：
+ *   uniqueArr([1,2,1,3])  // [1,2,3]
+ */
+export function uniqueArr(arr) {
+    return Array.from(new Set(arr))
+}
+
+/**
+ * 生成唯一字符串 ID（时间戳 + 随机数，32 进制）
+ *
+ * @returns {string}
+ */
+export function createUniqueString() {
+    const timestamp = +new Date() + ''
+    const randomNum = parseInt((1 + Math.random()) * 65536) + ''
+    return (+(randomNum + timestamp)).toString(32)
+}
+
+// ==================== 对象 ====================
+
+/**
+ * 递归合并两个对象（source 的同名字段被 target 覆盖）
+ *
+ * 注意：参数顺序与 objectMerge 相反！
+ *   mergeRecursive(a, b)  → b 覆盖 a
+ *   objectMerge(a, b)     → b 覆盖 a（参数名不同但效果相同）
+ *
+ * @param {Object} source - 被合并的目标（会被修改）
+ * @param {Object} target - 提供新值的来源
+ * @returns {Object}
  */
 export function mergeRecursive(source, target) {
-  for (const p in target) {
-    try {
-      if (target[p].constructor == Object) {
-        source[p] = mergeRecursive(source[p], target[p])
-      } else {
-        source[p] = target[p]
-      }
-    } catch (e) {
-      source[p] = target[p]
+    for (const p in target) {
+        try {
+            if (target[p].constructor == Object) {
+                source[p] = mergeRecursive(source[p], target[p])
+            } else {
+                source[p] = target[p]
+            }
+        } catch (e) {
+            source[p] = target[p]
+        }
     }
-  }
-  return source
+    return source
 }
 
 /**
- * 构造树型结构数据
+ * 深度合并（source 覆盖 target 中的同名字段）
  *
- * 将扁平数组按父子 ID 关系转换为嵌套树形结构。
- * 算法：两次遍历，第一次建立 id→节点 映射，第二次挂载子节点到父节点。
- * 无父节点（或父节点不存在）的节点作为根节点加入结果数组。
+ * 注意：参数顺序与 mergeRecursive 相同，但语义更接近 Object.assign。
+ * 若 source 为数组，返回 source 的浅拷贝。
  *
- * @param {Array}  data       - 扁平数据源数组（每项含 id 和 parentId 字段）
- * @param {string} [id]       - id 字段名，默认 'id'
- * @param {string} [parentId] - 父节点 id 字段名，默认 'parentId'
- * @param {string} [children] - 子节点列表字段名，默认 'children'
- * @returns {Array} 树形结构数组（根节点列表）
+ * @param {Object}        target - 被更新的目标
+ * @param {Object|Array}  source - 提供新值的来源
+ * @returns {Object}
  */
-export function handleTree(data, id, parentId, children) {
-  const config = {
-    id: id || 'id',
-    parentId: parentId || 'parentId',
-    childrenList: children || 'children'
-  }
-
-  // 第一次遍历：建立 id→节点 映射表，并初始化每个节点的 children 数组
-  const childrenListMap = {}
-  const tree = []
-  for (const d of data) {
-    const id = d[config.id]
-    childrenListMap[id] = d
-    if (!d[config.childrenList]) {
-      d[config.childrenList] = []
+export function objectMerge(target, source) {
+    if (typeof target !== 'object') {
+        target = {}
     }
-  }
-
-  // 第二次遍历：将每个节点挂载到父节点的 children 中，无父节点的作为根节点
-  for (const d of data) {
-    const parentId = d[config.parentId]
-    const parentObj = childrenListMap[parentId]
-    if (!parentObj) {
-      tree.push(d)
-    } else {
-      parentObj[config.childrenList].push(d)
+    if (Array.isArray(source)) {
+        return source.slice()
     }
-  }
-  return tree
+    Object.keys(source).forEach(property => {
+        const sourceProperty = source[property]
+        if (typeof sourceProperty === 'object') {
+            target[property] = objectMerge(target[property], sourceProperty)
+        } else {
+            target[property] = sourceProperty
+        }
+    })
+    return target
 }
 
-// ─────────────────────────────────────────────
-// 6. 请求参数处理
-// ─────────────────────────────────────────────
+/**
+ * 简易深克隆（递归复制，不处理 Date/RegExp/Function）
+ *
+ * @param {Object|Array} source
+ * @returns {Object|Array}
+ *
+ * 示例：
+ *   const b = deepClone(a)  // b !== a，完全独立
+ */
+export function deepClone(source) {
+    if (!source && typeof source !== 'object') {
+        throw new Error('error arguments', 'deepClone')
+    }
+    const targetObj = source.constructor === Array ? [] : {}
+    Object.keys(source).forEach(keys => {
+        if (source[keys] && typeof source[keys] === 'object') {
+            targetObj[keys] = deepClone(source[keys])
+        } else {
+            targetObj[keys] = source[keys]
+        }
+    })
+    return targetObj
+}
+
+// ==================== DOM ====================
 
 /**
- * 参数序列化（将对象转换为 URL 查询字符串）
+ * 切换 CSS 类名（有则移除，无则添加）
  *
- * 支持普通键值对和嵌套对象（转换为 key[subKey]=value 格式）。
- * 忽略值为 null / 空字符串 / undefined 的字段。
- * 返回末尾带 & 的字符串（调用方需自行处理末尾 &）。
+ * @param {HTMLElement} element
+ * @param {string}      className
+ */
+export function toggleClass(element, className) {
+    if (!element || !className) {
+        return
+    }
+    let classString = element.className
+    const nameIndex = classString.indexOf(className)
+    if (nameIndex === -1) {
+        classString += '' + className
+    } else {
+        classString = classString.substr(0, nameIndex) + classString.substr(nameIndex + className.length)
+    }
+    element.className = classString
+}
+
+/**
+ * 检测是否包含 CSS 类名
  *
- * @param {Object} params - 待序列化的参数对象
- * @returns {string} URL 查询字符串（末尾含 &）
+ * @param {HTMLElement} ele
+ * @param {string}      cls
+ * @returns {boolean}
+ */
+export function hasClass(ele, cls) {
+    return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
+}
+
+/**
+ * 添加 CSS 类名（已存在时不重复）
+ *
+ * @param {HTMLElement} ele
+ * @param {string}      cls
+ */
+export function addClass(ele, cls) {
+    if (!hasClass(ele, cls)) ele.className += ' ' + cls
+}
+
+/**
+ * 移除 CSS 类名
+ *
+ * @param {HTMLElement} ele
+ * @param {string}      cls
+ */
+export function removeClass(ele, cls) {
+    if (hasClass(ele, cls)) {
+        const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
+        ele.className = ele.className.replace(reg, ' ')
+    }
+}
+
+// ==================== 函数工具 ====================
+
+/**
+ * 防抖函数
+ *
+ * 连续触发期间，仅在最后一次触发结束后延迟 wait ms 执行。
+ * immediate 为 true 时首次触发立即执行。
+ *
+ * @param {Function} func
+ * @param {number}   wait      - 等待时间（ms）
+ * @param {boolean}  [immediate=false]
+ * @returns {Function}
+ *
+ * 示例：
+ *   const debounced = debounce(() => search(), 300)
+ *   input.addEventListener('input', debounced)
+ */
+export function debounce(func, wait, immediate) {
+    let timeout, args, context, timestamp, result
+    const later = function () {
+        const last = +new Date() - timestamp
+        if (last < wait && last > 0) {
+            timeout = setTimeout(later, wait - last)
+        } else {
+            timeout = null
+            if (!immediate) {
+                result = func.apply(context, args)
+                if (!timeout) context = args = null
+            }
+        }
+    }
+    return function (...args) {
+        context = this
+        timestamp = +new Date()
+        const callNow = immediate && !timeout
+        if (!timeout) timeout = setTimeout(later, wait)
+        if (callNow) {
+            result = func.apply(context, args)
+            context = args = null
+        }
+        return result
+    }
+}
+
+// ==================== URL / 参数 ====================
+
+/**
+ * 从 URL 中解析查询参数为对象
+ *
+ * @param {string} [url] - 默认取 window.location.href
+ * @returns {Object}
+ *
+ * 示例：
+ *   getQueryObject('http://a.com?name=1&age=2')  // { name: '1', age: '2' }
+ */
+export function getQueryObject(url) {
+    url = url == null ? window.location.href : url
+    const search = url.substring(url.lastIndexOf('?') + 1)
+    const obj = {}
+    const reg = /([^?&=]+)=([^?&=]*)/g
+    search.replace(reg, (rs, $1, $2) => {
+        const name = decodeURIComponent($1)
+        let val = decodeURIComponent($2)
+        val = String(val)
+        obj[name] = val
+        return rs
+    })
+    return obj
+}
+
+/**
+ * 对象转 URL 查询字符串（过滤 undefined）
+ *
+ * @param {Object} json
+ * @returns {string} 不含 ? 前缀
+ *
+ * 示例：
+ *   param({ name: 'a', age: 1 })  // 'name=a&age=1'
+ */
+export function param(json) {
+    if (!json) return ''
+    return cleanArray(
+        Object.keys(json).map(key => {
+            if (json[key] === undefined) return ''
+            return encodeURIComponent(key) + '=' + encodeURIComponent(json[key])
+        })
+    ).join('&')
+}
+
+/**
+ * URL 查询字符串解析为对象
+ *
+ * @param {string} url - 含 ? 的完整 URL
+ * @returns {Object}
+ *
+ * 示例：
+ *   param2Obj('http://a.com?name=1&age=2')  // { name: '1', age: '2' }
+ */
+export function param2Obj(url) {
+    const search = decodeURIComponent(url.split('?')[1]).replace(/\+/g, ' ')
+    if (!search) {
+        return {}
+    }
+    const obj = {}
+    const searchArr = search.split('&')
+    searchArr.forEach(v => {
+        const index = v.indexOf('=')
+        if (index !== -1) {
+            obj[v.substring(0, index)] = v.substring(index + 1)
+        }
+    })
+    return obj
+}
+
+/**
+ * 参数序列化到 URL 查询字符串（支持嵌套对象）
+ *
+ * 嵌套对象展开为 key[subKey]=value 格式，忽略 null/''/undefined。
+ * 末尾带 &，调用方需自行处理。
+ *
+ * @param {Object} params
+ * @returns {string}
+ *
+ * 示例：
+ *   tansParams({ a: 1, b: { c: 2 } })  // 'a=1&b[c]=2&'
  */
 export function tansParams(params) {
-  let result = ''
-  for (const propName of Object.keys(params)) {
-    const value = params[propName]
-    const part = encodeURIComponent(propName) + "="
-    if (value !== null && value !== "" && typeof (value) !== "undefined") {
-      if (typeof value === 'object') {
-        // 嵌套对象展开为 propName[key]=value 格式
-        for (const key of Object.keys(value)) {
-          if (value[key] !== null && value[key] !== "" && typeof (value[key]) !== 'undefined') {
-            const params = propName + '[' + key + ']'
-            const subPart = encodeURIComponent(params) + "="
-            result += subPart + encodeURIComponent(value[key]) + "&"
-          }
+    let result = ''
+    for (const propName of Object.keys(params)) {
+        const value = params[propName]
+        const part = encodeURIComponent(propName) + "="
+        if (value !== null && value !== "" && typeof (value) !== "undefined") {
+            if (typeof value === 'object') {
+                for (const key of Object.keys(value)) {
+                    if (value[key] !== null && value[key] !== "" && typeof (value[key]) !== 'undefined') {
+                        const params = propName + '[' + key + ']'
+                        const subPart = encodeURIComponent(params) + "="
+                        result += subPart + encodeURIComponent(value[key]) + "&"
+                    }
+                }
+            } else {
+                result += part + encodeURIComponent(value) + "&"
+            }
         }
-      } else {
-        result += part + encodeURIComponent(value) + "&"
-      }
     }
-  }
-  return result
+    return result
 }
 
 /**
  * 规范化路径（去除重复斜杠及末尾斜杠）
  *
- * @param {string} p - 待处理的路径字符串
- * @returns {string} 规范化后的路径
+ * @param {string} p
+ * @returns {string}
+ *
+ * 示例：
+ *   getNormalPath('//a//b/')  // '/a/b'
  */
 export function getNormalPath(p) {
-  if (p.length === 0 || !p || p === 'undefined') {
-    return p
-  }
-  let res = p.replace('//', '/')  // 去除重复斜杠
-  if (res[res.length - 1] === '/') {
-    return res.slice(0, res.length - 1)  // 去除末尾斜杠
-  }
-  return res
+    if (p.length === 0 || !p || p === 'undefined') {
+        return p
+    }
+    let res = p.replace('//', '/')
+    if (res[res.length - 1] === '/') {
+        return res.slice(0, res.length - 1)
+    }
+    return res
+}
+
+// ==================== 表单 ====================
+
+/**
+ * 重置表单（Options API 下使用，依赖 this.$refs）
+ *
+ * @param {string} refName - el-form 的 ref 名称
+ *
+ * 用法：resetForm.call(this, 'formRef')
+ */
+export function resetForm(refName) {
+    if (this.$refs[refName]) {
+        this.$refs[refName].resetFields()
+    }
 }
 
 /**
- * 验证响应内容是否为 blob（文件）格式
+ * 添加日期范围到查询参数
  *
- * 通过检测 Content-Type 是否为 application/json 来区分文件响应与 JSON 错误响应。
- * 文件下载场景下，若服务端返回业务错误，Content-Type 仍可能为 application/json。
+ * 将 dateRange 拆分为 beginTime/endTime（或自定义前缀）挂到 params.params。
  *
- * @param {Blob} data - 接口响应的 blob 数据
- * @returns {boolean} 非 JSON 内容类型时返回 true，表示是真正的文件数据
+ * @param {Object} params      - 查询参数（会被修改）
+ * @param {Array}  dateRange   - [start, end]
+ * @param {string} [propName]  - 自定义前缀，如 'Create' → beginCreate/endCreate
+ * @returns {Object}
+ */
+export function addDateRange(params, dateRange, propName) {
+    let search = params
+    search.params = typeof (search.params) === 'object' && search.params !== null && !Array.isArray(search.params) ? search.params : {}
+    dateRange = Array.isArray(dateRange) ? dateRange : []
+    if (typeof (propName) === 'undefined') {
+        search.params['beginTime'] = dateRange[0]
+        search.params['endTime'] = dateRange[1]
+    } else {
+        search.params['begin' + propName] = dateRange[0]
+        search.params['end' + propName] = dateRange[1]
+    }
+    return search
+}
+
+// ==================== 字典 ====================
+
+/**
+ * 字典回显单值
+ *
+ * @param {Array} datas  - 字典项数组 [{ value, label }]
+ * @param {*}     value  - 当前值
+ * @returns {string} 匹配到 label 或原始值
+ *
+ * 示例：
+ *  selectDictLabel([{ value: '1', label: '启用' }, { value: '0', label: '禁用' }], '1')  // '启用'
+ */
+export function selectDictLabel(datas, value) {
+    if (value === undefined) {
+        return ""
+    }
+    const actions = []
+    Object.keys(datas).some((key) => {
+        if (datas[key].value === ('' + value)) {
+            actions.push(datas[key].label)
+            return true
+        }
+    })
+    if (actions.length === 0) {
+        actions.push(value)
+    }
+    return actions.join('')
+}
+
+/**
+ * 字典回显多值（逗号分隔字符串或数组）
+ *
+ * @param {Array}  datas     - 字典项数组
+ * @param {string|Array} value - 逗号分隔值或数组
+ * @param {string} [separator] - 分隔符，默认 ','
+ * @returns {string}
+ *
+ * 示例：
+ *  selectDictLabels([{ value: '1', label: '启用' }, { value: '0', label: '禁用' }], '1,0')  // '启用,禁用'
+ */
+export function selectDictLabels(datas, value, separator) {
+    if (value === undefined || value.length === 0) {
+        return ""
+    }
+    if (Array.isArray(value)) {
+        value = value.join(",")
+    }
+    const actions = []
+    const currentSeparator = undefined === separator ? "," : separator
+    const temp = value.split(currentSeparator)
+    Object.keys(value.split(currentSeparator)).some((val) => {
+        let match = false
+        Object.keys(datas).some((key) => {
+            if (datas[key].value === ('' + temp[val])) {
+                actions.push(datas[key].label + currentSeparator)
+                match = true
+            }
+        })
+        if (!match) {
+            actions.push(temp[val] + currentSeparator)
+        }
+    })
+    return actions.join('').substring(0, actions.join('').length - 1)
+}
+
+// ==================== 树形 ====================
+
+/**
+ * 扁平数组转树形结构
+ *
+ * 两次遍历：先建 id→节点 映射，再挂载子节点到父节点。
+ *
+ * @param {Array}  data       - 含 id/parentId 的扁平数组
+ * @param {string} [id]       - id 字段名，默认 'id'
+ * @param {string} [parentId] - 父 id 字段名，默认 'parentId'
+ * @param {string} [children] - 子节点数组字段名，默认 'children'
+ * @returns {Array} 根节点列表
+ *
+ * 示例：
+ *   handleTree([{id:1,parentId:0},{id:2,parentId:1}])
+ *   // → [{id:1, children:[{id:2}]}]
+ */
+export function handleTree(data, id, parentId, children) {
+    const config = {
+        id: id || 'id',
+        parentId: parentId || 'parentId',
+        childrenList: children || 'children'
+    }
+    const childrenListMap = {}
+    const tree = []
+    for (const d of data) {
+        childrenListMap[d[config.id]] = d
+        if (!d[config.childrenList]) {
+            d[config.childrenList] = []
+        }
+    }
+    for (const d of data) {
+        const parent = childrenListMap[d[config.parentId]]
+        if (!parent) {
+            tree.push(d)
+        } else {
+            parent[config.childrenList].push(d)
+        }
+    }
+    return tree
+}
+
+// ==================== 文件 / Blob ====================
+
+/**
+ * 验证 blob 是否为合法文件数据（非 JSON 错误报文）
+ *
+ * @param {Blob} data
+ * @returns {boolean} true 为文件数据，false 为 JSON 错误
  */
 export function blobValidate(data) {
-  return data.type !== 'application/json'
+    return data.type !== 'application/json'
 }
+
+

@@ -450,3 +450,71 @@ export const trigger = {
   'el-date-picker': 'change',
   'el-rate': 'change',
 }
+
+/**
+ * 构建字符串集合的快速查找函数（O(1)）
+ *
+ * @param {string}  str              - 逗号分隔的字符串
+ * @param {boolean} [expectsLowerCase] - true 时查找时转小写
+ * @returns {Function} val => boolean
+ *
+ * 示例：
+ *   const isColor = makeMap('red,green,blue')
+ *   isColor('red')   // true
+ */
+export function makeMap(str, expectsLowerCase) {
+  const map = Object.create(null)
+  const list = str.split(',')
+  for (let i = 0; i < list.length; i++) {
+    map[list[i]] = true
+  }
+  return expectsLowerCase
+    ? val => map[val.toLowerCase()]
+    : val => map[val]
+}
+
+/**
+ * 代码生成器：js-beautify 格式化配置
+ *
+ * HTML / JS 两套选项，缩进 2 空格，行宽 110。
+ */
+export const beautifierConf = {
+  html: {
+    indent_size: '2',
+    indent_char: ' ',
+    max_preserve_newlines: '-1',
+    preserve_newlines: false,
+    keep_array_indentation: false,
+    break_chained_methods: false,
+    indent_scripts: 'separate',
+    brace_style: 'end-expand',
+    space_before_conditional: true,
+    unescape_strings: false,
+    jslint_happy: false,
+    end_with_newline: true,
+    wrap_line_length: '110',
+    indent_inner_html: true,
+    comma_first: false,
+    e4x: true,
+    indent_empty_lines: true
+  },
+  js: {
+    indent_size: '2',
+    indent_char: ' ',
+    max_preserve_newlines: '-1',
+    preserve_newlines: false,
+    keep_array_indentation: false,
+    break_chained_methods: false,
+    indent_scripts: 'normal',
+    brace_style: 'end-expand',
+    space_before_conditional: true,
+    unescape_strings: false,
+    jslint_happy: true,
+    end_with_newline: true,
+    wrap_line_length: '110',
+    indent_inner_html: true,
+    comma_first: false,
+    e4x: true,
+    indent_empty_lines: true
+  }
+}

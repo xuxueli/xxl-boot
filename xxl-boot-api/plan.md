@@ -9,9 +9,7 @@
             - store:            done
             - components:       done
             - composables       done       
-            - utils:            x-01
-                - common.js
-                - index.js
+            - utils:            done
             - views:            x-02
                 - 框架：
                   - 验证码：captchaImage
@@ -25,6 +23,7 @@
                     - 组织管理：用户
 
 2、UI 集成 API 服务；
+    - Copy：代码copy 孵化项；不可逆修改；
     - 框架：
         - 验证码：captchaImage
         - 登录：login

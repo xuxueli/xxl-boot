@@ -1,5 +1,5 @@
 import { defineComponent, h } from 'vue'
-import { makeMap } from '@/utils/index'
+import { makeMap } from '@/utils/generator/config'
 
 const isAttr = makeMap(
   'accept,accept-charset,accesskey,action,align,alt,async,autocomplete,' +

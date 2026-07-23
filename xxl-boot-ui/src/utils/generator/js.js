@@ -1,4 +1,4 @@
-import { titleCase } from '@/utils/index'
+import { titleCase } from '@/utils/common'
 import { trigger } from './config'
 // 文件大小设置
 const units = {
