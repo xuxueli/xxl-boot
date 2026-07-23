@@ -8,7 +8,6 @@
             - layouts:          done
             - store:            done
             - components:       x-02
-                - ExcelImportDialog 
                 - FileUpload
                 - ImageUpload
             - composables

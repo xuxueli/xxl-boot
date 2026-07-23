@@ -5,34 +5,39 @@
 -->
 <template>
   <div class="upload-file">
+
+    <!-- 文件上传组件 -->
     <el-upload
-      multiple
-      :action="uploadFileUrl"
-      :before-upload="handleBeforeUpload"
-      :file-list="fileList"
-      :data="data"
-      :limit="limit"
-      :on-error="handleUploadError"
-      :on-exceed="handleExceed"
-      :on-success="handleUploadSuccess"
-      :show-file-list="false"
-      :headers="headers"
-      class="upload-file-uploader"
-      ref="fileUpload"
-      v-if="!disabled"
+        multiple
+        :action="uploadFileUrl"
+        :before-upload="handleBeforeUpload"
+        :file-list="fileList"
+        :data="data"
+        :limit="limit"
+        :on-error="handleUploadError"
+        :on-exceed="handleExceed"
+        :on-success="handleUploadSuccess"
+        :show-file-list="false"
+        :headers="headers"
+        class="upload-file-uploader"
+        ref="fileUpload"
+        v-if="!disabled"
     >
       <!-- 上传按钮 -->
       <el-button type="primary">选取文件</el-button>
     </el-upload>
+
     <!-- 上传提示 -->
     <div class="el-upload__tip" v-if="showTip && !disabled">
       请上传
-      <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b> </template>
-      <template v-if="fileType"> 格式为 <b style="color: #f56c6c">{{ fileType.join("/") }}</b> </template>
+      <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b></template>
+      <template v-if="fileType"> 格式为 <b style="color: #f56c6c">{{ fileType.join("/") }}</b></template>
       的文件
     </div>
+
     <!-- 文件列表 -->
-    <transition-group ref="uploadFileList" class="upload-file-list el-upload-list el-upload-list--text" name="el-fade-in-linear" tag="ul">
+    <transition-group ref="uploadFileList" class="upload-file-list el-upload-list el-upload-list--text"
+                      name="el-fade-in-linear" tag="ul">
       <li :key="file.uid" class="el-upload-list__item ele-upload-list__item-content" v-for="(file, index) in fileList">
         <el-link :href="`${baseUrl}${file.url}`" underline="never" target="_blank">
           <span class="el-icon-document"> {{ getFileName(file.name) }} </span>
@@ -42,16 +47,25 @@
         </div>
       </li>
     </transition-group>
+
   </div>
 </template>
 
 <script setup>
-import { getToken } from "@/utils/auth"
+import {getToken} from "@/utils/auth"
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
 
+/**
+ * defineProps
+ */
 const props = defineProps({
-  // v-model 双向绑定值：文件 URL 逗号分隔字符串 / 数组
+  /**
+   * 文件列表，支持三种格式：
+   *    String: "url1,url2"（逗号分隔的 URL 字符串）
+   *    Object: {name, url}
+   *    Array:  ["url1", "url2"] 或 [{name, url}, ...]
+   */
   modelValue: [String, Object, Array],
   // 上传接口地址（相对于 base API）
   action: {
@@ -94,17 +108,19 @@ const props = defineProps({
   }
 })
 
+// defineEmits：子传父（modelValue 通过 update:modelValue 回传）
 const emit = defineEmits()
-const fileUpload = ref(null)
-const uploadFileList = ref(null)
-const number = ref(0)
-const uploadList = ref([])
-const baseUrl = import.meta.env.VITE_APP_BASE_API
-const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)
-const headers = ref({ Authorization: "Bearer " + getToken() })
-const fileList = ref([])
-const showTip = computed(
-  () => props.isShowTip && (props.fileType || props.fileSize)
+
+const fileUpload = ref(null)                  // el-upload 组件引用
+const uploadFileList = ref(null)              // 文件列表 DOM 引用（用于 sortablejs 拖拽）
+const number = ref(0)                         // 正在上传的文件计数
+const uploadList = ref([])                    // 本次上传成功的文件列表
+const baseUrl = import.meta.env.VITE_APP_BASE_API                                   // API 基础地址
+const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)         // 上传接口完整地址
+const headers = ref({Authorization: "Bearer " + getToken()})                        // 上传请求头（携带 token）
+const fileList = ref([])                      // 已上传文件列表 [{name, url}]
+const showTip = computed(                     // 是否显示文件格式/大小提示
+    () => props.isShowTip && (props.fileType || props.fileSize)
 )
 
 // 监听外部 modelValue 变化，同步到文件列表
@@ -116,7 +132,7 @@ watch(() => props.modelValue, val => {
     // 然后将数组转为对象数组
     fileList.value = list.map(item => {
       if (typeof item === "string") {
-        item = { name: item, url: item }
+        item = {name: item, url: item}
       }
       item.uid = item.uid || new Date().getTime() + temp++
       return item
@@ -125,7 +141,7 @@ watch(() => props.modelValue, val => {
     fileList.value = []
     return []
   }
-},{ deep: true, immediate: true })
+}, {deep: true, immediate: true})
 
 // 上传前置校验：文件类型、文件名、文件大小，全部通过后显示 loading
 function handleBeforeUpload(file) {
@@ -171,7 +187,7 @@ function handleUploadError(err) {
 // 上传成功回调：添加记录或回滚
 function handleUploadSuccess(res, file) {
   if (res.code === 200) {
-    uploadList.value.push({ name: res.fileName, url: res.fileName })
+    uploadList.value.push({name: res.fileName, url: res.fileName})
     uploadedSuccessfully()
   } else {
     number.value--
@@ -218,11 +234,12 @@ function listToString(list, separator) {
       strs += list[i].url + separator
     }
   }
-  return strs != '' ? strs.substr(0, strs.length - 1) : ''
+  return strs !== '' ? strs.substr(0, strs.length - 1) : ''
 }
 
 // 初始化拖拽排序（sortablejs）
 onMounted(() => {
+
   if (props.drag && !props.disabled) {
     nextTick(() => {
       const element = uploadFileList.value?.$el || uploadFileList.value
@@ -236,16 +253,22 @@ onMounted(() => {
       })
     })
   }
+
 })
+
 </script>
+
+
 <style scoped lang="scss">
 .file-upload-darg {
   opacity: 0.5;
   background: #c8ebfb;
 }
+
 .upload-file-uploader {
   margin-bottom: 5px;
 }
+
 .upload-file-list .el-upload-list__item {
   border: 1px solid #e4e7ed;
   line-height: 2;
@@ -253,12 +276,14 @@ onMounted(() => {
   position: relative;
   transition: none !important;
 }
+
 .upload-file-list .ele-upload-list__item-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: inherit;
 }
+
 .ele-upload-list__item-content-action .el-link {
   margin-right: 10px;
 }
