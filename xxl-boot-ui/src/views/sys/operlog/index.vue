@@ -156,9 +156,9 @@
 import { Search, Refresh, Delete, Download, View } from '@element-plus/icons-vue'
 import OperlogDetail from './detail'
 import { list, delOperlog, cleanOperlog } from "@/api/sys/operlog"
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { parseTime, addDateRange } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import { download } from '@/utils/request'
 import modal from '@/utils/modal'
 

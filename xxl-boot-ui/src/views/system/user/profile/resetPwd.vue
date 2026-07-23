@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { usePasswordRule } from "@/utils/hooks/usePasswordRule"
+import { usePasswordRule } from "@/composables/usePasswordRule"
 import { updateUserPwd } from "@/api/system/user"
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'

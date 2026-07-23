@@ -30,7 +30,7 @@ const useDictStore = defineStore(
              * 获取字典：针对 key 合法性校验
              */
             getDict(_key) {
-                if (_key === null && _key === "") {
+                if (_key === null || _key === "") {
                     return null
                 }
                 try {

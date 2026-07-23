@@ -1,7 +1,7 @@
 <!--
   组件：DictTag（字典标签）
   功能：根据字典选项数组，将字典值渲染为 el-tag 或纯文本。
-        支持单值、数组、逗号分隔字符串三种输入格式。
+        支持 "单值、数组、逗号分隔" 字符串三种输入格式。
 
   用法：<DictTag :options="sys_normal_disable" :value="scope.row.status" />
 -->
@@ -47,15 +47,15 @@ const props = defineProps({
   },
   // 当前值：支持 Number / String / Array 三种类型
   value: [Number, String, Array],
-  // 未匹配时是否显示原始 value
-  showValue: {
-    type: Boolean,
-    default: true,
-  },
   // 字符串分隔符：value 为逗号分隔字符串时使用
   separator: {
     type: String,
     default: ",",
+  },
+  // 未匹配时是否显示原始 value
+  showValue: {
+    type: Boolean,
+    default: true,
   }
 })
 
@@ -69,11 +69,15 @@ const values = computed(() => {
 // 检测是否存在未匹配的字典项，存在时记录到 unmatchArray
 const unmatch = computed(() => {
   unmatchArray.value = []
-  if (props.value === null || typeof props.value === 'undefined' || props.value === '' || !Array.isArray(props.options) || props.options.length === 0) return false
+  if (props.value === null
+      || typeof props.value === 'undefined'
+      || props.value === ''
+      || !Array.isArray(props.options)
+      || props.options.length === 0) return false
   // 遍历 value 中的每一项，检查是否在 options 中存在
   let unmatch = false
   values.value.forEach(item => {
-    if (!props.options.some(v => v.value == item)) {
+    if (!props.options.some(v => v.value === item)) {
       unmatchArray.value.push(item)
       unmatch = true
     }
@@ -91,7 +95,7 @@ function handleArray(array) {
 
 // 判断某个字典值是否与当前 value 匹配
 function isValueMatch(itemValue) {
-  return values.value.some(val => val == itemValue)
+  return values.value.some(val => val === itemValue)
 }
 </script>
 

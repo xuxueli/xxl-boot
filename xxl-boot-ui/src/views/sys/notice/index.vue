@@ -165,9 +165,9 @@ import { Search, Refresh, Plus, Edit, Delete, User } from '@element-plus/icons-v
 import ReadUsersDialog from "./ReadUsers"
 import NoticeDetailView from '@/layout/components/Navbar/HeaderNoticeDetail.vue'
 import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/sys/notice"
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 
 const { sys_notice_status, sys_notice_type } = useDict("sys_notice_status", "sys_notice_type")

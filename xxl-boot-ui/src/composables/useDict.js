@@ -12,10 +12,11 @@
  *   - @/api/sys/dict/data    字典数据查询接口（getDicts）
  *
  * 典型用法：
- *   import { useDict } from '@/utils/hooks/useDict'
+ *   import { useDict } from '@/composables/useDict'
  *   const { sys_user_sex, sys_normal_disable } = useDict('sys_user_sex', 'sys_normal_disable')
  *   // 在模板中直接使用 sys_user_sex 作为 el-select 选项数据源
  */
+import { ref, toRefs } from 'vue'
 import { useDictStore } from '@/store'
 import { getDicts } from '@/api/sys/dict/data'
 

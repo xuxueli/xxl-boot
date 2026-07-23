@@ -127,7 +127,7 @@
 
 <script setup>
 import { getUser } from '@/api/system/user'
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { selectDictLabel } from '@/utils/common'
 
 const visible = ref(false)

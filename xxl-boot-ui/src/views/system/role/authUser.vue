@@ -95,9 +95,9 @@
 import { Search, Refresh, Plus, CircleClose, Close } from '@element-plus/icons-vue'
 import selectUser from "./selectUser"
 import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/system/role"
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 

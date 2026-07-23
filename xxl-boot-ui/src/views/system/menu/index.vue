@@ -309,9 +309,9 @@
 import { Search, Refresh, Plus, Check, Sort, Edit, Delete, QuestionFilled } from '@element-plus/icons-vue'
 import { addMenu, delMenu, getMenu, listMenu, updateMenu, updateMenuSort } from "@/api/system/menu"
 
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { handleTree } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 
 const resetForm = useFormReset()

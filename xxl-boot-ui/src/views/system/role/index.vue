@@ -245,9 +245,9 @@
 import { Search, Refresh, Plus, Edit, Delete, Download, CircleCheck, User, QuestionFilled } from '@element-plus/icons-vue'
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/system/role"
 import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/menu"
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { parseTime, addDateRange } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import { download } from '@/utils/request'
 import modal from '@/utils/modal'
 

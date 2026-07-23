@@ -48,7 +48,7 @@
 <script setup name="AuthRole">
 import { getAuthRole, updateAuthRole } from "@/api/system/user"
 import { parseTime } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 

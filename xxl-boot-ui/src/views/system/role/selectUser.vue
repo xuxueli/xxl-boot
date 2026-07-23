@@ -63,9 +63,9 @@
 <script setup name="SelectUser">
 import { Search, Refresh, Plus } from '@element-plus/icons-vue'
 import { authUserSelectAll, unallocatedUserList } from "@/api/system/role"
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 
 const props = defineProps({

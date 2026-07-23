@@ -22,11 +22,12 @@
  *   - @/plugins/cache   sessionStorage 封装（读取 pwrChrtype 配置项）
  *
  * 典型用法：
- *   import { usePasswordRule } from '@/utils/hooks/usePasswordRule'
+ *   import { usePasswordRule } from '@/composables/usePasswordRule'
  *   const { pwdValidator, infoPwdValidator } = usePasswordRule()
  *   // 在 el-form-item 的 :rules 中直接使用 pwdValidator
  */
 
+import { ref, computed } from 'vue'
 import cache from '@/utils/cache'
 
 // 从 sessionStorage 中读取后端下发的密码字符类型配置，默认为 '0'（任意字符）

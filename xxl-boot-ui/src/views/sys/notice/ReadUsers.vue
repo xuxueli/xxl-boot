@@ -49,7 +49,7 @@
 import { Refresh, Search } from "@element-plus/icons-vue"
 import { listNoticeReadUsers } from "@/api/sys/notice"
 import { parseTime } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 
 const resetForm = useFormReset()
 

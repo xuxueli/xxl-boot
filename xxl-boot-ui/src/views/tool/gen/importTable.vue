@@ -52,7 +52,7 @@
 
 <script setup>
 import { listDbTable, importTable } from "@/api/tool/gen"
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 
 const total = ref(0)

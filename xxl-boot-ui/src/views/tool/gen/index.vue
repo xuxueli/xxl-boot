@@ -150,7 +150,7 @@ import { Search, Refresh, Download, Plus, Upload, Edit, Delete, View, DocumentCo
 import { listTable, previewTable, delTable, genCode, synchDb } from "@/api/tool/gen"
 import router from "@/router"
 import { addDateRange } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import downloadPlugin from '@/utils/download'

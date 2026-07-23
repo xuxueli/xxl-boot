@@ -183,9 +183,9 @@ import { optionselect as getDictOptionselect, getType } from "@/api/sys/dict/typ
 const dictStore = useDictStore()
 
 import { listData, getData, delData, addData, updateData } from "@/api/sys/dict/data"
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import { download } from '@/utils/request'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'

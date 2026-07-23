@@ -156,10 +156,10 @@
 <script setup name="Dept">
 import { Search, Refresh, Plus, Check, Sort, Edit, Delete } from '@element-plus/icons-vue'
 import { listDept, getDept, delDept, addDept, updateDept, updateDeptSort, listDeptExcludeChild } from "@/api/system/dept"
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
 import { handleTree } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 
 const resetForm = useFormReset()

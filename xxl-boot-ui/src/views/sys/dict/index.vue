@@ -188,9 +188,9 @@ import { listType, getType, delType, addType, updateType, refreshCache } from "@
 
 const dictStore = useDictStore()
 
-import { useDict } from '@/utils/hooks/useDict'
+import { useDict } from '@/composables/useDict'
 import { parseTime, addDateRange } from '@/utils/common'
-import { useFormReset } from '@/utils/hooks/useFormReset'
+import { useFormReset } from '@/composables/useFormReset'
 import { download } from '@/utils/request'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
