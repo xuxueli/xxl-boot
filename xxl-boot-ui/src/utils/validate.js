@@ -62,8 +62,7 @@ export function isHttp(url) {
 
 /**
  * 判断路径是否为外链（http/https/mailto/tel 协议）
- *
- * 通常用于路由守卫或菜单渲染时区分内部路由与外部链接。
+ *    - 通常用于路由守卫或菜单渲染时区分内部路由与外部链接。
  *
  * @param {string} path - 待检测的路径字符串
  * @returns {boolean} 为外链时返回 true
@@ -72,27 +71,11 @@ export function isExternal(path) {
   return /^(https?:|mailto:|tel:)/.test(path)
 }
 
-/**
- * 校验用户名是否在白名单中
- *
- * @param {string} str - 用户名字符串
- * @returns {boolean} 在白名单（admin / editor）中时返回 true
- */
-export function validUsername(str) {
+/*export function validUsername(str) {
+  // 校验用户名是否在白名单中
   const valid_map = ['admin', 'editor']
   return valid_map.indexOf(str.trim()) >= 0
-}
-
-/**
- * 校验完整 URL 格式（支持 http / https / ftp 协议）
- *
- * @param {string} url - 待校验的 URL 字符串
- * @returns {boolean} 格式合法时返回 true
- */
-export function validURL(url) {
-  const reg = /^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/
-  return reg.test(url)
-}
+}*/
 
 /**
  * 校验字符串是否全为小写字母（a-z）
