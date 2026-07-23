@@ -11,9 +11,7 @@
             - composables       done       
             - utils:            x-01
                 - common.js
-                - errorCode.js
                 - index.js
-                - validate.js               
             - views:            x-02
                 - 框架：
                   - 验证码：captchaImage

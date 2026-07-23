@@ -15,7 +15,6 @@ import axios from 'axios'
 import {ElNotification, ElMessageBox, ElMessage, ElLoading} from 'element-plus'
 import {getToken} from '@/utils/auth'
 import {tansParams, blobValidate} from '@/utils/common'
-import errorCode from '@/utils/errorCode'
 import cache from '@/utils/cache'
 import {saveAs} from 'file-saver'
 import {useUserStore} from '@/store'
@@ -23,7 +22,16 @@ import settings from '@/settings'
 
 
 // 401 重登录防重复弹出标志
-export let isRelogin = {show: false}
+let isRelogin = {show: false}
+
+// 错误码映射表：后端业务码 → 前端展示文案
+const errorCode = {
+  '401': '认证失败，无法访问系统资源',
+  '403': '当前操作没有权限',
+  '404': '访问资源不存在',
+  'default': '系统未知错误，请反馈给管理员'
+}
+
 // 默认 headers 属性
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
@@ -230,7 +238,7 @@ service.interceptors.response.use(res => {
  * @param {string} filename  保存到本地的文件名
  * @param {Object} [config]  额外的 axios 请求配置（可选）
  */
-export function download(url, params, filename, config) {
+function download(url, params, filename, config) {
     const downloadLoadingInstance = ElLoading.service({text: "正在下载数据，请稍候", background: "rgba(0, 0, 0, 0.7)",})
     return service.post(url, params, {
         transformRequest: [(params) => tansParams(params)],
@@ -258,4 +266,12 @@ export function download(url, params, filename, config) {
     })
 }
 
+/**
+ * 命名导出 (export { name })
+ */
+export { isRelogin, errorCode, download }
+
+/**
+ * 默认导出 (export default)
+ */
 export default service

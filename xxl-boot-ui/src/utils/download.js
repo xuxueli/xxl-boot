@@ -29,7 +29,7 @@ import axios from 'axios'
 import { ElLoading, ElMessage } from 'element-plus'
 import { saveAs } from 'file-saver'
 import { getAuthHeaders } from '@/utils/auth'
-import errorCode from '@/utils/errorCode'
+import { errorCode } from '@/utils/request'
 import { blobValidate } from '@/utils/common'
 
 
