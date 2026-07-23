@@ -5,48 +5,53 @@
   用法：<Editor v-model="form.content" :min-height="192" />
 -->
 <template>
+  <!-- 隐藏的文件上传组件：点击工具栏图片按钮时触发 -->
   <div>
     <el-upload
-      :action="uploadUrl"
-      :before-upload="handleBeforeUpload"
-      :on-success="handleUploadSuccess"
-      :on-error="handleUploadError"
-      name="file"
-      :show-file-list="false"
-      :headers="headers"
-      class="editor-img-uploader"
-      v-if="type == 'url'"
+        :action="uploadUrl"
+        :before-upload="handleBeforeUpload"
+        :on-success="handleUploadSuccess"
+        :on-error="handleUploadError"
+        name="file"
+        :show-file-list="false"
+        :headers="headers"
+        class="editor-img-uploader"
+        v-if="type === 'url'"
     >
       <i ref="uploadRef" class="editor-img-uploader"></i>
     </el-upload>
   </div>
+  <!-- Quill 富文本编辑器 -->
   <div class="editor">
     <quill-editor
-      ref="quillEditorRef"
-      v-model:content="content"
-      contentType="html"
-      @ready="onEditorReady"
-      @textChange="(e) => $emit('update:modelValue', content)"
-      :options="options"
-      :style="styles"
+        ref="quillEditorRef"
+        v-model:content="content"
+        contentType="html"
+        @ready="onEditorReady"
+        @textChange="(e) => $emit('update:modelValue', content)"
+        :options="options"
+        :style="styles"
     />
   </div>
 </template>
 
 <script setup>
 import axios from 'axios'
-import { QuillEditor } from "@vueup/vue-quill"
+import {QuillEditor} from "@vueup/vue-quill"
 import "@vueup/vue-quill/dist/vue-quill.snow.css"
-import { getToken } from "@/utils/auth"
+import {getToken} from "@/utils/auth"
 import modal from '@/utils/modal'
 
-const quillEditorRef = ref()
-const uploadRef = ref(null)
-const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + "/common/upload")
+const quillEditorRef = ref()          // Quill 编辑器实例
+const uploadRef = ref(null)           // 图片上传 input 引用
+const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + "/common/upload")  // 上传接口地址
 const headers = ref({
   Authorization: "Bearer " + getToken()
-})
+})                                    // 上传请求头（携带 token）
 
+/*
+* defineProps：父传子
+*/
 const props = defineProps({
   // 编辑器的内容（v-model 双向绑定）
   modelValue: {
@@ -88,12 +93,12 @@ const options = ref({
     toolbar: [
       ["bold", "italic", "underline", "strike"],
       ["blockquote", "code-block"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ indent: "-1" }, { indent: "+1" }],
-      [{ size: ["small", false, "large", "huge"] }],
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      [{ color: [] }, { background: [] }],
-      [{ align: [] }],
+      [{list: "ordered"}, {list: "bullet"}],
+      [{indent: "-1"}, {indent: "+1"}],
+      [{size: ["small", false, "large", "huge"]}],
+      [{header: [1, 2, 3, 4, 5, 6, false]}],
+      [{color: []}, {background: []}],
+      [{align: []}],
       ["clean"],
       ["link", "image", "video"]
     ],
@@ -102,6 +107,7 @@ const options = ref({
   readOnly: props.readOnly
 })
 
+// 编辑器样式：最小高度 / 高度
 const styles = computed(() => {
   let style = {}
   if (props.minHeight) {
@@ -113,17 +119,19 @@ const styles = computed(() => {
   return style
 })
 
+// 编辑器内部内容（双向同步 props.modelValue）
 const content = ref("")
 watch(() => props.modelValue, (v) => {
   if (v !== content.value) {
-    content.value = v == undefined ? "<p></p>" : v
+    content.value = v === undefined ? "<p></p>" : v
   }
-}, { immediate: true })
+}, {immediate: true})
 
-// url 模式下：劫持图片上传按钮（触发隐藏 file input）+ 监听粘贴图片事件
+// 编辑器初始化完成后：劫持工具栏图片按钮 + 监听粘贴事件
 function onEditorReady(quill) {
   if (props.type === 'url') {
     let toolbar = quill.getModule("toolbar")
+    // 劫持工具栏图片按钮
     toolbar.addHandler("image", (value) => {
       if (value) {
         uploadRef.value.click()
@@ -131,17 +139,19 @@ function onEditorReady(quill) {
         quill.format("image", false)
       }
     })
+    // 粘贴板有图片时走 handlePasteCapture 上传
     quill.root.addEventListener('paste', handlePasteCapture, true)
   }
 }
 
 // 编辑器销毁时移除粘贴监听
 onBeforeUnmount(() => {
-  if (props.type == 'url' && quillEditorRef.value) {
+  if (props.type === 'url' && quillEditorRef.value) {
     try {
       let quill = quillEditorRef.value.getQuill()
       quill.root.removeEventListener('paste', handlePasteCapture, true)
-    } catch { /* editor may not have been initialized */ }
+    } catch { /* editor may not have been initialized */
+    }
   }
 })
 
@@ -167,7 +177,7 @@ function handleBeforeUpload(file) {
 
 // 上传成功：在光标位置插入图片
 function handleUploadSuccess(res, file) {
-  if (res.code == 200) {
+  if (res.code === 200) {
     let quill = toRaw(quillEditorRef.value).getQuill()
     // 获取光标位置
     let length = quill.selection.savedRange.index
@@ -200,10 +210,16 @@ function handlePasteCapture(e) {
   }
 }
 
+// 粘贴图片时上传到服务器
 function insertImage(file) {
   const formData = new FormData()
   formData.append("file", file)
-  axios.post(uploadUrl.value, formData, { headers: { "Content-Type": "multipart/form-data", Authorization: headers.value.Authorization } }).then(res => {
+  axios.post(uploadUrl.value, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: headers.value.Authorization
+    }
+  }).then(res => {
     handleUploadSuccess(res.data)
   })
 }
@@ -213,76 +229,95 @@ function insertImage(file) {
 .editor-img-uploader {
   display: none;
 }
+
 .editor, .ql-toolbar {
   white-space: pre-wrap !important;
   line-height: normal !important;
 }
+
 .quill-img {
   display: none;
 }
+
 .ql-snow .ql-tooltip[data-mode="link"]::before {
   content: "请输入链接地址:";
 }
+
 .ql-snow .ql-tooltip.ql-editing a.ql-action::after {
   border-right: 0px;
   content: "保存";
   padding-right: 0px;
 }
+
 .ql-snow .ql-tooltip[data-mode="video"]::before {
   content: "请输入视频地址:";
 }
+
 .ql-snow .ql-picker.ql-size .ql-picker-label::before,
 .ql-snow .ql-picker.ql-size .ql-picker-item::before {
   content: "14px";
 }
+
 .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="small"]::before,
 .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="small"]::before {
   content: "10px";
 }
+
 .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="large"]::before,
 .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="large"]::before {
   content: "18px";
 }
+
 .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="huge"]::before,
 .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="huge"]::before {
   content: "32px";
 }
+
 .ql-snow .ql-picker.ql-header .ql-picker-label::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item::before {
   content: "文本";
 }
+
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
   content: "标题1";
 }
+
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
   content: "标题2";
 }
+
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
   content: "标题3";
 }
+
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="4"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="4"]::before {
   content: "标题4";
 }
+
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="5"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="5"]::before {
   content: "标题5";
 }
+
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="6"]::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="6"]::before {
   content: "标题6";
 }
+
 .ql-snow .ql-picker.ql-font .ql-picker-label::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item::before {
   content: "标准字体";
 }
+
 .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="serif"]::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="serif"]::before {
   content: "衬线字体";
 }
+
 .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="monospace"]::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before {
   content: "等宽字体";
