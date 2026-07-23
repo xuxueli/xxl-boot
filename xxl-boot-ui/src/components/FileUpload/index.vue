@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import {getToken} from "@/utils/auth"
+import {getAuthHeaders} from "@/utils/auth"
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
 
@@ -117,7 +117,7 @@ const number = ref(0)                         // 正在上传的文件计数
 const uploadList = ref([])                    // 本次上传成功的文件列表
 const baseUrl = import.meta.env.VITE_APP_BASE_API                                   // API 基础地址
 const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)         // 上传接口完整地址
-const headers = ref({Authorization: "Bearer " + getToken()})                        // 上传请求头（携带 token）
+const headers = ref(getAuthHeaders())                                          // 上传请求头（携带 token）
 const fileList = ref([])                      // 已上传文件列表 [{name, url}]
 const showTip = computed(                     // 是否显示文件格式/大小提示
     () => props.isShowTip && (props.fileType || props.fileSize)

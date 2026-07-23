@@ -39,15 +39,13 @@
 import axios from 'axios'
 import {QuillEditor} from "@vueup/vue-quill"
 import "@vueup/vue-quill/dist/vue-quill.snow.css"
-import {getToken} from "@/utils/auth"
+import {getAuthHeaders} from "@/utils/auth"
 import modal from '@/utils/modal'
 
 const quillEditorRef = ref()          // Quill 编辑器实例
 const uploadRef = ref(null)           // 图片上传 input 引用
 const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + "/common/upload")  // 上传接口地址
-const headers = ref({
-  Authorization: "Bearer " + getToken()
-})                                    // 上传请求头（携带 token）
+const headers = ref(getAuthHeaders())   // 上传请求头（携带 token）
 
 /*
 * defineProps：父传子

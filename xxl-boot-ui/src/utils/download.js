@@ -36,7 +36,7 @@
 import axios from 'axios'
 import { ElLoading, ElMessage } from 'element-plus'
 import { saveAs } from 'file-saver'
-import { getToken } from '@/utils/auth'
+import { getAuthHeaders } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
 import { blobValidate } from '@/utils/common'
 
@@ -70,7 +70,7 @@ export default {
       method: 'get',
       url: url,
       responseType: 'blob',                                       // 以二进制流方式接收响应，适用于文件下载
-      headers: { 'Authorization': 'Bearer ' + getToken() }       // 附加 Bearer Token 完成鉴权
+      headers: getAuthHeaders()       // 附加 Bearer Token 完成鉴权
     }).then((res) => {
       // 校验响应体是否为合法的 Blob 文件数据
       const isBlob = blobValidate(res.data)
@@ -102,7 +102,7 @@ export default {
       method: 'get',
       url: url,
       responseType: 'blob',                                       // 以二进制流方式接收响应
-      headers: { 'Authorization': 'Bearer ' + getToken() }       // 附加 Bearer Token 完成鉴权
+      headers: getAuthHeaders()       // 附加 Bearer Token 完成鉴权
     }).then((res) => {
       // 校验响应体是否为合法的 Blob 文件数据
       const isBlob = blobValidate(res.data)
@@ -137,7 +137,7 @@ export default {
       method: 'get',
       url: url,
       responseType: 'blob',                                       // 以二进制流方式接收响应
-      headers: { 'Authorization': 'Bearer ' + getToken() }       // 附加 Bearer Token 完成鉴权
+      headers: getAuthHeaders()       // 附加 Bearer Token 完成鉴权
     }).then((res) => {
       // 校验响应体是否为合法的 Blob 文件数据
       const isBlob = blobValidate(res.data)

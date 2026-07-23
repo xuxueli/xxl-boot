@@ -30,6 +30,16 @@ export function getToken() {
 }
 
 /**
+ * 获取认证请求头
+ *
+ * 返回 { Authorization: 'Bearer <token>' } 对象，供 el-upload 等组件使用。
+ * 集中管理，避免各处重复拼接。
+ */
+export function getAuthHeaders() {
+  return { Authorization: 'Bearer ' + getToken() }
+}
+
+/**
  * 写入认证令牌
  *
  * 登录成功后由用户 store 调用，将服务端下发的 token 持久化到 Cookie，

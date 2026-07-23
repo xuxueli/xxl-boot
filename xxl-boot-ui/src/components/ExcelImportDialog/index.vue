@@ -36,7 +36,7 @@
 
 <script setup>
 import {UploadFilled} from '@element-plus/icons-vue'
-import {getToken} from '@/utils/auth'
+import {getAuthHeaders} from '@/utils/auth'
 import {download} from '@/utils/request'
 import modal from '@/utils/modal'
 import {ElMessageBox} from 'element-plus'
@@ -95,7 +95,7 @@ const visible = ref(false)              // 弹窗显示/隐藏
 const selectedFile = ref(null)          // 当前选中的文件
 const isUploading = ref(false)          // 是否正在上传中
 const updateSupport = ref(false)        // 是否覆盖更新已有数据
-const headers = {Authorization: 'Bearer ' + getToken()}   // 上传请求头（el-upload 是浏览器原生 XMLHttpRequest 提交，不走 axios 拦截器）
+const headers = getAuthHeaders()   // 上传请求头（el-upload 不走 axios 拦截器，需手动注入）
 
 
 // 上传地址（拼接 updateSupport 参数）

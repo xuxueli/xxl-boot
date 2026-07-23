@@ -7,9 +7,7 @@
             - router:           done：              
             - layouts:          done
             - store:            done
-            - components:       x-02
-                - FileUpload
-                - ImageUpload
+            - components:       done
             - composables
                 - useFormReset
                 - userPasswordRule
