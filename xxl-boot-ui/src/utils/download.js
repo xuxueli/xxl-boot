@@ -9,14 +9,6 @@
  * - 内置 saveAs 方法封装，统一调用 file-saver 库触发浏览器下载行为
  * - 内置 printErrMsg 方法，将响应体中的错误信息解析后展示给用户
  *
- * 依赖说明：
- * - axios：发起带鉴权头的 HTTP 请求
- * - element-plus ElLoading / ElMessage：加载遮罩与消息提示
- * - file-saver saveAs：触发浏览器下载并命名文件
- * - @/utils/auth getToken：获取当前登录用户的 Bearer Token
- * - @/utils/errorCode：统一错误码与错误信息映射表
- * - @/utils/boot blobValidate：校验响应是否为合法的 Blob 文件数据
- *
  * 典型用法（组件内）：
  *   // 按文件名下载（下载后删除源文件）
  *   this.$download.name('test.xlsx')
@@ -40,18 +32,18 @@ import { getAuthHeaders } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
 import { blobValidate } from '@/utils/common'
 
+
 // 接口请求的基础 URL，从 Vite 环境变量中读取（对应 .env 文件中的 VITE_APP_BASE_API）
 const baseURL = import.meta.env.VITE_APP_BASE_API
 // 全局下载 Loading 实例，用于 zip 方法中显示/关闭全屏加载遮罩
 let downloadLoadingInstance
 
+
 /**
  * 对外导出的下载插件对象
- *
- * 挂载方式（main.js）：
- *   app.config.globalProperties.$download = download
  */
 export default {
+
   /**
    * 按文件名下载服务端文件
    *
@@ -194,4 +186,5 @@ export default {
     const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
     ElMessage.error(errMsg)
   }
+
 }

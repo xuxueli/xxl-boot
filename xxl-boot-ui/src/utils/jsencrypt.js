@@ -6,17 +6,14 @@
  *   - 用于登录密码等敏感数据在传输前的加密处理，防止明文在网络中传输。
  *   - 公钥加密（encrypt）在前端调用，私钥解密（decrypt）通常仅在调试或特殊场景使用。
  *
- * ⚠️  安全说明：
+ * 安全说明：
  *   - 下方私钥为示例/测试用密钥，生产环境请替换并通过安全方式管理。
  *   - 密钥对生成工具参考：http://web.chacuo.net/netrsakeypair
  *
- * 依赖：
- *   - jsencrypt  轻量级 RSA 加解密库
- *
  * 典型用法：
  *   import { encrypt, decrypt } from '@/utils/jsencrypt'
- *   const cipherText = encrypt(password)   // 加密后发送给后端
- *   const plainText  = decrypt(cipherText)  // 解密（调试用）
+ *   const cipherText = encrypt(password)               // 加密后发送给后端
+ *   const plainText  = decrypt(cipherText)             // 解密（调试用）
  */
 import JSEncrypt from 'jsencrypt'
 

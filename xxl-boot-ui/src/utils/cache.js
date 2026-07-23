@@ -202,9 +202,6 @@ const localCache = {
  * 结构：
  * - session：会话级缓存（sessionStorage 封装）
  * - local：本地持久化缓存（localStorage 封装）
- *
- * 挂载方式（main.js）：
- *   app.config.globalProperties.$cache = cache
  */
 export default {
   /**

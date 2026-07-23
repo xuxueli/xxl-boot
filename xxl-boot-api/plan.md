@@ -8,12 +8,17 @@
             - layouts:          done
             - store:            done
             - components:       done
-            - composables
-                - useFormReset
-                - userPasswordRule
-            - utils:            x
-                - 非必须合并；
-            - views:            x-03
+            - composables       done       
+            - utils:            x-01
+                - common.js
+                - errorCode.js
+                - index.js
+                - request.js
+                - scroll-to.js
+                - tab.js
+                - theme.js
+                - validate.js               
+            - views:            x-02
                 - 框架：
                   - 验证码：captchaImage
                   - 登录：login

@@ -42,10 +42,6 @@
  * - /redirect 路由会立即再次跳回原始路径，从而触发组件完整重新挂载
  * - 整个过程中 query 参数始终保留，页面刷新后参数不会丢失
  *
- * 七、挂载方式（plugins/index.js）
- * ```js
- * app.config.globalProperties.$tab = tab
- * ```
  */
 // 这里import后直接应用，使用时再实时获取。不支持别名用法，该工具在Pinia初始化前使用，别名会导致找不到store。
 import { useTagsViewStore } from '@/store'
