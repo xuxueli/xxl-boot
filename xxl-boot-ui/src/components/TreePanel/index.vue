@@ -5,8 +5,8 @@
 -->
 <template>
   <div class="tree-sidebar" :class="{ collapsed: collapsed, resizing: isResizing, 'no-initial-transition': isLoadingFromStorage}" :style="{ width: sidebarWidth + 'px' }">
-    <!-- 右侧拖动条 -->
-    <div v-if="!collapsed" class="resize-handle" @mousedown="startResize" @touchstart="startResize" :class="{ active: isResizing }" />
+
+    <!-- 树形面板：头部 -->
     <div class="tree-header">
       <span class="tree-title" v-show="!collapsed">
         <el-icon><component :is="titleIcon" /></el-icon> {{ title }}
@@ -24,17 +24,8 @@
         <slot name="actions"></slot>
       </div>
     </div>
-    
-    <!-- 侧边栏展开/收起按钮 -->
-    <div class="collapse-button-container">
-      <el-tooltip :content="collapsed ? '展开' : '收起'" placement="right">
-        <el-icon class="collapse-button" @click="toggleCollapsed">
-          <DArrowRight v-if="collapsed" />
-          <DArrowLeft v-else />
-        </el-icon>
-      </el-tooltip>
-    </div>
 
+    <!-- 树形面板：搜索框 -->
     <div class="tree-search" v-show="!collapsed" v-if="showSearch">
       <el-input v-model="searchKeyword" :placeholder="searchPlaceholder" clearable>
         <template #prefix>
@@ -43,6 +34,7 @@
       </el-input>
     </div>
 
+    <!-- 树形面板：内容区域 -->
     <div class="tree-wrap" v-show="!collapsed">
       <el-tree 
         ref="treeRef" 
@@ -73,12 +65,29 @@
         </template>
       </el-tree>
     </div>
+
+    <!-- 右侧：拖动条 -->
+    <div v-if="!collapsed" class="resize-handle" @mousedown="startResize" @touchstart="startResize" :class="{ active: isResizing }" />
+
+    <!-- 右侧：侧边栏展开/收起按钮 -->
+    <div class="collapse-button-container">
+      <el-tooltip :content="collapsed ? '展开' : '收起'" placement="right">
+        <el-icon class="collapse-button" @click="toggleCollapsed">
+          <DArrowRight v-if="collapsed" />
+          <DArrowLeft v-else />
+        </el-icon>
+      </el-tooltip>
+    </div>
+
   </div>
 </template>
 
 <script setup>
 import { ArrowDown, ArrowUp, DArrowRight, DArrowLeft, Folder, Document, Search, Refresh } from '@element-plus/icons-vue'
 
+/**
+ * defineProps 父传子
+ */
 const props = defineProps({
   // 树形数据
   treeData: {
@@ -114,8 +123,8 @@ const props = defineProps({
   treeProps: {
     type: Object,
     default: () => ({
-      children: "children",
-      label: "label"
+      children: "children",   // 子节点
+      label: "label"          // 节点名称
     })
   },
   // 节点唯一标识字段
@@ -185,6 +194,9 @@ const props = defineProps({
   }
 })
 
+/**
+ * defineEmits：子传父
+ */
 const emit = defineEmits([
   'collapsed-change',
   'expanded-all-change',
@@ -199,16 +211,16 @@ const emit = defineEmits([
 const treeRef = ref(null)
 
 // 响应式数据
-const searchKeyword = ref('')
-const collapsed = ref(props.defaultCollapsed)
-const sidebarWidth = ref(props.defaultCollapsed ? props.collapsedWidth : props.defaultWidth)
-const isResizing = ref(false)
-const startX = ref(0)
-const startWidth = ref(0)
-const saveWidthTimer = ref(null)
-const rafId = ref(null)
-const isLoadingFromStorage = ref(false)
-const expandedAll = ref(props.defaultExpandAll)
+const searchKeyword = ref('')                           // 搜索关键词
+const collapsed = ref(props.defaultCollapsed)            // 侧边栏收起状态
+const sidebarWidth = ref(props.defaultCollapsed ? props.collapsedWidth : props.defaultWidth)  // 侧边栏当前宽度
+const isResizing = ref(false)                            // 是否正在拖拽调整宽度
+const startX = ref(0)                                    // 拖拽起始鼠标 X 坐标
+const startWidth = ref(0)                                // 拖拽起始宽度
+const saveWidthTimer = ref(null)                         // 宽度持久化防抖定时器
+const rafId = ref(null)                                  // requestAnimationFrame ID
+const isLoadingFromStorage = ref(false)                   // 是否正在从本地存储加载宽度
+const expandedAll = ref(props.defaultExpandAll)           // 是否全部展开
 
 // 计算属性
 const isExpandedAll = computed({
@@ -378,12 +390,14 @@ const onNodeCollapse = (data, node, e) => {
   emit('node-collapse', data, node, e)
 }
 
+// 设置当前选中节点
 const setCurrentKey = (key) => {
   if (treeRef.value) {
     treeRef.value.setCurrentKey(key)
   }
 }
 
+// 获取当前选中节点数据
 const getCurrentNode = () => {
   if (treeRef.value) {
     return treeRef.value.getCurrentNode()
@@ -391,6 +405,7 @@ const getCurrentNode = () => {
   return null
 }
 
+// 获取当前选中节点 key
 const getCurrentKey = () => {
   if (treeRef.value) {
     return treeRef.value.getCurrentKey()
@@ -398,12 +413,14 @@ const getCurrentKey = () => {
   return null
 }
 
+// 设置勾选节点
 const setCheckedKeys = (keys) => {
   if (treeRef.value && props.showCheckbox) {
     treeRef.value.setCheckedKeys(keys)
   }
 }
 
+// 获取所有勾选节点 key
 const getCheckedKeys = () => {
   if (treeRef.value && props.showCheckbox) {
     return treeRef.value.getCheckedKeys()
@@ -411,6 +428,7 @@ const getCheckedKeys = () => {
   return []
 }
 
+// 获取所有勾选节点数据
 const getCheckedNodes = () => {
   if (treeRef.value && props.showCheckbox) {
     return treeRef.value.getCheckedNodes()
@@ -418,6 +436,7 @@ const getCheckedNodes = () => {
   return []
 }
 
+// 清空搜索
 const clearSearch = () => {
   searchKeyword.value = ""
   if (treeRef.value) {
@@ -425,10 +444,12 @@ const clearSearch = () => {
   }
 }
 
+// 主动触发搜索过滤
 const filter = (value) => {
   searchKeyword.value = value
 }
 
+// 开始拖拽调整宽度
 const startResize = (e) => {
   e.preventDefault()
   e.stopPropagation()
@@ -446,6 +467,7 @@ const startResize = (e) => {
   disableUserSelect()
 }
 
+// 拖拽过程中实时计算宽度
 const handleResizeMove = (e) => {
   if (!isResizing.value) return
   if (rafId.value) {
@@ -464,6 +486,7 @@ const handleResizeMove = (e) => {
   })
 }
 
+// 结束拖拽，清理事件监听并保存宽度
 const stopResize = () => {
   if (!isResizing.value) return
   isResizing.value = false
@@ -481,6 +504,7 @@ const stopResize = () => {
   saveWidthToStorage()
 }
 
+// 禁止文本选中，防止拖拽时文本高亮
 const disableUserSelect = () => {
   document.body.style.userSelect = 'none'
   document.body.style.webkitUserSelect = 'none'
@@ -488,6 +512,7 @@ const disableUserSelect = () => {
   document.body.style.msUserSelect = 'none'
 }
 
+// 恢复文本选中
 const enableUserSelect = () => {
   document.body.style.userSelect = ''
   document.body.style.webkitUserSelect = ''
@@ -495,15 +520,18 @@ const enableUserSelect = () => {
   document.body.style.msUserSelect = ''
 }
 
+// 重置为默认宽度
 const resetWidth = () => {
   sidebarWidth.value = props.defaultWidth
   saveWidthToStorage()
 }
 
+// 获取当前宽度
 const getCurrentWidth = () => {
   return sidebarWidth.value
 }
 
+// 设置宽度
 const setWidth = (width) => {
   if (typeof width === 'number' && width >= props.minWidth && width <= props.maxWidth) {
     sidebarWidth.value = width
@@ -513,6 +541,9 @@ const setWidth = (width) => {
   }
 }
 
+/**
+ * defineExpose：父传子
+ */
 defineExpose({
   setCurrentKey,
   getCurrentNode,
@@ -531,6 +562,9 @@ defineExpose({
   treeRef
 })
 
+/**
+ * 组件挂载后
+ */
 onMounted(() => {
   isLoadingFromStorage.value = true
   if (!collapsed.value && props.enableStorage) {
@@ -549,6 +583,9 @@ onMounted(() => {
   }
 })
 
+/**
+ * 组件卸载前
+ */
 onBeforeUnmount(() => {
   cleanup()
 })
