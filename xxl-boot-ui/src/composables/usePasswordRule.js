@@ -1,36 +1,24 @@
 /**
- * 密码强度规则工具模块（passwordRule.js）
+ * usePasswordRule - 密码强度校验规则
  *
- * 职责：
- *   - 根据系统配置的密码字符类型（chrtype），动态生成一组 Element Plus
- *     表单校验规则（validator array），供各密码输入场景复用。
- *   - 密码字符类型从 sessionStorage 缓存中读取，保持与后端配置一致。
- *   - 提供四个场景的校验规则：
- *       1. pwdValidator          通用密码校验（登录、修改密码等）
- *       2. infoPwdValidator      个人中心新密码校验
- *       3. registerPwdValidator  注册页密码校验（固定使用 type 0）
- *       4. pwdPromptValidator    Prompt 弹框输入校验（函数形式）
+ * 根据后端配置的 chrtype 动态生成 element-plus 表单校验规则。
+ * chrtype 从 sessionStorage 读取，支持 0-4 五种密码策略。
  *
- * chrtype 说明：
+ * 用法：
+ *   const { pwdValidator, infoPwdValidator } = usePasswordRule()
+ *   // :rules="pwdValidator" 绑定到 el-form-item
+ *
+ * chrtype:
  *   0 - 任意字符（默认，仅禁止 < > " ' \ |）
  *   1 - 纯数字（0-9）
  *   2 - 纯字母（a-z / A-Z）
  *   3 - 字母 + 数字（必须同时包含）
  *   4 - 字母 + 数字 + 特殊字符（必须同时包含，特殊字符：~!@#$%^&*()-=_+）
- *
- * 依赖：
- *   - @/plugins/cache   sessionStorage 封装（读取 pwrChrtype 配置项）
- *
- * 典型用法：
- *   import { usePasswordRule } from '@/composables/usePasswordRule'
- *   const { pwdValidator, infoPwdValidator } = usePasswordRule()
- *   // 在 el-form-item 的 :rules 中直接使用 pwdValidator
  */
-
 import { ref, computed } from 'vue'
 import cache from '@/utils/cache'
 
-// 从 sessionStorage 中读取后端下发的密码字符类型配置，默认为 '0'（任意字符）
+// 从 sessionStorage 读取密码字符类型配置
 const pwdChrType = ref(cache.session.get('pwrChrtype') || '0')
 
 /**
