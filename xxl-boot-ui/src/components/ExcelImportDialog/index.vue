@@ -6,16 +6,22 @@
 -->
 <template>
   <el-dialog :title="title" v-model="visible" :width="width" append-to-body @close="handleClose">
-    <el-upload ref="uploadRef" :limit="1" accept=".xlsx, .xls" :headers="headers" :action="uploadUrl" :disabled="isUploading" :on-progress="handleProgress" :on-change="handleFileChange" :on-remove="handleFileRemove" :on-success="handleSuccess" :auto-upload="false" drag>
-      <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
+    <el-upload ref="uploadRef" :limit="1" accept=".xlsx, .xls" :headers="headers" :action="uploadUrl"
+               :disabled="isUploading" :on-progress="handleProgress" :on-change="handleFileChange"
+               :on-remove="handleFileRemove" :on-success="handleSuccess" :auto-upload="false" drag>
+      <el-icon class="el-icon--upload">
+        <UploadFilled/>
+      </el-icon>
       <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
       <template #tip>
         <div class="el-upload__tip text-center">
           <div class="el-upload__tip">
-            <el-checkbox v-model="updateSupport"> {{ updateSupportLabel }} </el-checkbox>
+            <el-checkbox v-model="updateSupport"> {{ updateSupportLabel }}</el-checkbox>
           </div>
           <span>仅允许导入xls、xlsx格式文件。</span>
-          <el-link v-if="templateUrl" type="primary" underline="never" style="font-size: 12px; vertical-align: baseline" @click="handleDownloadTemplate">下载模板</el-link>
+          <el-link v-if="templateUrl" type="primary" underline="never" style="font-size: 12px; vertical-align: baseline"
+                   @click="handleDownloadTemplate">下载模板
+          </el-link>
         </div>
       </template>
     </el-upload>
@@ -29,12 +35,15 @@
 </template>
 
 <script setup>
-import { UploadFilled } from '@element-plus/icons-vue'
-import { getToken } from '@/utils/auth'
-import { download } from '@/utils/request'
+import {UploadFilled} from '@element-plus/icons-vue'
+import {getToken} from '@/utils/auth'
+import {download} from '@/utils/request'
 import modal from '@/utils/modal'
-import { ElMessageBox } from 'element-plus'
+import {ElMessageBox} from 'element-plus'
 
+/**
+ * defineProps：父传子
+ */
 const props = defineProps({
   // 对话框标题
   title: {
@@ -68,19 +77,33 @@ const props = defineProps({
   }
 })
 
+/**
+ * 暴露 open 方法供父组件调用
+ *
+ * defineExpose：父传子
+ */
+defineExpose({open})
+
+/**
+ * defineEmits：子传父
+ */
 const emit = defineEmits(['success'])
 
-const uploadRef = ref(null)
-const visible = ref(false)
-const selectedFile = ref(null)
-const isUploading = ref(false)
-const updateSupport = ref(false)
-const headers = { Authorization: 'Bearer ' + getToken() }
 
+const uploadRef = ref(null)             // el-upload 组件引用
+const visible = ref(false)              // 弹窗显示/隐藏
+const selectedFile = ref(null)          // 当前选中的文件
+const isUploading = ref(false)          // 是否正在上传中
+const updateSupport = ref(false)        // 是否覆盖更新已有数据
+const headers = {Authorization: 'Bearer ' + getToken()}   // 上传请求头（el-upload 是浏览器原生 XMLHttpRequest 提交，不走 axios 拦截器）
+
+
+// 上传地址（拼接 updateSupport 参数）
 const uploadUrl = computed(() => {
   return import.meta.env.VITE_APP_BASE_API + props.action + '?updateSupport=' + (updateSupport.value ? 1 : 0)
 })
 
+// 是否有模板下载地址
 const templateUrl = computed(() => !!props.templateAction)
 
 // 打开对话框（供父组件通过 ref 调用）
@@ -127,7 +150,7 @@ function handleSuccess(response) {
   isUploading.value = false
   selectedFile.value = null
   uploadRef.value?.clearFiles()
-  ElMessageBox.alert("<div style='overflow:auto;overflow-x:hidden;max-height:70vh;padding:10px 20px 0;'>" + response.msg + '</div>', '导入结果', { dangerouslyUseHTMLString: true })
+  ElMessageBox.alert("<div style='overflow:auto;overflow-x:hidden;max-height:70vh;padding:10px 20px 0;'>" + response.msg + '</div>', '导入结果', {dangerouslyUseHTMLString: true})
   emit('success')
 }
 
@@ -141,5 +164,4 @@ function handleSubmit() {
   uploadRef.value.submit()
 }
 
-defineExpose({ open })
 </script>

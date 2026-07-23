@@ -180,7 +180,13 @@
     <!-- 用户详情抽屉 -->
     <user-view-drawer ref="userViewRef" />
     <!-- 用户导入对话框 -->
-    <ExcelImportDialog ref="importUserRef" title="用户导入" action="/system/user/importData" template-action="/system/user/importTemplate" template-file-name="user_template" update-support-label="是否更新已经存在的用户数据" @success="getList" />
+    <ExcelImportDialog ref="importUserRef"
+                       title="用户导入"
+                       action="/system/user/importData"
+                       template-action="/system/user/importTemplate"
+                       template-file-name="user_template"
+                       update-support-label="是否更新已经存在的用户数据"
+                       @success="getList" />
   </div>
 </template>
 
