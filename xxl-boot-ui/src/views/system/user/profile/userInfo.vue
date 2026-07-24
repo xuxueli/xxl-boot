@@ -1,4 +1,9 @@
+<!--
+  页面：UserInfo（基本资料编辑）
+  功能：编辑用户昵称、手机号、邮箱、性别，提交保存
+-->
 <template>
+   <!-- 基本资料表单 -->
    <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
       <el-form-item label="用户昵称" prop="nickName">
          <el-input v-model="form.nickName" maxlength="30" />
@@ -23,19 +28,22 @@
 </template>
 
 <script setup>
+
+// 引入
 import { updateUserProfile } from "@/api/system/user"
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 
+// 父组件传入的用户数据
 const props = defineProps({
   user: {
     type: Object
   }
 })
 
-const userRef = ref(null)
-const form = ref({})
-const rules = ref({
+const userRef = ref(null)     // 表单 ref
+const form = ref({})          // 表单数据
+const rules = ref({           // 表单校验规则
   nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
   email: [{ required: true, message: "邮箱地址不能为空", trigger: "blur" }, { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
   phonenumber: [{ required: true, message: "手机号码不能为空", trigger: "blur" }, { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }],
@@ -65,4 +73,5 @@ watch(() => props.user, user => {
     form.value = { nickName: user.nickName, phonenumber: user.phonenumber, email: user.email, sex: user.sex }
   }
 },{ immediate: true })
+
 </script>
