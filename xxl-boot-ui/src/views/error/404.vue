@@ -1,12 +1,20 @@
+<!--
+  页面：404（未找到）
+  功能：提示用户页面不存在，提供返回首页入口
+-->
 <template>
   <div class="wscn-http404-container">
     <div class="wscn-http404">
+
+      <!-- 404 插画 -->
       <div class="pic-404">
         <img class="pic-404__parent" src="@/assets/images/404.png" alt="404">
         <img class="pic-404__child left" src="@/assets/images/404_cloud.png" alt="404">
         <img class="pic-404__child mid" src="@/assets/images/404_cloud.png" alt="404">
         <img class="pic-404__child right" src="@/assets/images/404_cloud.png" alt="404">
       </div>
+
+      <!-- 提示文案 -->
       <div class="bullshit">
         <div class="bullshit__oops">
           404错误!
@@ -21,16 +29,20 @@
           返回首页
         </router-link>
       </div>
+
     </div>
   </div>
 </template>
 
 <script setup>
+// 引入
 import settings from '@/settings'
 
+// 提示文字
 let message = computed(() => {
   return '找不到网页！'
 })
+
 </script>
 
 <style lang="scss" scoped>

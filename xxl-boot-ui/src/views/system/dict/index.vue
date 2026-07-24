@@ -292,7 +292,7 @@ function handleViewData(row) {
 
 /** 字典数据列表页面 */
 function handleDataList(row) {
-  tab.openPage("字典数据", '/sys/dict/data',{dictId: row.dictId} )
+  tab.openPage("字典数据", '/system/dict/data',{dictId: row.dictId} )
 }
 
 /** 修改按钮操作 */

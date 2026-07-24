@@ -1,6 +1,12 @@
+<!--
+  页面：Dashboard（首页）
+  功能：系统简介、更新日志
+-->
 <template>
   <div class="app-container home">
+
     <el-row :gutter="20">
+      <!-- 系统简介 -->
       <el-col :sm="24" :lg="12" style="padding-left: 20px">
         <h2>Boot后台管理框架</h2>
         <p>
@@ -14,21 +20,24 @@
         </p>
         <p>
           <el-button
-            type="primary"
-            :icon="Cloudy"
-            plain
-            @click="goTarget('https://gitee.com/boot/boot')"
-            >访问码云</el-button
+              type="primary"
+              :icon="Cloudy"
+              plain
+              @click="goTarget('https://gitee.com/boot/boot')"
+          >访问码云
+          </el-button
           >
           <el-button
-            :icon="HomeFilled"
-            plain
-            @click="goTarget('http://boot.vip')"
-            >访问主页</el-button
+              :icon="HomeFilled"
+              plain
+              @click="goTarget('http://boot.vip')"
+          >访问主页
+          </el-button
           >
         </p>
       </el-col>
 
+      <!-- 技术选型 -->
       <el-col :sm="24" :lg="12" style="padding-left: 50px">
         <el-row>
           <el-col :span="12">
@@ -63,8 +72,45 @@
         </el-row>
       </el-col>
     </el-row>
-    <el-divider />
+
+    <el-divider/>
+
     <el-row :gutter="20">
+
+      <!-- 常用功能 -->
+      <el-col :xs="24" :sm="24" :md="12" :lg="16">
+        <el-card class="update-log">
+          <template v-slot:header>
+            <div class="clearfix">
+              <span>常用功能</span>
+            </div>
+          </template>
+          <el-collapse accordion>
+            <el-collapse-item title="组织管理">
+              <ol>
+                <li>针对组织、用户、角色及资源等进行管理，支持灵活的人员角色、菜单权限、人员授权等操作管理。</li>
+              </ol>
+            </el-collapse-item>
+            <el-collapse-item title="系统管理">
+              <ol>
+                <li>提供站内消息、审计日志、字典管理、审计日志等相关能力，支持高校灵活进行系统监控及管理。</li>
+              </ol>
+            </el-collapse-item>
+            <el-collapse-item title="系统工具">
+              <ol>
+                <li>提供前后端一站式代码生成工具、前端表单在线构建工具等，辅助快速进行敏捷迭代开发。</li>
+              </ol>
+            </el-collapse-item>
+            <el-collapse-item title="帮助中心">
+              <ol>
+                <li>提供内容丰富、干练易懂的操作文档，辅助快速上手项目。</li>
+              </ol>
+            </el-collapse-item>
+          </el-collapse>
+        </el-card>
+      </el-col>
+
+      <!-- 联系信息 -->
       <el-col :xs="24" :sm="24" :md="12" :lg="8">
         <el-card class="update-log">
           <template v-slot:header>
@@ -74,14 +120,11 @@
           </template>
           <div class="body">
             <p>
-              <i class="el-icon-s-promotion"></i> 官网：<el-link
-                href="http://www.xxx.xxx"
-                target="_blank"
-                >http://www.boot.vip</el-link
-              >
+              <i class="el-icon-s-promotion"></i> 官网：
+              http://www.boot.vip
             </p>
             <p>
-              <i class="el-icon-user-solid"></i> QQ群：<s> 满111111 </s> <s> 满111111111 </s>
+              <i class="el-icon-user-solid"></i> 社区群：111111、111111、111111
               <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s>
               <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s>
               <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s>
@@ -89,67 +132,25 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="12" :lg="8">
-        <el-card class="update-log">
-          <template v-slot:header>
-            <div class="clearfix">
-              <span>更新日志</span>
-            </div>
-          </template>
-          <el-collapse accordion>
-            <el-collapse-item title="v3.9.2 - 2026-03-26">
-              <ol>
-                <li>新增锁定屏幕功能</li>
-                <li>首页新增通知公告消息提醒</li>
-                <li>添加持久化标签页开关功能</li>
-                <li>菜单搜索支持文本高亮&数量提示</li>
-                <li>添加菜单路由地址和名称的校验规则</li>
-              </ol>
-            </el-collapse-item>
-            <el-collapse-item title="v3.9.1 - 2025-12-18">
-              <ol>
-                <li>支持防盗链功能</li>
-                <li>菜单导航设置支持纯顶部</li>
-                <li>使用yauaa代替bitwalker</li>
-                <li>用户头像更换后移除旧头像文件</li>
-                <li>支持Excel导出对象的多个子列表</li>
-                <li>其他细节优化</li>
-              </ol>
-            </el-collapse-item>
-            <el-collapse-item title="v1.0.0 - 2019-10-08">
-              <ol>
-                <li>前后端分离系统正式发布</li>
-              </ol>
-            </el-collapse-item>
-          </el-collapse>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :sm="24" :md="12" :lg="8">
-        <el-card class="update-log">
-          <template v-slot:header>
-            <div class="clearfix">
-              <span>捐赠支持</span>
-            </div>
-          </template>
-          <div class="body">
-            <img src="base64:xx" alt="donate" style="width:100%"/>
-            <span style="display: inline-block; height: 30px; line-height: 30px">你可以请作者喝杯咖啡表示鼓励</span>
-          </div>
-        </el-card>
-      </el-col>
+
     </el-row>
   </div>
 </template>
 
+
 <script setup name="Index">
-import { Cloudy, HomeFilled } from '@element-plus/icons-vue'
 
-const version = ref('3.9.2')
+// 引入
+import {Cloudy, HomeFilled} from '@element-plus/icons-vue'
 
+const version = ref('3.9.2')        // 版本号
+
+/** 跳转外部链接 */
 function goTarget(url) {
   window.open(url, '__blank')
 }
 </script>
+
 
 <style scoped lang="scss">
 .home {
@@ -159,12 +160,14 @@ function goTarget(url) {
     font-size: 17.5px;
     border-left: 5px solid #eee;
   }
+
   hr {
     margin-top: 20px;
     margin-bottom: 20px;
     border: 0;
     border-top: 1px solid #eee;
   }
+
   .col-item {
     margin-bottom: 20px;
   }

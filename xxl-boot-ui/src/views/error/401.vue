@@ -1,9 +1,17 @@
+<!--
+  页面：401（无权限）
+  功能：提示用户无访问权限，提供返回上一页或回首页入口
+-->
 <template>
   <div class="errPage-container">
+
+    <!-- 返回按钮 -->
     <el-button icon="arrow-left" class="pan-back-btn" @click="back">
       返回
     </el-button>
+
     <el-row>
+      <!-- 提示信息 -->
       <el-col :span="12">
         <h1 class="text-jumbo text-ginormous">
           401错误!
@@ -18,23 +26,30 @@
           </li>
         </ul>
       </el-col>
+
+      <!-- 插画 -->
       <el-col :span="12">
         <img :src="errGif" width="313" height="428" alt="Girl has dropped her ice cream.">
       </el-col>
     </el-row>
+
   </div>
 </template>
 
 <script setup>
+// 引入
 import errImage from "@/assets/images/401.gif"
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute()      // 路由数据
+const router = useRouter()    // 路由操作
 
+// 401 动图（加时间戳防缓存）
 const errGif = ref(errImage + "?" + +new Date())
 
+/** 返回上一页或首页 */
 function back() {
   if (route.query.noGoBack) {
+    // 标记不回退时跳转首页
     router.push({ path: "/" })
   } else {
     router.go(-1)

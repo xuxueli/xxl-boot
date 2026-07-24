@@ -13,12 +13,6 @@
             - views:            x-02
                 - 功能：
                     - 组织管理：用户
-                - 目录调整：
-                    - dashboard：首页：
-                    - org：组织管理； /user、role、resource、org
-                    - system：系统管理；/message、dict、config、log
-                    - tool：系统工具；/codegen、pagegen
-                    - help：帮助中心
 
 2、UI 集成 API 服务；
     - Copy：代码copy 孵化项；不可逆修改；
