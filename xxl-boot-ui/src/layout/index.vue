@@ -70,13 +70,19 @@ watch(() => device.value, () => {
 })
 
 /*
-* 窗口响应式：宽度 < 992 切换 mobile，无动画收起侧栏
-*/
-watchEffect(() => {
-  if (width.value - 1 < WIDTH) {
+ * 窗口响应式：宽度 < 992 切换 mobile，无动画收起侧栏
+ * 桌面端加载时尊重侧栏的持久化状态，不自动展开
+ */
+if (width.value - 1 < WIDTH) {
+  appStore.toggleDevice('mobile')
+  appStore.closeSideBar({ withoutAnimation: true })
+}
+
+watch(width, (newVal, oldVal) => {
+  if (newVal - 1 < WIDTH && oldVal >= WIDTH) {
     appStore.toggleDevice('mobile')
     appStore.closeSideBar({ withoutAnimation: true })
-  } else {
+  } else if (newVal - 1 >= WIDTH && oldVal < WIDTH) {
     appStore.toggleDevice('desktop')
     appStore.openSideBar({ withoutAnimation: true })
   }
