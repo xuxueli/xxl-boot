@@ -166,21 +166,21 @@ create table sys_menu (
 -- ----------------------------
 -- 一级菜单
 insert into sys_menu values('5', '首页', '0', '0', '/index',      '', '', '', 1, 0, 'C', '0', '0', '', 'dashboard',   'admin', sysdate(), '', null, '首页');
-insert into sys_menu values('1', '组织管理', '0', '1', '/system',           '', '', '', 1, 0, 'M', '0', '0', '', 'system',   'admin', sysdate(), '', null, '系统管理目录');
-insert into sys_menu values('2', '系统管理', '0', '2', '/sys',          '', '', '', 1, 0, 'M', '0', '0', '', 'monitor',  'admin', sysdate(), '', null, '系统监控目录');
+insert into sys_menu values('1', '组织管理', '0', '1', '/org',           '', '', '', 1, 0, 'M', '0', '0', '', 'system',   'admin', sysdate(), '', null, '系统管理目录');
+insert into sys_menu values('2', '系统管理', '0', '2', '/system',          '', '', '', 1, 0, 'M', '0', '0', '', 'monitor',  'admin', sysdate(), '', null, '系统监控目录');
 insert into sys_menu values('3', '系统工具', '0', '3', '/tool',             '', '', '', 1, 0, 'M', '0', '0', '', 'tool',     'admin', sysdate(), '', null, '系统工具目录');
 insert into sys_menu values('4', '帮助中心', '0', '4', 'http://www.baidu.com', '', '', '', 0, 0, 'C', '0', '0', '', 'guide',    'admin', sysdate(), '', null, '帮助中心');
 -- 二级菜单
-insert into sys_menu values('100',  '用户管理', '1',   '1', '/system/user/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:user:list',        'user',          'admin', sysdate(), '', null, '用户管理菜单');
-insert into sys_menu values('101',  '角色管理', '1',   '2', '/system/role/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:role:list',        'peoples',       'admin', sysdate(), '', null, '角色管理菜单');
-insert into sys_menu values('102',  '菜单管理', '1',   '3', '/system/menu/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:menu:list',        'tree-table',    'admin', sysdate(), '', null, '菜单管理菜单');
-insert into sys_menu values('103',  '部门管理', '1',   '4', '/system/dept/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:dept:list',        'tree',          'admin', sysdate(), '', null, '部门管理菜单');
-insert into sys_menu values('105',  '字典管理', '2',   '6', '/sys/dict/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:dict:list',        'dict',          'admin', sysdate(), '', null, '字典管理菜单');
-insert into sys_menu values('106',  '参数设置', '2',   '7', '/sys/config/index',     '',      '', '', 1, 0, 'C', '0', '0', 'system:config:list',      'edit',          'admin', sysdate(), '', null, '参数设置菜单');
-insert into sys_menu values('107',  '通知公告', '2',   '8', '/sys/notice/index',     '',      '', '', 1, 0, 'C', '0', '0', 'system:notice:list',      'message',       'admin', sysdate(), '', null, '通知公告菜单');
-insert into sys_menu values('500',  '审计日志', '2', '10', '/sys/operlog/index',    '',    '', '', 1, 0, 'C', '0', '0', 'monitor:operlog:list',    'log',          'admin', sysdate(), '', null, '操作日志菜单');
-insert into sys_menu values('115',  '表单构建', '3',   '1', '/tool/build/index',      '',         '', '', 1, 0, 'C', '0', '0', 'tool:build:list',         'build',         'admin', sysdate(), '', null, '表单构建菜单');
-insert into sys_menu values('116',  '代码生成', '3',   '2', '/tool/gen/index',        '',           '', '', 1, 0, 'C', '0', '0', 'tool:gen:list',           'code',          'admin', sysdate(), '', null, '代码生成菜单');
+insert into sys_menu values('100',  '用户管理', '1',   '1', '/org/user/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:user:list',        'user',          'admin', sysdate(), '', null, '用户管理菜单');
+insert into sys_menu values('101',  '角色管理', '1',   '2', '/org/role/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:role:list',        'peoples',       'admin', sysdate(), '', null, '角色管理菜单');
+insert into sys_menu values('102',  '菜单管理', '1',   '3', '/org/resource/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:menu:list',        'tree-table',    'admin', sysdate(), '', null, '菜单管理菜单');
+insert into sys_menu values('103',  '部门管理', '1',   '4', '/org/org/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:dept:list',        'tree',          'admin', sysdate(), '', null, '部门管理菜单');
+insert into sys_menu values('105',  '字典管理', '2',   '6', '/system/dict/index',       '',        '', '', 1, 0, 'C', '0', '0', 'system:dict:list',        'dict',          'admin', sysdate(), '', null, '字典管理菜单');
+insert into sys_menu values('106',  '参数设置', '2',   '7', '/system/config/index',     '',      '', '', 1, 0, 'C', '0', '0', 'system:config:list',      'edit',          'admin', sysdate(), '', null, '参数设置菜单');
+insert into sys_menu values('107',  '通知公告', '2',   '8', '/system/message/index',     '',      '', '', 1, 0, 'C', '0', '0', 'system:notice:list',      'message',       'admin', sysdate(), '', null, '通知公告菜单');
+insert into sys_menu values('500',  '审计日志', '2', '10', '/system/log/index',    '',    '', '', 1, 0, 'C', '0', '0', 'monitor:operlog:list',    'log',          'admin', sysdate(), '', null, '操作日志菜单');
+insert into sys_menu values('115',  '表单构建', '3',   '1', '/tool/pagegen/index',      '',         '', '', 1, 0, 'C', '0', '0', 'tool:build:list',         'build',         'admin', sysdate(), '', null, '表单构建菜单');
+insert into sys_menu values('116',  '代码生成', '3',   '2', '/tool/codegen/index',        '',           '', '', 1, 0, 'C', '0', '0', 'tool:gen:list',           'code',          'admin', sysdate(), '', null, '代码生成菜单');
 -- 用户管理按钮
 insert into sys_menu values('1000', '用户查询', '100', '1',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:user:query',          '#', 'admin', sysdate(), '', null, '');
 insert into sys_menu values('1001', '用户新增', '100', '2',  '', '', '', '', 1, 0, 'F', '0', '0', 'system:user:add',            '#', 'admin', sysdate(), '', null, '');
@@ -235,10 +235,10 @@ insert into sys_menu values('1059', '预览代码', '116', '5', '#', '', '', '',
 insert into sys_menu values('1060', '生成代码', '116', '6', '#', '', '', '', 1, 0, 'F', '0', '0', 'tool:gen:code',              '#', 'admin', sysdate(), '', null, '');
 
 -- 隐藏路由菜单（侧栏不显示，支持 URL 直达）
-insert into sys_menu values('2000', '分配角色', '1', '11', '/system/user/authRole',  '', '', 'AuthRole', 1, 0, 'C', '1', '0', 'system:user:edit', '#', 'admin', sysdate(), '', null, '');
-insert into sys_menu values('2001', '分配用户', '1', '12', '/system/role/authUser',  '', '', 'AuthUser', 1, 0, 'C', '1', '0', 'system:role:edit', '#', 'admin', sysdate(), '', null, '');
-insert into sys_menu values('2002', '字典数据', '2', '11', '/sys/dict/data', '',       '', 'Data',     1, 0, 'C', '1', '0', 'system:dict:list', '#', 'admin', sysdate(), '', null, '');
-insert into sys_menu values('2003', '修改生成配置', '3', '11', '/tool/gen/editTable', '', '', 'GenEdit', 1, 0, 'C', '1', '0', 'tool:gen:edit', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2000', '分配角色', '1', '11', '/org/user/authRole',  '', '', 'AuthRole', 1, 0, 'C', '1', '0', 'system:user:edit', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2001', '分配用户', '1', '12', '/org/role/authUser',  '', '', 'AuthUser', 1, 0, 'C', '1', '0', 'system:role:edit', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2002', '字典数据', '2', '11', '/system/dict/data', '',       '', 'Data',     1, 0, 'C', '1', '0', 'system:dict:list', '#', 'admin', sysdate(), '', null, '');
+insert into sys_menu values('2003', '修改生成配置', '3', '11', '/tool/codegen/editTable', '', '', 'GenEdit', 1, 0, 'C', '1', '0', 'tool:gen:edit', '#', 'admin', sysdate(), '', null, '');
 
 
 -- ----------------------------

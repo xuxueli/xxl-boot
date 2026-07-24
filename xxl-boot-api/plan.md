@@ -11,12 +11,10 @@
             - composables       done       
             - utils:            done
             - views:            x-02
-                - 框架：
-                  - 个人管理：profile 查询、 profile修改、updatePwd修改；
                 - 功能：
                     - 组织管理：用户
                 - 目录调整：
-                    - index：首页：
+                    - dashboard：首页：
                     - org：组织管理； /user、role、resource、org
                     - system：系统管理；/message、dict、config、log
                     - tool：系统工具；/codegen、pagegen

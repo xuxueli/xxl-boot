@@ -44,7 +44,7 @@ export const constantRoutes = [
       {
         name: 'Profile',
         path: '/user/profile/:activeTab?',
-        component: () => import('@/views/system/user/profile/index'),
+        component: () => import('@/views/org/user/profile/index'),
         meta: { title: '个人中心', icon: 'user' }
       }
     ]

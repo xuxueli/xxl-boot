@@ -357,7 +357,7 @@ function handleCommand(command, row) {
 /** 跳转角色分配 */
 function handleAuthRole(row) {
   const userId = row.userId
-  router.push("/system/user/authRole?userId=" + userId)
+  router.push("/org/user/authRole?userId=" + userId)
 }
 
 /** 重置密码按钮操作 */
