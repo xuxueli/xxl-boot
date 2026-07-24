@@ -8,7 +8,7 @@
  */
 import { ref, toRefs } from 'vue'
 import { useDictStore } from '@/store'
-import { getDicts } from '@/api/sys/dict/data'
+import { getDicts } from '@/api/system/dict/data'
 
 const dictStore = useDictStore()
 

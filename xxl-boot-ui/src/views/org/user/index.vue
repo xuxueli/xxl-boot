@@ -194,12 +194,12 @@
 import { Search, Refresh, Plus, Edit, Delete, Upload, Download, Key, CircleCheck } from '@element-plus/icons-vue'
 import UserViewDrawer from "./view"
 import { usePasswordRule } from "@/composables/usePasswordRule"
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user"
+import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/org/user"
 import { useDict } from '@/composables/useDict'
 import { parseTime, addDateRange } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import { download } from '@/utils/request'
-import { getConfigKey } from '@/api/sys/config'
+import { getConfigKey } from '@/api/system/config'
 import modal from '@/utils/modal'
 import { ElMessageBox } from 'element-plus'
 

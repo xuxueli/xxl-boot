@@ -155,7 +155,7 @@
 
 <script setup name="Dept">
 import { Search, Refresh, Plus, Check, Sort, Edit, Delete } from '@element-plus/icons-vue'
-import { listDept, getDept, delDept, addDept, updateDept, updateDeptSort, listDeptExcludeChild } from "@/api/system/dept"
+import { listDept, getDept, delDept, addDept, updateDept, updateDeptSort, listDeptExcludeChild } from "@/api/org/org.js"
 import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
 import { handleTree } from '@/utils/common'

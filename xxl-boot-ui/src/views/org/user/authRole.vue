@@ -46,7 +46,7 @@
 </template>
 
 <script setup name="AuthRole">
-import { getAuthRole, updateAuthRole } from "@/api/system/user"
+import { getAuthRole, updateAuthRole } from "@/api/org/user"
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'

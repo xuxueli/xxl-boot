@@ -94,7 +94,7 @@
 <script setup name="AuthUser">
 import { Search, Refresh, Plus, CircleClose, Close } from '@element-plus/icons-vue'
 import selectUser from "./selectUser"
-import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/system/role"
+import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/org/role"
 import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'

@@ -123,7 +123,7 @@
 
 <script setup name="GenEdit">
 import { getGenTable, updateGenTable } from "@/api/tool/codegen"
-import { optionselect as getDictOptionselect } from "@/api/sys/dict/type"
+import { optionselect as getDictOptionselect } from "@/api/system/dict/type"
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import basicInfoForm from "./basicInfoForm"

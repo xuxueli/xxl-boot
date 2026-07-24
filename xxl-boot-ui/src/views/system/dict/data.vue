@@ -178,11 +178,11 @@
 <script setup name="Data">
 import { Search, Refresh, Plus, Edit, Delete, Download, Close } from '@element-plus/icons-vue'
 import { useDictStore } from '@/store'
-import { optionselect as getDictOptionselect, getType } from "@/api/sys/dict/type"
+import { optionselect as getDictOptionselect, getType } from "@/api/system/dict/type"
 
 const dictStore = useDictStore()
 
-import { listData, getData, delData, addData, updateData } from "@/api/sys/dict/data"
+import { listData, getData, delData, addData, updateData } from "@/api/system/dict/data"
 import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'

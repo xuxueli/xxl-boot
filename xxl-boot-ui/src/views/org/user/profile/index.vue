@@ -95,7 +95,7 @@
 import userAvatar from "./userAvatar"
 import userInfo from "./userInfo"
 import resetPwd from "./resetPwd"
-import {getUserProfile} from "@/api/system/user"
+import {getUserProfile} from "@/api/org/user"
 
 const route = useRoute()                // 路由
 const selectedTab = ref("userinfo")     // 当前选中的 tab

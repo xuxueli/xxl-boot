@@ -126,7 +126,7 @@
 </template>
 
 <script setup>
-import { getUser } from '@/api/system/user'
+import { getUser } from '@/api/org/user'
 import { useDict } from '@/composables/useDict'
 import { selectDictLabel } from '@/utils/common'
 

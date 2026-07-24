@@ -30,7 +30,7 @@
 <script setup>
 
 // 引入
-import { updateUserProfile } from "@/api/system/user"
+import { updateUserProfile } from "@/api/org/user"
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 

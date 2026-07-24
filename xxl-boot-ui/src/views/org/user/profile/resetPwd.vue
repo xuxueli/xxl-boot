@@ -25,7 +25,7 @@
 
 // 引入
 import {usePasswordRule} from "@/composables/usePasswordRule"
-import {updateUserPwd} from "@/api/system/user"
+import {updateUserPwd} from "@/api/org/user"
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 

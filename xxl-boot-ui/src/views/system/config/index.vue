@@ -166,7 +166,7 @@
 
 <script setup name="Config">
 import { Search, Refresh, Plus, Edit, Delete, Download } from '@element-plus/icons-vue'
-import { listConfig, getConfig, delConfig, addConfig, updateConfig, refreshCache } from "@/api/sys/config"
+import { listConfig, getConfig, delConfig, addConfig, updateConfig, refreshCache } from "@/api/system/config"
 import { useDict } from '@/composables/useDict'
 import { parseTime, addDateRange } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'

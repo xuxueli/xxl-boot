@@ -184,7 +184,7 @@
 import { Search, Refresh, Plus, Edit, Delete, Download, QuestionFilled, Operation } from '@element-plus/icons-vue'
 import DictDataDrawer from './detail'
 import { useDictStore } from '@/store'
-import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/sys/dict/type"
+import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/system/dict/type"
 
 const dictStore = useDictStore()
 

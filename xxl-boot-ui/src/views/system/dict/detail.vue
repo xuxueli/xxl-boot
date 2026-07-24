@@ -74,7 +74,7 @@
 
 <script setup>
 import { List, Loading, Document } from '@element-plus/icons-vue'
-import { listData } from '@/api/sys/dict/data'
+import { listData } from '@/api/system/dict/data'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },

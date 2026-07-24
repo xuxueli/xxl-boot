@@ -155,7 +155,7 @@
 <script setup name="Operlog">
 import { Search, Refresh, Delete, Download, View } from '@element-plus/icons-vue'
 import OperlogDetail from './detail'
-import { list, delOperlog, cleanOperlog } from "@/api/sys/operlog"
+import { list, delOperlog, cleanOperlog } from "@/api/system/log"
 import { useDict } from '@/composables/useDict'
 import { parseTime, addDateRange } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'

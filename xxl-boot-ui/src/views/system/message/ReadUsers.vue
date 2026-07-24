@@ -47,7 +47,7 @@
 
 <script setup name="ReadUsers">
 import { Refresh, Search } from "@element-plus/icons-vue"
-import { listNoticeReadUsers } from "@/api/sys/notice"
+import { listNoticeReadUsers } from "@/api/system/message"
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 

@@ -69,7 +69,7 @@
 
 <script setup>
 import { Document, Bell, Message, User, Clock } from '@element-plus/icons-vue'
-import { getNotice } from '@/api/sys/notice'
+import { getNotice } from '@/api/system/message.js'
 
 const visible = ref(false)  /* 抽屉显隐 */
 const loading = ref(false)  /* 接口加载状态 */

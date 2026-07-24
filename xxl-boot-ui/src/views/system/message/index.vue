@@ -164,7 +164,7 @@
 import { Search, Refresh, Plus, Edit, Delete, User } from '@element-plus/icons-vue'
 import ReadUsersDialog from "./ReadUsers"
 import NoticeDetailView from '@/layout/components/Navbar/HeaderNoticeDetail.vue'
-import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/sys/notice"
+import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/system/message"
 import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'

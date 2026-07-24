@@ -78,7 +78,7 @@
 import {Upload, Plus, Minus, RefreshLeft, RefreshRight} from '@element-plus/icons-vue'
 import "vue-cropper/dist/index.css"
 import {VueCropper} from "vue-cropper"
-import {uploadAvatar} from "@/api/system/user"
+import {uploadAvatar} from "@/api/org/user"
 import {useUserStore} from '@/store'
 import modal from '@/utils/modal'
 

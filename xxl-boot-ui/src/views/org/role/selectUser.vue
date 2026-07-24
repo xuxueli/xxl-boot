@@ -62,7 +62,7 @@
 
 <script setup name="SelectUser">
 import { Search, Refresh, Plus } from '@element-plus/icons-vue'
-import { authUserSelectAll, unallocatedUserList } from "@/api/system/role"
+import { authUserSelectAll, unallocatedUserList } from "@/api/org/role"
 import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'

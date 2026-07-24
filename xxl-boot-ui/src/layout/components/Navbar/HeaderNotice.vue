@@ -66,7 +66,7 @@
 <script setup>
 import { Postcard, Loading } from '@element-plus/icons-vue'
 import HeaderNoticeDetail from './HeaderNoticeDetail.vue'
-import {listNoticeTop, markNoticeRead, markNoticeReadAll} from '@/api/sys/notice'
+import {listNoticeTop, markNoticeRead, markNoticeReadAll} from '@/api/system/message.js'
 
 const noticePopover = ref(null)         /* popover 实例引用 */
 const noticeList = ref([])              /* 公告列表 */

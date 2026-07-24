@@ -259,7 +259,7 @@
 
 <script setup>
 import { QuestionFilled } from '@element-plus/icons-vue'
-import { listMenu } from "@/api/system/menu"
+import { listMenu } from "@/api/org/resource.js"
 import { handleTree } from '@/utils/common'
 
 const subColumns = ref([])
