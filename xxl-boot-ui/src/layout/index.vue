@@ -78,6 +78,7 @@ watchEffect(() => {
     appStore.closeSideBar({ withoutAnimation: true })
   } else {
     appStore.toggleDevice('desktop')
+    appStore.openSideBar({ withoutAnimation: true })
   }
 })
 
