@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { createTable } from "@/api/tool/gen"
+import { createTable } from "@/api/tool/codegen"
 import modal from '@/utils/modal'
 
 const visible = ref(false)

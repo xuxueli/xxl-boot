@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { listDbTable, importTable } from "@/api/tool/gen"
+import { listDbTable, importTable } from "@/api/tool/codegen"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 
