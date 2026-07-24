@@ -4,7 +4,7 @@
       @close="onClose">
       <template #header="{ close, titleId, titleClass }">
         选择图标
-        <el-input v-model="key" size="small" :style="{ width: '260px' }" placeholder="请输入图标名称" prefix-icon="Search"
+        <el-input v-model="key" size="small" :style="{ width: '260px' }" placeholder="请输入图标名称" :prefix-icon="Search"
           clearable />
       </template>
       <ul class="icon-ul">
@@ -22,6 +22,7 @@
 </template>
 <script setup>
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { Search } from '@element-plus/icons-vue'
 import { watch } from 'vue'
 
 const iconList = ref([])

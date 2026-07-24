@@ -6,7 +6,7 @@
   <div class="errPage-container">
 
     <!-- 返回按钮 -->
-    <el-button icon="arrow-left" class="pan-back-btn" @click="back">
+    <el-button :icon="ArrowLeft" class="pan-back-btn" @click="back">
       返回
     </el-button>
 
@@ -38,6 +38,7 @@
 
 <script setup>
 // 引入
+import { ArrowLeft } from '@element-plus/icons-vue'
 import errImage from "@/assets/images/401.gif"
 
 const route = useRoute()      // 路由数据
