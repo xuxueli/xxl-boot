@@ -35,7 +35,6 @@
 </template>
 
 <script setup>
-import {UploadFilled} from '@element-plus/icons-vue'
 import {getAuthHeaders} from '@/utils/auth'
 import {download} from '@/utils/request'
 import modal from '@/utils/modal'

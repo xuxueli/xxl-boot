@@ -83,8 +83,6 @@
 </template>
 
 <script setup>
-import { ArrowDown, ArrowUp, DArrowRight, DArrowLeft, Folder, Document, Search, Refresh } from '@element-plus/icons-vue'
-
 /**
  * defineProps 父传子
  */

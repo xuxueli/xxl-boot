@@ -79,7 +79,6 @@
 </template>
 
 <script setup>
-import { Close, CircleClose, Back, Right, FullScreen, RefreshRight, ArrowLeft, ArrowRight, ArrowDown } from '@element-plus/icons-vue'
 import ScrollPane from './ScrollPane.vue'
 import { getNormalPath } from '@/utils/common'
 import { useTagsViewStore, useRoutesStore, useSettingsStore } from '@/store'

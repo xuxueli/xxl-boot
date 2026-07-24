@@ -21,13 +21,13 @@
         <p>
           <el-button
               type="primary"
-              :icon="Cloudy"
+              icon="Cloudy"
               plain
               @click="goTarget('https://gitee.com/boot/boot')"
           >访问码云
           </el-button>
           <el-button
-              :icon="HomeFilled"
+              icon="HomeFilled"
               plain
               @click="goTarget('http://boot.vip')"
           >访问主页
@@ -139,8 +139,6 @@
 <script setup name="Index">
 
 // 引入
-import {Cloudy, HomeFilled} from '@element-plus/icons-vue'
-
 const version = ref('3.9.2')        // 版本号
 
 /** 跳转外部链接 */

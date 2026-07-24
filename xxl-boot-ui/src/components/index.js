@@ -14,8 +14,17 @@ import ImagePreview from '@/components/ImagePreview'
 import ImageUpload from '@/components/ImageUpload'
 import IFrame from '@/components/iFrame'
 
+// Element Plus 图标（全局注册）
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
 export default function registerComponents(app) {
-  // 自定义业务组件
+
+  // 全局注册：Element Plus 图标
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
+
+  // 全局注册：自定义业务组件
   app.component('SvgIcon', SvgIcon)                         // SVG 图标
   app.component('RightToolbar', RightToolbar)               // 表格工具栏（搜索/刷新/列显隐）
   app.component('Pagination', Pagination)                   // 分页

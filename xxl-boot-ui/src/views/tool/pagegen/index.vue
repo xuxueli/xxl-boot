@@ -58,13 +58,13 @@
     </div>
     <div class="center-board">
       <div class="action-bar">
-        <el-button :icon="DownloadIcon" type="primary" text @click="download">
+        <el-button icon="Download" type="primary" text @click="download">
           导出vue文件
         </el-button>
-        <el-button class="copy-btn-main" :icon="DocumentCopy" type="primary" text @click="copy">
+        <el-button class="copy-btn-main" icon="DocumentCopy" type="primary" text @click="copy">
           复制代码
         </el-button>
-        <el-button class="delete-btn" :icon="Delete" text @click="empty" type="danger">
+        <el-button class="delete-btn" icon="Delete" text @click="empty" type="danger">
           清空
         </el-button>
       </div>
@@ -96,7 +96,6 @@
 </template>
 
 <script setup>
-import { Download as DownloadIcon, DocumentCopy, Delete } from '@element-plus/icons-vue'
 import draggable from "vuedraggable/dist/vuedraggable.common"
 import ClipboardJS from 'clipboard'
 import beautifier from 'js-beautify'

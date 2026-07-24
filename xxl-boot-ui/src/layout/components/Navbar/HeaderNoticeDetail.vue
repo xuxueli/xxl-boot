@@ -68,7 +68,6 @@
 </template>
 
 <script setup>
-import { Document, Bell, Message, User, Clock } from '@element-plus/icons-vue'
 import { getNotice } from '@/api/system/message.js'
 
 const visible = ref(false)  /* 抽屉显隐 */

@@ -130,15 +130,14 @@
 
     <el-divider/>
 
-    <el-button type="primary" plain :icon="DocumentAdd" @click="saveSetting">保存配置</el-button>
-    <el-button plain :icon="Refresh" @click="resetSetting">重置配置</el-button>
+    <el-button type="primary" plain icon="DocumentAdd" @click="saveSetting">保存配置</el-button>
+    <el-button plain icon="Refresh" @click="resetSetting">重置配置</el-button>
   </el-drawer>
 
 </template>
 
 
 <script setup>
-import { DocumentAdd, Refresh } from '@element-plus/icons-vue'
 import { useAppStore, useRoutesStore, useSettingsStore, useTagsViewStore } from '@/store'
 import modal from '@/utils/modal'
 

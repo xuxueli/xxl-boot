@@ -15,7 +15,7 @@
         <!-- GitHub -->
         <el-button
             type="primary"
-            :icon="Cloudy"
+            icon="Cloudy"
             plain
             @click="goTarget('https://github.com/xuxueli/xxl-boot')"
         >访问GitHub
@@ -23,7 +23,7 @@
 
         <!-- 帮助文档 -->
         <el-button
-            :icon="HomeFilled"
+            icon="HomeFilled"
             plain
             @click="goTarget('https://www.xuxueli.com/xxl-boot/')"
         >帮助文档
@@ -56,7 +56,6 @@
 <script setup>
 // 引入
 import defaultSettings from '@/settings'
-import {Cloudy, HomeFilled} from "@element-plus/icons-vue";
 
 const title = defaultSettings.title           // 系统标题
 const version = defaultSettings.version       // 版本号

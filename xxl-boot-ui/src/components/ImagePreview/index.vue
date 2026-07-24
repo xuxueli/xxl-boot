@@ -25,7 +25,6 @@
 </template>
 
 <script setup>
-import {PictureFilled} from '@element-plus/icons-vue'
 import {isExternal} from "@/utils/validate"
 
 const props = defineProps({

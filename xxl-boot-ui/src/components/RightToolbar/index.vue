@@ -9,22 +9,22 @@
     <el-row>
       <!-- “搜索” 展示/隐藏开关 -->
       <el-tooltip class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" v-if="search">
-        <el-button circle :icon="Search" @click="toggleSearch()"/>
+        <el-button circle icon="Search" @click="toggleSearch()"/>
       </el-tooltip>
 
       <!-- “刷新” 按钮 -->
       <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-        <el-button circle :icon="Refresh" @click="refresh()"/>
+        <el-button circle icon="Refresh" @click="refresh()"/>
       </el-tooltip>
 
       <!-- “显隐列” 按钮 -->
       <el-tooltip class="item" effect="dark" content="显隐列" placement="top" v-if="Object.keys(columns).length > 0">
         <!-- transfer 模式 -->
-        <el-button circle :icon="Menu" @click="showColumn()" v-if="showColumnsType === 'transfer'"/>
+        <el-button circle icon="Menu" @click="showColumn()" v-if="showColumnsType === 'transfer'"/>
         <!-- checkbox 模式 -->
         <el-dropdown trigger="click" :hide-on-click="false" style="padding-left: 12px" v-if="showColumnsType === 'checkbox'">
           <!-- icon -->
-          <el-button circle :icon="Menu"/>
+          <el-button circle icon="Menu"/>
           <!-- 下拉框 -->
           <template #dropdown>
             <el-dropdown-menu>
@@ -60,7 +60,6 @@
 </template>
 
 <script setup>
-import { Search, Refresh, Menu } from '@element-plus/icons-vue'
 import cache from '@/utils/cache'
 
 const props = defineProps({

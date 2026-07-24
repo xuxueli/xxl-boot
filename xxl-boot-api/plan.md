@@ -1,21 +1,5 @@
 
-1、UI 重构：
-    - 模块代码重构：
-            - api:              done
-            - assets:           done
-            - directives:       done
-            - router:           done：              
-            - layouts:          done
-            - store:            done
-            - components:       done
-            - composables       done       
-            - utils:            done
-            - views:            x-02
-                - 功能：
-                    - 组织管理：用户
-
-2、UI 集成 API 服务；
-    - Copy：代码copy 孵化项；不可逆修改；
+1、UI 集成 API 服务；
     - 框架：
         - 验证码：captchaImage
         - 登录：login
@@ -31,4 +15,4 @@
         - 系统工具：表单、代码生成
         - 帮助中心：
 
-3、升级TS；
+2、升级TS；

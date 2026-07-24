@@ -73,7 +73,6 @@
 </template>
 
 <script setup>
-import { List, Loading, Document } from '@element-plus/icons-vue'
 import { listData } from '@/api/system/dict/data'
 
 const props = defineProps({

@@ -45,8 +45,8 @@
             ></el-date-picker>
          </el-form-item>
          <el-form-item>
-            <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-            <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
          </el-form-item>
       </el-form>
 
@@ -55,7 +55,7 @@
             <el-button
                type="primary"
                plain
-               :icon="Plus"
+               icon="Plus"
                @click="handleAdd"
                v-hasPermi="['system:dict:add']"
             >新增</el-button>
@@ -64,7 +64,7 @@
             <el-button
                type="success"
                plain
-               :icon="Edit"
+icon="Edit"
                :disabled="single"
                @click="handleUpdate"
                v-hasPermi="['system:dict:edit']"
@@ -74,7 +74,7 @@
             <el-button
                type="danger"
                plain
-               :icon="Delete"
+icon="Delete"
                :disabled="multiple"
                @click="handleDelete"
                v-hasPermi="['system:dict:remove']"
@@ -84,7 +84,7 @@
             <el-button
                type="warning"
                plain
-               :icon="Download"
+               icon="Download"
                @click="handleExport"
                v-hasPermi="['system:dict:export']"
             >导出</el-button>
@@ -93,7 +93,7 @@
             <el-button
                type="danger"
                plain
-               :icon="Refresh"
+               icon="Refresh"
                @click="handleRefreshCache"
                v-hasPermi="['system:dict:remove']"
             >刷新缓存</el-button>
@@ -123,9 +123,9 @@
          </el-table-column>
          <el-table-column label="操作" align="center" width="280" class-name="small-padding fixed-width">
             <template #default="scope">
-               <el-button link type="primary" :icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:dict:edit']">修改</el-button>
-               <el-button link type="primary" :icon="Operation" @click="handleDataList(scope.row)" v-hasPermi="['system:dict:edit']">列表</el-button>
-               <el-button link type="primary" :icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:dict:remove']">删除</el-button>
+               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:dict:edit']">修改</el-button>
+               <el-button link type="primary" icon="Operation" @click="handleDataList(scope.row)" v-hasPermi="['system:dict:edit']">列表</el-button>
+               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:dict:remove']">删除</el-button>
             </template>
          </el-table-column>
       </el-table>
@@ -181,7 +181,6 @@
 </template>
 
 <script setup name="Dict">
-import { Search, Refresh, Plus, Edit, Delete, Download, QuestionFilled, Operation } from '@element-plus/icons-vue'
 import DictDataDrawer from './detail'
 import { useDictStore } from '@/store'
 import { listType, getType, delType, addType, updateType, refreshCache } from "@/api/system/dict/type"

@@ -13,8 +13,8 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :icon="Search" size="small" @click="handleQuery">搜索</el-button>
-        <el-button :icon="Refresh" size="small" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" size="small" @click="handleQuery">搜索</el-button>
+        <el-button icon="Refresh" size="small" @click="resetQuery">重置</el-button>
       </el-form-item>
       <el-form-item style="float: right; margin-right: 0;">
         <span class="read-stat">
@@ -46,7 +46,6 @@
 </template>
 
 <script setup name="ReadUsers">
-import { Refresh, Search } from "@element-plus/icons-vue"
 import { listNoticeReadUsers } from "@/api/system/message"
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'

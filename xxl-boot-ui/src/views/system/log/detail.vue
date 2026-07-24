@@ -79,7 +79,7 @@
         <div class="code-body">
           <div class="code-wrap">
             <div class="code-action">
-              <el-button size="small" :icon="CopyDocument" @click="copyText(form.operParam)">复制</el-button>
+              <el-button size="small" icon="CopyDocument" @click="copyText(form.operParam)">复制</el-button>
             </div>
             <pre class="code-pre">{{ formatJson(form.operParam) }}</pre>
           </div>
@@ -92,7 +92,7 @@
         <div class="code-body">
           <div class="code-wrap">
             <div class="code-action">
-              <el-button size="small" :icon="CopyDocument" @click="copyText(form.jsonResult)">复制</el-button>
+              <el-button size="small" icon="CopyDocument" @click="copyText(form.jsonResult)">复制</el-button>
             </div>
             <pre class="code-pre">{{ formatJson(form.jsonResult) }}</pre>
           </div>
@@ -112,7 +112,6 @@
 </template>
 
 <script setup>
-import { InfoFilled, User, Sort, Upload, Download, Warning, CopyDocument } from '@element-plus/icons-vue'
 import { useDict } from '@/composables/useDict'
 import { selectDictLabel } from '@/utils/common'
 const props = defineProps({

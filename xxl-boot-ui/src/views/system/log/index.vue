@@ -75,8 +75,8 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -86,7 +86,7 @@
         <el-button
             type="danger"
             plain
-            :icon="Delete"
+            icon="Delete"
             :disabled="multiple"
             @click="handleDelete"
             v-hasPermi="['monitor:operlog:remove']"
@@ -97,7 +97,7 @@
         <el-button
             type="danger"
             plain
-            :icon="Delete"
+            icon="Delete"
             @click="handleClean"
             v-hasPermi="['monitor:operlog:remove']"
         >清空
@@ -107,7 +107,7 @@
         <el-button
             type="warning"
             plain
-            :icon="Download"
+            icon="Download"
             @click="handleExport"
             v-hasPermi="['monitor:operlog:export']"
         >导出
@@ -149,7 +149,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" :icon="View" @click="handleDetail(scope.row, scope.index)"
+          <el-button link type="primary" icon="View" @click="handleDetail(scope.row, scope.index)"
                      v-hasPermi="['monitor:operlog:query']">详细
           </el-button>
         </template>
@@ -173,7 +173,6 @@
 
 <script setup name="Operlog">
 // 引入
-import {Search, Refresh, Delete, Download, View} from '@element-plus/icons-vue'
 import OperlogDetail from './detail'
 import {list, delOperlog, cleanOperlog} from "@/api/system/log"
 import {useDict} from '@/composables/useDict'

@@ -34,7 +34,7 @@ app.use(ElementPlus, { locale, size: localStorage.getItem(FONTSIZE_KEY) || 'defa
 // 全局注册：自定义指令
 directive(app)
 
-// 全局注册：自定义业务组件
+// 全局注册：Element Plus 图标 + 自定义业务组件
 registerComponents(app)
 
 // 挂载应用到 DOM

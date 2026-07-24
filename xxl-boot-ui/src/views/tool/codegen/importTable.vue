@@ -21,8 +21,8 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
     <el-row>
@@ -51,7 +51,6 @@
 </template>
 
 <script setup>
-import { Search, Refresh } from '@element-plus/icons-vue'
 import { listDbTable, importTable } from "@/api/tool/codegen"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'

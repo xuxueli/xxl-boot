@@ -258,7 +258,6 @@
 </template>
 
 <script setup>
-import { QuestionFilled } from '@element-plus/icons-vue'
 import { listMenu } from "@/api/org/resource.js"
 import { handleTree } from '@/utils/common'
 

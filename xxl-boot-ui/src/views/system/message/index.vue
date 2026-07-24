@@ -30,8 +30,8 @@
             </el-select>
          </el-form-item>
          <el-form-item>
-            <el-button type="primary" :icon="Search" @click="handleQuery">搜索</el-button>
-            <el-button :icon="Refresh" @click="resetQuery">重置</el-button>
+            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
          </el-form-item>
       </el-form>
 
@@ -40,7 +40,7 @@
             <el-button
                type="primary"
                plain
-               :icon="Plus"
+               icon="Plus"
                @click="handleAdd"
                v-hasPermi="['system:notice:add']"
             >新增</el-button>
@@ -49,7 +49,7 @@
             <el-button
                type="success"
                plain
-               :icon="Edit"
+               icon="Edit"
                :disabled="single"
                @click="handleUpdate"
                v-hasPermi="['system:notice:edit']"
@@ -59,7 +59,7 @@
             <el-button
                type="danger"
                plain
-               :icon="Delete"
+               icon="Delete"
                :disabled="multiple"
                @click="handleDelete"
                v-hasPermi="['system:notice:remove']"
@@ -94,9 +94,9 @@
          </el-table-column>
          <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template #default="scope">
-               <el-button link type="primary" :icon="User" @click="handleReadUsers(scope.row)" v-hasPermi="['system:notice:list']">阅读用户</el-button>
-               <el-button link type="primary" :icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:notice:edit']">修改</el-button>
-               <el-button link type="primary" :icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:notice:remove']" >删除</el-button>
+               <el-button link type="primary" icon="User" @click="handleReadUsers(scope.row)" v-hasPermi="['system:notice:list']">阅读用户</el-button>
+               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:notice:edit']">修改</el-button>
+               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:notice:remove']" >删除</el-button>
             </template>
          </el-table-column>
       </el-table>
@@ -161,7 +161,6 @@
 </template>
 
 <script setup name="Notice">
-import { Search, Refresh, Plus, Edit, Delete, User } from '@element-plus/icons-vue'
 import ReadUsersDialog from "./ReadUsers"
 import NoticeDetailView from '@/layout/components/Navbar/HeaderNoticeDetail.vue'
 import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/system/message"
