@@ -64,13 +64,13 @@ export const constantRoutes = [
   {
     // 401：未授权或会话过期
     path: '/401',
-    component: () => import('@/views/error/401'),
+    component: () => import('@/views/common/401'),
     hidden: true
   },
   {
     // 404：访问资源不存在。兜底，必须放在末段
     path: "/:pathMatch(.*)*",
-    component: () => import('@/views/error/404'),
+    component: () => import('@/views/common/404'),
     hidden: true
   }
 ]
