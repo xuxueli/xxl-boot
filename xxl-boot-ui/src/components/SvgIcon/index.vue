@@ -3,6 +3,7 @@
   功能：通过 <use> 引用 sprite 图标，支持自定义 class 和填充色。
 
   用法：<SvgIcon icon-class="user" class-name="icon" />
+  通过 createSvgIconsPlugin 插件生成的 svg-sprite 图标（位于 /icons/svg 目录下），使用时传入 icon-class 对应图标名称即可。
 -->
 <template>
   <svg :class="svgClass" aria-hidden="true">
