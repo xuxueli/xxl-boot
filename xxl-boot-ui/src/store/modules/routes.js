@@ -4,7 +4,7 @@
  */
 import { markRaw } from 'vue'
 import { constantRoutes } from '@/router'
-import { getRouters } from '@/api/menu'
+import { getRouters } from '@/api/login'
 import Layout from '@/layout/index'
 import { ParentView, InnerLink } from '@/layout/components'
 
