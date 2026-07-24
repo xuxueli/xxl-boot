@@ -4,7 +4,11 @@
 -->
 <template>
   <footer v-if="visible" class="copyright">
+
+    Powered by <b>XXL-BOOT</b> {{version}}
+    ｜
     <span>{{ content }}</span>
+
   </footer>
 </template>
 
@@ -15,6 +19,7 @@ import { useSettingsStore } from '@/store'
 const settingsStore = useSettingsStore()
 const visible = computed(() => settingsStore.footerVisible)
 const content = computed(() => settingsStore.footerContent)
+const version = computed(() => settingsStore.version)
 </script>
 
 

@@ -91,6 +91,6 @@ export default {
   /**
    * 底部版权文本内容
    */
-  footerContent: 'Copyright © 2015-' + new Date().getFullYear() + ' Boot. All Rights Reserved.'
+  footerContent: `Copyright © 2015-${new Date().getFullYear()}`
 
 }
