@@ -92,7 +92,7 @@ function checkSelectable(row) {
 
 /** 关闭按钮 */
 function close() {
-  const obj = { path: "/system/user/index" }
+  const obj = { path: "/org/user/index" }
   tab.closeOpenPage(obj)
 }
 

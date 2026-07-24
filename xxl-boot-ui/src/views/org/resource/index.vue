@@ -204,7 +204,7 @@
                   <el-form-item prop="component">
                      <template #label>
                         <span>
-                           <el-tooltip content="访问的组件路径，如：`system/user/index`，默认在`views`目录下" placement="top">
+                           <el-tooltip content="访问的组件路径，如：`org/user/index`，默认在`views`目录下" placement="top">
                               <el-icon><QuestionFilled /></el-icon>
                            </el-tooltip>
                            组件路径

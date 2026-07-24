@@ -11,7 +11,7 @@ export default {
   /**
    * 首页路径
    */
-  homePath: '/index',
+  homePath: '/dashboard',
 
   /**
    * 布局配置：启用开关

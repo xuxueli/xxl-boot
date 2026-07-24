@@ -174,7 +174,7 @@ export const loadView = (view) => {
   // 去掉 view 可能携带的前导 "/"，统一匹配格式
   const key = view.replace(/^\//, '')
   for (const path in modules) {
-    // ./views/system/user/index.vue → system/user/index
+    // ./views/org/user/index.vue → org/user/index
     const relative = path.split('/views/')[1].replace('.vue', '')
     if (relative === key) {
       // 匹配到页面组件，返回 () => import() 异步工厂
