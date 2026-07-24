@@ -9,6 +9,11 @@ export default {
   title: 'Boot管理系统',
 
   /**
+   * 版本
+   */
+  version: '1.7.1-SNAPSHOT',
+
+  /**
    * 首页路径
    */
   homePath: '/dashboard',
