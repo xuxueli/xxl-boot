@@ -30,7 +30,7 @@
 
 XXL-BOOT is a rapid development platform, easy to learn, easy to develop, rich extensions, out-of-the-box. Integrating popular front-end and back-end technologies, we are committed to creating out-of-the-box mid-and back-end solutions for SMEs and individual developers.
 
-XXL-BOOT 是一个快速开发平台，易学易用、简化开发、丰富扩展、开箱即用。整合前后端流行技术，致力为 中小企业、个人开发者 打造开箱即用的中后台解决方案。
+XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即用。整合前后端流行技术，致力为 中小企业、个人开发者 打造开箱即用的中后台解决方案。
 
 
 ## Documentation
