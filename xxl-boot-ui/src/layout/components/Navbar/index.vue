@@ -292,36 +292,28 @@ async function toggleTheme(event) {
     }
 
     .avatar-container {
-      margin-right: 0px;
       padding-right: 0px;
+      padding-left: 0px;
+      margin-left: -5px;
+      display: flex;
+      align-items: center;
 
       .avatar-wrapper {
-        margin-top: 10px;
-        margin-left: 10px;
-        right: 8px;
-        position: relative;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding: 0 8px;
+        cursor: pointer;
 
-        .user-avatar {
-          cursor: pointer;
-          width: 30px;
-          height: 30px;
-          margin-right: 8px;
-          border-radius: 50%;
-        }
-
-        .user-realName{
-          position: relative;
-          left: 0px;
+        .user-realName {
           font-size: 14px;
           font-weight: bold;
+          white-space: nowrap;
         }
 
         i {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
           font-size: 12px;
+          margin-left: 4px;
         }
       }
     }
