@@ -102,10 +102,10 @@
     </select>
 
     <select id="trendList" parameterType="java.util.Map" resultType="java.util.LinkedHashMap">
-        SELECT DATE(t.`add_time`) AS `date`, COUNT(1) AS `count`
+        SELECT DATE_FORMAT(t.`add_time`, '%Y-%m-%d') AS `date`, COUNT(1) AS `count`
         FROM xxl_boot_log AS t
-        WHERE t.`add_time` >= DATE_SUB(NOW(), INTERVAL #{days} DAY)
-        GROUP BY DATE(t.`add_time`)
+        WHERE t.`add_time` >= DATE_SUB(CURDATE(), INTERVAL #{days} DAY)
+        GROUP BY `date`
         ORDER BY `date` ASC
     </select>
 
