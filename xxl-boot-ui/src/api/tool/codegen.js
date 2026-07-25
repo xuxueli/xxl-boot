@@ -12,7 +12,7 @@ import request from '@/utils/request'
  */
 export function listTable(query) {
   return request({
-    url: '/tool/gen/list',
+    url: '/tool/codegen/pageList',
     method: 'get',
     params: query
   })
@@ -25,7 +25,7 @@ export function listTable(query) {
  */
 export function listDbTable(query) {
   return request({
-    url: '/tool/gen/db/list',
+    url: '/tool/codegen/dbList',
     method: 'get',
     params: query
   })
@@ -38,8 +38,9 @@ export function listDbTable(query) {
  */
 export function getGenTable(tableId) {
   return request({
-    url: '/tool/gen/' + tableId,
-    method: 'get'
+    url: '/tool/codegen/load',
+    method: 'get',
+    params: { id: tableId }
   })
 }
 
@@ -50,8 +51,8 @@ export function getGenTable(tableId) {
  */
 export function updateGenTable(data) {
   return request({
-    url: '/tool/gen',
-    method: 'put',
+    url: '/tool/codegen/update',
+    method: 'post',
     data: data
   })
 }
@@ -63,7 +64,7 @@ export function updateGenTable(data) {
  */
 export function importTable(data) {
   return request({
-    url: '/tool/gen/importTable',
+    url: '/tool/codegen/importTable',
     method: 'post',
     params: data
   })
@@ -76,7 +77,7 @@ export function importTable(data) {
  */
 export function createTable(data) {
   return request({
-    url: '/tool/gen/createTable',
+    url: '/tool/codegen/createTable',
     method: 'post',
     params: data
   })
@@ -89,8 +90,9 @@ export function createTable(data) {
  */
 export function previewTable(tableId) {
   return request({
-    url: '/tool/gen/preview/' + tableId,
-    method: 'get'
+    url: '/tool/codegen/preview',
+    method: 'get',
+    params: { id: tableId }
   })
 }
 
@@ -101,8 +103,9 @@ export function previewTable(tableId) {
  */
 export function delTable(tableId) {
   return request({
-    url: '/tool/gen/' + tableId,
-    method: 'delete'
+    url: '/tool/codegen/delete',
+    method: 'post',
+    params: { 'ids[]': tableId }
   })
 }
 
@@ -113,8 +116,9 @@ export function delTable(tableId) {
  */
 export function genCode(tableName) {
   return request({
-    url: '/tool/gen/genCode/' + tableName,
-    method: 'get'
+    url: '/tool/codegen/batchGenCode',
+    method: 'post',
+    params: { tableName: tableName }
   })
 }
 
@@ -125,7 +129,8 @@ export function genCode(tableName) {
  */
 export function synchDb(tableName) {
   return request({
-    url: '/tool/gen/synchDb/' + tableName,
-    method: 'get'
+    url: '/tool/codegen/synchDb',
+    method: 'get',
+    params: { tableName: tableName }
   })
 }

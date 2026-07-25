@@ -13,7 +13,7 @@
  */
 import axios from 'axios'
 import {ElNotification, ElMessageBox, ElMessage, ElLoading} from 'element-plus'
-import {getToken} from '@/utils/auth'
+import {getToken, getTokenKeyHeader} from '@/utils/auth'
 import {tansParams, blobValidate} from '@/utils/common'
 import cache from '@/utils/cache'
 import {saveAs} from 'file-saver'
@@ -72,7 +72,7 @@ service.interceptors.request.use(config => {
 
     // 1. Token 注入
     if (getToken() && !isToken) {
-        config.headers['xxl_sso_token'] = getToken()
+        config.headers[getTokenKeyHeader()] = getToken()
     }
 
     // 2. GET 参数序列化

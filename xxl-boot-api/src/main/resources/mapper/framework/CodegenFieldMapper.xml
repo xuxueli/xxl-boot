@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.api.framework.mapper.CodegenFieldMapper">
+
+    <resultMap id="CodegenField" type="com.xxl.boot.api.framework.model.entity.CodegenField">
+        <result column="id" property="id" /><result column="codegen_id" property="codegenId" />
+        <result column="column_name" property="columnName" /><result column="column_comment" property="columnComment" />
+        <result column="column_type" property="columnType" /><result column="java_type" property="javaType" />
+        <result column="java_field" property="javaField" /><result column="is_pk" property="isPk" />
+        <result column="is_increment" property="isIncrement" /><result column="is_required" property="isRequired" />
+        <result column="is_insert" property="isInsert" /><result column="is_edit" property="isEdit" />
+        <result column="is_list" property="isList" /><result column="is_query" property="isQuery" />
+        <result column="query_type" property="queryType" /><result column="html_type" property="htmlType" />
+        <result column="dict_type" property="dictType" /><result column="sort" property="sort" />
+        <result column="add_time" property="addTime" /><result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`, t.`codegen_id`, t.`column_name`, t.`column_comment`, t.`column_type`,
+        t.`java_type`, t.`java_field`, t.`is_pk`, t.`is_increment`, t.`is_required`,
+        t.`is_insert`, t.`is_edit`, t.`is_list`, t.`is_query`, t.`query_type`,
+        t.`html_type`, t.`dict_type`, t.`sort`, t.`add_time`, t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map">
+        INSERT INTO xxl_boot_codegen_field (
+            `codegen_id`, `column_name`, `column_comment`, `column_type`, `java_type`, `java_field`,
+            `is_pk`, `is_increment`, `is_required`, `is_insert`, `is_edit`, `is_list`, `is_query`,
+            `query_type`, `html_type`, `dict_type`, `sort`, `add_time`, `update_time`
+        ) VALUES (
+            #{xxlBootCodegenField.codegenId}, #{xxlBootCodegenField.columnName},
+            #{xxlBootCodegenField.columnComment}, #{xxlBootCodegenField.columnType},
+            #{xxlBootCodegenField.javaType}, #{xxlBootCodegenField.javaField},
+            #{xxlBootCodegenField.isPk}, #{xxlBootCodegenField.isIncrement},
+            #{xxlBootCodegenField.isRequired}, #{xxlBootCodegenField.isInsert},
+            #{xxlBootCodegenField.isEdit}, #{xxlBootCodegenField.isList},
+            #{xxlBootCodegenField.isQuery}, #{xxlBootCodegenField.queryType},
+            #{xxlBootCodegenField.htmlType}, #{xxlBootCodegenField.dictType},
+            #{xxlBootCodegenField.sort}, NOW(), NOW()
+        )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map">
+        DELETE FROM xxl_boot_codegen_field WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator=",">#{item}</foreach>
+    </delete>
+
+    <delete id="deleteByCodegenIds" parameterType="java.util.Map">
+        DELETE FROM xxl_boot_codegen_field WHERE `codegen_id` in
+        <foreach collection="codegenIds" item="item" open="(" close=")" separator=",">#{item}</foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map">
+        UPDATE xxl_boot_codegen_field SET
+            `column_name` = #{xxlBootCodegenField.columnName},
+            `column_comment` = #{xxlBootCodegenField.columnComment},
+            `column_type` = #{xxlBootCodegenField.columnType},
+            `java_type` = #{xxlBootCodegenField.javaType},
+            `java_field` = #{xxlBootCodegenField.javaField},
+            `is_pk` = #{xxlBootCodegenField.isPk},
+            `is_increment` = #{xxlBootCodegenField.isIncrement},
+            `is_required` = #{xxlBootCodegenField.isRequired},
+            `is_insert` = #{xxlBootCodegenField.isInsert},
+            `is_edit` = #{xxlBootCodegenField.isEdit},
+            `is_list` = #{xxlBootCodegenField.isList},
+            `is_query` = #{xxlBootCodegenField.isQuery},
+            `query_type` = #{xxlBootCodegenField.queryType},
+            `html_type` = #{xxlBootCodegenField.htmlType},
+            `dict_type` = #{xxlBootCodegenField.dictType},
+            `sort` = #{xxlBootCodegenField.sort},
+            update_time = NOW()
+        WHERE `id` = #{xxlBootCodegenField.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="CodegenField">
+        SELECT <include refid="Base_Column_List" /> FROM xxl_boot_codegen_field AS t WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="CodegenField">
+        SELECT <include refid="Base_Column_List" /> FROM xxl_boot_codegen_field AS t
+        WHERE t.`codegen_id` = #{codegenId}
+        ORDER BY t.`sort` ASC, t.`id` ASC LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1) FROM xxl_boot_codegen_field AS t WHERE t.`codegen_id` = #{codegenId}
+    </select>
+
+    <select id="findByCodegenId" parameterType="java.util.Map" resultMap="CodegenField">
+        SELECT <include refid="Base_Column_List" /> FROM xxl_boot_codegen_field AS t
+        WHERE t.`codegen_id` = #{codegenId} ORDER BY t.`sort` ASC, t.`id` ASC
+    </select>
+
+</mapper>

@@ -4,7 +4,7 @@
  * 职责：
  *   - 以 Cookie 为载体，统一管理前端认证令牌（Token）的读、写、删操作。
  *   - 解耦业务代码与具体存储方案：业务层只调用本模块，不直接操作 Cookie。
- *   - 令牌键名统一为 TokenKey，便于后续调整存储位置或 key 名称。
+ *   - 令牌键名统一为 TOKEN_KEY_LOCAL，便于后续调整存储位置或 key 名称。
  *
  * 依赖：
  *   - js-cookie：轻量级 Cookie 读写库。
@@ -17,8 +17,11 @@
  */
 import Cookies from 'js-cookie'
 
-// Cookie 中存储认证令牌的键名，全局统一，修改此处即可全量生效
-const TokenKey = 'Admin-Token'
+// 认证令牌：Cookie 中存储的键名
+const TOKEN_KEY_LOCAL = 'Admin-Token'
+
+// 认证令牌：Header 中传参key
+const TOKEN_KEY_HEADER = 'xxl_sso_token';
 
 /**
  * 读取当前认证令牌
@@ -26,17 +29,26 @@ const TokenKey = 'Admin-Token'
  * @returns {string|undefined} Cookie 中存储的 token 字符串；未登录或已过期时返回 undefined
  */
 export function getToken() {
-  return Cookies.get(TokenKey)
+  return Cookies.get(TOKEN_KEY_LOCAL)
+}
+
+/**
+ * 获取 认证令牌 的 header key
+ *
+ * @returns {string}
+ */
+export function getTokenKeyHeader() {
+  return TOKEN_KEY_HEADER;
 }
 
 /**
  * 获取认证请求头
  *
- * 返回 { Authorization: 'Bearer <token>' } 对象，供 el-upload 等组件使用。
+ * 返回 { <tokenKey>: <token> } 对象，供 el-upload 等组件使用。
  * 集中管理，避免各处重复拼接。
  */
 export function getAuthHeaders() {
-  return { Authorization: 'Bearer ' + getToken() }
+  return { [getTokenKeyHeader()]: getToken() }
 }
 
 /**
@@ -49,10 +61,10 @@ export function getAuthHeaders() {
  * @returns {string|undefined} js-cookie set 的返回值
  */
 export function setToken(token) {
-  return Cookies.set(TokenKey, token)
+  return Cookies.set(TOKEN_KEY_LOCAL, token)
 }
 export function setTokenWithAge(token, age) {
-  return Cookies.set(TokenKey, token, { expires: age })
+  return Cookies.set(TOKEN_KEY_LOCAL, token, { expires: age })
 }
 
 /**
@@ -64,5 +76,5 @@ export function setTokenWithAge(token, age) {
  * @returns {undefined}
  */
 export function removeToken() {
-  return Cookies.remove(TokenKey)
+  return Cookies.remove(TOKEN_KEY_LOCAL)
 }

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.api.framework.mapper.CodegenMapper">
+
+    <resultMap id="Codegen" type="com.xxl.boot.api.framework.model.entity.Codegen">
+        <result column="id" property="id" />
+        <result column="table_name" property="tableName" />
+        <result column="table_comment" property="tableComment" />
+        <result column="sub_table_name" property="subTableName" />
+        <result column="sub_table_fk_name" property="subTableFkName" />
+        <result column="class_name" property="className" />
+        <result column="tpl_category" property="tplCategory" />
+        <result column="tpl_web_type" property="tplWebType" />
+        <result column="package_name" property="packageName" />
+        <result column="module_name" property="moduleName" />
+        <result column="business_name" property="businessName" />
+        <result column="function_name" property="functionName" />
+        <result column="function_author" property="functionAuthor" />
+        <result column="form_col_num" property="formColNum" />
+        <result column="gen_type" property="genType" />
+        <result column="gen_path" property="genPath" />
+        <result column="options" property="options" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`, t.`table_name`, t.`table_comment`, t.`sub_table_name`, t.`sub_table_fk_name`,
+        t.`class_name`, t.`tpl_category`, t.`tpl_web_type`, t.`package_name`, t.`module_name`,
+        t.`business_name`, t.`function_name`, t.`function_author`, t.`form_col_num`,
+        t.`gen_type`, t.`gen_path`, t.`options`, t.`add_time`, t.`update_time`, t.`remark`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map">
+        INSERT INTO xxl_boot_codegen (
+            `table_name`, `table_comment`, `sub_table_name`, `sub_table_fk_name`,
+            `class_name`, `tpl_category`, `tpl_web_type`, `package_name`, `module_name`,
+            `business_name`, `function_name`, `function_author`, `form_col_num`,
+            `gen_type`, `gen_path`, `options`, `remark`, `add_time`, `update_time`
+        ) VALUES (
+            #{xxlBootCodegen.tableName}, #{xxlBootCodegen.tableComment},
+            #{xxlBootCodegen.subTableName}, #{xxlBootCodegen.subTableFkName},
+            #{xxlBootCodegen.className}, #{xxlBootCodegen.tplCategory},
+            #{xxlBootCodegen.tplWebType}, #{xxlBootCodegen.packageName},
+            #{xxlBootCodegen.moduleName}, #{xxlBootCodegen.businessName},
+            #{xxlBootCodegen.functionName}, #{xxlBootCodegen.functionAuthor},
+            #{xxlBootCodegen.formColNum}, #{xxlBootCodegen.genType},
+            #{xxlBootCodegen.genPath}, #{xxlBootCodegen.options}, #{xxlBootCodegen.remark},
+            NOW(), NOW()
+        )
+    </insert>
+
+    <delete id="delete" parameterType="java.util.Map">
+        DELETE FROM xxl_boot_codegen WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator=",">#{item}</foreach>
+    </delete>
+
+    <update id="update" parameterType="java.util.Map">
+        UPDATE xxl_boot_codegen SET
+            `table_name` = #{xxlBootCodegen.tableName},
+            `table_comment` = #{xxlBootCodegen.tableComment},
+            `sub_table_name` = #{xxlBootCodegen.subTableName},
+            `sub_table_fk_name` = #{xxlBootCodegen.subTableFkName},
+            `class_name` = #{xxlBootCodegen.className},
+            `tpl_category` = #{xxlBootCodegen.tplCategory},
+            `tpl_web_type` = #{xxlBootCodegen.tplWebType},
+            `package_name` = #{xxlBootCodegen.packageName},
+            `module_name` = #{xxlBootCodegen.moduleName},
+            `business_name` = #{xxlBootCodegen.businessName},
+            `function_name` = #{xxlBootCodegen.functionName},
+            `function_author` = #{xxlBootCodegen.functionAuthor},
+            `form_col_num` = #{xxlBootCodegen.formColNum},
+            `gen_type` = #{xxlBootCodegen.genType},
+            `gen_path` = #{xxlBootCodegen.genPath},
+            `options` = #{xxlBootCodegen.options},
+            `remark` = #{xxlBootCodegen.remark},
+            update_time = NOW()
+        WHERE `id` = #{xxlBootCodegen.id}
+    </update>
+
+    <select id="load" parameterType="java.util.Map" resultMap="Codegen">
+        SELECT <include refid="Base_Column_List" /> FROM xxl_boot_codegen AS t WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="Codegen">
+        SELECT <include refid="Base_Column_List" /> FROM xxl_boot_codegen AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="tableName != null and tableName != ''">AND t.`table_name` like CONCAT('%', #{tableName}, '%')</if>
+            <if test="tableComment != null and tableComment != ''">AND t.`table_comment` like CONCAT('%', #{tableComment}, '%')</if>
+        </trim>
+        ORDER BY t.`id` DESC LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1) FROM xxl_boot_codegen AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="tableName != null and tableName != ''">AND t.`table_name` like CONCAT('%', #{tableName}, '%')</if>
+            <if test="tableComment != null and tableComment != ''">AND t.`table_comment` like CONCAT('%', #{tableComment}, '%')</if>
+        </trim>
+    </select>
+
+</mapper>

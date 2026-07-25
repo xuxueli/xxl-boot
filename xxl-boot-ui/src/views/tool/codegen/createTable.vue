@@ -31,7 +31,7 @@ function handleImportTable() {
     modal.msgError("请输入建表语句")
     return
   }
-  createTable({ sql: content.value, tplWebType: 'element-plus' }).then(() => {
+  createTable({ tableSql: content.value }).then(() => {
     modal.msgSuccess("创建成功")
     visible.value = false
     emit("ok")

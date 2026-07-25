@@ -1,155 +1,179 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
+
+      <!-- 表名称 -->
       <el-form-item label="表名称" prop="tableName">
         <el-input
-          v-model="queryParams.tableName"
-          placeholder="请输入表名称"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
+            v-model="queryParams.tableName"
+            placeholder="请输入表名称"
+            clearable
+            style="width: 200px"
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
+
+      <!-- 表描述 -->
       <el-form-item label="表描述" prop="tableComment">
         <el-input
-          v-model="queryParams.tableComment"
-          placeholder="请输入表描述"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
+            v-model="queryParams.tableComment"
+            placeholder="请输入表描述"
+            clearable
+            style="width: 200px"
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
+
+      <!-- 创建时间 -->
       <el-form-item label="创建时间" style="width: 308px">
         <el-date-picker
-          v-model="dateRange"
-          value-format="YYYY-MM-DD"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+            v-model="dateRange"
+            value-format="YYYY-MM-DD"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
+
+      <!-- 操作按钮 -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
+
     </el-form>
 
+    <!-- 操作区域 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-icon="Download"
-          :disabled="multiple"
-          @click="handleGenTable"
-          v-hasPermi="['tool:gen:code']"
-        >生成</el-button>
+            type="primary"
+            plain
+            icon="Download"
+            :disabled="multiple"
+            @click="handleGenTable"
+        >生成 <!-- v-hasPermi="['tool:gen:code']" -->
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="openCreateTable"
-          v-hasRole="['admin']"
-        >创建</el-button>
+            type="primary"
+            plain
+            icon="Plus"
+            @click="openCreateTable"
+
+        >创建  <!-- v-hasRole="['admin']" -->
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="info"
-          plain
-          icon="Upload"
-          @click="openImportTable"
-          v-hasPermi="['tool:gen:import']"
-        >导入</el-button>
+            type="info"
+            plain
+            icon="Upload"
+            @click="openImportTable"
+        >导入
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-icon="Edit"
-          :disabled="single"
-          @click="handleEditTable"
-          v-hasPermi="['tool:gen:edit']"
-        >修改</el-button>
+            type="success"
+            plain
+            icon="Edit"
+            :disabled="single"
+            @click="handleEditTable"
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
-          plain
-icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['tool:gen:remove']"
-        >删除</el-button>
+            type="danger"
+            plain
+            icon="Delete"
+            :disabled="multiple"
+            @click="handleDelete"
+        >删除
+        </el-button>
       </el-col>
       <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
-    <el-table ref="genRef" v-loading="loading" :data="tableList" @selection-change="handleSelectionChange" :default-sort="defaultSort" @sort-change="handleSortChange">
+    <!-- 表格区域 -->
+    <el-table ref="genRef" v-loading="loading" :data="tableList" @selection-change="handleSelectionChange"
+              :default-sort="defaultSort" @sort-change="handleSortChange">
       <el-table-column type="selection" align="center" width="55"></el-table-column>
       <el-table-column label="序号" type="index" width="50" align="center">
         <template #default="scope">
-          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
+          <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="表名称" align="center" prop="tableName" :show-overflow-tooltip="true" />
-      <el-table-column label="表描述" align="center" prop="tableComment" :show-overflow-tooltip="true" />
-      <el-table-column label="实体" align="center" prop="className" :show-overflow-tooltip="true" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="160" sortable="custom" :sort-orders="['descending', 'ascending']" />
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="160" sortable="custom" :sort-orders="['descending', 'ascending']" />
+      <el-table-column label="表名称" align="center" prop="tableName" :show-overflow-tooltip="true"/>
+      <el-table-column label="表描述" align="center" prop="tableComment" :show-overflow-tooltip="true"/>
+      <el-table-column label="实体" align="center" prop="className" :show-overflow-tooltip="true"/>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="160" sortable="custom"
+                       :sort-orders="['descending', 'ascending']"/>
+      <el-table-column label="更新时间" align="center" prop="updateTime" width="160" sortable="custom"
+                       :sort-orders="['descending', 'ascending']"/>
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-tooltip content="预览" placement="top">
-            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasPermi="['tool:gen:preview']"></el-button>
+            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)"></el-button>
           </el-tooltip>
           <el-tooltip content="编辑" placement="top">
-            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)" v-hasPermi="['tool:gen:edit']"></el-button>
+            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)"></el-button>
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['tool:gen:remove']"></el-button>
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
           </el-tooltip>
           <el-tooltip content="同步" placement="top">
-            <el-button link type="primary" icon="Refresh" @click="handleSynchDb(scope.row)" v-hasPermi="['tool:gen:edit']"></el-button>
+            <el-button link type="primary" icon="Refresh" @click="handleSynchDb(scope.row)"></el-button>
           </el-tooltip>
           <el-tooltip content="生成代码" placement="top">
-            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasPermi="['tool:gen:code']"></el-button>
+            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 分页 -->
     <Pagination
-      v-show="total>0"
-      :total="total"
-      v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize"
-      @pagination="getList"
+        v-show="total>0"
+        :total="total"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        @pagination="getList"
     />
+
     <!-- 预览界面 -->
     <el-dialog :title="preview.title" v-model="preview.open" width="80%" top="5vh" append-to-body class="scrollbar">
       <el-tabs v-model="preview.activeName">
         <el-tab-pane
-          v-for="(value, key) in preview.data"
-          :label="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
-          :name="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
-          :key="value"
+            v-for="(value, key) in preview.data"
+            :label="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
+            :name="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
+            :key="value"
         >
-          <el-link underline="never" icon="DocumentCopy" v-copyText="value" v-copyText:callback="copyTextSuccess" style="float:right">&nbsp;复制</el-link>
+          <el-link underline="never" icon="DocumentCopy" v-copyText="value" v-copyText:callback="copyTextSuccess"
+                   style="float:right">&nbsp;复制
+          </el-link>
           <pre>{{ value }}</pre>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
-    <import-table ref="importRef" @ok="handleQuery" />
-    <create-table ref="createRef" @ok="handleQuery" />
+
+    <!--  导入表格  -->
+    <importTable ref="importRef" @ok="handleQuery"/>
+
+    <!--  创建表格  -->
+    <createTable ref="createRef" @ok="handleQuery"/>
+
   </div>
 </template>
 
 <script setup name="Gen">
-import { listTable, previewTable, delTable, genCode, synchDb } from "@/api/tool/codegen"
-import router from "@/router"
-import { addDateRange } from '@/utils/common'
-import { useFormReset } from '@/composables/useFormReset'
+import {listTable, previewTable, delTable, genCode, synchDb} from "@/api/tool/codegen"
+import {addDateRange} from '@/utils/common'
+import {useFormReset} from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import downloadPlugin from '@/utils/download'
@@ -172,7 +196,7 @@ const total = ref(0)
 const tableNames = ref([])
 const dateRange = ref([])
 const uniqueId = ref("")
-const defaultSort = ref({ prop: "createTime", order: "descending" })
+const defaultSort = ref({prop: "createTime", order: "descending"})
 
 const data = reactive({
   queryParams: {
@@ -191,7 +215,7 @@ const data = reactive({
   }
 })
 
-const { queryParams, preview } = toRefs(data)
+const {queryParams, preview} = toRefs(data)
 
 onActivated(() => {
   const time = route.query.t
@@ -208,8 +232,8 @@ onActivated(() => {
 function getList() {
   loading.value = true
   listTable(addDateRange(queryParams.value, dateRange.value)).then(response => {
-    tableList.value = response.rows
-    total.value = response.total
+    tableList.value = response.data.data
+    total.value = response.data.total
     loading.value = false
   })
 }
@@ -229,11 +253,11 @@ function handleGenTable(row) {
   }
   if (row.genType === "1") {
     genCode(row.tableName).then(response => {
-      modal.msgSuccess("成功生成到自定义路径：" + row.genPath)
+      modal.msgSuccess("成功生成到自定义路径：" + row.data)
     })
   } else {
     const zipName = Array.isArray(tbNames) ? "boot.zip" : tbNames + ".zip"
-    downloadPlugin.zip("/tool/gen/batchGenCode?tables=" + tbNames, zipName)
+    downloadPlugin.zip("/tool/codegen/batchGenCode?tables=" + tbNames, zipName)
   }
 }
 
@@ -244,7 +268,8 @@ function handleSynchDb(row) {
     return synchDb(tableName)
   }).then(() => {
     modal.msgSuccess("同步成功")
-  }).catch(() => {})
+  }).catch(() => {
+  })
 }
 
 /** 打开导入表弹窗 */
@@ -298,7 +323,7 @@ function handleSortChange(column, prop, order) {
 function handleEditTable(row) {
   const tableId = row.tableId || ids.value[0]
   const tableName = row.tableName || tableNames.value[0]
-  const params = { pageNum: queryParams.value.pageNum, tableId: tableId }
+  const params = {pageNum: queryParams.value.pageNum, tableId: tableId}
   tab.openPage("修改[" + tableName + "]生成配置", '/tool/codegen/editTable', params)
 }
 
@@ -310,7 +335,8 @@ function handleDelete(row) {
   }).then(() => {
     getList()
     modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  }).catch(() => {
+  })
 }
 
 getList()
