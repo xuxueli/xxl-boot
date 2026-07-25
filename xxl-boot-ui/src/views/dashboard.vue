@@ -307,7 +307,7 @@ function loadChart() {
 }
 
 .chart-box {
-  height: 300px;
+  height: 320px;
   width: 100%;
 }
 
