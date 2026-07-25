@@ -52,13 +52,13 @@
             <div class="card-header">
               <div class="card-header-left">
                 <SvgIcon icon-class="list"/>
-                <span>功能模块</span>
+                <span>消息列表</span>
               </div>
             </div>
           </template>
           <div v-if="messages.length === 0" class="msg-empty">暂无消息</div>
           <div v-else class="msg-list">
-            <div v-for="item in messages" :key="item.id" class="msg-item">
+            <div v-for="item in messages" :key="item.id" class="msg-item" @click="handleMsgClick(item)">
               <div class="msg-title">{{ item.title }}</div>
               <div class="msg-meta">
                 <el-tag size="small" :type="item.category === 1 ? 'warning' : 'success'">
@@ -73,15 +73,19 @@
 
     </el-row>
 
+    <!-- 消息详情 -->
+    <NoticeDetailView ref="noticeDetailRef" />
+
   </div>
 </template>
 
 <script setup name="Index">
 
 import {getStats, getLogTrend} from '@/api/dashboard'
-import {listNoticeTop} from '@/api/system/message'
+import {listNoticeTop, markNoticeRead} from '@/api/system/message'
 import {parseTime} from '@/utils/common'
 import * as echarts from 'echarts'
+import NoticeDetailView from '@/layout/components/Navbar/HeaderNoticeDetail.vue'
 
 // 指标卡片
 const stats = ref([
@@ -94,6 +98,7 @@ const stats = ref([
 const messages = ref([])
 const chartRef = ref(null)
 const chartDays = ref(30)
+const noticeDetailRef = ref(null)
 let chartInstance = null
 
 /**
@@ -132,6 +137,14 @@ function loadMessages() {
   listNoticeTop().then(res => {
     messages.value = res.data || []
   })
+}
+
+/**
+ * 消息列表 - 点击查看详情，标记已读
+ */
+function handleMsgClick(item) {
+  noticeDetailRef.value.open(item.id)
+  markNoticeRead(item.id)
 }
 
 /**
@@ -314,6 +327,7 @@ function loadChart() {
 .msg-item {
   padding: 12px 0;
   border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
 
   &:last-child {
     border-bottom: none;
