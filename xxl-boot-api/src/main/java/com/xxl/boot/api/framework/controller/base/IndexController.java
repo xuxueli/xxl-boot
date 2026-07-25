@@ -99,6 +99,8 @@ public class IndexController {
 		}
 		List<RouterVo> routers = new ArrayList<>();
 		for (com.xxl.boot.api.framework.model.entity.Resource resource : resources) {
+
+			// build router
 			RouterVo router = new RouterVo();
 			router.setName("menu_" + resource.getId());
 			router.setPath(resource.getUrl());
@@ -110,15 +112,20 @@ public class IndexController {
 			List<com.xxl.boot.api.framework.model.entity.Resource> childrenRes = parentMap.get(resource.getId());
 
 			if (type == ResourceTypeEnum.CATALOG.getValue()) {
+				// 目录
 				router.setComponent(isRoot ? "Layout" : "ParentView");
+
+				// 子节点
 				if (CollectionTool.isNotEmpty(childrenRes)) {
 					router.setChildren(buildRouterChildren(childrenRes, parentMap));
 				}
 			} else if (type == ResourceTypeEnum.MENU.getValue()) {
 				if (isRoot) {
+					// 菜单 - 根节点
 					router.setComponent("Layout");
 					router.setMeta(null);
 
+					// 模拟子节点
 					RouterVo child = new RouterVo();
 					child.setName("child_menu_" + resource.getId());
 					child.setPath(resource.getUrl());
@@ -126,6 +133,7 @@ public class IndexController {
 					child.setMeta(new MetaVo(resource.getName(), resource.getIcon()));
 					router.setChildren(List.of(child));
 				} else {
+					// 菜单 - 非根节点
 					router.setComponent(isHttp(resource.getUrl()) ? "InnerLink" : resource.getUrl());
 				}
 			}
