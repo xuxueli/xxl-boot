@@ -8,11 +8,11 @@
     <!-- 第一排：指标卡片 -->
     <el-row :gutter="20">
       <el-col :xs="12" :sm="6" v-for="item in stats" :key="item.label">
-        <el-card shadow="hover" class="stat-card" :style="'--stat-color:' + item.color">
+        <el-card shadow="never" class="stat-card" :style="{ borderTopColor: item.color }">
           <div class="stat-body">
-            <SvgIcon :icon-class="item.icon" class="stat-icon" />
+            <SvgIcon :icon-class="item.icon" class="stat-icon" :style="{ color: item.color }" />
             <div class="stat-info">
-              <span class="stat-value">{{ item.value }}</span>
+              <span class="stat-value" :style="{ color: item.color }">{{ item.value }}</span>
               <span class="stat-label">{{ item.label }}</span>
             </div>
           </div>
@@ -199,20 +199,22 @@ function formatDate(date) {
 
 .stat-card {
   margin-bottom: 16px;
-  border-radius: 8px;
-  :deep(.el-card__body) { padding: 20px; }
+  border-radius: 6px;
+  border-top: 3px solid transparent;
+  transition: box-shadow 0.2s;
+  &:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+  :deep(.el-card__body) { padding: 18px 20px; }
 }
 
 .stat-body {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .stat-icon {
-  width: 44px;
-  height: 44px;
-  color: var(--stat-color);
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
 }
 
@@ -222,16 +224,15 @@ function formatDate(date) {
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
-  color: #303133;
   line-height: 1.2;
 }
 
 .stat-label {
   font-size: 13px;
   color: #909399;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .row-chart {
