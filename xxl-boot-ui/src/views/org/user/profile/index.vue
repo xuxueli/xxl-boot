@@ -13,13 +13,8 @@
               <span>个人信息</span>
             </div>
           </template>
+
           <div>
-
-            <!-- 头像展示 -->
-            <div class="text-center">
-              <userAvatar/>
-            </div>
-
             <!-- 用户信息列表 -->
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
@@ -53,8 +48,8 @@
                 <div class="pull-right">{{ state.user.addTime }}</div>
               </li>
             </ul>
-
           </div>
+
         </el-card>
       </el-col>
 
@@ -89,7 +84,6 @@
 <script setup name="Profile">
 
 // 引入
-import userAvatar from "./userAvatar"
 import userInfo from "./userInfo"
 import resetPwd from "./resetPwd"
 import {getUserProfile} from "@/api/org/user"

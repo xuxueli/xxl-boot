@@ -65,8 +65,7 @@
       <el-dropdown @command="handleCommand" class="avatar-container right-menu-item hover-effect" trigger="hover">
         <!-- 用户信息  -->
         <div class="avatar-wrapper">
-          <img :src="userStore.avatar" class="user-avatar" />
-          <span class="user-nickname"> {{ userStore.nickName }} </span>
+          <span class="user-realName"> {{ userStore.realName }} </span>
         </div>
         <!-- 下拉框  -->
         <template #dropdown>
@@ -311,10 +310,9 @@ async function toggleTheme(event) {
           border-radius: 50%;
         }
 
-        .user-nickname{
+        .user-realName{
           position: relative;
           left: 0px;
-          bottom: 10px;
           font-size: 14px;
           font-weight: bold;
         }

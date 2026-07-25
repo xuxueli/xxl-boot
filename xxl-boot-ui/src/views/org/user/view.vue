@@ -7,7 +7,7 @@
         <el-col :span="12">
           <div class="info-item">
             <label class="info-label">用户名称：</label>
-            <span class="info-value plaintext">{{ info.nickName }}</span>
+            <span class="info-value plaintext">{{ info.realName }}</span>
           </div>
         </el-col>
         <el-col :span="12">

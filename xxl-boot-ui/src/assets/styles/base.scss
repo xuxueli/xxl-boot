@@ -229,6 +229,7 @@ div:focus { outline: none; }
 .list-group {
   padding-left: 0;
   list-style: none;
+  margin-top: 0px;
 }
 .list-group-item {
   border-bottom: 1px solid #e7eaec;
@@ -260,19 +261,6 @@ div:focus { outline: none; }
   line-height: 1.7;
   word-break: break-all;
   white-space: pre-wrap;
-}
-
-.img-circle { border-radius: 50%; }
-.img-lg { width: 120px; height: 120px; }
-.avatar-upload-preview {
-  position: absolute;
-  top: 50%;
-  transform: translate(50%, -50%);
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  box-shadow: 0 0 4px #ccc;
-  overflow: hidden;
 }
 
 /* ==================== 拖拽排序 ==================== */

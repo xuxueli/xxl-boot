@@ -23,8 +23,7 @@ const useUserStore = defineStore(
       token: getToken(),       // 登录令牌，页面刷新后恢复
       id: '',                  // 用户 ID
       name: '',                // 用户名
-      nickName: '',            // 用户名称
-      avatar: '',              // 头像地址
+      realName: '',            // 用户名称
       roles: [],               // 角色标识集合
       permissions: []          // 权限标识集合
     }),
@@ -69,16 +68,11 @@ const useUserStore = defineStore(
           getInfo().then(res => {
             const data = res.data
 
-            // 头像：空值兜底默认头像，相对路径拼接访问前缀
-            let avatar = data.avatar || ""
-            if (!isHttp(avatar)) {
-              avatar = (isEmpty(avatar)) ? defAva : import.meta.env.VITE_APP_BASE_API + avatar
-            }
+
             // 用户基础资料
             this.id = data.userId
             this.name = data.userName
-            this.nickName = data.realName
-            this.avatar = avatar
+            this.realName = data.realName
             // 角色权限：后端有值则回填，无值设默认角色兜底
             if (data.roleList && data.roleList.length > 0) {
               this.roles = data.roleList

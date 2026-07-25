@@ -396,7 +396,7 @@ function reset() {
     userId: undefined,
     deptId: undefined,
     userName: undefined,
-    nickName: undefined,
+    realName: undefined,
     password: undefined,
     phonenumber: undefined,
     email: undefined,

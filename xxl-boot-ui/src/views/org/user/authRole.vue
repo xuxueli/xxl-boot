@@ -4,7 +4,7 @@
       <el-form :model="form" label-width="80px">
          <el-row>
             <el-col :span="8" :offset="2">
-               <el-form-item label="用户昵称" prop="nickName">
+               <el-form-item label="用户昵称" prop="realName">
                   <el-input v-model="form.realName" disabled />
                </el-form-item>
             </el-col>
@@ -63,7 +63,7 @@ const pageSize = ref(10)
 const roleIds = ref([])
 const roles = ref([])
 const form = ref({
-  nickName: undefined,
+  realName: undefined,
   userName: undefined,
   userId: undefined
 })

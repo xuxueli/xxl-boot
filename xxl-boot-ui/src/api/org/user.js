@@ -125,14 +125,6 @@ export function updateUserPwd(oldPassword, newPassword) {
   })
 }
 
-export function uploadAvatar(data) {
-  return request({
-    url: '/org/user/update',
-    method: 'post',
-    data: data
-  })
-}
-
 export function getAuthRole(userId) {
   return request({
     url: '/org/user/load',
