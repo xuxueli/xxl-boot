@@ -11,7 +11,7 @@
     -->
     <router-view v-slot="{ Component, route }">
       <!--
-        fade-transform：0.3s 透明度 + 水平位移的过渡动画。
+        fade-transform：0.1s 速度（index.scss） +  透明度 + 水平位移的过渡动画。
         mode="out-in"：旧组件完全离开后再挂载新组件，避免同时两个组件在 DOM 中。
       -->
       <transition name="fade-transform" mode="out-in">

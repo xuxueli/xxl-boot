@@ -58,7 +58,7 @@
                    class="avatar-container right-menu-item hover-effect"
                    trigger="hover"
                    :show-timeout="50"
-                   :hide-timeout="100">
+                   :hide-timeout="500">
 
         <!-- 用户信息  -->
         <div class="avatar-wrapper">
