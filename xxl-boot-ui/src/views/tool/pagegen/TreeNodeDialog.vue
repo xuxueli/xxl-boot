@@ -1,3 +1,7 @@
+<!--
+  组件：树节点添加弹窗
+  功能：为级联选择器（cascader）添加树形选项节点
+-->
 <template>
   <div>
     <el-dialog title="添加选项" v-model="open" width="800px" :close-on-click-modal="false" :modal-append-to-body="false"
@@ -32,6 +36,7 @@
   </div>
 </template>
 <script setup>
+/** 树节点添加弹窗 - 逻辑 */
 const open = defineModel()
 const emit = defineEmits(['confirm'])
 const formData = ref({
@@ -39,35 +44,26 @@ const formData = ref({
   value: undefined
 })
 const rules = {
-  label: [
-    {
-      required: true,
-      message: '请输入选项名',
-      trigger: 'blur'
-    }
-  ],
-  value: [
-    {
-      required: true,
-      message: '请输入选项值',
-      trigger: 'blur'
-    }
-  ]
+  label: [{
+    required: true,
+    message: '请输入选项名',
+    trigger: 'blur'
+  }],
+  value: [{
+    required: true,
+    message: '请输入选项值',
+    trigger: 'blur'
+  }]
 }
-const dataType = ref('string')
+const dataType = ref('string')       /* 值类型 */
 const dataTypeOptions = ref([
-  {
-    label: '字符串',
-    value: 'string'
-  },
-  {
-    label: '数字',
-    value: 'number'
-  }
+  { label: '字符串', value: 'string' },
+  { label: '数字',   value: 'number' }
 ])
-const id = ref(100)
+const id = ref(100)                  /* 节点 ID 自增 */
 const treeNodeForm = ref()
 
+/** 弹窗打开：重置表单 */
 function onOpen() {
   formData.value = {
     label: undefined,
@@ -75,10 +71,12 @@ function onOpen() {
   }
 }
 
+/** 弹窗关闭 */
 function onClose() {
   open.value = false
 }
 
+/** 确认添加节点 */
 function handelConfirm() {
   treeNodeForm.value.validate(valid => {
     if (!valid) return

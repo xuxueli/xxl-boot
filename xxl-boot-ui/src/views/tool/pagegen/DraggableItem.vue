@@ -1,3 +1,7 @@
+<!--
+  组件：画布可拖拽表单项
+  功能：渲染单个表单项/行容器，支持选中、复制、删除
+-->
 <template>
   <el-col :span="element.span" :class="className" @click.stop="activeItem(element)">
     <el-form-item :label="element.label" :label-width="element.labelWidth ? element.labelWidth + 'px' : null"
@@ -25,6 +29,7 @@
   </el-col>
 </template>
 <script setup name="DraggableItem">
+/** 可拖拽表单项 - 逻辑 */
 import draggable from "vuedraggable/dist/vuedraggable.common"
 import render from '@/utils/generator/render'
 
@@ -41,16 +46,22 @@ const className = ref('')
 const draggableItemRef = ref(null)
 const emits = defineEmits(['activeItem', 'copyItem', 'deleteItem'])
 
+/** 选中当前组件 */
 function activeItem(item) {
   emits('activeItem', item)
 }
+
+/** 复制当前组件 */
 function copyItem(item, parent) {
   emits('copyItem', item, parent ?? props.drawingList)
 }
+
+/** 删除当前组件 */
 function deleteItem(item, parent) {
   emits('deleteItem', item, parent ?? props.drawingList)
 }
 
+/** 获取行容器的组件数据（栅格属性） */
 function getComponentData() {
   return {
     gutter: props.element.gutter,
@@ -59,6 +70,7 @@ function getComponentData() {
   }
 }
 
+/* 监听激活 ID，更新选中样式 */
 watch(() => props.activeId, (val) => {
   className.value = (props.element.layout === 'rowFormItem' ? 'drawing-row-item' : 'drawing-item') + (val === props.element.formId ? ' active-from-item' : '')
   if (props.formConf.unFocusedComponentBorder) {

@@ -1,3 +1,7 @@
+<!--
+  组件：代码生成类型选择弹窗
+  功能：选择生成页面或弹窗类型，可输入文件名
+-->
 <template>
   <el-dialog v-model="open" width="500px" title="选择生成类型" @open="onOpen" @close="onClose">
     <el-form ref="codeTypeForm" :model="formData" :rules="rules" label-width="100px">
@@ -21,14 +25,15 @@
 </template>
 
 <script setup>
+/** 生成类型弹窗 - 逻辑 */
 const open = defineModel()
 const props = defineProps({
-  showFileName: Boolean
+  showFileName: Boolean   /* 是否显示文件名输入 */
 })
 const emit = defineEmits(['confirm'])
 const formData = ref({
   fileName: undefined,
-  type: 'file'
+  type: 'file'            /* 默认生成页面 */
 })
 const codeTypeForm = ref()
 const rules = {
@@ -44,23 +49,23 @@ const rules = {
   }]
 }
 const typeOptions = ref([
-  {
-    label: '页面',
-    value: 'file'
-  },
-  {
-    label: '弹窗',
-    value: 'dialog'
-  }
+  { label: '页面', value: 'file' },
+  { label: '弹窗', value: 'dialog' }
 ])
+
+/** 弹窗打开：需要文件名时设置默认值 */
 function onOpen() {
   if (props.showFileName) {
     formData.value.fileName = `${+new Date()}.vue`
   }
 }
+
+/** 弹窗关闭 */
 function onClose() {
   open.value = false
 }
+
+/** 确认生成 */
 function handelConfirm() {
   codeTypeForm.value.validate(valid => {
     if (!valid) return

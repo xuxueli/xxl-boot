@@ -85,17 +85,20 @@ service.interceptors.request.use(config => {
 
     // 3. POST / PUT 防重复提交
     if (!isRepeatSubmit && (config.method === 'post' || config.method === 'put')) {
+        // request data
         const requestObj = {
             url: config.url,
             data: typeof config.data === 'object' ? JSON.stringify(config.data) : config.data,
             time: new Date().getTime()
         }
+        // request size
         const requestSize = Object.keys(JSON.stringify(requestObj)).length
         if (requestSize >= 5 * 1024 * 1024) {
             console.warn(`[${config.url}]: 请求数据大小超出5M限制，跳过防重复提交验证。`)
             return config
         }
 
+        // request data cache
         const sessionObj = cache.session.getJSON('sessionObj')
         if (!sessionObj) {
             // 首次提交，写入快照

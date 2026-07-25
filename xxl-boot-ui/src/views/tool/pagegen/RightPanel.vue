@@ -1,3 +1,7 @@
+<!--
+  组件：右侧属性面板
+  功能：展示选中组件的属性配置（组件属性/表单属性），支持编辑
+-->
 <template>
   <div class="right-board">
     <el-tabs v-model="currentTab" stretch class="center-tabs">
@@ -464,6 +468,7 @@
 </template>
 
 <script setup>
+/** 右侧属性面板 - 逻辑 */
 import draggable from "vuedraggable/dist/vuedraggable.common"
 import { isNumberStr } from '@/utils/common'
 import IconsDialog from './IconsDialog'
@@ -482,99 +487,46 @@ const dateTimeFormat = {
   datetimerange: 'YYYY-MM-DD HH:mm:ss'
 }
 const props = defineProps({
-  showField: Boolean,
-  activeData: Object,
-  formConf: Object
+  showField: Boolean,    /* 是否展示组件属性面板 */
+  activeData: Object,    /* 当前选中组件数据 */
+  formConf: Object       /* 表单全局配置 */
 })
 
+/* 面板状态与选项配置 */
 const data = reactive({
-  currentTab: 'field',
-  currentNode: null,
-  dialogVisible: false,
-  iconsVisible: false,
-  currentIconModel: null,
-  dateTypeOptions: [
-    {
-      label: '日(date)',
-      value: 'date'
-    },
-    {
-      label: '周(week)',
-      value: 'week'
-    },
-    {
-      label: '月(month)',
-      value: 'month'
-    },
-    {
-      label: '年(year)',
-      value: 'year'
-    },
-    {
-      label: '日期时间(datetime)',
-      value: 'datetime'
-    }
+  currentTab: 'field',                   /* 当前 tab：组件属性 / 表单属性 */
+  currentNode: null,                     /* 当前操作树节点 */
+  dialogVisible: false,                  /* 树节点弹窗 */
+  iconsVisible: false,                   /* 图标选择弹窗 */
+  currentIconModel: null,                /* 当前编辑的图标模型名 */
+  dateTypeOptions: [                     /* 日期类型选项 */
+    { label: '日(date)',         value: 'date' },
+    { label: '周(week)',         value: 'week' },
+    { label: '月(month)',        value: 'month' },
+    { label: '年(year)',         value: 'year' },
+    { label: '日期时间(datetime)', value: 'datetime' }
   ],
-  dateRangeTypeOptions: [
-    {
-      label: '日期范围(daterange)',
-      value: 'daterange'
-    },
-    {
-      label: '月范围(monthrange)',
-      value: 'monthrange'
-    },
-    {
-      label: '日期时间范围(datetimerange)',
-      value: 'datetimerange'
-    }
+  dateRangeTypeOptions: [                /* 日期范围类型选项 */
+    { label: '日期范围(daterange)',       value: 'daterange' },
+    { label: '月范围(monthrange)',        value: 'monthrange' },
+    { label: '日期时间范围(datetimerange)', value: 'datetimerange' }
   ],
-  colorFormatOptions: [
-    {
-      label: 'hex',
-      value: 'hex'
-    },
-    {
-      label: 'rgb',
-      value: 'rgb'
-    },
-    {
-      label: 'rgba',
-      value: 'rgba'
-    },
-    {
-      label: 'hsv',
-      value: 'hsv'
-    },
-    {
-      label: 'hsl',
-      value: 'hsl'
-    }
+  colorFormatOptions: [                  /* 颜色格式选项 */
+    { label: 'hex',  value: 'hex' },
+    { label: 'rgb',  value: 'rgb' },
+    { label: 'rgba', value: 'rgba' },
+    { label: 'hsv',  value: 'hsv' },
+    { label: 'hsl',  value: 'hsl' }
   ],
-  justifyOptions: [
-    {
-      label: 'start',
-      value: 'start'
-    },
-    {
-      label: 'end',
-      value: 'end'
-    },
-    {
-      label: 'center',
-      value: 'center'
-    },
-    {
-      label: 'space-around',
-      value: 'space-around'
-    },
-    {
-      label: 'space-between',
-      value: 'space-between'
-    }
+  justifyOptions: [                     /* flex 水平排列选项 */
+    { label: 'start',         value: 'start' },
+    { label: 'end',           value: 'end' },
+    { label: 'center',        value: 'center' },
+    { label: 'space-around',  value: 'space-around' },
+    { label: 'space-between', value: 'space-between' }
   ],
-  layoutTreeProps: {
-    label(data, node) {
+  layoutTreeProps: {                    /* 布局树展示配置 */
+    label(data) {
       return data.componentName || `${data.label}: ${data.vModel}`
     }
   }
@@ -584,6 +536,7 @@ const { currentTab, currentNode, dialogVisible, iconsVisible, currentIconModel, 
 
 const documentLink = computed(() => props.activeData.document || 'https://element-plus.org/zh-CN/guide/installation')
 
+/* 日期类型选项计算：单日期 / 日期范围 */
 const dateOptions = computed(() => {
   if (props.activeData.type !== undefined && props.activeData.tag === 'el-date-picker') {
     if (props.activeData['start-placeholder'] === undefined) {
@@ -594,38 +547,32 @@ const dateOptions = computed(() => {
   return []
 })
 
+/* 组件类型切换选项列表 */
 const tagList = ref([
-  {
-    label: '输入型组件',
-    options: inputComponents
-  },
-  {
-    label: '选择型组件',
-    options: selectComponents
-  }
+  { label: '输入型组件', options: inputComponents },
+  { label: '选择型组件', options: selectComponents }
 ])
 
 const emit = defineEmits(['tag-change'])
 
+/** 添加正则校验规则 */
 function addReg() {
-  props.activeData.regList.push({
-    pattern: '',
-    message: ''
-  })
-}
-function addSelectItem() {
-  props.activeData.options.push({
-    label: '',
-    value: ''
-  })
+  props.activeData.regList.push({ pattern: '', message: '' })
 }
 
+/** 添加选项（checkbox / radio / select） */
+function addSelectItem() {
+  props.activeData.options.push({ label: '', value: '' })
+}
+
+/** 添加树节点（cascader） */
 function addTreeItem() {
   ++idGlobal.value
   dialogVisible.value = true
   currentNode.value = props.activeData.options
 }
 
+/** 渲染树节点操作按钮（添加子级 / 删除） */
 function renderContent(h, { node, data, store }) {
   return h('div', {
     class: "custom-tree-node"
@@ -655,6 +602,8 @@ function renderContent(h, { node, data, store }) {
     ])
   ])
 }
+
+/** 添加子节点 */
 function append(data) {
   if (!data.children) {
     data.children = []
@@ -662,19 +611,26 @@ function append(data) {
   dialogVisible.value = true
   currentNode.value = data.children
 }
+
+/** 删除节点 */
 function remove(node, data) {
   const { parent } = node
   const children = parent.data.children || parent.data
   const index = children.findIndex(d => d.id === data.id)
   children.splice(index, 1)
 }
+
+/** 接收弹窗返回的树节点 */
 function addNode(data) {
   currentNode.value.push(data)
 }
 
+/** 设置选项值：数字字符串转数字 */
 function setOptionValue(item, val) {
   item.value = isNumberStr(val) ? +val : val
 }
+
+/** 默认值转换为输入框显示格式 */
 function setDefaultValue(val) {
   if (Array.isArray(val)) {
     return val.join(',')
@@ -688,19 +644,21 @@ function setDefaultValue(val) {
   return val
 }
 
+/** 默认值输入处理：数组/布尔/字符串/数字 */
 function onDefaultValueInput(str) {
   if (Array.isArray(props.activeData.defaultValue)) {
-    // 数组
+    /* 数组：逗号分隔 */
     props.activeData.defaultValue = str.split(',').map(val => (isNumberStr(val) ? +val : val))
   } else if (['true', 'false'].indexOf(str) > -1) {
-    // 布尔
+    /* 布尔 */
     props.activeData.defaultValue = JSON.parse(str)
   } else {
-    // 字符串和数字
+    /* 字符串和数字 */
     props.activeData.defaultValue = isNumberStr(str) ? +str : str
   }
 }
 
+/** switch 开关值输入处理 */
 function onSwitchValueInput(val, name) {
   if (['true', 'false'].indexOf(val) > -1) {
     props.activeData[name] = JSON.parse(val)
@@ -709,6 +667,7 @@ function onSwitchValueInput(val, name) {
   }
 }
 
+/** 设置时间格式 */
 function setTimeValue(val, type) {
   const valueFormat = type === 'week' ? dateTimeFormat.date : val
   props.activeData.defaultValue = null
@@ -716,45 +675,55 @@ function setTimeValue(val, type) {
   props.activeData.format = val
 }
 
+/** 栅格跨度变更 */
 function spanChange(val) {
   props.formConf.span = val
 }
 
+/** 多选切换：重置默认值 */
 function multipleChange(val) {
   props.activeData.defaultValue = val ? [] : ''
 }
 
+/** 日期类型切换 */
 function dateTypeChange(val) {
   setTimeValue(dateTimeFormat[val], val)
 }
 
+/** 范围选择切换 */
 function rangeChange(val) {
   props.activeData.defaultValue = val ? [props.activeData.min, props.activeData.max] : props.activeData.min
 }
 
+/** 评分辅助文字切换：取消显示分数 */
 function rateTextChange(val) {
   if (val) props.activeData['show-score'] = false
 }
 
+/** 评分显示分数切换：取消显示辅助文字 */
 function rateScoreChange(val) {
   if (val) props.activeData['show-text'] = false
 }
 
+/** 颜色格式切换 */
 function colorFormatChange(val) {
   props.activeData.defaultValue = null
   props.activeData['show-alpha'] = val.indexOf('a') > -1
-  props.activeData.renderKey = +new Date() // 更新renderKey,重新渲染该组件
+  props.activeData.renderKey = +new Date()
 }
 
+/** 打开图标选择弹窗 */
 function openIconsDialog(model) {
   iconsVisible.value = true
   currentIconModel.value = model
 }
 
+/** 设置选中图标 */
 function setIcon(val) {
   props.activeData[currentIconModel.value] = val
 }
 
+/** 切换组件类型 */
 function tagChange(tagIcon) {
   let target = inputComponents.find(item => item.tagIcon === tagIcon)
   if (!target) target = selectComponents.find(item => item.tagIcon === tagIcon)

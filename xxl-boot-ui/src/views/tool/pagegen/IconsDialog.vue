@@ -1,3 +1,7 @@
+<!--
+  组件：图标选择弹窗
+  功能：展示 Element Plus 图标列表，按名称搜索并选择
+-->
 <template>
   <div class="icon-dialog">
     <el-dialog v-model="value" width="980px" :close-on-click-modal="false" :modal-append-to-body="false" @open="onOpen"
@@ -21,28 +25,33 @@
   </div>
 </template>
 <script setup>
+/** 图标选择弹窗 - 逻辑 */
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import { watch } from 'vue'
 
-const iconList = ref([])
-const originList = []
-const key = ref('')
-const active = ref('')
+const iconList = ref([])     /* 当前展示的图标列表 */
+const originList = []        /* 全量图标列表 */
+const key = ref('')          /* 搜索关键词 */
+const active = ref('')       /* 当前选中图标 */
 const emit = defineEmits(['select'])
 const value = defineModel()
+
+/* 初始化：加载所有 Element Plus 图标 */
 for (const [key] of Object.entries(ElementPlusIconsVue)) {
   iconList.value.push(key)
   originList.push(key)
 }
 
-function onOpen() { }
-function onClose() { }
+function onOpen() {}
+function onClose() {}
+
+/** 选择图标 */
 function onSelect(icon) {
   active.value = icon
   emit('select', icon)
   value.value = false
 }
 
+/* 搜索过滤 */
 watch(key, (val) => {
   if (val) {
     iconList.value = originList.filter(name => name.indexOf(val) > -1)
