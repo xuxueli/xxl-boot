@@ -22,10 +22,10 @@ export default defineConfig(({ mode, command }) => {
    * 获取环境变量：
    */
   const rawEnv = loadEnv(mode, process.cwd());                      // 获取环境变量
-  const API_URL = rawEnv.VITE_API_URL || 'http://localhost:8081';   // 后端API地址
-  const APP_BASE_API = rawEnv.VITE_APP_BASE_API || '/api';              // 后端路由前缀
-  const APP_ENV = rawEnv.VITE_APP_ENV;                              // 环境配置
-  const APP_PORT = Number(rawEnv.VITE_APP_PORT) || 3000;    // 端口号
+  const API_URL = rawEnv.VITE_API_URL || 'http://localhost:8081';               // 后端API地址
+  const APP_BASE_API = rawEnv.VITE_APP_BASE_API || '/api';                      // 后端路由前缀
+  const APP_ENV = rawEnv.VITE_APP_ENV;                                          // 环境配置
+  const APP_PORT = Number(rawEnv.VITE_APP_PORT) || 3000;                      // 端口号
 
   // 是否为生产环境：
   const isBuild = command === 'build';
@@ -142,17 +142,20 @@ export default defineConfig(({ mode, command }) => {
       host: true,           // 默认是localhost
       open: true,           // 运行自动打开浏览器
       proxy: {              // 代理配置，
-        // development environment proxy
+        // 请求前缀匹配
         [APP_BASE_API]: {
+          // 后端API地址
           target: API_URL,
+          // 请求头 Origin/Host 改目标地址域名
           changeOrigin: true,
+          // 请求前缀移除
           rewrite: (p) => p.replace(new RegExp(`^${APP_BASE_API}`), '')
         },
          // springdoc proxy
-         '^/v3/api-docs/(.*)': {
+         /*'^/v3/api-docs/(.*)': {
           target: API_URL,
           changeOrigin: true,
-        }
+        }*/
         /*'/api': {
           target: VITE_BASE_URL,
           changeOrigin: true,

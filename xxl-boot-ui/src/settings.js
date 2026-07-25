@@ -6,7 +6,7 @@ export default {
   /**
    * 网页标题
    */
-  title: 'Boot管理系统',
+  title: '快速开发平台',
 
   /**
    * 版本
