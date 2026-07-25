@@ -8,11 +8,13 @@
     <!-- 第一排：指标卡片 -->
     <el-row :gutter="20">
       <el-col :xs="12" :sm="6" v-for="item in stats" :key="item.label">
-        <el-card shadow="never" class="stat-card" :style="{ borderTopColor: item.color }">
+        <el-card shadow="never" class="stat-card">
           <div class="stat-body">
-            <SvgIcon :icon-class="item.icon" class="stat-icon" :style="{ color: item.color }" />
+            <div class="stat-icon-wrap" :style="{ background: item.bg }">
+              <SvgIcon :icon-class="item.icon" class="stat-icon" :style="{ color: item.color }" />
+            </div>
             <div class="stat-info">
-              <span class="stat-value" :style="{ color: item.color }">{{ item.value }}</span>
+              <span class="stat-value">{{ item.value }}</span>
               <span class="stat-label">{{ item.label }}</span>
             </div>
           </div>
@@ -80,10 +82,10 @@ import * as echarts from 'echarts'
 
 // 指标卡片
 const stats = ref([
-  { label: '用户数量', value: 0, icon: 'user', color: '#7265e6' },
-  { label: '角色数量', value: 0, icon: 'peoples', color: '#2bb3c0' },
-  { label: '日志数量', value: 0, icon: 'log', color: '#f5a623' },
-  { label: '消息数量', value: 0, icon: 'message', color: '#f2706c' }
+  { label: '用户数量', value: 0, icon: 'user', color: '#5b6abf', bg: '#eef0fb' },
+  { label: '角色数量', value: 0, icon: 'peoples', color: '#319c8a', bg: '#e8f6f3' },
+  { label: '日志数量', value: 0, icon: 'log', color: '#d4943c', bg: '#fcf4e8' },
+  { label: '消息数量', value: 0, icon: 'message', color: '#c5566a', bg: '#fbeef1' }
 ])
 
 const messages = ref([])
@@ -199,22 +201,31 @@ function formatDate(date) {
 
 .stat-card {
   margin-bottom: 16px;
-  border-radius: 6px;
-  border-top: 3px solid transparent;
+  border-radius: 8px;
   transition: box-shadow 0.2s;
-  &:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+  &:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
   :deep(.el-card__body) { padding: 18px 20px; }
 }
 
 .stat-body {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
+}
+
+.stat-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .stat-icon {
-  width: 32px;
-  height: 32px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
 }
 
@@ -226,6 +237,7 @@ function formatDate(date) {
 .stat-value {
   font-size: 26px;
   font-weight: 700;
+  color: #1f2937;
   line-height: 1.2;
 }
 
@@ -298,7 +310,7 @@ function formatDate(date) {
 }
 
 html.dark {
-  .stat-value { color: #e0e0e0; }
+  .stat-value { color: #e5e7eb; }
   .card-header { color: #e0e0e0; }
   .msg-title { color: #e0e0e0; }
   .msg-item { border-bottom-color: #2a2a3e; }

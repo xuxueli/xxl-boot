@@ -54,7 +54,11 @@
       </template>
 
       <!-- 用户头像与下拉菜单 -->
-      <el-dropdown @command="handleCommand" class="avatar-container right-menu-item hover-effect" trigger="hover">
+      <el-dropdown @command="handleCommand"
+                   class="avatar-container right-menu-item hover-effect"
+                   trigger="hover"
+                   :show-timeout="50"
+                   :hide-timeout="100">
 
         <!-- 用户信息  -->
         <div class="avatar-wrapper">
