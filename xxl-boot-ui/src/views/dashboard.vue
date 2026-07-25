@@ -50,8 +50,10 @@
         <el-card shadow="hover" class="msg-card">
           <template v-slot:header>
             <div class="card-header">
-              <SvgIcon icon-class="message"/>
-              <span>最新消息</span>
+              <div class="card-header-left">
+                <SvgIcon icon-class="list"/>
+                <span>功能模块</span>
+              </div>
             </div>
           </template>
           <div v-if="messages.length === 0" class="msg-empty">暂无消息</div>
