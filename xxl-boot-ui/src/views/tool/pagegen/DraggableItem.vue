@@ -13,7 +13,7 @@
       <draggable group="componentsGroup" :animation="340" :list="element.children" class="drag-wrapper" item-key="label"
         ref="draggableItemRef" :component-data="getComponentData()">
         <template #item="scoped">
-          <draggable-item :key="scoped.element.renderKey" :drawing-list="element.children" :element="scoped.element"
+          <DraggableItem :key="scoped.element.renderKey" :drawing-list="element.children" :element="scoped.element"
             :index="index" :active-id="activeId" :form-conf="formConf" @activeItem="activeItem(scoped.element)"
             @copyItem="copyItem(scoped.element, element.children)"
             @deleteItem="deleteItem(scoped.index, element.children)" />

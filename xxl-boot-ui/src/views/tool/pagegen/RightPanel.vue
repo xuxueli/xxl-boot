@@ -461,8 +461,12 @@
         </el-form>
       </el-scrollbar>
     </div>
-    <icons-dialog v-model="iconsVisible" :current="activeData[currentIconModel]" @select="setIcon" />
-    <treeNode-dialog v-model="dialogVisible" @commit="addNode" />
+
+    <!-- 图标选择弹窗 -->
+    <IconsDialog v-model="iconsVisible" :current="activeData[currentIconModel]" @select="setIcon" />
+
+    <!-- 树节点弹窗 -->
+    <TreeNodeDialog v-model="dialogVisible" @commit="addNode" />
 
   </div>
 </template>
