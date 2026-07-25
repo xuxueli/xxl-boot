@@ -95,7 +95,7 @@ export function getCodeImg() {
  */
 export const getRouters = () => {
   return request({
-    url: '/auth/getRouters',
+    url: '/getRouters',
     method: 'get'
   })
 }

@@ -50,9 +50,9 @@ public class IndexController {
 	/**
 	 * 获取路由菜单
 	 *
-	 * 转换为前端 Vue Router 可消费的树形结构，输出格式与旧项目 SysMenuServiceImpl#buildMenus 一致。
+	 * 转换为前端 Vue Router 可消费的树形结构
 	 */
-	@RequestMapping("/auth/getRouters")
+	@RequestMapping("/getRouters")
 	@XxlSso
 	public Response<List<RouterVo>> getRouters(HttpServletRequest request) {
 

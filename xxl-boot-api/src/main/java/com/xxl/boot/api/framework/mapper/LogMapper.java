@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * Log Mapper
@@ -51,5 +52,10 @@ public interface LogMapper {
                              @Param("title") String title,
                              @Param("offset") int offset,
                              @Param("pagesize") int pagesize);
+
+    /**
+     * 按日期统计日志趋势
+     */
+    List<Map<String, Object>> trendList(@Param("days") int days);
 
 }

@@ -1,216 +1,322 @@
 <!--
   页面：Dashboard（首页）
-  功能：系统简介、更新日志
+  功能：统计概览、日志趋势、最新消息
 -->
 <template>
-  <div class="app-container home">
+  <div class="app-container dashboard">
 
+    <!-- 第一排：指标卡片 -->
     <el-row :gutter="20">
-      <!-- 系统简介 -->
-      <el-col :sm="24" :lg="16" style="padding-left: 20px">
-        <h2>Boot后台管理框架</h2>
-        <p>
-          一直想做一款后台管理系统，看了很多优秀的开源项目但是发现没有合适自己的。于是利用空闲休息时间开始自己写一套后台系统。如此有了Boot管理系统，她可以用于所有的Web应用程序，如网站管理后台，网站会员中心，CMS，CRM，OA等等，当然，您也可以对她进行深度定制，以做出更强系统。所有前端后台代码封装过后十分精简易上手，出错概率低。同时支持移动客户端访问。系统会陆续更新一些实用功能。
-        </p>
-        <p>
-          <b>当前版本:</b> <span>v{{ version }}</span>
-        </p>
-        <p>
-          <el-tag type="danger">&yen;免费开源</el-tag>
-        </p>
-        <p>
-          <el-button
-              type="primary"
-              icon="Cloudy"
-              plain
-              @click="goTarget('https://gitee.com/boot/boot')"
-          >访问码云
-          </el-button>
-          <el-button
-              icon="HomeFilled"
-              plain
-              @click="goTarget('http://boot.vip')"
-          >访问主页
-          </el-button>
-        </p>
-      </el-col>
-
-      <!-- 技术选型 -->
-      <el-col :sm="24" :lg="8" style="padding-left: 50px">
-        <el-row>
-          <el-col :span="12">
-            <h2>技术选型</h2>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="6">
-            <h4>后端技术</h4>
-            <ul>
-              <li>SpringBoot</li>
-              <li>Spring Security</li>
-              <li>JWT</li>
-              <li>MyBatis</li>
-              <li>Druid</li>
-              <li>Fastjson</li>
-              <li>...</li>
-            </ul>
-          </el-col>
-          <el-col :span="6">
-            <h4>前端技术</h4>
-            <ul>
-              <li>Vue</li>
-              <li>Vuex</li>
-              <li>Element-ui</li>
-              <li>Axios</li>
-              <li>Sass</li>
-              <li>Quill</li>
-              <li>...</li>
-            </ul>
-          </el-col>
-        </el-row>
+      <el-col :xs="12" :sm="6" v-for="item in stats" :key="item.label">
+        <el-card shadow="hover" class="stat-card">
+          <div class="stat-body">
+            <div class="stat-icon-wrap" :style="{ background: item.color }">
+              <SvgIcon :icon-class="item.icon" class="stat-icon" />
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ item.value }}</span>
+              <span class="stat-label">{{ item.label }}</span>
+            </div>
+          </div>
+        </el-card>
       </el-col>
     </el-row>
 
-    <el-divider/>
+    <!-- 第二排：折线图 + 消息列表 -->
+    <el-row :gutter="20" class="row-chart">
 
-    <el-row :gutter="20">
-
-      <!-- 常用功能 -->
-      <el-col :xs="24" :sm="24" :md="12" :lg="16">
-        <el-card class="update-log">
+      <!-- 折线图 -->
+      <el-col :xs="24" :lg="17">
+        <el-card shadow="hover" class="chart-card">
           <template v-slot:header>
-            <div class="clearfix">
-              <span>常用功能</span>
+            <div class="card-header">
+              <div class="card-header-left">
+                <SvgIcon icon-class="chart" />
+                <span>审计日志趋势</span>
+              </div>
+              <el-radio-group v-model="chartDays" size="small" @change="loadChart">
+                <el-radio-button :value="7">7天</el-radio-button>
+                <el-radio-button :value="14">14天</el-radio-button>
+                <el-radio-button :value="30">30天</el-radio-button>
+              </el-radio-group>
             </div>
           </template>
-          <el-collapse accordion>
-            <el-collapse-item title="组织管理">
-              <ol>
-                <li>针对组织、用户、角色及资源等进行管理，支持灵活的人员角色、菜单权限、人员授权等操作管理。</li>
-              </ol>
-            </el-collapse-item>
-            <el-collapse-item title="系统管理">
-              <ol>
-                <li>提供站内消息、审计日志、字典管理、审计日志等相关能力，支持高校灵活进行系统监控及管理。</li>
-              </ol>
-            </el-collapse-item>
-            <el-collapse-item title="系统工具">
-              <ol>
-                <li>提供前后端一站式代码生成工具、前端表单在线构建工具等，辅助快速进行敏捷迭代开发。</li>
-              </ol>
-            </el-collapse-item>
-            <el-collapse-item title="帮助中心">
-              <ol>
-                <li>提供内容丰富、干练易懂的操作文档，辅助快速上手项目。</li>
-              </ol>
-            </el-collapse-item>
-          </el-collapse>
+          <div ref="chartRef" class="chart-box"></div>
         </el-card>
       </el-col>
 
-      <!-- 联系信息 -->
-      <el-col :xs="24" :sm="24" :md="12" :lg="8">
-        <el-card class="update-log">
+      <!-- 消息列表 -->
+      <el-col :xs="24" :lg="7">
+        <el-card shadow="hover" class="msg-card">
           <template v-slot:header>
-            <div class="clearfix">
-              <span>联系信息</span>
+            <div class="card-header">
+              <SvgIcon icon-class="message" />
+              <span>最新消息</span>
             </div>
           </template>
-          <div class="body">
-            <p>
-              <i class="el-icon-s-promotion"></i> 官网：
-              http://www.boot.vip
-            </p>
-            <p>
-              <i class="el-icon-user-solid"></i> 社区群：111111、111111、111111
-              <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s>
-              <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s>
-              <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s> <s> 满111111111 </s>
-            </p>
+          <div v-if="messages.length === 0" class="msg-empty">暂无消息</div>
+          <div v-else class="msg-list">
+            <div v-for="item in messages" :key="item.id" class="msg-item">
+              <div class="msg-title">{{ item.title }}</div>
+              <div class="msg-meta">
+                <el-tag size="small" :type="item.category === 1 ? 'warning' : 'success'">
+                  {{ item.category === 1 ? '通知' : '公告' }}
+                </el-tag>
+                <span class="msg-time">{{ item.addTime }}</span>
+              </div>
+            </div>
           </div>
         </el-card>
       </el-col>
 
     </el-row>
+
   </div>
 </template>
 
-
 <script setup name="Index">
 
-// 引入
-const version = ref('3.9.2')        // 版本号
+import { getStats, getLogTrend } from '@/api/dashboard'
+import { listNoticeTop } from '@/api/system/message'
+import * as echarts from 'echarts'
 
-/** 跳转外部链接 */
-function goTarget(url) {
-  window.open(url, '__blank')
+// 指标卡片
+const stats = ref([
+  { label: '用户数量', value: 0, icon: 'user', color: '#409EFF' },
+  { label: '角色数量', value: 0, icon: 'peoples', color: '#67C23A' },
+  { label: '日志数量', value: 0, icon: 'log', color: '#E6A23C' },
+  { label: '消息数量', value: 0, icon: 'message', color: '#F56C6C' }
+])
+
+const messages = ref([])
+const chartRef = ref(null)
+const chartDays = ref(30)
+let chartInstance = null
+
+/**
+ * init
+ */
+onMounted(() => {
+  loadStats()
+  loadMessages()
+  nextTick(loadChart)
+})
+
+/**
+ * destory
+ */
+onUnmounted(() => {
+  chartInstance?.dispose()
+})
+
+/**
+ * 指标卡片 - 数据加载
+ */
+function loadStats() {
+  getStats().then(res => {
+    const data = res.data
+    stats.value[0].value = data.userCount
+    stats.value[1].value = data.roleCount
+    stats.value[2].value = data.logCount
+    stats.value[3].value = data.messageCount
+  })
 }
+
+/**
+ * 消息列表 - 数据加载
+ */
+function loadMessages() {
+  listNoticeTop().then(res => {
+    messages.value = res.data || []
+  })
+}
+
+/**
+ * 日志趋势 - 数据加载
+ */
+function loadChart() {
+  const days = chartDays.value
+  getLogTrend(days).then(res => {
+    const list = res.data || []
+
+    // 生成完整日期序列，无数据日期补 0
+    const dateMap = {}
+    list.forEach(i => { dateMap[i.date] = i.count })
+
+    const dates = []
+    const counts = []
+    const now = new Date()
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(now)
+      d.setDate(d.getDate() - i)
+      const key = formatDate(d)
+      dates.push(key)
+      counts.push(dateMap[key] || 0)
+    }
+
+    chartInstance = echarts.init(chartRef.value)
+    chartInstance.setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: 40, right: 20, bottom: 30, top: 20 },
+      xAxis: {
+        type: 'category',
+        data: dates,
+        axisLabel: { fontSize: 11, color: '#909399' }
+      },
+      yAxis: {
+        type: 'value',
+        minInterval: 1,
+        axisLabel: { fontSize: 11, color: '#909399' }
+      },
+      series: [{
+        data: counts,
+        type: 'line',
+        smooth: true,
+        lineStyle: { width: 2, color: '#409EFF' },
+        areaStyle: {
+          color: {
+            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(64,158,255,0.3)' },
+              { offset: 1, color: 'rgba(64,158,255,0.02)' }
+            ]
+          }
+        },
+        itemStyle: { color: '#409EFF' }
+      }]
+    })
+  })
+}
+
+function formatDate(date) {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
 </script>
 
-
 <style scoped lang="scss">
-.home {
-  blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
-    font-size: 17.5px;
-    border-left: 5px solid #eee;
-  }
 
-  hr {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border: 0;
-    border-top: 1px solid #eee;
-  }
+.stat-card {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  :deep(.el-card__body) { padding: 20px; }
+}
 
-  .col-item {
-    margin-bottom: 20px;
-  }
+.stat-body {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 
-  ul {
-    padding: 0;
-    margin: 0;
-  }
+.stat-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
-  font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+.stat-icon {
+  width: 26px;
+  height: 26px;
+  color: #fff;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #303133;
+  line-height: 1.2;
+}
+
+.stat-label {
   font-size: 13px;
-  color: #676a6c;
-  overflow-x: hidden;
+  color: #909399;
+  margin-top: 2px;
+}
 
-  ul {
-    list-style-type: none;
-  }
+.row-chart {
+  margin-top: 4px;
+}
 
-  h4 {
-    margin-top: 0px;
-  }
+.chart-card, .msg-card {
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
 
-  h2 {
-    margin-top: 10px;
-    font-size: 26px;
-    font-weight: 100;
-  }
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+}
 
-  p {
-    margin-top: 10px;
+.card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    b {
-      font-weight: 700;
-    }
-  }
+.chart-box {
+  height: 300px;
+  width: 100%;
+}
 
-  .update-log {
-    ol {
-      display: block;
-      list-style-type: decimal;
-      margin-block-start: 1em;
-      margin-block-end: 1em;
-      margin-inline-start: 0;
-      margin-inline-end: 0;
-      padding-inline-start: 40px;
-    }
-  }
+.msg-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: #bbb;
+  font-size: 13px;
+}
+
+.msg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.msg-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  &:last-child { border-bottom: none; }
+}
+
+.msg-title {
+  font-size: 13px;
+  color: #303133;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 6px;
+}
+
+.msg-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.msg-time {
+  font-size: 11px;
+  color: #bbb;
+}
+
+html.dark {
+  .stat-value { color: #e0e0e0; }
+  .card-header { color: #e0e0e0; }
+  .msg-title { color: #e0e0e0; }
+  .msg-item { border-bottom-color: #2a2a3e; }
 }
 </style>
-
