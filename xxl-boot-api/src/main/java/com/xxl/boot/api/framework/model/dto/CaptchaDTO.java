@@ -11,6 +11,8 @@ public class CaptchaDTO {
 
     private String image;
 
+    private boolean enable;
+
     public String getUuid() {
         return uuid;
     }
@@ -27,4 +29,11 @@ public class CaptchaDTO {
         this.image = image;
     }
 
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
+    }
 }

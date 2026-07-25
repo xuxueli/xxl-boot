@@ -78,13 +78,15 @@ public class LoginController {
 			return Response.ofFail("username or password is invalid.");
 		}
 
-		// valid
-		if (StringTool.isBlank(loginRequest.getCaptchaUuid())) {
-			return Response.ofFail("captcha empty.");
-		}
-		String captchaResult = redisCacheUtil.getObject(Consts.getLoginCaptchaKey(loginRequest.getCaptchaUuid()));
-		if (StringTool.isBlank(captchaResult) || !captchaResult.equals(loginRequest.getCaptchaResult())) {
-			return Response.ofFail("验证码非法");
+		// valid captcha
+		if (Consts.CAPTCHA_ENABLED) {
+			if (StringTool.isBlank(loginRequest.getCaptchaUuid())) {
+				return Response.ofFail("验证码为空");
+			}
+			String captchaResult = redisCacheUtil.getObject(Consts.getLoginCaptchaKey(loginRequest.getCaptchaUuid()));
+			if (StringTool.isBlank(captchaResult) || !captchaResult.equals(loginRequest.getCaptchaResult())) {
+				return Response.ofFail("验证码非法");
+			}
 		}
 
 		// 1、verify login user, include userName, password, status
@@ -159,6 +161,15 @@ public class LoginController {
 	@XxlSso(login = false)
 	public Response<CaptchaDTO> captcha(){
 
+		// build response
+		CaptchaDTO captchaDTO = new CaptchaDTO();
+		captchaDTO.setEnable(Consts.CAPTCHA_ENABLED);
+
+		// valid switch
+		if (!captchaDTO.isEnable()) {
+			return Response.ofSuccess(captchaDTO);
+		}
+
 		// 1、generate captcha text
 		CaptchaTool.TextResult textResult = captchaTool.createText();
 
@@ -180,7 +191,6 @@ public class LoginController {
 		redisCacheUtil.setObject(Consts.getLoginCaptchaKey(uuid), result, 3, TimeUnit.MINUTES);
 
 		// 4、build response
-		CaptchaDTO captchaDTO = new CaptchaDTO();
 		captchaDTO.setUuid(uuid);
 		captchaDTO.setImage(base64Image);
 

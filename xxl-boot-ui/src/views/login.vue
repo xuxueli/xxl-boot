@@ -151,6 +151,7 @@ function handleLogin() {
 /** 获取验证码图片，根据开关控制显示 */
 function getCode() {
   getCodeImg().then(res => {
+    captchaEnabled.value = res.data.enable
     codeUrl.value = res.data.image
     loginForm.value.captchaUuid = res.data.uuid
   })
