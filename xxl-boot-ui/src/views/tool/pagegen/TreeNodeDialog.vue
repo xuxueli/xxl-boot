@@ -42,7 +42,7 @@
 <script setup>
 /** 树节点添加弹窗 - 逻辑 */
 const open = defineModel()
-const emit = defineEmits(['confirm'])
+const emit = defineEmits(['commit'])
 const formData = ref({
   label: undefined,
   value: undefined

@@ -682,17 +682,16 @@ function renderContent(h, {node, data, store}) {
     }, [
       h(resolveComponent('el-link'), {
         type: "primary",
-        icon: Plus,
-        underline: false,
+        icon: resolveComponent('Plus'),
+        underline: 'never',
         onClick: () => {
           append(data)
-
         }
       }),
       h(resolveComponent('el-link'), {
         type: "danger",
-        icon: Delete,
-        underline: false,
+        icon: resolveComponent('Delete'),
+        underline: 'never',
         style: "margin-left: 5px;",
         onClick: () => {
           remove(node, data)

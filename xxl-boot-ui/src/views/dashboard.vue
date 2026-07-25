@@ -249,8 +249,8 @@ function loadChart() {
 }
 
 .stat-icon-wrap {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -271,7 +271,7 @@ function loadChart() {
 
 .stat-value {
   font-size: 26px;
-  font-weight: 700;
+  font-weight: 500;
   color: #1f2937;
   line-height: 1.2;
 }
