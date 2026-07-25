@@ -9,7 +9,7 @@
  *
  * 拦截器能力：
  *   请求 - token 注入 / GET 参数序列化 / POST/PUT 防重复提交
- *   响应 - 401 自动登录弹窗 / blob 透传 / 业务码统一处理
+ *   响应 - 301 自动登录弹窗 / blob 透传 / 业务码统一处理
  */
 import axios from 'axios'
 import {ElNotification, ElMessageBox, ElMessage, ElLoading} from 'element-plus'
@@ -21,12 +21,12 @@ import {useUserStore} from '@/store'
 import settings from '@/settings'
 
 
-// 401 重登录防重复弹出标志
+// 301 重登录防重复弹出标志
 let isRelogin = {show: false}
 
 // 错误码映射表：后端业务码 → 前端展示文案
 const errorCode = {
-  '401': '认证失败，无法访问系统资源',
+  '301': '认证失败，无法访问系统资源',
   '403': '当前操作没有权限',
   '404': '访问资源不存在',
   'default': '系统未知错误，请反馈给管理员'
@@ -72,7 +72,7 @@ service.interceptors.request.use(config => {
 
     // 1. Token 注入
     if (getToken() && !isToken) {
-        config.headers['Authorization'] = 'Bearer ' + getToken()
+        config.headers['xxl_sso_token'] = getToken()
     }
 
     // 2. GET 参数序列化
@@ -129,9 +129,9 @@ service.interceptors.request.use(config => {
  *      1. blob / arraybuffer 透传
  *         - 文件下载接口的 responseType 为 blob/arraybuffer，不做业务码解析，直接返回。
  *
- *      2. code === 401（未授权 / 会话过期）
+ *      2. code === 301（未授权 / 会话过期）
  *         - 弹出重新登录确认框。
- *         - isRelogin.show 标志防止多个并发 401 重复弹框。
+ *         - isRelogin.show 标志防止多个并发 301 重复弹框。
  *         - 点击"重新登录"时调用 userStore.logout() 清除状态并跳转登录页。
  *         - 始终返回 rejected Promise，阻止后续代码继续执行。
  *
@@ -159,8 +159,8 @@ service.interceptors.response.use(res => {
             return res.data
         }
 
-        // 2. 401：未授权，弹出重新登录弹窗
-        if (code === 401) {
+        // 2. 301：未授权，弹出重新登录弹窗
+        if (code === 301) {
             if (!isRelogin.show) {
                 isRelogin.show = true
                 ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {

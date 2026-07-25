@@ -163,22 +163,32 @@ function filterChildren(childrenMap) {
 
 /**
  * 按 view 路径匹配页面组件
+ *
+ * 支持两种格式匹配：
+ *   1) /path/index   → 匹配 views/path/index.vue
+ *   2) /path         → 尝试匹配 views/path/index.vue（目录格式，自动补全 index）
  */
 export const loadView = (view) => {
-
-  /*if (view === 'http://www.baidu.com') {
-    debugger
-  }*/
 
   let res
   // 去掉 view 可能携带的前导 "/"，统一匹配格式
   const key = view.replace(/^\//, '')
   for (const path in modules) {
-    // ./views/org/user/index.vue → org/user/index
+    // ./views/{org/user/index}.vue → org/user/index
     const relative = path.split('/views/')[1].replace('.vue', '')
     if (relative === key) {
       // 匹配到页面组件，返回 () => import() 异步工厂
       res = () => modules[path]()
+    }
+  }
+  // 未匹配到，尝试 /path 格式 → 补全 /path/index
+  if (!res) {
+    const keyWithIndex = key + '/index'
+    for (const path in modules) {
+      const relative = path.split('/views/')[1].replace('.vue', '')
+      if (relative === keyWithIndex) {
+        res = () => modules[path]()
+      }
     }
   }
   return res

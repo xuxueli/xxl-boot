@@ -43,15 +43,15 @@
 
       <!-- 公告列表 -->
       <div v-else>
-        <div v-for="item in noticeList" :key="item.noticeId" class="notice-item" :class="{ 'is-read': item.isRead }"
+        <div v-for="item in noticeList" :key="item.id" class="notice-item" :class="{ 'is-read': item.isRead }"
              @click="previewNotice(item)">
           <!-- 公告标签 -->
-          <el-tag size="small" :type="item.noticeType === '1' ? 'warning' : 'success'" class="notice-tag">
-            {{ item.noticeType === '1' ? '通知' : '公告' }}
+          <el-tag size="small" :type="item.category === 1 ? 'warning' : 'success'" class="notice-tag">
+            {{ item.category === 1 ? '通知' : '公告' }}
           </el-tag>
           <!-- 标题 / 时间 -->
-          <span class="notice-item-title">{{ item.noticeTitle }}</span>
-          <span class="notice-item-date">{{ item.createTime }}</span>
+          <span class="notice-item-title">{{ item.title }}</span>
+          <span class="notice-item-date">{{ item.addTime }}</span>
         </div>
       </div>
 
@@ -81,8 +81,8 @@ const noticeViewRef = ref(null)         /* 抽屉组件引用 */
 function loadNoticeTop() {
   noticeLoading.value = true
   listNoticeTop().then(res => {
-    noticeList.value = res.data || []
-    unreadCount.value = res.unreadCount !== undefined ? res.unreadCount : noticeList.value.filter(n => !n.isRead).length
+    noticeList.value = res || []
+    unreadCount.value = noticeList.value.filter(n => !n.isRead).length
   }).finally(() => {
     noticeLoading.value = false
   })
@@ -128,7 +128,7 @@ function onNoticeLeave() {
 function previewNotice(item) {
   if (!item.isRead) {
     // 已读标记
-    markNoticeRead(item.noticeId).catch(() => {
+    markNoticeRead(item.id).catch(() => {
     })
 
     // 更新已读列表
@@ -140,7 +140,7 @@ function previewNotice(item) {
   }
 
   // 预览公告
-  noticeViewRef.value.open(item.noticeId)
+  noticeViewRef.value.open(item.id)
 }
 
 /*
@@ -148,7 +148,7 @@ function previewNotice(item) {
 */
 function markAllRead() {
   // 标记全部已读
-  const ids = noticeList.value.map(n => n.noticeId).join(',')
+  const ids = noticeList.value.map(n => n.id).join(',')
   if (!ids) return
   markNoticeReadAll(ids).catch(() => {
   })

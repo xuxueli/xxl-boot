@@ -17,10 +17,10 @@
 
         <!-- 类型标签：通知 / 公告 / 消息 -->
         <div class="notice-type-wrap">
-          <span v-if="detail.noticeType === '1'" class="notice-type-tag type-notify">
+          <span v-if="detail.category === 1" class="notice-type-tag type-notify">
             <el-icon><Bell /></el-icon> 通知
           </span>
-          <span v-else-if="detail.noticeType === '2'" class="notice-type-tag type-announce">
+          <span v-else-if="detail.category === 2" class="notice-type-tag type-announce">
             <el-icon><Message /></el-icon> 公告
           </span>
           <span v-else class="notice-type-tag type-notify">
@@ -29,17 +29,17 @@
         </div>
 
         <!-- 公告标题 -->
-        <h1 class="notice-title">{{ detail.noticeTitle }}</h1>
+        <h1 class="notice-title">{{ detail.title }}</h1>
 
         <!-- 公告元数据：发布人 / 发布时间 / 状态 -->
         <div class="notice-meta">
           <span class="meta-item">
             <el-icon><User /></el-icon>
-            <span>{{ detail.createBy || '—' }}</span>
+            <span>{{ detail.sender || '—' }}</span>
           </span>
           <span class="meta-item">
             <el-icon><Clock /></el-icon>
-            <span>{{ detail.createTime || '—' }}</span>
+            <span>{{ detail.addTime || '—' }}</span>
           </span>
           <span class="meta-item">
             <span :class="['status-dot', isStatusNormal ? 'status-ok' : 'status-off']"></span>
@@ -56,7 +56,7 @@
 
         <!-- 公告正文 -->
         <div class="notice-body">
-          <div v-if="hasContent" class="notice-content" v-html="detail.noticeContent" />
+          <div v-if="hasContent" class="notice-content" v-html="detail.content" />
           <div v-else class="notice-empty notice-empty--inner">
             <el-icon><Document /></el-icon> 暂无内容
           </div>
@@ -86,7 +86,7 @@ const isStatusNormal = computed(() => {
 * 是否有正文内容（非空字符串）
 */
 const hasContent = computed(() => {
-  const content = detail.value && detail.value.noticeContent
+  const content = detail.value && detail.value.content
   return content != null && String(content).trim() !== ''
 })
 
@@ -124,7 +124,8 @@ function open(payload) {
   loading.value = true
   detail.value = null
   getNotice(id).then(res => {
-    detail.value = res.data
+    // axios 拦截器已解包 data，res 即 Message/MessageDTO 实体
+    detail.value = res
   }).catch(() => {
     detail.value = null
   }).finally(() => {

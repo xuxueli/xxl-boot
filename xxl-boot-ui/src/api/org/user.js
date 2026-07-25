@@ -13,11 +13,12 @@ import { parseStrEmpty } from "@/utils/common";
  */
 export function listUser(query) {
   return request({
-    url: '/system/user/list',
+    url: '/org/user/pageList',
     method: 'get',
     params: query
   })
 }
+
 
 /**
  * 查询用户详情。
@@ -26,8 +27,9 @@ export function listUser(query) {
  */
 export function getUser(userId) {
   return request({
-    url: '/system/user/' + parseStrEmpty(userId),
-    method: 'get'
+    url: '/org/user/load',
+    method: 'get',
+    params: { id: userId }
   })
 }
 
@@ -38,7 +40,7 @@ export function getUser(userId) {
  */
 export function addUser(data) {
   return request({
-    url: '/system/user',
+    url: '/org/user/add',
     method: 'post',
     data: data
   })
@@ -51,8 +53,8 @@ export function addUser(data) {
  */
 export function updateUser(data) {
   return request({
-    url: '/system/user',
-    method: 'put',
+    url: '/org/user/update',
+    method: 'post',
     data: data
   })
 }
@@ -64,8 +66,9 @@ export function updateUser(data) {
  */
 export function delUser(userId) {
   return request({
-    url: '/system/user/' + userId,
-    method: 'delete'
+    url: '/org/user/delete',
+    method: 'post',
+    params: { 'ids[]': [userId] }
   })
 }
 
@@ -81,118 +84,78 @@ export function resetUserPwd(userId, password) {
     password
   }
   return request({
-    url: '/system/user/resetPwd',
-    method: 'put',
+    url: '/org/user/update',
+    method: 'post',
     data: data
   })
 }
 
-/**
- * 修改用户状态。
- * @param {string|number} userId 用户 ID。
- * @param {string} status 状态值。
- * @returns {Promise<any>} 修改结果。
- */
 export function changeUserStatus(userId, status) {
   const data = {
     userId,
     status
   }
   return request({
-    url: '/system/user/changeStatus',
-    method: 'put',
+    url: '/org/user/update',
+    method: 'post',
     data: data
   })
 }
 
-/**
- * 查询当前用户个人信息。
- * @returns {Promise<any>} 个人资料。
- */
 export function getUserProfile() {
   return request({
-    url: '/system/user/profile',
+    url: '/auth/logincheck',
     method: 'get'
   })
 }
 
-/**
- * 修改当前用户个人信息。
- * @param {Object} data 个人资料数据。
- * @returns {Promise<any>} 修改结果。
- */
 export function updateUserProfile(data) {
   return request({
-    url: '/system/user/profile',
-    method: 'put',
+    url: '/org/user/update',
+    method: 'post',
     data: data
   })
 }
 
-/**
- * 修改当前用户密码。
- * @param {string} oldPassword 原密码。
- * @param {string} newPassword 新密码。
- * @returns {Promise<any>} 修改结果。
- */
 export function updateUserPwd(oldPassword, newPassword) {
   const data = {
     oldPassword,
-    newPassword
+    password: newPassword
   }
   return request({
-    url: '/system/user/profile/updatePwd',
-    method: 'put',
+    url: '/org/user/updatePwd',
+    method: 'post',
     data: data
   })
 }
 
-/**
- * 上传当前用户头像。
- * @param {string|Object} data 头像表单数据。
- * @returns {Promise<any>} 上传结果。
- */
 export function uploadAvatar(data) {
   return request({
-    url: '/system/user/profile/avatar',
+    url: '/org/user/update',
     method: 'post',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     data: data
   })
 }
 
-/**
- * 查询用户授权角色。
- * @param {string|number} userId 用户 ID。
- * @returns {Promise<any>} 角色授权信息。
- */
 export function getAuthRole(userId) {
   return request({
-    url: '/system/user/authRole/' + userId,
-    method: 'get'
+    url: '/org/user/load',
+    method: 'get',
+    params: { id: userId }
   })
 }
 
-/**
- * 保存用户授权角色。
- * @param {Object} data 角色授权数据。
- * @returns {Promise<any>} 保存结果。
- */
 export function updateAuthRole(data) {
   return request({
-    url: '/system/user/authRole',
-    method: 'put',
-    params: data
+    url: '/org/user/update',
+    method: 'post',
+    data: data
   })
 }
 
-/**
- * 查询部门下拉树。
- * @returns {Promise<any>} 部门树结构。
- */
 export function deptTreeSelect() {
   return request({
-    url: '/system/user/deptTree',
+    url: '/org/org/treeList',
     method: 'get'
   })
 }

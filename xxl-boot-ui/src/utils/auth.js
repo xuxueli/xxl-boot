@@ -51,6 +51,9 @@ export function getAuthHeaders() {
 export function setToken(token) {
   return Cookies.set(TokenKey, token)
 }
+export function setTokenWithAge(token, age) {
+  return Cookies.set(TokenKey, token, { expires: age })
+}
 
 /**
  * 删除认证令牌

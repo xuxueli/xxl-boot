@@ -6,11 +6,8 @@
  *   state   — token、用户资料、角色、权限
  *   actions — login / getInfo / logout
  */
-import router from '@/router'
-import cache from '@/utils/cache'
-import { ElMessageBox, } from 'element-plus'
 import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import {getToken, removeToken, setTokenWithAge} from '@/utils/auth'
 import { isHttp, isEmpty } from "@/utils/validate"
 import defAva from '@/assets/images/profile.jpg'
 
@@ -43,14 +40,19 @@ const useUserStore = defineStore(
       login(userInfo) {
         const username = userInfo.username.trim()
         const password = userInfo.password
-        const code = userInfo.code
-        const uuid = userInfo.uuid
+        const captchaResult = userInfo.captchaResult
+        const captchaUuid = userInfo.captchaUuid
+        const rememberMe = userInfo.rememberMe
 
         // 异步操作：
         return new Promise((resolve, reject) => {
-          login(username, password, code, uuid).then(res => {
-            setToken(res.token)
-            this.token = res.token
+          login(username, password, captchaUuid, captchaResult).then(res => {
+            this.token = res.data
+            let age = rememberMe ? 365 : 2/24     // 记住我：365天；默认，2H过期；
+
+            // 记住我：365天有效期，否则 session 过期
+            setTokenWithAge(this.token, age)
+
             // 操作成功：
             resolve()
           }).catch(error => {
@@ -65,39 +67,25 @@ const useUserStore = defineStore(
       getInfo() {
         return new Promise((resolve, reject) => {
           getInfo().then(res => {
-            const user = res.user
+            const data = res.data
 
             // 头像：空值兜底默认头像，相对路径拼接访问前缀
-            let avatar = user.avatar || ""
+            let avatar = data.avatar || ""
             if (!isHttp(avatar)) {
               avatar = (isEmpty(avatar)) ? defAva : import.meta.env.VITE_APP_BASE_API + avatar
             }
             // 用户基础资料
-            this.id = user.userId
-            this.name = user.userName
-            this.nickName = user.nickName
+            this.id = data.userId
+            this.name = data.userName
+            this.nickName = data.realName
             this.avatar = avatar
             // 角色权限：后端有值则回填，无值设默认角色兜底
-            if (res.roles && res.roles.length > 0) {
-              this.roles = res.roles
-              this.permissions = res.permissions
+            if (data.roleList && data.roleList.length > 0) {
+              this.roles = data.roleList
+              this.permissions = data.permissionList
             } else {
               this.roles = []
               this.permissions = []
-            }
-
-            // 缓存密码字符类型，供其他页面读取
-            cache.session.set('pwrChrtype', res.pwdChrtype)
-            // 初始密码或密码过期，弹安全提示并引导修改密码
-            if(res.isDefaultModifyPwd) {
-              ElMessageBox.confirm('您的密码还是初始密码，请修改密码！',  '安全提示', {  confirmButtonText: '确定',  cancelButtonText: '取消',  type: 'warning' }).then(() => {
-                router.push({ name: 'Profile', params: { activeTab: 'resetPwd' } })
-              }).catch(() => {})
-            }
-            if(!res.isDefaultModifyPwd && res.isPasswordExpired) {
-              ElMessageBox.confirm('您的密码已过期，请尽快修改密码！',  '安全提示', {  confirmButtonText: '确定',  cancelButtonText: '取消',  type: 'warning' }).then(() => {
-                router.push({ name: 'Profile', params: { activeTab: 'resetPwd' } })
-              }).catch(() => {})
             }
 
             // success

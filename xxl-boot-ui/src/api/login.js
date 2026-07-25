@@ -9,19 +9,19 @@ import request from '@/utils/request'
  * 用户登录。
  * @param {string} username 用户名。
  * @param {string} password 密码。
- * @param {string} code 验证码。
- * @param {string} uuid 验证码标识。
+ * @param {string} captchaUuid 验证码。
+ * @param {string} captchaResult 验证码标识。
  * @returns {Promise<any>} 登录结果。
  */
-export function login(username, password, code, uuid) {
+export function login(username, password, captchaUuid, captchaResult) {
   const data = {
     username,
     password,
-    code,
-    uuid
+    captchaUuid,
+    captchaResult
   }
   return request({
-    url: '/login',
+    url: '/auth/login',
     headers: {
       isToken: false,
       repeatSubmit: false
@@ -49,7 +49,7 @@ export function login(username, password, code, uuid) {
  */
 export function getInfo() {
   return request({
-    url: '/getInfo',
+    url: '/auth/logincheck',
     method: 'get'
   })
 }
@@ -69,7 +69,7 @@ export function getInfo() {
  */
 export function logout() {
   return request({
-    url: '/logout',
+    url: '/auth/logout',
     method: 'post'
   })
 }
@@ -80,7 +80,7 @@ export function logout() {
  */
 export function getCodeImg() {
   return request({
-    url: '/captchaImage',
+    url: '/auth/captcha',
     headers: {
       isToken: false
     },
@@ -95,7 +95,7 @@ export function getCodeImg() {
  */
 export const getRouters = () => {
   return request({
-    url: '/getRouters',
+    url: '/auth/getRouters',
     method: 'get'
   })
 }

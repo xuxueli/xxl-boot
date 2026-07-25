@@ -1,5 +1,5 @@
 <!--
-  页面：401（无权限）
+  页面：301（无权限）
   功能：提示用户无访问权限，提供返回上一页或回首页入口
 -->
 <template>
@@ -14,7 +14,7 @@
       <!-- 提示信息 -->
       <el-col :span="12">
         <h1 class="text-jumbo text-ginormous">
-          401错误!
+          301错误!
         </h1>
         <h2>您没有访问权限！</h2>
         <h6>对不起，您没有访问权限，请不要进行非法操作！您可以返回主页面</h6>
@@ -38,12 +38,12 @@
 
 <script setup>
 // 引入
-import errImage from "@/assets/images/401.gif"
+import errImage from "@/assets/images/301.gif"
 
 const route = useRoute()      // 路由数据
 const router = useRouter()    // 路由操作
 
-// 401 动图（加时间戳防缓存）
+// 301 动图（加时间戳防缓存）
 const errGif = ref(errImage + "?" + +new Date())
 
 /** 返回上一页或首页 */

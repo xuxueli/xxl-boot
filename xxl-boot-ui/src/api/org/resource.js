@@ -12,7 +12,7 @@ import request from '@/utils/request'
  */
 export function listMenu(query) {
   return request({
-    url: '/system/menu/list',
+    url: '/org/resource/treeList',
     method: 'get',
     params: query
   })
@@ -25,8 +25,9 @@ export function listMenu(query) {
  */
 export function getMenu(menuId) {
   return request({
-    url: '/system/menu/' + menuId,
-    method: 'get'
+    url: '/org/resource/load',
+    method: 'get',
+    params: { id: menuId }
   })
 }
 
@@ -36,7 +37,7 @@ export function getMenu(menuId) {
  */
 export function treeselect() {
   return request({
-    url: '/system/menu/treeselect',
+    url: '/org/resource/simpleTreeList',
     method: 'get'
   })
 }
@@ -48,8 +49,9 @@ export function treeselect() {
  */
 export function roleMenuTreeselect(roleId) {
   return request({
-    url: '/system/menu/roleMenuTreeselect/' + roleId,
-    method: 'get'
+    url: '/org/role/loadRoleRes',
+    method: 'get',
+    params: { roleId }
   })
 }
 
@@ -60,7 +62,7 @@ export function roleMenuTreeselect(roleId) {
  */
 export function addMenu(data) {
   return request({
-    url: '/system/menu',
+    url: '/org/resource/insert',
     method: 'post',
     data: data
   })
@@ -73,8 +75,8 @@ export function addMenu(data) {
  */
 export function updateMenu(data) {
   return request({
-    url: '/system/menu',
-    method: 'put',
+    url: '/org/resource/update',
+    method: 'post',
     data: data
   })
 }
@@ -86,8 +88,8 @@ export function updateMenu(data) {
  */
 export function updateMenuSort(data) {
   return request({
-    url: '/system/menu/updateSort',
-    method: 'put',
+    url: '/org/resource/update',
+    method: 'post',
     data: data
   })
 }
@@ -99,7 +101,8 @@ export function updateMenuSort(data) {
  */
 export function delMenu(menuId) {
   return request({
-    url: '/system/menu/' + menuId,
-    method: 'delete'
+    url: '/org/resource/delete',
+    method: 'post',
+    params: { 'ids[]': menuId }
   })
 }

@@ -20,7 +20,7 @@ import settings from '@/settings'
 
 /**
  * 静态路由 ——无权限门槛，启动即注册
- * 包含：登录、个人中心、重定向页、404 兜底、401、
+ * 包含：登录、个人中心、重定向页、404 兜底、301、
  */
 export const constantRoutes = [
   {
@@ -62,9 +62,9 @@ export const constantRoutes = [
     ]
   },
   {
-    // 401：未授权或会话过期
-    path: '/401',
-    component: () => import('@/views/common/401'),
+    // 301：未授权或会话过期
+    path: '/301',
+    component: () => import('@/views/common/301'),
     hidden: true
   },
   {

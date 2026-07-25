@@ -6,6 +6,7 @@
   <div class="login">
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">{{ title }}</h3>
+
       <!-- 用户名 -->
       <el-form-item prop="username">
         <el-input
@@ -18,6 +19,7 @@
           <template #prefix><SvgIcon icon-class="user" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
+
       <!-- 密码 -->
       <el-form-item prop="password">
         <el-input
@@ -31,10 +33,11 @@
           <template #prefix><SvgIcon icon-class="password" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
+
       <!-- 验证码 -->
-      <el-form-item prop="code" v-if="captchaEnabled">
+      <el-form-item prop="captchaResult" v-if="captchaEnabled">
         <el-input
-          v-model="loginForm.code"
+          v-model="loginForm.captchaResult"
           size="large"
           auto-complete="off"
           placeholder="验证码"
@@ -47,8 +50,11 @@
           <img :src="codeUrl" @click="getCode" class="login-code-img"/>
         </div>
       </el-form-item>
+
       <!-- 记住密码 -->
-      <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
+      <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
+
+      <!-- login btn -->
       <el-form-item style="width:100%;">
         <el-button
           :loading="loading"
@@ -60,10 +66,8 @@
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </el-button>
-        <div style="float: right;" v-if="register">
-          <router-link class="link-type" :to="'/register'">立即注册</router-link>
-        </div>
       </el-form-item>
+
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
@@ -75,8 +79,6 @@
 <script setup>
 // 引入
 import { getCodeImg } from "@/api/login"
-import Cookies from "js-cookie"
-import { encrypt, decrypt } from "@/utils/jsencrypt"
 import { useUserStore } from '@/store'
 import defaultSettings from '@/settings'
 
@@ -89,24 +91,23 @@ const loginRef = ref(null)                            // 登录表单 ref
 
 // 登录表单数据
 const loginForm = ref({
-  username: "admin",
-  password: "admin123",
+  username: "",
+  password: "",
   rememberMe: false,
-  code: "",
-  uuid: ""
+  captchaResult: "",
+  captchaUuid: ""
 })
 
 // 表单校验规则
 const loginRules = {
   username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
   password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
-  code: [{ required: true, trigger: "change", message: "请输入验证码" }]
+  captchaResult: [{ required: true, trigger: "change", message: "请输入验证码" }]
 }
 
 const codeUrl = ref("")                   // 验证码图片 base64
 const loading = ref(false)                // 登录按钮 loading
-const captchaEnabled = ref(true)          // 验证码开关
-const register = ref(false)               // 注册开关
+const captchaEnabled = ref(true)          // 验证码开关（来自 settings.js）
 const redirect = ref(undefined)           // 登录后重定向地址
 
 
@@ -119,7 +120,6 @@ watch(route, (newRoute) => {
 /**
  * 处理登录：
  *    - 表单校验
- *    - →记住密码（写入 Cookie）
  *    - →调用登录接口
  *    - →路由跳转
  */
@@ -127,17 +127,6 @@ function handleLogin() {
   loginRef.value.validate(valid => {
     if (valid) {
       loading.value = true
-      // 勾选记住密码→写入 Cookie
-      if (loginForm.value.rememberMe) {
-        Cookies.set("username", loginForm.value.username, { expires: 30 })
-        Cookies.set("password", encrypt(loginForm.value.password), { expires: 30 })
-        Cookies.set("rememberMe", loginForm.value.rememberMe, { expires: 30 })
-      } else {
-        // 未勾选→移除 Cookie
-        Cookies.remove("username")
-        Cookies.remove("password")
-        Cookies.remove("rememberMe")
-      }
       // 执行登录
       userStore.login(loginForm.value).then(() => {
         const query = route.query
@@ -162,31 +151,14 @@ function handleLogin() {
 /** 获取验证码图片，根据开关控制显示 */
 function getCode() {
   getCodeImg().then(res => {
-    captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled
-    if (captchaEnabled.value) {
-      codeUrl.value = "data:image/gif;base64," + res.img
-      loginForm.value.uuid = res.uuid
-    }
+    codeUrl.value = res.data.image
+    loginForm.value.captchaUuid = res.data.uuid
   })
-}
-
-/** 从 Cookie 中读取已记住的用户名、密码，回填表单 */
-function getCookie() {
-  const username = Cookies.get("username")
-  const password = Cookies.get("password")
-  const rememberMe = Cookies.get("rememberMe")
-  loginForm.value = {
-    username: username === undefined ? loginForm.value.username : username,
-    password: password === undefined ? loginForm.value.password : decrypt(password),
-    rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
-  }
 }
 
 // 获取验证码
 getCode()
 
-// 回填已记住的凭据
-getCookie()
 </script>
 
 
