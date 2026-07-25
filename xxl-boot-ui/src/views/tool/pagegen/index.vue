@@ -103,13 +103,13 @@
                        item-key="label">
               <template #item="{ element, index }">
                 <DraggableItem :key="element.renderKey"
-                                :drawing-list="drawingList"
-                                :element="element"
-                                :index="index"
-                                :active-id="activeId"
-                                :form-conf="formConf" @activeItem="activeFormItem"
-                                @copyItem="drawingItemCopy"
-                                @deleteItem="drawingItemDelete"/>
+                               :drawing-list="drawingList"
+                               :element="element"
+                               :index="index"
+                               :active-id="activeId"
+                               :form-conf="formConf" @activeItem="activeFormItem"
+                               @copyItem="drawingItemCopy"
+                               @deleteItem="drawingItemDelete"/>
               </template>
             </draggable>
 
@@ -193,7 +193,7 @@ function activeFormItem(element) {
 }
 
 /**
- * 复制代码 - 打开生成类型弹窗
+ * 复制代码：打开弹框，不显示文件
  */
 function copy() {
   dialogVisible.value = true
@@ -202,7 +202,7 @@ function copy() {
 }
 
 /**
- * 下载 vue 文件 - 打开生成类型弹窗
+ * 下载 vue 文件：打开弹框，显示文件属性
  */
 function download() {
   dialogVisible.value = true
@@ -339,7 +339,7 @@ function updateDrawingList(newTag, list) {
 }
 
 /**
- * 生成代码 - 弹窗确认后执行
+ * 生成代码：组件回调- 弹窗确认后执行
  */
 function generate(data) {
   generateConf.value = data

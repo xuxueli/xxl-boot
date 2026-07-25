@@ -5,6 +5,8 @@
 <template>
   <el-dialog v-model="open" width="500px" title="选择生成类型" @open="onOpen" @close="onClose">
     <el-form ref="codeTypeForm" :model="formData" :rules="rules" label-width="100px">
+
+      <!-- 生成类型选择 -->
       <el-form-item label="生成类型" prop="type">
         <el-radio-group v-model="formData.type">
           <el-radio-button v-for="(item, index) in typeOptions" :key="index" :label="item.value">
@@ -12,29 +14,41 @@
           </el-radio-button>
         </el-radio-group>
       </el-form-item>
+
+      <!-- 文件名输入 -->
       <el-form-item v-if="showFileName" label="文件名" prop="fileName">
         <el-input v-model="formData.fileName" placeholder="请输入文件名" clearable />
       </el-form-item>
     </el-form>
 
+    <!-- 弹窗底部按钮 -->
     <template #footer>
       <el-button type="primary" @click="handelConfirm">确定</el-button>
       <el-button @click="onClose">取消</el-button>
     </template>
+
   </el-dialog>
 </template>
 
 <script setup>
-/** 生成类型弹窗 - 逻辑 */
+/** 弹窗：显示状态 */
 const open = defineModel()
+
+// 组件属性
 const props = defineProps({
   showFileName: Boolean   /* 是否显示文件名输入 */
 })
+
+// 组件回调
 const emit = defineEmits(['confirm'])
+
+// 响应式数据
 const formData = ref({
   fileName: undefined,
   type: 'file'            /* 默认生成页面 */
 })
+
+// 表单 + 规则
 const codeTypeForm = ref()
 const rules = {
   fileName: [{
@@ -48,6 +62,8 @@ const rules = {
     trigger: 'change'
   }]
 }
+
+// 生成类型
 const typeOptions = ref([
   { label: '页面', value: 'file' },
   { label: '弹窗', value: 'dialog' }
