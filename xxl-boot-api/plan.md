@@ -12,10 +12,10 @@
 ## 2、改造范围
 
 - 框架层：
-    - 验证码：captchaImage
-    - 登录：login
-    - 个人信息（权限、角色列表）：getInfo
-    - 菜单路由：getRouters
+    - 验证码：captchaImage                  【done】
+    - 登录：login                           【done】
+    - 个人信息（权限、角色列表）：getInfo       【done】
+    - 菜单路由：getRouters                   【done】
     - 公告：listTop
     - 注销：logout
     - 个人管理：profile查询、 profile修改、updatePwd修改；

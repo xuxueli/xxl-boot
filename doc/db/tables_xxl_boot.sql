@@ -122,6 +122,16 @@ CREATE TABLE `xxl_boot_message`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
+CREATE TABLE `xxl_boot_message_read` (
+    `id`            BIGINT          NOT NULL AUTO_INCREMENT     COMMENT 'ID',
+    `message_id`    BIGINT          NOT NULL                    COMMENT '消息ID',
+    `user_id`       INT             NOT NULL                    COMMENT '用户ID',
+    `add_time`      DATETIME        NOT NULL                    COMMENT '阅读时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `i_message_user` (`message_id`, `user_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
 CREATE TABLE `xxl_boot_dict`
 (
     `id`                BIGINT          NOT NULL AUTO_INCREMENT     COMMENT '字典ID',

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.api.framework.mapper.MessageReadMapper">
+
+    <resultMap id="MessageRead" type="com.xxl.boot.api.framework.model.entity.MessageRead" >
+        <result column="id" property="id" />
+        <result column="message_id" property="messageId" />
+        <result column="user_id" property="userId" />
+        <result column="add_time" property="addTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`message_id`,
+        t.`user_id`,
+        t.`add_time`
+    </sql>
+
+    <insert id="insert" parameterType="java.util.Map" >
+        INSERT INTO xxl_boot_message_read (
+            `message_id`,
+            `user_id`,
+            `add_time`
+        )
+        VALUES(
+                  #{xxlBootMessageRead.messageId} ,
+                  #{xxlBootMessageRead.userId} ,
+                  NOW()
+              )
+    </insert>
+
+    <select id="selectByMessageId" parameterType="java.util.Map" resultMap="MessageRead">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_message_read AS t
+        WHERE t.`message_id` = #{messageId}
+    </select>
+
+    <select id="selectByMessageAndUser" parameterType="java.util.Map" resultMap="MessageRead">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_message_read AS t
+        WHERE t.`message_id` = #{messageId}
+          AND t.`user_id` = #{userId}
+    </select>
+
+    <select id="countByMessageId" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_message_read AS t
+        WHERE t.`message_id` = #{messageId}
+    </select>
+
+    <delete id="deleteByMessageIds" parameterType="java.util.Map">
+        DELETE FROM xxl_boot_message_read
+        WHERE `message_id` in
+        <foreach collection="messageIds" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -20,6 +20,7 @@ import com.xxl.boot.api.framework.web.xxllog.XxlLogQueueHelper;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
+import com.xxl.sso.core.token.TokenHelper;
 import com.xxl.tool.captcha.CaptchaTool;
 import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -82,7 +84,7 @@ public class LoginController {
 		}
 		String captchaResult = redisCacheUtil.getObject(Consts.getLoginCaptchaKey(loginRequest.getCaptchaUuid()));
 		if (StringTool.isBlank(captchaResult) || !captchaResult.equals(loginRequest.getCaptchaResult())) {
-			return Response.ofFail("captcha invalid.");
+			return Response.ofFail("验证码非法");
 		}
 
 		// 1、verify login user, include userName, password, status
@@ -138,6 +140,53 @@ public class LoginController {
 		return Response.ofSuccess(token);
 	}
 
+
+	/**
+	 * CaptchaTool
+	 */
+	private static CaptchaTool captchaTool;
+	static {
+		captchaTool = CaptchaTool
+				.build()
+				.setTextCreator(new CaptchaTool.ArithmeticTextCreator())
+				.setNoiseColor(Color.GRAY);
+	}
+
+	/**
+	 * captcha
+	 */
+	@RequestMapping("/captcha")
+	@XxlSso(login = false)
+	public Response<CaptchaDTO> captcha(){
+
+		// 1、generate captcha text
+		CaptchaTool.TextResult textResult = captchaTool.createText();
+
+		// 2、generate captcha image, and convert to base64
+		BufferedImage image = captchaTool.createImage(textResult);
+		String base64Image = null;
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			ImageIO.write(image, "png", baos);
+			byte[] imageBytes = baos.toByteArray();
+			base64Image = Base64.getEncoder().encodeToString(imageBytes);
+		} catch (IOException e) {
+			return Response.ofFail("Failed to generate captcha image, error: " + e.getMessage());
+		}
+		base64Image = "data:image/png;base64," + base64Image;
+
+		// 3、store captcha result
+		String uuid = RandomIdTool.getAlphaNumeric();
+		String result = textResult.getResult();
+		redisCacheUtil.setObject(Consts.getLoginCaptchaKey(uuid), result, 3, TimeUnit.MINUTES);
+
+		// 4、build response
+		CaptchaDTO captchaDTO = new CaptchaDTO();
+		captchaDTO.setUuid(uuid);
+		captchaDTO.setImage(base64Image);
+
+		return Response.ofSuccess(captchaDTO);
+	}
+
 	/**
 	 * Logout
 	 */
@@ -152,10 +201,16 @@ public class LoginController {
 	 */
 	private static Response<String> logoutWithHeader(HttpServletRequest request) {
 
+		// todo, will replace by new version
 		// get header
-		String token = request.getHeader(XxlSsoHelper.getInstance().getTokenKey());		// todo, will replace by new version
+		String token = request.getHeader(XxlSsoHelper.getInstance().getTokenKey());
 		if (StringTool.isBlank(token)) {
 			return Response.ofSuccess();    // not login; no need to logout.
+		}
+		// parse token
+		LoginInfo loginInfoForToken = TokenHelper.parseToken(token);
+		if (loginInfoForToken == null) {
+			return Response.ofSuccess();			// invalid token; no need to logout.
 		}
 
 		// do logout
@@ -198,51 +253,5 @@ public class LoginController {
 		// write
 		logQueueHelper.push(xxlBootLog);
 	}
-
-	/**
-	 * CaptchaTool
-	 */
-	private static CaptchaTool captchaTool;
-	static {
-		captchaTool = CaptchaTool
-				.build()
-				.setTextCreator(new CaptchaTool.ArithmeticTextCreator());
-	}
-
-	/**
-	 * captcha
-	 */
-	@RequestMapping("/captcha")
-	@XxlSso(login = false)
-	public Response<CaptchaDTO> captcha(){
-
-		// 1、generate captcha text
-		CaptchaTool.TextResult textResult = captchaTool.createText();
-
-		// 2、generate captcha image, and convert to base64
-		BufferedImage image = captchaTool.createImage(textResult);
-		String base64Image = null;
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			ImageIO.write(image, "png", baos);
-			byte[] imageBytes = baos.toByteArray();
-			base64Image = Base64.getEncoder().encodeToString(imageBytes);
-		} catch (IOException e) {
-			return Response.ofFail("Failed to generate captcha image, error: " + e.getMessage());
-		}
-		base64Image = "data:image/png;base64," + base64Image;
-
-		// 3、store captcha result
-		String uuid = RandomIdTool.getAlphaNumeric();
-		String result = textResult.getResult();
-		redisCacheUtil.setObject(Consts.getLoginCaptchaKey(uuid), result, 3, TimeUnit.MINUTES);
-
-		// 4、build response
-		CaptchaDTO captchaDTO = new CaptchaDTO();
-		captchaDTO.setUuid(uuid);
-		captchaDTO.setImage(base64Image);
-
-		return Response.ofSuccess(captchaDTO);
-	}
-
 
 }
