@@ -6,11 +6,15 @@
   <div class="icon-dialog">
     <el-dialog v-model="value" width="980px" :close-on-click-modal="false" :modal-append-to-body="false" @open="onOpen"
       @close="onClose">
+
+      <!-- 选择 -->
       <template #header="{ close, titleId, titleClass }">
         选择图标
         <el-input v-model="key" size="small" :style="{ width: '260px' }" placeholder="请输入图标名称" prefix-icon="Search"
           clearable />
       </template>
+
+      <!-- 图标列表 -->
       <ul class="icon-ul">
         <li v-for="icon in iconList" :key="icon" :class="active === icon ? 'active-item' : ''" @click="onSelect(icon)">
           <div>
