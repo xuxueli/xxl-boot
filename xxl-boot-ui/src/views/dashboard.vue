@@ -8,11 +8,9 @@
     <!-- 第一排：指标卡片 -->
     <el-row :gutter="20">
       <el-col :xs="12" :sm="6" v-for="item in stats" :key="item.label">
-        <el-card shadow="hover" class="stat-card">
+        <el-card shadow="hover" class="stat-card" :style="'--stat-color:' + item.color">
           <div class="stat-body">
-            <div class="stat-icon-wrap" :style="{ background: item.color }">
-              <SvgIcon :icon-class="item.icon" class="stat-icon" />
-            </div>
+            <SvgIcon :icon-class="item.icon" class="stat-icon" />
             <div class="stat-info">
               <span class="stat-value">{{ item.value }}</span>
               <span class="stat-label">{{ item.label }}</span>
@@ -82,10 +80,10 @@ import * as echarts from 'echarts'
 
 // 指标卡片
 const stats = ref([
-  { label: '用户数量', value: 0, icon: 'user', color: '#409EFF' },
-  { label: '角色数量', value: 0, icon: 'peoples', color: '#67C23A' },
-  { label: '日志数量', value: 0, icon: 'log', color: '#E6A23C' },
-  { label: '消息数量', value: 0, icon: 'message', color: '#F56C6C' }
+  { label: '用户数量', value: 0, icon: 'user', color: '#7265e6' },
+  { label: '角色数量', value: 0, icon: 'peoples', color: '#2bb3c0' },
+  { label: '日志数量', value: 0, icon: 'log', color: '#f5a623' },
+  { label: '消息数量', value: 0, icon: 'message', color: '#f2706c' }
 ])
 
 const messages = ref([])
@@ -208,23 +206,14 @@ function formatDate(date) {
 .stat-body {
   display: flex;
   align-items: center;
-  gap: 16px;
-}
-
-.stat-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  gap: 14px;
 }
 
 .stat-icon {
-  width: 26px;
-  height: 26px;
-  color: #fff;
+  width: 44px;
+  height: 44px;
+  color: var(--stat-color);
+  flex-shrink: 0;
 }
 
 .stat-info {
@@ -257,16 +246,10 @@ function formatDate(date) {
 .card-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   font-size: 14px;
   font-weight: 600;
   color: #303133;
-}
-
-.card-header-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .chart-box {
