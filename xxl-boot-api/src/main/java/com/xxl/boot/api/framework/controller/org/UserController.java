@@ -19,6 +19,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -101,13 +102,47 @@ public class UserController {
      * updatePwd
      */
     @RequestMapping("/updatePwd")
+    @ResponseBody
     @XxlSso
-    public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String password){
+    public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String newPassword){
 
         // login check
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
-        return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, password);
+        return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, newPassword);
+    }
+
+    /**
+     * 加载个人中心信息
+     */
+    @RequestMapping("/loadProfile")
+    @ResponseBody
+    @XxlSso
+    public Response<UserDTO> loadProfile(HttpServletRequest request) {
+
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
+        String username = loginInfoResponse.getData().getUserName();
+
+        return userService.loadProfile(username);
+    }
+
+    /**
+     * 更新个人中心信息
+     */
+    @RequestMapping("/updateProfile")
+    @ResponseBody
+    @XxlSso
+    public Response<String> updateProfile(HttpServletRequest request, @RequestBody UserDTO userDTO) {
+
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
+        String username = loginInfoResponse.getData().getUserName();
+
+        // 更新登录信息
+        LoginInfo loginInfo = loginInfoResponse.getData();
+        loginInfo.setRealName(userDTO.getRealName());
+        XxlSsoHelper.loginUpdate(loginInfo);
+
+        return userService.updateProfile(username, userDTO);
     }
 
 }

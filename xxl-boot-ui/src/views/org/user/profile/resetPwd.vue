@@ -63,8 +63,11 @@ const rules = ref({
 function submit() {
   pwdRef.value.validate(valid => {
     if (valid) {
-      updateUserPwd(user.oldPassword, user.newPassword).then(() => {
+      updateUserPwd(user.oldPassword, user.newPassword).then(res => {
         modal.msgSuccess("修改成功")
+        user.oldPassword = undefined
+        user.newPassword = undefined
+        user.confirmPassword = undefined
       })
     }
   })

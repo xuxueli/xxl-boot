@@ -301,4 +301,52 @@ public class UserServiceImpl implements UserService {
         return ret>0 ? Response.ofSuccess() : Response.ofFail();
     }
 
+    @Override
+    public Response<UserDTO> loadProfile(String username) {
+        // load user
+        User user = userMapper.loadByUserName(username);
+        if (user == null) {
+            return Response.ofFail("用户不存在");
+        }
+
+        // convert to DTO
+        UserDTO userDTO = UserAdaptor.adapt2dto(user, true, null);
+
+        // query org name
+        if (user.getOrgId() > 0) {
+            Org org = orgMapper.load(user.getOrgId());
+            if (org != null) {
+                userDTO.setOrgName(org.getName());
+            }
+        }
+
+        // query role names
+        List<Role> roleList = roleMapper.queryByUserid(user.getId());
+        if (CollectionTool.isNotEmpty(roleList)) {
+            userDTO.setRoleNames(roleList.stream().map(Role::getName).collect(Collectors.toList()));
+        }
+
+        return Response.ofSuccess(userDTO);
+    }
+
+    @Override
+    public Response<String> updateProfile(String username, UserDTO userDTO) {
+        // valid
+        if (StringTool.isBlank(userDTO.getRealName())) {
+            return Response.ofFail("昵称不能为空");
+        }
+        User user = userMapper.loadByUserName(username);
+        if (user == null) {
+            return Response.ofFail("用户不存在");
+        }
+
+        // write field
+        user.setRealName(userDTO.getRealName());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+
+        int ret = userMapper.update(user);
+        return ret>0 ? Response.ofSuccess() : Response.ofFail();
+    }
+
 }

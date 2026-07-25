@@ -24,13 +24,13 @@
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
                 <SvgIcon icon-class="user"/>
-                用户名称
-                <div class="pull-right">{{ state.user.userName }}</div>
+                用户账号
+                <div class="pull-right">{{ state.user.username }}</div>
               </li>
               <li class="list-group-item">
                 <SvgIcon icon-class="phone"/>
                 手机号码
-                <div class="pull-right">{{ state.user.phonenumber }}</div>
+                <div class="pull-right">{{ state.user.phone }}</div>
               </li>
               <li class="list-group-item">
                 <SvgIcon icon-class="email"/>
@@ -40,20 +40,17 @@
               <li class="list-group-item">
                 <SvgIcon icon-class="tree"/>
                 所属部门
-                <div class="pull-right" v-if="state.user.dept">{{ state.user.dept.deptName }} / {{
-                    state.postGroup
-                  }}
-                </div>
+                <div class="pull-right">{{ state.user.orgName }}</div>
               </li>
               <li class="list-group-item">
                 <SvgIcon icon-class="peoples"/>
                 所属角色
-                <div class="pull-right">{{ state.roleGroup }}</div>
+                <div class="pull-right">{{ state.roleNames }}</div>
               </li>
               <li class="list-group-item">
                 <SvgIcon icon-class="date"/>
                 创建日期
-                <div class="pull-right">{{ state.user.createTime }}</div>
+                <div class="pull-right">{{ state.user.addTime }}</div>
               </li>
             </ul>
 
@@ -100,17 +97,15 @@ import {getUserProfile} from "@/api/org/user"
 const route = useRoute()                // 路由
 const selectedTab = ref("userinfo")     // 当前选中的 tab
 const state = reactive({                // 用户信息、角色、岗位数据
-  user: {},
-  roleGroup: {},
-  postGroup: {}
+  user: {},                 // 用户信息
+  roleNames: {}             // 角色名称列表
 })
 
 /** 获取当前登录用户个人信息 */
 function getUser() {
-  getUserProfile().then(response => {
-    state.user = response.data
-    state.roleGroup = response.roleGroup
-    state.postGroup = response.postGroup
+  getUserProfile().then(res => {
+    state.user = res.data
+    state.roleNames = (state.user.roleNames || []).join(', ')
   })
 }
 

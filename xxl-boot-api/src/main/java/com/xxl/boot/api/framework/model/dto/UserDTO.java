@@ -14,13 +14,16 @@ public class UserDTO {
 	private String password;		// 密码
 	private String token;			// 登录token
 	private int status;				// 状态：0-正常、1-停用
-	private String realName;		// 真实姓名
+	private String realName;		// 用户名称
 	private Date addTime;
 	private Date updateTime;
 
 	// other
 	private List<Integer> roleIds;
 	private String orgName;			// 组织名称（非DB字段）
+	private List<String> roleNames;	// 角色名称列表（非DB字段）
+	private String email;			// 邮箱
+	private String phone;			// 手机号码
 
 
 	public int getId() {
@@ -111,5 +114,28 @@ public class UserDTO {
 		this.roleIds = roleIds;
 	}
 
+	public List<String> getRoleNames() {
+		return roleNames;
+	}
+
+	public void setRoleNames(List<String> roleNames) {
+		this.roleNames = roleNames;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
 }

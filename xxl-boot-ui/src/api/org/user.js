@@ -104,28 +104,24 @@ export function changeUserStatus(userId, status) {
 
 export function getUserProfile() {
   return request({
-    url: '/auth/logincheck',
+    url: '/org/user/loadProfile',
     method: 'get'
   })
 }
 
 export function updateUserProfile(data) {
   return request({
-    url: '/org/user/update',
+    url: '/org/user/updateProfile',
     method: 'post',
     data: data
   })
 }
 
 export function updateUserPwd(oldPassword, newPassword) {
-  const data = {
-    oldPassword,
-    password: newPassword
-  }
   return request({
     url: '/org/user/updatePwd',
     method: 'post',
-    data: data
+    params: { oldPassword, newPassword }
   })
 }
 

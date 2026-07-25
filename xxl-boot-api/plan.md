@@ -18,7 +18,10 @@
     - 菜单路由：getRouters                   【done】
     - 公告：listTop                         【done】
     - 注销：logout                          【done】
-    - 个人管理：profile查询、 profile修改、updatePwd修改；
+    - 个人管理：
+      - profile查询
+      - profile修改
+      - updatePwd修改；
 - 业务层：
     - 首页：                      
     - 组织管理：用户、角色、菜单、部门

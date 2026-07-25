@@ -30,6 +30,8 @@ CREATE TABLE `xxl_boot_user`
     `token`         VARCHAR(100)    DEFAULT NULL                 COMMENT '登录token',
     `status`        TINYINT         NOT NULL                     COMMENT '状态：0-正常、1-禁用',
     `real_name`     VARCHAR(50)     DEFAULT NULL                 COMMENT '真实姓名',
+    `email`         VARCHAR(100)    DEFAULT NULL                 COMMENT '邮箱',
+    `phone`         VARCHAR(20)     DEFAULT NULL                 COMMENT '手机号码',
     `add_time`      DATETIME        NOT NULL                     COMMENT '新增时间',
     `update_time`   DATETIME        NOT NULL                     COMMENT '更新时间',
     PRIMARY KEY (`id`),

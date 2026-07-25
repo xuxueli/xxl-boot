@@ -59,4 +59,14 @@ public interface UserService {
      */
     Response<String> updateToken(Integer id, String token);
 
+    /**
+     * 加载个人中心信息
+     */
+    Response<UserDTO> loadProfile(String username);
+
+    /**
+     * 更新个人中心信息
+     */
+    Response<String> updateProfile(String username, UserDTO userDTO);
+
 }

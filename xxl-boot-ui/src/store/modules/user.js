@@ -23,7 +23,7 @@ const useUserStore = defineStore(
       token: getToken(),       // 登录令牌，页面刷新后恢复
       id: '',                  // 用户 ID
       name: '',                // 用户名
-      nickName: '',            // 昵称
+      nickName: '',            // 用户名称
       avatar: '',              // 头像地址
       roles: [],               // 角色标识集合
       permissions: []          // 权限标识集合

@@ -9,11 +9,13 @@ public class User {
 
 	private int id;
 	private int orgId;				// 组织ID
-	private String username;		// 账号
+	private String username;		// 用户账号
 	private String password;		// 密码
 	private String token;			// 登录token
 	private int status;				// 状态：0-正常、1-停用
-	private String realName;		// 真实姓名
+	private String realName;		// 用户名称
+	private String email;			// 邮箱
+	private String phone;			// 手机号码
 	private Date addTime;
 	private Date updateTime;
 
@@ -72,6 +74,22 @@ public class User {
 
 	public void setRealName(String realName) {
 		this.realName = realName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public Date getAddTime() {

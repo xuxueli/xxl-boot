@@ -51,6 +51,7 @@ const PWD_RULES = {
  * }}
  */
 export function usePasswordRule() {
+
   /**
    * 通用密码校验规则（computed）
    * 根据当前 pwdChrType 动态返回对应的字符规则，适用于登录后修改密码等场景。
