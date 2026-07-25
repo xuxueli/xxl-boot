@@ -110,8 +110,8 @@ function handleSelectionChange(selection) {
 // 查询表数据
 function getList() {
   unallocatedUserList(queryParams).then(res => {
-    userList.value = res.rows
-    total.value = res.total
+    userList.value = res.data.data
+    total.value = res.data.total
   })
 }
 
@@ -136,8 +136,8 @@ function handleSelectUser() {
     modal.msgError("请选择要分配的用户")
     return
   }
-  authUserSelectAll({ roleId: roleId, userIds: uIds }).then(res => {
-    modal.msgSuccess(res.msg)
+  authUserSelectAll({ roleId: roleId, userIds: uIds }).then(() => {
+    modal.msgSuccess("授权成功")
     visible.value = false
     emit("ok")
   })

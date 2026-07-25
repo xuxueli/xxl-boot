@@ -77,8 +77,8 @@ function open(row) {
 function getList() {
   loading.value = true
   listNoticeReadUsers(queryParams).then(res => {
-    userList.value = res.rows
-    total.value = res.total
+    userList.value = res.data.data
+    total.value = res.data.total
   }).finally(() => {
     loading.value = false
   })

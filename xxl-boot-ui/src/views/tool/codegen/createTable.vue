@@ -31,12 +31,10 @@ function handleImportTable() {
     modal.msgError("请输入建表语句")
     return
   }
-  createTable({ sql: content.value, tplWebType: 'element-plus' }).then(res => {
-    modal.msgSuccess(res.msg)
-    if (res.code === 200) {
-      visible.value = false
-      emit("ok")
-    }
+  createTable({ sql: content.value, tplWebType: 'element-plus' }).then(() => {
+    modal.msgSuccess("创建成功")
+    visible.value = false
+    emit("ok")
   })
 }
 

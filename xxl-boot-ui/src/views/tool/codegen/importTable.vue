@@ -90,8 +90,8 @@ function handleSelectionChange(selection) {
 /** 查询表数据 */
 function getList() {
   listDbTable(queryParams).then(res => {
-    dbTableList.value = res.rows
-    total.value = res.total
+    dbTableList.value = res.data.data
+    total.value = res.data.total
   })
 }
 
@@ -114,12 +114,10 @@ function handleImportTable() {
     modal.msgError("请选择要导入的表")
     return
   }
-  importTable({ tables: tableNames, tplWebType: 'element-plus' }).then(res => {
-    modal.msgSuccess(res.msg)
-    if (res.code === 200) {
-      visible.value = false
-      emit("ok")
-    }
+  importTable({ tables: tableNames, tplWebType: 'element-plus' }).then(() => {
+    modal.msgSuccess("导入成功")
+    visible.value = false
+    emit("ok")
   })
 }
 

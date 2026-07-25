@@ -262,8 +262,8 @@ function getList() {
   loading.value = true
   listUser(addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false
-    userList.value = res.rows
-    total.value = res.total
+    userList.value = res.data.data
+    total.value = res.data.total
   })
 }
 

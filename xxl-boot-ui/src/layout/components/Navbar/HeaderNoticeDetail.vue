@@ -124,8 +124,7 @@ function open(payload) {
   loading.value = true
   detail.value = null
   getNotice(id).then(res => {
-    // axios 拦截器已解包 data，res 即 Message/MessageDTO 实体
-    detail.value = res
+    detail.value = res.data
   }).catch(() => {
     detail.value = null
   }).finally(() => {

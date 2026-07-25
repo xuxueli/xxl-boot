@@ -81,7 +81,7 @@ const noticeViewRef = ref(null)         /* 抽屉组件引用 */
 function loadNoticeTop() {
   noticeLoading.value = true
   listNoticeTop().then(res => {
-    noticeList.value = res || []
+    noticeList.value = res.data || []
     unreadCount.value = noticeList.value.filter(n => !n.isRead).length
   }).finally(() => {
     noticeLoading.value = false
@@ -119,7 +119,7 @@ function onNoticeEnter() {
 function onNoticeLeave() {
   noticeLeaveTimer.value = setTimeout(() => {
     noticeVisible.value = false
-  }, 500)
+  }, 1000)
 }
 
 /*

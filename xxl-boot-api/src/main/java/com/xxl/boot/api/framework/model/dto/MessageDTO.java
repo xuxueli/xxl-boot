@@ -50,6 +50,11 @@ public class MessageDTO implements Serializable {
     */
     private String updateTime;
 
+    /**
+    * 是否已读
+    */
+    private boolean isRead;
+
 
     public long getId() {
         return id;
@@ -113,5 +118,13 @@ public class MessageDTO implements Serializable {
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public boolean getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(boolean isRead) {
+        this.isRead = isRead;
     }
 }
