@@ -169,6 +169,9 @@ function loadChart() {
     }
 
     // 3、渲染折线图（渐变面积 + 平滑曲线）
+    if (chartInstance) {
+      chartInstance.dispose()
+    }
     chartInstance = echarts.init(chartRef.value)
     chartInstance.setOption({
       tooltip: {trigger: 'axis'},                              // 悬浮提示：轴触发
