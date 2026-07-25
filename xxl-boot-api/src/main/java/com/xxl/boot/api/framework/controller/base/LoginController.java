@@ -172,20 +172,6 @@ public class LoginController {
 		return XxlSsoHelper.loginCheckWithAttr(request);
 	}
 
-
-	/**
-	 * updatePwd
-	 */
-	@RequestMapping("/updatePwd")
-	@XxlSso
-	public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String password){
-
-		// login check
-		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
-
-		return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, password);
-	}
-
 	/**
 	 * add log
 	 */

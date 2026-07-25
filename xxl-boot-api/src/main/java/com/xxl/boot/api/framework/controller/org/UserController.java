@@ -97,4 +97,17 @@ public class UserController {
         return userService.deleteByIds(ids, Integer.valueOf(loginInfoResponse.getData().getUserId()));
     }
 
+    /**
+     * updatePwd
+     */
+    @RequestMapping("/updatePwd")
+    @XxlSso
+    public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String password){
+
+        // login check
+        Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
+
+        return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, password);
+    }
+
 }
