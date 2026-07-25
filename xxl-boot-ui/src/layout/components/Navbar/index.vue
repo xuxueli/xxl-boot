@@ -11,7 +11,7 @@
 
     <!-- 面包屑导航：导航模式：
         1=左侧菜单（显示面包屑）
-        2=混合模式（显示 TopNav）
+        2=混合模式（显示 TopBarMix）
         3=顶部菜单模式（显示 SidebarLogo + TopBar）
     -->
 
@@ -19,7 +19,7 @@
     <Breadcrumb v-if="settingsStore.navType === 1" id="breadcrumb-container" class="breadcrumb-container" />
 
     <!-- 顶部导航（混合模式-2） -->
-    <TopNav v-if="settingsStore.navType === 2" id="topmenu-container" class="topmenu-container" />
+    <TopBarMix v-if="settingsStore.navType === 2" id="topmenu-container" class="topmenu-container" />
 
     <!-- 顶部导航+Logo（顶部菜单模式-3） -->
     <template v-if="settingsStore.navType === 3">
@@ -34,14 +34,6 @@
       <template v-if="appStore.device !== 'mobile'">
         <!-- 搜索 -->
         <HeaderSearch id="header-search" class="right-menu-item" />
-        <!-- 源码 -->
-        <!--<el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <Git id="boot-git" class="right-menu-item hover-effect" />
-        </el-tooltip>-->
-        <!-- 文档 -->
-        <!--<el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <Doc id="boot-doc" class="right-menu-item hover-effect" />
-        </el-tooltip>-->
         <!-- 全屏 -->
         <Screenfull id="screenfull" class="right-menu-item hover-effect" />
         <!-- 主题 -->
@@ -63,10 +55,12 @@
 
       <!-- 用户头像与下拉菜单 -->
       <el-dropdown @command="handleCommand" class="avatar-container right-menu-item hover-effect" trigger="hover">
+
         <!-- 用户信息  -->
         <div class="avatar-wrapper">
           <span class="user-realName"> {{ userStore.realName }} </span>
         </div>
+
         <!-- 下拉框  -->
         <template #dropdown>
           <el-dropdown-menu>
@@ -90,10 +84,11 @@
   </div>
 </template>
 
+
 <script setup>
 import { ElMessageBox } from 'element-plus'
 import Breadcrumb from './Breadcrumb.vue'
-import TopNav from './TopNav.vue'
+import TopBarMix from './TopBarMix.vue'
 import TopBar from './TopBar.vue'
 import SidebarLogo from '../Sidebar/SidebarLogo.vue'
 import Hamburger from './Hamburger.vue'
@@ -101,8 +96,6 @@ import Screenfull from './Screenfull.vue'
 import SizeSelect from './SizeSelect.vue'
 import HeaderSearch from './HeaderSearch.vue'
 import HeaderNotice from './HeaderNotice.vue'
-import Git from './Git.vue'
-import Doc from './Doc.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 import settings from '@/settings'
 
@@ -198,6 +191,7 @@ async function toggleTheme(event) {
   }
 }
 </script>
+
 
 <style lang='scss' scoped>
 .navbar.nav3 {
@@ -299,6 +293,7 @@ async function toggleTheme(event) {
 
       .avatar-wrapper {
         margin-top: 10px;
+        margin-left: 10px;
         right: 8px;
         position: relative;
 

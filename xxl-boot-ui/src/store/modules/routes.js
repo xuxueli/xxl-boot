@@ -27,7 +27,7 @@ const useRoutesStore = defineStore(
        *  混合布局模式下当前激活的顶级菜单路径，
        *  - 用于 Sidebar 联动过滤：只显示该菜单下的子路由。
        *  - 空字符串表示不过滤，显示全部动态路由。
-       *  - 由 TopNav 选中菜单时写入，Settings 切换布局时清除。
+       *  - 由 TopBarMix 选中菜单时写入，Settings 切换布局时清除。
        */
       _scope: ''
     }),

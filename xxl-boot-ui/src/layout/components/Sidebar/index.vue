@@ -54,7 +54,7 @@ const store = useRoutesStore()
 const sidebarRouters = computed(() => {
   const routes = store.fullRoutes
   /*
-  * _scope 由 TopNav 的 setScope 设置，标识当前激活的顶级菜单 path。
+  * _scope 由 TopBarMix 的 setScope 设置，标识当前激活的顶级菜单 path。
   * 默认scope为 ''/假值，不会过滤。
   */
   if (settingsStore.navType === 2 && store._scope) {
