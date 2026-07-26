@@ -108,8 +108,10 @@ function open(id) {
   info.value = {formColNum: 1, tplWebType: 'element-plus'}
   visible.value = true
   getGenTable(id).then(res => {
-    columns.value = res.data.rows || []
-    info.value = Object.assign({formColNum: 1, tplWebType: 'element-plus'}, res.data.info || {})
+    const defaults = {formColNum: 1, tplWebType: 'element-plus'}
+    info.value = Object.assign(defaults, res.data || {})
+    columns.value = info.value.fieldList || []
+    delete info.value.fieldList
     if (![1, 2, 3].includes(info.value.formColNum)) info.value.formColNum = 1
     if (!['element-plus', 'element-plus-typescript'].includes(info.value.tplWebType)) info.value.tplWebType = 'element-plus'
   })
@@ -124,7 +126,7 @@ function submitForm() {
   Promise.all([basicForm, genForm].map(f => new Promise(r => f.validate(v => r(v))))).then(res => {
     if (res.every(Boolean)) {
       const genTable = Object.assign({}, info.value)
-      genTable.columns = columns.value
+      genTable.fieldList = columns.value
       updateGenTable(genTable).then(res => {
         modal.msgSuccess(res.msg)
         if (res.code === 200) {

@@ -106,16 +106,15 @@
                        :sort-orders="['descending', 'ascending']"/>
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-tooltip content="预览" placement="top">
-            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)"></el-button>
-          </el-tooltip>
           <el-tooltip content="编辑" placement="top">
             <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)"></el-button>
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
             <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
           </el-tooltip>
-
+          <el-tooltip content="预览" placement="top">
+            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)"></el-button>
+          </el-tooltip>
           <el-tooltip content="生成代码" placement="top">
             <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)"></el-button>
           </el-tooltip>

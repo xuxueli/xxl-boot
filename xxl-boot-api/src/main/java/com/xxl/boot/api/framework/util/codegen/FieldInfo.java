@@ -1,5 +1,8 @@
 package com.xxl.boot.api.framework.util.codegen;
 
+/**
+ * 字段信息 - 用于代码生成模板渲染
+ */
 public class FieldInfo {
 
     private String columnName;     /* 列名，如 add_time */
@@ -8,14 +11,44 @@ public class FieldInfo {
     private String columnType;     /* 数据库类型，如 datetime */
     private String fieldComment;   /* 注释 */
 
-    public String getColumnName() { return columnName; }
-    public void setColumnName(String v) { this.columnName = v; }
-    public String getFieldName() { return fieldName; }
-    public void setFieldName(String v) { this.fieldName = v; }
-    public String getFieldClass() { return fieldClass; }
-    public void setFieldClass(String v) { this.fieldClass = v; }
-    public String getColumnType() { return columnType; }
-    public void setColumnType(String v) { this.columnType = v; }
-    public String getFieldComment() { return fieldComment; }
-    public void setFieldComment(String v) { this.fieldComment = v; }
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public String getFieldClass() {
+        return fieldClass;
+    }
+
+    public void setFieldClass(String fieldClass) {
+        this.fieldClass = fieldClass;
+    }
+
+    public String getColumnType() {
+        return columnType;
+    }
+
+    public void setColumnType(String columnType) {
+        this.columnType = columnType;
+    }
+
+    public String getFieldComment() {
+        return fieldComment;
+    }
+
+    public void setFieldComment(String fieldComment) {
+        this.fieldComment = fieldComment;
+    }
+
 }

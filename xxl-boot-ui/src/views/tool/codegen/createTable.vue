@@ -22,6 +22,7 @@ const emit = defineEmits(["ok"])
 
 /** 显示弹框 */
 function show() {
+  content.value = ""
   visible.value = true
 }
 

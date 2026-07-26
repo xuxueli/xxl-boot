@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="12">
         <el-form-item label="生成包路径" prop="packageName">
-          <el-input v-model="info.packageName" placeholder="com.xxl.boot.demo" />
+          <el-input v-model="info.packageName" placeholder="com.xxl.boot.api.business" />
         </el-form-item>
       </el-col>
       <el-col :span="12">

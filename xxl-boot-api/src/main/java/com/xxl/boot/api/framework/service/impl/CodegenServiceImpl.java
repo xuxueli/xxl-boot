@@ -12,7 +12,6 @@ import com.xxl.boot.api.framework.service.CodegenService;
 import com.xxl.boot.api.framework.util.codegen.ClassInfo;
 import com.xxl.boot.api.framework.util.codegen.FieldInfo;
 import com.xxl.boot.api.framework.util.codegen.TableParseUtil;
-import com.xxl.tool.core.StringTool;
 import com.xxl.tool.freemarker.FtlTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
@@ -25,12 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -49,86 +43,6 @@ public class CodegenServiceImpl implements CodegenService {
     private static final String TPL_PATH = "/tool/codegen2/";
 
     @Override
-    public Response<String> insert(Codegen xxlBootCodegen) {
-        codegenMapper.insert(xxlBootCodegen);
-        return Response.ofSuccess();
-    }
-
-    @Override
-    public Response<String> delete(List<Integer> ids) {
-        codegenFieldMapper.deleteByCodegenIds(ids);
-        return codegenMapper.delete(ids) > 0 ? Response.ofSuccess() : Response.ofFail();
-    }
-
-    @Override
-    public Response<String> update(Map<String, Object> body) {
-        Codegen c = new Codegen();
-        Number idNum = (Number) body.get("id");
-        if (idNum != null) c.setId(idNum.longValue());
-        c.setTableName((String) body.get("tableName"));
-        c.setTableComment((String) body.get("tableComment"));
-        c.setRemark((String) body.get("remark"));
-        c.setPackageName((String) body.get("packageName"));
-        c.setModuleName((String) body.get("moduleName"));
-        c.setBusinessName((String) body.get("businessName"));
-        c.setFunctionName((String) body.get("functionName"));
-        c.setFunctionAuthor((String) body.get("functionAuthor"));
-        Number colNum = (Number) body.get("formColNum");
-        if (colNum != null) c.setFormColNum(colNum.intValue());
-        c.setTplCategory((String) body.get("tplCategory"));
-        c.setTplWebType((String) body.get("tplWebType"));
-
-        int ret = codegenMapper.update(c);
-        if (ret <= 0) return Response.ofFail();
-
-        // 保存字段
-        Object columnsObj = body.get("columns");
-        if (columnsObj instanceof List) {
-            List<Map<String, Object>> columnList = (List<Map<String, Object>>) columnsObj;
-            codegenFieldMapper.deleteByCodegenIds(List.of((int) c.getId()));
-            for (Map<String, Object> colMap : columnList) {
-                CodegenField f = new CodegenField();
-                Number colId = (Number) colMap.get("columnId");
-                if (colId != null) f.setId(colId.longValue());
-                f.setCodegenId(c.getId());
-                f.setColumnName((String) colMap.get("columnName"));
-                f.setColumnComment((String) colMap.get("columnComment"));
-                f.setJavaType((String) colMap.get("javaType"));
-                f.setJavaField((String) colMap.get("javaField"));
-                f.setIsRequired((String) colMap.get("isRequired"));
-                f.setIsInsert((String) colMap.get("isInsert"));
-                f.setIsEdit((String) colMap.get("isEdit"));
-                f.setIsList((String) colMap.get("isList"));
-                f.setIsQuery((String) colMap.get("isQuery"));
-                f.setQueryType((String) colMap.get("queryType"));
-                f.setHtmlType((String) colMap.get("htmlType"));
-                f.setDictType((String) colMap.get("dictType"));
-                Number sortNum = (Number) colMap.get("sort");
-                if (sortNum != null) f.setSort(sortNum.intValue());
-                codegenFieldMapper.insert(f);
-            }
-        }
-        return Response.ofSuccess();
-    }
-
-    @Override
-    public Response<Codegen> load(int id) {
-        return Response.ofSuccess(codegenMapper.load(id));
-    }
-
-    @Override
-    public Response<Map<String, Object>> loadDetail(int id) {
-        Codegen info = codegenMapper.load(id);
-        List<CodegenField> rows = codegenFieldMapper.findByCodegenId(id);
-        List<Codegen> tables = codegenMapper.pageList(null, null, 0, Integer.MAX_VALUE);
-        Map<String, Object> map = new HashMap<>();
-        map.put("info", info);
-        map.put("rows", rows);
-        map.put("tables", tables);
-        return Response.ofSuccess(map);
-    }
-
-    @Override
     public PageModel<CodegenDTO> pageList(String tableName, String tableComment, int offset, int pagesize) {
         List<Codegen> list = codegenMapper.pageList(tableName, tableComment, offset, pagesize);
         int total = codegenMapper.pageListCount(tableName, tableComment, offset, pagesize);
@@ -139,39 +53,51 @@ public class CodegenServiceImpl implements CodegenService {
     }
 
     @Override
-    public Response<String> insertField(CodegenField f) {
-        codegenFieldMapper.insert(f);
+    public Response<String> delete(List<Integer> ids) {
+        codegenFieldMapper.deleteByCodegenIds(ids);
+        return codegenMapper.delete(ids) > 0 ? Response.ofSuccess() : Response.ofFail();
+    }
+
+    @Override
+    public Response<String> update(CodegenDTO dto) {
+        Codegen c = new Codegen();
+        c.setId(dto.getId());
+        c.setTableName(dto.getTableName());
+        c.setTableComment(dto.getTableComment());
+        c.setRemark(dto.getRemark());
+        c.setPackageName(dto.getPackageName());
+        c.setModuleName(dto.getModuleName());
+        c.setBusinessName(dto.getBusinessName());
+        c.setFunctionName(dto.getFunctionName());
+        c.setFunctionAuthor(dto.getFunctionAuthor());
+        c.setFormColNum(dto.getFormColNum());
+        c.setTplCategory(dto.getTplCategory());
+        c.setTplWebType(dto.getTplWebType());
+
+        int ret = codegenMapper.update(c);
+        if (ret <= 0) return Response.ofFail();
+
+        // 保存字段
+        List<CodegenFieldDTO> fieldList = dto.getFieldList();
+        if (fieldList != null && !fieldList.isEmpty()) {
+            codegenFieldMapper.deleteByCodegenIds(List.of((int) c.getId()));
+            for (CodegenFieldDTO fd : fieldList) {
+                codegenFieldMapper.insert(toEntity(c.getId(), fd));
+            }
+        }
         return Response.ofSuccess();
     }
 
     @Override
-    public Response<String> deleteField(List<Integer> ids) {
-        return codegenFieldMapper.delete(ids) > 0 ? Response.ofSuccess() : Response.ofFail();
-    }
+    public Response<CodegenDTO> loadDetail(int id) {
+        Codegen entity = codegenMapper.load(id);
+        List<CodegenField> rows = codegenFieldMapper.findByCodegenId(id);
 
-    @Override
-    public Response<String> updateField(CodegenField f) {
-        return codegenFieldMapper.update(f) > 0 ? Response.ofSuccess() : Response.ofFail();
-    }
+        List<CodegenDTO> list = CodegenAdaptor.adaptor(List.of(entity));
+        CodegenDTO dto = list.get(0);
+        dto.setFieldList(CodegenFieldAdaptor.adaptor(rows));
 
-    @Override
-    public Response<CodegenField> loadField(int id) {
-        return Response.ofSuccess(codegenFieldMapper.load(id));
-    }
-
-    @Override
-    public PageModel<CodegenFieldDTO> fieldPageList(long codegenId, int offset, int pagesize) {
-        List<CodegenField> list = codegenFieldMapper.pageList(codegenId, offset, pagesize);
-        int total = codegenFieldMapper.pageListCount(codegenId, offset, pagesize);
-        PageModel<CodegenFieldDTO> pm = new PageModel<>();
-        pm.setData(CodegenFieldAdaptor.adaptor(list));
-        pm.setTotal(total);
-        return pm;
-    }
-
-    @Override
-    public List<CodegenField> findFieldsByCodegenId(long codegenId) {
-        return codegenFieldMapper.findByCodegenId(codegenId);
+        return Response.ofSuccess(dto);
     }
 
     @Override
@@ -181,24 +107,41 @@ public class CodegenServiceImpl implements CodegenService {
             Codegen c = new Codegen();
             c.setTableName(ci.getTableName());
             c.setTableComment(ci.getClassComment());
+            c.setPackageName("com.xxl.boot.api.business");
+            c.setModuleName("demo");
             c.setBusinessName(ci.getClassName());
+
+            String funcName = ci.getClassComment() != null && !ci.getClassComment().isEmpty()
+                    ? ci.getClassComment()
+                    : ci.getClassName() + "管理";
+            c.setFunctionName(funcName);
+            c.setFunctionAuthor("xxl-boot");
+            c.setFormColNum(1);
             c.setTplCategory("crud");
             codegenMapper.insert(c);
+
             // 保存字段
             if (ci.getFieldList() != null) {
                 for (int i = 0; i < ci.getFieldList().size(); i++) {
                     FieldInfo fi = ci.getFieldList().get(i);
+                    String colName = fi.getColumnName().toLowerCase();
+
                     CodegenField f = new CodegenField();
                     f.setCodegenId(c.getId());
                     f.setColumnName(fi.getColumnName());
                     f.setColumnComment(fi.getFieldComment());
                     f.setJavaField(fi.getFieldName());
                     f.setJavaType(fi.getFieldClass());
-                    f.setIsInsert(fi.getColumnName().equals("add_time") ? "0" : "1");
-                    f.setIsEdit(fi.getColumnName().equals("update_time") ? "0" : "1");
-                    f.setIsList("1");
-                    f.setIsQuery("0");
-                    f.setQueryType("EQ");
+
+                    boolean isWhitelist = List.of("id", "add_time", "update_time").contains(colName);
+                    f.setIsInsert("1");
+                    f.setIsEdit("1");
+                    f.setIsList(isWhitelist ? "0" : "1");
+                    f.setIsQuery(isWhitelist ? "0" : "1");
+                    f.setIsRequired("0");
+
+                    f.setQueryType(colName.endsWith("name") || colName.endsWith("title") ? "LIKE" : "EQ");
+                    f.setHtmlType(inferHtmlType(colName, fi.getFieldClass(), fi.getColumnType()));
                     f.setSort(i + 1);
                     codegenFieldMapper.insert(f);
                 }
@@ -208,6 +151,41 @@ public class CodegenServiceImpl implements CodegenService {
             logger.error(e.getMessage(), e);
             return Response.ofFail("建表失败");
         }
+    }
+
+    /** 根据列名、Java类型、SQL类型推断合适的显示组件 */
+    private String inferHtmlType(String colName, String javaType, String sqlType) {
+        if (sqlType != null) {
+            String st = sqlType.toLowerCase();
+            if (st.contains("text") || st.contains("blob")) {
+                return "textarea";
+            }
+            if (st.startsWith("tinyint") && colName.contains("status")) {
+                return "radio";
+            }
+        }
+        if (colName.endsWith("status") || colName.endsWith("type") || colName.equals("sex")) {
+            return "radio";
+        }
+        if (colName.endsWith("content") || colName.endsWith("description") || colName.endsWith("desc")) {
+            return "editor";
+        }
+        if (colName.endsWith("image") || colName.endsWith("img") || colName.endsWith("avatar")) {
+            return "imageUpload";
+        }
+        if (colName.endsWith("file") || colName.endsWith("attachment")) {
+            return "fileUpload";
+        }
+        if (colName.endsWith("time") || colName.endsWith("date")) {
+            return "datetime";
+        }
+        if ("String".equals(javaType) && sqlType != null && sqlType.contains("(")) {
+            String digits = sqlType.replaceAll("\\D", "");
+            if (!digits.isEmpty() && Integer.parseInt(digits) > 500) {
+                return "textarea";
+            }
+        }
+        return "input";
     }
 
     @Override
@@ -244,6 +222,7 @@ public class CodegenServiceImpl implements CodegenService {
             for (String tableName : tableNames) {
                 List<Codegen> list = codegenMapper.pageList(tableName.trim(), null, 0, 1);
                 if (list == null || list.isEmpty()) continue;
+
                 Codegen codegen = list.get(0);
                 List<CodegenField> fields = codegenFieldMapper.findByCodegenId(codegen.getId());
 
@@ -251,18 +230,16 @@ public class CodegenServiceImpl implements CodegenService {
                 Map<String, Object> params = new HashMap<>();
                 params.put("classInfo", ci);
 
-                String pkgPath = codegen.getPackageName() != null
-                        ? codegen.getPackageName().replace('.', '/')
-                        : "com/xxl/boot/demo";
+                String pkg = codegen.getPackageName() != null ? codegen.getPackageName().replace('.', '/') : "com/xxl/boot/demo";
                 String cn = toPascalCase(codegen.getBusinessName() != null ? codegen.getBusinessName() : "demo");
                 String module = codegen.getModuleName() != null ? codegen.getModuleName() : "demo";
 
-                addZipEntry(zos, "main/java/" + pkgPath + "/domain/" + cn + ".java", render("entity.ftl", params));
-                addZipEntry(zos, "main/java/" + pkgPath + "/mapper/" + cn + "Mapper.java", render("mapper.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/domain/" + cn + ".java", render("entity.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/mapper/" + cn + "Mapper.java", render("mapper.ftl", params));
                 addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "Mapper.xml", render("mapper_xml.ftl", params));
-                addZipEntry(zos, "main/java/" + pkgPath + "/service/I" + cn + "Service.java", render("service.ftl", params));
-                addZipEntry(zos, "main/java/" + pkgPath + "/service/impl/" + cn + "ServiceImpl.java", render("service_impl.ftl", params));
-                addZipEntry(zos, "main/java/" + pkgPath + "/controller/" + cn + "Controller.java", render("controller.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/service/I" + cn + "Service.java", render("service.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/service/impl/" + cn + "ServiceImpl.java", render("service_impl.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/controller/" + cn + "Controller.java", render("controller.ftl", params));
                 addZipEntry(zos, "vue/views/" + module + "/" + codegen.getBusinessName() + "/index.vue", render("page.ftl", params));
             }
 
@@ -283,6 +260,26 @@ public class CodegenServiceImpl implements CodegenService {
         zos.putNextEntry(new ZipEntry(name));
         zos.write(content.getBytes("UTF-8"));
         zos.closeEntry();
+    }
+
+    private CodegenField toEntity(long codegenId, CodegenFieldDTO dto) {
+        CodegenField f = new CodegenField();
+        f.setId(dto.getId());
+        f.setCodegenId(codegenId);
+        f.setColumnName(dto.getColumnName());
+        f.setColumnComment(dto.getColumnComment());
+        f.setJavaType(dto.getJavaType());
+        f.setJavaField(dto.getJavaField());
+        f.setIsRequired(dto.getIsRequired());
+        f.setIsInsert(dto.getIsInsert());
+        f.setIsEdit(dto.getIsEdit());
+        f.setIsList(dto.getIsList());
+        f.setIsQuery(dto.getIsQuery());
+        f.setQueryType(dto.getQueryType());
+        f.setHtmlType(dto.getHtmlType());
+        f.setDictType(dto.getDictType());
+        f.setSort(dto.getSort());
+        return f;
     }
 
     private ClassInfo toClassInfo(Codegen codegen, List<CodegenField> fields) {

@@ -1,9 +1,6 @@
 package com.xxl.boot.api.framework.service;
 
 import com.xxl.boot.api.framework.model.dto.CodegenDTO;
-import com.xxl.boot.api.framework.model.dto.CodegenFieldDTO;
-import com.xxl.boot.api.framework.model.entity.Codegen;
-import com.xxl.boot.api.framework.model.entity.CodegenField;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 
@@ -15,21 +12,24 @@ import java.util.Map;
  */
 public interface CodegenService {
 
-    Response<String> insert(Codegen xxlBootCodegen);
-    Response<String> delete(List<Integer> ids);
-    Response<String> update(Map<String, Object> body);
-    Response<Codegen> load(int id);
-    Response<Map<String, Object>> loadDetail(int id);
+    /** 分页列表 */
     PageModel<CodegenDTO> pageList(String tableName, String tableComment, int offset, int pagesize);
 
-    Response<String> insertField(CodegenField xxlBootCodegenField);
-    Response<String> deleteField(List<Integer> ids);
-    Response<String> updateField(CodegenField xxlBootCodegenField);
-    Response<CodegenField> loadField(int id);
-    PageModel<CodegenFieldDTO> fieldPageList(long codegenId, int offset, int pagesize);
-    List<CodegenField> findFieldsByCodegenId(long codegenId);
+    /** 批量删除 */
+    Response<String> delete(List<Integer> ids);
 
+    /** 更新（含字段） */
+    Response<String> update(CodegenDTO dto);
+
+    /** 查询表详情（含字段列表） */
+    Response<CodegenDTO> loadDetail(int id);
+
+    /** 通过 SQL 建表 */
     Response<String> createTable(String tableSql);
+
+    /** 预览生成代码 */
     Response<Map<String, String>> preview(int id);
+
+    /** 生成代码 zip */
     byte[] downloadCode(String[] tableNames);
 }
