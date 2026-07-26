@@ -23,19 +23,20 @@ import settings from '@/settings'
  * 包含：登录、个人中心、重定向页、404 兜底、301、
  */
 export const constantRoutes = [
+  // 登录页
   {
-    // 登录页
     path: '/login',
     component: () => import('@/views/login'),
     hidden: true
   },
+  // 首页：默认跳转 “/index”
   {
-    // 首页：默认跳转 “/index”
     path: '',
     redirect: settings.homePath
   },
+  // 个人中心：hidden 控制侧栏不显示
   {
-    // 个人中心：hidden 控制侧栏不显示
+
     path: '/user',
     component: Layout,
     hidden: true,
@@ -49,8 +50,8 @@ export const constantRoutes = [
       }
     ]
   },
+  // 重定向：内部重定向承载页
   {
-    // 重定向：内部重定向承载页
     path: '/redirect',
     component: Layout,
     hidden: true,
@@ -61,14 +62,15 @@ export const constantRoutes = [
       }
     ]
   },
+  // 301：未授权或会话过期
   {
-    // 301：未授权或会话过期
     path: '/301',
     component: () => import('@/views/common/301'),
     hidden: true
   },
+  // 404：访问资源不存在。兜底，必须放在末段
   {
-    // 404：访问资源不存在。兜底，必须放在末段
+
     path: "/:pathMatch(.*)*",
     component: () => import('@/views/common/404'),
     hidden: true

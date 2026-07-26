@@ -38,7 +38,7 @@ export function listDbTable(query) {
  */
 export function getGenTable(tableId) {
   return request({
-    url: '/tool/codegen/load',
+    url: '/tool/codegen/detail',
     method: 'get',
     params: { id: tableId }
   })
@@ -122,15 +122,4 @@ export function genCode(tableName) {
   })
 }
 
-/**
- * 同步数据库表结构。
- * @param {string} tableName 表名。
- * @returns {Promise<any>} 同步结果。
- */
-export function synchDb(tableName) {
-  return request({
-    url: '/tool/codegen/synchDb',
-    method: 'get',
-    params: { tableName: tableName }
-  })
-}
+

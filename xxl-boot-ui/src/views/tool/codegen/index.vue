@@ -50,29 +50,9 @@
         <el-button
             type="primary"
             plain
-            icon="Download"
-            :disabled="multiple"
-            @click="handleGenTable"
-        >生成 <!-- v-hasPermi="['tool:gen:code']" -->
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="primary"
-            plain
             icon="Plus"
             @click="openCreateTable"
-
-        >创建  <!-- v-hasRole="['admin']" -->
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="info"
-            plain
-            icon="Upload"
-            @click="openImportTable"
-        >导入
+        >创建
         </el-button>
       </el-col>
       <el-col :span="1.5">
@@ -93,6 +73,16 @@
             :disabled="multiple"
             @click="handleDelete"
         >删除
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="primary"
+            plain
+            icon="Download"
+            :disabled="multiple"
+            @click="handleGenTable"
+        >生成
         </el-button>
       </el-col>
       <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
@@ -125,9 +115,7 @@
           <el-tooltip content="删除" placement="top">
             <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
           </el-tooltip>
-          <el-tooltip content="同步" placement="top">
-            <el-button link type="primary" icon="Refresh" @click="handleSynchDb(scope.row)"></el-button>
-          </el-tooltip>
+
           <el-tooltip content="生成代码" placement="top">
             <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)"></el-button>
           </el-tooltip>
@@ -162,28 +150,27 @@
     </el-dialog>
 
     <!--  导入表格  -->
-    <importTable ref="importRef" @ok="handleQuery"/>
-
     <!--  创建表格  -->
     <createTable ref="createRef" @ok="handleQuery"/>
+    <editTable ref="editRef" @ok="handleQuery"/>
 
   </div>
 </template>
 
 <script setup name="Gen">
-import {listTable, previewTable, delTable, genCode, synchDb} from "@/api/tool/codegen"
+import {listTable, previewTable, delTable, genCode} from "@/api/tool/codegen"
 import {addDateRange} from '@/utils/common'
 import {useFormReset} from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import downloadPlugin from '@/utils/download'
-import importTable from "./importTable"
 import createTable from "./createTable"
+import editTable from "./editTable"
 
 const route = useRoute()
 const resetForm = useFormReset()
-const importRef = ref(null)
 const createRef = ref(null)
+const editRef = ref(null)
 const genRef = ref(null)
 
 const tableList = ref([])
@@ -272,11 +259,6 @@ function handleSynchDb(row) {
   })
 }
 
-/** 打开导入表弹窗 */
-function openImportTable() {
-  importRef.value.show()
-}
-
 /** 打开创建表弹窗 */
 function openCreateTable() {
   createRef.value.show()
@@ -321,10 +303,7 @@ function handleSortChange(column, prop, order) {
 
 /** 修改按钮操作 */
 function handleEditTable(row) {
-  const tableId = row.id || ids.value[0]
-  const tableName = row.tableName || tableNames.value[0]
-  const params = {pageNum: queryParams.value.pageNum, tableId: tableId}
-  tab.openPage("修改[" + tableName + "]生成配置", '/tool/codegen/editTable', params)
+  editRef.value.open(row.id || ids.value[0])
 }
 
 /** 删除按钮操作 */

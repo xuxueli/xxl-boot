@@ -7,7 +7,6 @@ import com.xxl.boot.api.framework.model.dto.CodegenDTO;
 import com.xxl.boot.api.framework.model.dto.CodegenFieldDTO;
 import com.xxl.boot.api.framework.model.entity.Codegen;
 import com.xxl.boot.api.framework.model.entity.CodegenField;
-import com.xxl.boot.api.framework.model.entity.DbTable;
 import com.xxl.boot.api.framework.service.CodegenService;
 import com.xxl.boot.api.framework.util.codegen.ClassInfo;
 import com.xxl.boot.api.framework.util.codegen.TableParseUtil;
@@ -65,6 +64,13 @@ public class CodeGenController {
     @XxlSso
     public Response<Codegen> load(int id) {
         return codegenService.load(id);
+    }
+
+    /** 查询表详情（含字段列表 + 全量表） */
+    @RequestMapping("/detail")
+    @XxlSso
+    public Response<Map<String, Object>> detail(int id) {
+        return codegenService.loadDetail(id);
     }
 
     /** 新增 */
@@ -132,23 +138,6 @@ public class CodeGenController {
 
     // ------ 数据库导入导出操作 ------
 
-    /** 查询数据库表列表 */
-    @RequestMapping("/dbList")
-    @XxlSso
-    public Response<PageModel<DbTable>> dbList(@RequestParam(defaultValue = "0") int offset,
-                                               @RequestParam(defaultValue = "10") int pagesize,
-                                               String tableName) {
-        return Response.ofSuccess(codegenService.dbPageList(tableName, offset, pagesize));
-    }
-
-    /** 导入表 */
-    @RequestMapping("/importTable")
-    @XxlSso
-    @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "导入数据表")
-    public Response<String> importTable(String tableName) {
-        return codegenService.importTable(tableName);
-    }
-
     /** 通过 SQL 建表 */
     @RequestMapping("/createTable")
     @XxlSso
@@ -162,14 +151,6 @@ public class CodeGenController {
     @XxlSso
     public Response<Map<String, String>> preview(int id) {
         return codegenService.preview(id);
-    }
-
-    /** 同步数据库表结构 */
-    @RequestMapping("/synchDb")
-    @XxlSso
-    @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "同步数据表")
-    public Response<String> synchDb(String tableName) {
-        return codegenService.synchDb(tableName);
     }
 
     /** 批量生成代码（下载 zip） */

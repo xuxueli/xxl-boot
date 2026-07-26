@@ -116,6 +116,7 @@
             </el-tooltip>
           </template>
           <el-tree-select
+            v-if="menuOptions.length > 0"
             v-model="info.parentMenuId"
             :data="menuOptions"
             :props="{ value: 'menuId', label: 'menuName', children: 'children' }"
@@ -267,11 +268,11 @@ const menuOptions = ref([])
 const props = defineProps({
   info: {
     type: Object,
-    default: null
+    default: () => ({})
   },
   tables: {
     type: Array,
-    default: null
+    default: () => ([])
   }
 })
 
@@ -308,7 +309,15 @@ function setSubTableColumns(value) {
 /** 查询菜单下拉树结构 */
 function getMenuTreeselect() {
   listMenu().then(response => {
-    menuOptions.value = handleTree(response.data, "menuId")
+    const data = response?.data
+    if (Array.isArray(data)) {
+      // 过滤掉 menuId 为空的数据，避免 el-tree-select 校验失败
+      menuOptions.value = handleTree(data.filter(d => d.menuId != null), "menuId")
+    } else {
+      menuOptions.value = []
+    }
+  }).catch(() => {
+    menuOptions.value = []
   })
 }
 
@@ -317,7 +326,7 @@ onMounted(() => {
 })
 
 watch(() => props.info.subTableName, val => {
-  setSubTableColumns(val)
+  if (val) setSubTableColumns(val)
 })
 
 watch(() => props.info.tplWebType, val => {

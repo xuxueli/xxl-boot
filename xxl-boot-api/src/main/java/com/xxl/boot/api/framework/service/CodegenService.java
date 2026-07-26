@@ -4,7 +4,6 @@ import com.xxl.boot.api.framework.model.dto.CodegenDTO;
 import com.xxl.boot.api.framework.model.dto.CodegenFieldDTO;
 import com.xxl.boot.api.framework.model.entity.Codegen;
 import com.xxl.boot.api.framework.model.entity.CodegenField;
-import com.xxl.boot.api.framework.model.entity.DbTable;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 
@@ -20,6 +19,7 @@ public interface CodegenService {
     Response<String> delete(List<Integer> ids);
     Response<String> update(Codegen xxlBootCodegen);
     Response<Codegen> load(int id);
+    Response<Map<String, Object>> loadDetail(int id);
     PageModel<CodegenDTO> pageList(String tableName, String tableComment, int offset, int pagesize);
 
     Response<String> insertField(CodegenField xxlBootCodegenField);
@@ -29,10 +29,7 @@ public interface CodegenService {
     PageModel<CodegenFieldDTO> fieldPageList(long codegenId, int offset, int pagesize);
     List<CodegenField> findFieldsByCodegenId(long codegenId);
 
-    PageModel<DbTable> dbPageList(String tableName, int offset, int pagesize);
-    Response<String> importTable(String tableName);
     Response<String> createTable(String tableSql);
     Response<Map<String, String>> preview(int id);
-    Response<String> synchDb(String tableName);
     byte[] downloadCode(String[] tableNames);
 }

@@ -82,10 +82,14 @@ export function refreshCache() {
 /**
  * 获取字典类型下拉选项。
  * @returns {Promise<any>} 下拉选项列表。
+ *
+ * TODO: 后端接口 /system/dict/type/optionselect 暂未实现，先返回空数据
  */
 export function optionselect() {
-  return request({
-    url: '/system/dict/type/optionselect',
-    method: 'get'
-  })
+  // TODO: 后端尚未实现，后续对接
+  return Promise.resolve({code: 200, msg: 'success', data: []})
+  // return request({
+  //   url: '/system/dict/type/optionselect',
+  //   method: 'get'
+  // })
 }

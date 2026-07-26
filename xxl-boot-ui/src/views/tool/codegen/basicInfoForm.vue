@@ -34,7 +34,7 @@
 defineProps({
   info: {
     type: Object,
-    default: null
+    default: () => ({})
   }
 })
 

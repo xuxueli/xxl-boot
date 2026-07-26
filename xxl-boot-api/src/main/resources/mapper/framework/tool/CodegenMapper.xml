@@ -33,7 +33,7 @@
         t.`gen_type`, t.`gen_path`, t.`options`, t.`add_time`, t.`update_time`, t.`remark`
     </sql>
 
-    <insert id="insert" parameterType="java.util.Map">
+    <insert id="insert" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="xxlBootCodegen.id">
         INSERT INTO xxl_boot_codegen (
             `table_name`, `table_comment`, `sub_table_name`, `sub_table_fk_name`,
             `class_name`, `tpl_category`, `tpl_web_type`, `package_name`, `module_name`,
