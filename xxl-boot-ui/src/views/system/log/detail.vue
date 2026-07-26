@@ -100,7 +100,13 @@ function copyText(str) {
 </script>
 
 <style scoped>
+.code-body {
+  min-height: 350px;
+}
+.code-wrap {
+  min-height: 350px;
+}
 .code-pre {
-  min-height: 200px;
+  min-height: 350px;
 }
 </style>
