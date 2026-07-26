@@ -84,13 +84,13 @@ public class CodeGenController {
     @GetMapping("/batchGenCode")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "批量生成代码")
-    public void batchGenCode(HttpServletResponse response, String tables) throws IOException {
-        if (StringTool.isBlank(tables)) {
+    public void batchGenCode(HttpServletResponse response, @RequestParam List<Integer> ids) throws IOException {
+        if (ids == null || ids.isEmpty()) {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(GsonTool.toJson(Response.ofFail("请选择要生成的表")));
             return;
         }
-        byte[] data = codegenService.downloadCode(tables.split(","));
+        byte[] data = codegenService.downloadCode(ids);
         if (data == null || data.length == 0) {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(GsonTool.toJson(Response.ofFail("生成失败")));

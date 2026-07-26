@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -214,16 +215,14 @@ public class CodegenServiceImpl implements CodegenService {
     }
 
     @Override
-    public byte[] downloadCode(String[] tableNames) {
+    public byte[] downloadCode(List<Integer> ids) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ZipOutputStream zos = new ZipOutputStream(baos);
 
-            for (String tableName : tableNames) {
-                List<Codegen> list = codegenMapper.pageList(tableName.trim(), null, 0, 1);
-                if (list == null || list.isEmpty()) continue;
-
-                Codegen codegen = list.get(0);
+            for (int id : ids) {
+                Codegen codegen = codegenMapper.load(id);
+                if (codegen == null) continue;
                 List<CodegenField> fields = codegenFieldMapper.findByCodegenId(codegen.getId());
 
                 ClassInfo ci = toClassInfo(codegen, fields);
@@ -258,7 +257,7 @@ public class CodegenServiceImpl implements CodegenService {
     private void addZipEntry(ZipOutputStream zos, String name, String content) throws IOException {
         if (content == null) return;
         zos.putNextEntry(new ZipEntry(name));
-        zos.write(content.getBytes("UTF-8"));
+        zos.write(content.getBytes(StandardCharsets.UTF_8));
         zos.closeEntry();
     }
 

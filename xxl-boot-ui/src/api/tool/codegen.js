@@ -83,17 +83,5 @@ export function delTable(tableId) {
   })
 }
 
-/**
- * 生成代码（自定义路径）。
- * @param {string} tableName 表名。
- * @returns {Promise<any>} 生成结果。
- */
-export function genCode(tableName) {
-  return request({
-    url: '/tool/codegen/batchGenCode',
-    method: 'post',
-    params: { tableName: tableName }
-  })
-}
 
 

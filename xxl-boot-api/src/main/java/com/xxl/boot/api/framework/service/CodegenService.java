@@ -31,5 +31,5 @@ public interface CodegenService {
     Response<Map<String, String>> preview(int id);
 
     /** 生成代码 zip */
-    byte[] downloadCode(String[] tableNames);
+    byte[] downloadCode(List<Integer> ids);
 }

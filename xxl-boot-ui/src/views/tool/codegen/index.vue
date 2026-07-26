@@ -171,7 +171,6 @@ const ids = ref([])
 const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
-const tableNames = ref([])
 const uniqueId = ref("")
 
 const data = reactive({
@@ -219,14 +218,14 @@ function handleQuery() {
 
 /** 生成代码操作 */
 function handleGenTable(row) {
-  const tbNames = row.tableName || tableNames.value
-  if (!tbNames || (Array.isArray(tbNames) && tbNames.length === 0)) {
+  const idList = row.id !== undefined ? [row.id] : ids.value
+  if (!idList || idList.length === 0) {
     modal.msgError("请选择要生成的数据")
     return
   }
-  const names = Array.isArray(tbNames) ? tbNames : [tbNames]
-  const zipName = names.length > 1 ? "boot.zip" : names[0] + ".zip"
-  downloadPlugin.zip("/tool/codegen/batchGenCode?tables=" + names.map(encodeURIComponent).join(","), zipName)
+  const zipName = idList.length > 1 ? "boot.zip" : idList[0] + ".zip"
+  const query = idList.map(id => "ids=" + id).join("&")
+  downloadPlugin.zip("/tool/codegen/batchGenCode?" + query, zipName)
 }
 
 /** 打开创建表弹窗 */
@@ -252,6 +251,7 @@ function handleCreateTable() {
 function resetQuery() {
   resetForm("queryRef")
   queryParams.value.pageNum = 1
+  getList()
 }
 
 /** 预览按钮 */
@@ -271,7 +271,6 @@ function copyTextSuccess() {
 // 多选框选中数据
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id)
-  tableNames.value = selection.map(item => item.tableName)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
