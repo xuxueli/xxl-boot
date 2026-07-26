@@ -93,46 +93,7 @@ CREATE TABLE `xxl_boot_role_res`
   DEFAULT CHARSET = utf8mb4;
 
 
--- ================== system：message、log、dict、config ==================
-
-CREATE TABLE `xxl_boot_log`
-(
-    `id`            BIGINT          NOT NULL AUTO_INCREMENT      COMMENT '日志ID',
-    `type`          INT             NOT NULL                     COMMENT '日志类型（如操作日志、登陆日志）',
-    `module`        VARCHAR(50)     NOT NULL                     COMMENT '日志标题（如用户管理）',
-    `title`         VARCHAR(50)     NOT NULL                     COMMENT '日志标题',
-    `content`       TEXT            NOT NULL                     COMMENT '日志内容',
-    `operator`      VARCHAR(20)     DEFAULT NULL                 COMMENT '操作人',
-    `ip`            VARCHAR(50)     DEFAULT NULL                 COMMENT '操作IP',
-    `add_time`      DATETIME        NOT NULL                     COMMENT '新增时间',
-    `update_time`   DATETIME        NOT NULL                     COMMENT '更新时间',
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE `xxl_boot_message`
-(
-    `id`            BIGINT          NOT NULL AUTO_INCREMENT      COMMENT '消息ID',
-    `category`      INT             NOT NULL                     COMMENT '分类（如 通知、新闻 ）',
-    `title`         VARCHAR(50)     NOT NULL                     COMMENT '标题',
-    `content`       TEXT            NOT NULL                     COMMENT '内容',
-    `sender`        VARCHAR(50)     NOT NULL                     COMMENT '发送人',
-    `status`        TINYINT         NOT NULL                     COMMENT '状态：0-正常、1-下线',
-    `add_time`      DATETIME        NOT NULL                     COMMENT '新增时间',
-    `update_time`   DATETIME        NOT NULL                     COMMENT '更新时间',
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE `xxl_boot_message_read` (
-    `id`            BIGINT          NOT NULL AUTO_INCREMENT     COMMENT 'ID',
-    `message_id`    BIGINT          NOT NULL                    COMMENT '消息ID',
-    `user_id`       INT             NOT NULL                    COMMENT '用户ID',
-    `add_time`      DATETIME        NOT NULL                    COMMENT '阅读时间',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `i_message_user` (`message_id`, `user_id`) USING BTREE
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
+-- ================== system：dict、config、message、log ==================
 
 CREATE TABLE `xxl_boot_dict`
 (
@@ -175,6 +136,45 @@ CREATE TABLE `xxl_boot_config`
     `remark`            VARCHAR(500)    DEFAULT NULL                COMMENT '备注',
     PRIMARY KEY (`id`),
     UNIQUE KEY `i_type` (`key`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `xxl_boot_message`
+(
+    `id`            BIGINT          NOT NULL AUTO_INCREMENT      COMMENT '消息ID',
+    `category`      INT             NOT NULL                     COMMENT '分类（如 通知、新闻 ）',
+    `title`         VARCHAR(50)     NOT NULL                     COMMENT '标题',
+    `content`       TEXT            NOT NULL                     COMMENT '内容',
+    `sender`        VARCHAR(50)     NOT NULL                     COMMENT '发送人',
+    `status`        TINYINT         NOT NULL                     COMMENT '状态：0-正常、1-下线',
+    `add_time`      DATETIME        NOT NULL                     COMMENT '新增时间',
+    `update_time`   DATETIME        NOT NULL                     COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `xxl_boot_message_read` (
+    `id`            BIGINT          NOT NULL AUTO_INCREMENT     COMMENT 'ID',
+    `message_id`    BIGINT          NOT NULL                    COMMENT '消息ID',
+    `user_id`       INT             NOT NULL                    COMMENT '用户ID',
+    `add_time`      DATETIME        NOT NULL                    COMMENT '阅读时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `i_message_user` (`message_id`, `user_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE `xxl_boot_log`
+(
+    `id`            BIGINT          NOT NULL AUTO_INCREMENT      COMMENT '日志ID',
+    `type`          INT             NOT NULL                     COMMENT '日志类型（如操作日志、登陆日志）',
+    `module`        VARCHAR(50)     NOT NULL                     COMMENT '日志标题（如用户管理）',
+    `title`         VARCHAR(50)     NOT NULL                     COMMENT '日志标题',
+    `content`       TEXT            NOT NULL                     COMMENT '日志内容',
+    `operator`      VARCHAR(20)     DEFAULT NULL                 COMMENT '操作人',
+    `ip`            VARCHAR(50)     DEFAULT NULL                 COMMENT '操作IP',
+    `add_time`      DATETIME        NOT NULL                     COMMENT '新增时间',
+    `update_time`   DATETIME        NOT NULL                     COMMENT '更新时间',
+    PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

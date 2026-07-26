@@ -9,11 +9,10 @@ import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ import java.util.List;
  *
  * Created by xuxueli on '2024-10-27 12:19:06'.
  */
-@Controller
+@RestController
 @RequestMapping("/system/log")
 public class LogController {
 
@@ -46,7 +45,6 @@ public class LogController {
      * 分页查询
      */
     @RequestMapping("/pageList")
-    @ResponseBody
     @XxlSso
     public Response<PageModel<LogDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                        @RequestParam(required = false, defaultValue = "10") int pagesize,
@@ -62,7 +60,6 @@ public class LogController {
      * Load查询
      */
     @RequestMapping("/load")
-    @ResponseBody
     @XxlSso
     public Response<Log> load(int id){
         return xxlBootLogService.load(id);
@@ -72,7 +69,6 @@ public class LogController {
      * 新增
      */
     @RequestMapping("/insert")
-    @ResponseBody
     @XxlSso
     public Response<String> insert(Log xxlBootLog){
         return xxlBootLogService.insert(xxlBootLog);
@@ -82,7 +78,6 @@ public class LogController {
      * 删除
      */
     @RequestMapping("/delete")
-    @ResponseBody
     @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return xxlBootLogService.delete(ids);
@@ -92,7 +87,6 @@ public class LogController {
      * 更新
      */
     @RequestMapping("/update")
-    @ResponseBody
     @XxlSso
     public Response<String> update(Log xxlBootLog){
         return xxlBootLogService.update(xxlBootLog);

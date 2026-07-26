@@ -1,5 +1,5 @@
 
--- ================== 清空 xxl_boot_resource 表数据，执行如下SQL ====================
+-- ================== Vue 版本菜单 icon 等属性存在差异；执行如下SQL重置 xxl_boot_resource 表数据  ====================
 
 delete from xxl_boot_resource;
 INSERT INTO `xxl_boot_resource` (`id`, `parent_id`, `name`, `type`, `permission`, `url`, `icon`, `order`, `status`, `visible`, `add_time`, `update_time`)
