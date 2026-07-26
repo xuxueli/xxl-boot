@@ -110,10 +110,11 @@ function transformRoutes(routerMap, flatten = false) {
           // 普通页面-1：定制 component 定位组件位置，通过 loadView 异步加载
           let _component = loadView(route.component)
           if (typeof _component === 'undefined') {
-            console.error(`transformRoutes loadView fail, route.component：[${route.component}]`)
-            return false;
+            console.error(`transformRoutes loadView fail, route.component：[${route.component}]，重定向到 404`)
+            route.component = markRaw(() => import('@/views/common/404'))
+          } else {
+            route.component = markRaw(_component);
           }
-          route.component = markRaw(_component);
 
         }
 
@@ -122,10 +123,11 @@ function transformRoutes(routerMap, flatten = false) {
         // 普通页面-2：默认通过 path 匹配组件位置
         let _component = loadView(route.path)
         if (typeof _component === 'undefined') {
-          console.error(`transformRoutes loadView fail, route.path：[${route.path}]`)
-          return false;
+          console.error(`transformRoutes loadView fail, route.path：[${route.path}]，重定向到 404`)
+          route.component = markRaw(() => import('@/views/common/404'))
+        } else {
+          route.component = markRaw(_component);
         }
-        route.component = markRaw(_component);
 
       }
 
