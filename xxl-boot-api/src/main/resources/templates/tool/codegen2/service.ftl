@@ -1,45 +1,26 @@
-package ${classInfo.packageName}.service;
+package ${codegen.packageName}.service;
 
-import java.util.Map;
 import java.util.List;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
-import ${classInfo.packageName}.model.${classInfo.className};
+import ${codegen.packageName}.model.${codegen.businessName};
 
-<#assign classNameLower = classInfo.className?uncap_first />
+<#assign cn = codegen.businessName />
+<#assign cnLower = cn?uncap_first />
 
 /**
-* ${classInfo.className} Service
+* ${cn} Service
 *
-* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
-public interface ${classInfo.className}Service {
+public interface ${cn}Service {
 
-    /**
-    * 新增
-    */
-    public Response<String> insert(${classInfo.className} ${classNameLower});
-
-    /**
-    * 删除
-    */
+    public Response<String> insert(${cn} ${cnLower});
     public Response<String> delete(List<Integer> ids);
-
-    /**
-    * 更新
-    */
-    public Response<String> update(${classInfo.className} ${classNameLower});
-
-    /**
-    * Load查询
-    */
-    public Response<${classInfo.className}> load(int id);
-
-    /**
-    * 分页查询
-    */
-    public PageModel<${classInfo.className}> pageList(int offset, int pagesize);
+    public Response<String> update(${cn} ${cnLower});
+    public Response<${cn}> load(int id);
+    public PageModel<${cn}> pageList(int offset, int pagesize);
 
 }

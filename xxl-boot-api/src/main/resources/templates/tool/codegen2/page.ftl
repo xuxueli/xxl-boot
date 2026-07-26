@@ -2,29 +2,19 @@
 <html>
 <head>
 <#noparse>
-    <#-- import macro -->
     <#import "/framework/common/common.macro.ftl" as netCommon>
-
-    <!-- 1-style start -->
     <@netCommon.commonStyle />
     <link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
-    <!-- 1-style end -->
 </#noparse>
-<#assign classNameLower = classInfo.className?uncap_first />
-
+<#assign cnLower = codegen.businessName?uncap_first />
 </head>
 <body class="hold-transition" style="background-color: #ecf0f5;">
 <div class="wrapper">
     <section class="content">
-
-        <!-- 2-content start -->
-
-        <!-- 查询区域 -->
         <div class="box" style="margin-bottom:9px;">
             <div class="box-body">
                 <div class="row" id="data_filter" >
                     <div class="col-xs-3">
-                        <!--query param-->
                         <div class="input-group">
                             <span class="input-group-addon">查询参数</span>
                             <input type="text" class="form-control param" autocomplete="on" >
@@ -40,7 +30,6 @@
             </div>
         </div>
 
-        <!-- 数据表格区域 -->
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
@@ -60,28 +49,22 @@
             </div>
         </div>
 
-        <!-- 新增.模态框 -->
         <div class="modal fade" id="addModal" tabindex="-1" role="dialog"  aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" >新增记录</h4>
-                    </div>
+                    <div class="modal-header"><h4 class="modal-title" >新增记录</h4></div>
                     <div class="modal-body">
                         <form class="form-horizontal form" role="form" >
-
-                            <!-- field -->
-                            <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
-                                <#list classInfo.fieldList as fieldItem >
-                                    <#if fieldItem.fieldName != "id" && fieldItem.fieldName != "addTime" && fieldItem.fieldName != "updateTime">
+                            <#if fields?? && fields?size gt 0>
+                                <#list fields as fieldItem >
+                                    <#if fieldItem.javaField != "id" && fieldItem.javaField != "addTime" && fieldItem.javaField != "updateTime">
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">${fieldItem.fieldComment}<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="${fieldItem.fieldName}" placeholder="" maxlength="100" ></div>
+                                <label class="col-sm-2 control-label">${fieldItem.columnComment}<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="${fieldItem.javaField}" placeholder="" maxlength="100" ></div>
                             </div>
                                     </#if>
                                 </#list>
                             </#if>
-
                             <br>
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
                                 <div style="margin-top: 10px;" >
@@ -89,35 +72,28 @@
                                     <button type="button" class="btn btn-default" data-dismiss="modal"><#noparse>${I18n.system_cancel}</#noparse></button>
                                 </div>
                             </div>
-
                         </form>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 更新.模态框 -->
         <div class="modal fade" id="updateModal" tabindex="-1" role="dialog"  aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" >更新记录</h4>
-                    </div>
+                    <div class="modal-header"><h4 class="modal-title" >更新记录</h4></div>
                     <div class="modal-body">
                         <form class="form-horizontal form" role="form" >
-
-                            <!-- field -->
-                            <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
-                                <#list classInfo.fieldList as fieldItem >
-                                    <#if fieldItem.fieldName != "id" && fieldItem.fieldName != "addTime" && fieldItem.fieldName != "updateTime">
+                            <#if fields?? && fields?size gt 0>
+                                <#list fields as fieldItem >
+                                    <#if fieldItem.javaField != "id" && fieldItem.javaField != "addTime" && fieldItem.javaField != "updateTime">
                             <div class="form-group">
-                                <label for="lastname" class="col-sm-2 control-label">${fieldItem.fieldComment}<font color="red">*</font></label>
-                                <div class="col-sm-10"><input type="text" class="form-control" name="${fieldItem.fieldName}" placeholder="" maxlength="100" ></div>
+                                <label class="col-sm-2 control-label">${fieldItem.columnComment}<font color="red">*</font></label>
+                                <div class="col-sm-10"><input type="text" class="form-control" name="${fieldItem.javaField}" placeholder="" maxlength="100" ></div>
                             </div>
                                     </#if>
                                 </#list>
                             </#if>
-
                             <div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
                                 <div style="margin-top: 10px;" >
                                     <button type="submit" class="btn btn-primary"  ><#noparse>${I18n.system_save}</#noparse></button>
@@ -125,37 +101,25 @@
                                     <input type="hidden" name="id" >
                                 </div>
                             </div>
-
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- 2-content end -->
-
     </section>
 </div>
 
-<!-- 3-script start -->
 <#noparse>
 <@netCommon.commonScript />
 <script src="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
 <script src="${request.contextPath}/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
-<!-- admin table -->
 <script src="${request.contextPath}/static/framework/admin.table.js"></script>
 </#noparse>
 <script>
     $(function() {
-
-        // ---------- ---------- ---------- table + curd  ---------- ---------- ----------
-
-        /**
-         * init table
-         */
         $.adminTable.initTable({
             table: '#data_list',
-            url: base_url + "/${classNameLower}/pageList",
+            url: base_url + "/${cnLower}/pageList",
             queryParams: function (params) {
                 var obj = {};
                 obj.param = $('#data_filter .param').val();
@@ -164,93 +128,53 @@
                 return obj;
             },
             columns: [
-                {
-                    checkbox: true,
-                    field: 'state',
-                    width: '5',
-                    widthUnit: '%'
-                }
-                <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
-                    <#list classInfo.fieldList as fieldItem >
-                ,{
-                    title: '${fieldItem.fieldComment}',
-                    field: '${fieldItem.fieldName}',
-                    width: '20',
-                    widthUnit: '%'
-                }
+                { checkbox: true, field: 'state', width: '5', widthUnit: '%' }
+                <#if fields?? && fields?size gt 0>
+                    <#list fields as fieldItem >
+                ,{ title: '${fieldItem.columnComment}', field: '${fieldItem.javaField}', width: '20', widthUnit: '%' }
                     </#list>
                 </#if>
             ]
         });
-
-        /**
-         * init delete
-         */
-        $.adminTable.initDelete({
-            url: base_url + "/${classNameLower}/delete"
-        });
-
-
-        /**
-         * init add
-         */
-        // init add editor
-        $.adminTable.initAdd( {
-            url: base_url + "/${classNameLower}/insert",
-            rules : {
-            },
-            messages : {
-            },
+        $.adminTable.initDelete({ url: base_url + "/${cnLower}/delete" });
+        $.adminTable.initAdd({
+            url: base_url + "/${cnLower}/insert",
+            rules : {}, messages : {},
             readFormData: function() {
-                // request
                 return {
-                    <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
-                        <#list classInfo.fieldList as fieldItem >
-                            <#if fieldItem.fieldName != "id" && fieldItem.fieldName != "addTime" && fieldItem.fieldName != "updateTime">
-                    "${fieldItem.fieldName}": $("#addModal [name=${fieldItem.fieldName}]").val()<#if fieldItem?has_next>,</#if>
+                    <#if fields?? && fields?size gt 0>
+                        <#list fields as fieldItem >
+                            <#if fieldItem.javaField != "id" && fieldItem.javaField != "addTime" && fieldItem.javaField != "updateTime">
+                    "${fieldItem.javaField}": $("#addModal [name=${fieldItem.javaField}]").val()<#if fieldItem?has_next>,</#if>
                             </#if>
                         </#list>
                     </#if>
                 };
             }
         });
-
-        /**
-         * init update
-         */
-        $.adminTable.initUpdate( {
-            url: base_url + "/${classNameLower}/update",
+        $.adminTable.initUpdate({
+            url: base_url + "/${cnLower}/update",
             writeFormData: function(row) {
-                // base data
-
-                <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
-                    <#list classInfo.fieldList as fieldItem >
-                        <#if fieldItem.fieldName != "addTime" && fieldItem.fieldName != "updateTime">
-                $("#updateModal [name='${fieldItem.fieldName}']").val( row.${fieldItem.fieldName} );
+                <#if fields?? && fields?size gt 0>
+                    <#list fields as fieldItem >
+                        <#if fieldItem.javaField != "addTime" && fieldItem.javaField != "updateTime">
+                $("#updateModal [name='${fieldItem.javaField}']").val( row.${fieldItem.javaField} );
                         </#if>
                     </#list>
                 </#if>
             },
-            rules : {
-            },
-            messages : {
-            },
+            rules : {}, messages : {},
             readFormData: function() {
-                // request
                 return {
-                    <#if classInfo.fieldList?? && classInfo.fieldList?size gt 0>
-                    <#list classInfo.fieldList as fieldItem >
-                    "${fieldItem.fieldName}": $("#updateModal [name=${fieldItem.fieldName}]").val()<#if fieldItem?has_next>,</#if>
+                    <#if fields?? && fields?size gt 0>
+                    <#list fields as fieldItem >
+                    "${fieldItem.javaField}": $("#updateModal [name=${fieldItem.javaField}]").val()<#if fieldItem?has_next>,</#if>
                     </#list>
                     </#if>
                 };
             }
         });
-
     });
-
 </script>
-<!-- 3-script end -->
-
 </body>
 </html>

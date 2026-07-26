@@ -1,4 +1,4 @@
-package ${classInfo.packageName}.controller;
+package ${codegen.packageName}.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,22 +13,23 @@ import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 import com.xxl.sso.core.annotation.XxlSso;
 
-import ${classInfo.packageName}.model.${classInfo.className};
-import ${classInfo.packageName}.service.${classInfo.className}Service;
+import ${codegen.packageName}.model.${codegen.businessName};
+import ${codegen.packageName}.service.${codegen.businessName}Service;
 
-<#assign classNameLower = classInfo.className?uncap_first />
+<#assign cn = codegen.businessName />
+<#assign cnLower = cn?uncap_first />
 
 /**
-* ${classInfo.className} Controller
+* ${cn} Controller
 *
-* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
 @Controller
-@RequestMapping("/${classNameLower}")
-public class ${classInfo.className}Controller {
+@RequestMapping("/${cnLower}")
+public class ${cn}Controller {
 
     @Resource
-    private ${classInfo.className}Service ${classNameLower}Service;
+    private ${cn}Service ${cnLower}Service;
 
     /**
     * 页面
@@ -36,7 +37,7 @@ public class ${classInfo.className}Controller {
     @RequestMapping
     @XxlSso
     public String index(Model model) {
-        return "${classNameLower}";
+        return "${cnLower}";
     }
 
     /**
@@ -45,9 +46,9 @@ public class ${classInfo.className}Controller {
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<${classInfo.className}>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<${cn}>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                     @RequestParam(required = false, defaultValue = "10") int pagesize) {
-        PageModel<${classInfo.className}> pageModel = ${classNameLower}Service.pageList(offset, pagesize);
+        PageModel<${cn}> pageModel = ${cnLower}Service.pageList(offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
@@ -57,8 +58,8 @@ public class ${classInfo.className}Controller {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso
-    public Response<${classInfo.className}> load(int id){
-        return ${classNameLower}Service.load(id);
+    public Response<${cn}> load(int id){
+        return ${cnLower}Service.load(id);
     }
 
     /**
@@ -67,8 +68,8 @@ public class ${classInfo.className}Controller {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(${classInfo.className} ${classNameLower}){
-        return ${classNameLower}Service.insert(${classNameLower});
+    public Response<String> insert(${cn} ${cnLower}){
+        return ${cnLower}Service.insert(${cnLower});
     }
 
     /**
@@ -78,7 +79,7 @@ public class ${classInfo.className}Controller {
     @ResponseBody
     @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
-        return ${classNameLower}Service.delete(ids);
+        return ${cnLower}Service.delete(ids);
     }
 
     /**
@@ -87,8 +88,8 @@ public class ${classInfo.className}Controller {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(${classInfo.className} ${classNameLower}){
-        return ${classNameLower}Service.update(${classNameLower});
+    public Response<String> update(${cn} ${cnLower}){
+        return ${cnLower}Service.update(${cnLower});
     }
 
 }

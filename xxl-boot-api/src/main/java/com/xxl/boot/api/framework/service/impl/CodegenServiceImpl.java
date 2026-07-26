@@ -128,6 +128,7 @@ public class CodegenServiceImpl implements CodegenService {
             // parse class-info
             ClassInfo ci = TableParseUtil.processTableIntoClassInfo(tableSql);
 
+            // ClassInfo 2 Codegen
             Codegen c = new Codegen();
             c.setTableName(ci.getTableName());
             c.setTableComment(ci.getClassComment());
@@ -142,11 +143,13 @@ public class CodegenServiceImpl implements CodegenService {
             c.setFunctionAuthor("xxl-boot");
             c.setFormColNum(1);
             c.setTplCategory("crud");
+
             codegenMapper.insert(c);
 
             // 保存字段
             if (ci.getFieldList() != null) {
                 for (int i = 0; i < ci.getFieldList().size(); i++) {
+                    // FieldInfo 2 CodegenField
                     FieldInfo fi = ci.getFieldList().get(i);
                     String colName = fi.getColumnName().toLowerCase();
 
@@ -167,6 +170,7 @@ public class CodegenServiceImpl implements CodegenService {
                     f.setQueryType(colName.endsWith("name") || colName.endsWith("title") ? "LIKE" : "EQ");
                     f.setHtmlType(inferHtmlType(colName, fi.getFieldClass(), fi.getColumnType()));
                     f.setSort(i + 1);
+
                     codegenFieldMapper.insert(f);
                 }
             }
@@ -218,13 +222,8 @@ public class CodegenServiceImpl implements CodegenService {
         if (codegen == null) return Response.ofFail("表不存在");
         List<CodegenField> fields = codegenFieldMapper.findByCodegenId(id);
         try {
+            Map<String, Object> params = buildTemplateContext(codegen, fields);
 
-            // build template data
-            ClassInfo ci = toClassInfo(codegen, fields);
-            Map<String, Object> params = new HashMap<>();
-            params.put("classInfo", ci);
-
-            // 单表：生成代码预览
             Map<String, String> result = new LinkedHashMap<>();
             result.put("java/domain.java.vm", render("entity.ftl", params));
             result.put("java/mapper.java.vm", render("mapper.ftl", params));
@@ -253,22 +252,17 @@ public class CodegenServiceImpl implements CodegenService {
                 if (codegen == null) continue;
                 List<CodegenField> fields = codegenFieldMapper.findByCodegenId(codegen.getId());
 
-                // build template data
-                ClassInfo ci = toClassInfo(codegen, fields);
-                Map<String, Object> params = new HashMap<>();
-                params.put("classInfo", ci);
-
-                String pkg = codegen.getPackageName() != null ? codegen.getPackageName().replace('.', '/') : "com/xxl/boot/demo";
-                String cn = toPascalCase(codegen.getBusinessName() != null ? codegen.getBusinessName() : "demo");
+                Map<String, Object> params = buildTemplateContext(codegen, fields);
+                String pkg = codegen.getPackageName() != null ? codegen.getPackageName().replace('.', '/') : "com.xxl.boot.api.business";
                 String module = codegen.getModuleName() != null ? codegen.getModuleName() : "demo";
 
                 // 单表：生成代码预览
-                addZipEntry(zos, "main/java/" + pkg + "/domain/" + cn + ".java", render("entity.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/mapper/" + cn + "Mapper.java", render("mapper.ftl", params));
-                addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "Mapper.xml", render("mapper_xml.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/service/I" + cn + "Service.java", render("service.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/service/impl/" + cn + "ServiceImpl.java", render("service_impl.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/controller/" + cn + "Controller.java", render("controller.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/domain/" + codegen.getBusinessName() + ".java", render("entity.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/mapper/" + codegen.getBusinessName() + "Mapper.java", render("mapper.ftl", params));
+                addZipEntry(zos, "main/resources/mapper/" + module + "/" + codegen.getBusinessName() + "Mapper.xml", render("mapper_xml.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/service/I" + codegen.getBusinessName() + "Service.java", render("service.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/service/impl/" + codegen.getBusinessName() + "ServiceImpl.java", render("service_impl.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/controller/" + codegen.getBusinessName() + "Controller.java", render("controller.ftl", params));
                 addZipEntry(zos, "vue/views/" + module + "/" + codegen.getBusinessName() + "/index.vue", render("page.ftl", params));
             }
         } catch (Exception e) {
@@ -300,30 +294,12 @@ public class CodegenServiceImpl implements CodegenService {
         zos.closeEntry();
     }
 
-    private ClassInfo toClassInfo(Codegen codegen, List<CodegenField> fields) {
-        ClassInfo ci = new ClassInfo();
-        ci.setTableName(codegen.getTableName());
-        ci.setClassComment(codegen.getTableComment());
-        ci.setClassName(toPascalCase(codegen.getBusinessName() != null ? codegen.getBusinessName() : "demo"));
-        ci.setPackageName(codegen.getPackageName());
-        ci.setAuthor(codegen.getFunctionAuthor());
-        List<FieldInfo> fl = new ArrayList<>();
-        for (CodegenField f : fields) {
-            FieldInfo fi = new FieldInfo();
-            fi.setColumnName(f.getColumnName());
-            fi.setFieldName(f.getJavaField());
-            fi.setFieldClass(f.getJavaType());
-            fi.setFieldComment(f.getColumnComment());
-            fl.add(fi);
-        }
-        ci.setFieldList(fl);
-        return ci;
-    }
-
-    private String toPascalCase(String name) {
-        if (name == null || name.isEmpty()) return name;
-        String camel = StringTool.underlineToCamelCase(name);
-        return StringTool.upperCaseFirst(camel);
+    /** 构建模板上下文：直接传递实体对象，模板访问 codegen.xxx / fields */
+    private Map<String, Object> buildTemplateContext(Codegen codegen, List<CodegenField> fields) {
+        Map<String, Object> ctx = new HashMap<>();
+        ctx.put("codegen", codegen);
+        ctx.put("fields", fields);
+        return ctx;
     }
 
 }

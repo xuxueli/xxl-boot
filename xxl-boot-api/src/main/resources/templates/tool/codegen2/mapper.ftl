@@ -1,50 +1,28 @@
-package ${classInfo.packageName}.mapper;
+package ${codegen.packageName}.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-import ${classInfo.packageName}.model.${classInfo.className};
+import ${codegen.packageName}.model.${codegen.businessName};
 
-<#assign classNameLower = classInfo.className?uncap_first />
+<#assign cn = codegen.businessName />
+<#assign cnLower = cn?uncap_first />
 
 /**
-* ${classInfo.className} Mapper
+* ${cn} Mapper
 *
-* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
 @Mapper
-public interface ${classInfo.className}Mapper {
+public interface ${cn}Mapper {
 
-    /**
-    * 新增
-    */
-    public int insert(@Param("${classNameLower}") ${classInfo.className} ${classNameLower});
-
-    /**
-    * 删除
-    */
+    public int insert(@Param("${cnLower}") ${cn} ${cnLower});
     public int delete(@Param("ids") List<Integer> ids);
-
-    /**
-    * 更新
-    */
-    public int update(@Param("${classNameLower}") ${classInfo.className} ${classNameLower});
-
-    /**
-    * Load查询
-    */
-    public ${classInfo.className} load(@Param("id") int id);
-
-    /**
-    * 分页查询Data
-    */
-	public List<${classInfo.className}> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
-
-    /**
-    * 分页查询Count
-    */
+    public int update(@Param("${cnLower}") ${cn} ${cnLower});
+    public ${cn} load(@Param("id") int id);
+    public List<${cn}> pageList(@Param("offset") int offset, @Param("pagesize") int pagesize);
     public int pageListCount(@Param("offset") int offset, @Param("pagesize") int pagesize);
 
 }

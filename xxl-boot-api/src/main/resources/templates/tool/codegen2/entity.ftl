@@ -1,11 +1,11 @@
-<#if classInfo.fieldList?exists && classInfo.fieldList?size gt 0>
-    <#list classInfo.fieldList as fieldItem >
-        <#if fieldItem.fieldClass == "Date">
+<#if fields?exists && fields?size gt 0>
+    <#list fields as fieldItem >
+        <#if fieldItem.javaType == "Date">
             <#assign importDdate = true />
         </#if>
     </#list>
 </#if>
-package ${classInfo.packageName}.model;
+package ${codegen.packageName}.model;
 
 import java.io.Serializable;
 <#if importDdate?? && importDdate>
@@ -13,31 +13,31 @@ import java.util.Date;
 </#if>
 
 /**
-*  ${classInfo.className} Entity
+*  ${codegen.businessName} Entity
 *
-*  Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+*  Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
-public class ${classInfo.className} implements Serializable {
+public class ${codegen.businessName} implements Serializable {
     private static final long serialVersionUID = 42L;
 
-<#if classInfo.fieldList?exists && classInfo.fieldList?size gt 0>
-<#list classInfo.fieldList as fieldItem >
+<#if fields?exists && fields?size gt 0>
+<#list fields as fieldItem >
     /**
-    * ${fieldItem.fieldComment}
+    * ${fieldItem.columnComment}
     */
-    private ${fieldItem.fieldClass} ${fieldItem.fieldName};
+    private ${fieldItem.javaType} ${fieldItem.javaField};
 
 </#list>
 </#if>
 
-<#if classInfo.fieldList?exists && classInfo.fieldList?size gt 0>
-<#list classInfo.fieldList as fieldItem>
-    public ${fieldItem.fieldClass} get${fieldItem.fieldName?cap_first}() {
-        return ${fieldItem.fieldName};
+<#if fields?exists && fields?size gt 0>
+<#list fields as fieldItem>
+    public ${fieldItem.javaType} get${fieldItem.javaField?cap_first}() {
+        return ${fieldItem.javaField};
     }
 
-    public void set${fieldItem.fieldName?cap_first}(${fieldItem.fieldClass} ${fieldItem.fieldName}) {
-        this.${fieldItem.fieldName} = ${fieldItem.fieldName};
+    public void set${fieldItem.javaField?cap_first}(${fieldItem.javaType} ${fieldItem.javaField}) {
+        this.${fieldItem.javaField} = ${fieldItem.javaField};
     }
 
 </#list>
