@@ -38,11 +38,15 @@ public class CodegenServiceImpl implements CodegenService {
 
     private static final Logger logger = LoggerFactory.getLogger(CodegenServiceImpl.class);
 
-    @Resource private CodegenMapper codegenMapper;
-    @Resource private CodegenFieldMapper codegenFieldMapper;
-    @Resource private Configuration freemarkerConfig;
+    @Resource
+    private CodegenMapper codegenMapper;
 
-    private static final String TPL_PATH = "/tool/codegen2/";
+    @Resource
+    private CodegenFieldMapper codegenFieldMapper;
+
+    @Resource
+    private Configuration freemarkerConfig;
+
 
     @Override
     public PageModel<CodegenDTO> pageList(String tableName, String tableComment, int offset, int pagesize) {
@@ -272,6 +276,10 @@ public class CodegenServiceImpl implements CodegenService {
         return baos.toByteArray();
     }
 
+    /**
+     * template base path
+     */
+    private static final String TPL_PATH = "/tool/codegen2/";
 
     /**
      * 渲染 FreeMarker 模板
