@@ -3,122 +3,85 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xxl.boot.api.framework.mapper.system.LogMapper">
 
-    <resultMap id="Log" type="com.xxl.boot.api.framework.model.entity.Log" >
-        <result column="id" property="id" />
-        <result column="type" property="type" />
-        <result column="module" property="module" />
-        <result column="title" property="title" />
-        <result column="content" property="content" />
-        <result column="operator" property="operator" />
-        <result column="ip" property="ip" />
-        <result column="add_time" property="addTime" />
+    <!-- 结果映射 -->
+    <resultMap id="Log" type="com.xxl.boot.api.framework.model.entity.Log">
+        <result column="id"          property="id" />
+        <result column="type"        property="type" />
+        <result column="module"      property="module" />
+        <result column="title"       property="title" />
+        <result column="content"     property="content" />
+        <result column="operator"    property="operator" />
+        <result column="ip"          property="ip" />
+        <result column="add_time"    property="addTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
 
+    <!-- 通用查询列 -->
     <sql id="Base_Column_List">
-        t.`id`,
-        t.`type`,
-        t.`module`,
-        t.`title`,
-        t.`content`,
-        t.`operator`,
-        t.`ip`,
-        t.`add_time`,
-        t.`update_time`
+        t.`id`, t.`type`, t.`module`, t.`title`, t.`content`,
+        t.`operator`, t.`ip`, t.`add_time`, t.`update_time`
     </sql>
 
-    <insert id="insert" parameterType="java.util.Map" >
-        INSERT INTO xxl_boot_log (
-            `type`,
-            `module`,
-            `title`,
-            `content`,
-            `operator`,
-            `ip`,
-            `add_time`,
-            `update_time`
-        )
-        VALUES(
-          #{xxlBootLog.type} ,
-          #{xxlBootLog.module} ,
-          #{xxlBootLog.title} ,
-          #{xxlBootLog.content} ,
-          #{xxlBootLog.operator} ,
-          #{xxlBootLog.ip} ,
-          NOW() ,
-          NOW()
-      )
+    <!-- 新增 -->
+    <insert id="insert" parameterType="java.util.Map">
+        INSERT INTO xxl_boot_log (`type`, `module`, `title`, `content`, `operator`, `ip`, `add_time`, `update_time`)
+        VALUES(#{xxlBootLog.type}, #{xxlBootLog.module}, #{xxlBootLog.title}, #{xxlBootLog.content},
+               #{xxlBootLog.operator}, #{xxlBootLog.ip}, NOW(), NOW())
     </insert>
 
-    <delete id="delete" parameterType="java.util.Map" >
-        DELETE FROM xxl_boot_log
-        WHERE `id` in
-        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+    <!-- 批量删除 -->
+    <delete id="delete" parameterType="java.util.Map">
+        DELETE FROM xxl_boot_log WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator=",">
             #{item}
         </foreach>
     </delete>
 
-    <update id="update" parameterType="java.util.Map" >
+    <!-- 更新 -->
+    <update id="update" parameterType="java.util.Map">
         UPDATE xxl_boot_log
-        SET
-            `type` = #{xxlBootLog.type},
-            `module` = #{xxlBootLog.module},
-            `title` = #{xxlBootLog.title},
-            `content` = #{xxlBootLog.content},
-            `operator` = #{xxlBootLog.operator},
-            `ip` = #{xxlBootLog.ip},
+        SET `type` = #{xxlBootLog.type}, `module` = #{xxlBootLog.module},
+            `title` = #{xxlBootLog.title}, `content` = #{xxlBootLog.content},
+            `operator` = #{xxlBootLog.operator}, `ip` = #{xxlBootLog.ip},
             update_time = NOW()
         WHERE `id` = #{xxlBootLog.id}
     </update>
 
+    <!-- 根据 ID 查询 -->
     <select id="load" parameterType="java.util.Map" resultMap="Log">
         SELECT <include refid="Base_Column_List" />
-        FROM xxl_boot_log AS t
-        WHERE t.`id` = #{id}
+        FROM xxl_boot_log AS t WHERE t.`id` = #{id}
     </select>
 
+    <!-- 分页查询 -->
     <select id="pageList" parameterType="java.util.Map" resultMap="Log">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_log AS t
-        <trim prefix="WHERE" prefixOverrides="AND | OR" >
-            <if test="type gt -1">
-                AND t.`type` = #{type}
-            </if>
-            <if test="module gt 0">
-                AND t.`module` = #{module}
-            </if>
-            <if test="title != null and title != ''">
-                AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
-            </if>
-
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="type gt -1">AND t.`type` = #{type}</if>
+            <if test="module gt 0">AND t.`module` = #{module}</if>
+            <if test="title != null and title != ''">AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')</if>
         </trim>
         ORDER BY t.`id` DESC
         LIMIT #{offset}, #{pagesize}
     </select>
 
+    <!-- 分页查询-总数 -->
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
-        SELECT count(1)
-        FROM xxl_boot_log AS t
-        <trim prefix="WHERE" prefixOverrides="AND | OR" >
-            <if test="type gt -1">
-                AND t.`type` = #{type}
-            </if>
-            <if test="module gt 0">
-                AND t.`module` = #{module}
-            </if>
-            <if test="title != null and title != ''">
-                AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
-            </if>
-
+        SELECT count(1) FROM xxl_boot_log AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR">
+            <if test="type gt -1">AND t.`type` = #{type}</if>
+            <if test="module gt 0">AND t.`module` = #{module}</if>
+            <if test="title != null and title != ''">AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')</if>
         </trim>
     </select>
 
+    <!-- 按日期统计日志趋势 -->
     <select id="trendList" parameterType="java.util.Map" resultType="java.util.LinkedHashMap">
         SELECT DATE_FORMAT(t.`add_time`, '%Y-%m-%d') AS `date`, COUNT(1) AS `count`
         FROM xxl_boot_log AS t
         WHERE t.`add_time` >= DATE_SUB(CURDATE(), INTERVAL #{days} DAY)
-        GROUP BY `date`
-        ORDER BY `date` ASC
+        GROUP BY `date` ORDER BY `date` ASC
     </select>
 
 </mapper>

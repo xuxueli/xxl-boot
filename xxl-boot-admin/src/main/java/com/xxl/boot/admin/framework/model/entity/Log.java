@@ -4,58 +4,21 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-*  Log Entity
-*
-*  Created by xuxueli on '2024-10-27 12:19:06'.
-*/
+ * 名称：Log
+ * 功能：日志实体，对应 xxl_boot_log 表
+ */
 public class Log implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    /**
-    * 日志ID
-    */
-    private long id;
-
-    /**
-    * 日志类型（如操作日志、登陆日志）
-    */
-    private int type;
-
-    /**
-    * 系统模块（如用户管理）
-    */
-    private String module;
-
-    /**
-    * 日志标题
-    */
-    private String title;
-
-    /**
-    * 日志内容
-    */
-    private String content;
-
-    /**
-    * 操作人
-    */
-    private String operator;
-
-    /**
-    * 操作IP
-    */
-    private String ip;
-
-    /**
-    * 新增时间
-    */
-    private Date addTime;
-
-    /**
-    * 更新时间
-    */
-    private Date updateTime;
-
+    private long   id;                            /* 日志ID */
+    private int    type;                          /* 日志类型（0-操作日志、1-登陆日志） */
+    private int    module;                        /* 系统模块编码（对应 LogModuleEnum） */
+    private String title;                         /* 日志标题 */
+    private String content;                       /* 日志内容 */
+    private String operator;                      /* 操作人 */
+    private String ip;                            /* 操作IP */
+    private Date   addTime;                       /* 新增时间 */
+    private Date   updateTime;                    /* 更新时间 */
 
     public long getId() {
         return id;
@@ -73,11 +36,11 @@ public class Log implements Serializable {
         this.type = type;
     }
 
-    public String getModule() {
+    public int getModule() {
         return module;
     }
 
-    public void setModule(String module) {
+    public void setModule(int module) {
         this.module = module;
     }
 
@@ -128,5 +91,4 @@ public class Log implements Serializable {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-
 }

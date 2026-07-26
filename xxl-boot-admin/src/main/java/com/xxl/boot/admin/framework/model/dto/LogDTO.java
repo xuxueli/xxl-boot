@@ -1,61 +1,23 @@
 package com.xxl.boot.admin.framework.model.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
-*  Log Entity
-*
-*  Created by xuxueli on '2024-10-27 12:19:06'.
-*/
+ * 名称：LogDTO
+ * 功能：日志数据传输对象，对外展示使用
+ */
 public class LogDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    /**
-    * 日志ID
-    */
-    private long id;
-
-    /**
-    * 日志类型（如操作日志、登陆日志）
-    */
-    private int type;
-
-    /**
-    * 系统模块（如用户管理）
-    */
-    private String module;
-
-    /**
-    * 日志标题
-    */
-    private String title;
-
-    /**
-    * 日志内容
-    */
-    private String content;
-
-    /**
-    * 操作人
-    */
-    private String operator;
-
-    /**
-    * 操作IP
-    */
-    private String ip;
-
-    /**
-    * 新增时间
-    */
-    private String addTime;
-
-    /**
-     * 操作IP（对应地址）
-     */
-    private String ipAddress;
-
+    private long   id;                            /* 日志ID */
+    private int    type;                          /* 日志类型（0-操作日志、1-登陆日志） */
+    private int    module;                        /* 系统模块编码 */
+    private String title;                         /* 日志标题 */
+    private String content;                       /* 日志内容 */
+    private String operator;                      /* 操作人 */
+    private String ip;                            /* 操作IP */
+    private String addTime;                       /* 新增时间（格式化后 yyyy-MM-dd HH:mm:ss） */
+    private String ipAddress;                     /* 操作地址（IP 对应地理位置） */
 
     public long getId() {
         return id;
@@ -73,11 +35,11 @@ public class LogDTO implements Serializable {
         this.type = type;
     }
 
-    public String getModule() {
+    public int getModule() {
         return module;
     }
 
-    public void setModule(String module) {
+    public void setModule(int module) {
         this.module = module;
     }
 
@@ -128,5 +90,4 @@ public class LogDTO implements Serializable {
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
-
 }

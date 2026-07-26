@@ -29,67 +29,69 @@ public class LogController {
     private LogService xxlBootLogService;
 
     /**
-     * 页面
+     * 日志页面（FreeMarker）
      */
     @RequestMapping
     @XxlSso
     public String index(Model model) {
-
         model.addAttribute("LogTypeEnum", LogTypeEnum.values());
         model.addAttribute("LogModuleEnum", LogModuleEnum.values());
-
         return "/framework/system/log";
     }
 
     /**
      * 分页查询
+     *
+     * @param offset   偏移量
+     * @param pagesize 每页条数
+     * @param type     日志类型（-1 全部）
+     * @param module   系统模块编码（0 全部）
+     * @param title    日志标题（模糊匹配）
      */
     @RequestMapping("/pageList")
     @XxlSso
-    public Response<PageModel<LogDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                @RequestParam(required = false, defaultValue = "-1") int type,
-                                                @RequestParam(required = false, defaultValue = "0") int module,
-                                                String title
-    ) {
+    public Response<PageModel<LogDTO>> pageList(@RequestParam(defaultValue = "0") int offset,
+                                                @RequestParam(defaultValue = "10") int pagesize,
+                                                @RequestParam(defaultValue = "-1") int type,
+                                                @RequestParam(defaultValue = "0") int module,
+                                                String title) {
         PageModel<LogDTO> pageModel = xxlBootLogService.pageList(type, module, title, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
     /**
-     * Load查询
+     * 根据 ID 查询单条日志
      */
     @RequestMapping("/load")
     @XxlSso
-    public Response<Log> load(int id){
+    public Response<Log> load(int id) {
         return xxlBootLogService.load(id);
     }
 
     /**
-     * 新增
+     * 新增日志
      */
     @RequestMapping("/insert")
     @XxlSso
-    public Response<String> insert(Log xxlBootLog){
+    public Response<String> insert(Log xxlBootLog) {
         return xxlBootLogService.insert(xxlBootLog);
     }
 
     /**
-     * 删除
+     * 批量删除日志
      */
     @RequestMapping("/delete")
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
         return xxlBootLogService.delete(ids);
     }
 
     /**
-     * 更新
+     * 更新日志
      */
     @RequestMapping("/update")
     @XxlSso
-    public Response<String> update(Log xxlBootLog){
+    public Response<String> update(Log xxlBootLog) {
         return xxlBootLogService.update(xxlBootLog);
     }
-
 }

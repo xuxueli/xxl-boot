@@ -127,5 +127,4 @@ public class LogDTO implements Serializable {
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
-
 }

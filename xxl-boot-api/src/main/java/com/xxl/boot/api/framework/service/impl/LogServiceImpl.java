@@ -23,65 +23,46 @@ public class LogServiceImpl implements LogService {
 	@Resource
 	private LogMapper logMapper;
 
-	/**
-    * 新增
-    */
 	@Override
 	public Response<String> insert(Log xxlBootLog) {
-
-		// valid
+		// 参数校验
 		if (xxlBootLog == null) {
 			return Response.ofFail("必要参数缺失");
         }
-
 		logMapper.insert(xxlBootLog);
 		return Response.ofSuccess();
 	}
 
-	/**
-	* 删除
-	*/
 	@Override
 	public Response<String> delete(List<Integer> ids) {
 		int ret = logMapper.delete(ids);
-		return ret>0? Response.ofSuccess() : Response.ofFail() ;
+		return ret > 0 ? Response.ofSuccess() : Response.ofFail();
 	}
 
-	/**
-	* 更新
-	*/
 	@Override
 	public Response<String> update(Log xxlBootLog) {
 		int ret = logMapper.update(xxlBootLog);
-		return ret>0? Response.ofSuccess() : Response.ofFail() ;
+		return ret > 0 ? Response.ofSuccess() : Response.ofFail();
 	}
 
-	/**
-	* Load查询
-	*/
 	@Override
 	public Response<Log> load(int id) {
 		Log record = logMapper.load(id);
 		return Response.ofSuccess(record);
 	}
 
-	/**
-	* 分页查询
-	*/
 	@Override
 	public PageModel<LogDTO> pageList(int type, int module, String title, int offset, int pagesize) {
-
+		// 分页查询
 		List<Log> pageList = logMapper.pageList(type, module, title, offset, pagesize);
 		int totalCount = logMapper.pageListCount(type, module, title, offset, pagesize);
 
+		// 实体转 DTO（补充 IP 地理位置）
 		List<LogDTO> pageListDTO = LogAdaptor.adaptor(pageList);
 
-		// result
 		PageModel<LogDTO> pageModel = new PageModel<>();
 		pageModel.setData(pageListDTO);
 		pageModel.setTotal(totalCount);
-
 		return pageModel;
 	}
-
 }

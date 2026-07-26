@@ -8,33 +8,39 @@ import com.xxl.tool.core.DateTool;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 名称：LogAdaptor
+ * 功能：日志实体 → DTO 转换，补充 IP 地理位置信息
+ */
 public class LogAdaptor {
 
-
+    /**
+     * 将日志实体列表转换为 DTO 列表
+     *
+     * @param pageList 日志实体列表
+     * @return DTO 列表（含 ipAddress 地理位置）
+     */
     public static List<LogDTO> adaptor(List<Log> pageList) {
         List<LogDTO> dtoList = new ArrayList<LogDTO>();
-        for (Log xxlBootLog : pageList) {
-            // adaptor
+        for (Log log : pageList) {
             LogDTO dto = new LogDTO();
-            dto.setId(xxlBootLog.getId());
-            dto.setType(xxlBootLog.getType());
-            dto.setModule(xxlBootLog.getModule());
-            dto.setTitle(xxlBootLog.getTitle());
-            dto.setContent(xxlBootLog.getContent());
-            dto.setOperator(xxlBootLog.getOperator());
-            dto.setIp(xxlBootLog.getIp());
-            dto.setAddTime(DateTool.formatDateTime(xxlBootLog.getAddTime()));
-            // ip
-            Ip2regionUtil.RegionInfo cityInfo = Ip2regionUtil.getRegionInfo(xxlBootLog.getIp());
+            dto.setId(log.getId());
+            dto.setType(log.getType());
+            dto.setModule(log.getModule());
+            dto.setTitle(log.getTitle());
+            dto.setContent(log.getContent());
+            dto.setOperator(log.getOperator());
+            dto.setIp(log.getIp());
+            dto.setAddTime(DateTool.formatDateTime(log.getAddTime()));
+
+            // 根据 IP 查询地理位置
+            Ip2regionUtil.RegionInfo cityInfo = Ip2regionUtil.getRegionInfo(log.getIp());
             if (cityInfo != null) {
-                //String temp = String.format("%s%s%s", cityInfo.getCountry(), cityInfo.getProvince(), cityInfo.getCity());
                 dto.setIpAddress(cityInfo.getSearchIpInfo());
             }
 
-            // collect
             dtoList.add(dto);
         }
         return dtoList;
     }
-
 }

@@ -1,5 +1,10 @@
+<!--
+  页面：Log（日志管理）
+  功能：查询、删除日志，查看日志详情
+-->
 <template>
   <div class="app-container">
+    <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px">
       <el-form-item label="日志类型" prop="type">
         <el-select v-model="queryParams.type" placeholder="日志类型" clearable style="width: 240px">
@@ -22,6 +27,7 @@
       </el-form-item>
     </el-form>
 
+    <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
@@ -29,6 +35,7 @@
       <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
+    <!-- 日志列表 -->
     <el-table ref="logRef" v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="日志编号" align="center" prop="id" width="80" />
@@ -63,9 +70,11 @@
       </el-table-column>
     </el-table>
 
+    <!-- 分页 -->
     <Pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize" @pagination="getList" />
 
+    <!-- 详情弹窗 -->
     <log-detail v-model:visible="detailVisible" :row="detailRow" />
   </div>
 </template>
@@ -80,35 +89,37 @@ import modal from '@/utils/modal'
 
 const resetForm = useFormReset()
 
-const logRef = ref(null)
+const logRef = ref(null)            /* 表格 ref */
+const logList = ref([])             /* 日志列表数据 */
+const total = ref(0)                /* 总条数 */
+const detailVisible = ref(false)    /* 详情弹窗可见 */
+const loading = ref(true)           /* 加载中 */
+const detailRow = ref({})           /* 当前查看的日志行 */
+const showSearch = ref(true)        /* 是否显示搜索栏 */
+const ids = ref([])                 /* 选中行 ID 数组 */
+const single = ref(true)            /* 是否单选 */
+const multiple = ref(true)          /* 是否多选 */
+const title = ref("")               /* 对话框标题 */
+const moduleOptions = ref([])       /* 系统模块下拉选项 */
+const moduleMap = ref({})           /* 系统模块编码 → 名称映射 */
 
-const logList = ref([])
-const total = ref(0)
-const detailVisible = ref(false)
-const loading = ref(true)
-const detailRow = ref({})
-const showSearch = ref(true)
-const ids = ref([])
-const single = ref(true)
-const multiple = ref(true)
-const title = ref("")
-const moduleOptions = ref([])
-const moduleMap = ref({})
 const data = reactive({
   form: {},
   queryParams: {
-    pageNum: 1,
-    pageSize: 10,
-    type: undefined,
-    module: undefined,
-    title: undefined
+    pageNum: 1,         /* 当前页码 */
+    pageSize: 10,       /* 每页条数 */
+    type: undefined,    /* 日志类型 */
+    module: undefined,  /* 系统模块编码 */
+    title: undefined    /* 日志标题 */
   }
 })
 
 const { queryParams, form } = toRefs(data)
 
+/** 查询日志列表 */
 function getList() {
   loading.value = true
+  // 前端分页参数 → 后端分页参数
   const params = {
     ...queryParams.value,
     offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
@@ -123,27 +134,32 @@ function getList() {
   })
 }
 
+/** 搜索按钮 */
 function handleQuery() {
   queryParams.value.pageNum = 1
   getList()
 }
 
+/** 重置按钮 */
 function resetQuery() {
   resetForm("queryRef")
   queryParams.value.pageNum = 1
   getList()
 }
 
+/** 多选框选中 */
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id)
   multiple.value = !selection.length
 }
 
+/** 详细按钮 */
 function handleDetail(row) {
   detailRow.value = row
   detailVisible.value = true
 }
 
+/** 删除按钮 */
 function handleDelete(row) {
   const logIds = row.id || ids.value
   modal.confirm('是否确认删除日志编号为"' + logIds + '"的数据项?').then(function () {
@@ -151,14 +167,15 @@ function handleDelete(row) {
   }).then(() => {
     getList()
     modal.msgSuccess("删除成功")
-  }).catch(() => {
-  })
+  }).catch(() => {})
 }
 
+// 加载系统模块枚举
 loadEnumItem('LogModuleEnum').then(data => {
   moduleOptions.value = data.data
   moduleOptions.value.forEach(item => { moduleMap.value[item.code] = item.title })
 })
 
+// 初始化查询
 getList()
 </script>
