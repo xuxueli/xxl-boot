@@ -263,9 +263,7 @@ function open(id) {
 /** 提交保存 */
 function submitForm() {
   /* 校验两个表单 */
-  const p1 = new Promise(r => basicFormRef.value.validate(v => r(v)))
-  const p2 = new Promise(r => genFormRef.value.validate(v => r(v)))
-  Promise.all([p1, p2]).then(res => {
+  Promise.all([basicFormRef.value.validate(), genFormRef.value.validate()]).then(res => {
     if (res.every(Boolean)) {
       const genTable = Object.assign({}, info.value)
       genTable.fieldList = columns.value
