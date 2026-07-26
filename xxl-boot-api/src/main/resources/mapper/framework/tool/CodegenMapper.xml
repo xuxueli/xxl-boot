@@ -7,8 +7,6 @@
         <result column="id" property="id" />
         <result column="table_name" property="tableName" />
         <result column="table_comment" property="tableComment" />
-        <result column="sub_table_name" property="subTableName" />
-        <result column="sub_table_fk_name" property="subTableFkName" />
         <result column="class_name" property="className" />
         <result column="tpl_category" property="tplCategory" />
         <result column="tpl_web_type" property="tplWebType" />
@@ -27,7 +25,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        t.`id`, t.`table_name`, t.`table_comment`, t.`sub_table_name`, t.`sub_table_fk_name`,
+        t.`id`, t.`table_name`, t.`table_comment`,
         t.`class_name`, t.`tpl_category`, t.`tpl_web_type`, t.`package_name`, t.`module_name`,
         t.`business_name`, t.`function_name`, t.`function_author`, t.`form_col_num`,
         t.`gen_type`, t.`gen_path`, t.`options`, t.`add_time`, t.`update_time`, t.`remark`
@@ -35,13 +33,12 @@
 
     <insert id="insert" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="xxlBootCodegen.id">
         INSERT INTO xxl_boot_codegen (
-            `table_name`, `table_comment`, `sub_table_name`, `sub_table_fk_name`,
+            `table_name`, `table_comment`,
             `class_name`, `tpl_category`, `tpl_web_type`, `package_name`, `module_name`,
             `business_name`, `function_name`, `function_author`, `form_col_num`,
             `gen_type`, `gen_path`, `options`, `remark`, `add_time`, `update_time`
         ) VALUES (
             #{xxlBootCodegen.tableName}, #{xxlBootCodegen.tableComment},
-            #{xxlBootCodegen.subTableName}, #{xxlBootCodegen.subTableFkName},
             #{xxlBootCodegen.className}, #{xxlBootCodegen.tplCategory},
             #{xxlBootCodegen.tplWebType}, #{xxlBootCodegen.packageName},
             #{xxlBootCodegen.moduleName}, #{xxlBootCodegen.businessName},
@@ -61,8 +58,6 @@
         UPDATE xxl_boot_codegen SET
             `table_name` = #{xxlBootCodegen.tableName},
             `table_comment` = #{xxlBootCodegen.tableComment},
-            `sub_table_name` = #{xxlBootCodegen.subTableName},
-            `sub_table_fk_name` = #{xxlBootCodegen.subTableFkName},
             `class_name` = #{xxlBootCodegen.className},
             `tpl_category` = #{xxlBootCodegen.tplCategory},
             `tpl_web_type` = #{xxlBootCodegen.tplWebType},

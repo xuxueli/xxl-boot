@@ -7,7 +7,6 @@
           <el-select v-model="info.tplCategory" @change="tplSelectChange">
             <el-option label="单表（增删改查）" value="crud" />
             <el-option label="树表（增删改查）" value="tree" />
-            <el-option label="主子表（增删改查）" value="sub" />
           </el-select>
         </el-form-item>
       </el-col>
@@ -16,9 +15,8 @@
         <el-form-item prop="tplWebType">
           <template #label>前端类型</template>
           <el-select v-model="info.tplWebType">
-            <el-option label="Vue2 Element UI 模版" value="element-ui" />
-            <el-option label="Vue3 Element Plus 模版" value="element-plus" />
-            <el-option label="Vue3 Element Plus TypeScript 模版" value="element-plus-typescript" />
+            <el-option label="Element Plus" value="element-plus" />
+            <el-option label="Element Plus + TypeScript" value="element-plus-typescript" />
           </el-select>
         </el-form-item>
       </el-col>
@@ -213,47 +211,7 @@
       </el-row>
     </template>
 
-    <template v-if="info.tplCategory == 'sub'">
-      <h4 class="form-header">关联信息</h4>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item>
-            <template #label>
-              关联子表的表名
-              <el-tooltip content="关联子表的表名， 如：sys_user" placement="top">
-                <el-icon><QuestionFilled /></el-icon>
-              </el-tooltip>
-            </template>
-            <el-select v-model="info.subTableName" placeholder="请选择" @change="subSelectChange">
-              <el-option
-                v-for="(table, index) in tables"
-                :key="index"
-                :label="table.tableName + '：' + table.tableComment"
-                :value="table.tableName"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item>
-            <template #label>
-              子表关联的外键名
-              <el-tooltip content="子表关联的外键名， 如：user_id" placement="top">
-                <el-icon><QuestionFilled /></el-icon>
-              </el-tooltip>
-            </template>
-            <el-select v-model="info.subTableFkName" placeholder="请选择">
-              <el-option
-                v-for="(column, index) in subColumns"
-                :key="index"
-                :label="column.columnName + '：' + column.columnComment"
-                :value="column.columnName"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-    </template>
+
 
   </el-form>
 </template>
@@ -262,17 +220,11 @@
 import { listMenu } from "@/api/org/resource.js"
 import { handleTree } from '@/utils/common'
 
-const subColumns = ref([])
 const menuOptions = ref([])
-
 const props = defineProps({
   info: {
     type: Object,
     default: () => ({})
-  },
-  tables: {
-    type: Array,
-    default: () => ([])
   }
 })
 
@@ -285,25 +237,7 @@ const rules = ref({
   functionName: [{ required: true, message: "请输入生成功能名", trigger: "blur" }]
 })
 
-function subSelectChange(value) {
-  props.info.subTableFkName = ""
-}
-
 function tplSelectChange(value) {
-  if (value !== "sub") {
-    props.info.subTableName = ""
-    props.info.subTableFkName = ""
-  }
-}
-
-function setSubTableColumns(value) {
-  for (var item in props.tables) {
-    const name = props.tables[item].tableName
-    if (value === name) {
-      subColumns.value = props.tables[item].columns
-      break
-    }
-  }
 }
 
 /** 查询菜单下拉树结构 */
@@ -325,13 +259,5 @@ onMounted(() => {
   getMenuTreeselect()
 })
 
-watch(() => props.info.subTableName, val => {
-  if (val) setSubTableColumns(val)
-})
 
-watch(() => props.info.tplWebType, val => {
-  if (val === '') {
-    props.info.tplWebType = "element-plus"
-  }
-})
 </script>

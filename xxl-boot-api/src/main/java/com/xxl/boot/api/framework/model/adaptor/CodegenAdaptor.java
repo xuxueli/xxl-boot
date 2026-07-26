@@ -19,8 +19,7 @@ public class CodegenAdaptor {
         for (Codegen entity : entityList) {
             CodegenDTO dto = new CodegenDTO();
             dto.setId(entity.getId()); dto.setTableName(entity.getTableName());
-            dto.setTableComment(entity.getTableComment()); dto.setSubTableName(entity.getSubTableName());
-            dto.setSubTableFkName(entity.getSubTableFkName()); dto.setClassName(entity.getClassName());
+            dto.setTableComment(entity.getTableComment()); dto.setClassName(entity.getClassName());
             dto.setTplCategory(entity.getTplCategory()); dto.setTplWebType(entity.getTplWebType());
             dto.setPackageName(entity.getPackageName()); dto.setModuleName(entity.getModuleName());
             dto.setBusinessName(entity.getBusinessName()); dto.setFunctionName(entity.getFunctionName());

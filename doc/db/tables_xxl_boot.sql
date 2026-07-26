@@ -186,8 +186,6 @@ CREATE TABLE `xxl_boot_codegen`
     `id`               BIGINT          NOT NULL AUTO_INCREMENT      COMMENT '编号',
     `table_name`       VARCHAR(200)    DEFAULT ''                   COMMENT '表名称',
     `table_comment`    VARCHAR(500)    DEFAULT ''                   COMMENT '表描述',
-    `sub_table_name`   VARCHAR(64)     DEFAULT NULL                 COMMENT '关联子表的表名',
-    `sub_table_fk_name` VARCHAR(64)    DEFAULT NULL                 COMMENT '子表关联的外键名',
     `class_name`       VARCHAR(100)    DEFAULT ''                   COMMENT '实体类名称',
     `tpl_category`     VARCHAR(200)    DEFAULT 'crud'               COMMENT '使用的模板（crud单表操作 tree树表操作）',
     `tpl_web_type`     VARCHAR(30)     DEFAULT ''                   COMMENT '前端模板类型（element-ui element-plus）',

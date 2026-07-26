@@ -1,8 +1,12 @@
 <template>
   <el-dialog v-model="visible" title="修改生成配置" width="90%" top="3vh" append-to-body destroy-on-close>
     <el-tabs v-model="activeName">
-      <el-tab-pane label="基本信息" name="basic">
+      <el-tab-pane label="配置信息" name="basic">
+        <h4 style="margin: 0 0 8px 0; font-weight: 600;">基本信息</h4>
         <basic-info-form ref="basicInfo" :info="info" />
+        <el-divider style="margin: 8px 0;" />
+        <h4 style="margin: 0 0 8px 0; font-weight: 600;">生成信息</h4>
+        <gen-info-form ref="genInfo" :info="info" />
       </el-tab-pane>
       <el-tab-pane label="字段信息" name="columnInfo">
         <el-table ref="dragTable" :data="columns" row-key="columnId" :max-height="tableHeight">
@@ -73,9 +77,6 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <el-tab-pane label="生成信息" name="genInfo">
-        <gen-info-form ref="genInfo" :info="info" :tables="tables" />
-      </el-tab-pane>
     </el-tabs>
     <template #footer>
       <el-button type="primary" @click="submitForm">提交</el-button>
@@ -96,9 +97,8 @@ const emit = defineEmits(["ok"])
 const basicInfo = ref(null)
 const genInfo = ref(null)
 
-const activeName = ref("columnInfo")
+const activeName = ref("basic")
 const tableHeight = ref(document.documentElement.scrollHeight - 285 + "px")
-const tables = ref([])
 const columns = ref([])
 const dictOptions = ref([])
 const info = ref({})
@@ -107,12 +107,11 @@ const tableId = ref(0)
 
 function open(id) {
   tableId.value = id
-  info.value = {}
+  info.value = {formColNum: 1, tplWebType: 'element-plus'}
   visible.value = true
   getGenTable(id).then(res => {
     columns.value = res.data.rows || []
     info.value = res.data.info || {}
-    tables.value = res.data.tables || []
   })
   getDictOptionselect().then(response => {
     dictOptions.value = response.data || []

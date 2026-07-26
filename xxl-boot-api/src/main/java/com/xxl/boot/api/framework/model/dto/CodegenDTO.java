@@ -9,8 +9,7 @@ public class CodegenDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
     private long id;                private String tableName;
-    private String tableComment;    private String subTableName;
-    private String subTableFkName;  private String className;
+    private String tableComment;    private String className;
     private String tplCategory;     private String tplWebType;
     private String packageName;     private String moduleName;
     private String businessName;    private String functionName;
@@ -22,8 +21,6 @@ public class CodegenDTO implements Serializable {
     public long getId() { return id; } public void setId(long id) { this.id = id; }
     public String getTableName() { return tableName; } public void setTableName(String v) { this.tableName = v; }
     public String getTableComment() { return tableComment; } public void setTableComment(String v) { this.tableComment = v; }
-    public String getSubTableName() { return subTableName; } public void setSubTableName(String v) { this.subTableName = v; }
-    public String getSubTableFkName() { return subTableFkName; } public void setSubTableFkName(String v) { this.subTableFkName = v; }
     public String getClassName() { return className; } public void setClassName(String v) { this.className = v; }
     public String getTplCategory() { return tplCategory; } public void setTplCategory(String v) { this.tplCategory = v; }
     public String getTplWebType() { return tplWebType; } public void setTplWebType(String v) { this.tplWebType = v; }

@@ -12,8 +12,6 @@ public class Codegen implements Serializable {
     private long id;                /* 编号 */
     private String tableName;       /* 表名称 */
     private String tableComment;    /* 表描述 */
-    private String subTableName;    /* 关联子表的表名 */
-    private String subTableFkName;  /* 子表关联的外键名 */
     private String className;       /* 实体类名称 */
     private String tplCategory;     /* 使用的模板（crud单表操作 tree树表操作） */
     private String tplWebType;      /* 前端模板类型（element-ui element-plus） */
@@ -36,10 +34,6 @@ public class Codegen implements Serializable {
     public void setTableName(String tableName) { this.tableName = tableName; }
     public String getTableComment() { return tableComment; }
     public void setTableComment(String tableComment) { this.tableComment = tableComment; }
-    public String getSubTableName() { return subTableName; }
-    public void setSubTableName(String subTableName) { this.subTableName = subTableName; }
-    public String getSubTableFkName() { return subTableFkName; }
-    public void setSubTableFkName(String subTableFkName) { this.subTableFkName = subTableFkName; }
     public String getClassName() { return className; }
     public void setClassName(String className) { this.className = className; }
     public String getTplCategory() { return tplCategory; }
