@@ -1,3 +1,7 @@
+/**
+* ${codegen.functionName} API
+* Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+*/
 import request from '@/utils/request'
 
 // 查询${codegen.functionName}列表

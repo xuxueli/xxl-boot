@@ -20,7 +20,7 @@ import ${codegen.packageName}.service.${codegen.businessName}Service;
 <#assign cnLower = cn?uncap_first />
 
 /**
-* ${cn} Controller
+* ${codegen.functionName} Controller
 *
 * Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
@@ -58,7 +58,7 @@ public class ${cn}Controller {
     @RequestMapping("/load")
     @ResponseBody
     @XxlSso
-    public Response<${cn}> load(int id){
+    public Response<${cn}> load(int id) {
         return ${cnLower}Service.load(id);
     }
 
@@ -68,7 +68,7 @@ public class ${cn}Controller {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(${cn} ${cnLower}){
+    public Response<String> insert(${cn} ${cnLower}) {
         return ${cnLower}Service.insert(${cnLower});
     }
 
@@ -78,7 +78,7 @@ public class ${cn}Controller {
     @RequestMapping("/delete")
     @ResponseBody
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
         return ${cnLower}Service.delete(ids);
     }
 
@@ -88,7 +88,7 @@ public class ${cn}Controller {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(${cn} ${cnLower}){
+    public Response<String> update(${cn} ${cnLower}) {
         return ${cnLower}Service.update(${cnLower});
     }
 

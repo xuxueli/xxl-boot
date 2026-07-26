@@ -13,9 +13,9 @@ import java.util.Date;
 </#if>
 
 /**
-*  ${codegen.businessName} Entity
+* ${codegen.functionName} Entity
 *
-*  Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
 public class ${codegen.businessName} implements Serializable {
     private static final long serialVersionUID = 42L;
