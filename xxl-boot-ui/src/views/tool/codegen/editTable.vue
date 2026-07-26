@@ -105,6 +105,7 @@ const tableId = ref(0)
 
 function open(id) {
   tableId.value = id
+  activeName.value = "basic"
   info.value = {formColNum: 1, tplWebType: 'element-plus'}
   visible.value = true
   getGenTable(id).then(res => {
