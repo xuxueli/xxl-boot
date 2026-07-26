@@ -1,62 +1,21 @@
 package com.xxl.boot.api.framework.util.codegen;
 
-/**
- * field info
- *
- * @author xuxueli 2018-05-02 20:11:05
- */
 public class FieldInfo {
 
-    /**
-     * column Name, "add_time"
-     */
-    private String columnName;
+    private String columnName;     /* 列名，如 add_time */
+    private String fieldName;      /* 属性名，如 addTime */
+    private String fieldClass;     /* Java类型，如 Date */
+    private String columnType;     /* 数据库类型，如 datetime */
+    private String fieldComment;   /* 注释 */
 
-    /**
-     * field Name, "addTime"
-     */
-    private String fieldName;
-
-    /**
-     * field Class, "Date"
-     */
-    private String fieldClass;
-
-    /**
-     * field Comment, "add time of the recore"
-     */
-    private String fieldComment;
-
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
-
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
-    public String getFieldClass() {
-        return fieldClass;
-    }
-
-    public void setFieldClass(String fieldClass) {
-        this.fieldClass = fieldClass;
-    }
-
-    public String getFieldComment() {
-        return fieldComment;
-    }
-
-    public void setFieldComment(String fieldComment) {
-        this.fieldComment = fieldComment;
-    }
-
+    public String getColumnName() { return columnName; }
+    public void setColumnName(String v) { this.columnName = v; }
+    public String getFieldName() { return fieldName; }
+    public void setFieldName(String v) { this.fieldName = v; }
+    public String getFieldClass() { return fieldClass; }
+    public void setFieldClass(String v) { this.fieldClass = v; }
+    public String getColumnType() { return columnType; }
+    public void setColumnType(String v) { this.columnType = v; }
+    public String getFieldComment() { return fieldComment; }
+    public void setFieldComment(String v) { this.fieldComment = v; }
 }

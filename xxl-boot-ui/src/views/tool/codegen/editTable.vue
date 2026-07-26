@@ -9,13 +9,12 @@
         <gen-info-form ref="genInfo" :info="info" />
       </el-tab-pane>
       <el-tab-pane label="字段信息" name="columnInfo">
-        <el-table ref="dragTable" :data="columns" row-key="columnId" :max-height="tableHeight">
+        <el-table ref="dragTable" :data="columns" row-key="columnId" max-height="420">
           <el-table-column label="序号" type="index" min-width="5%" class-name="allowDrag"/>
           <el-table-column label="字段列名" prop="columnName" min-width="10%" :show-overflow-tooltip="true" class-name="allowDrag"/>
           <el-table-column label="字段描述" min-width="10%">
             <template #default="scope"><el-input v-model="scope.row.columnComment"></el-input></template>
           </el-table-column>
-          <el-table-column label="物理类型" prop="columnType" min-width="10%" :show-overflow-tooltip="true" />
           <el-table-column label="Java类型" min-width="11%">
             <template #default="scope">
               <el-select v-model="scope.row.javaType">
@@ -98,7 +97,6 @@ const basicInfo = ref(null)
 const genInfo = ref(null)
 
 const activeName = ref("basic")
-const tableHeight = ref(document.documentElement.scrollHeight - 285 + "px")
 const columns = ref([])
 const dictOptions = ref([])
 const info = ref({})
@@ -140,8 +138,9 @@ function submitForm() {
   })
 }
 
-// 拖动排序
-onMounted(() => {
+// 拖动排序（columns 数据加载后初始化）
+watch(columns, (val) => {
+  if (!val || val.length === 0) return
   nextTick(() => {
     const el = document.querySelector('.el-table__body > tbody')
     if (!el) return
@@ -154,7 +153,7 @@ onMounted(() => {
       }
     })
   })
-})
+}, { once: true })
 
 defineExpose({ open })
 </script>

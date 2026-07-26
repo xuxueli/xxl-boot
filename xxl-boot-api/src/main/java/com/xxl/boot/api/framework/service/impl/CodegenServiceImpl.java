@@ -93,11 +93,8 @@ public class CodegenServiceImpl implements CodegenService {
                 f.setCodegenId(c.getId());
                 f.setColumnName((String) colMap.get("columnName"));
                 f.setColumnComment((String) colMap.get("columnComment"));
-                f.setColumnType((String) colMap.get("columnType"));
                 f.setJavaType((String) colMap.get("javaType"));
                 f.setJavaField((String) colMap.get("javaField"));
-                f.setIsPk((String) colMap.get("isPk"));
-                f.setIsIncrement((String) colMap.get("isIncrement"));
                 f.setIsRequired((String) colMap.get("isRequired"));
                 f.setIsInsert((String) colMap.get("isInsert"));
                 f.setIsEdit((String) colMap.get("isEdit"));
@@ -195,7 +192,6 @@ public class CodegenServiceImpl implements CodegenService {
                     f.setCodegenId(c.getId());
                     f.setColumnName(fi.getColumnName());
                     f.setColumnComment(fi.getFieldComment());
-                    f.setColumnType(fi.getFieldClass());
                     f.setJavaField(fi.getFieldName());
                     f.setJavaType(fi.getFieldClass());
                     f.setIsInsert(fi.getColumnName().equals("add_time") ? "0" : "1");
@@ -204,10 +200,6 @@ public class CodegenServiceImpl implements CodegenService {
                     f.setIsQuery("0");
                     f.setQueryType("EQ");
                     f.setSort(i + 1);
-                    if ("id".equals(fi.getColumnName())) {
-                        f.setIsPk("1");
-                        f.setIsIncrement("1");
-                    }
                     codegenFieldMapper.insert(f);
                 }
             }

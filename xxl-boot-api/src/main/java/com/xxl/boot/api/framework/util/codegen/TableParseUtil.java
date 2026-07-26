@@ -115,27 +115,39 @@ public class TableParseUtil {
                 fieldName = fieldName.replace("_", "");
             }
 
-            // 5.4、field class
-            String fieldClass = Object.class.getSimpleName();
-            if (columnLine.startsWith("int")
-                    || columnLine.startsWith("tinyint")
-                    || columnLine.startsWith("smallint")) {
-                fieldClass = Integer.TYPE.getSimpleName();
-            } else if (columnLine.startsWith("bigint")) {
-                fieldClass = Long.TYPE.getSimpleName();
-            } else if (columnLine.startsWith("float")) {
-                fieldClass = Float.TYPE.getSimpleName();
-            } else if (columnLine.startsWith("double")) {
-                fieldClass = Double.TYPE.getSimpleName();
-            } else if (columnLine.startsWith("datetime")
-                    || columnLine.startsWith("timestamp")) {
+            // 5.4、column type（SQL原始类型，如 int(11)）
+            String columnType = columnLine;
+            int typeEnd = -1;
+            for (int i = 0; i < columnLine.length(); i++) {
+                char ch = columnLine.charAt(i);
+                if (ch == ' ' || ch == '\t') { typeEnd = i; break; }
+            }
+            if (typeEnd > 0) columnType = columnLine.substring(0, typeEnd);
+            columnLine = columnLine.substring(typeEnd > 0 ? typeEnd + 1 : 0).trim();
+
+            // 5.5、field class（SQL 类型 → Java 包装类型，与前端选项值一致）
+            String fieldClass = String.class.getSimpleName();
+            if (columnType.startsWith("int")
+                    || columnType.startsWith("tinyint")
+                    || columnType.startsWith("smallint")) {
+                fieldClass = Integer.class.getSimpleName();
+            } else if (columnType.startsWith("bigint")) {
+                fieldClass = Long.class.getSimpleName();
+            } else if (columnType.startsWith("float")) {
+                fieldClass = Float.class.getSimpleName();
+            } else if (columnType.startsWith("double")) {
+                fieldClass = Double.class.getSimpleName();
+            } else if (columnType.startsWith("datetime")
+                    || columnType.startsWith("timestamp")) {
                 fieldClass = Date.class.getSimpleName();
-            } else if (columnLine.startsWith("varchar")
-                    || columnLine.startsWith("text")
-                    || columnLine.startsWith("char")) {
+            } else if (columnType.startsWith("varchar")
+                    || columnType.startsWith("text")
+                    || columnType.startsWith("char")) {
                 fieldClass = String.class.getSimpleName();
-            } else if (columnLine.startsWith("decimal")) {
+            } else if (columnType.startsWith("decimal")) {
                 fieldClass = BigDecimal.class.getSimpleName();
+            } else if (columnType.startsWith("boolean") || columnType.startsWith("bit")) {
+                fieldClass = Boolean.class.getSimpleName();
             }
 
             // 5.5、field comment
@@ -152,6 +164,7 @@ public class TableParseUtil {
             fieldInfo.setColumnName(columnName);
             fieldInfo.setFieldName(fieldName);
             fieldInfo.setFieldClass(fieldClass);
+            fieldInfo.setColumnType(columnType);
             fieldInfo.setFieldComment(fieldComment);
 
             fieldList.add(fieldInfo);

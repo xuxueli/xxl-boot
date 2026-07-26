@@ -14,20 +14,32 @@ import java.util.List;
 public class CodegenAdaptor {
 
     public static List<CodegenDTO> adaptor(List<Codegen> entityList) {
-        if (CollectionTool.isEmpty(entityList)) return new ArrayList<>();
+        if (CollectionTool.isEmpty(entityList)) {
+            return new ArrayList<>();
+        }
+
         List<CodegenDTO> dtoList = new ArrayList<>();
         for (Codegen entity : entityList) {
             CodegenDTO dto = new CodegenDTO();
-            dto.setId(entity.getId()); dto.setTableName(entity.getTableName());
-            dto.setTableComment(entity.getTableComment()); dto.setRemark(entity.getRemark());
-            dto.setPackageName(entity.getPackageName()); dto.setModuleName(entity.getModuleName());
-            dto.setBusinessName(entity.getBusinessName()); dto.setFunctionName(entity.getFunctionName());
-            dto.setFunctionAuthor(entity.getFunctionAuthor()); dto.setFormColNum(entity.getFormColNum());
-            dto.setTplCategory(entity.getTplCategory()); dto.setTplWebType(entity.getTplWebType());
+            dto.setId(entity.getId());
+            dto.setTableName(entity.getTableName());
+            dto.setTableComment(entity.getTableComment());
+            dto.setRemark(entity.getRemark());
+            dto.setPackageName(entity.getPackageName());
+            dto.setModuleName(entity.getModuleName());
+            dto.setBusinessName(entity.getBusinessName());
+            dto.setFunctionName(entity.getFunctionName());
+            dto.setFunctionAuthor(entity.getFunctionAuthor());
+            dto.setFormColNum(entity.getFormColNum());
+            dto.setTplCategory(entity.getTplCategory());
+            dto.setTplWebType(entity.getTplWebType());
             dto.setAddTime(DateTool.formatDateTime(entity.getAddTime()));
             dto.setUpdateTime(DateTool.formatDateTime(entity.getUpdateTime()));
+
             dtoList.add(dto);
         }
+
         return dtoList;
     }
+
 }
