@@ -76,7 +76,7 @@
 
 		<!-- 新增.模态框 -->
 		<div class="modal fade" id="addModal" tabindex="-1" role="dialog"  aria-hidden="true">
-			<div class="modal-dialog">
+			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" >${I18n.system_opt_add}${I18n.resource_tips}</h4>
@@ -85,7 +85,7 @@
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>父资源</label>
-								<div class="col-sm-6">
+								<div class="col-sm-4">
 									<div class="input-group">
 										<input type="text" class="form-control" name="parentName" readonly value="根资源" >
 										<input type="hidden" name="parentId" value="0" >
@@ -94,10 +94,8 @@
 										</span>
 									</div>
 								</div>
-							</div>
-							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>资源类型</label>
-								<div class="col-sm-6">
+								<div class="col-sm-4">
 									<#list resourceTypeEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;">
 											<input type="radio" name="type" value="${item.value}" > ${item.desc}
@@ -117,7 +115,7 @@
 							</div>
 							<div class="form-group">
 								<label for="lastname" class="col-sm-2 control-label">图标</label>
-								<div class="col-sm-6">
+								<div class="col-sm-4">
 									<div class="input-group">
 										<input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" >
 										<span class="input-group-btn">
@@ -125,46 +123,44 @@
 										</span>
 									</div>
 								</div>
+								<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
+								<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
 							</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
-							<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
-							<div class="col-sm-4">
-								<#list resourceStatuEnum as item>
-									<span class="col-sm-6" style="padding-left: 0px;">
-										<input type="radio" name="status" value="${item.value}" > ${item.desc}
-									</span>
-								</#list>
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
+								<div class="col-sm-4">
+									<#list resourceStatuEnum as item>
+										<span class="col-sm-6" style="padding-left: 0px;">
+											<input type="radio" name="status" value="${item.value}" > ${item.desc}
+										</span>
+									</#list>
+								</div>
+								<label class="col-sm-2 control-label"><font color="red">*</font>显示状态</label>
+								<div class="col-sm-4">
+									<#list resourceVisibleEnum as item>
+										<span class="col-sm-6" style="padding-left: 0px;">
+											<input type="radio" name="visible" value="${item.value}" > ${item.desc}
+										</span>
+									</#list>
+								</div>
 							</div>
-							<label class="col-sm-2 control-label"><font color="red">*</font>显示状态</label>
-							<div class="col-sm-4">
-								<#list resourceVisibleEnum as item>
-									<span class="col-sm-6" style="padding-left: 0px;">
-										<input type="radio" name="visible" value="${item.value}" > ${item.desc}
-									</span>
-								</#list>
-							</div>
-						</div>
 
-						<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
+							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
 							<div style="margin-top: 10px;" >
 								<button type="submit" class="btn btn-primary" >${I18n.system_save}</button>
 								<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
 							</div>
 						</div>
 
-					</form>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<!-- 更新.模态框 -->
+		<!-- 更新.模态框 -->
 		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog"  aria-hidden="true">
-			<div class="modal-dialog">
+			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title" >${I18n.system_opt_edit}${I18n.resource_tips}</h4>
@@ -173,7 +169,7 @@
 						<form class="form-horizontal form" role="form" >
 							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>父资源</label>
-								<div class="col-sm-6">
+								<div class="col-sm-4">
 									<div class="input-group">
 										<input type="text" class="form-control" name="parentName" readonly value="根资源" >
 										<input type="hidden" name="parentId" value="0" >
@@ -182,10 +178,8 @@
 										</span>
 									</div>
 								</div>
-							</div>
-							<div class="form-group">
 								<label class="col-sm-2 control-label"><font color="red">*</font>资源类型</label>
-								<div class="col-sm-6">
+								<div class="col-sm-4">
 									<#list resourceTypeEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;">
 											<input type="radio" name="type" value="${item.value}" > ${item.desc}
@@ -205,7 +199,7 @@
 							</div>
 							<div class="form-group">
 								<label for="lastname" class="col-sm-2 control-label">图标</label>
-								<div class="col-sm-6">
+								<div class="col-sm-4">
 									<div class="input-group">
 										<input type="text" class="form-control" name="icon" placeholder="${I18n.system_please_input}icon" maxlength="50" >
 										<span class="input-group-btn">
@@ -213,39 +207,38 @@
 										</span>
 									</div>
 								</div>
+								<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
+								<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
 							</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><font color="red">*</font>顺序</label>
-							<div class="col-sm-4"><input type="number" class="form-control" name="order" placeholder="${I18n.system_please_input}展示顺序" ></div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
-							<div class="col-sm-4">
-								<#list resourceStatuEnum as item>
-									<span class="col-sm-6" style="padding-left: 0px;">
-										<input type="radio" name="status" value="${item.value}" > ${item.desc}
-									</span>
-								</#list>
-							</div>
-							<label class="col-sm-2 control-label"><font color="red">*</font>显示状态</label>
-							<div class="col-sm-4">
-								<#list resourceVisibleEnum as item>
-									<span class="col-sm-6" style="padding-left: 0px;">
-										<input type="radio" name="visible" value="${item.value}" > ${item.desc}
-									</span>
-								</#list>
-							</div>
-						</div>
-
-						<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
-							<div style="margin-top: 10px;" >
-								<button type="submit" class="btn btn-primary"  >${I18n.system_save}</button>
-								<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
-								<input type="hidden" name="id" >
+							<div class="form-group">
+								<label class="col-sm-2 control-label"><font color="red">*</font>状态</label>
+								<div class="col-sm-4">
+									<#list resourceStatuEnum as item>
+										<span class="col-sm-6" style="padding-left: 0px;">
+											<input type="radio" name="status" value="${item.value}" > ${item.desc}
+										</span>
+									</#list>
+								</div>
+								<label class="col-sm-2 control-label"><font color="red">*</font>显示状态</label>
+								<div class="col-sm-4">
+									<#list resourceVisibleEnum as item>
+										<span class="col-sm-6" style="padding-left: 0px;">
+											<input type="radio" name="visible" value="${item.value}" > ${item.desc}
+										</span>
+									</#list>
 								</div>
 							</div>
 
-						</form>
+							<div class="form-group" style="text-align:center;border-top: 1px solid #e4e4e4;">
+								<div style="margin-top: 10px;" >
+									<button type="submit" class="btn btn-primary"  >${I18n.system_save}</button>
+									<button type="button" class="btn btn-default" data-dismiss="modal">${I18n.system_cancel}</button>
+									<input type="hidden" name="id" >
+									</div>
+								</div>
+
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
