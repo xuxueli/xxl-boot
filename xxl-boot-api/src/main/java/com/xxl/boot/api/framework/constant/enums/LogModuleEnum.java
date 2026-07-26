@@ -52,4 +52,14 @@ public enum LogModuleEnum implements EnumTool.IEnum {
         return title;
     }
 
+
+    public static LogModuleEnum match(int code) {
+        for (LogModuleEnum logModuleEnum : LogModuleEnum.values()) {
+            if (logModuleEnum.getCode() == code) {
+                return logModuleEnum;
+            }
+        }
+        return null;
+    }
+
 }

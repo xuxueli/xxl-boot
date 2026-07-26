@@ -30,4 +30,14 @@ public enum LogTypeEnum implements EnumTool.IEnum {
         return title;
     }
 
+
+    public static LogTypeEnum match(int code) {
+        for (LogTypeEnum logTypeEnum : LogTypeEnum.values()) {
+            if (logTypeEnum.getCode() == code) {
+                return logTypeEnum;
+            }
+        }
+        return null;
+    }
+
 }

@@ -3,9 +3,11 @@ package com.xxl.boot.api.framework.controller.system;
 import com.xxl.boot.api.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.api.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.api.framework.model.dto.LogDTO;
+import com.xxl.boot.api.framework.model.dto.LogExcelDTO;
 import com.xxl.boot.api.framework.model.entity.Log;
 import com.xxl.boot.api.framework.service.LogService;
 import com.xxl.sso.core.annotation.XxlSso;
+import com.xxl.tool.core.DateTool;
 import com.xxl.tool.excel.ExcelTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -107,21 +110,30 @@ public class LogController {
                        @RequestParam(defaultValue = "-1") int type,
                        @RequestParam(defaultValue = "0") int module,
                        String title) throws Exception {
+
         PageModel<LogDTO> pageModel = xxlBootLogService.pageList(type, module, title, 0, 100000);
         List<LogDTO> list = pageModel.getData();
-        byte[] byteArray = ExcelTool.writeExcel(list);
+        List<LogExcelDTO> excelDTOList = list.stream().map(LogExcelDTO::new).toList();
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setCharacterEncoding("utf-8");
+        // file data
+        byte[] byteArray = ExcelTool.writeExcel(excelDTOList);
+        String fileName = "excel-"+ DateTool.formatDateTime(new Date()) +".xlsx";
 
+        // write file
+        writeResponse(response, byteArray, fileName);
 
-        // write zip file
-        response.reset();
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Expose-Headers", "Content-Disposition");
-        response.setHeader("Content-Disposition", "attachment; filename=\"boot-excel.zip\"");
-        response.addHeader("Content-Length", "" + byteArray.length);
-        response.setContentType("application/octet-stream; charset=UTF-8");
-        response.getOutputStream().write(byteArray);
     }
+
+    /**
+     * write response
+     */
+    public static void writeResponse(HttpServletResponse response, byte[] byteArray, String fileName) throws Exception {
+        response.reset();
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename*=utf-8''" + fileName);
+        response.setContentLength(byteArray.length);
+        response.getOutputStream().write(byteArray);
+        response.getOutputStream().flush();
+    }
+
 }

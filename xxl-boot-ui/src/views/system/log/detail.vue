@@ -98,3 +98,9 @@ function copyText(str) {
   }
 }
 </script>
+
+<style scoped>
+.code-pre {
+  min-height: 200px;
+}
+</style>
