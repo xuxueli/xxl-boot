@@ -254,7 +254,7 @@ public class LoginController {
 		// build log
 		Log xxlBootLog = new Log();
 		xxlBootLog.setType(logTypeEnum.getCode());
-		xxlBootLog.setModule(logModuleEnum.name());
+		xxlBootLog.setModule(logModuleEnum.getCode());
 		xxlBootLog.setTitle(title);
 		xxlBootLog.setContent(content);
 		xxlBootLog.setOperator(operator);
