@@ -47,11 +47,11 @@ public class LogController {
     @RequestMapping("/pageList")
     @XxlSso
     public Response<PageModel<LogDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                       @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                       @RequestParam(required = false, defaultValue = "-1") int type,
-                                                       String module,
-                                                       String title
-                                                       ) {
+                                                @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                @RequestParam(required = false, defaultValue = "-1") int type,
+                                                String module,
+                                                String title
+    ) {
         PageModel<LogDTO> pageModel = xxlBootLogService.pageList(type, module, title, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }

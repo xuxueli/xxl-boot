@@ -5,6 +5,7 @@ import request from '@/utils/request'
  * 能力：提供日志查询、删除接口。
  */
 
+
 /**
  * 查询日志列表。
  * @param {Object} query 查询参数。
@@ -28,5 +29,18 @@ export function delOperlog(ids) {
     url: '/system/log/delete',
     method: 'post',
     params: { 'ids[]': ids }
+  })
+}
+
+/**
+ * 查询枚举列表。
+ * @param {string} enumName 枚举类名。
+ * @returns {Promise<any>} 枚举项列表。
+ */
+export function loadEnumItem(enumName) {
+  return request({
+    url: '/system/dict/loadEnumItem',
+    method: 'get',
+    params: { enumName }
   })
 }

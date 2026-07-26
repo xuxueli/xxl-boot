@@ -51,7 +51,7 @@ public class LogDTO implements Serializable {
     private String addTime;
 
     /**
-     * 操作IP（对应地址）
+     * 操作地址
      */
     private String ipAddress;
 

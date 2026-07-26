@@ -8,8 +8,9 @@
         </el-select>
       </el-form-item>
       <el-form-item label="系统模块" prop="module">
-        <el-input v-model="queryParams.module" placeholder="请输入系统模块" clearable style="width: 240px"
-          @keyup.enter="handleQuery" />
+        <el-select v-model="queryParams.module" placeholder="系统模块" clearable style="width: 240px">
+          <el-option v-for="item in moduleOptions" :key="item.code" :label="item.title" :value="item.code" />
+        </el-select>
       </el-form-item>
       <el-form-item label="日志标题" prop="title">
         <el-input v-model="queryParams.title" placeholder="请输入日志标题" clearable style="width: 240px"
@@ -38,7 +39,11 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="系统模块" align="center" prop="module" :show-overflow-tooltip="true" />
+      <el-table-column label="系统模块" align="center" :show-overflow-tooltip="true">
+        <template #default="scope">
+          {{ moduleMap[scope.row.module] || scope.row.module }}
+        </template>
+      </el-table-column>
       <el-table-column label="日志标题" align="center" prop="title" :show-overflow-tooltip="true" />
       <el-table-column label="操作人" align="center" prop="operator" width="110" :show-overflow-tooltip="true" />
       <el-table-column label="操作IP" align="center" prop="ip" width="130" :show-overflow-tooltip="true" />
@@ -64,6 +69,7 @@
 <script setup name="Log">
 import LogDetail from './detail'
 import { pageList, delOperlog } from "@/api/system/log"
+import { loadEnumItem } from "@/api/system/dict/data"
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
@@ -82,6 +88,8 @@ const ids = ref([])
 const single = ref(true)
 const multiple = ref(true)
 const title = ref("")
+const moduleOptions = ref([])
+const moduleMap = ref({})
 const data = reactive({
   form: {},
   queryParams: {
@@ -142,6 +150,11 @@ function handleDelete(row) {
   }).catch(() => {
   })
 }
+
+loadEnumItem('LogModuleEnum').then(data => {
+  moduleOptions.value = data.data
+  moduleOptions.value.forEach(item => { moduleMap.value[item.code] = item.title })
+})
 
 getList()
 </script>

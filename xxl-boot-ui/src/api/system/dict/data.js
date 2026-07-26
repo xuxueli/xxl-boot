@@ -79,3 +79,19 @@ export function delData(dictCode) {
     method: 'delete'
   })
 }
+
+
+/* ---------------------- 字典、枚举 查询 ---------------------- */
+
+/**
+ * 查询枚举列表。
+ * @param {string} enumName 枚举类名。
+ * @returns {Promise<any>} 枚举项列表。
+ */
+export function loadEnumItem(enumName) {
+  return request({
+    url: '/system/dict/loadEnumItem',
+    method: 'get',
+    params: { enumName }
+  })
+}
