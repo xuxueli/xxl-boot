@@ -111,7 +111,9 @@ function open(id) {
   visible.value = true
   getGenTable(id).then(res => {
     columns.value = res.data.rows || []
-    info.value = res.data.info || {}
+    info.value = Object.assign({formColNum: 1, tplWebType: 'element-plus'}, res.data.info || {})
+    if (![1, 2, 3].includes(info.value.formColNum)) info.value.formColNum = 1
+    if (!['element-plus', 'element-plus-typescript'].includes(info.value.tplWebType)) info.value.tplWebType = 'element-plus'
   })
   getDictOptionselect().then(response => {
     dictOptions.value = response.data || []
@@ -125,13 +127,6 @@ function submitForm() {
     if (res.every(Boolean)) {
       const genTable = Object.assign({}, info.value)
       genTable.columns = columns.value
-      genTable.params = {
-        genView: info.value.view ? '1' : '0',
-        treeCode: info.value.treeCode,
-        treeName: info.value.treeName,
-        treeParentCode: info.value.treeParentCode,
-        parentMenuId: info.value.parentMenuId
-      }
       updateGenTable(genTable).then(res => {
         modal.msgSuccess(res.msg)
         if (res.code === 200) {

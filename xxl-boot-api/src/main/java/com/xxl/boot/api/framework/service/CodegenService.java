@@ -17,7 +17,7 @@ public interface CodegenService {
 
     Response<String> insert(Codegen xxlBootCodegen);
     Response<String> delete(List<Integer> ids);
-    Response<String> update(Codegen xxlBootCodegen);
+    Response<String> update(Map<String, Object> body);
     Response<Codegen> load(int id);
     Response<Map<String, Object>> loadDetail(int id);
     PageModel<CodegenDTO> pageList(String tableName, String tableComment, int offset, int pagesize);

@@ -238,14 +238,8 @@ function handleGenTable(row) {
     modal.msgError("请选择要生成的数据")
     return
   }
-  if (row.genType === "1") {
-    genCode(row.tableName).then(response => {
-      modal.msgSuccess("成功生成到自定义路径：" + row.data)
-    })
-  } else {
-    const zipName = Array.isArray(tbNames) ? "boot.zip" : tbNames + ".zip"
-    downloadPlugin.zip("/tool/codegen/batchGenCode?tables=" + tbNames, zipName)
-  }
+  const zipName = Array.isArray(tbNames) ? "boot.zip" : tbNames + ".zip"
+  downloadPlugin.zip("/tool/codegen/batchGenCode?tables=" + tbNames, zipName)
 }
 
 /** 同步数据库操作 */

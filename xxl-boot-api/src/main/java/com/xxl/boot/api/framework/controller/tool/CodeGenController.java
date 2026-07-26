@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,7 +78,7 @@ public class CodeGenController {
     @RequestMapping("/insert")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "新增代码生成")
-    public Response<String> insert(Codegen xxlBootCodegen) {
+    public Response<String> insert(@RequestBody Codegen xxlBootCodegen) {
         return codegenService.insert(xxlBootCodegen);
     }
 
@@ -85,8 +86,8 @@ public class CodeGenController {
     @RequestMapping("/update")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "更新代码生成")
-    public Response<String> update(Codegen xxlBootCodegen) {
-        return codegenService.update(xxlBootCodegen);
+    public Response<String> update(@RequestBody Map<String, Object> body) {
+        return codegenService.update(body);
     }
 
     /** 批量删除 */
