@@ -37,6 +37,6 @@ public interface LogService {
     /**
     * 分页查询
     */
-    public PageModel<LogDTO> pageList(int type, String module, String title, int offset, int pagesize);
+    public PageModel<LogDTO> pageList(int type, int module, String title, int offset, int pagesize);
 
 }

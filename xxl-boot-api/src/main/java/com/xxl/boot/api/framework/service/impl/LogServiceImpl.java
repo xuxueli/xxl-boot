@@ -69,7 +69,7 @@ public class LogServiceImpl implements LogService {
 	* 分页查询
 	*/
 	@Override
-	public PageModel<LogDTO> pageList(int type, String module, String title, int offset, int pagesize) {
+	public PageModel<LogDTO> pageList(int type, int module, String title, int offset, int pagesize) {
 
 		List<Log> pageList = logMapper.pageList(type, module, title, offset, pagesize);
 		int totalCount = logMapper.pageListCount(type, module, title, offset, pagesize);

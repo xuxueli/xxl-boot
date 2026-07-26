@@ -131,7 +131,7 @@ public class XxlLogAspect {
         // generate
         com.xxl.boot.api.framework.model.entity.Log xxlBootLog = new com.xxl.boot.api.framework.model.entity.Log();
         xxlBootLog.setType(log.type().getCode());
-        xxlBootLog.setModule(log.module().name());
+        xxlBootLog.setModule(log.module().getCode());
         xxlBootLog.setTitle(log.title());
         xxlBootLog.setContent(content);
         xxlBootLog.setOperator(operator);

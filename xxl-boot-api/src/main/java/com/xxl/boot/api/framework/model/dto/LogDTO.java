@@ -21,9 +21,9 @@ public class LogDTO implements Serializable {
     private int type;
 
     /**
-    * 系统模块（如用户管理）
-    */
-    private String module;
+     * 系统模块（如用户管理）
+     */
+    private int module;
 
     /**
     * 日志标题
@@ -72,11 +72,11 @@ public class LogDTO implements Serializable {
         this.type = type;
     }
 
-    public String getModule() {
+    public int getModule() {
         return module;
     }
 
-    public void setModule(String module) {
+    public void setModule(int module) {
         this.module = module;
     }
 

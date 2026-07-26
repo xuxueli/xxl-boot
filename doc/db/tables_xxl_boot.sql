@@ -167,8 +167,8 @@ CREATE TABLE `xxl_boot_log`
 (
     `id`            BIGINT          NOT NULL AUTO_INCREMENT      COMMENT '日志ID',
     `type`          INT             NOT NULL                     COMMENT '日志类型（如操作日志、登陆日志）',
-    `module`        VARCHAR(50)     NOT NULL                     COMMENT '日志标题（如用户管理）',
-    `title`         VARCHAR(50)     NOT NULL                     COMMENT '日志标题',
+    `module`        INT             NOT NULL                     COMMENT '系统模块（如用户管理）',
+    `title`         VARCHAR(100)     NOT NULL                    COMMENT '日志标题',
     `content`       TEXT            NOT NULL                     COMMENT '日志内容',
     `operator`      VARCHAR(20)     DEFAULT NULL                 COMMENT '操作人',
     `ip`            VARCHAR(50)     DEFAULT NULL                 COMMENT '操作IP',

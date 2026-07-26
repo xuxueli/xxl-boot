@@ -49,7 +49,7 @@ public class LogController {
     public Response<PageModel<LogDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                 @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                 @RequestParam(required = false, defaultValue = "-1") int type,
-                                                String module,
+                                                @RequestParam(required = false, defaultValue = "0") int module,
                                                 String title
     ) {
         PageModel<LogDTO> pageModel = xxlBootLogService.pageList(type, module, title, offset, pagesize);
