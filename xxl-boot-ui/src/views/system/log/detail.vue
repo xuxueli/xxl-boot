@@ -11,27 +11,19 @@
         <div class="detail-card-title"><el-icon><InfoFilled /></el-icon> 基本信息</div>
         <el-row class="detail-row">
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">日志ID</span><span class="detail-value">{{ form.id }}</span></div>
-          </el-col>
-          <el-col :span="12">
             <div class="detail-item"><span class="detail-label">日志类型</span><span class="detail-value">{{
               form.type === 0 ? '操作日志' : form.type === 1 ? '登陆日志' : form.type }}</span></div>
           </el-col>
+          <el-col :span="12">
+            <div class="detail-item"><span class="detail-label">系统模块</span><span class="detail-value">{{ moduleMap[form.module] || form.module }}</span></div>
+          </el-col>
         </el-row>
         <el-row class="detail-row">
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">系统模块</span><span class="detail-value">{{ form.module }}</span></div>
+            <div class="detail-item"><span class="detail-label">日志ID</span><span class="detail-value">{{ form.id }}</span></div>
           </el-col>
           <el-col :span="12">
             <div class="detail-item"><span class="detail-label">日志标题</span><span class="detail-value">{{ form.title }}</span></div>
-          </el-col>
-        </el-row>
-        <el-row class="detail-row">
-          <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">新增时间</span><span class="detail-value">{{ form.addTime }}</span></div>
-          </el-col>
-          <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">IP地址</span><span class="detail-value">{{ form.ipAddress || form.ip }}</span></div>
           </el-col>
         </el-row>
       </div>
@@ -44,7 +36,15 @@
             <div class="detail-item"><span class="detail-label">操作人</span><span class="detail-value">{{ form.operator }}</span></div>
           </el-col>
           <el-col :span="12">
+            <div class="detail-item"><span class="detail-label">操作时间</span><span class="detail-value">{{ form.addTime }}</span></div>
+          </el-col>
+        </el-row>
+        <el-row class="detail-row">
+          <el-col :span="12">
             <div class="detail-item"><span class="detail-label">操作IP</span><span class="detail-value">{{ form.ip }}</span></div>
+          </el-col>
+          <el-col :span="12">
+            <div class="detail-item"><span class="detail-label">操作地址</span><span class="detail-value">{{ form.ipAddress || form.ip }}</span></div>
           </el-col>
         </el-row>
       </div>
@@ -68,7 +68,8 @@
 <script setup>
 const props = defineProps({
   visible: { type: Boolean, default: false },  /* 弹窗可见性 */
-  row: { type: Object, default: () => ({}) }   /* 当前行数据 */
+  row: { type: Object, default: () => ({}) },  /* 当前行数据 */
+  moduleMap: { type: Object, default: () => ({}) } /* 系统模块编码 → 名称映射 */
 })
 
 const emit = defineEmits(['update:visible'])
