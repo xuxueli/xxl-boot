@@ -280,7 +280,7 @@ function handleDelete(row) {
 function handleExport() {
   download('/${codegen.moduleName}/${codegen.businessName?lower_case}/export', {
     ...queryParams.value
-  }, `${codegen.businessName?lower_case}_${new Date().getTime()}.xlsx`)
+  }, "${codegen.businessName?lower_case}_" + new Date().getTime() + ".xlsx")
 }
 
 getList()
