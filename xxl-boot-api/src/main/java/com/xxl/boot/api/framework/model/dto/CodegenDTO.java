@@ -23,6 +23,8 @@ public class CodegenDTO implements Serializable {
     private String tplWebType;      /* 前端模板类型 */
     private String addTime;         /* 创建时间 */
     private String updateTime;      /* 更新时间 */
+
+    // plugin
     private List<CodegenFieldDTO> fieldList;  /* 字段列表 */
 
     public long getId() { return id; }

@@ -1,7 +1,5 @@
 package com.xxl.boot.api.framework.util.codegen;
 
-import com.xxl.boot.api.framework.util.codegen.FieldInfo;
-
 import java.util.List;
 
 /**

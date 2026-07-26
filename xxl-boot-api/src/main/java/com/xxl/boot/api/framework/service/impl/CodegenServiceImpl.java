@@ -12,6 +12,7 @@ import com.xxl.boot.api.framework.service.CodegenService;
 import com.xxl.boot.api.framework.util.codegen.ClassInfo;
 import com.xxl.boot.api.framework.util.codegen.FieldInfo;
 import com.xxl.boot.api.framework.util.codegen.TableParseUtil;
+import com.xxl.tool.core.StringTool;
 import com.xxl.tool.freemarker.FtlTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
@@ -89,6 +90,26 @@ public class CodegenServiceImpl implements CodegenService {
         return Response.ofSuccess();
     }
 
+    private CodegenField toEntity(long codegenId, CodegenFieldDTO dto) {
+        CodegenField f = new CodegenField();
+        f.setId(dto.getId());
+        f.setCodegenId(codegenId);
+        f.setColumnName(dto.getColumnName());
+        f.setColumnComment(dto.getColumnComment());
+        f.setJavaType(dto.getJavaType());
+        f.setJavaField(dto.getJavaField());
+        f.setIsRequired(dto.getIsRequired());
+        f.setIsInsert(dto.getIsInsert());
+        f.setIsEdit(dto.getIsEdit());
+        f.setIsList(dto.getIsList());
+        f.setIsQuery(dto.getIsQuery());
+        f.setQueryType(dto.getQueryType());
+        f.setHtmlType(dto.getHtmlType());
+        f.setDictType(dto.getDictType());
+        f.setSort(dto.getSort());
+        return f;
+    }
+
     @Override
     public Response<CodegenDTO> loadDetail(int id) {
         Codegen entity = codegenMapper.load(id);
@@ -104,7 +125,9 @@ public class CodegenServiceImpl implements CodegenService {
     @Override
     public Response<String> createTable(String tableSql) {
         try {
+            // parse class-info
             ClassInfo ci = TableParseUtil.processTableIntoClassInfo(tableSql);
+
             Codegen c = new Codegen();
             c.setTableName(ci.getTableName());
             c.setTableComment(ci.getClassComment());
@@ -195,10 +218,13 @@ public class CodegenServiceImpl implements CodegenService {
         if (codegen == null) return Response.ofFail("表不存在");
         List<CodegenField> fields = codegenFieldMapper.findByCodegenId(id);
         try {
+
+            // build template data
             ClassInfo ci = toClassInfo(codegen, fields);
             Map<String, Object> params = new HashMap<>();
             params.put("classInfo", ci);
 
+            // 单表：生成代码预览
             Map<String, String> result = new LinkedHashMap<>();
             result.put("java/domain.java.vm", render("entity.ftl", params));
             result.put("java/mapper.java.vm", render("mapper.ftl", params));
@@ -207,6 +233,7 @@ public class CodegenServiceImpl implements CodegenService {
             result.put("java/serviceImpl.java.vm", render("service_impl.ftl", params));
             result.put("java/controller.java.vm", render("controller.ftl", params));
             result.put("vue/page.vue.vm", render("page.ftl", params));
+
             return Response.ofSuccess(result);
         } catch (IOException | TemplateException e) {
             logger.error(e.getMessage(), e);
@@ -216,15 +243,17 @@ public class CodegenServiceImpl implements CodegenService {
 
     @Override
     public byte[] downloadCode(List<Integer> ids) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ZipOutputStream zos = new ZipOutputStream(baos);
-
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // 多表下载
+        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
             for (int id : ids) {
+
+                // load data
                 Codegen codegen = codegenMapper.load(id);
                 if (codegen == null) continue;
                 List<CodegenField> fields = codegenFieldMapper.findByCodegenId(codegen.getId());
 
+                // build template data
                 ClassInfo ci = toClassInfo(codegen, fields);
                 Map<String, Object> params = new HashMap<>();
                 params.put("classInfo", ci);
@@ -233,6 +262,7 @@ public class CodegenServiceImpl implements CodegenService {
                 String cn = toPascalCase(codegen.getBusinessName() != null ? codegen.getBusinessName() : "demo");
                 String module = codegen.getModuleName() != null ? codegen.getModuleName() : "demo";
 
+                // 单表：生成代码预览
                 addZipEntry(zos, "main/java/" + pkg + "/domain/" + cn + ".java", render("entity.ftl", params));
                 addZipEntry(zos, "main/java/" + pkg + "/mapper/" + cn + "Mapper.java", render("mapper.ftl", params));
                 addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "Mapper.xml", render("mapper_xml.ftl", params));
@@ -241,19 +271,28 @@ public class CodegenServiceImpl implements CodegenService {
                 addZipEntry(zos, "main/java/" + pkg + "/controller/" + cn + "Controller.java", render("controller.ftl", params));
                 addZipEntry(zos, "vue/views/" + module + "/" + codegen.getBusinessName() + "/index.vue", render("page.ftl", params));
             }
-
-            zos.close();
-            return baos.toByteArray();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return null;
         }
+        return baos.toByteArray();
     }
 
+
+    /**
+     * 渲染 FreeMarker 模板
+     */
     private String render(String ftl, Map<String, Object> params) throws IOException, TemplateException {
         return FtlTool.processString(freemarkerConfig, TPL_PATH + ftl, params);
     }
 
+    /**
+     * 写入文件到 zip 包
+     *
+     * @param zos ZipOutputStream,
+     * @param name 文件名
+     * @param content 文件内容
+     */
     private void addZipEntry(ZipOutputStream zos, String name, String content) throws IOException {
         if (content == null) return;
         zos.putNextEntry(new ZipEntry(name));
@@ -261,33 +300,13 @@ public class CodegenServiceImpl implements CodegenService {
         zos.closeEntry();
     }
 
-    private CodegenField toEntity(long codegenId, CodegenFieldDTO dto) {
-        CodegenField f = new CodegenField();
-        f.setId(dto.getId());
-        f.setCodegenId(codegenId);
-        f.setColumnName(dto.getColumnName());
-        f.setColumnComment(dto.getColumnComment());
-        f.setJavaType(dto.getJavaType());
-        f.setJavaField(dto.getJavaField());
-        f.setIsRequired(dto.getIsRequired());
-        f.setIsInsert(dto.getIsInsert());
-        f.setIsEdit(dto.getIsEdit());
-        f.setIsList(dto.getIsList());
-        f.setIsQuery(dto.getIsQuery());
-        f.setQueryType(dto.getQueryType());
-        f.setHtmlType(dto.getHtmlType());
-        f.setDictType(dto.getDictType());
-        f.setSort(dto.getSort());
-        return f;
-    }
-
     private ClassInfo toClassInfo(Codegen codegen, List<CodegenField> fields) {
         ClassInfo ci = new ClassInfo();
         ci.setTableName(codegen.getTableName());
         ci.setClassComment(codegen.getTableComment());
         ci.setClassName(toPascalCase(codegen.getBusinessName() != null ? codegen.getBusinessName() : "demo"));
-        ci.setPackageName(codegen.getPackageName() != null ? codegen.getPackageName() : "com.xxl.boot.demo");
-        ci.setAuthor(codegen.getFunctionAuthor() != null ? codegen.getFunctionAuthor() : "xxl-boot");
+        ci.setPackageName(codegen.getPackageName());
+        ci.setAuthor(codegen.getFunctionAuthor());
         List<FieldInfo> fl = new ArrayList<>();
         for (CodegenField f : fields) {
             FieldInfo fi = new FieldInfo();
@@ -303,19 +322,8 @@ public class CodegenServiceImpl implements CodegenService {
 
     private String toPascalCase(String name) {
         if (name == null || name.isEmpty()) return name;
-        String camel = toCamelCase(name);
-        return Character.toUpperCase(camel.charAt(0)) + camel.substring(1);
+        String camel = StringTool.underlineToCamelCase(name);
+        return StringTool.upperCaseFirst(camel);
     }
 
-    private String toCamelCase(String name) {
-        if (name == null) return null;
-        StringBuilder sb = new StringBuilder();
-        boolean next = false;
-        for (char c : name.toCharArray()) {
-            if (c == '_') { next = true; }
-            else if (next) { sb.append(Character.toUpperCase(c)); next = false; }
-            else { sb.append(Character.toLowerCase(c)); }
-        }
-        return sb.toString();
-    }
 }
