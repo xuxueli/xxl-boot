@@ -141,7 +141,7 @@ function submitForm() {
   })
 }
 
-// 拖动排序（columns 数据加载后初始化）
+// 字段拖拽排序
 watch(columns, (val) => {
   if (!val || val.length === 0) return
   nextTick(() => {

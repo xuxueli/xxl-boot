@@ -1,5 +1,7 @@
 <template>
   <div class="app-container">
+
+    <!-- 查询表单 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
 
       <!-- 表名称 -->
@@ -22,18 +24,6 @@
             style="width: 200px"
             @keyup.enter="handleQuery"
         />
-      </el-form-item>
-
-      <!-- 创建时间 -->
-      <el-form-item label="创建时间" style="width: 308px">
-        <el-date-picker
-            v-model="dateRange"
-            value-format="YYYY-MM-DD"
-            type="daterange"
-            range-separator="-"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-        ></el-date-picker>
       </el-form-item>
 
       <!-- 操作按钮 -->
@@ -89,8 +79,7 @@
     </el-row>
 
     <!-- 表格区域 -->
-    <el-table ref="genRef" v-loading="loading" :data="tableList" @selection-change="handleSelectionChange"
-              :default-sort="defaultSort" @sort-change="handleSortChange">
+    <el-table ref="genRef" v-loading="loading" :data="tableList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center" width="55"></el-table-column>
       <el-table-column label="序号" type="index" width="50" align="center">
         <template #default="scope">
@@ -100,10 +89,8 @@
       <el-table-column label="表名称" align="center" prop="tableName" :show-overflow-tooltip="true"/>
       <el-table-column label="表描述" align="center" prop="tableComment" :show-overflow-tooltip="true"/>
       <el-table-column label="实体" align="center" prop="className" :show-overflow-tooltip="true"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="160" sortable="custom"
-                       :sort-orders="['descending', 'ascending']"/>
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="160" sortable="custom"
-                       :sort-orders="['descending', 'ascending']"/>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="160"/>
+      <el-table-column label="更新时间" align="center" prop="updateTime" width="160"/>
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-tooltip content="编辑" placement="top">
@@ -148,27 +135,33 @@
       </el-tabs>
     </el-dialog>
 
-    <!--  导入表格  -->
-    <!--  创建表格  -->
-    <createTable ref="createRef" @ok="handleQuery"/>
+    <!--  创建表弹窗  -->
+    <el-dialog v-model="createVisible" title="创建表" width="800px" top="5vh" append-to-body>
+      <span>创建表语句(支持多个建表语句)：</span>
+      <el-input type="textarea" :rows="10" placeholder="请输入文本" v-model="createContent"></el-input>
+      <template #footer>
+        <el-button type="primary" @click="handleCreateTable">确 定</el-button>
+        <el-button @click="createVisible = false">取 消</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- 编辑代码生成信息 -->
     <editTable ref="editRef" @ok="handleQuery"/>
 
   </div>
 </template>
 
 <script setup name="Gen">
-import {listTable, previewTable, delTable, genCode} from "@/api/tool/codegen"
-import {addDateRange} from '@/utils/common'
+import {listTable, previewTable, delTable, genCode, createTable} from "@/api/tool/codegen"
 import {useFormReset} from '@/composables/useFormReset'
 import modal from '@/utils/modal'
-import tab from '@/utils/tab'
 import downloadPlugin from '@/utils/download'
-import createTable from "./createTable"
 import editTable from "./editTable"
 
 const route = useRoute()
 const resetForm = useFormReset()
-const createRef = ref(null)
+const createVisible = ref(false)
+const createContent = ref("")
 const editRef = ref(null)
 const genRef = ref(null)
 
@@ -180,18 +173,14 @@ const single = ref(true)
 const multiple = ref(true)
 const total = ref(0)
 const tableNames = ref([])
-const dateRange = ref([])
 const uniqueId = ref("")
-const defaultSort = ref({prop: "createTime", order: "descending"})
 
 const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
     tableName: undefined,
-    tableComment: undefined,
-    orderByColumn: defaultSort.value.prop,
-    isAsc: defaultSort.value.order
+    tableComment: undefined
   },
   preview: {
     open: false,
@@ -205,10 +194,9 @@ const {queryParams, preview} = toRefs(data)
 
 onActivated(() => {
   const time = route.query.t
-  if (time != null && time != uniqueId.value) {
+  if (time != null && time !== uniqueId.value) {
     uniqueId.value = time
     queryParams.value.pageNum = Number(route.query.pageNum)
-    dateRange.value = []
     resetForm("queryForm")
     getList()
   }
@@ -217,7 +205,7 @@ onActivated(() => {
 /** 查询表集合 */
 function getList() {
   loading.value = true
-  listTable(addDateRange(queryParams.value, dateRange.value)).then(response => {
+  listTable(queryParams.value).then(response => {
     tableList.value = response.data.data
     total.value = response.data.total
     loading.value = false
@@ -233,7 +221,7 @@ function handleQuery() {
 /** 生成代码操作 */
 function handleGenTable(row) {
   const tbNames = row.tableName || tableNames.value
-  if (tbNames == "") {
+  if (tbNames === "") {
     modal.msgError("请选择要生成的数据")
     return
   }
@@ -241,28 +229,29 @@ function handleGenTable(row) {
   downloadPlugin.zip("/tool/codegen/batchGenCode?tables=" + tbNames, zipName)
 }
 
-/** 同步数据库操作 */
-function handleSynchDb(row) {
-  const tableName = row.tableName
-  modal.confirm('确认要强制同步"' + tableName + '"表结构吗？').then(function () {
-    return synchDb(tableName)
-  }).then(() => {
-    modal.msgSuccess("同步成功")
-  }).catch(() => {
-  })
-}
-
 /** 打开创建表弹窗 */
 function openCreateTable() {
-  createRef.value.show()
+  createContent.value = ""
+  createVisible.value = true
+}
+
+/** 创建表 */
+function handleCreateTable() {
+  if (createContent.value === "") {
+    modal.msgError("请输入建表语句")
+    return
+  }
+  createTable({tableSql: createContent.value}).then(() => {
+    modal.msgSuccess("创建成功")
+    createVisible.value = false
+    handleQuery()
+  })
 }
 
 /** 重置按钮操作 */
 function resetQuery() {
-  dateRange.value = []
   resetForm("queryRef")
   queryParams.value.pageNum = 1
-  genRef.value.sort(defaultSort.value.prop, defaultSort.value.order)
 }
 
 /** 预览按钮 */
@@ -285,13 +274,6 @@ function handleSelectionChange(selection) {
   tableNames.value = selection.map(item => item.tableName)
   single.value = selection.length != 1
   multiple.value = !selection.length
-}
-
-/** 排序触发事件 */
-function handleSortChange(column, prop, order) {
-  queryParams.value.orderByColumn = column.prop
-  queryParams.value.isAsc = column.order
-  getList()
 }
 
 /** 修改按钮操作 */

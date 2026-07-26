@@ -78,7 +78,7 @@ public class CodeGenController {
         return codegenService.createTable(tableSql);
     }
 
-    // ------ 数据库导入导出操作 ------
+    // ------ 生成操作 ------
 
     /** 预览生成代码 */
     @RequestMapping("/preview")
