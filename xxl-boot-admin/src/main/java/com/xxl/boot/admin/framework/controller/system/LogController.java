@@ -19,9 +19,9 @@ import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
 /**
- * Log Controller
+ * 日志管理 Controller，提供日志的增删改查功能
  *
- * Created by xuxueli on '2024-10-27 12:19:06'.
+ * @author xuxueli 2024-10-27
  */
 @Controller
 @RequestMapping("/system/log")

@@ -1,31 +1,16 @@
 package com.xxl.boot.admin.framework.util.codegen;
 
 /**
- * field info
+ * 代码生成-字段信息，封装建表 SQL 解析后得到的字段元数据
  *
  * @author xuxueli 2018-05-02 20:11:05
  */
 public class FieldInfo {
 
-    /**
-     * column Name, "add_time"
-     */
-    private String columnName;
-
-    /**
-     * field Name, "addTime"
-     */
-    private String fieldName;
-
-    /**
-     * field Class, "Date"
-     */
-    private String fieldClass;
-
-    /**
-     * field Comment, "add time of the recore"
-     */
-    private String fieldComment;
+    private String columnName;   /* 数据库列名，如 add_time */
+    private String fieldName;    /* Java 属性名，如 addTime */
+    private String fieldClass;   /* Java 属性类型，如 Date */
+    private String fieldComment; /* 字段注释 */
 
     public String getColumnName() {
         return columnName;

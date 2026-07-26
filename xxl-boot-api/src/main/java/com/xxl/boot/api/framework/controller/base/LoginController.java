@@ -45,9 +45,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * index controller
- *
- * @author xuxueli 2015-12-19 16:13:16
+ * 登录认证 Controller
+ * 
+ * @author xuxueli 2024-01-01
  */
 @RestController
 @RequestMapping("/auth")

@@ -2,6 +2,11 @@ package com.xxl.boot.admin.framework.constant.enums;
 
 import com.xxl.boot.admin.framework.util.EnumTool;
 
+/**
+ * 系统模块枚举，定义所有支持日志记录的模块
+ *
+ * @author xuxueli 2024-01-01
+ */
 public enum LogModuleEnum implements EnumTool.IEnum {
 
     // ---------------------- OPT_LOG ----------------------
@@ -45,7 +50,11 @@ public enum LogModuleEnum implements EnumTool.IEnum {
         return title;
     }
 
+    /**
+     * 根据编码匹配枚举
+     */
     public static LogModuleEnum match(int code) {
+        // 遍历所有枚举值匹配编码
         for (LogModuleEnum e : LogModuleEnum.values()) {
             if (e.getCode() == code) {
                 return e;

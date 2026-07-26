@@ -25,8 +25,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.lang.reflect.Method;
 
 /**
- * aspect/aop
- *
+ * 日志切面，通过 AOP 拦截 @XxlLog 注解自动记录操作日志
+ * 
  * @author xuxueli 2016-1-6 19:22:18
  */
 @Aspect
@@ -46,25 +46,24 @@ public class XxlLogAspect {
     /**
      * 环绕通知，记录请求和响应
      */
-    //@Around("@annotation(com.xxl.boot.admin.framework.annotation.Log)")
     @Around("logPointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        // parse request/response
+        // 获取当前请求
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
-        // parse annotation
+        // 获取方法上的 @XxlLog 注解
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
 
-        // 1、annotation not exits
+        // 未找到注解则直接执行
         XxlLog log = AnnotationUtils.findAnnotation(method, XxlLog.class);
         if (log == null) {
             return joinPoint.proceed();
         }
 
-        // 2、process log logic
+        // 执行方法并记录耗时
         long startTime = 0;
         Object result = null;
         long endTime = 0;
@@ -75,11 +74,10 @@ public class XxlLogAspect {
         } catch (Throwable e) {
             throw e;
         } finally {
-            // push log message-queue
+            // 推送日志到消息队列
             try {
                 doLog(log, request, joinPoint.getArgs(), result, startTime, endTime);
             } catch (Throwable e) {
-                // ignore
                 logger.error(e.getMessage(), e);
             }
         }
@@ -87,7 +85,7 @@ public class XxlLogAspect {
     }
 
     /**
-     * do log
+     * 构建日志并推送消息队列
      */
     private void doLog(XxlLog log,
                        HttpServletRequest request,
@@ -96,14 +94,15 @@ public class XxlLogAspect {
                        long startTime,
                        long endTime) {
 
-        // xxl-sso, logincheck
+        // 获取当前登录用户
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
-
         String operator = loginInfoResponse.isSuccess() ? loginInfoResponse.getData().getUserName() : "";
+
+        // 获取客户端 IP
         String ip = Ip2regionUtil.getIp(request);
         ip = ip != null ? ip : "";
 
-        // content
+        // 若注解未指定 content，自动拼接请求/响应/耗时信息
         String content = log.content();
         if (StringTool.isBlank(content)) {
             content += "【Request】:\n" + getRequestData(request, args);
@@ -111,7 +110,7 @@ public class XxlLogAspect {
             content += "\n\n【CostTime】:\n" + (endTime - startTime) + "ms";
         }
 
-        // generate
+        // 构建日志实体
         com.xxl.boot.admin.framework.model.entity.Log xxlBootLog = new com.xxl.boot.admin.framework.model.entity.Log();
         xxlBootLog.setType(log.type().getCode());
         xxlBootLog.setModule(log.module().getCode());
@@ -120,21 +119,24 @@ public class XxlLogAspect {
         xxlBootLog.setOperator(operator);
         xxlBootLog.setIp(ip);
 
+        // 推入消息队列异步写入
         xxlLogQueueHelper.push(xxlBootLog);
     }
 
     /**
-     * 获取请求数据
+     * 获取请求数据，用于记录日志内容
      */
     private String getRequestData(HttpServletRequest request, Object[] args) {
-        // 1. GET 请求：直接记录参数 Map
+
+        // GET 请求直接记录参数 Map
         if ("GET".equalsIgnoreCase(request.getMethod())) {
             return GsonTool.toJson(request.getParameterMap());
         }
 
-        // 2. POST/PUT 等请求：遍历方法参数，找到第一个有效的业务对象
+        // POST/PUT 等从方法参数中取首个有效业务对象
         if (args != null) {
             for (Object arg : args) {
+                // 跳过框架内部对象
                 if (arg == null
                         || arg instanceof HttpServletRequest
                         || arg instanceof HttpServletResponse
@@ -146,7 +148,7 @@ public class XxlLogAspect {
             }
         }
 
-        // 3. Fallback：ParameterMap
+        // 最终兜底：使用 ParameterMap
         return GsonTool.toJson(request.getParameterMap());
     }
 

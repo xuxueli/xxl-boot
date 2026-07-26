@@ -3,8 +3,9 @@ package com.xxl.boot.admin.framework.model.dto;
 import java.io.Serializable;
 
 /**
- * 名称：LogDTO
- * 功能：日志数据传输对象，对外展示使用
+ * 日志数据传输对象，对外展示使用
+ *
+ * @author xuxueli 2024-01-01
  */
 public class LogDTO implements Serializable {
     private static final long serialVersionUID = 42L;

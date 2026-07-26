@@ -2,6 +2,11 @@ package com.xxl.boot.api.framework.constant.enums;
 
 import com.xxl.boot.api.framework.util.EnumTool;
 
+/**
+ * 系统模块枚举
+ * 
+ * @author xuxueli 2024-01-01
+ */
 public enum LogModuleEnum implements EnumTool.IEnum {
 
     // ---------------------- OPT_LOG ----------------------
@@ -27,15 +32,8 @@ public enum LogModuleEnum implements EnumTool.IEnum {
     LOGIN(1301,"系统登录"),
     LOGOUT(1302,"注销登录");
 
-    /**
-     * 枚举编码
-     */
-    private int code;
-
-    /**
-     * 枚举展示名称
-     */
-    private String title;
+    private int code;       /* 枚举编码 */
+    private String title;   /* 枚举展示名称 */
 
     LogModuleEnum(int code, String title) {
         this.code = code;
@@ -53,6 +51,12 @@ public enum LogModuleEnum implements EnumTool.IEnum {
     }
 
 
+    /**
+     * 根据编码匹配枚举
+     *
+     * @param code 编码
+     * @return 匹配的枚举，未匹配返回 null
+     */
     public static LogModuleEnum match(int code) {
         for (LogModuleEnum logModuleEnum : LogModuleEnum.values()) {
             if (logModuleEnum.getCode() == code) {

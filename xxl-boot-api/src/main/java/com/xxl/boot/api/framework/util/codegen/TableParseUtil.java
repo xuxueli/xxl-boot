@@ -15,6 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 建表 SQL 解析工具，解析 SQL 生成代码生成所需的类信息
+ * 
  * @author xuxueli 2018-05-02 21:10:45
  */
 public class TableParseUtil {

@@ -5,6 +5,8 @@ import java.util.Date;
 
 /**
  * 代码生成 - 业务表
+ * 
+ * @author xuxueli 2024-01-01
  */
 public class Codegen implements Serializable {
     private static final long serialVersionUID = 42L;

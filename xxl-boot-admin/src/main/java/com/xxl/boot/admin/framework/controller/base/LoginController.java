@@ -27,8 +27,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
- * index controller
- * @author xuxueli 2015-12-19 16:13:16
+ * 登录认证 Controller，处理登录、登出、修改密码
+ *
+ * @author xuxueli 2015-12-19
  */
 @Controller
 @RequestMapping("/auth")
@@ -41,6 +42,9 @@ public class LoginController {
 	private XxlLogQueueHelper logQueueHelper;
 
 
+	/**
+	 * 登录页面
+	 */
 	@RequestMapping("/login")
 	@XxlSso(login = false)
 	public ModelAndView login(HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) {
@@ -48,6 +52,7 @@ public class LoginController {
 		// xxl-sso, logincheck (login-false, must check wiht cookie)
 		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithCookie(request, response);
 
+		// 已登录则重定向到首页
 		if (loginInfoResponse.isSuccess()) {
 			modelAndView.setView(new RedirectView("/",true,false));
 			return modelAndView;
@@ -55,60 +60,74 @@ public class LoginController {
 		return new ModelAndView("/framework/base/login");
 	}
 
+	/**
+	 * 执行登录
+	 */
 	@RequestMapping(value="/doLogin", method=RequestMethod.POST)
 	@ResponseBody
 	@XxlSso(login=false)
 	public Response<String> doLogin(HttpServletRequest request, HttpServletResponse response, String userName, String password, String ifRemember){
 
-		// param
+		// 是否记住密码
 		boolean ifRem = StringTool.isNotBlank(ifRemember) && "on".equals(ifRemember);
+
+		// 参数为空校验
 		if (StringTool.isBlank(userName) || StringTool.isBlank(password)){
 			return Response.ofFail( I18nUtil.getString("login_param_empty") );
 		}
 
-		// valid user, empty、status、passowrd
+		// 校验用户是否存在
 		Response<User> xxlBootUserResponse = userService.loadByUserName(userName);
 		if (!xxlBootUserResponse.isSuccess()) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
 		User xxlBootUser = xxlBootUserResponse.getData();
+
+		// 校验用户状态
 		if (xxlBootUser.getStatus() != UserStatuEnum.NORMAL.getStatus()) {
 			return Response.ofFail( I18nUtil.getString("login_status_invalid") );
 		}
+
+		// 校验密码
 		String passwordHash = Sha256Tool.sha256(password);
 		if (!passwordHash.equals(xxlBootUser.getPassword())) {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
 
-		// xxl-sso, do login
+		// SSO 登录
 		LoginInfo loginInfo = new LoginInfo(String.valueOf(xxlBootUser.getId()), UUIDTool.getSimpleUUID());
-		// add log
+		// 添加登录日志
 		addLog(LogTypeEnum.LOGIN_LOG, LogModuleEnum.LOGIN, "系统登录", "登录成功",xxlBootUser.getUsername(), request);
 		return XxlSsoHelper.loginWithCookie(loginInfo, response, ifRem);
 	}
 	
+	/**
+	 * 注销登录
+	 */
 	@RequestMapping(value="/logout", method=RequestMethod.POST)
 	@ResponseBody
 	@XxlSso(login=false)
 	public Response<String> logout(HttpServletRequest request, HttpServletResponse response){
-		// xxl-sso, do logout
 		return XxlSsoHelper.logoutWithCookie(request, response);
 	}
 
+	/**
+	 * 修改密码
+	 */
 	@RequestMapping("/updatePwd")
 	@ResponseBody
 	@XxlSso
 	public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String password){
 
-		// xxl-sso, logincheck
+		// 获取当前登录用户
 		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
-		// add log
+		// 添加操作日志
 		addLog(LogTypeEnum.OPT_LOG, LogModuleEnum.USER, "修改密码", "修改密码成功", loginInfoResponse.getData().getUserName(), request);
 		return userService.updatePwd(loginInfoResponse.getData().getUserName(), oldPassword, password);
 	}
 
 	/**
-	 * add log
+	 * 添加日志（同步方式）
 	 */
 	private void addLog(LogTypeEnum logTypeEnum,
 						LogModuleEnum logModuleEnum,
@@ -117,11 +136,11 @@ public class LoginController {
 						String operator,
 						HttpServletRequest request) {
 
-		// param
+		// 获取客户端 IP
 		String ip = Ip2regionUtil.getIp(request);
 		ip = ip!=null?ip:"";
 
-		// build log
+		// 构建日志实体
 		Log xxlBootLog = new Log();
 		xxlBootLog.setType(logTypeEnum.getCode());
 		xxlBootLog.setModule(logModuleEnum.getCode());
@@ -130,7 +149,7 @@ public class LoginController {
 		xxlBootLog.setOperator(operator);
 		xxlBootLog.setIp(ip);
 
-		// write
+		// 推入消息队列异步写入
 		logQueueHelper.push(xxlBootLog);
 	}
 

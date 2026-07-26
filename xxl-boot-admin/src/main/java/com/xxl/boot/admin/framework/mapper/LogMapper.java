@@ -7,46 +7,46 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
-* Log Mapper
-*
-* Created by xuxueli on '2024-10-27 12:19:06'.
-*/
+ * 日志 Mapper
+ *
+ * @author xuxueli 2024-10-27
+ */
 @Mapper
 public interface LogMapper {
 
     /**
-    * 新增
-    */
+     * 新增日志
+     */
     public int insert(@Param("xxlBootLog") Log xxlBootLog);
 
     /**
-    * 删除
-    */
+     * 批量删除日志
+     */
     public int delete(@Param("ids") List<Integer> ids);
 
     /**
-    * 更新
-    */
+     * 更新日志
+     */
     public int update(@Param("xxlBootLog") Log xxlBootLog);
 
     /**
-    * Load查询
-    */
+     * 根据 ID 查询日志
+     */
     public Log load(@Param("id") int id);
 
     /**
-     * 分页查询Data
+     * 分页查询日志列表
      */
-    List<Log> pageList(@Param("type") int type,                     /* 分页查询 */
+    List<Log> pageList(@Param("type") int type,
                        @Param("module") int module,
                        @Param("title") String title,
                        @Param("offset") int offset,
                        @Param("pagesize") int pagesize);
 
     /**
-     * 分页查询Count
+     * 分页查询日志总数
      */
-    int pageListCount(@Param("type") int type,                      /* 分页查询-总数 */
+    int pageListCount(@Param("type") int type,
                       @Param("module") int module,
                       @Param("title") String title,
                       @Param("offset") int offset,

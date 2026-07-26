@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-// 引入
+// 导入依赖
 import { getCodeImg } from "@/api/login"
 import { useUserStore } from '@/store'
 import defaultSettings from '@/settings'
@@ -157,7 +157,7 @@ function getCode() {
   })
 }
 
-// 获取验证码
+/** 初始化：获取验证码 */
 getCode()
 
 </script>

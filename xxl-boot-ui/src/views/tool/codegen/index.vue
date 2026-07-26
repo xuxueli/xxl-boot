@@ -1,3 +1,7 @@
+<!--
+  页面：代码生成管理
+  功能：查询、创建、修改、删除、预览、生成代码
+-->
 <template>
   <div class="app-container">
 
@@ -157,21 +161,21 @@ import modal from '@/utils/modal'
 import downloadPlugin from '@/utils/download'
 import editTable from "./editTable"
 
-const route = useRoute()
-const resetForm = useFormReset()
-const createVisible = ref(false)
-const createContent = ref("")
-const editRef = ref(null)
-const genRef = ref(null)
+const route = useRoute()             /* 当前路由 */
+const resetForm = useFormReset()     /* 表单重置方法 */
+const createVisible = ref(false)     /* 创建表弹窗可见 */
+const createContent = ref("")        /* 创建表 SQL 语句 */
+const editRef = ref(null)            /* 编辑弹窗 ref */
+const genRef = ref(null)             /* 表格 ref */
 
-const tableList = ref([])
-const loading = ref(true)
-const showSearch = ref(true)
-const ids = ref([])
-const single = ref(true)
-const multiple = ref(true)
-const total = ref(0)
-const uniqueId = ref("")
+const tableList = ref([])            /* 表列表数据 */
+const loading = ref(true)            /* 加载中 */
+const showSearch = ref(true)         /* 是否显示搜索栏 */
+const ids = ref([])                  /* 选中行 ID 数组 */
+const single = ref(true)             /* 是否单选 */
+const multiple = ref(true)           /* 是否多选 */
+const total = ref(0)                 /* 总条数 */
+const uniqueId = ref("")             /* 页面路由唯一标识 */
 
 const data = reactive({
   queryParams: {
@@ -190,6 +194,7 @@ const data = reactive({
 
 const {queryParams, preview} = toRefs(data)
 
+/** 页面激活时：若路由携带时间戳且与上次不同，则刷新列表 */
 onActivated(() => {
   const time = route.query.t
   if (time != null && time !== uniqueId.value) {

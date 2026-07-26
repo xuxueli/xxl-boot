@@ -10,8 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * permission annotation
- *
+ * 系统日志注解，标记需要记录操作日志的方法】
  * <pre>
  * 		@Log(type=xx)
  * </pre>
@@ -22,12 +21,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface XxlLog {
 
-	LogTypeEnum type();
+    LogTypeEnum type();     /* 日志类型 */
 
-	LogModuleEnum module();
+    LogModuleEnum module(); /* 系统模块 */
 
-	String title() ;
+    String title();         /* 日志标题 */
 
-	String content() default "";
+    String content() default ""; /* 日志内容，为空则自动拼接请求/响应信息 */
 
 }

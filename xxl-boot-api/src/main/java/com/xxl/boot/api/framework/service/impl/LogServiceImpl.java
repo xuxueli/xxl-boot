@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
-* Log Service Impl
-*
-* Created by xuxueli on '2024-10-27 12:19:06'.
-*/
+ * 日志 Service 实现
+ * 
+ * @author xuxueli 2024-10-27 12:19:06
+ */
 @Service
 public class LogServiceImpl implements LogService {
 
@@ -35,18 +35,21 @@ public class LogServiceImpl implements LogService {
 
 	@Override
 	public Response<String> delete(List<Integer> ids) {
+		// 执行删除
 		int ret = logMapper.delete(ids);
 		return ret > 0 ? Response.ofSuccess() : Response.ofFail();
 	}
 
 	@Override
 	public Response<String> update(Log xxlBootLog) {
+		// 执行更新
 		int ret = logMapper.update(xxlBootLog);
 		return ret > 0 ? Response.ofSuccess() : Response.ofFail();
 	}
 
 	@Override
 	public Response<Log> load(int id) {
+		// 根据 ID 查询
 		Log record = logMapper.load(id);
 		return Response.ofSuccess(record);
 	}

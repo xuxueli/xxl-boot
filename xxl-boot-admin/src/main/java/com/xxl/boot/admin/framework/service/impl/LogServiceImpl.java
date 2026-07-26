@@ -13,72 +13,74 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
-* Log Service Impl
-*
-* Created by xuxueli on '2024-10-27 12:19:06'.
-*/
+ * 日志 Service 实现，提供日志的增删改查业务逻辑
+ *
+ * @author xuxueli 2024-10-27
+ */
 @Service
 public class LogServiceImpl implements LogService {
 
 	@Resource
 	private LogMapper logMapper;
 
-	/**
-    * 新增
-    */
-	@Override
-	public Response<String> insert(Log xxlBootLog) {
+    /**
+     * 新增日志
+     */
+    @Override
+    public Response<String> insert(Log xxlBootLog) {
 
-		// valid
-		if (xxlBootLog == null) {
-			return Response.ofFail("必要参数缺失");
+        // 参数校验
+        if (xxlBootLog == null) {
+            return Response.ofFail("必要参数缺失");
         }
-		logMapper.insert(xxlBootLog);
-		return Response.ofSuccess();
-	}
+        logMapper.insert(xxlBootLog);
+        return Response.ofSuccess();
+    }
 
-	/**
-	* 删除
-	*/
-	@Override
-	public Response<String> delete(List<Integer> ids) {
-		int ret = logMapper.delete(ids);
-		return ret > 0 ? Response.ofSuccess() : Response.ofFail();
-	}
+    /**
+     * 批量删除日志
+     */
+    @Override
+    public Response<String> delete(List<Integer> ids) {
+        int ret = logMapper.delete(ids);
+        return ret > 0 ? Response.ofSuccess() : Response.ofFail();
+    }
 
-	/**
-	* 更新
-	*/
-	@Override
-	public Response<String> update(Log xxlBootLog) {
-		int ret = logMapper.update(xxlBootLog);
-		return ret > 0 ? Response.ofSuccess() : Response.ofFail();
-	}
+    /**
+     * 更新日志
+     */
+    @Override
+    public Response<String> update(Log xxlBootLog) {
+        int ret = logMapper.update(xxlBootLog);
+        return ret > 0 ? Response.ofSuccess() : Response.ofFail();
+    }
 
-	/**
-	* Load查询
-	*/
-	@Override
-	public Response<Log> load(int id) {
-		Log record = logMapper.load(id);
-		return Response.ofSuccess(record);
-	}
+    /**
+     * 根据 ID 查询日志
+     */
+    @Override
+    public Response<Log> load(int id) {
+        Log record = logMapper.load(id);
+        return Response.ofSuccess(record);
+    }
 
-	/**
-	* 分页查询
-	*/
-	@Override
-	public PageModel<LogDTO> pageList(int type, int module, String title, int offset, int pagesize) {
-		// 分页查询
-		List<Log> pageList = logMapper.pageList(type, module, title, offset, pagesize);
-		int totalCount = logMapper.pageListCount(type, module, title, offset, pagesize);
+    /**
+     * 分页查询日志列表
+     */
+    @Override
+    public PageModel<LogDTO> pageList(int type, int module, String title, int offset, int pagesize) {
 
-		// 实体转 DTO（补充 IP 地理位置）
-		List<LogDTO> pageListDTO = LogAdaptor.adaptor(pageList);
+        // 分页查询数据库
+        List<Log> pageList = logMapper.pageList(type, module, title, offset, pagesize);
+        int totalCount = logMapper.pageListCount(type, module, title, offset, pagesize);
 
-		PageModel<LogDTO> pageModel = new PageModel<>();
-		pageModel.setData(pageListDTO);
-		pageModel.setTotal(totalCount);
-		return pageModel;
-	}
+        // 实体转 DTO，补充 IP 地理位置
+        List<LogDTO> pageListDTO = LogAdaptor.adaptor(pageList);
+
+        // 封装分页结果
+        PageModel<LogDTO> pageModel = new PageModel<>();
+        pageModel.setData(pageListDTO);
+        pageModel.setTotal(totalCount);
+        return pageModel;
+    }
 }

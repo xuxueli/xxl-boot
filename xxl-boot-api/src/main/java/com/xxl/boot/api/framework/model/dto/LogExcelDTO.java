@@ -8,9 +8,9 @@ import com.xxl.tool.excel.annotation.ExcelSheet;
 import java.io.Serializable;
 
 /**
- *  Log Entity
- *
- *  Created by xuxueli on '2024-10-27 12:19:06'.
+ * 日志 Excel 导出 DTO
+ * 
+ * @author xuxueli 2024-01-01
  */
 @ExcelSheet(name = "审计日志列表")
 public class LogExcelDTO implements Serializable {

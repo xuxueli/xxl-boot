@@ -25,6 +25,8 @@ import java.util.Map;
 
 /**
  * 代码生成 Controller
+ * 
+ * @author xuxueli 2024-01-01
  */
 @RestController
 @RequestMapping("/tool/codegen")
@@ -33,7 +35,9 @@ public class CodeGenController {
     @Resource
     private CodegenService codegenService;
 
-    /** 分页列表 */
+    /**
+     * 分页列表
+     */
     @GetMapping("/pageList")
     @XxlSso
     public Response<PageModel<CodegenDTO>> pageList(@RequestParam(defaultValue = "0") int offset,
@@ -42,14 +46,18 @@ public class CodeGenController {
         return Response.ofSuccess(codegenService.pageList(tableName, tableComment, offset, pageSize));
     }
 
-    /** 查询表详情（含字段列表） */
+    /**
+     * 查询表详情（含字段列表）
+     */
     @GetMapping("/detail")
     @XxlSso
     public Response<CodegenDTO> detail(int id) {
         return codegenService.loadDetail(id);
     }
 
-    /** 更新 */
+    /**
+     * 更新
+     */
     @PostMapping("/update")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "更新代码生成")
@@ -57,7 +65,9 @@ public class CodeGenController {
         return codegenService.update(dto);
     }
 
-    /** 批量删除 */
+    /**
+     * 批量删除
+     */
     @PostMapping("/delete")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "删除代码生成")
@@ -65,7 +75,9 @@ public class CodeGenController {
         return codegenService.delete(ids);
     }
 
-    /** 通过 SQL 建表 */
+    /**
+     * 通过 SQL 建表
+     */
     @PostMapping("/createTable")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "创建数据表")
@@ -73,14 +85,18 @@ public class CodeGenController {
         return codegenService.createTable(tableSql);
     }
 
-    /** 预览生成代码 */
+    /**
+     * 预览生成代码
+     */
     @GetMapping("/preview")
     @XxlSso
     public Response<Map<String, String>> preview(int id) {
         return codegenService.preview(id);
     }
 
-    /** 批量生成代码（下载 zip） */
+    /**
+     * 批量生成代码（下载 zip）
+     */
     @GetMapping("/batchGenCode")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "批量生成代码")

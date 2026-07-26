@@ -9,6 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.stereotype.Component;
 
+/**
+ * 日志消息队列辅助类，异步批量写入日志
+ * 
+ * @author xuxueli 2024-01-01
+ */
 @Component
 public class XxlLogQueueHelper implements SmartLifecycle {
     private static final Logger logger = LoggerFactory.getLogger(XxlLogQueueHelper.class);

@@ -10,9 +10,17 @@ import java.util.List;
 
 /**
  * 代码生成字段 - Entity 转 DTO
+ * 
+ * @author xuxueli 2024-01-01
  */
 public class CodegenFieldAdaptor {
 
+    /**
+     * 将字段实体列表转换为 DTO 列表
+     *
+     * @param entityList 字段实体列表
+     * @return DTO 列表
+     */
     public static List<CodegenFieldDTO> adaptor(List<CodegenField> entityList) {
         if (CollectionTool.isEmpty(entityList)) {
             return new ArrayList<>();

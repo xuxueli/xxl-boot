@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 名称：Log
- * 功能：日志实体，对应 xxl_boot_log 表
+ * 日志实体，对应 xxl_boot_log 表
+ *
+ * @author xuxueli 2024-01-01
  */
 public class Log implements Serializable {
     private static final long serialVersionUID = 42L;

@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 名称：LogAdaptor
- * 功能：日志实体 → DTO 转换，补充 IP 地理位置信息
+ * 日志实体转 DTO 适配器，补充 IP 地理位置信息
+ *
+ * @author xuxueli 2024-01-01
  */
 public class LogAdaptor {
 

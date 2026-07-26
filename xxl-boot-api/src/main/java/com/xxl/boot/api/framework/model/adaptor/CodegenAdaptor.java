@@ -10,9 +10,17 @@ import java.util.List;
 
 /**
  * 代码生成业务表 - Entity 转 DTO
+ * 
+ * @author xuxueli 2024-01-01
  */
 public class CodegenAdaptor {
 
+    /**
+     * 将业务表实体列表转换为 DTO 列表
+     *
+     * @param entityList 业务表实体列表
+     * @return DTO 列表
+     */
     public static List<CodegenDTO> adaptor(List<Codegen> entityList) {
         if (CollectionTool.isEmpty(entityList)) {
             return new ArrayList<>();

@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
-* Log Mapper
-*
-* Created by xuxueli on '2024-10-27 12:19:06'.
-*/
+ * 日志 Mapper
+ * 
+ * @author xuxueli 2024-01-01
+ */
 @Mapper
 public interface LogMapper {
 

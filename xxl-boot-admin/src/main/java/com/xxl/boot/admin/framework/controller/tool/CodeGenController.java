@@ -23,6 +23,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 代码生成 Controller，根据建表 SQL 生成对应代码文件
+ *
+ * @author xuxueli 2024-01-01
+ */
 @Controller
 @RequestMapping("/tool/codegen")
 public class CodeGenController {
@@ -31,22 +36,29 @@ public class CodeGenController {
     @Autowired
     private Configuration freemarkerConfig;
 
+    /**
+     * 代码生成页面
+     */
     @RequestMapping
     @XxlSso
     public String index(Model model) {
         return "/framework/tool/codegen";
     }
 
+    /**
+     * 根据建表 SQL 生成代码
+     */
     @RequestMapping("/genCode")
     @ResponseBody
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "生成代码")
     public Response<Map<String, String>> codeGenerate(String tableSql,
-                                                      String author,
-                                                      String packagePath,
-                                                      String businessName) {
+                                                       String author,
+                                                       String packagePath,
+                                                       String businessName) {
 
         try {
+            // 参数校验
             if (StringTool.isBlank(tableSql)) {
                 return Response.ofFail("表结构信息不可为空");
             }
@@ -57,7 +69,7 @@ public class CodeGenController {
                 return Response.ofFail("Package路径不可为空");
             }
 
-            // parse table
+            // 解析表结构
             ClassInfo classInfo = TableParseUtil.processTableIntoClassInfo(tableSql);
             classInfo.setAuthor(author);
             classInfo.setPackageName(packagePath);
@@ -65,13 +77,12 @@ public class CodeGenController {
                 classInfo.setClassName(businessName);
             }
 
-            // code genarete
+            // 准备 FreeMarker 模板参数
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("classInfo", classInfo);
 
-            // result
+            // 通过模板生成各层代码
             Map<String, String> result = new HashMap<String, String>();
-
             result.put("controller_code", FtlTool.processString(freemarkerConfig,"/framework/tool/codegen-module/controller.ftl", params));
             result.put("service_code", FtlTool.processString(freemarkerConfig,"/framework/tool/codegen-module/service.ftl", params));
             result.put("service_impl_code", FtlTool.processString(freemarkerConfig,"/framework/tool/codegen-module/service_impl.ftl", params));
@@ -80,7 +91,7 @@ public class CodeGenController {
             result.put("entity_code", FtlTool.processString(freemarkerConfig,"/framework/tool/codegen-module/entity.ftl", params));
             result.put("page_code", FtlTool.processString(freemarkerConfig,"/framework/tool/codegen-module/page.ftl", params));
 
-            // 计算,生成代码行数
+            // 统计生成代码行数
             int lineNum = 0;
             for (Map.Entry<String, String> item: result.entrySet()) {
                 if (item.getValue() != null) {
@@ -94,7 +105,6 @@ public class CodeGenController {
             logger.error(e.getMessage(), e);
             return Response.ofFail("表结构解析失败");
         }
-
     }
 
 

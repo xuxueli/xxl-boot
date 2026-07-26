@@ -2,6 +2,8 @@ package com.xxl.boot.api.framework.util.codegen;
 
 /**
  * 字段信息 - 用于代码生成模板渲染
+ * 
+ * @author xuxueli 2024-01-01
  */
 public class FieldInfo {
 

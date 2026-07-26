@@ -32,6 +32,8 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * 代码生成 Service 实现
+ * 
+ * @author xuxueli 2024-01-01
  */
 @Service
 public class CodegenServiceImpl implements CodegenService {
@@ -94,6 +96,13 @@ public class CodegenServiceImpl implements CodegenService {
         return Response.ofSuccess();
     }
 
+    /**
+     * CodegenFieldDTO 转实体
+     *
+     * @param codegenId 归属表编号
+     * @param dto       DTO
+     * @return 实体
+     */
     private CodegenField toEntity(long codegenId, CodegenFieldDTO dto) {
         CodegenField f = new CodegenField();
         f.setId(dto.getId());
@@ -185,7 +194,14 @@ public class CodegenServiceImpl implements CodegenService {
         }
     }
 
-    /** 根据列名、Java类型、SQL类型推断合适的显示组件 */
+    /**
+     * 根据列名、Java类型、SQL类型推断合适的显示组件
+     *
+     * @param colName  列名
+     * @param javaType Java 类型
+     * @param sqlType  SQL 类型
+     * @return 显示组件类型
+     */
     private String inferHtmlType(String colName, String javaType, String sqlType) {
         if (sqlType != null) {
             String st = sqlType.toLowerCase();
@@ -301,12 +317,16 @@ public class CodegenServiceImpl implements CodegenService {
     }
 
     /**
-     * template base path
-     */
+      * 模板基础路径
+      */
     private static final String TPL_PATH = "/tool/codegen/";
 
     /**
      * 渲染 FreeMarker 模板
+     *
+     * @param ftl    模板文件名
+     * @param params 模板参数
+     * @return 渲染后的字符串
      */
     private String render(String ftl, Map<String, Object> params) throws IOException, TemplateException {
         return FtlTool.processString(freemarkerConfig, TPL_PATH + ftl, params);
@@ -315,8 +335,8 @@ public class CodegenServiceImpl implements CodegenService {
     /**
      * 写入文件到 zip 包
      *
-     * @param zos ZipOutputStream,
-     * @param name 文件名
+     * @param zos     ZipOutputStream
+     * @param name    文件名
      * @param content 文件内容
      */
     private void addZipEntry(ZipOutputStream zos, String name, String content) throws IOException {
@@ -326,7 +346,13 @@ public class CodegenServiceImpl implements CodegenService {
         zos.closeEntry();
     }
 
-    /** 构建模板上下文：直接传递实体对象，模板访问 codegen.xxx / fields */
+    /**
+     * 构建模板上下文
+     *
+     * @param codegen 业务表实体
+     * @param fields  字段列表
+     * @return 模板上下文
+     */
     private Map<String, Object> buildTemplateContext(Codegen codegen, List<CodegenField> fields) {
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("codegen", codegen);

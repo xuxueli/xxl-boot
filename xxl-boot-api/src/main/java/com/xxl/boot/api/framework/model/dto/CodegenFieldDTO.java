@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /**
  * 代码生成 - 业务表字段 DTO
+ * 
+ * @author xuxueli 2024-01-01
  */
 public class CodegenFieldDTO implements Serializable {
     private static final long serialVersionUID = 42L;

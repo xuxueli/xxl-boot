@@ -3,9 +3,9 @@ package com.xxl.boot.api.framework.model.dto;
 import java.io.Serializable;
 
 /**
- *  Log Entity
- *
- *  Created by xuxueli on '2024-10-27 12:19:06'.
+ * 日志 DTO
+ * 
+ * @author xuxueli 2024-01-01
  */
 public class LogDTO implements Serializable {
     private static final long serialVersionUID = 42L;

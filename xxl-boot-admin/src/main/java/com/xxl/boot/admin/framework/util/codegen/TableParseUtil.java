@@ -13,14 +13,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author xuxueli 2018-05-02 21:10:45
+ * 建表 SQL 解析工具，将 SQL 解析为 ClassInfo 对象用于代码生成
+ * 
+ * @author xuxueli 2018-05-02
  */
 public class TableParseUtil {
 
     /**
-     * 解析建表SQL生成代码（model-dao-xml）
+     * 解析建表 SQL，生成 ClassInfo 对象（用于代码生成）
      *
      * <pre>
+     * 输入 SQL 格式示例：
      *      CREATE TABLE `xxl_boot_user`
      *      (
      *          `id`            INT             NOT NULL AUTO_INCREMENT      COMMENT '用户ID',
@@ -36,14 +39,16 @@ public class TableParseUtil {
      * </pre>
      */
     public static ClassInfo processTableIntoClassInfo(String tableSql) throws IOException {
+
+        // 空值校验
         if (StringTool.isBlank(tableSql)) {
             throw new BizException("Table structure can not be empty.");
         }
 
-        // 1、lower case
+        // 转小写
         tableSql = tableSql.trim().toLowerCase();
 
-        // 2、table Name
+        // 解析表名
         String tableName = null;
         if (tableSql.contains("table") && tableSql.contains("(")) {
             tableName = tableSql.substring(tableSql.indexOf("table")+5, tableSql.indexOf("("));
@@ -54,10 +59,10 @@ public class TableParseUtil {
             tableName = tableName.substring(tableName.indexOf("`")+1, tableName.lastIndexOf("`"));
         }
 
-        // 3、class Name
+        // 驼峰转类名
         String className = StringTool.upperCaseFirst(StringTool.underlineToCamelCase(tableName));
 
-        // 4、class Comment
+        // 解析表注释
         String classComment = "";
         if (tableSql.contains("comment=")) {
             String classCommentTmp = tableSql.substring(tableSql.lastIndexOf("comment=")+8).trim();
@@ -69,12 +74,10 @@ public class TableParseUtil {
             }
         }
 
-        // 5、field List
-        List<FieldInfo> fieldList = new ArrayList<>();
-
+        // 提取字段 SQL 片段（括号中的部分）
         String fieldListTmp = tableSql.substring(tableSql.indexOf("(")+1, tableSql.lastIndexOf(")"));
 
-        // replace "," by "，" in comment
+        // 替换字段注释中的英文逗号为中文逗号，避免误分割
         Matcher matcher = Pattern.compile("\\ comment '(.*?)\\'").matcher(fieldListTmp);
         while(matcher.find()){
             String commentFull = matcher.group();
@@ -84,12 +87,13 @@ public class TableParseUtil {
             }
         }
 
-        // collect column
+        // 逐行解析字段
+        List<FieldInfo> fieldList = new ArrayList<>();
         String[] fieldLineList = fieldListTmp.split(",");
         for (String columnLine : fieldLineList) {
-            columnLine = columnLine.trim();                                                 // `userid` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+            columnLine = columnLine.trim();
 
-            // 5.1、skip non-field lines
+            // 跳过非字段行（主键、索引等）
             if (columnLine.isEmpty()
                     || columnLine.startsWith("primary")
                     || columnLine.startsWith("unique")
@@ -98,7 +102,7 @@ public class TableParseUtil {
                 continue;
             }
 
-            // 5.2、column Name
+            // 解析列名
             int firstSpace = columnLine.indexOf(" ");
             if (firstSpace == -1) continue;
             String columnName = columnLine.substring(0, firstSpace);
@@ -107,13 +111,13 @@ public class TableParseUtil {
             }
             columnLine = columnLine.substring(firstSpace + 1).trim();
 
-            // 5.3、field Name
+            // 驼峰转属性名
             String fieldName = StringTool.lowerCaseFirst(StringTool.underlineToCamelCase(columnName));
             if (fieldName.contains("_")) {
                 fieldName = fieldName.replace("_", "");
             }
 
-            // 5.4、field class
+            // 根据 SQL 类型映射 Java 类型
             String fieldClass = Object.class.getSimpleName();
             if (columnLine.startsWith("int")
                     || columnLine.startsWith("tinyint")
@@ -136,7 +140,7 @@ public class TableParseUtil {
                 fieldClass = BigDecimal.class.getSimpleName();
             }
 
-            // 5.5、field comment
+            // 解析字段注释
             String fieldComment = "";
             if (columnLine.contains("comment")) {
                 String commentTmp = columnLine.substring(columnLine.indexOf("comment") + 7).trim();
@@ -146,12 +150,12 @@ public class TableParseUtil {
                 fieldComment = commentTmp;
             }
 
+            // 封装字段信息
             FieldInfo fieldInfo = new FieldInfo();
             fieldInfo.setColumnName(columnName);
             fieldInfo.setFieldName(fieldName);
             fieldInfo.setFieldClass(fieldClass);
             fieldInfo.setFieldComment(fieldComment);
-
             fieldList.add(fieldInfo);
         }
 
@@ -159,13 +163,12 @@ public class TableParseUtil {
             throw new BizException("Table structure anomaly.");
         }
 
-        // result
+        // 封装结果
         ClassInfo codeJavaInfo = new ClassInfo();
         codeJavaInfo.setTableName(tableName);
         codeJavaInfo.setClassName(className);
         codeJavaInfo.setClassComment(classComment);
         codeJavaInfo.setFieldList(fieldList);
-
         return codeJavaInfo;
     }
 

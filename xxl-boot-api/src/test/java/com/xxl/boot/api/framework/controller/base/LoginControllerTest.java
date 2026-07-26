@@ -9,6 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 登录 Controller 测试
+ * 
+ * @author xuxueli 2024-01-01
+ */
 public class LoginControllerTest {
     private static final Logger logger = LoggerFactory.getLogger(LoginControllerTest.class);
 

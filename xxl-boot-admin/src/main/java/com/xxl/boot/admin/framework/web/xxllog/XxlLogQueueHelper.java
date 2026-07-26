@@ -9,6 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.stereotype.Component;
 
+/**
+ * 日志消息队列助手，使用 MessageQueue 异步批量写入日志
+ * 
+ * @author xuxueli 2024-01-01
+ */
 @Component
 public class XxlLogQueueHelper implements SmartLifecycle {
     private static final Logger logger = LoggerFactory.getLogger(XxlLogQueueHelper.class);
@@ -30,7 +35,7 @@ public class XxlLogQueueHelper implements SmartLifecycle {
     private LogService logService;
 
     /**
-     * callback message-queue
+     * 日志消息队列
      */
     private volatile MessageQueue<Log> logMessageQueue;
 
@@ -40,12 +45,12 @@ public class XxlLogQueueHelper implements SmartLifecycle {
     @Override
     public void start() {
 
-        // start message-queue
+        // 初始化消息队列，批量消费
         logMessageQueue = new MessageQueue<Log>(
                 "XxlLogQueueConfig#logMessageQueue",
                 messages -> {
 
-                    // write log
+                    // 批量写入日志
                     for (Log log : messages) {
                         logService.insert(log);
                     }
@@ -54,24 +59,26 @@ public class XxlLogQueueHelper implements SmartLifecycle {
                 1,
                 10);
 
-        // mark running
         running = true;
     }
 
     @Override
     public void stop() {
-        // mark stop
+
         running = false;
 
-        // stop message-queue
+        // 停止消息队列
         if (logMessageQueue != null){
             logMessageQueue.stop();
         }
     }
 
 
-    // ---------------------- start、stop ----------------------
+    // ---------------------- 操作方法 ----------------------
 
+    /**
+     * 推送日志到消息队列（异步写入）
+     */
     public boolean push(Log log) {
         return logMessageQueue.produce(log);
     }

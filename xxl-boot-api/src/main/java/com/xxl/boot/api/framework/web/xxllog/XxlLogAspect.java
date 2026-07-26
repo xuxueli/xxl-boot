@@ -25,9 +25,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.lang.reflect.Method;
 
 /**
- * aspect/aop
- *
- * @author xuxueli 2016-1-6 19:22:18
+ * 操作日志切面，拦截 @XxlLog 注解自动记录操作日志
+ * 
+ * @author xuxueli 2016-1-6 19:22:
  */
 @Aspect
 @Component

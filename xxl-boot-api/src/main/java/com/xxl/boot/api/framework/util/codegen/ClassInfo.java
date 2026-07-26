@@ -3,43 +3,19 @@ package com.xxl.boot.api.framework.util.codegen;
 import java.util.List;
 
 /**
- * class info
- *
- * @author xuxueli 2018-05-02 20:02:34
+ * 代码生成 - 类信息
+ * 
+ * @author xuxueli 2024-01-01
  */
 public class ClassInfo {
 
-	/**
-	 * table name, 'user_info'
-	 */
-    private String tableName;
-
-	/**
-	 * class name, 'userInfo'
-	 */
-    private String className;
-
-	/**
-	 * class comment, "user info table"
-	 */
-	private String classComment;
-
-	/**
-	 * author for java class comment
-	 */
-	private String author;
-
-	/**
-	 * package name for java class
-	 */
-	private String packageName;
-
-	/**
-	 * business name, override className
-	 */
-	private String businessName;
-
-	private List<FieldInfo> fieldList;
+    private String tableName;           /* 表名称，如 user_info */
+    private String className;           /* 类名，如 userInfo */
+    private String classComment;        /* 类注释 */
+    private String author;              /* 作者 */
+    private String packageName;         /* 包名 */
+    private String businessName;        /* 业务名 */
+    private List<FieldInfo> fieldList;  /* 字段列表 */
 
 	public String getTableName() {
 		return tableName;

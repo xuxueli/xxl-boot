@@ -10,24 +10,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * permission annotation
- *
- * <pre>
- * 		@Log(type=xx)
- * </pre>
- *
- * @author xuxueli 2015-12-12 18:29:02
+ * 操作日志注解
+ * 
+ * @author xuxueli 2024-01-01
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface XxlLog {
 
-	LogTypeEnum type();
-
-	LogModuleEnum module();
-
-	String title() ;
-
-	String content() default "";
+    LogTypeEnum type();             /* 日志类型 */
+    LogModuleEnum module();         /* 系统模块 */
+    String title();                 /* 日志标题 */
+    String content() default "";    /* 日志内容 */
 
 }

@@ -1,29 +1,16 @@
 package com.xxl.boot.api.framework.model.dto;
 
 /**
- * @author xuxueli 2018-03-22 23:51:51
+ * 登录请求 DTO
+ * 
+ * @author xuxueli 2024-01-01
  */
 public class LoginRequest {
 
-    /**
-     * username
-     */
-    private String username;
-
-    /**
-     * password
-     */
-    private String password;
-
-    /**
-     * captcha uuid
-     */
-    private String captchaUuid;
-
-    /**
-     * captcha result
-     */
-    private String captchaResult;
+    private String username;        /* 用户名 */
+    private String password;        /* 密码 */
+    private String captchaUuid;     /* 验证码 UUID */
+    private String captchaResult;   /* 验证码结果 */
 
     public LoginRequest() {
     }
