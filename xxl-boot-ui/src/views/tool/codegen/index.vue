@@ -93,16 +93,16 @@
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-tooltip content="编辑" placement="top">
-            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)"></el-button>
+            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)">编辑</el-button>
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
           </el-tooltip>
           <el-tooltip content="预览" placement="top">
-            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)"></el-button>
+            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)">预览</el-button>
           </el-tooltip>
           <el-tooltip content="生成代码" placement="top">
-            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)"></el-button>
+            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)">生成代码</el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -122,8 +122,8 @@
       <el-tabs v-model="preview.activeName">
         <el-tab-pane
             v-for="(value, key) in preview.data"
-            :label="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
-            :name="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
+            :label="key.substring(key.lastIndexOf('/')+1,key.indexOf('.ftl'))"
+            :name="key.substring(key.lastIndexOf('/')+1,key.indexOf('.ftl'))"
             :key="value"
         >
           <el-link underline="never" icon="DocumentCopy" v-copyText="value" v-copyText:callback="copyTextSuccess"
@@ -184,7 +184,7 @@ const data = reactive({
     open: false,
     title: "代码预览",
     data: {},
-    activeName: "domain.java"
+    activeName: "entity.java"
   }
 })
 
@@ -259,7 +259,8 @@ function handlePreview(row) {
   previewTable(row.id).then(response => {
     preview.value.data = response.data
     preview.value.open = true
-    preview.value.activeName = "domain.java"
+    const keys = Object.keys(response.data)
+    preview.value.activeName = keys.length > 0 ? keys[0].substring(keys[0].lastIndexOf('/') + 1, keys[0].indexOf('.ftl')) : "entity.java"
   })
 }
 

@@ -228,19 +228,30 @@ public class CodegenServiceImpl implements CodegenService {
         try {
             Map<String, Object> params = buildTemplateContext(codegen, fields);
 
+            // generate java
             Map<String, String> result = new LinkedHashMap<>();
-            result.put("java/domain.java.vm", render("entity.ftl", params));
-            result.put("java/mapper.java.vm", render("mapper.ftl", params));
-            result.put("java/mapper.xml.vm", render("mapper_xml.ftl", params));
-            result.put("java/service.java.vm", render("service.ftl", params));
-            result.put("java/serviceImpl.java.vm", render("service_impl.ftl", params));
-            result.put("java/controller.java.vm", render("controller.ftl", params));
-            result.put("vue/page.vue.vm", render("page.ftl", params));
+            result.put("java/entity.java.ftl", render("java/entity.java.ftl", params));
+            result.put("java/mapper.java.ftl", render("java/mapper.java.ftl", params));
+            result.put("java/mapper.xml.ftl", render("java/mapper.xml.ftl", params));
+            result.put("java/service.java.ftl", render("java/service.java.ftl", params));
+            result.put("java/serviceImpl.java.ftl", render("java/serviceImpl.java.ftl", params));
+            result.put("java/controller.java.ftl", render("java/controller.java.ftl", params));
+
+            // generate sql
+            result.put("sql/sql.ftl", render("sql/sql.ftl", params));
+
+            // generate vue
+            result.put("vue3/api.js.ftl", render("vue3/api.js.ftl", params));
+            if (codegen.getTplCategory().equals("tree")) {
+                result.put("vue3/index-tree.vue.ftl", render("vue3/index-tree.vue.ftl", params));
+            } else {
+                result.put("vue3/index.vue.ftl", render("vue3/index.vue.ftl", params));
+            }
 
             return Response.ofSuccess(result);
         } catch (IOException | TemplateException e) {
             logger.error(e.getMessage(), e);
-            return Response.ofFail("代码生成失败");
+            return Response.ofFail("代码生成失败: "  + e.getMessage());
         }
     }
 
@@ -256,18 +267,31 @@ public class CodegenServiceImpl implements CodegenService {
                 if (codegen == null) continue;
                 List<CodegenField> fields = codegenFieldMapper.findByCodegenId(codegen.getId());
 
+                // param
                 Map<String, Object> params = buildTemplateContext(codegen, fields);
                 String pkg = codegen.getPackageName() != null ? codegen.getPackageName().replace('.', '/') : "com.xxl.boot.api.business";
                 String module = codegen.getModuleName() != null ? codegen.getModuleName() : "demo";
+                String cn = codegen.getBusinessName() != null ? codegen.getBusinessName() : "Demo";
 
-                // 单表：生成代码预览
-                addZipEntry(zos, "main/java/" + pkg + "/domain/" + codegen.getBusinessName() + ".java", render("entity.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/mapper/" + codegen.getBusinessName() + "Mapper.java", render("mapper.ftl", params));
-                addZipEntry(zos, "main/resources/mapper/" + module + "/" + codegen.getBusinessName() + "Mapper.xml", render("mapper_xml.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/service/I" + codegen.getBusinessName() + "Service.java", render("service.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/service/impl/" + codegen.getBusinessName() + "ServiceImpl.java", render("service_impl.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/controller/" + codegen.getBusinessName() + "Controller.java", render("controller.ftl", params));
-                addZipEntry(zos, "vue/views/" + module + "/" + codegen.getBusinessName() + "/index.vue", render("page.ftl", params));
+                // generate java
+                addZipEntry(zos, "main/java/" + pkg + "/entity/" + cn + ".java", render("java/entity.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/mapper/" + cn + "Mapper.java", render("java/mapper.java.ftl", params));
+                addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "Mapper.xml", render("java/mapper.xml.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/service/" + cn + "Service.java", render("java/service.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/service/impl/" + cn + "ServiceImpl.java", render("java/serviceImpl.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/controller/" + cn + "Controller.java", render("java/controller.java.ftl", params));
+
+                // generate sql
+                addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "-init.sql", render("sql/sql.ftl", params));
+
+                // generate vue
+                addZipEntry(zos, "vue/api/" + module + "/" + cn + ".js", render("vue3/api.js.ftl", params));
+                if (codegen.getTplCategory().equals("tree")) {
+                    addZipEntry(zos, "vue/views/" + module + "/" + cn + "/index.vue", render("vue3/index-tree.vue.ftl", params));
+                } else {
+                    addZipEntry(zos, "vue/views/" + module + "/" + cn + "/index.vue", render("vue3/index.vue.ftl", params));
+                }
+
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
