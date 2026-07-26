@@ -279,7 +279,7 @@ public class CodegenServiceImpl implements CodegenService {
     /**
      * template base path
      */
-    private static final String TPL_PATH = "/tool/codegen2/";
+    private static final String TPL_PATH = "/tool/codegen/";
 
     /**
      * 渲染 FreeMarker 模板

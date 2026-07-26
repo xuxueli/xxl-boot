@@ -23,11 +23,6 @@
                 <el-input placeholder="请输入表描述" v-model="info.tableComment"/>
               </el-form-item>
             </el-col>
-            <el-col :span="24">
-              <el-form-item label="备注" prop="remark">
-                <el-input type="textarea" :rows="2" v-model="info.remark"></el-input>
-              </el-form-item>
-            </el-col>
           </el-row>
         </el-form>
 
@@ -85,6 +80,11 @@
                   <el-option label="Element Plus" value="element-plus"/>
                   <el-option label="Element Plus + TypeScript" value="element-plus-typescript"/>
                 </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="备注" prop="remark">
+                <el-input type="textarea" :rows="2" v-model="info.remark"/>
               </el-form-item>
             </el-col>
           </el-row>
