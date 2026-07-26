@@ -43,7 +43,7 @@ const props = defineProps({
   pageSizes: {
     type: Array,
     default() {
-      return [10, 20, 30, 50]
+      return [10, 20, 50, 100]
     }
   },
   // 页码按钮数：移动端收敛为 5，桌面端默认 7，避免过度拥挤。

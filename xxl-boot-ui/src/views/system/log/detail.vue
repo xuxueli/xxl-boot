@@ -20,7 +20,7 @@
         </el-row>
         <el-row class="detail-row">
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">日志ID</span><span class="detail-value">{{ form.id }}</span></div>
+            <div class="detail-item"><span class="detail-label">日志编号</span><span class="detail-value">{{ form.id }}</span></div>
           </el-col>
           <el-col :span="12">
             <div class="detail-item"><span class="detail-label">日志标题</span><span class="detail-value">{{ form.title }}</span></div>
