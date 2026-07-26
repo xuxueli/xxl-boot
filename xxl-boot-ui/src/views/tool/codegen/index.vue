@@ -88,8 +88,7 @@
       </el-table-column>
       <el-table-column label="表名称" align="center" prop="tableName" :show-overflow-tooltip="true"/>
       <el-table-column label="表描述" align="center" prop="tableComment" :show-overflow-tooltip="true"/>
-      <el-table-column label="实体" align="center" prop="className" :show-overflow-tooltip="true"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="160"/>
+      <el-table-column label="创建时间" align="center" prop="addTime" width="160"/>
       <el-table-column label="更新时间" align="center" prop="updateTime" width="160"/>
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -152,7 +151,7 @@
 </template>
 
 <script setup name="Gen">
-import {listTable, previewTable, delTable, genCode, createTable} from "@/api/tool/codegen"
+import {listTable, previewTable, delTable, createTable} from "@/api/tool/codegen"
 import {useFormReset} from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import downloadPlugin from '@/utils/download'
@@ -221,12 +220,13 @@ function handleQuery() {
 /** 生成代码操作 */
 function handleGenTable(row) {
   const tbNames = row.tableName || tableNames.value
-  if (tbNames === "") {
+  if (!tbNames || (Array.isArray(tbNames) && tbNames.length === 0)) {
     modal.msgError("请选择要生成的数据")
     return
   }
-  const zipName = Array.isArray(tbNames) ? "boot.zip" : tbNames + ".zip"
-  downloadPlugin.zip("/tool/codegen/batchGenCode?tables=" + tbNames, zipName)
+  const names = Array.isArray(tbNames) ? tbNames : [tbNames]
+  const zipName = names.length > 1 ? "boot.zip" : names[0] + ".zip"
+  downloadPlugin.zip("/tool/codegen/batchGenCode?tables=" + names.map(encodeURIComponent).join(","), zipName)
 }
 
 /** 打开创建表弹窗 */

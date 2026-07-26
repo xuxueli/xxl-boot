@@ -19,19 +19,6 @@ export function listTable(query) {
 }
 
 /**
- * 查询数据库表列表。
- * @param {Object} query 查询参数。
- * @returns {Promise<any>} 数据库表列表。
- */
-export function listDbTable(query) {
-  return request({
-    url: '/tool/codegen/dbList',
-    method: 'get',
-    params: query
-  })
-}
-
-/**
  * 查询生成表详情。
  * @param {string|number} tableId 表 ID。
  * @returns {Promise<any>} 表详细信息。
@@ -54,19 +41,6 @@ export function updateGenTable(data) {
     url: '/tool/codegen/update',
     method: 'post',
     data: data
-  })
-}
-
-/**
- * 导入数据库表到生成器。
- * @param {Object} data 导入参数。
- * @returns {Promise<any>} 导入结果。
- */
-export function importTable(data) {
-  return request({
-    url: '/tool/codegen/importTable',
-    method: 'post',
-    params: data
   })
 }
 
@@ -105,7 +79,7 @@ export function delTable(tableId) {
   return request({
     url: '/tool/codegen/delete',
     method: 'post',
-    params: { 'ids[]': tableId }
+    params: { ids: tableId }
   })
 }
 

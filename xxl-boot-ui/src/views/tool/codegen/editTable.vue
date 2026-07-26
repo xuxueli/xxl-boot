@@ -246,10 +246,9 @@ function open(id) {
 
   /* 加载表配置 + 字段列表 */
   getGenTable(id).then(res => {
-    const defaults = {formColNum: 1, tplWebType: 'element-plus'}
-    info.value = Object.assign(defaults, res.data || {})
-    columns.value = info.value.fieldList || []
-    delete info.value.fieldList
+    const {fieldList, ...rest} = res.data || {}
+    info.value = {formColNum: 1, tplWebType: 'element-plus', ...rest}
+    columns.value = fieldList || []
     /* 校验默认值是否在可选范围内 */
     if (![1, 2, 3].includes(info.value.formColNum)) info.value.formColNum = 1
     if (!['element-plus', 'element-plus-typescript'].includes(info.value.tplWebType)) info.value.tplWebType = 'element-plus'
@@ -271,8 +270,8 @@ function submitForm() {
       const genTable = Object.assign({}, info.value)
       genTable.fieldList = columns.value
       updateGenTable(genTable).then(res => {
-        modal.msgSuccess(res.msg)
         if (res.code === 200) {
+          modal.msgSuccess(res.msg)
           visible.value = false
           emit("ok")
         }
@@ -283,33 +282,25 @@ function submitForm() {
   })
 }
 
-/** 字段拖拽排序：数据加载后初始化 Sortable */
-onMounted(() => {
-  // 监听 columns 变化，val 为变化后新值；
-  watch(columns, (val) => {
-    if (!val || val.length === 0) return
-    const init = (retry = 0) => {
-      if (retry > 20) return
-      const table = dragTableRef.value
-      if (!table) return setTimeout(() => init(retry + 1), 100)
-      const tbody = table.$el?.querySelector('tbody')
-      if (!tbody) return setTimeout(() => init(retry + 1), 100)
-      if (tbody.__sortable) return
-      tbody.__sortable = Sortable.create(tbody, {
-        handle: ".allowDrag",
-        animation: 150,
-        ghostClass: 'sortable-ghost',
-        onStart: () => document.onselectstart = () => false,
-        onEnd: (evt) => {
-          document.onselectstart = null
-          const item = columns.value.splice(evt.oldIndex, 1)[0]
-          columns.value.splice(evt.newIndex, 0, item)
-          columns.value.forEach((c, i) => c.sort = i + 1)
-        }
-      })
-    }
-    init()
-  }, {once: true})
+/** 拖拽排序：切换到字段信息 tab 时初始化，确保 DOM 已渲染 */
+watch(activeName, (name) => {
+  if (name !== 'columnInfo' || !columns.value || columns.value.length === 0) return
+  nextTick(() => {
+    const tbody = dragTableRef.value?.$el?.querySelector('tbody')
+    if (!tbody || tbody.__sortable) return
+    tbody.__sortable = Sortable.create(tbody, {
+      handle: '.allowDrag',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      onStart: () => document.onselectstart = () => false,
+      onEnd: (evt) => {
+        document.onselectstart = null
+        const item = columns.value.splice(evt.oldIndex, 1)[0]
+        columns.value.splice(evt.newIndex, 0, item)
+        columns.value.forEach((c, i) => c.sort = i + 1)
+      }
+    })
+  })
 })
 
 defineExpose({open})
