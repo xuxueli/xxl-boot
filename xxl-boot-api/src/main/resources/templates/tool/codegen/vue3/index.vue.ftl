@@ -14,19 +14,15 @@
         <el-input v-model="queryParams.${field.javaField}" placeholder="请输入${comment}" clearable @keyup.enter="handleQuery" />
       </el-form-item>
 <#elseif field.htmlType == "select" || field.htmlType == "radio">
+      <el-form-item label="${comment}" prop="${field.javaField}">
+        <el-select v-model="queryParams.${field.javaField}" placeholder="请选择${comment}" clearable>
 <#if field.dictType?has_content>
-      <el-form-item label="${comment}" prop="${field.javaField}">
-        <el-select v-model="queryParams.${field.javaField}" placeholder="请选择${comment}" clearable>
           <el-option v-for="dict in ${field.dictType}" :key="dict.value" :label="dict.label" :value="dict.value" />
-        </el-select>
-      </el-form-item>
 <#else>
-      <el-form-item label="${comment}" prop="${field.javaField}">
-        <el-select v-model="queryParams.${field.javaField}" placeholder="请选择${comment}" clearable>
           <el-option label="请选择字典生成" value="" />
+</#if>
         </el-select>
       </el-form-item>
-</#if>
 <#elseif field.htmlType == "datetime">
 <#if field.queryType == "BETWEEN">
       <el-form-item label="${comment}">
@@ -63,7 +59,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
     </el-row>
 
-    <el-table ref="tableRef" v-loading="loading" :data="${codegen.businessName?uncap_first}List" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="${codegen.businessName?uncap_first}List" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" type="index" width="50" align="center">
         <template #default="scope">
@@ -77,7 +73,7 @@
 </#if>
 </#list>
 </#if>
-      <el-table-column label="操作" align="center" width="200">
+      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:remove']">删除</el-button>
@@ -88,8 +84,7 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="主键" prop="id" v-if="false" />
+      <el-form ref="${codegen.businessName?uncap_first}Ref" :model="form" :rules="rules" label-width="80px">
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isInsert == "1" || field.isEdit == "1">
@@ -150,10 +145,13 @@
 </template>
 
 <script setup name="${codegen.businessName}">
-import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName} } from "@/api/${codegen.moduleName}/${codegen.businessName?lower_case}"
-import downloadPlugin from '@/utils/download'
+import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName}, export${codegen.businessName} } from "@/api/${codegen.moduleName}/${codegen.businessName?lower_case}"
+import { addDateRange } from '@/utils/common'
+import { useFormReset } from '@/composables/useFormReset'
+import { download } from '@/utils/request'
+import modal from '@/utils/modal'
 
-const tableRef = ref(null)
+const resetForm = useFormReset()
 
 const ${codegen.businessName?uncap_first}List = ref([])
 const open = ref(false)
@@ -177,48 +175,65 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data)
 
+/** 查询${codegen.functionName}列表 */
 function getList() {
   loading.value = true
-  list${codegen.businessName}(queryParams.value).then(res => {
+  list${codegen.businessName}(addDateRange(queryParams.value, dateRange.value)).then(res => {
     ${codegen.businessName?uncap_first}List.value = res.data.data
     total.value = res.data.total
     loading.value = false
   })
 }
 
+/** 取消按钮 */
 function cancel() {
   open.value = false
   reset()
 }
 
+/** 表单重置 */
 function reset() {
-  form.value = {}
-  resetForm("formRef")
+  form.value = {
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.isInsert == "1" || field.isEdit == "1">
+    ${field.javaField}: undefined,
+</#if>
+</#list>
+</#if>
+    id: undefined
+  }
+  resetForm("${codegen.businessName?uncap_first}Ref")
 }
 
+/** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1
   getList()
 }
 
+/** 重置按钮操作 */
 function resetQuery() {
-  queryParams.value = { pageNum: 1, pageSize: 10 }
   dateRange.value = []
-  getList()
+  resetForm("queryRef")
+  handleQuery()
 }
 
+/** 多选框选中数据 */
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id)
-  single.value = selection.length !== 1
+  single.value = selection.length != 1
   multiple.value = !selection.length
 }
 
+/** 新增按钮操作 */
 function handleAdd() {
   reset()
   open.value = true
   title.value = "添加${codegen.functionName}"
 }
 
+/** 修改按钮操作 */
 function handleUpdate(row) {
   reset()
   const id = row.id || ids.value[0]
@@ -229,33 +244,43 @@ function handleUpdate(row) {
   })
 }
 
+/** 提交按钮 */
 function submitForm() {
-  formRef.value.validate(valid => {
+  ${codegen.businessName?uncap_first}Ref.value.validate(valid => {
     if (valid) {
-      const submit = form.value.id ? update${codegen.businessName}(form.value) : add${codegen.businessName}(form.value)
-      submit.then(() => {
-        ElMessage.success(form.value.id ? "修改成功" : "新增成功")
-        open.value = false
-        getList()
-      })
+      if (form.value.id != undefined) {
+        update${codegen.businessName}(form.value).then(() => {
+          modal.msgSuccess("修改成功")
+          open.value = false
+          getList()
+        })
+      } else {
+        add${codegen.businessName}(form.value).then(() => {
+          modal.msgSuccess("新增成功")
+          open.value = false
+          getList()
+        })
+      }
     }
   })
 }
 
+/** 删除按钮操作 */
 function handleDelete(row) {
   const delIds = row.id || ids.value
-  ElMessageBox.confirm('是否确认删除编号为"' + delIds + '"的数据项？').then(() => {
+  modal.confirm('是否确认删除编号为"' + delIds + '"的数据项？').then(() => {
     return del${codegen.businessName}(delIds)
   }).then(() => {
     getList()
-    ElMessage.success("删除成功")
+    modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
 
+/** 导出按钮操作 */
 function handleExport() {
-  downloadPlugin.zip('/${codegen.moduleName}/${codegen.businessName?lower_case}/export', {
+  download('/${codegen.moduleName}/${codegen.businessName?lower_case}/export', {
     ...queryParams.value
-  }, "${codegen.businessName}_" + new Date().getTime() + ".xlsx")
+  }, `${codegen.businessName?lower_case}_${new Date().getTime()}.xlsx`)
 }
 
 getList()

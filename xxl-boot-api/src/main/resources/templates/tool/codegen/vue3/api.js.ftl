@@ -48,3 +48,12 @@ export function del${codegen.businessName}(id) {
     params: { ids: id }
   })
 }
+
+// 导出${codegen.functionName}
+export function export${codegen.businessName}(query) {
+  return request({
+    url: '/${codegen.moduleName}/${codegen.businessName?lower_case}/export',
+    method: 'get',
+    params: query
+  })
+}

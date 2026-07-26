@@ -69,11 +69,14 @@ public class ${cn}ServiceImpl implements ${cn}Service {
     */
     @Override
     public PageModel<${cn}> pageList(int offset, int pagesize) {
+
         List<${cn}> list = ${cnLower}Mapper.pageList(offset, pagesize);
         int total = ${cnLower}Mapper.pageListCount(offset, pagesize);
+
         PageModel<${cn}> pm = new PageModel<>();
         pm.setData(list);
         pm.setTotal(total);
+
         return pm;
     }
 

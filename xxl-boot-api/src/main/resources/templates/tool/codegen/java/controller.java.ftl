@@ -47,7 +47,7 @@ public class ${cn}Controller {
     @ResponseBody
     @XxlSso
     public Response<PageModel<${cn}>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                    @RequestParam(required = false, defaultValue = "10") int pagesize) {
+                                               @RequestParam(required = false, defaultValue = "10") int pagesize) {
         PageModel<${cn}> pageModel = ${cnLower}Service.pageList(offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
