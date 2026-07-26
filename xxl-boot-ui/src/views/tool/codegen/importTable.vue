@@ -89,7 +89,12 @@ function handleSelectionChange(selection) {
 
 /** 查询表数据 */
 function getList() {
-  listDbTable(queryParams).then(res => {
+  const params = {
+    offset: (queryParams.pageNum - 1) * queryParams.pageSize,
+    pagesize: queryParams.pageSize,
+    tableName: queryParams.tableName
+  }
+  listDbTable(params).then(res => {
     dbTableList.value = res.data.data
     total.value = res.data.total
   })
@@ -114,7 +119,7 @@ function handleImportTable() {
     modal.msgError("请选择要导入的表")
     return
   }
-  importTable({ tables: tableNames, tplWebType: 'element-plus' }).then(() => {
+  importTable({ tableName: tableNames }).then(() => {
     modal.msgSuccess("导入成功")
     visible.value = false
     emit("ok")

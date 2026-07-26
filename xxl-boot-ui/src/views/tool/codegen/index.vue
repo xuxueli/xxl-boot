@@ -292,7 +292,7 @@ function resetQuery() {
 
 /** 预览按钮 */
 function handlePreview(row) {
-  previewTable(row.tableId).then(response => {
+  previewTable(row.id).then(response => {
     preview.value.data = response.data
     preview.value.open = true
     preview.value.activeName = "domain.java"
@@ -306,7 +306,7 @@ function copyTextSuccess() {
 
 // 多选框选中数据
 function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.tableId)
+  ids.value = selection.map(item => item.id)
   tableNames.value = selection.map(item => item.tableName)
   single.value = selection.length != 1
   multiple.value = !selection.length
@@ -321,7 +321,7 @@ function handleSortChange(column, prop, order) {
 
 /** 修改按钮操作 */
 function handleEditTable(row) {
-  const tableId = row.tableId || ids.value[0]
+  const tableId = row.id || ids.value[0]
   const tableName = row.tableName || tableNames.value[0]
   const params = {pageNum: queryParams.value.pageNum, tableId: tableId}
   tab.openPage("修改[" + tableName + "]生成配置", '/tool/codegen/editTable', params)
@@ -329,7 +329,7 @@ function handleEditTable(row) {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const tableIds = row.tableId || ids.value
+  const tableIds = row.id || ids.value
   modal.confirm('是否确认删除表编号为"' + tableIds + '"的数据项？').then(function () {
     return delTable(tableIds)
   }).then(() => {

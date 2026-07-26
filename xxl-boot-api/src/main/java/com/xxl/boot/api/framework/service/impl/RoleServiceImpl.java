@@ -1,7 +1,7 @@
 package com.xxl.boot.api.framework.service.impl;
 
-import com.xxl.boot.api.framework.mapper.RoleMapper;
-import com.xxl.boot.api.framework.mapper.RoleResMapper;
+import com.xxl.boot.api.framework.mapper.org.RoleMapper;
+import com.xxl.boot.api.framework.mapper.org.RoleResMapper;
 import com.xxl.boot.api.framework.model.entity.Role;
 import com.xxl.boot.api.framework.model.entity.RoleRes;
 import com.xxl.boot.api.framework.service.RoleService;

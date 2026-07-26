@@ -2,7 +2,7 @@ package com.xxl.boot.api.framework.service.impl;
 
 import com.xxl.boot.api.framework.constant.enums.ResourceStatuEnum;
 import com.xxl.boot.api.framework.constant.enums.ResourceTypeEnum;
-import com.xxl.boot.api.framework.mapper.ResourceMapper;
+import com.xxl.boot.api.framework.mapper.org.ResourceMapper;
 import com.xxl.boot.api.framework.model.dto.ResourceDTO;
 import com.xxl.boot.api.framework.model.entity.Resource;
 import com.xxl.boot.api.framework.service.ResourceService;

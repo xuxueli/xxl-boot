@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.service.impl;
 
-import com.xxl.boot.api.framework.mapper.LogMapper;
+import com.xxl.boot.api.framework.mapper.system.LogMapper;
 import com.xxl.boot.api.framework.model.adaptor.LogAdaptor;
 import com.xxl.boot.api.framework.model.dto.LogDTO;
 import com.xxl.boot.api.framework.model.entity.Log;

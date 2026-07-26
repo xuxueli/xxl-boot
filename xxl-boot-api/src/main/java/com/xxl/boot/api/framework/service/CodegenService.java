@@ -34,5 +34,5 @@ public interface CodegenService {
     Response<String> createTable(String tableSql);
     Response<Map<String, String>> preview(int id);
     Response<String> synchDb(String tableName);
-    String genCodeZip(String tableName);
+    byte[] downloadCode(String[] tableNames);
 }

@@ -2,7 +2,7 @@ package com.xxl.boot.api.framework.controller.system;
 
 import com.xxl.boot.api.framework.constant.enums.MessageCategoryEnum;
 import com.xxl.boot.api.framework.constant.enums.MessageStatusEnum;
-import com.xxl.boot.api.framework.mapper.MessageMapper;
+import com.xxl.boot.api.framework.mapper.system.MessageMapper;
 import com.xxl.boot.api.framework.model.adaptor.MesssageAdaptor;
 import com.xxl.boot.api.framework.model.dto.MessageDTO;
 import com.xxl.boot.api.framework.model.entity.Message;
@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Message Controller

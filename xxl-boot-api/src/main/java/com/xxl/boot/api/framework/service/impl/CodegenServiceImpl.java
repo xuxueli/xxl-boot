@@ -1,8 +1,8 @@
 package com.xxl.boot.api.framework.service.impl;
 
-import com.xxl.boot.api.framework.mapper.CodegenFieldMapper;
-import com.xxl.boot.api.framework.mapper.CodegenMapper;
-import com.xxl.boot.api.framework.mapper.DbTableMapper;
+import com.xxl.boot.api.framework.mapper.tool.CodegenFieldMapper;
+import com.xxl.boot.api.framework.mapper.tool.CodegenMapper;
+import com.xxl.boot.api.framework.mapper.tool.DbTableMapper;
 import com.xxl.boot.api.framework.model.adaptor.CodegenAdaptor;
 import com.xxl.boot.api.framework.model.adaptor.CodegenFieldAdaptor;
 import com.xxl.boot.api.framework.model.dto.CodegenDTO;
@@ -25,11 +25,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 代码生成 Service 实现
@@ -43,6 +47,8 @@ public class CodegenServiceImpl implements CodegenService {
     @Resource private CodegenFieldMapper codegenFieldMapper;
     @Resource private DbTableMapper dbTableMapper;
     @Resource private Configuration freemarkerConfig;
+
+    private static final String TPL_PATH = "/tool/codegen2/";
 
     @Override
     public Response<String> insert(Codegen xxlBootCodegen) {
@@ -130,8 +136,10 @@ public class CodegenServiceImpl implements CodegenService {
         if (columns == null || columns.isEmpty()) return Response.ofFail("表字段为空");
 
         Codegen c = new Codegen();
-        c.setTableName(tableName); c.setTableComment(tables.get(0).getTableComment());
-        c.setClassName(toPascalCase(tableName)); c.setTplCategory("crud");
+        c.setTableName(tableName);
+        c.setTableComment(tables.get(0).getTableComment());
+        c.setClassName(toPascalCase(tableName));
+        c.setTplCategory("crud");
         codegenMapper.insert(c);
 
         for (int i = 0; i < columns.size(); i++) {
@@ -145,8 +153,10 @@ public class CodegenServiceImpl implements CodegenService {
         try {
             ClassInfo ci = TableParseUtil.processTableIntoClassInfo(tableSql);
             Codegen c = new Codegen();
-            c.setTableName(ci.getTableName()); c.setTableComment(ci.getClassComment());
-            c.setClassName(ci.getClassName()); c.setTplCategory("crud");
+            c.setTableName(ci.getTableName());
+            c.setTableComment(ci.getClassComment());
+            c.setClassName(ci.getClassName());
+            c.setTplCategory("crud");
             codegenMapper.insert(c);
             return Response.ofSuccess();
         } catch (Exception e) {
@@ -164,14 +174,17 @@ public class CodegenServiceImpl implements CodegenService {
             ClassInfo ci = toClassInfo(codegen, fields);
             Map<String, Object> params = new HashMap<>();
             params.put("classInfo", ci);
-            Map<String, String> result = new HashMap<>();
-            result.put("controller_code", FtlTool.processString(freemarkerConfig, "/framework/tool/codegen-module/controller.ftl", params));
-            result.put("service_code", FtlTool.processString(freemarkerConfig, "/framework/tool/codegen-module/service.ftl", params));
-            result.put("service_impl_code", FtlTool.processString(freemarkerConfig, "/framework/tool/codegen-module/service_impl.ftl", params));
-            result.put("mapper_code", FtlTool.processString(freemarkerConfig, "/framework/tool/codegen-module/mapper.ftl", params));
-            result.put("mapper_xml_code", FtlTool.processString(freemarkerConfig, "/framework/tool/codegen-module/mapper_xml.ftl", params));
-            result.put("entity_code", FtlTool.processString(freemarkerConfig, "/framework/tool/codegen-module/entity.ftl", params));
-            result.put("page_code", FtlTool.processString(freemarkerConfig, "/framework/tool/codegen-module/page.ftl", params));
+
+            Map<String, String> result = new LinkedHashMap<>();
+            // 后端代码
+            result.put("java/domain.java.vm", render("entity.ftl", params));
+            result.put("java/mapper.java.vm", render("mapper.ftl", params));
+            result.put("java/mapper.xml.vm", render("mapper_xml.ftl", params));
+            result.put("java/service.java.vm", render("service.ftl", params));
+            result.put("java/serviceImpl.java.vm", render("service_impl.ftl", params));
+            result.put("java/controller.java.vm", render("controller.ftl", params));
+            // 前端页面
+            result.put("vue/page.vue.vm", render("page.ftl", params));
             return Response.ofSuccess(result);
         } catch (IOException | TemplateException e) {
             logger.error(e.getMessage(), e);
@@ -193,12 +206,65 @@ public class CodegenServiceImpl implements CodegenService {
     }
 
     @Override
-    public String genCodeZip(String tableName) { return "generated"; }
+    public byte[] downloadCode(String[] tableNames) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ZipOutputStream zos = new ZipOutputStream(baos);
+
+            for (String tableName : tableNames) {
+                List<Codegen> list = codegenMapper.pageList(tableName.trim(), null, 0, 1);
+                if (list == null || list.isEmpty()) continue;
+                Codegen codegen = list.get(0);
+                List<CodegenField> fields = codegenFieldMapper.findByCodegenId(codegen.getId());
+
+                ClassInfo ci = toClassInfo(codegen, fields);
+                Map<String, Object> params = new HashMap<>();
+                params.put("classInfo", ci);
+
+                String pkgPath = codegen.getPackageName() != null
+                        ? codegen.getPackageName().replace('.', '/')
+                        : "com/xxl/boot/demo";
+                String cn = ci.getClassName();
+                String module = codegen.getModuleName() != null ? codegen.getModuleName() : "demo";
+
+                // 后端代码
+                addZipEntry(zos, "main/java/" + pkgPath + "/domain/" + cn + ".java", render("entity.ftl", params));
+                addZipEntry(zos, "main/java/" + pkgPath + "/mapper/" + cn + "Mapper.java", render("mapper.ftl", params));
+                addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "Mapper.xml", render("mapper_xml.ftl", params));
+                addZipEntry(zos, "main/java/" + pkgPath + "/service/I" + cn + "Service.java", render("service.ftl", params));
+                addZipEntry(zos, "main/java/" + pkgPath + "/service/impl/" + cn + "ServiceImpl.java", render("service_impl.ftl", params));
+                addZipEntry(zos, "main/java/" + pkgPath + "/controller/" + cn + "Controller.java", render("controller.ftl", params));
+                // 前端页面
+                addZipEntry(zos, "vue/views/" + module + "/" + codegen.getBusinessName() + "/index.vue", render("page.ftl", params));
+            }
+
+            zos.close();
+            return baos.toByteArray();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    // ------ 工具方法 ------
+
+    private String render(String ftl, Map<String, Object> params) throws IOException, TemplateException {
+        return FtlTool.processString(freemarkerConfig, TPL_PATH + ftl, params);
+    }
+
+    private void addZipEntry(ZipOutputStream zos, String name, String content) throws IOException {
+        if (content == null) return;
+        zos.putNextEntry(new ZipEntry(name));
+        zos.write(content.getBytes("UTF-8"));
+        zos.closeEntry();
+    }
 
     private CodegenField buildField(long codegenId, DbTableColumn col, int sort) {
         CodegenField f = new CodegenField();
-        f.setCodegenId(codegenId); f.setColumnName(col.getColumnName());
-        f.setColumnComment(col.getColumnComment()); f.setColumnType(col.getColumnType());
+        f.setCodegenId(codegenId);
+        f.setColumnName(col.getColumnName());
+        f.setColumnComment(col.getColumnComment());
+        f.setColumnType(col.getColumnType());
         f.setJavaField(toCamelCase(col.getColumnName()));
         f.setJavaType(mapToJavaType(col.getColumnType()));
         if ("PRI".equalsIgnoreCase(col.getColumnKey())) {
@@ -239,14 +305,18 @@ public class CodegenServiceImpl implements CodegenService {
 
     private ClassInfo toClassInfo(Codegen codegen, List<CodegenField> fields) {
         ClassInfo ci = new ClassInfo();
-        ci.setTableName(codegen.getTableName()); ci.setClassComment(codegen.getTableComment());
-        ci.setClassName(codegen.getClassName()); ci.setPackageName(codegen.getPackageName());
-        ci.setAuthor(codegen.getFunctionAuthor());
+        ci.setTableName(codegen.getTableName());
+        ci.setClassComment(codegen.getTableComment());
+        ci.setClassName(codegen.getClassName() != null ? codegen.getClassName() : "Demo");
+        ci.setPackageName(codegen.getPackageName() != null ? codegen.getPackageName() : "com.xxl.boot.demo");
+        ci.setAuthor(codegen.getFunctionAuthor() != null ? codegen.getFunctionAuthor() : "xxl-boot");
         List<FieldInfo> fl = new ArrayList<>();
         for (CodegenField f : fields) {
             FieldInfo fi = new FieldInfo();
-            fi.setColumnName(f.getColumnName()); fi.setFieldName(f.getJavaField());
-            fi.setFieldClass(f.getJavaType()); fi.setFieldComment(f.getColumnComment());
+            fi.setColumnName(f.getColumnName());
+            fi.setFieldName(f.getJavaField());
+            fi.setFieldClass(f.getJavaType());
+            fi.setFieldComment(f.getColumnComment());
             fl.add(fi);
         }
         ci.setFieldList(fl);

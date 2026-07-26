@@ -14,6 +14,7 @@ import com.xxl.boot.api.framework.util.codegen.TableParseUtil;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.freemarker.FtlTool;
+import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import freemarker.template.Configuration;
@@ -22,10 +23,12 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -45,12 +48,6 @@ public class CodeGenController {
     @Resource
     private CodegenService codegenService;
 
-    /** 页面入口 */
-    @RequestMapping
-    @XxlSso
-    public String index() {
-        return "/framework/tool/codegen";
-    }
 
     // ------ 代码生成表 CRUD ------
 
@@ -175,12 +172,31 @@ public class CodeGenController {
         return codegenService.synchDb(tableName);
     }
 
-    /** 批量生成代码 */
-    @RequestMapping("/batchGenCode")
+    /** 批量生成代码（下载 zip） */
+    @GetMapping("/batchGenCode")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "批量生成代码")
-    public Response<String> batchGenCode(String tables) {
-        return Response.ofSuccess("生成成功");
+    public void batchGenCode(HttpServletResponse response, String tables) throws IOException {
+        if (StringTool.isBlank(tables)) {
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(GsonTool.toJson(Response.ofFail("请选择要生成的表")));
+            return;
+        }
+        byte[] data = codegenService.downloadCode(tables.split(","));
+        if (data == null || data.length == 0) {
+            response.setContentType("application/json;charset=utf-8");
+            response.getWriter().write(GsonTool.toJson(Response.ofFail("生成失败")));
+            return;
+        }
+
+        // write zip file
+        response.reset();
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Expose-Headers", "Content-Disposition");
+        response.setHeader("Content-Disposition", "attachment; filename=\"boot.zip\"");
+        response.addHeader("Content-Length", "" + data.length);
+        response.setContentType("application/octet-stream; charset=UTF-8");
+        response.getOutputStream().write(data);
     }
 
     /** 在线代码生成（旧版） */

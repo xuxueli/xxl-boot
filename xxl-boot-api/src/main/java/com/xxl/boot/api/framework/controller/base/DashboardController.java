@@ -1,9 +1,9 @@
 package com.xxl.boot.api.framework.controller.base;
 
-import com.xxl.boot.api.framework.mapper.LogMapper;
-import com.xxl.boot.api.framework.mapper.MessageMapper;
-import com.xxl.boot.api.framework.mapper.RoleMapper;
-import com.xxl.boot.api.framework.mapper.UserMapper;
+import com.xxl.boot.api.framework.mapper.system.LogMapper;
+import com.xxl.boot.api.framework.mapper.system.MessageMapper;
+import com.xxl.boot.api.framework.mapper.org.RoleMapper;
+import com.xxl.boot.api.framework.mapper.org.UserMapper;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;

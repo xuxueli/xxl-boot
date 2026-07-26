@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.service.impl;
 
-import com.xxl.boot.api.framework.mapper.ConfigMapper;
+import com.xxl.boot.api.framework.mapper.system.ConfigMapper;
 import com.xxl.boot.api.framework.model.adaptor.ConfigAdaptor;
 import com.xxl.boot.api.framework.model.dto.ConfigDTO;
 import com.xxl.boot.api.framework.model.entity.Config;

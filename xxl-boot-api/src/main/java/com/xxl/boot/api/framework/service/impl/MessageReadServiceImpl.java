@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.service.impl;
 
-import com.xxl.boot.api.framework.mapper.MessageReadMapper;
+import com.xxl.boot.api.framework.mapper.system.MessageReadMapper;
 import com.xxl.boot.api.framework.model.entity.MessageRead;
 import com.xxl.boot.api.framework.service.MessageReadService;
 import com.xxl.tool.core.CollectionTool;

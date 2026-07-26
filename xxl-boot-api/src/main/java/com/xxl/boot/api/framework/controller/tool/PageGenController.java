@@ -9,10 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/tool/pagegen")
 public class PageGenController {
 
-    @RequestMapping
-    @XxlSso
-    public String index(Model model) {
-        return "/framework/tool/pagegen";
-    }
+
 
 }

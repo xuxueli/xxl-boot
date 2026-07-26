@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.service.impl;
 
-import com.xxl.boot.api.framework.mapper.MessageMapper;
+import com.xxl.boot.api.framework.mapper.system.MessageMapper;
 import com.xxl.boot.api.framework.model.adaptor.MesssageAdaptor;
 import com.xxl.boot.api.framework.model.dto.MessageDTO;
 import com.xxl.boot.api.framework.model.entity.Message;

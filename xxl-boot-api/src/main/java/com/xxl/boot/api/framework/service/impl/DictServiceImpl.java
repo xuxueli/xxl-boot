@@ -1,7 +1,7 @@
 package com.xxl.boot.api.framework.service.impl;
 
-import com.xxl.boot.api.framework.mapper.DictItemMapper;
-import com.xxl.boot.api.framework.mapper.DictMapper;
+import com.xxl.boot.api.framework.mapper.system.DictItemMapper;
+import com.xxl.boot.api.framework.mapper.system.DictMapper;
 import com.xxl.boot.api.framework.model.adaptor.DictAdaptor;
 import com.xxl.boot.api.framework.model.adaptor.DictItemAdaptor;
 import com.xxl.boot.api.framework.model.dto.DictDTO;

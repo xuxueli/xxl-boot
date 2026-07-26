@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.boot.api.framework.mapper.org.RoleMapper">
+
+    <resultMap id="Role" type="com.xxl.boot.api.framework.model.entity.Role" >
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="code" property="code" />
+        <result column="status" property="status" />
+        <result column="order" property="order" />
+        <result column="add_time" property="addTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t.`id`,
+        t.`name`,
+        t.`code`,
+        t.`status`,
+        t.`order`,
+        t.`add_time`,
+        t.`update_time`
+    </sql>
+
+    <insert id="insert" parameterType="com.xxl.boot.api.framework.model.entity.Role" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO xxl_boot_role (`name`,
+                                   `code`,
+                                   `status`,
+                                   `order`,
+                                   `add_time`,
+                                   `update_time`)
+        VALUES (#{name},
+                #{code},
+                #{status},
+                #{order},
+                NOW(),
+                NOW())
+    </insert>
+
+    <delete id="deleteByIds" parameterType="java.util.Map" >
+        DELETE FROM xxl_boot_role
+        WHERE `id` in
+        <foreach collection="ids" item="item" open="(" close=")" separator="," >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="update" parameterType="com.xxl.boot.api.framework.model.entity.Role" >
+        UPDATE xxl_boot_role
+        SET
+            `name` = #{name},
+            `code` = #{code},
+            `status` = #{status},
+            `order` = #{order},
+            `update_time` = NOW()
+        WHERE `id` = #{id}
+    </update>
+
+
+    <select id="load" parameterType="java.util.Map" resultMap="Role">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        WHERE t.`id` = #{id}
+    </select>
+
+    <select id="pageList" parameterType="java.util.Map" resultMap="Role">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+            <if test="status >= 0">
+                AND t.status = #{status}
+            </if>
+        </trim>
+        ORDER BY `order` ASC
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="pageListCount" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_role AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.name like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+            <if test="status >= 0">
+                AND t.status = #{status}
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryByRoleIds" parameterType="java.util.Map" resultMap="Role">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        WHERE t.`id` in
+        <foreach collection="roleIds" item="roleId" index="index" separator="," open="(" close=")" >
+            #{roleId}
+        </foreach>
+    </select>
+
+    <select id="queryByUserid" parameterType="java.util.Map" resultMap="Role">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        WHERE t.id IN (
+            SELECT role_id
+            FROM xxl_boot_user_role
+            WHERE user_id = #{userId}
+        )
+        <!--SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_role AS t
+        INNER JOIN xxl_boot_user_role AS ur
+            ON t.id = ur.role_id
+        WHERE ur.user_id = #{userId}-->
+    </select>
+
+</mapper>
