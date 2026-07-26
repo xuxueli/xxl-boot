@@ -46,7 +46,11 @@
       </el-table-column>
       <el-table-column label="日志标题" align="center" prop="title" :show-overflow-tooltip="true" />
       <el-table-column label="操作人" align="center" prop="operator" width="110" :show-overflow-tooltip="true" />
-      <el-table-column label="操作IP" align="center" prop="ip" width="130" :show-overflow-tooltip="true" />
+      <el-table-column label="操作地址" align="center" :show-overflow-tooltip="true" width="160">
+        <template #default="scope">
+          {{ scope.row.ipAddress || scope.row.ip }}
+        </template>
+      </el-table-column>
       <el-table-column label="新增时间" align="center" prop="addTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.addTime) }}</span>
