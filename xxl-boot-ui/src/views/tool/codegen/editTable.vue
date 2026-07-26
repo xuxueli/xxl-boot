@@ -9,7 +9,7 @@
         <gen-info-form ref="genInfo" :info="info" />
       </el-tab-pane>
       <el-tab-pane label="字段信息" name="columnInfo">
-        <el-table ref="dragTable" :data="columns" row-key="columnId" max-height="420">
+        <el-table ref="dragTableRef" :data="columns" row-key="id" max-height="420">
           <el-table-column label="序号" type="index" min-width="5%" class-name="allowDrag"/>
           <el-table-column label="字段列名" prop="columnName" min-width="10%" :show-overflow-tooltip="true" class-name="allowDrag"/>
           <el-table-column label="字段描述" min-width="10%">
@@ -102,6 +102,8 @@ const dictOptions = ref([])
 const info = ref({})
 const visible = ref(false)
 const tableId = ref(0)
+const dragTableRef = ref(null)
+const sortableInstance = ref(null)
 
 function open(id) {
   tableId.value = id
@@ -142,21 +144,41 @@ function submitForm() {
 }
 
 // 字段拖拽排序
-watch(columns, (val) => {
-  if (!val || val.length === 0) return
-  nextTick(() => {
-    const el = document.querySelector('.el-table__body > tbody')
-    if (!el) return
-    Sortable.create(el, {
-      handle: ".allowDrag",
-      onEnd: (evt) => {
-        const targetRow = columns.value.splice(evt.oldIndex, 1)[0]
-        columns.value.splice(evt.newIndex, 0, targetRow)
-        for (const i in columns.value) columns.value[i].sort = parseInt(i) + 1
-      }
-    })
-  })
-}, { once: true })
+onMounted(() => {
+  watch(columns, (val) => {
+    if (!val || val.length === 0) return
+    const init = (retry = 0) => {
+      if (retry > 20) return
+      const table = dragTableRef.value
+      if (!table) return setTimeout(() => init(retry + 1), 100)
+      const tbody = table.$el?.querySelector('tbody')
+      if (!tbody) return setTimeout(() => init(retry + 1), 100)
+      if (tbody.__sortable) return
+      tbody.__sortable = Sortable.create(tbody, {
+        handle: ".allowDrag",
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onStart: () => document.onselectstart = () => false,
+        onEnd: (evt) => {
+          document.onselectstart = null
+          const item = columns.value.splice(evt.oldIndex, 1)[0]
+          columns.value.splice(evt.newIndex, 0, item)
+          columns.value.forEach((c, i) => c.sort = i + 1)
+        }
+      })
+    }
+    init()
+  }, { once: true })
+})
 
 defineExpose({ open })
 </script>
+
+<style scoped>
+:deep(.sortable-ghost) {
+  opacity: 0.3;
+}
+:deep(.sortable-chosen) {
+  background: #f5f7fa;
+}
+</style>
