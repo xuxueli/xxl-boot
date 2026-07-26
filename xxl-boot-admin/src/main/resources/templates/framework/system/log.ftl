@@ -27,7 +27,7 @@
                                 <select class="form-control type" >
                                     <option value="-1" >${I18n.system_all}</option>
                                     <#list LogTypeEnum as item>
-                                        <option value="${item.code}" >${item.desc}</option>
+                                        <option value="${item.code}" >${item.title}</option>
                                     </#list>
                                 </select>
                             </div>
@@ -38,7 +38,7 @@
                                 <select class="form-control module" >
                                     <option value="" >${I18n.system_all}</option>
                                     <#list LogModuleEnum as item>
-                                        <option value="${item}" >${item.desc}</option>
+                                        <option value="${item.code}" >${item.title}</option>
                                     </#list>
                                 </select>
                             </div>
@@ -258,7 +258,7 @@ $(function() {
         // fill module display
         var moduleText = "";
         $('#data_filter .module option').each(function(){
-            if ( row.module === $(this).val() ) {
+            if ( row.module.toString() === $(this).val() ) {
                 moduleText = $(this).text();
             }
         });

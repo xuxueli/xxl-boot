@@ -8,35 +8,19 @@ import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
 /**
-* Log Service
-*
-* Created by xuxueli on '2024-10-27 12:19:06'.
-*/
+ * 名称：LogService
+ * 功能：日志 Service 接口
+ */
 public interface LogService {
 
-    /**
-    * 新增
-    */
-    public Response<String> insert(Log xxlBootLog);
+    Response<String> insert(Log xxlBootLog);                          /* 新增 */
 
-    /**
-    * 删除
-    */
-    public Response<String> delete(List<Integer> ids);
+    Response<String> delete(List<Integer> ids);                       /* 批量删除 */
 
-    /**
-    * 更新
-    */
-    public Response<String> update(Log xxlBootLog);
+    Response<String> update(Log xxlBootLog);                         /* 更新 */
 
-    /**
-    * Load查询
-    */
-    public Response<Log> load(int id);
+    Response<Log> load(int id);                                       /* 根据 ID 查询 */
 
-    /**
-    * 分页查询
-    */
-    public PageModel<LogDTO> pageList(int type, String module, String title, int offset, int pagesize);
-
+    PageModel<LogDTO> pageList(int type, int module,                  /* 分页查询 */
+                               String title, int offset, int pagesize);
 }

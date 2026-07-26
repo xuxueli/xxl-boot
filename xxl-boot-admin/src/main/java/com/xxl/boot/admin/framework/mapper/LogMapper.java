@@ -35,21 +35,20 @@ public interface LogMapper {
     public Log load(@Param("id") int id);
 
     /**
-    * 分页查询Data
-    */
-	public List<Log> pageList(@Param("type") int type,
-                                     @Param("module") String module,
-                                     @Param("title") String title,
-                                     @Param("offset") int offset,
-                                     @Param("pagesize") int pagesize);
+     * 分页查询Data
+     */
+    List<Log> pageList(@Param("type") int type,                     /* 分页查询 */
+                       @Param("module") int module,
+                       @Param("title") String title,
+                       @Param("offset") int offset,
+                       @Param("pagesize") int pagesize);
 
     /**
-    * 分页查询Count
-    */
-    public int pageListCount(@Param("type") int type,
-                             @Param("module") String module,
-                             @Param("title") String title,
-                             @Param("offset") int offset,
-                             @Param("pagesize") int pagesize);
-
+     * 分页查询Count
+     */
+    int pageListCount(@Param("type") int type,                      /* 分页查询-总数 */
+                      @Param("module") int module,
+                      @Param("title") String title,
+                      @Param("offset") int offset,
+                      @Param("pagesize") int pagesize);
 }

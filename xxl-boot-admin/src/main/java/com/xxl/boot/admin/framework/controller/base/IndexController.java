@@ -81,7 +81,7 @@ public class IndexController {
 		int userTotal = userPageModel.getTotal();
 		model.addAttribute("userTotal", userTotal);
 		// log total
-		PageModel<LogDTO> logPageModel = logService.pageList(-1, null, null, 0, 1);
+		PageModel<LogDTO> logPageModel = logService.pageList(-1, 0, null, 0, 1);
 		int logTotal = logPageModel.getTotal();
 		model.addAttribute("logTotal", logTotal);
 
