@@ -32,6 +32,9 @@
       <el-col :span="1.5">
         <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="warning" plain icon="Download" @click="handleExport">导出</el-button>
+      </el-col>
       <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
@@ -86,6 +89,7 @@ import { loadEnumItem } from "@/api/system/dict/data"
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
+import { download } from '@/utils/request'
 
 const resetForm = useFormReset()
 
@@ -168,6 +172,13 @@ function handleDelete(row) {
     getList()
     modal.msgSuccess("删除成功")
   }).catch(() => {})
+}
+
+/** 导出按钮 */
+function handleExport() {
+  download("system/log/export", {
+    ...queryParams.value
+  }, `log_${new Date().getTime()}.xlsx`)
 }
 
 // 加载系统模块枚举

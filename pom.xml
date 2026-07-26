@@ -42,6 +42,8 @@
 
         <!-- xxl-sso -->
         <xxl-sso.version>2.4.0</xxl-sso.version>
+        <!-- poi (excel ) -->
+        <poi.version>5.5.1</poi.version>
         <!-- ip2region -->
         <ip2region.version>3.3.7</ip2region.version>
         <!-- spring-ai -->
@@ -86,6 +88,13 @@
                 <groupId>org.lionsoul</groupId>
                 <artifactId>ip2region</artifactId>
                 <version>${ip2region.version}</version>
+            </dependency>
+
+            <!-- poi -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
             </dependency>
 
             <!-- ********************************* for plugin start ********************************* -->
