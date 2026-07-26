@@ -28,23 +28,21 @@
       <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
-    <el-table ref="logRef" v-loading="loading" :data="logList" @selection-change="handleSelectionChange"
-      :default-sort="defaultSort" @sort-change="handleSortChange">
+    <el-table ref="logRef" v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="日志编号" align="center" prop="id" width="80" />
-      <el-table-column label="日志类型" align="center" prop="type" width="100">
+      <el-table-column label="日志类型" align="center" width="100">
         <template #default="scope">
-          <span>{{ scope.row.type === 0 ? '操作日志' : scope.row.type === 1 ? '登陆日志' : scope.row.type }}</span>
+          <el-tag :type="scope.row.type === 0 ? 'primary' : 'warning'" size="small">
+            {{ scope.row.type === 0 ? '操作日志' : scope.row.type === 1 ? '登陆日志' : scope.row.type }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="系统模块" align="center" prop="module" :show-overflow-tooltip="true" />
       <el-table-column label="日志标题" align="center" prop="title" :show-overflow-tooltip="true" />
-      <el-table-column label="日志内容" align="center" prop="content" :show-overflow-tooltip="true" />
-      <el-table-column label="操作人" align="center" prop="operator" width="110" :show-overflow-tooltip="true"
-        sortable="custom" :sort-orders="['descending', 'ascending']" />
+      <el-table-column label="操作人" align="center" prop="operator" width="110" :show-overflow-tooltip="true" />
       <el-table-column label="操作IP" align="center" prop="ip" width="130" :show-overflow-tooltip="true" />
-      <el-table-column label="新增时间" align="center" prop="addTime" width="180" sortable="custom"
-        :sort-orders="['descending', 'ascending']">
+      <el-table-column label="新增时间" align="center" prop="addTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.addTime) }}</span>
         </template>
@@ -84,8 +82,6 @@ const ids = ref([])
 const single = ref(true)
 const multiple = ref(true)
 const title = ref("")
-const defaultSort = ref({ prop: "addTime", order: "descending" })
-
 const data = reactive({
   form: {},
   queryParams: {
@@ -123,18 +119,12 @@ function handleQuery() {
 function resetQuery() {
   resetForm("queryRef")
   queryParams.value.pageNum = 1
-  logRef.value.sort(defaultSort.value.prop, defaultSort.value.order)
+  getList()
 }
 
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id)
   multiple.value = !selection.length
-}
-
-function handleSortChange(column, prop, order) {
-  queryParams.value.orderByColumn = column.prop
-  queryParams.value.isAsc = column.order
-  getList()
 }
 
 function handleDetail(row) {
