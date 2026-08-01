@@ -31,6 +31,18 @@ public class MessageRead implements Serializable {
     */
     private Date addTime;
 
+    // plugin
+
+    /**
+    * 用户账号（附属字段，关联用户表）
+    */
+    private String userName;
+
+    /**
+    * 用户名称（附属字段，关联用户表）
+    */
+    private String realName;
+
     public long getId() {
         return id;
     }
@@ -61,6 +73,22 @@ public class MessageRead implements Serializable {
 
     public void setAddTime(Date addTime) {
         this.addTime = addTime;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 
 }

@@ -23,6 +23,8 @@ public interface UserMapper {
 
 	User load(@Param("id") int id);
 
+	List<User> loadByIds(@Param("ids") List<Integer> ids);
+
 	List<User> pageList(@Param("offset") int offset,
 							   @Param("pagesize") int pagesize,
 							   @Param("username") String username,

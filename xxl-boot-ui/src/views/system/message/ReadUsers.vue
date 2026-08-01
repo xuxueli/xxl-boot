@@ -3,10 +3,11 @@
   功能：分页展示某条消息的已读用户列表
 -->
 <template>
-  <el-dialog v-model="visible" :title="`「${noticeTitle}」已读用户`" width="600px" top="6vh" append-to-body @close="handleClose">
+  <el-dialog v-model="visible" :title="`「${noticeTitle}」已读用户`" width="680px" top="6vh" append-to-body @close="handleClose">
     <el-table v-loading="loading" :data="userList" size="small" stripe height="340px">
       <el-table-column type="index" label="序号" width="70" align="center" />
-      <el-table-column label="用户ID" prop="userId" align="center" :show-overflow-tooltip="true" />
+      <el-table-column label="登录名称" prop="userName" align="center" :show-overflow-tooltip="true" />
+      <el-table-column label="用户名称" prop="realName" align="center" :show-overflow-tooltip="true" />
       <el-table-column label="阅读时间" prop="addTime" align="center" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.addTime) }}</span>
