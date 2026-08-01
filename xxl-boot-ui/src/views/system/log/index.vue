@@ -79,7 +79,7 @@
       v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 详情弹窗 -->
-    <LogDetail v-model:visible="detailVisible" :row="detailRow" :module-map="moduleDict.map" />
+    <LogDetail v-model:visible="detail.visible" :row="detail.row" :module-map="moduleDict.map" />
   </div>
 </template>
 
@@ -115,8 +115,10 @@ const ids = ref([])               /* 表格：选中行 ID 数组 */
 const multiple = ref(true)        /* 表格：是否多选 */
 
 // 详情弹框：UI数据
-const detailVisible = ref(false)  /* 详情弹窗：可见状态 */
-const detailRow = ref({})         /* 详情弹窗：当前查看的日志行 */
+const detail = ref({
+  visible: false,  /* 详情弹窗：可见状态 */
+  row: {}          /* 详情弹窗：当前查看的日志行 */
+})
 
 // 枚举数据（下拉选项 + 编码→名称映射）
 const typeDict = ref({
@@ -176,8 +178,7 @@ function handleSelectionChange(selection) {
 
 /** 查看日志详情 */
 function handleDetail(row) {
-  detailRow.value = row
-  detailVisible.value = true
+  detail.value = { visible: true, row }
 }
 
 /** 删除日志（顶部按钮 @click 传事件对象，取勾选 ids） */
