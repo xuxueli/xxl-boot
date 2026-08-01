@@ -83,12 +83,13 @@ const props = defineProps({
 
 const emit = defineEmits(['update:visible'])
 
-const loading = ref(false)
-const dataList = ref([])
+const loading = ref(false)   /* 加载状态 */
+const dataList = ref([])     /* 字典项列表 */
 
 const normalCount = computed(() => dataList.value.filter(r => r.status === 0).length)
 const disabledCount = computed(() => dataList.value.filter(r => r.status !== 0).length)
 
+/* 弹窗打开时加载数据，关闭时清空 */
 watch(() => props.visible, (val) => {
   if (val) {
     loadData()
@@ -97,6 +98,7 @@ watch(() => props.visible, (val) => {
   }
 })
 
+/** 加载字典项列表 */
 function loadData() {
   if (!props.row?.id) return
   loading.value = true
