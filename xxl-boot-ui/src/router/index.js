@@ -103,7 +103,7 @@ const router = createRouter({
  * 业务路由 —— 与后端菜单无关的页面（下钻页等），单独维护、单独注册
  * 说明：hidden 不显示在侧栏，供 tab.openPage 等内部跳转使用
  */
-export const businessRoutes = [
+const businessRoutes = [
     // 字典管理-子页面：字典数据页面
     {
         path: '/system/dict/data',

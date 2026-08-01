@@ -2,16 +2,21 @@ package com.xxl.boot.api.framework.model.dto;
 
 import java.io.Serializable;
 
+/**
+ * 字典 DTO（用于列表展示）
+ *
+ * @author xuxueli 2024-11-03
+ */
 public class DictDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private long id;
-    private String name;
-    private String code;
-    private int status;
-    private String addTime;
-    private String updateTime;
-    private String remark;
+    private long id;            /* 字典ID */
+    private String name;        /* 字典名称 */
+    private String code;        /* 字典标识 */
+    private int status;         /* 状态（0-正常、1-停用） */
+    private String addTime;     /* 新增时间（格式化字符串） */
+    private String updateTime;  /* 更新时间（格式化字符串） */
+    private String remark;      /* 备注 */
 
     public long getId() {
         return id;

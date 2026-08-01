@@ -3,18 +3,23 @@ package com.xxl.boot.api.framework.model.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 字典项实体
+ *
+ * @author xuxueli 2024-11-03
+ */
 public class DictItem implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private long id;
-    private long dictId;
-    private String itemName;
-    private String itemCode;
-    private int status;
-    private int order;
-    private Date addTime;
-    private Date updateTime;
-    private String remark;
+    private long id;            /* 字典项ID */
+    private long dictId;        /* 字典ID */
+    private String itemName;    /* 字典项名称 */
+    private String itemCode;    /* 字典项标识 */
+    private int status;         /* 状态（0-正常、1-停用） */
+    private int order;          /* 顺序 */
+    private Date addTime;       /* 新增时间 */
+    private Date updateTime;    /* 更新时间 */
+    private String remark;      /* 备注 */
 
     public long getId() {
         return id;

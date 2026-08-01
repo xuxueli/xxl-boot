@@ -3,16 +3,21 @@ package com.xxl.boot.api.framework.model.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 字典实体
+ *
+ * @author xuxueli 2024-11-03
+ */
 public class Dict implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private long id;
-    private String name;
-    private String code;
-    private int status;
-    private Date addTime;
-    private Date updateTime;
-    private String remark;
+    private long id;            /* 字典ID */
+    private String name;        /* 字典名称 */
+    private String code;        /* 字典标识 */
+    private int status;         /* 状态（0-正常、1-停用） */
+    private Date addTime;       /* 新增时间 */
+    private Date updateTime;    /* 更新时间 */
+    private String remark;      /* 备注 */
 
     public long getId() {
         return id;
