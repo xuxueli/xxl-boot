@@ -105,4 +105,11 @@
         ORDER BY t.`order` ASC, t.`id` DESC
     </select>
 
+    <select id="findByDictIdAndCode" parameterType="java.util.Map" resultMap="DictItem">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_dict_item AS t
+        WHERE t.`dict_id` = #{dictId}
+          AND t.`item_code` = #{itemCode}
+    </select>
+
 </mapper>

@@ -29,4 +29,6 @@ public interface DictItemMapper {
 
     public List<DictItem> findByDictId(@Param("dictId") long dictId);
 
+    public DictItem findByDictIdAndCode(@Param("dictId") long dictId, @Param("itemCode") String itemCode);
+
 }

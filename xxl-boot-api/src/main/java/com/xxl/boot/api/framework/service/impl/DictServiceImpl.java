@@ -9,6 +9,7 @@ import com.xxl.boot.api.framework.model.dto.DictItemDTO;
 import com.xxl.boot.api.framework.model.entity.Dict;
 import com.xxl.boot.api.framework.model.entity.DictItem;
 import com.xxl.boot.api.framework.service.DictService;
+import com.xxl.tool.core.RegexTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
@@ -37,6 +38,16 @@ public class DictServiceImpl implements DictService {
         }
         if (StringTool.isBlank(xxlBootDict.getCode())) {
             return Response.ofFail("请输入字典标识");
+        }
+        // 字典标识格式校验：小写字母开头，由字母和数字组成，长度2-100
+        String code = xxlBootDict.getCode();
+        if (code.length() < 2 || code.length() > 100 || !RegexTool.matches("^[a-z][a-zA-Z0-9]*$", code)) {
+            return Response.ofFail("字典标识需以小写字母开头，由字母和数字组成，长度2-100");
+        }
+        // 字典标识唯一性校验：数据库唯一索引，代码层友好提示
+        Dict existDict = dictMapper.loadByCode(xxlBootDict.getCode());
+        if (existDict != null) {
+            return Response.ofFail("字典标识已存在");
         }
         dictMapper.insert(xxlBootDict);
         return Response.ofSuccess();
@@ -85,6 +96,11 @@ public class DictServiceImpl implements DictService {
         }
         if (StringTool.isBlank(xxlBootDictItem.getItemCode())) {
             return Response.ofFail("请输入字典项标识");
+        }
+        // 字典项标识唯一性校验：同字典下不可重复（数据库联合唯一索引）
+        DictItem existItem = dictItemMapper.findByDictIdAndCode(xxlBootDictItem.getDictId(), xxlBootDictItem.getItemCode());
+        if (existItem != null) {
+            return Response.ofFail("字典项标识已存在");
         }
         dictItemMapper.insert(xxlBootDictItem);
         return Response.ofSuccess();

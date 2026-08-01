@@ -41,6 +41,15 @@ public class ConfigServiceImpl implements ConfigService {
         if (!RegexTool.matches("^[a-z][a-z0-9.]*$", xxlBootConfig.getKey())) {
             return Response.ofFail("配置Key格式不正确");
         }
+        // 配置Key长度校验：4-100
+        if (xxlBootConfig.getKey().length() < 4 || xxlBootConfig.getKey().length() > 100) {
+            return Response.ofFail("配置Key长度需在4-100之间");
+        }
+        // 配置Key唯一性校验：数据库唯一索引，代码层友好提示
+        Config existConfig = configMapper.loadByKey(xxlBootConfig.getKey());
+        if (existConfig != null) {
+            return Response.ofFail("配置Key已存在");
+        }
 
         configMapper.insert(xxlBootConfig);
         return Response.ofSuccess();

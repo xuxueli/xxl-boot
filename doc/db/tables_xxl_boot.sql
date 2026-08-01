@@ -120,7 +120,8 @@ CREATE TABLE `xxl_boot_dict_item`
     `add_time`          DATETIME        NOT NULL                    COMMENT '新增时间',
     `update_time`       DATETIME        NOT NULL                    COMMENT '更新时间',
     `remark`            VARCHAR(500)    DEFAULT NULL                COMMENT '备注',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `i_dict_item` (`dict_id`, `item_code`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
