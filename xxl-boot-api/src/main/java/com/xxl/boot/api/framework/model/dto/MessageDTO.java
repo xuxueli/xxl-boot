@@ -3,57 +3,22 @@ package com.xxl.boot.api.framework.model.dto;
 import java.io.Serializable;
 
 /**
-*  Message DTO
-*
-*  Created by xuxueli on '2024-11-03 11:03:29'.
-*/
+ * 消息 DTO（用于列表、顶部消息展示）
+ *
+ * @author xuxueli 2024-11-03
+ */
 public class MessageDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    /**
-    * 消息ID
-    */
-    private long id;
-
-    /**
-    * 分类（如 临时通知、正式公告 ）
-    */
-    private int category;
-
-    /**
-    * 标题
-    */
-    private String title;
-
-    /**
-    * 内容
-    */
-    private String content;
-
-    /**
-    * 发送人
-    */
-    private String sender;
-
-    /**
-    * 状态：0-正常、1-下线
-    */
-    private int status;
-
-    /**
-    * 新增时间
-    */
-    private String addTime;
-
-    /**
-    * 更新时间
-    */
-    private String updateTime;
-
-    /**
-    * 是否已读
-    */
-    private boolean isRead;
+    private long id;            /* 消息ID */
+    private int category;       /* 分类（0-通知、1-公告） */
+    private String title;       /* 标题 */
+    private String content;     /* 内容 */
+    private String sender;      /* 发送人 */
+    private int status;         /* 状态（0-正常、1-下线） */
+    private String addTime;     /* 新增时间（格式化字符串） */
+    private String updateTime;  /* 更新时间（格式化字符串） */
+    private boolean isRead;     /* 是否已读 */
 
 
     public long getId() {

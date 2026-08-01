@@ -38,9 +38,10 @@ const userList = ref([])     /* 已读用户列表 */
 const queryParams = reactive({
   pageNum: 1,
   pageSize: 10,
-  messageId: undefined
+  messageId: undefined  /* 消息ID */
 })
 
+/** 打开弹窗：回显消息信息并加载已读用户列表 */
 function open(row) {
   queryParams.messageId = row.id
   noticeTitle.value = row.title
@@ -49,6 +50,7 @@ function open(row) {
   getList()
 }
 
+/** 查询已读用户列表 */
 function getList() {
   loading.value = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
@@ -67,6 +69,7 @@ function getList() {
   })
 }
 
+/** 关闭弹窗：清空列表与计数 */
 function handleClose() {
   userList.value = []
   total.value = 0

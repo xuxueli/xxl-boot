@@ -4,52 +4,21 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
-*  Message Entity
-*
-*  Created by xuxueli on '2024-11-03 11:03:29'.
-*/
+ * 消息实体
+ *
+ * @author xuxueli 2024-11-03
+ */
 public class Message implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    /**
-    * 消息ID
-    */
-    private long id;
-
-    /**
-    * 分类（如 临时通知、正式公告 ）
-    */
-    private int category;
-
-    /**
-    * 标题
-    */
-    private String title;
-
-    /**
-    * 内容
-    */
-    private String content;
-
-    /**
-    * 发送人
-    */
-    private String sender;
-
-    /**
-    * 状态：0-正常、1-下线
-    */
-    private int status;
-
-    /**
-    * 新增时间
-    */
-    private Date addTime;
-
-    /**
-    * 更新时间
-    */
-    private Date updateTime;
+    private long id;            /* 消息ID */
+    private int category;       /* 分类（0-通知、1-公告） */
+    private String title;       /* 标题 */
+    private String content;     /* 内容 */
+    private String sender;      /* 发送人 */
+    private int status;         /* 状态（0-正常、1-下线） */
+    private Date addTime;       /* 新增时间 */
+    private Date updateTime;    /* 更新时间 */
 
 
     public long getId() {

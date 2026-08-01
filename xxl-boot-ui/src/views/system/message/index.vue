@@ -196,10 +196,10 @@ const statusOptions = [
 const data = reactive({
   form: {},
   queryParams: {
-    pageNum: 1,
-    pageSize: 10,
-    title: undefined,
-    status: -1
+    pageNum: 1,        /* 当前页码 */
+    pageSize: 10,      /* 每页条数 */
+    title: undefined,  /* 标题/内容关键词 */
+    status: -1         /* 状态（-1 全部、0 正常、1 下线） */
   },
   rules: {
     title: [{ required: true, message: "消息标题不能为空", trigger: "blur" }],
@@ -302,7 +302,8 @@ function handleUpdate(row) {
 function submitForm() {
   messageRef.value.validate(valid => {
     if (valid) {
-      if (form.value.id != undefined) {
+      // 已有 id 走更新，否则走新增
+      if (form.value.id !== undefined) {
         updateNotice(form.value).then(response => {
           modal.msgSuccess("修改成功")
           open.value = false
@@ -342,6 +343,7 @@ function handleDelete(row) {
     modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
-
+// 页面初始化加载消息列表
 getList()
+
 </script>
