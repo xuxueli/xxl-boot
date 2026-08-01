@@ -178,7 +178,7 @@
     </el-dialog>
 
     <!-- 用户详情抽屉 -->
-    <user-view-drawer ref="userViewRef" />
+    <UserViewDrawer ref="userViewRef" />
     <!-- 用户导入对话框 -->
     <ExcelImportDialog ref="importUserRef"
                        title="用户导入"

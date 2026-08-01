@@ -176,7 +176,7 @@ icon="Delete"
          </template>
       </el-dialog>
 
-      <dict-data-drawer v-model:visible="drawerVisible" :row="drawerRow" />
+      <DictDataDrawer v-model:visible="drawerVisible" :row="drawerRow" />
    </div>
 </template>
 

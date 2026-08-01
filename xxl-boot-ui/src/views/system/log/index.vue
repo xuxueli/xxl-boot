@@ -78,7 +78,7 @@
       v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 详情弹窗 -->
-    <log-detail v-model:visible="detailVisible" :row="detailRow" :module-map="moduleMap" />
+    <LogDetail v-model:visible="detailVisible" :row="detailRow" :module-map="moduleMap" />
   </div>
 </template>
 

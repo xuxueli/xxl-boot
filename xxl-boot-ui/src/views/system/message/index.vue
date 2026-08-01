@@ -160,7 +160,7 @@
         </div>
       </template>
     </el-dialog>
-    <notice-detail-view ref="noticeViewRef" />
+    <NoticeDetailView ref="noticeViewRef" />
     <ReadUsersDialog ref="readUsersRef" />
   </div>
 </template>

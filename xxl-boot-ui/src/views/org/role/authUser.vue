@@ -87,12 +87,12 @@ icon="CircleClose"
          v-model:limit="queryParams.pageSize"
          @pagination="getList"
       />
-      <select-user ref="selectRef" :roleId="queryParams.roleId" @ok="handleQuery" />
+      <SelectUser ref="selectRef" :roleId="queryParams.roleId" @ok="handleQuery" />
    </div>
 </template>
 
 <script setup name="AuthUser">
-import selectUser from "./selectUser"
+import SelectUser from "./selectUser"
 import { allocatedUserList, authUserCancel, authUserCancelAll } from "@/api/org/role"
 import { useDict } from '@/composables/useDict'
 import { parseTime } from '@/utils/common'

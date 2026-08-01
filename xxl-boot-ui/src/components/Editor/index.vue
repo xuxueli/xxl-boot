@@ -23,7 +23,7 @@
   </div>
   <!-- Quill 富文本编辑器 -->
   <div class="editor">
-    <quill-editor
+    <QuillEditor
         ref="quillEditorRef"
         v-model:content="content"
         contentType="html"
