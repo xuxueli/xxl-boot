@@ -13,6 +13,7 @@ import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,13 +26,6 @@ public class DictController {
 
     @Resource
     private DictService dictService;
-
-    @RequestMapping
-    @XxlSso
-    public String index(Model model) {
-        model.addAttribute("DictStatusEnum", DictStatusEnum.values());
-        return "/framework/system/dict";
-    }
 
     @RequestMapping("/pageList")
     @XxlSso
@@ -52,7 +46,7 @@ public class DictController {
 
     @RequestMapping("/insert")
     @XxlSso
-    public Response<String> insert(Dict xxlBootDict) {
+    public Response<String> insert(@RequestBody(required = false) Dict xxlBootDict) {
         return dictService.insert(xxlBootDict);
     }
 
@@ -64,7 +58,7 @@ public class DictController {
 
     @RequestMapping("/update")
     @XxlSso
-    public Response<String> update(Dict xxlBootDict) {
+    public Response<String> update(@RequestBody(required = false) Dict xxlBootDict) {
         return dictService.update(xxlBootDict);
     }
 
@@ -85,7 +79,7 @@ public class DictController {
 
     @RequestMapping("/itemInsert")
     @XxlSso
-    public Response<String> itemInsert(DictItem xxlBootDictItem) {
+    public Response<String> itemInsert(@RequestBody(required = false) DictItem xxlBootDictItem) {
         return dictService.insertItem(xxlBootDictItem);
     }
 
@@ -97,17 +91,33 @@ public class DictController {
 
     @RequestMapping("/itemUpdate")
     @XxlSso
-    public Response<String> itemUpdate(DictItem xxlBootDictItem) {
+    public Response<String> itemUpdate(@RequestBody(required = false) DictItem xxlBootDictItem) {
         return dictService.updateItem(xxlBootDictItem);
     }
 
 
     // ---------------------- 字典、枚举 查询 ----------------------
 
-    // loadDict
+    /**
+     * 查询全部字典（供代码生成等场景的下拉选项使用）
+     */
+    @RequestMapping("/queryDictList")
+    @XxlSso
+    public Response<List<Dict>> queryDictList() {
+        return dictService.queryDictList();
+    }
 
     /**
-     * 通用枚举查询
+     * 按字典标识查询字典项列表（供下拉选项、回显使用）
+     */
+    @RequestMapping("/loadDictItem")
+    @XxlSso
+    public Response<List<DictItem>> loadDictItem(String dictCode) {
+        return dictService.getDictItemsByCode(dictCode);
+    }
+
+    /**
+     * 按枚举Name查询枚举项数据
      */
     @RequestMapping("/loadEnumItem")
     @XxlSso

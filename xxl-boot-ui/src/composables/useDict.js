@@ -8,7 +8,7 @@
  */
 import { ref, toRefs } from 'vue'
 import { useDictStore } from '@/store'
-import { getDicts } from '@/api/system/dict/data'
+import { loadDictItem } from '@/api/system/dict/data'
 
 const dictStore = useDictStore()
 
@@ -31,13 +31,13 @@ export function useDict(...args) {
         res.value[dictType] = dicts
       } else {
         // 缓存未命中，请求接口并写入缓存
-        getDicts(dictType).then(resp => {
+        loadDictItem(dictType).then(resp => {
           // 后端字段 → 前端通用字段名
           res.value[dictType] = resp.data.map(p => ({
-            label: p.dictLabel,
-            value: p.dictValue,
-            elTagType: p.listClass,
-            elTagClass: p.cssClass
+            label: p.itemName,
+            value: p.itemCode,
+            elTagType: undefined,   // p.listClass,
+            elTagClass: undefined   // p.cssClass
           }))
           // 写入 store 缓存，下次同类型请求直接命中
           dictStore.setDict(dictType, res.value[dictType])

@@ -17,6 +17,8 @@ public interface DictMapper {
 
     public Dict load(@Param("id") int id);
 
+    public Dict loadByCode(@Param("code") String code);
+
     public List<Dict> pageList(@Param("name") String name,
                                       @Param("code") String code,
                                       @Param("status") int status,
@@ -28,5 +30,7 @@ public interface DictMapper {
                              @Param("status") int status,
                              @Param("offset") int offset,
                              @Param("pagesize") int pagesize);
+
+    public List<Dict> findAll();
 
 }

@@ -15,6 +15,7 @@ import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -119,6 +120,24 @@ public class DictServiceImpl implements DictService {
         pageModel.setTotal(totalCount);
 
         return pageModel;
+    }
+
+    @Override
+    public Response<List<DictItem>> getDictItemsByCode(String code) {
+        // 按字典标识查询字典，不存在则返回空列表
+        Dict dict = dictMapper.loadByCode(code);
+        if (dict == null) {
+            return Response.ofSuccess(new ArrayList<>());
+        }
+        // 查询字典下的字典项列表
+        List<DictItem> itemList = dictItemMapper.findByDictId(dict.getId());
+        return Response.ofSuccess(itemList);
+    }
+
+    @Override
+    public Response<List<Dict>> queryDictList() {
+        // 查询全部字典列表，供下拉选项使用
+        return Response.ofSuccess(dictMapper.findAll());
     }
 
 }

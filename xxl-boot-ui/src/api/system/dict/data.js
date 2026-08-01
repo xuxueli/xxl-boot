@@ -2,81 +2,84 @@ import request from '@/utils/request'
 
 /**
  * 名称：字典数据 API
- * 能力：提供字典数据查询、按类型获取与增删改接口。
+ * 能力：提供字典项查询、维护、按字典标识查询与枚举查询接口。
  */
 
 /**
- * 查询字典数据列表。
- * @param {Object} query 查询参数。
- * @returns {Promise<any>} 字典数据列表。
+ * 分页查询字典项列表。
+ * @param {Object} query 查询参数（dictId/offset/pagesize）。
+ * @returns {Promise<any>} 字典项分页列表。
  */
 export function listData(query) {
   return request({
-    url: '/system/dict/data/list',
+    url: '/system/dict/itemPageList',
     method: 'get',
     params: query
   })
 }
 
 /**
- * 查询字典数据详情。
- * @param {string|number} dictCode 字典数据编码。
- * @returns {Promise<any>} 字典数据详情。
+ * 查询单条字典项详情。
+ * @param {number} id 字典项ID。
+ * @returns {Promise<any>} 字典项详情。
  */
-export function getData(dictCode) {
+export function getData(id) {
   return request({
-    url: '/system/dict/data/' + dictCode,
-    method: 'get'
+    url: '/system/dict/itemLoad',
+    method: 'get',
+    params: { id }
   })
 }
 
 /**
- * 根据字典类型查询字典数据。
- * @param {string} dictType 字典类型。
- * @returns {Promise<any>} 字典数据集合。
+ * 按字典标识查询字典项列表（供下拉选项、回显使用）。
+ * @param {string} dictCode 字典标识。
+ * @returns {Promise<any>} 字典项列表。
  */
-export function getDicts(dictType) {
+export function loadDictItem(dictCode) {
   return request({
-    url: '/system/dict/data/type/' + dictType,
-    method: 'get'
+    url: '/system/dict/loadDictItem',
+    method: 'get',
+    params: { dictCode }
   })
 }
 
 /**
- * 新增字典数据。
- * @param {Object} data 字典数据。
+ * 新增字典项。
+ * @param {Object} data 字典项数据。
  * @returns {Promise<any>} 新增结果。
  */
 export function addData(data) {
   return request({
-    url: '/system/dict/data',
+    url: '/system/dict/itemInsert',
     method: 'post',
     data: data
   })
 }
 
 /**
- * 修改字典数据。
- * @param {Object} data 字典数据。
- * @returns {Promise<any>} 修改结果。
+ * 更新字典项。
+ * @param {Object} data 字典项数据。
+ * @returns {Promise<any>} 更新结果。
  */
 export function updateData(data) {
   return request({
-    url: '/system/dict/data',
-    method: 'put',
+    url: '/system/dict/itemUpdate',
+    method: 'post',
     data: data
   })
 }
 
 /**
- * 删除字典数据。
- * @param {string|number} dictCode 字典数据编码。
+ * 删除字典项。
+ * @param {number|Array} id 字典项ID或字典项ID数组。
  * @returns {Promise<any>} 删除结果。
  */
-export function delData(dictCode) {
+export function delData(id) {
   return request({
-    url: '/system/dict/data/' + dictCode,
-    method: 'delete'
+    url: '/system/dict/itemDelete',
+    method: 'post',
+    params: { 'ids[]': id }
   })
 }
 

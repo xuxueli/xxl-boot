@@ -31,4 +31,8 @@ public interface DictService {
 
     public PageModel<DictItemDTO> itemPageList(long dictId, int offset, int pagesize);
 
+    public Response<List<DictItem>> getDictItemsByCode(String code);
+
+    public Response<List<Dict>> queryDictList();
+
 }

@@ -67,6 +67,12 @@
         WHERE t.`id` = #{id}
     </select>
 
+    <select id="loadByCode" parameterType="java.util.Map" resultMap="Dict">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_dict AS t
+        WHERE t.`code` = #{code}
+    </select>
+
     <select id="pageList" parameterType="java.util.Map" resultMap="Dict">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_dict AS t
@@ -99,6 +105,12 @@
                 AND t.`status` = #{status}
             </if>
         </trim>
+    </select>
+
+    <select id="findAll" parameterType="java.util.Map" resultMap="Dict">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_dict AS t
+        ORDER BY t.`id` ASC
     </select>
 
 </mapper>

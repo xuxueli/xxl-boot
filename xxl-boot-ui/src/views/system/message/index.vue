@@ -203,6 +203,19 @@ function loadOptions() {
   })
 }
 
+/**
+ * 查询参数、表单数据、表单校验规则
+ *
+ *  响应式用法：
+ *    - 用法A：const messageRef = ref(null)
+ *      - 本质：用于"拿 DOM/组件实例"或"单个独立响应式变量"
+ *      - 示例：模板引用（template ref），ref 值绑定到 <el-form ref="messageRef">
+ *    - 用法B：reactive({...}) + toRefs(data)
+ *      - 本质：用于"一组逻辑相关数据打包管理 + 支持整体替换"。
+ *      - 示例：下文，把一组逻辑相关的状态（表单数据、查询参数、校验规则）集中打包成一个对象，再用 toRefs 解构出独立 ref。解构出的 form 是 ref，支持整体替换。
+ *
+ *  建议用法：可以统一到 方案A；TODO
+ */
 const data = reactive({
   form: {},
   queryParams: {

@@ -2,31 +2,32 @@ import request from '@/utils/request'
 
 /**
  * 名称：字典类型 API
- * 能力：提供字典类型查询、维护、缓存刷新与下拉选项接口。
+ * 能力：提供字典类型（字典）查询与维护接口。
  */
 
 /**
- * 查询字典类型列表。
- * @param {Object} query 查询参数。
- * @returns {Promise<any>} 字典类型列表。
+ * 分页查询字典类型列表。
+ * @param {Object} query 查询参数（name/code/status/offset/pagesize）。
+ * @returns {Promise<any>} 字典类型分页列表。
  */
 export function listType(query) {
   return request({
-    url: '/system/dict/type/list',
+    url: '/system/dict/pageList',
     method: 'get',
     params: query
   })
 }
 
 /**
- * 查询字典类型详情。
- * @param {string|number} dictId 字典类型 ID。
+ * 查询单条字典类型详情。
+ * @param {number} id 字典ID。
  * @returns {Promise<any>} 字典类型详情。
  */
-export function getType(dictId) {
+export function getType(id) {
   return request({
-    url: '/system/dict/type/' + dictId,
-    method: 'get'
+    url: '/system/dict/load',
+    method: 'get',
+    params: { id }
   })
 }
 
@@ -37,59 +38,53 @@ export function getType(dictId) {
  */
 export function addType(data) {
   return request({
-    url: '/system/dict/type',
+    url: '/system/dict/insert',
     method: 'post',
     data: data
   })
 }
 
 /**
- * 修改字典类型。
+ * 更新字典类型。
  * @param {Object} data 字典类型数据。
- * @returns {Promise<any>} 修改结果。
+ * @returns {Promise<any>} 更新结果。
  */
 export function updateType(data) {
   return request({
-    url: '/system/dict/type',
-    method: 'put',
+    url: '/system/dict/update',
+    method: 'post',
     data: data
   })
 }
 
 /**
  * 删除字典类型。
- * @param {string|number} dictId 字典类型 ID。
+ * @param {number|Array} id 字典ID或字典ID数组。
  * @returns {Promise<any>} 删除结果。
  */
-export function delType(dictId) {
+export function delType(id) {
   return request({
-    url: '/system/dict/type/' + dictId,
-    method: 'delete'
+    url: '/system/dict/delete',
+    method: 'post',
+    params: { 'ids[]': id }
   })
 }
 
 /**
- * 刷新字典缓存。
- * @returns {Promise<any>} 刷新结果。
+ * 查询全部字典（下拉选项）。
+ * @returns {Promise<any>} 下拉选项列表（{dictId, dictName, dictType}）。
  */
-export function refreshCache() {
+export function queryDictList() {
   return request({
-    url: '/system/dict/type/refreshCache',
-    method: 'delete'
+    url: '/system/dict/queryDictList',
+    method: 'get'
+  }).then(response => {
+    // 后端 dict 字段（id/name/code）→ 前端通用结构（dictId/dictName/dictType）
+    response.data = (response.data || []).map(item => ({
+      dictId: item.id,
+      dictName: item.name,
+      dictType: item.code
+    }))
+    return response
   })
-}
-
-/**
- * 获取字典类型下拉选项。
- * @returns {Promise<any>} 下拉选项列表。
- *
- * TODO: 后端接口 /system/dict/type/optionselect 暂未实现，先返回空数据
- */
-export function optionselect() {
-  // TODO: 后端尚未实现，后续对接
-  return Promise.resolve({code: 200, msg: 'success', data: []})
-  // return request({
-  //   url: '/system/dict/type/optionselect',
-  //   method: 'get'
-  // })
 }

@@ -1,11 +1,15 @@
+<!--
+  组件：DictDataDrawer（字典项抽屉）
+  功能：展示指定字典下的全部字典项
+-->
 <template>
   <el-drawer :model-value="visible" direction="rtl" size="700px" append-to-body @update:model-value="$emit('update:visible', $event)">
     <!-- 自定义标题 -->
     <template #header>
       <div class="drawer-head">
         <el-icon style="color:#5b9bd5;margin-right:8px;"><List /></el-icon>
-        <span class="drawer-head-name">{{ row.dictName }}</span>
-        <span class="drawer-head-type">{{ row.dictType }}</span>
+        <span class="drawer-head-name">{{ row.name }}</span>
+        <span class="drawer-head-type">{{ row.code }}</span>
       </div>
     </template>
 
@@ -45,24 +49,21 @@
           </el-col>
         </el-row>
 
-        <!-- 数据列表 -->
-        <div v-for="item in dataList" :key="item.dictCode" class="dict-item">
+        <!-- 字典项列表 -->
+        <div v-for="item in dataList" :key="item.id" class="dict-item">
           <div class="dict-cell">
-            <div class="dict-cell-key">标签</div>
-            <div class="dict-cell-val">
-              <el-tag v-if="item.listClass && item.listClass !== 'default'" :type="item.listClass === 'primary' ? undefined : item.listClass" size="small">{{ item.dictLabel }}</el-tag>
-              <span v-else>{{ item.dictLabel }}</span>
-            </div>
+            <div class="dict-cell-key">名称</div>
+            <div class="dict-cell-val">{{ item.itemName }}</div>
           </div>
           <div class="dict-cell">
-            <div class="dict-cell-key">键值</div>
-            <div class="dict-cell-val">{{ item.dictValue }}</div>
+            <div class="dict-cell-key">标识</div>
+            <div class="dict-cell-val">{{ item.itemCode }}</div>
           </div>
           <div class="dict-cell">
             <div class="dict-cell-key">状态</div>
             <div class="dict-cell-val">
-              <el-tag :type="item.status === '0' ? 'success' : 'danger'" size="small">
-                {{ item.status === '0' ? '正常' : '停用' }}
+              <el-tag :type="item.status === 0 ? 'success' : 'danger'" size="small">
+                {{ item.status === 0 ? '正常' : '停用' }}
               </el-tag>
             </div>
           </div>
@@ -85,8 +86,8 @@ const emit = defineEmits(['update:visible'])
 const loading = ref(false)
 const dataList = ref([])
 
-const normalCount = computed(() => dataList.value.filter(r => r.status === '0').length)
-const disabledCount = computed(() => dataList.value.filter(r => r.status !== '0').length)
+const normalCount = computed(() => dataList.value.filter(r => r.status === 0).length)
+const disabledCount = computed(() => dataList.value.filter(r => r.status !== 0).length)
 
 watch(() => props.visible, (val) => {
   if (val) {
@@ -97,11 +98,11 @@ watch(() => props.visible, (val) => {
 })
 
 function loadData() {
-  if (!props.row?.dictType) return
+  if (!props.row?.id) return
   loading.value = true
   dataList.value = []
-  listData({ dictType: props.row.dictType, pageSize: 100, pageNum: 1 }).then(response => {
-    dataList.value = response.rows || []
+  listData({ dictId: props.row.id, offset: 0, pagesize: 100 }).then(response => {
+    dataList.value = response.data.data || []
   }).catch(() => {}).finally(() => {
     loading.value = false
   })

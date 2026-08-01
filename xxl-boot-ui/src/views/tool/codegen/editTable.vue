@@ -201,7 +201,7 @@
 
 <script setup name="GenEdit">
 import {getGenTable, updateGenTable} from "@/api/tool/codegen"
-import {optionselect as getDictOptionselect} from "@/api/system/dict/type"
+import {queryDictList} from "@/api/system/dict/type"
 import modal from '@/utils/modal'
 import Sortable from 'sortablejs'
 
@@ -255,7 +255,7 @@ function open(id) {
   })
 
   /* 加载字典类型下拉 */
-  getDictOptionselect().then(response => {
+  queryDictList().then(response => {
     dictOptions.value = response.data || []
   })
 }
