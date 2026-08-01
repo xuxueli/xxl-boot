@@ -108,17 +108,13 @@ const typeMap = ref({})           /* 日志类型编码 → 名称映射 */
 const moduleOptions = ref([])     /* 系统模块下拉选项 */
 const moduleMap = ref({})         /* 系统模块编码 → 名称映射 */
 
-const data = reactive({
-  queryParams: {
-    pageNum: 1,       /* 当前页码 */
-    pageSize: 10,     /* 每页条数 */
-    type: -1,         /* 日志类型（-1 全部） */
-    module: 0,        /* 系统模块编码（0 全部） */
-    title: undefined  /* 日志标题 */
-  }
+const queryParams = ref({
+  pageNum: 1,       /* 当前页码 */
+  pageSize: 10,     /* 每页条数 */
+  type: -1,         /* 日志类型（-1 全部） */
+  module: 0,        /* 系统模块编码（0 全部） */
+  title: undefined  /* 日志标题 */
 })
-
-const { queryParams } = toRefs(data)
 
 /** 查询日志列表 */
 function getList() {
