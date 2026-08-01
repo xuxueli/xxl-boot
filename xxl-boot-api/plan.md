@@ -19,12 +19,12 @@
       - 角色             -1
       - 菜单             -1
       - 部门             -1
-      - 系统管理：
-        - 字典             -2
-          - // reactive({...}) + toRefs(data)： 统一到 ref 方案；
-        - 参数             【done】
-        - 通知             【done】
-        - 日志             【done】
+    - 系统管理：
+      - 字典            【done】
+      - 参数            【done】
+      - 通知            【done】
+        -  重构：精简、reactive + toRefs(data)  统一到 ref 方案；
+      - 日志            【done】
     - 系统工具：
       - 表单：          【done】
       - 代码生成：       【done】      

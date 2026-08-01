@@ -66,6 +66,8 @@
 </template>
 
 <script setup>
+import modal from '@/utils/modal'
+
 const props = defineProps({
   visible: { type: Boolean, default: false },  /* 弹窗可见性 */
   row: { type: Object, default: () => ({}) },  /* 当前行数据 */
@@ -86,7 +88,7 @@ const form = computed(() => props.row || {})
 function copyText(str) {
   const text = str || ''
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => ElMessage({ message: '已复制', type: 'success', duration: 1500 }))
+    navigator.clipboard.writeText(text).then(() => modal.msgSuccess('已复制'))
   } else {
     const ta = document.createElement('textarea')
     ta.value = text
@@ -94,7 +96,7 @@ function copyText(str) {
     ta.select()
     document.execCommand('copy')
     document.body.removeChild(ta)
-    ElMessage({ message: '已复制', type: 'success', duration: 1500 })
+    modal.msgSuccess('已复制')
   }
 }
 </script>

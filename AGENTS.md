@@ -29,7 +29,6 @@
 ### 2.4 前端规范
 
 - 组件 import 名称与模板使用标签保持一致（统一 PascalCase，如 `import NoticeDetailView` 对应 `<NoticeDetailView>`）
-- 列表数据统一从 `response.data.data`、总数从 `response.data.total` 获取，注意取数层级。
 
 ## 三、注释规范
 

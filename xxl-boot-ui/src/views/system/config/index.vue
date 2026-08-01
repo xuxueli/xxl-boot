@@ -85,7 +85,7 @@
 
     <!-- 添加或修改配置对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="configRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="configRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="配置名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入配置名称" />
         </el-form-item>

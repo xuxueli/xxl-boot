@@ -5,20 +5,21 @@
 <template>
   <div class="app-container">
     <!-- 搜索栏 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
       <el-form-item label="日志类型" prop="type">
-        <el-select v-model="queryParams.type" placeholder="日志类型" clearable style="width: 240px">
-          <el-option label="操作日志" :value="0" />
-          <el-option label="登陆日志" :value="1" />
+        <el-select v-model="queryParams.type" placeholder="日志类型" clearable style="width: 200px">
+          <el-option label="全部" :value="-1" />
+          <el-option v-for="item in typeOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item label="系统模块" prop="module">
-        <el-select v-model="queryParams.module" placeholder="系统模块" clearable style="width: 240px">
+        <el-select v-model="queryParams.module" placeholder="系统模块" clearable style="width: 200px">
+          <el-option label="全部" :value="0" />
           <el-option v-for="item in moduleOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item label="日志标题" prop="title">
-        <el-input v-model="queryParams.title" placeholder="请输入日志标题" clearable style="width: 240px"
+        <el-input v-model="queryParams.title" placeholder="请输入日志标题" clearable style="width: 200px"
           @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
@@ -30,22 +31,22 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport">导出</el-button>
+        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasRole="['admin']">导出</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
     <!-- 日志列表 -->
-    <el-table ref="logRef" v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="日志编号" align="center" prop="id" width="80" />
       <el-table-column label="日志类型" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.type === 0 ? 'primary' : 'warning'" size="small">
-            {{ scope.row.type === 0 ? '操作日志' : scope.row.type === 1 ? '登陆日志' : scope.row.type }}
+            {{ typeText(scope.row.type) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -93,37 +94,36 @@ import { download } from '@/utils/request'
 
 const resetForm = useFormReset()
 
-const logRef = ref(null)            /* 表格 ref */
-const logList = ref([])             /* 日志列表数据 */
-const total = ref(0)                /* 总条数 */
-const detailVisible = ref(false)    /* 详情弹窗可见 */
-const loading = ref(true)           /* 加载中 */
-const detailRow = ref({})           /* 当前查看的日志行 */
-const showSearch = ref(true)        /* 是否显示搜索栏 */
-const ids = ref([])                 /* 选中行 ID 数组 */
-const single = ref(true)            /* 是否单选 */
-const multiple = ref(true)          /* 是否多选 */
-const title = ref("")               /* 对话框标题 */
-const moduleOptions = ref([])       /* 系统模块下拉选项 */
-const moduleMap = ref({})           /* 系统模块编码 → 名称映射 */
+const logList = ref([])           /* 日志列表数据 */
+const total = ref(0)              /* 总条数 */
+const detailVisible = ref(false)  /* 详情弹窗可见 */
+const loading = ref(true)         /* 加载状态 */
+const detailRow = ref({})         /* 当前查看的日志行 */
+const showSearch = ref(true)      /* 是否显示搜索栏 */
+const ids = ref([])               /* 选中行 ID 数组 */
+const multiple = ref(true)        /* 是否多选 */
+
+const typeOptions = ref([])       /* 日志类型下拉选项 */
+const typeMap = ref({})           /* 日志类型编码 → 名称映射 */
+const moduleOptions = ref([])     /* 系统模块下拉选项 */
+const moduleMap = ref({})         /* 系统模块编码 → 名称映射 */
 
 const data = reactive({
-  form: {},
   queryParams: {
-    pageNum: 1,         /* 当前页码 */
-    pageSize: 10,       /* 每页条数 */
-    type: undefined,    /* 日志类型 */
-    module: undefined,  /* 系统模块编码 */
-    title: undefined    /* 日志标题 */
+    pageNum: 1,       /* 当前页码 */
+    pageSize: 10,     /* 每页条数 */
+    type: -1,         /* 日志类型（-1 全部） */
+    module: 0,        /* 系统模块编码（0 全部） */
+    title: undefined  /* 日志标题 */
   }
 })
 
-const { queryParams, form } = toRefs(data)
+const { queryParams } = toRefs(data)
 
 /** 查询日志列表 */
 function getList() {
   loading.value = true
-  // 前端分页参数 → 后端分页参数
+  // 前端分页参数 → 后端分页参数（offset/pagesize）
   const params = {
     ...queryParams.value,
     offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
@@ -138,34 +138,43 @@ function getList() {
   })
 }
 
-/** 搜索按钮 */
+/** 日志类型编码 → 文案 */
+function typeText(type) {
+  const item = typeOptions.value.find(i => i.code === type)
+  return item ? item.title : type
+}
+
+/** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1
   getList()
 }
 
-/** 重置按钮 */
+/** 重置按钮操作 */
 function resetQuery() {
   resetForm("queryRef")
   queryParams.value.pageNum = 1
   getList()
 }
 
-/** 多选框选中 */
+/** 多选框选中数据 */
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id)
   multiple.value = !selection.length
 }
 
-/** 详细按钮 */
+/** 查看日志详情 */
 function handleDetail(row) {
   detailRow.value = row
   detailVisible.value = true
 }
 
-/** 删除按钮 */
+/** 删除日志（顶部按钮 @click 传事件对象，取勾选 ids） */
 function handleDelete(row) {
-  const logIds = row.id || ids.value
+  const logIds = row && row.id != null ? row.id : ids.value
+  if (logIds == null || (Array.isArray(logIds) && logIds.length === 0)) {
+    return
+  }
   modal.confirm('是否确认删除日志编号为"' + logIds + '"的数据项?').then(function () {
     return delOperlog(logIds)
   }).then(() => {
@@ -174,19 +183,23 @@ function handleDelete(row) {
   }).catch(() => {})
 }
 
-/** 导出按钮 */
+/** 导出按钮操作 */
 function handleExport() {
   download("system/log/export", {
     ...queryParams.value
   }, `log_${new Date().getTime()}.xlsx`)
 }
 
-// 加载系统模块枚举
-loadEnumItem('LogModuleEnum').then(data => {
-  moduleOptions.value = data.data
+// 加载日志类型、系统模块枚举（下拉选项）
+loadEnumItem('LogTypeEnum').then(res => {
+  typeOptions.value = res.data
+  typeOptions.value.forEach(item => { typeMap.value[item.code] = item.title })
+})
+loadEnumItem('LogModuleEnum').then(res => {
+  moduleOptions.value = res.data
   moduleOptions.value.forEach(item => { moduleMap.value[item.code] = item.title })
 })
 
-// 初始化查询
+// 页面初始化加载日志列表
 getList()
 </script>
