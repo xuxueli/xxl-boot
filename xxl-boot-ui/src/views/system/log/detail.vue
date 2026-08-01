@@ -68,12 +68,45 @@
 <script setup>
 import modal from '@/utils/modal'
 
+/**
+ * 组件入参（父->子）：defineProps
+ *
+ * <pre>
+ *     <LogDetail
+ *        v-model:visible="detail.visible"
+ *        :row="detail.row"
+ *        :module-map="moduleDict.map"
+ *      />
+ *
+ *      - :row="..." → 传入 prop row
+ *      - :module-map="..." → kebab-case 会自动对应 prop moduleMap（驼峰）
+ *      - v-model:visible 本质是 :visible + @update:visible 两条绑定的语法糖
+ *           - 说明：v-model:xxx 本质上是 prop 传递 + 事件监听‌（:xxx + @update:xxx） 的语法糖：
+ *
+ * </pre>
+ */
 const props = defineProps({
   visible: { type: Boolean, default: false },  /* 弹窗可见性 */
   row: { type: Object, default: () => ({}) },  /* 当前行数据 */
   moduleMap: { type: Object, default: () => ({}) } /* 系统模块编码 → 名称映射 */
 })
 
+/**
+ * 组件事件（子->父）：defineEmits
+ *
+ * <pre>
+ *      子组件声明并触发（detail.vue）：
+ *      const emit = defineEmits(['update:visible'])
+ *
+ *      // 模板里：el-dialog 关闭时
+ *      @close="$emit('update:visible', false)"
+ *      // 或 computed 的 set 里
+ *      set: (val) => emit('update:visible', val)
+ *
+ *      - 事件名约定：update:xxx 对应父的 v-model:xxx，是双向绑定的另一半。
+ *      - emit('事件名', 参数) 只是发通知，真正改状态的是父。
+ * </pre>
+ */
 const emit = defineEmits(['update:visible'])
 
 // 双向绑定 visible
@@ -87,6 +120,7 @@ const form = computed(() => props.row || {})
 /** 复制文本到剪贴板 */
 function copyText(str) {
   const text = str || ''
+  // 优先使用 Clipboard API，不支持时降级为 execCommand
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => modal.msgSuccess('已复制'))
   } else {

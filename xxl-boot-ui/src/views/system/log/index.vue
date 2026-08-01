@@ -186,6 +186,7 @@ function handleDetail(row) {
 /** 删除日志（顶部按钮 @click 传事件对象，取勾选 ids） */
 function handleDelete(row) {
   const logIds = row && row.id != null ? row.id : table.value.ids
+  // 无勾选数据时直接返回
   if (logIds == null || (Array.isArray(logIds) && logIds.length === 0)) {
     return
   }
