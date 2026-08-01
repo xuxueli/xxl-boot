@@ -5,7 +5,7 @@
 <template>
   <div class="app-container">
     <!-- 搜索栏 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
       <el-form-item label="日志类型" prop="type">
         <el-select v-model="queryParams.type" placeholder="日志类型" clearable style="width: 200px">
           <el-option label="全部" :value="-1" />
@@ -31,16 +31,16 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport" v-hasRole="['admin']">导出</el-button>
       </el-col>
-      <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
+      <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
     <!-- 日志列表 -->
-    <el-table v-loading="loading" :data="logList" @selection-change="handleSelectionChange">
+    <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column label="日志编号" align="center" prop="id" width="80" />
       <el-table-column label="日志类型" align="center" width="100">
@@ -75,7 +75,7 @@
     </el-table>
 
     <!-- 分页 -->
-    <Pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+    <Pagination v-show="table.total > 0" :total="table.total" v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 详情弹窗 -->
@@ -107,12 +107,14 @@ const queryParams = ref({
 })
 
 // 表格：UI数据
-const logList = ref([])           /* 表格：列表数据 */
-const total = ref(0)              /* 表格：总条数 */
-const loading = ref(true)         /* 表格：加载状态 */
-const showSearch = ref(true)      /* 表格：是否显示搜索栏 */
-const ids = ref([])               /* 表格：选中行 ID 数组 */
-const multiple = ref(true)        /* 表格：是否多选 */
+const table = ref({
+  list: [],          /* 表格：列表数据 */
+  total: 0,          /* 表格：总条数 */
+  loading: true,     /* 表格：加载状态 */
+  showSearch: true,  /* 表格：是否显示搜索栏 */
+  ids: [],           /* 表格：选中行 ID 数组 */
+  multiple: true     /* 表格：是否多选 */
+})
 
 // 详情弹框：UI数据
 const detail = ref({
@@ -135,7 +137,7 @@ const moduleDict = ref({
 
 /** 查询日志列表 */
 function getList() {
-  loading.value = true
+  table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
   const params = {
     ...queryParams.value,
@@ -145,9 +147,9 @@ function getList() {
   delete params.pageNum
   delete params.pageSize
   pageList(params).then(response => {
-    logList.value = response.data.data
-    total.value = response.data.total
-    loading.value = false
+    table.value.list = response.data.data
+    table.value.total = response.data.total
+    table.value.loading = false
   })
 }
 
@@ -172,8 +174,8 @@ function resetQuery() {
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id)
-  multiple.value = !selection.length
+  table.value.ids = selection.map(item => item.id)
+  table.value.multiple = !selection.length
 }
 
 /** 查看日志详情 */
@@ -183,7 +185,7 @@ function handleDetail(row) {
 
 /** 删除日志（顶部按钮 @click 传事件对象，取勾选 ids） */
 function handleDelete(row) {
-  const logIds = row && row.id != null ? row.id : ids.value
+  const logIds = row && row.id != null ? row.id : table.value.ids
   if (logIds == null || (Array.isArray(logIds) && logIds.length === 0)) {
     return
   }
