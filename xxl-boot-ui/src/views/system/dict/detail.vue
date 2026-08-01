@@ -52,11 +52,11 @@
         <!-- 字典项列表 -->
         <div v-for="item in dataList" :key="item.id" class="dict-item">
           <div class="dict-cell">
-            <div class="dict-cell-key">名称</div>
+            <div class="dict-cell-key">字典项名称</div>
             <div class="dict-cell-val">{{ item.name }}</div>
           </div>
           <div class="dict-cell">
-            <div class="dict-cell-key">标识</div>
+            <div class="dict-cell-key">字典项Code</div>
             <div class="dict-cell-val">{{ item.code }}</div>
           </div>
           <div class="dict-cell">
@@ -173,7 +173,7 @@ function loadData() {
 }
 .dict-item {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1.1fr 1.1fr 0.8fr;
   border: 1px solid #e8ecf0;
   border-radius: 6px;
   overflow: hidden;
@@ -181,7 +181,7 @@ function loadData() {
 }
 .dict-cell {
   display: grid;
-  grid-template-columns: 70px 1fr;
+  grid-template-columns: auto 1fr;
   border-right: 1px solid #f0f4f8;
 }
 .dict-cell:last-child {
@@ -193,6 +193,7 @@ function loadData() {
   color: #888;
   background: #f7f9fb;
   border-right: 1px solid #f0f4f8;
+  white-space: nowrap;
 }
 .dict-cell-val {
   padding: 9px 14px;
