@@ -4,10 +4,12 @@
  * 职责：
  *   1. 声明静态路由（constantRoutes）——登录、错误页、个人中心等，启动即注册；
  *   2. 创建全局 router 实例（HTML5 history 模式）；
- *   3. 定义全局守卫（beforeEach/afterEach）——鉴权、路由注入、进度条控制。
+ *   3. 处理业务路由（businessRoutes）通常为业务子页面、隐藏状态；
+ *   4. 定义全局守卫（beforeEach/afterEach）——鉴权、路由注入、进度条控制。
  */
 import {createWebHistory, createRouter} from 'vue-router'
 import Layout from '@/layout'
+import {businessRoutes} from './business'
 import {ElMessage} from 'element-plus'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -99,28 +101,7 @@ const router = createRouter({
 
 // ==================== 业务隐藏路由注册 ====================
 
-/**
- * 业务路由 —— 与后端菜单无关的页面（下钻页等），单独维护、单独注册
- * 说明：hidden 不显示在侧栏，供 tab.openPage 等内部跳转使用
- */
-const businessRoutes = [
-    // 字典管理-子页面：字典数据页面
-    {
-        path: '/system/dict/data',
-        component: Layout,
-        hidden: true,
-        redirect: 'noredirect',
-        children: [
-            {
-                name: 'DictData',
-                path: '/system/dict/data',
-                component: () => import('@/views/system/dict/data'),
-                meta: {title: '字典数据', activeMenu: '/system/dict'}
-            }
-        ]
-    }
-]
-
+// 业务路由（独立维护于 ./business.js），单独注册
 businessRoutes.forEach(route => router.addRoute(route))
 
 
