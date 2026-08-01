@@ -1,6 +1,5 @@
 package com.xxl.boot.api.framework.controller.system;
 
-import com.xxl.boot.api.framework.constant.enums.MessageCategoryEnum;
 import com.xxl.boot.api.framework.constant.enums.MessageStatusEnum;
 import com.xxl.boot.api.framework.mapper.system.MessageMapper;
 import com.xxl.boot.api.framework.model.adaptor.MesssageAdaptor;
@@ -44,6 +43,7 @@ public class MessageController {
      *
      * @param offset   分页偏移量
      * @param pagesize 每页条数
+     * @param category 分类（-1 全部、0 通知、1 公告）
      * @param status   状态（-1 全部、0 正常、1 下线）
      * @param title    标题/内容关键词（模糊匹配）
      */
@@ -51,9 +51,10 @@ public class MessageController {
     @XxlSso
     public Response<PageModel<MessageDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                     @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                    @RequestParam(required = false, defaultValue = "-1") int category,
                                                     @RequestParam(required = false, defaultValue = "-1") int status,
                                                     String title) {
-        PageModel<MessageDTO> pageModel = messageService.pageList(status, title, offset, pagesize);
+        PageModel<MessageDTO> pageModel = messageService.pageList(category, status, title, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
@@ -118,7 +119,7 @@ public class MessageController {
         int userId = Integer.parseInt(loginInfoResponse.getData().getUserId());
 
         // 查询最近5条正常状态消息，并逐个标记是否已读
-        List<Message> messageList = messageMapper.pageList(MessageStatusEnum.NORMAL.getValue(), null, 0, 5);
+        List<Message> messageList = messageMapper.pageList(-1, MessageStatusEnum.NORMAL.getCode(), null, 0, 5);
         List<MessageDTO> dtoList = MesssageAdaptor.adaptor(messageList);
         for (MessageDTO dto : dtoList) {
             dto.setIsRead(messageReadService.isRead(dto.getId(), userId));

@@ -79,6 +79,9 @@
             <if test="title != null and title != ''">
                 AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
             </if>
+            <if test="category gt -1">
+                AND t.`category` = #{category}
+            </if>
             <if test="status gt -1">
                 AND t.`status` = #{status}
             </if>
@@ -93,6 +96,9 @@
         <trim prefix="WHERE" prefixOverrides="AND | OR" >
             <if test="title != null and title != ''">
                 AND t.`title` like CONCAT(CONCAT('%', #{title}), '%')
+            </if>
+            <if test="category gt -1">
+                AND t.`category` = #{category}
             </if>
             <if test="status gt -1">
                 AND t.`status` = #{status}

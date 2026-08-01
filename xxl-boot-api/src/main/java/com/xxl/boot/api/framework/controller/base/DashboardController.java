@@ -43,7 +43,7 @@ public class DashboardController {
         int userCount = userMapper.pageListCount(0, 10, null, -1, 0);
         int roleCount = roleMapper.pageListCount(0, 999, null, -1);
         int logCount = logMapper.pageListCount(-1, 0, null, 0, 10);
-        int messageCount = messageMapper.pageListCount(-1, null, 0, 10);
+        int messageCount = messageMapper.pageListCount(-1, -1, null, 0, 10);
 
         Map<String, Object> data = new HashMap<>();
         data.put("userCount", userCount);

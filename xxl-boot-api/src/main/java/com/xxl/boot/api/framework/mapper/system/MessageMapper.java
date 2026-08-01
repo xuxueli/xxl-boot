@@ -35,17 +35,19 @@ public interface MessageMapper {
     public Message load(@Param("id") int id);
 
     /**
-     * 分页查询消息列表（标题/内容模糊匹配，状态过滤）
+     * 分页查询消息列表（分类/状态过滤，标题内容模糊匹配）
      */
-	public List<Message> pageList(@Param("status") int status,
-                                         @Param("title") String title,
-                                         @Param("offset") int offset,
-                                         @Param("pagesize") int pagesize);
+	public List<Message> pageList(@Param("category") int category,
+                                  @Param("status") int status,
+                                  @Param("title") String title,
+                                  @Param("offset") int offset,
+                                  @Param("pagesize") int pagesize);
 
     /**
      * 分页查询消息总数
      */
-    public int pageListCount(@Param("status") int status,
+    public int pageListCount(@Param("category") int category,
+                             @Param("status") int status,
                              @Param("title") String title,
                              @Param("offset") int offset,
                              @Param("pagesize") int pagesize);

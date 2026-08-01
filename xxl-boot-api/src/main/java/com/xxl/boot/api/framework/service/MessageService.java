@@ -46,11 +46,12 @@ public interface MessageService {
     /**
      * 分页查询消息
      *
+     * @param category 分类（-1 全部、0 通知、1 公告）
      * @param status   状态（-1 全部、0 正常、1 下线）
      * @param title    标题/内容关键词（模糊匹配）
      * @param offset   分页偏移量
      * @param pagesize 每页条数
      */
-    public PageModel<MessageDTO> pageList(int status, String title, int offset, int pagesize);
+    public PageModel<MessageDTO> pageList(int category, int status, String title, int offset, int pagesize);
 
 }

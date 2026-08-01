@@ -12,30 +12,20 @@ public enum MessageCategoryEnum implements EnumTool.IEnum {
     NOTICE(0, "通知"),
     ANNOUNCEMENT(1, "公告");
 
-    private int value;      /* 分类编码 */
-    private String desc;    /* 分类描述 */
+    private int code;       /* 分类编码 */
+    private String title;   /* 分类描述 */
 
-    MessageCategoryEnum(int value, String desc) {
-        this.value = value;
-        this.desc = desc;
+    MessageCategoryEnum(int code, String title) {
+        this.code = code;
+        this.title = title;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    @Override
     public int getCode() {
-        return value;
+        return code;
     }
 
-    @Override
     public String getTitle() {
-        return desc;
+        return title;
     }
 
 }

@@ -75,10 +75,10 @@ public class MessageServiceImpl implements MessageService {
 	 * 分页查询消息
 	 */
 	@Override
-	public PageModel<MessageDTO> pageList(int status, String title, int offset, int pagesize) {
+	public PageModel<MessageDTO> pageList(int category, int status, String title, int offset, int pagesize) {
 
-		List<Message> pageList = messageMapper.pageList(status, title, offset, pagesize);
-		int totalCount = messageMapper.pageListCount(status, title, offset, pagesize);
+		List<Message> pageList = messageMapper.pageList(category, status, title, offset, pagesize);
+		int totalCount = messageMapper.pageListCount(category, status, title, offset, pagesize);
 
 		// entity 转 DTO
 		List<MessageDTO> dtoList = MesssageAdaptor.adaptor(pageList);

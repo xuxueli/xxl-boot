@@ -6,20 +6,26 @@
   <div class="app-container">
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
-      <el-form-item label="标题/内容" prop="title">
-        <el-input
-          v-model="queryParams.title"
-          placeholder="请输入标题或内容"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+      <el-form-item label="分类" prop="category">
+        <el-select v-model="queryParams.category" placeholder="消息分类" clearable style="width: 200px">
+          <el-option label="全部" :value="-1" />
+          <el-option v-for="item in categoryOptions" :key="item.code" :label="item.title" :value="item.code" />
+        </el-select>
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="消息状态" clearable style="width: 200px">
           <el-option label="全部" :value="-1" />
-          <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in statusOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
+      </el-form-item>
+      <el-form-item label="标题" prop="title">
+        <el-input
+          v-model="queryParams.title"
+          placeholder="请输入标题"
+          clearable
+          style="width: 200px"
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -122,9 +128,9 @@
               <el-select v-model="form.category" placeholder="请选择">
                 <el-option
                   v-for="item in categoryOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item.code"
+                  :label="item.title"
+                  :value="item.code"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -134,9 +140,9 @@
               <el-radio-group v-model="form.status">
                 <el-radio
                   v-for="item in statusOptions"
-                  :key="item.value"
-                  :value="item.value"
-                >{{ item.label }}</el-radio>
+                  :key="item.code"
+                  :value="item.code"
+                >{{ item.title }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -163,6 +169,7 @@
 import ReadUsersDialog from "./ReadUsers"
 import NoticeDetailView from '@/layout/components/Navbar/HeaderNoticeDetail.vue'
 import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/system/message"
+import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 
@@ -182,24 +189,28 @@ const multiple = ref(true)       /* 是否多选 */
 const total = ref(0)             /* 总条数 */
 const title = ref("")            /* 对话框标题 */
 
-// 分类选项（0-通知、1-公告）
-const categoryOptions = [
-  { label: '通知', value: 0 },
-  { label: '公告', value: 1 }
-]
-// 状态选项（0-正常、1-下线）
-const statusOptions = [
-  { label: '正常', value: 0 },
-  { label: '下线', value: 1 }
-]
+// 分类/状态选项（从后端枚举接口加载，枚举项属性为 code、title）
+const categoryOptions = ref([])
+const statusOptions = ref([])
+
+/** 从后端枚举接口加载分类、状态选项 */
+function loadOptions() {
+  loadEnumItem('MessageCategoryEnum').then(res => {
+    categoryOptions.value = res.data
+  })
+  loadEnumItem('MessageStatusEnum').then(res => {
+    statusOptions.value = res.data
+  })
+}
 
 const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,        /* 当前页码 */
     pageSize: 10,      /* 每页条数 */
-    title: undefined,  /* 标题/内容关键词 */
-    status: -1         /* 状态（-1 全部、0 正常、1 下线） */
+    category: -1,      /* 分类（-1 全部、0 通知、1 公告） */
+    status: -1,        /* 状态（-1 全部、0 正常、1 下线） */
+    title: undefined   /* 标题关键词 */
   },
   rules: {
     title: [{ required: true, message: "消息标题不能为空", trigger: "blur" }],
@@ -229,14 +240,14 @@ function getList() {
 
 /** 分类编码 → 文案 */
 function categoryText(category) {
-  const item = categoryOptions.find(i => i.value === category)
-  return item ? item.label : category
+  const item = categoryOptions.value.find(i => i.code === category)
+  return item ? item.title : category
 }
 
 /** 状态编码 → 文案 */
 function statusText(status) {
-  const item = statusOptions.find(i => i.value === status)
-  return item ? item.label : status
+  const item = statusOptions.value.find(i => i.code === status)
+  return item ? item.title : status
 }
 
 /** 取消按钮 */
@@ -343,7 +354,8 @@ function handleDelete(row) {
     modal.msgSuccess("删除成功")
   }).catch(() => {})
 }
-// 页面初始化加载消息列表
+// 页面初始化：加载分类/状态选项 + 消息列表
+loadOptions()
 getList()
 
 </script>
