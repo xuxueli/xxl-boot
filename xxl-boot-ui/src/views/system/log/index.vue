@@ -94,20 +94,10 @@ import { download } from '@/utils/request'
 
 const resetForm = useFormReset()
 
-const logList = ref([])           /* 日志列表数据 */
-const total = ref(0)              /* 总条数 */
-const detailVisible = ref(false)  /* 详情弹窗可见 */
-const loading = ref(true)         /* 加载状态 */
-const detailRow = ref({})         /* 当前查看的日志行 */
-const showSearch = ref(true)      /* 是否显示搜索栏 */
-const ids = ref([])               /* 选中行 ID 数组 */
-const multiple = ref(true)        /* 是否多选 */
 
-const typeOptions = ref([])       /* 日志类型下拉选项 */
-const typeMap = ref({})           /* 日志类型编码 → 名称映射 */
-const moduleOptions = ref([])     /* 系统模块下拉选项 */
-const moduleMap = ref({})         /* 系统模块编码 → 名称映射 */
+// --------------------------------- ref data ---------------------------------
 
+// 筛选：表单数据
 const queryParams = ref({
   pageNum: 1,       /* 当前页码 */
   pageSize: 10,     /* 每页条数 */
@@ -115,6 +105,27 @@ const queryParams = ref({
   module: 0,        /* 系统模块编码（0 全部） */
   title: undefined  /* 日志标题 */
 })
+
+// 表格：UI数据
+const logList = ref([])           /* 表格：列表数据 */
+const total = ref(0)              /* 表格：总条数 */
+const loading = ref(true)         /* 表格：加载状态 */
+const showSearch = ref(true)      /* 表格：是否显示搜索栏 */
+const ids = ref([])               /* 表格：选中行 ID 数组 */
+const multiple = ref(true)        /* 表格：是否多选 */
+
+// 详情弹框：UI数据
+const detailVisible = ref(false)  /* 详情弹窗：可见状态 */
+const detailRow = ref({})         /* 详情弹窗：当前查看的日志行 */
+
+// 枚举数据
+const typeOptions = ref([])       /* 日志类型下拉选项 */
+const typeMap = ref({})           /* 日志类型编码 → 名称映射 */
+const moduleOptions = ref([])     /* 系统模块下拉选项 */
+const moduleMap = ref({})         /* 系统模块编码 → 名称映射 */
+
+
+// --------------------------------- fun ---------------------------------
 
 /** 查询日志列表 */
 function getList() {
@@ -185,6 +196,9 @@ function handleExport() {
     ...queryParams.value
   }, `log_${new Date().getTime()}.xlsx`)
 }
+
+
+// --------------------------------- init page ---------------------------------
 
 // 加载日志类型、系统模块枚举（下拉选项）
 loadEnumItem('LogTypeEnum').then(res => {
