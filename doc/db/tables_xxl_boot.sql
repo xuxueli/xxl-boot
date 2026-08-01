@@ -293,4 +293,13 @@ VALUES (0, 'XXL-BOOT | 快速开发平台', '<p><strong>XXL-BOOT </strong>是一
 INSERT INTO `xxl_boot_config` (`name`, `key`, `value`, `status`, `remark`, `add_time`, `update_time`)
 VALUES ('系统配置-登录验证码启用开关', 'system.login.captcha.enabled', 'true', 0, 'true 开启，false 关闭', now(), now());
 
+INSERT INTO xxl_boot.xxl_boot_dict (id, name, type, status, add_time, update_time, remark)
+VALUES (1, '用户性别', 'sex', 0, '2026-08-02 02:33:53', '2026-08-02 02:33:53', null);
+
+INSERT INTO xxl_boot.xxl_boot_dict_item (id, dict_id, name, code, status, `order`, add_time, update_time, remark)
+VALUES (1, 1, '男', 1000, 0, 1, '2026-08-02 02:34:12', '2026-08-02 02:34:18', null),
+       (2, 1, '女', 1002, 0, 2, '2026-08-02 02:34:29', '2026-08-02 02:34:29', null),
+       (3, 1, '未知', 1003, 0, 3, '2026-08-02 02:35:01', '2026-08-02 02:35:01', null);
+
+
 COMMIT;
