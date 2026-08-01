@@ -283,10 +283,14 @@ function handleAdd() {
   title.value = "添加消息"
 }
 
-/** 修改按钮操作 */
+/** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
 function handleUpdate(row) {
   reset()
-  const id = row.id || ids.value
+  // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
+  const id = row && row.id != null ? row.id : ids.value[0]
+  if (id == null) {
+    return
+  }
   getNotice(id).then(response => {
     form.value = response.data
     open.value = true
@@ -325,9 +329,12 @@ function handleReadUsers(row) {
   readUsersRef.value.open(row)
 }
 
-/** 删除按钮操作 */
+/** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row) {
-  const messageIds = row.id || ids.value
+  const messageIds = row && row.id != null ? row.id : ids.value
+  if (messageIds == null || (Array.isArray(messageIds) && messageIds.length === 0)) {
+    return
+  }
   modal.confirm('是否确认删除消息编号为"' + messageIds + '"的数据项？').then(function() {
     return delNotice(messageIds)
   }).then(() => {
