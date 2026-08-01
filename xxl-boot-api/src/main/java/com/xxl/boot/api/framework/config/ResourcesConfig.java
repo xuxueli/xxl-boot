@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 通用配置：文件上传路径与静态资源映射
- * <p>
+ *
  * 配置项：spring.servlet.file.profile 上传存储根路径，spring.servlet.file.resource-prefix 上传文件访问前缀。
  */
 @Configuration
@@ -41,7 +41,7 @@ public class ResourcesConfig implements WebMvcConfigurer {
      * 获取上传路径
      */
     public static String getUploadPath() {
-        return getProfile() + "/upload";
+        return getProfile();
     }
 
     /**
