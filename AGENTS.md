@@ -29,6 +29,7 @@
 ### 2.4 前端规范
 
 - 组件 import 名称与模板使用标签保持一致（统一 PascalCase，如 `import NoticeDetailView` 对应 `<NoticeDetailView>`）
+- 针对 响应式数据，非必须的情况下 一律使用 `ref`，避免使用 `reactive`，并通过 `toRefs(data)` 方式解构响应式数据。
 
 ## 三、注释规范
 
