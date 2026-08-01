@@ -15,11 +15,11 @@ public class ConfigDTO implements Serializable {
 
     private int status;
 
+    private String remark;
+
     private String addTime;
 
     private String updateTime;
-
-    private String remark;
 
 
     public long getId() {
@@ -62,6 +62,14 @@ public class ConfigDTO implements Serializable {
         this.status = status;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     public String getAddTime() {
         return addTime;
     }
@@ -76,14 +84,6 @@ public class ConfigDTO implements Serializable {
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
     }
 
 }

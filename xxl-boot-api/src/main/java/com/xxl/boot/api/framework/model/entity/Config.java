@@ -16,11 +16,11 @@ public class Config implements Serializable {
 
     private int status;
 
+    private String remark;
+
     private Date addTime;
 
     private Date updateTime;
-
-    private String remark;
 
 
     public long getId() {
@@ -63,6 +63,14 @@ public class Config implements Serializable {
         this.status = status;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     public Date getAddTime() {
         return addTime;
     }
@@ -77,14 +85,6 @@ public class Config implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
     }
 
 }

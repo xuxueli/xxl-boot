@@ -9,9 +9,9 @@
         <result column="key" property="key" />
         <result column="value" property="value" />
         <result column="status" property="status" />
+        <result column="remark" property="remark" />
         <result column="add_time" property="addTime" />
         <result column="update_time" property="updateTime" />
-        <result column="remark" property="remark" />
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -20,9 +20,9 @@
         t.`key`,
         t.`value`,
         t.`status`,
+        t.`remark`,
         t.`add_time`,
-        t.`update_time`,
-        t.`remark`
+        t.`update_time`
     </sql>
 
     <insert id="insert" parameterType="java.util.Map" >
@@ -31,18 +31,18 @@
             `key`,
             `value`,
             `status`,
+            `remark`,
             `add_time`,
-            `update_time`,
-            `remark`
+            `update_time`
         )
         VALUES(
                   #{xxlBootConfig.name} ,
                   #{xxlBootConfig.key} ,
                   #{xxlBootConfig.value} ,
                   #{xxlBootConfig.status} ,
+                  #{xxlBootConfig.remark} ,
                   NOW() ,
-                  NOW() ,
-                  #{xxlBootConfig.remark}
+                  NOW()
               )
     </insert>
 
