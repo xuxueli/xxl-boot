@@ -131,9 +131,9 @@ CREATE TABLE `xxl_boot_config`
     `key`               VARCHAR(100)    NOT NULL                    COMMENT '配置Key',
     `value`             VARCHAR(500)    NOT NULL                    COMMENT '配置Value',
     `status`            TINYINT         NOT NULL                    COMMENT '状态：0-正常、1-停用',
+    `remark`            VARCHAR(500)    DEFAULT NULL                COMMENT '备注',
     `add_time`          DATETIME        NOT NULL                    COMMENT '新增时间',
     `update_time`       DATETIME        NOT NULL                    COMMENT '更新时间',
-    `remark`            VARCHAR(500)    DEFAULT NULL                COMMENT '备注',
     PRIMARY KEY (`id`),
     UNIQUE KEY `i_type` (`key`) USING BTREE
 ) ENGINE = InnoDB
@@ -288,5 +288,8 @@ VALUES (0, 'XXL-BOOT | 快速开发平台', '<p><strong>XXL-BOOT </strong>是一
        (0, 'XXL-BOOT 新版发布 | 快速开发平台', '<p><strong>XXL-BOOT </strong>是一个快速开发平台，易学易用、灵活扩展、开箱即用。内置安全登录、权限管控、端到端代码生成、响应式布局、多语言、通告触达&hellip;&hellip;等能力。整合前后端流行技术，致力为 中小企业、个人开发者 打造开箱即用的中后台解决方案。</p>
 <p>&nbsp;</p> <p><u><strong>项目文档</strong></u>：<a href="https://www.xuxueli.com/xxl-boot/" target="_blank">https://www.xuxueli.com/xxl-boot/</a></p> <p><u><strong>GitHub地址</strong></u>：<a href="https://github.com/xuxueli/xxl-boot/" target="_blank">https://github.com/xuxueli/xxl-boot/</a></p>
 ', 'admin', 0, now(), now());
+
+INSERT INTO `xxl_boot_config` (`name`, `key`, `value`, `status`, `remark`, `add_time`, `update_time`)
+VALUES ('系统配置-登录验证码启用开关', 'system.login.captcha.enabled', 'true', 0, 'true 开启，false 关闭', now(), now());
 
 COMMIT;

@@ -107,7 +107,7 @@ const loginRules = {
 
 const codeUrl = ref("")                   // 验证码图片 base64
 const loading = ref(false)                // 登录按钮 loading
-const captchaEnabled = ref(true)          // 验证码开关（来自 settings.js）
+const captchaEnabled = ref(true)          // 验证码开关（默认开启，实际由后端 /auth/captcha 返回的 enable 决定）
 const redirect = ref(undefined)           // 登录后重定向地址
 
 

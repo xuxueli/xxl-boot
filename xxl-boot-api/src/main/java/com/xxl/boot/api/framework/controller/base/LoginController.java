@@ -6,10 +6,11 @@ import com.xxl.boot.api.framework.constant.enums.LogTypeEnum;
 import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
 import com.xxl.boot.api.framework.model.dto.CaptchaDTO;
 import com.xxl.boot.api.framework.model.dto.LoginRequest;
+import com.xxl.boot.api.framework.model.entity.Config;
 import com.xxl.boot.api.framework.model.entity.Log;
-import com.xxl.boot.api.framework.model.entity.Resource;
 import com.xxl.boot.api.framework.model.entity.Role;
 import com.xxl.boot.api.framework.model.entity.User;
+import com.xxl.boot.api.framework.service.ConfigService;
 import com.xxl.boot.api.framework.service.ResourceService;
 import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.boot.api.framework.service.UserService;
@@ -28,6 +29,7 @@ import com.xxl.tool.crypto.Sha256Tool;
 import com.xxl.tool.id.RandomIdTool;
 import com.xxl.tool.id.UUIDTool;
 import com.xxl.tool.response.Response;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,16 +56,18 @@ import java.util.stream.Collectors;
 public class LoginController {
 
 
-	@jakarta.annotation.Resource
+	@Resource
 	private UserService userService;
-	@jakarta.annotation.Resource
+	@Resource
 	private ResourceService resourceService;
-	@jakarta.annotation.Resource
+	@Resource
 	private RoleService roleService;
-	@jakarta.annotation.Resource
+	@Resource
 	private XxlLogQueueHelper logQueueHelper;
-	@jakarta.annotation.Resource
+	@Resource
 	private RedisCacheUtil redisCacheUtil;
+	@Resource
+	private ConfigService configService;
 
 
 	/**
@@ -79,7 +83,7 @@ public class LoginController {
 		}
 
 		// valid captcha
-		if (Consts.CAPTCHA_ENABLED) {
+		if (isCaptchaEnabled()) {
 			if (StringTool.isBlank(loginRequest.getCaptchaUuid())) {
 				return Response.ofFail("验证码为空");
 			}
@@ -104,10 +108,10 @@ public class LoginController {
 		}
 
 		// 2、find permission + role
-		List<Resource> resourceList = resourceService.queryResourceByUserid(xxlBootUser.getId(), -1);
+		List<com.xxl.boot.api.framework.model.entity.Resource> resourceList = resourceService.queryResourceByUserid(xxlBootUser.getId(), -1);
 		List<String> permissions = CollectionTool.isNotEmpty(resourceList) ?
 				resourceList.stream()
-						.map(Resource::getPermission)
+						.map(com.xxl.boot.api.framework.model.entity.Resource::getPermission)
 						.collect(Collectors.toCollection(ArrayList::new)) :
 				new ArrayList<>();
 
@@ -163,7 +167,7 @@ public class LoginController {
 
 		// build response
 		CaptchaDTO captchaDTO = new CaptchaDTO();
-		captchaDTO.setEnable(Consts.CAPTCHA_ENABLED);
+		captchaDTO.setEnable(isCaptchaEnabled());
 
 		// valid switch
 		if (!captchaDTO.isEnable()) {
@@ -195,6 +199,14 @@ public class LoginController {
 		captchaDTO.setImage(base64Image);
 
 		return Response.ofSuccess(captchaDTO);
+	}
+
+	/**
+	 * 登录验证码开关：从系统参数中读取（配置Key：system.login.captcha.enabled，值为 true/false）
+	 */
+	private boolean isCaptchaEnabled() {
+		Config config = configService.loadByKey("system.login.captcha.enabled").getData();
+		return config != null && Boolean.parseBoolean(config.getValue());
 	}
 
 	/**

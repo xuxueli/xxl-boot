@@ -19,9 +19,4 @@ public class Consts {
         return LOGIN_CAPTCHA_KEY + uuid;
     }
 
-    /**
-     * captcha enabled
-     */
-    public static boolean CAPTCHA_ENABLED = false;
-
 }
