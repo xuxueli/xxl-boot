@@ -14,16 +14,24 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 配置管理 Service Impl
+ *
+ * @author xuxueli 2024-11-03
+ */
 @Service
 public class ConfigServiceImpl implements ConfigService {
 
     @Resource
     private ConfigMapper configMapper;
 
+    /**
+     * 新增配置
+     */
     @Override
     public Response<String> insert(Config xxlBootConfig) {
 
-        // 参数校验
+        // 参数校验：实体及必填字段不能为空
         if (xxlBootConfig == null
                 || StringTool.isBlank(xxlBootConfig.getName())
                 || StringTool.isBlank(xxlBootConfig.getKey())) {
@@ -38,38 +46,55 @@ public class ConfigServiceImpl implements ConfigService {
         return Response.ofSuccess();
     }
 
+    /**
+     * 批量删除配置
+     */
     @Override
     public Response<String> delete(List<Integer> ids) {
         int ret = configMapper.delete(ids);
         return ret>0? Response.ofSuccess() : Response.ofFail();
     }
 
+    /**
+     * 更新配置
+     */
     @Override
     public Response<String> update(Config xxlBootConfig) {
         int ret = configMapper.update(xxlBootConfig);
         return ret>0? Response.ofSuccess() : Response.ofFail();
     }
 
+    /**
+     * Load查询（按ID查询单条配置）
+     */
     @Override
     public Response<Config> load(int id) {
         Config record = configMapper.load(id);
         return Response.ofSuccess(record);
     }
 
+    /**
+     * 按配置Key查询
+     */
     @Override
     public Response<Config> loadByKey(String key) {
         Config record = configMapper.loadByKey(key);
         return Response.ofSuccess(record);
     }
 
+    /**
+     * 分页查询配置列表
+     */
     @Override
     public PageModel<ConfigDTO> pageList(int status, String name, String key, int offset, int pagesize) {
 
         List<Config> pageList = configMapper.pageList(status, name, key, offset, pagesize);
         int totalCount = configMapper.pageListCount(status, name, key, offset, pagesize);
 
+        // entity 转 DTO
         List<ConfigDTO> dtoList = ConfigAdaptor.adaptor(pageList);
 
+        // 组装分页结果
         PageModel<ConfigDTO> pageModel = new PageModel<>();
         pageModel.setData(dtoList);
         pageModel.setTotal(totalCount);

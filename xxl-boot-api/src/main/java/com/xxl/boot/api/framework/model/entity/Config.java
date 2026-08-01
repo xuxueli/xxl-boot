@@ -3,24 +3,22 @@ package com.xxl.boot.api.framework.model.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 配置实体
+ *
+ * @author xuxueli 2024-11-03
+ */
 public class Config implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private long id;
-
-    private String name;
-
-    private String key;
-
-    private String value;
-
-    private int status;
-
-    private String remark;
-
-    private Date addTime;
-
-    private Date updateTime;
+    private long id;            /* 配置ID */
+    private String name;        /* 配置名称 */
+    private String key;         /* 配置Key */
+    private String value;       /* 配置Value */
+    private int status;         /* 状态（0-正常、1-停用） */
+    private String remark;      /* 备注 */
+    private Date addTime;       /* 新增时间 */
+    private Date updateTime;    /* 更新时间 */
 
 
     public long getId() {

@@ -2,24 +2,22 @@ package com.xxl.boot.api.framework.model.dto;
 
 import java.io.Serializable;
 
+/**
+ * 配置 DTO（用于列表展示）
+ *
+ * @author xuxueli 2024-11-03
+ */
 public class ConfigDTO implements Serializable {
     private static final long serialVersionUID = 42L;
 
-    private long id;
-
-    private String name;
-
-    private String key;
-
-    private String value;
-
-    private int status;
-
-    private String remark;
-
-    private String addTime;
-
-    private String updateTime;
+    private long id;            /* 配置ID */
+    private String name;        /* 配置名称 */
+    private String key;         /* 配置Key */
+    private String value;       /* 配置Value */
+    private int status;         /* 状态（0-正常、1-停用） */
+    private String remark;      /* 备注 */
+    private String addTime;     /* 新增时间（格式化字符串） */
+    private String updateTime;  /* 更新时间（格式化字符串） */
 
 
     public long getId() {
