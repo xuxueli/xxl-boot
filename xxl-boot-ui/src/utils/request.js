@@ -24,6 +24,9 @@ import settings from '@/settings'
 // 301 重登录防重复弹出标志
 let isRelogin = {show: false}
 
+// 防重复提交快照存储 key
+const REPEAT_SUBMIT_STORAGE_KEY = 'sessionObj'
+
 // 错误码映射表：后端业务码 → 前端展示文案
 const errorCode = {
   '301': '认证失败，无法访问系统资源',
@@ -56,8 +59,9 @@ const service = axios.create({
  *         - 解决 axios 默认序列化对嵌套对象支持不佳的问题。
  *
  *      3. POST / PUT 防重复提交
- *         - 基于 sessionStorage 缓存上一次请求的 url + data + time 快照。
- *         - 同一 url、相同 data、间隔小于 interval（默认 1s）时判定为重复，拒绝发送。
+ *         - 基于 sessionStorage 缓存上一次请求的 url + params + data + time 快照。
+ *         - 同一 url、相同 params + data、间隔小于 interval（默认 1s）时判定为重复，拒绝发送。
+ *         - FormData / Blob 请求无法序列化比对，直接放行。
  *         - 超过 5MB 的大请求不做防重校验，直接放行。
  *         - 可通过 { headers: { repeatSubmit: false } } 全局跳过。
  *         - 可通过 { headers: { interval: 2000 } } 自定义判定间隔。
@@ -85,10 +89,16 @@ service.interceptors.request.use(config => {
 
     // 3. POST / PUT 防重复提交
     if (!isRepeatSubmit && (config.method === 'post' || config.method === 'put')) {
+        // FormData / Blob 无法序列化比对，跳过防重复提交校验
+        if (config.data instanceof FormData || config.data instanceof Blob) {
+            return config
+        }
+
         // request data
         const requestObj = {
             url: config.url,
             data: typeof config.data === 'object' ? JSON.stringify(config.data) : config.data,
+            params: config.params ? JSON.stringify(config.params) : undefined,
             time: new Date().getTime()
         }
         // request size
@@ -99,20 +109,23 @@ service.interceptors.request.use(config => {
         }
 
         // request data cache
-        const sessionObj = cache.session.getJSON('sessionObj')
+        const sessionObj = cache.session.getJSON(REPEAT_SUBMIT_STORAGE_KEY)
         if (!sessionObj) {
             // 首次提交，写入快照
-            cache.session.setJSON('sessionObj', requestObj)
+            cache.session.setJSON(REPEAT_SUBMIT_STORAGE_KEY, requestObj)
         } else {
-            // 非首次：比对 url + data + 时间间隔
-            if (sessionObj.data === requestObj.data
-                && requestObj.time - sessionObj.time < interval
-                && sessionObj.url === requestObj.url) {
+            // 非首次：比对 url + params + data + 时间间隔
+            if (sessionObj.url === requestObj.url
+                && sessionObj.params === requestObj.params
+                && sessionObj.data === requestObj.data
+                && requestObj.time - sessionObj.time < interval) {
+                // 重复提交
                 console.warn(`[${sessionObj.url}]: 数据正在处理，请勿重复提交`)
                 return Promise.reject(new Error('数据正在处理，请勿重复提交'))
+            } else {
+                // 非重复提交，更新快照
+                cache.session.setJSON(REPEAT_SUBMIT_STORAGE_KEY, requestObj)
             }
-            // 非重复提交，更新快照
-            cache.session.setJSON('sessionObj', requestObj)
         }
     }
 
