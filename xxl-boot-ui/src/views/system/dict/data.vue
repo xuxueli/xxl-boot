@@ -65,7 +65,7 @@
           <el-input v-model="form.itemName" placeholder="请输入字典项名称" />
         </el-form-item>
         <el-form-item label="字典项标识" prop="itemCode">
-          <el-input v-model="form.itemCode" placeholder="请输入字典项标识" />
+          <el-input v-model="form.itemCode" placeholder="请输入字典项标识" :disabled="form.id != undefined" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -128,7 +128,21 @@ const data = reactive({
   },
   rules: {
     itemName: [{ required: true, message: "字典项名称不能为空", trigger: "blur" }],
-    itemCode: [{ required: true, message: "字典项标识不能为空", trigger: "blur" }],
+    itemCode: [
+      { required: true, message: "字典项标识不能为空", trigger: "blur" },
+      { pattern: /^[0-9]+$/, message: "只允许输入数字", trigger: "blur" },
+      {
+        validator: (rule, value, callback) => {
+          const n = Number(value)
+          if (value == null || value === '' || (n >= 1 && n <= 10000000)) {
+            callback()
+          } else {
+            callback(new Error("需在1-10000000之间"))
+          }
+        },
+        trigger: "blur"
+      }
+    ],
     order: [{ required: true, message: "顺序不能为空", trigger: "blur" }]
   }
 })

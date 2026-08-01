@@ -94,7 +94,7 @@
           <el-input v-model="form.name" placeholder="请输入字典名称" />
         </el-form-item>
         <el-form-item label="字典标识" prop="code">
-          <el-input v-model="form.code" placeholder="请输入字典标识" />
+          <el-input v-model="form.code" placeholder="请输入字典标识" :disabled="form.id != undefined" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -157,7 +157,11 @@ const data = reactive({
   },
   rules: {
     name: [{ required: true, message: "字典名称不能为空", trigger: "blur" }],
-    code: [{ required: true, message: "字典标识不能为空", trigger: "blur" }]
+    code: [
+      { required: true, message: "字典标识不能为空", trigger: "blur" },
+      { pattern: /^[a-z][a-zA-Z0-9]*$/, message: "以小写字母开头，由字母和数字组成", trigger: "blur" },
+      { min: 2, max: 100, message: "长度需在2-100之间", trigger: "blur" }
+    ]
   },
 })
 

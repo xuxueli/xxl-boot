@@ -152,7 +152,8 @@ const data = reactive({
     name: [{ required: true, message: "配置名称不能为空", trigger: "blur" }],
     key: [
       { required: true, message: "配置Key不能为空", trigger: "blur" },
-      { pattern: /^[a-z][a-z0-9.]*$/, message: "以小写字母开头，只能由小写字母、数字和点组成", trigger: "blur" }
+      { pattern: /^[a-z][a-z0-9.]*$/, message: "以小写字母开头，只能由小写字母、数字和点组成", trigger: "blur" },
+      { min: 4, max: 100, message: "长度需在4-100之间", trigger: "blur" }
     ],
     value: [{ required: true, message: "配置Value不能为空", trigger: "blur" }]
   }
