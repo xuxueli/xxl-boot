@@ -93,7 +93,9 @@ const props = defineProps({
   moduleMap: { type: Object, default: () => ({}) } /* 系统模块编码 → 名称映射 */
 })
 
-/** 复制文本到剪贴板 */
+/**
+ * 复制文本到剪贴板
+ */
 function copyText(str) {
   const text = str || ''
   // 优先使用 Clipboard API，不支持时降级为 execCommand
