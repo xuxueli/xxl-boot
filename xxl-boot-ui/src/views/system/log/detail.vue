@@ -3,8 +3,7 @@
   功能：展示单条日志的详细信息
 -->
 <template>
-  <el-dialog title="日志详细" v-model="dialogVisible" width="700px" append-to-body
-    @close="$emit('update:visible', false)">
+  <el-dialog title="日志详细" v-model="visible" width="700px" append-to-body>
     <div class="detail-wrap">
       <!-- 基本信息 -->
       <div class="detail-card">
@@ -69,50 +68,29 @@
 import modal from '@/utils/modal'
 
 /**
- * 组件入参（父->子）：defineProps
+ * 弹窗显隐：v-model:xxx + defineModel 双向绑定
+ * ---
  *
- * <pre>
- *     <LogDetail
- *        v-model:visible="detail.visible"
- *        :row="detail.row"
- *        :module-map="moduleDict.map"
- *      />
+ * defineModel，读写自动与父组件 v-model:visible 同步
  *
- *      - :row="..." → 传入 prop row
- *      - :module-map="..." → kebab-case 会自动对应 prop moduleMap（驼峰）
- *      - v-model:visible 本质是 :visible + @update:visible 两条绑定的语法糖
- *           - 说明：v-model:xxx 本质上是 prop 传递 + 事件监听‌（:xxx + @update:xxx） 的语法糖：
+ * 父组件用法：
+ *   <LogDetail
+ *     v-model:visible="detail.visible"
+ *     :row="detail.row"
+ *     :module-map="moduleDict.map"
+ *   />
  *
- * </pre>
+ *   - visible：defineModel，读=父传值，写=自动发 update:visible 给父
+ *   - row / moduleMap：普通 props，只读传入
  */
-const props = defineProps({
-  visible: { type: Boolean, default: false },  /* 弹窗可见性 */
-  row: { type: Object, default: () => ({}) },  /* 当前行数据 */
-  moduleMap: { type: Object, default: () => ({}) } /* 系统模块编码 → 名称映射 */
-})
+const visible = defineModel('visible', { type: Boolean, default: false })
 
 /**
- * 组件事件（子->父）：defineEmits
- *
- * <pre>
- *      子组件声明并触发（detail.vue）：
- *      const emit = defineEmits(['update:visible'])
- *
- *      // 模板里：el-dialog 关闭时
- *      @close="$emit('update:visible', false)"
- *      // 或 computed 的 set 里
- *      set: (val) => emit('update:visible', val)
- *
- *      - 事件名约定：update:xxx 对应父的 v-model:xxx，是双向绑定的另一半。
- *      - emit('事件名', 参数) 只是发通知，真正改状态的是父。
- * </pre>
+ * 组件入参: 通过 :xxx + defineProps 单项数据同步
  */
-const emit = defineEmits(['update:visible'])
-
-// 双向绑定 visible
-const dialogVisible = computed({
-  get: () => props.visible,
-  set: (val) => emit('update:visible', val)
+const props = defineProps({
+  row: { type: Object, default: () => ({}) },  /* 当前行数据 */
+  moduleMap: { type: Object, default: () => ({}) } /* 系统模块编码 → 名称映射 */
 })
 
 const form = computed(() => props.row || {})
