@@ -45,18 +45,18 @@ public class DictServiceImpl implements DictService {
         if (StringTool.isBlank(xxlBootDict.getName())) {
             return Response.ofFail("请输入字典名称");
         }
-        if (StringTool.isBlank(xxlBootDict.getCode())) {
-            return Response.ofFail("请输入字典标识");
+        if (StringTool.isBlank(xxlBootDict.getType())) {
+            return Response.ofFail("请输入字典Type");
         }
-        // 字典标识格式校验：小写字母开头，由字母和数字组成，长度2-100
-        String code = xxlBootDict.getCode();
-        if (code.length() < 2 || code.length() > 100 || !RegexTool.matches("^[a-z][a-zA-Z0-9]*$", code)) {
-            return Response.ofFail("字典标识需以小写字母开头，由字母和数字组成，长度2-100");
+        // 字典Type格式校验：小写字母开头，由字母和数字组成，长度2-100
+        String type = xxlBootDict.getType();
+        if (type.length() < 2 || type.length() > 100 || !RegexTool.matches("^[a-z][a-zA-Z0-9]*$", type)) {
+            return Response.ofFail("字典Type需以小写字母开头，由字母和数字组成，长度2-100");
         }
-        // 字典标识唯一性校验：数据库唯一索引，代码层友好提示
-        Dict existDict = dictMapper.loadByCode(xxlBootDict.getCode());
+        // 字典Type唯一性校验：数据库唯一索引，代码层友好提示
+        Dict existDict = dictMapper.loadByType(xxlBootDict.getType());
         if (existDict != null) {
-            return Response.ofFail("字典标识已存在");
+            return Response.ofFail("字典Type已存在");
         }
         dictMapper.insert(xxlBootDict);
         return Response.ofSuccess();
@@ -95,9 +95,9 @@ public class DictServiceImpl implements DictService {
      * 分页查询字典列表
      */
     @Override
-    public PageModel<DictDTO> pageList(String name, String code, int status, int offset, int pagesize) {
-        List<Dict> pageList = dictMapper.pageList(name, code, status, offset, pagesize);
-        int totalCount = dictMapper.pageListCount(name, code, status, offset, pagesize);
+    public PageModel<DictDTO> pageList(String name, String type, int status, int offset, int pagesize) {
+        List<Dict> pageList = dictMapper.pageList(name, type, status, offset, pagesize);
+        int totalCount = dictMapper.pageListCount(name, type, status, offset, pagesize);
 
         // entity 转 DTO
         List<DictDTO> dtoList = DictAdaptor.adaptor(pageList);
@@ -119,16 +119,16 @@ public class DictServiceImpl implements DictService {
         if (xxlBootDictItem == null) {
             return Response.ofFail("必要参数缺失");
         }
-        if (StringTool.isBlank(xxlBootDictItem.getItemName())) {
+        if (StringTool.isBlank(xxlBootDictItem.getName())) {
             return Response.ofFail("请输入字典项名称");
         }
-        if (StringTool.isBlank(xxlBootDictItem.getItemCode())) {
-            return Response.ofFail("请输入字典项标识");
+        if (xxlBootDictItem.getCode() < 1 || xxlBootDictItem.getCode() > 10000000) {
+            return Response.ofFail("字典项Code需在1-10000000之间");
         }
-        // 字典项标识唯一性校验：同字典下不可重复（数据库联合唯一索引）
-        DictItem existItem = dictItemMapper.findByDictIdAndCode(xxlBootDictItem.getDictId(), xxlBootDictItem.getItemCode());
+        // 字典项Code唯一性校验：同字典下不可重复（数据库联合唯一索引）
+        DictItem existItem = dictItemMapper.findByDictIdAndCode(xxlBootDictItem.getDictId(), xxlBootDictItem.getCode());
         if (existItem != null) {
-            return Response.ofFail("字典项标识已存在");
+            return Response.ofFail("字典项Code已存在");
         }
         dictItemMapper.insert(xxlBootDictItem);
         return Response.ofSuccess();
@@ -181,12 +181,12 @@ public class DictServiceImpl implements DictService {
     }
 
     /**
-     * 按字典标识查询字典项列表
+     * 按字典Type查询字典项列表
      */
     @Override
-    public Response<List<DictItem>> getDictItemsByCode(String code) {
-        // 按字典标识查询字典，不存在则返回空列表
-        Dict dict = dictMapper.loadByCode(code);
+    public Response<List<DictItem>> getDictItemsByType(String type) {
+        // 按字典Type查询字典，不存在则返回空列表
+        Dict dict = dictMapper.loadByType(type);
         if (dict == null) {
             return Response.ofSuccess(new ArrayList<>());
         }

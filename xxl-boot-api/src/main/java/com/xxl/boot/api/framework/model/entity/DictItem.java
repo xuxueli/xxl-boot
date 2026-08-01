@@ -13,8 +13,8 @@ public class DictItem implements Serializable {
 
     private long id;            /* 字典项ID */
     private long dictId;        /* 字典ID */
-    private String itemName;    /* 字典项名称 */
-    private String itemCode;    /* 字典项标识 */
+    private String name;        /* 字典项名称 */
+    private int code;           /* 字典项Code */
     private int status;         /* 状态（0-正常、1-停用） */
     private int order;          /* 顺序 */
     private Date addTime;       /* 新增时间 */
@@ -37,20 +37,20 @@ public class DictItem implements Serializable {
         this.dictId = dictId;
     }
 
-    public String getItemName() {
-        return itemName;
+    public String getName() {
+        return name;
     }
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getItemCode() {
-        return itemCode;
+    public int getCode() {
+        return code;
     }
 
-    public void setItemCode(String itemCode) {
-        this.itemCode = itemCode;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public int getStatus() {

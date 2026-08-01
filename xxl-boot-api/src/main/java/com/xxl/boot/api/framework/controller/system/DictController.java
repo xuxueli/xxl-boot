@@ -11,7 +11,6 @@ import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,7 +37,7 @@ public class DictController {
      * @param pagesize 每页条数
      * @param status   状态（-1 全部、0 正常、1 停用）
      * @param name     字典名称（模糊匹配）
-     * @param code     字典标识（模糊匹配）
+     * @param type     字典Type（模糊匹配）
      */
     @RequestMapping("/pageList")
     @XxlSso
@@ -46,8 +45,8 @@ public class DictController {
                                                  @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                  @RequestParam(required = false, defaultValue = "-1") int status,
                                                  String name,
-                                                 String code) {
-        PageModel<DictDTO> pageModel = dictService.pageList(name, code, status, offset, pagesize);
+                                                 String type) {
+        PageModel<DictDTO> pageModel = dictService.pageList(name, type, status, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 
@@ -168,14 +167,14 @@ public class DictController {
     }
 
     /**
-     * 按字典标识查询字典项列表（供下拉选项、回显使用）
+     * 按字典Type查询字典项列表（供下拉选项、回显使用）
      *
-     * @param dictCode 字典标识
+     * @param type 字典Type
      */
     @RequestMapping("/loadDictItem")
     @XxlSso
-    public Response<List<DictItem>> loadDictItem(String dictCode) {
-        return dictService.getDictItemsByCode(dictCode);
+    public Response<List<DictItem>> loadDictItem(String type) {
+        return dictService.getDictItemsByType(type);
     }
 
     /**

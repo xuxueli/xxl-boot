@@ -34,8 +34,8 @@ export function useDict(...args) {
         loadDictItem(dictType).then(resp => {
           // 后端字段 → 前端通用字段名
           res.value[dictType] = resp.data.map(p => ({
-            label: p.itemName,
-            value: p.itemCode,
+            label: p.name,
+            value: p.code,
             elTagType: undefined,   // p.listClass,
             elTagClass: undefined   // p.cssClass
           }))

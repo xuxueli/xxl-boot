@@ -83,7 +83,7 @@ export function queryDictList() {
     response.data = (response.data || []).map(item => ({
       dictId: item.id,
       dictName: item.name,
-      dictType: item.code
+      dictType: item.type
     }))
     return response
   })

@@ -33,14 +33,14 @@ export function getData(id) {
 
 /**
  * 按字典标识查询字典项列表（供下拉选项、回显使用）。
- * @param {string} dictCode 字典标识。
+ * @param {string} type 字典标识。
  * @returns {Promise<any>} 字典项列表。
  */
-export function loadDictItem(dictCode) {
+export function loadDictItem(type) {
   return request({
     url: '/system/dict/loadDictItem',
     method: 'get',
-    params: { dictCode }
+    params: { type }
   })
 }
 

@@ -48,12 +48,12 @@ public interface DictService {
      * 分页查询字典列表
      *
      * @param name     字典名称（模糊匹配）
-     * @param code     字典标识（模糊匹配）
+     * @param type     字典Type（模糊匹配）
      * @param status   状态（-1 全部、0 正常、1 停用）
      * @param offset   分页偏移量
      * @param pagesize 每页条数
      */
-    PageModel<DictDTO> pageList(String name, String code, int status, int offset, int pagesize);
+    PageModel<DictDTO> pageList(String name, String type, int status, int offset, int pagesize);
 
     /**
      * 新增字典项
@@ -93,11 +93,11 @@ public interface DictService {
     PageModel<DictItemDTO> itemPageList(long dictId, int offset, int pagesize);
 
     /**
-     * 按字典标识查询字典项列表
+     * 按字典Type查询字典项列表
      *
-     * @param code 字典标识
+     * @param type 字典Type
      */
-    Response<List<DictItem>> getDictItemsByCode(String code);
+    Response<List<DictItem>> getDictItemsByType(String type);
 
     /**
      * 查询全部字典（供下拉选项使用）

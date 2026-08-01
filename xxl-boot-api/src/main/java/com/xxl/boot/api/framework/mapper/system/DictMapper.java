@@ -35,15 +35,15 @@ public interface DictMapper {
     Dict load(@Param("id") int id);
 
     /**
-     * 按字典标识查询
+     * 按字典Type查询
      */
-    Dict loadByCode(@Param("code") String code);
+    Dict loadByType(@Param("type") String type);
 
     /**
-     * 分页查询字典列表（名称/标识模糊匹配，状态过滤）
+     * 分页查询字典列表（名称/Type模糊匹配，状态过滤）
      */
     List<Dict> pageList(@Param("name") String name,
-                        @Param("code") String code,
+                        @Param("type") String type,
                         @Param("status") int status,
                         @Param("offset") int offset,
                         @Param("pagesize") int pagesize);
@@ -52,7 +52,7 @@ public interface DictMapper {
      * 分页查询字典总数
      */
     int pageListCount(@Param("name") String name,
-                      @Param("code") String code,
+                      @Param("type") String type,
                       @Param("status") int status,
                       @Param("offset") int offset,
                       @Param("pagesize") int pagesize);

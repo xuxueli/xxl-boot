@@ -13,7 +13,7 @@ public class Dict implements Serializable {
 
     private long id;            /* 字典ID */
     private String name;        /* 字典名称 */
-    private String code;        /* 字典标识 */
+    private String type;        /* 字典Type */
     private int status;         /* 状态（0-正常、1-停用） */
     private Date addTime;       /* 新增时间 */
     private Date updateTime;    /* 更新时间 */
@@ -35,12 +35,12 @@ public class Dict implements Serializable {
         this.name = name;
     }
 
-    public String getCode() {
-        return code;
+    public String getType() {
+        return type;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getStatus() {

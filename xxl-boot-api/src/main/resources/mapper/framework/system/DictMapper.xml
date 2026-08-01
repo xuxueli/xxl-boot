@@ -6,7 +6,7 @@
     <resultMap id="Dict" type="com.xxl.boot.api.framework.model.entity.Dict" >
         <result column="id" property="id" />
         <result column="name" property="name" />
-        <result column="code" property="code" />
+        <result column="type" property="type" />
         <result column="status" property="status" />
         <result column="add_time" property="addTime" />
         <result column="update_time" property="updateTime" />
@@ -16,7 +16,7 @@
     <sql id="Base_Column_List">
         t.`id`,
         t.`name`,
-        t.`code`,
+        t.`type`,
         t.`status`,
         t.`add_time`,
         t.`update_time`,
@@ -26,7 +26,7 @@
     <insert id="insert" parameterType="java.util.Map" >
         INSERT INTO xxl_boot_dict (
             `name`,
-            `code`,
+            `type`,
             `status`,
             `remark`,
             `add_time`,
@@ -34,7 +34,7 @@
         )
         VALUES(
                   #{xxlBootDict.name} ,
-                  #{xxlBootDict.code} ,
+                  #{xxlBootDict.type} ,
                   #{xxlBootDict.status} ,
                   #{xxlBootDict.remark} ,
                   NOW() ,
@@ -54,7 +54,6 @@
         UPDATE xxl_boot_dict
         SET
             `name` = #{xxlBootDict.name},
-            `code` = #{xxlBootDict.code},
             `status` = #{xxlBootDict.status},
             `remark` = #{xxlBootDict.remark},
             update_time = NOW()
@@ -67,10 +66,10 @@
         WHERE t.`id` = #{id}
     </select>
 
-    <select id="loadByCode" parameterType="java.util.Map" resultMap="Dict">
+    <select id="loadByType" parameterType="java.util.Map" resultMap="Dict">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_dict AS t
-        WHERE t.`code` = #{code}
+        WHERE t.`type` = #{type}
     </select>
 
     <select id="pageList" parameterType="java.util.Map" resultMap="Dict">
@@ -80,8 +79,8 @@
             <if test="name != null and name != ''">
                 AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
             </if>
-            <if test="code != null and code != ''">
-                AND t.`code` like CONCAT(CONCAT('%', #{code}), '%')
+            <if test="type != null and type != ''">
+                AND t.`type` like CONCAT(CONCAT('%', #{type}), '%')
             </if>
             <if test="status gt -1">
                 AND t.`status` = #{status}
@@ -98,8 +97,8 @@
             <if test="name != null and name != ''">
                 AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
             </if>
-            <if test="code != null and code != ''">
-                AND t.`code` like CONCAT(CONCAT('%', #{code}), '%')
+            <if test="type != null and type != ''">
+                AND t.`type` like CONCAT(CONCAT('%', #{type}), '%')
             </if>
             <if test="status gt -1">
                 AND t.`status` = #{status}

@@ -172,6 +172,7 @@ import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api
 import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
+import {reactive, ref, toRefs} from "vue";
 
 const resetForm = useFormReset()
 
@@ -207,14 +208,12 @@ function loadOptions() {
  * 查询参数、表单数据、表单校验规则
  *
  *  响应式用法：
- *    - 用法A：const messageRef = ref(null)
- *      - 本质：用于"拿 DOM/组件实例"或"单个独立响应式变量"
- *      - 示例：模板引用（template ref），ref 值绑定到 <el-form ref="messageRef">
- *    - 用法B：reactive({...}) + toRefs(data)
- *      - 本质：用于"一组逻辑相关数据打包管理 + 支持整体替换"。
- *      - 示例：下文，把一组逻辑相关的状态（表单数据、查询参数、校验规则）集中打包成一个对象，再用 toRefs 解构出独立 ref。解构出的 form 是 ref，支持整体替换。
- *
- *  建议用法：可以统一到 方案A；TODO
+ *    - ref：主要用于处理基本数据类型（如字符串、数字、布尔值）以及简单的对象和数组。ref 允许将一个普通的值变成响应式，当值改变时，所有依赖于它的组件或计算属性也会自动更新。
+ *    - reactive：主要用于将复杂的对象（如对象和数组）转换为响应式对象，从而使得对象内部的所有属性都具有响应性。这意味着，当对象的属性发生变化时，所有依赖于这些属性的组件或计算属性也会自动更新。
+ *    - toRef：将响应式对象中的‌每个属性‌单独提取出来，变成独立的 ref，以便在解构（destructuring）后依然保持响应性。
+ *  使用方式：
+ *    - 方式1：直接使用 ref（更常见）
+ *    - 方式2：使用 reactive + toRefs（适用于多个属性的对象，解构后仍保持响应性）
  */
 const data = reactive({
   form: {},

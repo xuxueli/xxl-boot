@@ -9,7 +9,7 @@
       <div class="drawer-head">
         <el-icon style="color:#5b9bd5;margin-right:8px;"><List /></el-icon>
         <span class="drawer-head-name">{{ row.name }}</span>
-        <span class="drawer-head-type">{{ row.code }}</span>
+        <span class="drawer-head-type">{{ row.type }}</span>
       </div>
     </template>
 
@@ -53,11 +53,11 @@
         <div v-for="item in dataList" :key="item.id" class="dict-item">
           <div class="dict-cell">
             <div class="dict-cell-key">名称</div>
-            <div class="dict-cell-val">{{ item.itemName }}</div>
+            <div class="dict-cell-val">{{ item.name }}</div>
           </div>
           <div class="dict-cell">
             <div class="dict-cell-key">标识</div>
-            <div class="dict-cell-val">{{ item.itemCode }}</div>
+            <div class="dict-cell-val">{{ item.code }}</div>
           </div>
           <div class="dict-cell">
             <div class="dict-cell-key">状态</div>

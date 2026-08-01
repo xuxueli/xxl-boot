@@ -99,29 +99,29 @@ CREATE TABLE `xxl_boot_dict`
 (
     `id`                BIGINT          NOT NULL AUTO_INCREMENT     COMMENT '字典ID',
     `name`              VARCHAR(100)    NOT NULL                    COMMENT '字典名称',
-    `code`              VARCHAR(100)    NOT NULL                    COMMENT '字典标识',
+    `type`              VARCHAR(100)    NOT NULL                    COMMENT '字典Type',
     `status`            TINYINT         NOT NULL                    COMMENT '状态：0-正常、1-停用',
     `add_time`          DATETIME        NOT NULL                    COMMENT '新增时间',
     `update_time`       DATETIME        NOT NULL                    COMMENT '更新时间',
     `remark`            VARCHAR(500)    DEFAULT NULL                COMMENT '备注',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `i_type` (`code`) USING BTREE
+    UNIQUE KEY `i_type` (`type`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE `xxl_boot_dict_item`
 (
-    `id`                BIGINT          NOT NULL AUTO_INCREMENT     COMMENT '字典子项ID',
+    `id`                BIGINT          NOT NULL AUTO_INCREMENT     COMMENT '字典项ID',
     `dict_id`           BIGINT          NOT NULL                    COMMENT '字典ID',
-    `item_name`         VARCHAR(100)    NOT NULL                    COMMENT '字典子项名称',
-    `item_code`         VARCHAR(100)    NOT NULL                    COMMENT '字典子项标识',
+    `name`              VARCHAR(100)    NOT NULL                    COMMENT '字典项名称',
+    `code`              INT             NOT NULL                    COMMENT '字典项Code',
     `status`            TINYINT         NOT NULL                    COMMENT '状态：0-正常、1-停用',
     `order`             INT             NOT NULL                    COMMENT '顺序',
     `add_time`          DATETIME        NOT NULL                    COMMENT '新增时间',
     `update_time`       DATETIME        NOT NULL                    COMMENT '更新时间',
     `remark`            VARCHAR(500)    DEFAULT NULL                COMMENT '备注',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `i_dict_item` (`dict_id`, `item_code`) USING BTREE
+    UNIQUE KEY `i_dict_item` (`dict_id`, `code`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

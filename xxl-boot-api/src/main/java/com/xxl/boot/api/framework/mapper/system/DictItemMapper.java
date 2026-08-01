@@ -59,8 +59,8 @@ public interface DictItemMapper {
     List<DictItem> findByDictId(@Param("dictId") long dictId);
 
     /**
-     * 按字典ID + 字典项标识查询（唯一性校验）
+     * 按字典ID + 字典项Code查询（唯一性校验）
      */
-    DictItem findByDictIdAndCode(@Param("dictId") long dictId, @Param("itemCode") String itemCode);
+    DictItem findByDictIdAndCode(@Param("dictId") long dictId, @Param("code") int code);
 
 }

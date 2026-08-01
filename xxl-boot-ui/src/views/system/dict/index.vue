@@ -15,10 +15,10 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="字典标识" prop="code">
+      <el-form-item label="字典Type" prop="type">
         <el-input
-          v-model="queryParams.code"
-          placeholder="请输入字典标识"
+          v-model="queryParams.type"
+          placeholder="请输入字典Type"
           clearable
           style="width: 200px"
           @keyup.enter="handleQuery"
@@ -55,9 +55,9 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" width="80" />
       <el-table-column label="字典名称" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
-      <el-table-column label="字典标识" align="center" :show-overflow-tooltip="true">
+      <el-table-column label="字典Type" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
-          <a class="link-type" style="cursor:pointer" @click="handleViewData(scope.row)">{{ scope.row.code }}</a>
+          <a class="link-type" style="cursor:pointer" @click="handleViewData(scope.row)">{{ scope.row.type }}</a>
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center" width="80">
@@ -93,8 +93,8 @@
         <el-form-item label="字典名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入字典名称" />
         </el-form-item>
-        <el-form-item label="字典标识" prop="code">
-          <el-input v-model="form.code" placeholder="请输入字典标识" :disabled="form.id != undefined" />
+        <el-form-item label="字典Type" prop="type">
+          <el-input v-model="form.type" placeholder="请输入字典Type" :disabled="form.id != undefined" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -152,13 +152,13 @@ const data = reactive({
     pageNum: 1,        /* 当前页码 */
     pageSize: 10,      /* 每页条数 */
     name: undefined,   /* 字典名称 */
-    code: undefined,   /* 字典标识 */
+    type: undefined,   /* 字典Type */
     status: -1         /* 状态（-1 全部、0 正常、1 停用） */
   },
   rules: {
     name: [{ required: true, message: "字典名称不能为空", trigger: "blur" }],
-    code: [
-      { required: true, message: "字典标识不能为空", trigger: "blur" },
+    type: [
+      { required: true, message: "字典Type不能为空", trigger: "blur" },
       { pattern: /^[a-z][a-zA-Z0-9]*$/, message: "以小写字母开头，由字母和数字组成", trigger: "blur" },
       { min: 2, max: 100, message: "长度需在2-100之间", trigger: "blur" }
     ]
@@ -202,7 +202,7 @@ function reset() {
   form.value = {
     id: undefined,
     name: undefined,
-    code: undefined,
+    type: undefined,
     status: 0,
     remark: undefined
   }

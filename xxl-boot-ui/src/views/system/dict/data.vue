@@ -29,8 +29,8 @@
     <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" width="80" />
-      <el-table-column label="字典项名称" align="center" prop="itemName" width="180" :show-overflow-tooltip="true" />
-      <el-table-column label="字典项标识" align="center" prop="itemCode" :show-overflow-tooltip="true" />
+      <el-table-column label="字典项名称" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
+      <el-table-column label="字典项Code" align="center" prop="code" :show-overflow-tooltip="true" />
       <el-table-column label="状态" align="center" width="80">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
@@ -61,11 +61,11 @@
     <!-- 添加或修改字典项对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="dataRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="字典项名称" prop="itemName">
-          <el-input v-model="form.itemName" placeholder="请输入字典项名称" />
+        <el-form-item label="字典项名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入字典项名称" />
         </el-form-item>
-        <el-form-item label="字典项标识" prop="itemCode">
-          <el-input v-model="form.itemCode" placeholder="请输入字典项标识" :disabled="form.id != undefined" />
+        <el-form-item label="字典项Code" prop="code">
+          <el-input v-model="form.code" placeholder="请输入字典项Code" :disabled="form.id != undefined" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -127,9 +127,9 @@ const data = reactive({
     dictId: dictId.value  /* 字典ID */
   },
   rules: {
-    itemName: [{ required: true, message: "字典项名称不能为空", trigger: "blur" }],
-    itemCode: [
-      { required: true, message: "字典项标识不能为空", trigger: "blur" },
+    name: [{ required: true, message: "字典项名称不能为空", trigger: "blur" }],
+    code: [
+      { required: true, message: "字典项Code不能为空", trigger: "blur" },
       { pattern: /^[0-9]+$/, message: "只允许输入数字", trigger: "blur" },
       {
         validator: (rule, value, callback) => {
@@ -194,8 +194,8 @@ function reset() {
   form.value = {
     id: undefined,
     dictId: dictId.value,
-    itemName: undefined,
-    itemCode: undefined,
+    name: undefined,
+    code: undefined,
     status: 0,
     order: 0,
     remark: undefined
