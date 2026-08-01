@@ -15,10 +15,10 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="参数键名" prop="key">
+      <el-form-item label="参数Key" prop="key">
         <el-input
           v-model="queryParams.key"
-          placeholder="请输入参数键名"
+          placeholder="请输入参数Key"
           clearable
           style="width: 200px"
           @keyup.enter="handleQuery"
@@ -53,10 +53,10 @@
     <!-- 参数列表 -->
     <el-table v-loading="loading" :data="configList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" width="100" />
+      <el-table-column label="序号" align="center" prop="id" width="50" />
       <el-table-column label="参数名称" align="center" prop="name" :show-overflow-tooltip="true" />
-      <el-table-column label="参数键名" align="center" prop="key" :show-overflow-tooltip="true" />
-      <el-table-column label="参数键值" align="center" prop="value" :show-overflow-tooltip="true" />
+      <el-table-column label="参数Key" align="center" prop="key" :show-overflow-tooltip="true" />
+      <el-table-column label="参数Value" align="center" prop="value" :show-overflow-tooltip="true" />
       <el-table-column label="状态" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
@@ -89,11 +89,11 @@
         <el-form-item label="参数名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入参数名称" />
         </el-form-item>
-        <el-form-item label="参数键名" prop="key">
-          <el-input v-model="form.key" placeholder="请输入参数键名" />
+        <el-form-item label="参数Key" prop="key">
+          <el-input v-model="form.key" placeholder="请输入参数Key" :disabled="form.id != undefined" />
         </el-form-item>
-        <el-form-item label="参数键值" prop="value">
-          <el-input v-model="form.value" type="textarea" placeholder="请输入参数键值" />
+        <el-form-item label="参数Value" prop="value">
+          <el-input v-model="form.value" type="textarea" placeholder="请输入参数Value" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -145,13 +145,13 @@ const data = reactive({
     pageNum: 1,        /* 当前页码 */
     pageSize: 10,      /* 每页条数 */
     name: undefined,   /* 参数名称 */
-    key: undefined,    /* 参数键名 */
+    key: undefined,    /* 参数Key */
     status: -1         /* 状态（-1 全部、0 正常、1 停用） */
   },
   rules: {
     name: [{ required: true, message: "参数名称不能为空", trigger: "blur" }],
-    key: [{ required: true, message: "参数键名不能为空", trigger: "blur" }],
-    value: [{ required: true, message: "参数键值不能为空", trigger: "blur" }]
+    key: [{ required: true, message: "参数Key不能为空", trigger: "blur" }],
+    value: [{ required: true, message: "参数Value不能为空", trigger: "blur" }]
   }
 })
 

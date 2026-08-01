@@ -12,10 +12,10 @@
  *   响应 - 301 自动登录弹窗 / blob 透传 / 业务码统一处理
  */
 import axios from 'axios'
-import {ElNotification, ElMessageBox, ElMessage, ElLoading} from 'element-plus'
 import {getToken, getTokenKeyHeader} from '@/utils/auth'
 import {tansParams, blobValidate} from '@/utils/common'
 import cache from '@/utils/cache'
+import modal from '@/utils/modal'
 import {saveAs} from 'file-saver'
 import {useUserStore} from '@/store'
 import settings from '@/settings'
@@ -151,19 +151,13 @@ service.interceptors.request.use(config => {
  *         - 点击"重新登录"时调用 userStore.logout() 清除状态并跳转登录页。
  *         - 始终返回 rejected Promise，阻止后续代码继续执行。
  *
- *      3. code === 500（服务端内部错误）
- *         - 以 ElMessage error 样式展示错误信息 + rejected Promise。
+ *      3. code !== 200（其他非成功码，如 403/404）
+ *         - 以 modal.msgError 样式展示错误信息 + rejected Promise。
  *
- *      4. code === 601（业务警告）
- *         - 以 ElMessage warning 样式展示提示 + rejected Promise。
- *
- *      5. code !== 200（其他非成功码，如 403/404）
- *         - 以 ElNotification error 形式展示 + rejected Promise。
- *
- *      6. code === 200（业务成功）
+ *      4. code === 200（业务成功）
  *         - 直接返回 res.data，业务层无需再解包装。
  *
- *      7. HTTP 层异常（网络断开 / 超时 / HTTP 错误码）
+ *      5. HTTP 层异常（网络断开 / 超时 / HTTP 错误码）
  *          - 将英文错误消息映射为中文后展示。
  */
 service.interceptors.response.use(res => {
@@ -179,11 +173,7 @@ service.interceptors.response.use(res => {
         if (code === 301) {
             if (!isRelogin.show) {
                 isRelogin.show = true
-                ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
-                    confirmButtonText: '重新登录',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
+                modal.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录').then(() => {
                     isRelogin.show = false
                     useUserStore().logout().then(() => {
                         location.href = settings.homePath
@@ -195,28 +185,16 @@ service.interceptors.response.use(res => {
             return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         }
 
-        // 3. 500：业务异常（服务端）
-        if (code === 500) {
-            ElMessage({message: msg, type: 'error'})
-            return Promise.reject(new Error(msg))
-        }
-
-        // 4. 601：业务警告
-        if (code === 601) {
-            ElMessage({message: msg, type: 'warning'})
-            return Promise.reject(new Error(msg))
-        }
-
-        // 5. 其他非成功码
+        // 3. 其他非成功码（非200）
         if (code !== 200) {
-            ElNotification.error({title: msg})
-            return Promise.reject('error')
+            modal.msgError(msg)     // msgWarning、notifyError
+            return Promise.reject(msg?new Error(msg):'error')
         }
 
-        // 6. 业务成功
+        // 4. 业务成功
         return Promise.resolve(res.data)
     },
-    // 7. HTTP 层异常
+    // 5. HTTP 层异常
     error => {
         console.log('err' + error)
         let {message} = error
@@ -227,7 +205,7 @@ service.interceptors.response.use(res => {
         } else if (message.includes("Request failed with status code")) {
             message = "系统接口" + message.slice(-3) + "异常"
         }
-        ElMessage({message: message, type: 'error', duration: 5 * 1000})
+        modal.msgError(message)
         return Promise.reject(error)
     }
 )
@@ -255,7 +233,7 @@ service.interceptors.response.use(res => {
  * @param {Object} [config]  额外的 axios 请求配置（可选）
  */
 function download(url, params, filename, config) {
-    const downloadLoadingInstance = ElLoading.service({text: "正在下载数据，请稍候", background: "rgba(0, 0, 0, 0.7)",})
+    modal.loading('正在下载数据，请稍候')
     return service.post(url, params, {
         transformRequest: [(params) => tansParams(params)],
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -272,13 +250,13 @@ function download(url, params, filename, config) {
             const resText = await data.text()
             const rspObj = JSON.parse(resText)
             const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
-            ElMessage.error(errMsg)
+            modal.msgError(errMsg)
         }
-        downloadLoadingInstance.close()
+        modal.closeLoading()
     }).catch((r) => {
         console.error(r)
-        ElMessage.error('下载文件出现错误，请联系管理员！')
-        downloadLoadingInstance.close()
+        modal.msgError('下载文件出现错误，请联系管理员！')
+        modal.closeLoading()
     })
 }
 
