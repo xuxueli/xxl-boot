@@ -155,7 +155,7 @@
       </template>
     </el-dialog>
     <notice-detail-view ref="noticeViewRef" />
-    <read-users-dialog ref="readUsersRef" />
+    <ReadUsersDialog ref="readUsersRef" />
   </div>
 </template>
 
@@ -272,7 +272,7 @@ function resetQuery() {
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id)
-  single.value = selection.length != 1
+  single.value = selection.length !== 1
   multiple.value = !selection.length
 }
 

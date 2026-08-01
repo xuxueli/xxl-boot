@@ -43,8 +43,8 @@ public class LoginControllerTest {
     }
 
     @Test
-    void logincheck_test() {
-        HttpResponse response = HttpTool.createPost(API_SERVICE_URL + "/auth/logincheck")
+    void loginCheck_test() {
+        HttpResponse response = HttpTool.createPost(API_SERVICE_URL + "/auth/loginCheck")
                 .header(TEST_TOKEN_KEY, TEST_TOKEN_VALUE)
                 .execute();
         logger.info("Response: {}", response.response());

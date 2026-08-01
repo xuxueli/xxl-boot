@@ -49,7 +49,7 @@ export function login(username, password, captchaUuid, captchaResult) {
  */
 export function getInfo() {
   return request({
-    url: '/auth/logincheck',
+    url: '/auth/loginCheck',
     method: 'get'
   })
 }

@@ -70,7 +70,7 @@ const props = defineProps({
   // 上传接口地址（相对于 base API）
   action: {
     type: String,
-    default: "/common/upload"
+    default: "/file/upload"
   },
   // 上传时携带的额外参数
   data: {

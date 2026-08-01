@@ -230,9 +230,9 @@ public class LoginController {
 	/**
 	 * loginCheck
 	 */
-	@RequestMapping("/logincheck")
+	@RequestMapping("/loginCheck")
 	@XxlSso
-	public Response<LoginInfo> logincheck(HttpServletRequest request) {
+	public Response<LoginInfo> loginCheck(HttpServletRequest request) {
 		// login check
 		return XxlSsoHelper.loginCheckWithAttr(request);
 	}
