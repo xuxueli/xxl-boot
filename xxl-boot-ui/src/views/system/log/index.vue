@@ -9,13 +9,13 @@
       <el-form-item label="日志类型" prop="type">
         <el-select v-model="queryParams.type" placeholder="日志类型" clearable style="width: 200px">
           <el-option label="全部" :value="-1" />
-          <el-option v-for="item in typeOptions" :key="item.code" :label="item.title" :value="item.code" />
+          <el-option v-for="item in typeDict.options" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item label="系统模块" prop="module">
         <el-select v-model="queryParams.module" placeholder="系统模块" clearable style="width: 200px">
           <el-option label="全部" :value="0" />
-          <el-option v-for="item in moduleOptions" :key="item.code" :label="item.title" :value="item.code" />
+          <el-option v-for="item in moduleDict.options" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item label="日志标题" prop="title">
@@ -52,7 +52,7 @@
       </el-table-column>
       <el-table-column label="系统模块" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
-          {{ moduleMap[scope.row.module] || scope.row.module }}
+          {{ moduleDict.map[scope.row.module] || scope.row.module }}
         </template>
       </el-table-column>
       <el-table-column label="日志标题" align="center" prop="title" :show-overflow-tooltip="true" />
@@ -79,7 +79,7 @@
       v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 详情弹窗 -->
-    <LogDetail v-model:visible="detailVisible" :row="detailRow" :module-map="moduleMap" />
+    <LogDetail v-model:visible="detailVisible" :row="detailRow" :module-map="moduleDict.map" />
   </div>
 </template>
 
@@ -118,11 +118,15 @@ const multiple = ref(true)        /* 表格：是否多选 */
 const detailVisible = ref(false)  /* 详情弹窗：可见状态 */
 const detailRow = ref({})         /* 详情弹窗：当前查看的日志行 */
 
-// 枚举数据
-const typeOptions = ref([])       /* 日志类型下拉选项 */
-const typeMap = ref({})           /* 日志类型编码 → 名称映射 */
-const moduleOptions = ref([])     /* 系统模块下拉选项 */
-const moduleMap = ref({})         /* 系统模块编码 → 名称映射 */
+// 枚举数据（下拉选项 + 编码→名称映射）
+const typeDict = ref({
+  options: [],  /* 日志类型下拉选项 */
+  map: {}       /* 日志类型编码 → 名称映射 */
+})
+const moduleDict = ref({
+  options: [],  /* 系统模块下拉选项 */
+  map: {}       /* 系统模块编码 → 名称映射 */
+})
 
 
 // --------------------------------- fun ---------------------------------
@@ -147,7 +151,7 @@ function getList() {
 
 /** 日志类型编码 → 文案 */
 function typeText(type) {
-  const item = typeOptions.value.find(i => i.code === type)
+  const item = typeDict.value.options.find(i => i.code === type)
   return item ? item.title : type
 }
 
@@ -202,12 +206,14 @@ function handleExport() {
 
 // 加载日志类型、系统模块枚举（下拉选项）
 loadEnumItem('LogTypeEnum').then(res => {
-  typeOptions.value = res.data
-  typeOptions.value.forEach(item => { typeMap.value[item.code] = item.title })
+  typeDict.value.options = res.data
+  typeDict.value.map = {}
+  typeDict.value.options.forEach(item => { typeDict.value.map[item.code] = item.title })
 })
 loadEnumItem('LogModuleEnum').then(res => {
-  moduleOptions.value = res.data
-  moduleOptions.value.forEach(item => { moduleMap.value[item.code] = item.title })
+  moduleDict.value.options = res.data
+  moduleDict.value.map = {}
+  moduleDict.value.options.forEach(item => { moduleDict.value.map[item.code] = item.title })
 })
 
 // 页面初始化加载日志列表
