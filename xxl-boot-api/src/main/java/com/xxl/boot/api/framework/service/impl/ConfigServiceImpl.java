@@ -5,6 +5,8 @@ import com.xxl.boot.api.framework.model.adaptor.ConfigAdaptor;
 import com.xxl.boot.api.framework.model.dto.ConfigDTO;
 import com.xxl.boot.api.framework.model.entity.Config;
 import com.xxl.boot.api.framework.service.ConfigService;
+import com.xxl.tool.core.RegexTool;
+import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
@@ -21,8 +23,15 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Response<String> insert(Config xxlBootConfig) {
 
-        if (xxlBootConfig == null) {
+        // 参数校验
+        if (xxlBootConfig == null
+                || StringTool.isBlank(xxlBootConfig.getName())
+                || StringTool.isBlank(xxlBootConfig.getKey())) {
             return Response.ofFail("必要参数缺失");
+        }
+        // 配置Key格式校验：小写字母开头，由小写字母、数字和点组成
+        if (!RegexTool.matches("^[a-z][a-z0-9.]*$", xxlBootConfig.getKey())) {
+            return Response.ofFail("配置Key格式不正确");
         }
 
         configMapper.insert(xxlBootConfig);

@@ -35,7 +35,7 @@ public class ConfigController {
     }
 
     /**
-     * 按参数键名查询
+     * 按配置Key查询
      */
     @RequestMapping("/loadByKey")
     @XxlSso

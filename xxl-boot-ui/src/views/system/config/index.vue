@@ -1,31 +1,31 @@
 <!--
-  页面：Config（参数管理）
-  功能：查询、新增、修改、删除系统参数
+  页面：Config（配置管理）
+  功能：查询、新增、修改、删除系统配置
 -->
 <template>
   <div class="app-container">
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
-      <el-form-item label="参数名称" prop="name">
+      <el-form-item label="配置名称" prop="name">
         <el-input
           v-model="queryParams.name"
-          placeholder="请输入参数名称"
+          placeholder="请输入配置名称"
           clearable
           style="width: 200px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="参数Key" prop="key">
+      <el-form-item label="配置Key" prop="key">
         <el-input
           v-model="queryParams.key"
-          placeholder="请输入参数Key"
+          placeholder="请输入配置Key"
           clearable
           style="width: 200px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="参数状态" clearable style="width: 200px">
+        <el-select v-model="queryParams.status" placeholder="配置状态" clearable style="width: 200px">
           <el-option label="全部" :value="-1" />
           <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
@@ -50,14 +50,14 @@
       <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
-    <!-- 参数列表 -->
+    <!-- 配置列表 -->
     <el-table v-loading="loading" :data="configList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" width="50" />
-      <el-table-column label="参数名称" align="center" prop="name" :show-overflow-tooltip="true" />
-      <el-table-column label="参数Key" align="center" prop="key" :show-overflow-tooltip="true" />
-      <el-table-column label="参数Value" align="center" prop="value" :show-overflow-tooltip="true" />
-      <el-table-column label="状态" align="center" width="100">
+      <el-table-column label="配置名称" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
+      <el-table-column label="配置Key" align="center" prop="key" width="180" :show-overflow-tooltip="true" />
+      <el-table-column label="配置Value" align="center" prop="value" :show-overflow-tooltip="true" />
+      <el-table-column label="状态" align="center" width="80">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
             {{ statusText(scope.row.status) }}
@@ -83,17 +83,17 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改参数对话框 -->
+    <!-- 添加或修改配置对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="configRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="参数名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入参数名称" />
+        <el-form-item label="配置名称" prop="name">
+          <el-input v-model="form.name" placeholder="请输入配置名称" />
         </el-form-item>
-        <el-form-item label="参数Key" prop="key">
-          <el-input v-model="form.key" placeholder="请输入参数Key" :disabled="form.id != undefined" />
+        <el-form-item label="配置Key" prop="key">
+          <el-input v-model="form.key" placeholder="请输入配置Key" :disabled="form.id != undefined" />
         </el-form-item>
-        <el-form-item label="参数Value" prop="value">
-          <el-input v-model="form.value" type="textarea" placeholder="请输入参数Value" />
+        <el-form-item label="配置Value" prop="value">
+          <el-input v-model="form.value" type="textarea" placeholder="请输入配置Value" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="form.status">
@@ -123,7 +123,7 @@ const resetForm = useFormReset()
 
 const configRef = ref(null)   /* 表单 ref */
 
-const configList = ref([])    /* 参数列表 */
+const configList = ref([])    /* 配置列表 */
 const open = ref(false)       /* 对话框显隐 */
 const loading = ref(true)     /* 加载状态 */
 const showSearch = ref(true)  /* 是否显示搜索栏 */
@@ -144,20 +144,23 @@ const data = reactive({
   queryParams: {
     pageNum: 1,        /* 当前页码 */
     pageSize: 10,      /* 每页条数 */
-    name: undefined,   /* 参数名称 */
-    key: undefined,    /* 参数Key */
+    name: undefined,   /* 配置名称 */
+    key: undefined,    /* 配置Key */
     status: -1         /* 状态（-1 全部、0 正常、1 停用） */
   },
   rules: {
-    name: [{ required: true, message: "参数名称不能为空", trigger: "blur" }],
-    key: [{ required: true, message: "参数Key不能为空", trigger: "blur" }],
-    value: [{ required: true, message: "参数Value不能为空", trigger: "blur" }]
+    name: [{ required: true, message: "配置名称不能为空", trigger: "blur" }],
+    key: [
+      { required: true, message: "配置Key不能为空", trigger: "blur" },
+      { pattern: /^[a-z][a-z0-9.]*$/, message: "以小写字母开头，只能由小写字母、数字和点组成", trigger: "blur" }
+    ],
+    value: [{ required: true, message: "配置Value不能为空", trigger: "blur" }]
   }
 })
 
 const { queryParams, form, rules } = toRefs(data)
 
-/** 查询参数列表 */
+/** 查询配置列表 */
 function getList() {
   loading.value = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
@@ -223,7 +226,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset()
   open.value = true
-  title.value = "添加参数"
+  title.value = "添加配置"
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -237,7 +240,7 @@ function handleUpdate(row) {
   getConfig(id).then(response => {
     form.value = response.data
     open.value = true
-    title.value = "修改参数"
+    title.value = "修改配置"
   })
 }
 
@@ -269,7 +272,7 @@ function handleDelete(row) {
   if (configIds == null || (Array.isArray(configIds) && configIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除参数编号为"' + configIds + '"的数据项？').then(function () {
+  modal.confirm('是否确认删除配置编号为"' + configIds + '"的数据项？').then(function () {
     return delConfig(configIds)
   }).then(() => {
     getList()
@@ -277,6 +280,6 @@ function handleDelete(row) {
   }).catch(() => {})
 }
 
-// 页面初始化加载参数列表
+// 页面初始化加载配置列表
 getList()
 </script>

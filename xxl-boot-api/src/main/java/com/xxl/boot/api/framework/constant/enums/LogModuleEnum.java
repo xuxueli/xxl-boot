@@ -20,7 +20,7 @@ public enum LogModuleEnum implements EnumTool.IEnum {
     // 系统
     MESSAGE(1101,"消息管理"),
     DICT(1102,"字典管理"),
-    CONFIG(1103,"参数管理"),
+    CONFIG(1103,"配置管理"),
 
     // 工具
     CODE_GEN(1201,"代码生成"),

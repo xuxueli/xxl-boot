@@ -202,7 +202,7 @@ public class LoginController {
 	}
 
 	/**
-	 * 登录验证码开关：从系统参数中读取（配置Key：system.login.captcha.enabled，值为 true/false）
+	 * 登录验证码开关：从系统配置中读取（配置Key：system.login.captcha.enabled，值为 true/false）
 	 */
 	private boolean isCaptchaEnabled() {
 		Config config = configService.loadByKey("system.login.captcha.enabled").getData();

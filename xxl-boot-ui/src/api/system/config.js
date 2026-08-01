@@ -1,14 +1,14 @@
 import request from '@/utils/request'
 
 /**
- * 名称：系统参数 API
- * 能力：提供系统参数查询、维护接口。
+ * 名称：系统配置 API
+ * 能力：提供系统配置查询、维护接口。
  */
 
 /**
- * 分页查询参数列表。
+ * 分页查询配置列表。
  * @param {Object} query 查询参数（name/key/status/offset/pagesize）。
- * @returns {Promise<any>} 参数分页列表。
+ * @returns {Promise<any>} 配置分页列表。
  */
 export function listConfig(query) {
   return request({
@@ -19,9 +19,9 @@ export function listConfig(query) {
 }
 
 /**
- * 查询单条参数详情。
- * @param {number} id 参数ID。
- * @returns {Promise<any>} 参数详情。
+ * 查询单条配置详情。
+ * @param {number} id 配置ID。
+ * @returns {Promise<any>} 配置详情。
  */
 export function getConfig(id) {
   return request({
@@ -32,9 +32,9 @@ export function getConfig(id) {
 }
 
 /**
- * 按参数键名查询参数。
- * @param {string} key 参数键名。
- * @returns {Promise<any>} 参数详情。
+ * 按配置Key查询配置。
+ * @param {string} key 配置Key。
+ * @returns {Promise<any>} 配置详情。
  */
 export function getConfigKey(key) {
   return request({
@@ -45,8 +45,8 @@ export function getConfigKey(key) {
 }
 
 /**
- * 新增参数。
- * @param {Object} data 参数数据。
+ * 新增配置。
+ * @param {Object} data 配置数据。
  * @returns {Promise<any>} 新增结果。
  */
 export function addConfig(data) {
@@ -58,8 +58,8 @@ export function addConfig(data) {
 }
 
 /**
- * 更新参数。
- * @param {Object} data 参数数据。
+ * 更新配置。
+ * @param {Object} data 配置数据。
  * @returns {Promise<any>} 更新结果。
  */
 export function updateConfig(data) {
@@ -71,8 +71,8 @@ export function updateConfig(data) {
 }
 
 /**
- * 删除参数。
- * @param {number|Array} id 参数ID或参数ID数组。
+ * 删除配置。
+ * @param {number|Array} id 配置ID或配置ID数组。
  * @returns {Promise<any>} 删除结果。
  */
 export function delConfig(id) {
