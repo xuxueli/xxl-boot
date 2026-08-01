@@ -6,15 +6,30 @@
 
 ## 二、代码规范
 
-- Java 的 set/get 方法，不折叠成一行，使用正常方法体书写。
-- 变量命名：
-  - 驼峰式命名，首字母小写，类名首字母大写。
-  - 变量命名应具有可读性，避免使用无意义单字母，避免使用拼音命名。
-- 方法命名：
-  - 方法命名应具有可读性，避免使用无语义性命名。
-- 代码实现：
-  - 避免过度设计，注重复用、易理解、易维护。
-  - 避免同类场景使用多种实现方案，保持规范与实现方式统一。
+### 2.1 命名规范
+
+- 类名使用大驼峰命名，首字母大写；变量、方法使用小驼峰命名，首字母小写。
+- 命名应表达真实语义、具备可读性，避免无意义单字母（循环变量等通用惯例除外），避免使用拼音。
+- 常量使用全大写 + 下划线分隔，如 `REPEAT_SUBMIT_STORAGE_KEY`。
+- 布尔属性不使用 `isXxx` 前缀命名，避免与 getter 生成冲突。
+
+### 2.2 代码实现
+
+- 避免过度设计，注重复用、易理解、易维护。
+- 同一类场景保持同一套实现方案，不混用多种写法（如各模块 Controller 的 pageList/load/insert/delete/update 结构保持一致）。
+- 分层职责清晰：Controller 负责参数接收与校验、Service 负责业务逻辑、Mapper 负责数据访问，不跨层越权。
+- Java 的 set/get 方法不折叠成一行，使用正常方法体书写。
+
+### 2.3 接口规范
+
+- 接口路径采用「模块前缀 + 动词式后缀」，如 `/system/message/pageList`、`/load`、`/insert`、`/delete`。
+- 统一返回 `Response(code、msg、data)`，分页返回 `Response<PageModel>`；分页入参统一为 `offset`、`pagesize`，由前端传入。
+- 数据库字段采用下划线命名，Java 实体采用对应驼峰命名，并在 mapper XML 中显式配置字段映射。
+
+### 2.4 前端规范
+
+- 组件 import 名称与模板使用标签保持一致（统一 PascalCase，如 `import NoticeDetailView` 对应 `<NoticeDetailView>`）
+- 列表数据统一从 `response.data.data`、总数从 `response.data.total` 获取，注意取数层级。
 
 ## 三、注释规范
 
