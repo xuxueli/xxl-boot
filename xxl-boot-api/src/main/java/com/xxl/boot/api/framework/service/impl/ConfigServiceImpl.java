@@ -48,6 +48,12 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
+    public Response<Config> loadByKey(String key) {
+        Config record = configMapper.loadByKey(key);
+        return Response.ofSuccess(record);
+    }
+
+    @Override
     public PageModel<ConfigDTO> pageList(int status, String name, String key, int offset, int pagesize) {
 
         List<Config> pageList = configMapper.pageList(status, name, key, offset, pagesize);

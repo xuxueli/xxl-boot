@@ -17,6 +17,8 @@ public interface ConfigMapper {
 
     public Config load(@Param("id") int id);
 
+    public Config loadByKey(@Param("key") String key);
+
     public List<Config> pageList(@Param("status") int status,
                                         @Param("name") String name,
                                         @Param("key") String key,

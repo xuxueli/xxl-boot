@@ -468,7 +468,7 @@ onMounted(() => {
   getDeptTree()
   getList()
   getConfigKey("sys.user.initPassword").then(response => {
-    initPassword.value = response.msg
+    initPassword.value = response.data ? response.data.value : undefined
   })
 })
 </script>

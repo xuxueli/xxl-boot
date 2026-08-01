@@ -17,6 +17,8 @@ public interface ConfigService {
 
     public Response<Config> load(int id);
 
+    public Response<Config> loadByKey(String key);
+
     public PageModel<ConfigDTO> pageList(int status, String name, String key, int offset, int pagesize);
 
 }

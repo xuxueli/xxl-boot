@@ -195,7 +195,7 @@ service.interceptors.response.use(res => {
             return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         }
 
-        // 3. 500：服务端内部错误
+        // 3. 500：业务异常（服务端）
         if (code === 500) {
             ElMessage({message: msg, type: 'error'})
             return Promise.reject(new Error(msg))

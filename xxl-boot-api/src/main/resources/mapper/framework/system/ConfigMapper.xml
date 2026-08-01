@@ -72,6 +72,12 @@
         WHERE t.`id` = #{id}
     </select>
 
+    <select id="loadByKey" parameterType="java.util.Map" resultMap="Config">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_config AS t
+        WHERE t.`key` = #{key}
+    </select>
+
     <select id="pageList" parameterType="java.util.Map" resultMap="Config">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_config AS t
