@@ -1,10 +1,10 @@
 <!--
-  组件：HeaderNoticeDetail（公告详情抽屉）
-  功能：从右侧滑出抽屉展示公告完整详情内容
+  组件：HeaderNoticeDetail（站内消息详情抽屉）
+  功能：从右侧滑出抽屉展示消息完整详情内容
 -->
 <template>
   <!-- 右侧滑出抽屉，半屏展示 -->
-  <el-drawer v-model="visible" title="公告详情" direction="rtl" size="50%" append-to-body :before-close="handleClose" class="notice-detail-drawer">
+  <el-drawer v-model="visible" title="站内消息详情" direction="rtl" size="50%" append-to-body :before-close="handleClose" class="notice-detail-drawer">
     <div v-loading="loading" class="notice-detail-drawer__body">
       <!-- 无数据状态 -->
       <div v-if="!detail" class="notice-empty">
@@ -72,7 +72,7 @@ import { getNotice } from '@/api/system/message.js'
 
 const visible = ref(false)  /* 抽屉显隐 */
 const loading = ref(false)  /* 接口加载状态 */
-const detail = ref(null)    /* 公告详情数据 */
+const detail = ref(null)    /* 消息详情数据 */
 
 /*
 * 公告状态：'0' 为正常

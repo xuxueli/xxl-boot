@@ -291,7 +291,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset()
   open.value = true
-  title.value = "添加消息"
+  title.value = "新增站内消息"
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -305,7 +305,7 @@ function handleUpdate(row) {
   getNotice(id).then(response => {
     form.value = response.data
     open.value = true
-    title.value = "修改消息"
+    title.value = "修改站内消息"
   })
 }
 

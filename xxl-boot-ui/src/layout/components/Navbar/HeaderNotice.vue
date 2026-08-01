@@ -1,6 +1,6 @@
 <!--
-  组件：HeaderNotice（通知公告）
-  功能：顶部导航栏铃铛图标，hover 弹出未读公告列表，支持标记已读、全部已读、预览详情
+  组件：HeaderNotice（站内消息）
+  功能：顶部导航栏铃铛图标，hover 弹出未读消息列表，支持标记已读、全部已读、预览详情
 -->
 <template>
   <div>
@@ -21,7 +21,7 @@
 
       <!-- 面板头部：标题 + 全部已读按钮 -->
       <div class="notice-header">
-        <span class="notice-title">通知公告</span>
+        <span class="notice-title">站内消息</span>
         <span class="notice-mark-all" @click="markAllRead">全部已读</span>
       </div>
 
