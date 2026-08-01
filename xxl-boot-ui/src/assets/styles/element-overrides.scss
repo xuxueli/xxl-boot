@@ -40,6 +40,7 @@
     .el-button [class*="el-icon-"] + span { margin-left: 1px; }
   }
   .fixed-width .el-button--small { padding-left: 0; padding-right: 0; width: inherit; }
+  .fixed-width .el-button { font-size: 12px; }
   .el-dropdown-link { cursor: pointer; color: #409EFF; margin-left: 10px; }
   .el-dropdown, .el-icon-arrow-down { font-size: 12px; }
 }
