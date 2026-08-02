@@ -1,24 +1,31 @@
 package com.xxl.boot.admin.framework.constant.enums;
 
-public enum MessageCategoryEnum {
+import com.xxl.boot.admin.framework.util.EnumTool;
+
+/**
+ * 消息分类枚举
+ *
+ * @author xuxueli 2024-11-03
+ */
+public enum MessageCategoryEnum implements EnumTool.IEnum {
 
     NOTICE(0, "通知"),
     ANNOUNCEMENT(1, "公告");
 
-    private int value;
-    private String desc;
+    private int code;       /* 分类编码 */
+    private String title;   /* 分类描述 */
 
-    MessageCategoryEnum(int value, String desc) {
-        this.value = value;
-        this.desc = desc;
+    MessageCategoryEnum(int code, String title) {
+        this.code = code;
+        this.title = title;
     }
 
-    public int getValue() {
-        return value;
+    public int getCode() {
+        return code;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getTitle() {
+        return title;
     }
 
 }

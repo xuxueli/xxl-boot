@@ -27,7 +27,7 @@
                                 <select class="form-control category" >
                                     <option value="-1" >${I18n.system_all}</option>
                                     <#list MessageCategoryEnum as item>
-                                        <option value="${item.value}" >${item.desc}</option>
+                                        <option value="${item.code}" >${item.title}</option>
                                     </#list>
                                 </select>
                             </div>
@@ -38,7 +38,7 @@
                                 <select class="form-control status" >
                                     <option value="-1" >${I18n.system_all}</option>
                                     <#list MessageStatusEnum as item>
-                                        <option value="${item.value}" >${item.desc}</option>
+                                        <option value="${item.code}" >${item.title}</option>
                                     </#list>
                                 </select>
                             </div>
@@ -93,7 +93,7 @@
                                     <div class="col-sm-5">
                                         <select class="form-control" name="category" >
                                             <#list MessageCategoryEnum as item>
-                                                <option value="${item.value}" >${item.desc}</option>
+                                                <option value="${item.code}" >${item.title}</option>
                                             </#list>
                                         </select>
                                     </div>
@@ -103,7 +103,7 @@
                                     <div class="col-sm-6">
                                         <#list MessageStatusEnum as item>
                                             <span class="col-sm-3" style="padding-left: 0px;">
-                                                <input type="radio" name="status" value="${item.value}" > ${item.desc}
+                                                <input type="radio" name="status" value="${item.code}" > ${item.title}
                                             </span>
                                         </#list>
                                     </div>
@@ -147,7 +147,7 @@
                                     <div class="col-sm-5">
                                         <select class="form-control" name="category" >
                                             <#list MessageCategoryEnum as item>
-                                                <option value="${item.value}" >${item.desc}</option>
+                                                <option value="${item.code}" >${item.title}</option>
                                             </#list>
                                         </select>
                                     </div>
@@ -157,7 +157,7 @@
                                     <div class="col-sm-6">
                                         <#list MessageStatusEnum as item>
                                             <span class="col-sm-3" style="padding-left: 0px;">
-                                                <input type="radio" name="status" value="${item.value}" > ${item.desc}
+                                                <input type="radio" name="status" value="${item.code}" > ${item.title}
                                             </span>
                                         </#list>
                                     </div>

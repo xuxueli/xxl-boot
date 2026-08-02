@@ -27,7 +27,7 @@
                                 <select class="form-control status" >
                                     <option value="-1" >${I18n.system_all}</option>
                                     <#list ConfigStatusEnum as item>
-                                        <option value="${item.value}" >${item.desc}</option>
+                                        <option value="${item.code}" >${item.title}</option>
                                     </#list>
                                 </select>
                             </div>
@@ -100,7 +100,7 @@
                                     <div class="col-sm-8">
                                         <#list ConfigStatusEnum as item>
                                             <span class="col-sm-4" >
-                                                <input type="radio" name="status" value="${item.value}" > ${item.desc}
+                                                <input type="radio" name="status" value="${item.code}" > ${item.title}
                                             </span>
                                         </#list>
                                     </div>
@@ -152,7 +152,7 @@
                                     <div class="col-sm-8">
                                         <#list ConfigStatusEnum as item>
                                             <span class="col-sm-4" >
-                                                <input type="radio" name="status" value="${item.value}" > ${item.desc}
+                                                <input type="radio" name="status" value="${item.code}" > ${item.title}
                                             </span>
                                         </#list>
                                     </div>
@@ -195,8 +195,8 @@ $(function() {
 
     // valid: config key
     $.validator.addMethod("configKeyRule", function(value, element) {
-        return this.optional(element) || /^[a-z][a-z0-9_]*$/.test(value);
-    }, "必须以小写字母开头，仅允许小写字母、数字和下划线");
+        return this.optional(element) || /^[a-z][a-z0-9.]*$/.test(value);
+    }, "必须小写字母开头，由小写字母、数字和点组成");
 
 
     // ---------- ---------- ---------- table + curd  ---------- ---------- ----------

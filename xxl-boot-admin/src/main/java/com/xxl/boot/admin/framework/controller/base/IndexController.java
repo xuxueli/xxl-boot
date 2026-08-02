@@ -71,7 +71,7 @@ public class IndexController {
 	public String dashboard(HttpServletRequest request, Model model) {
 
         // message
-		PageModel<MessageDTO>  pageModel = messageService.pageList(MessageStatusEnum.NORMAL.getValue(), null, 0, 10);
+		PageModel<MessageDTO>  pageModel = messageService.pageList(MessageStatusEnum.NORMAL.getCode(), null, 0, 10);
 		if (pageModel!=null && CollectionTool.isNotEmpty(pageModel.getData())) {
 			List<MessageDTO> messageList = pageModel.getData();
 			model.addAttribute("messageList", messageList);

@@ -1,28 +1,31 @@
 package com.xxl.boot.admin.framework.constant.enums;
 
-public enum RoleStatusEnum {
+import com.xxl.boot.admin.framework.util.EnumTool;
+
+/**
+ * 角色状态枚举
+ *
+ * @author xuxueli 2024-11-03
+ */
+public enum RoleStatusEnum implements EnumTool.IEnum {
 
     NORMAL(0, "正常"),
     INACTIVE(1, "停用");
 
-    private int status;
-    private String desc;
+    private int code;       /* 状态编码 */
+    private String title;   /* 状态描述 */
 
-    RoleStatusEnum(int status, String desc) {
-        this.status = status;
-        this.desc = desc;
+    RoleStatusEnum(int code, String title) {
+        this.code = code;
+        this.title = title;
     }
-    public int getStatus() {
-        return status;
+
+    public int getCode() {
+        return code;
     }
-    public void setStatus(int status) {
-        this.status = status;
-    }
-    public String getDesc() {
-        return desc;
-    }
-    public void setDesc(String desc) {
-        this.desc = desc;
+
+    public String getTitle() {
+        return title;
     }
 
 }

@@ -38,7 +38,7 @@
 							<select class="form-control status" >
 								<option value="-1" >${I18n.system_all}</option>
 								<#list userStatuEnum as item>
-									<option value="${item.status}" >${item.desc}</option>
+									<option value="${item.code}" >${item.title}</option>
 								</#list>
 							</select>
 						</div>
@@ -117,7 +117,7 @@
 								<div class="col-sm-8">
 									<#list userStatuEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;" >
-											<input type="radio" name="status" value="${item.status}" > ${item.desc}
+											<input type="radio" name="status" value="${item.code}" > ${item.title}
 										</span>
 									</#list>
 								</div>
@@ -187,7 +187,7 @@
 								<div class="col-sm-8">
 									<#list userStatuEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;" >
-											<input type="radio" name="status" value="${item.status}" > ${item.desc}
+											<input type="radio" name="status" value="${item.code}" > ${item.title}
 										</span>
 									</#list>
 								</div>

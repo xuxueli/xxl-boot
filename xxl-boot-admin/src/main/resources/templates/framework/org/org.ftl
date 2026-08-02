@@ -29,7 +29,7 @@
 								<select class="form-control status" >
 									<option value="-1" >${I18n.system_all}</option>
 									<#list orgStatuEnum as item>
-										<option value="${item.value}" >${item.desc}</option>
+										<option value="${item.code}" >${item.title}</option>
 									</#list>
 								</select>
 							</div>
@@ -109,7 +109,7 @@
 									<div class="col-sm-8">
 										<#list orgStatuEnum as item>
 											<label class="radio-inline">
-												<input type="radio" name="status" value="${item.value}" > ${item.desc}
+												<input type="radio" name="status" value="${item.code}" > ${item.title}
 											</label>
 										</#list>
 									</div>
@@ -166,7 +166,7 @@
 									<div class="col-sm-8">
 										<#list orgStatuEnum as item>
 											<label class="radio-inline">
-												<input type="radio" name="status" value="${item.value}" > ${item.desc}
+												<input type="radio" name="status" value="${item.code}" > ${item.title}
 											</label>
 										</#list>
 									</div>
@@ -243,7 +243,7 @@ $(function() {
 	// status map for table formatter
 	var statusMap = {};
 	<#list orgStatuEnum as item>
-	statusMap['${item.value}'] = '${item.desc}';
+	statusMap['${item.code}'] = '${item.title}';
 	</#list>
 
 	/**

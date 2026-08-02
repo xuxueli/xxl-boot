@@ -32,7 +32,7 @@
 							<select class="form-control status" >
 								<option value="-1" >${I18n.system_all}</option>
 								<#list resourceStatuEnum as item>
-									<option value="${item.value}" >${item.desc}</option>
+									<option value="${item.code}" >${item.title}</option>
 								</#list>
 							</select>
 						</div>
@@ -98,7 +98,7 @@
 								<div class="col-sm-4">
 									<#list resourceTypeEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;">
-											<input type="radio" name="type" value="${item.value}" > ${item.desc}
+											<input type="radio" name="type" value="${item.code}" > ${item.title}
 										</span>
 									</#list>
 								</div>
@@ -131,7 +131,7 @@
 								<div class="col-sm-4">
 									<#list resourceStatuEnum as item>
 										<span class="col-sm-6" style="padding-left: 0px;">
-											<input type="radio" name="status" value="${item.value}" > ${item.desc}
+											<input type="radio" name="status" value="${item.code}" > ${item.title}
 										</span>
 									</#list>
 								</div>
@@ -139,7 +139,7 @@
 								<div class="col-sm-4">
 									<#list resourceVisibleEnum as item>
 										<span class="col-sm-6" style="padding-left: 0px;">
-											<input type="radio" name="visible" value="${item.value}" > ${item.desc}
+											<input type="radio" name="visible" value="${item.code}" > ${item.title}
 										</span>
 									</#list>
 								</div>
@@ -182,7 +182,7 @@
 								<div class="col-sm-4">
 									<#list resourceTypeEnum as item>
 										<span class="col-sm-4" style="padding-left: 0px;">
-											<input type="radio" name="type" value="${item.value}" > ${item.desc}
+											<input type="radio" name="type" value="${item.code}" > ${item.title}
 										</span>
 									</#list>
 								</div>
@@ -215,7 +215,7 @@
 								<div class="col-sm-4">
 									<#list resourceStatuEnum as item>
 										<span class="col-sm-6" style="padding-left: 0px;">
-											<input type="radio" name="status" value="${item.value}" > ${item.desc}
+											<input type="radio" name="status" value="${item.code}" > ${item.title}
 										</span>
 									</#list>
 								</div>
@@ -223,7 +223,7 @@
 								<div class="col-sm-4">
 									<#list resourceVisibleEnum as item>
 										<span class="col-sm-6" style="padding-left: 0px;">
-											<input type="radio" name="visible" value="${item.value}" > ${item.desc}
+											<input type="radio" name="visible" value="${item.code}" > ${item.title}
 										</span>
 									</#list>
 								</div>

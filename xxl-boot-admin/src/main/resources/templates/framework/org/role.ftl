@@ -34,7 +34,7 @@
 							<select class="form-control status" >
 								<option value="">${I18n.system_all}</option>
 								<#list roleStatusEnum as enum>
-									<option value="${enum.status}">${enum.desc}</option>
+									<option value="${enum.code}">${enum.title}</option>
 								</#list>
 							</select>
 						</div>
@@ -125,7 +125,7 @@
 								<div class="col-sm-8">
 									<#list roleStatusEnum as enum>
 										<span class="col-sm-4" style="padding-left: 0px;" >
-											<input type="radio" name="status" value="${enum.status}" > ${enum.desc}
+											<input type="radio" name="status" value="${enum.code}" > ${enum.title}
 										</span>
 									</#list>
 								</div>
@@ -170,7 +170,7 @@
 								<div class="col-sm-8">
 									<#list roleStatusEnum as enum>
 										<span class="col-sm-4" style="padding-left: 0px;" >
-											<input type="radio" name="status" value="${enum.status}" > ${enum.desc}
+											<input type="radio" name="status" value="${enum.code}" > ${enum.title}
 										</span>
 									</#list>
 								</div>
@@ -207,7 +207,7 @@
 <script>
 var statusMap = {
 	<#list roleStatusEnum as enum>
-	${enum.status}: '${enum.desc}'<#sep>,</#sep>
+	${enum.code}: '${enum.title}'<#sep>,</#sep>
 	</#list>
 };
 $(function() {

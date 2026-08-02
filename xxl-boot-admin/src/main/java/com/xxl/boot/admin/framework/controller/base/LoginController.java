@@ -84,7 +84,7 @@ public class LoginController {
 		User xxlBootUser = xxlBootUserResponse.getData();
 
 		// 校验用户状态
-		if (xxlBootUser.getStatus() != UserStatuEnum.NORMAL.getStatus()) {
+		if (xxlBootUser.getStatus() != UserStatuEnum.NORMAL.getCode()) {
 			return Response.ofFail( I18nUtil.getString("login_status_invalid") );
 		}
 

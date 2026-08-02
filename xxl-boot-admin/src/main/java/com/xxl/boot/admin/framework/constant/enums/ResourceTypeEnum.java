@@ -1,35 +1,32 @@
 package com.xxl.boot.admin.framework.constant.enums;
 
+import com.xxl.boot.admin.framework.util.EnumTool;
+
 /**
- * user type
- * @author xuxueli
+ * 资源类型枚举
+ *
+ * @author xuxueli 2024-11-03
  */
-public enum ResourceTypeEnum {
+public enum ResourceTypeEnum implements EnumTool.IEnum {
 
     CATALOG(0, "目录"),
     MENU(1, "菜单"),
     BUTTOM(2, "按钮");
 
-    private int value;
-    private String desc;
+    private int code;       /* 类型编码 */
+    private String title;   /* 类型描述 */
 
-    ResourceTypeEnum(int value, String desc) {
-        this.value = value;
-        this.desc = desc;
-    }
-
-    public int getValue() {
-        return value;
+    ResourceTypeEnum(int code, String title) {
+        this.code = code;
+        this.title = title;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public int getCode() {
+        return code;
     }
-    public String getDesc() {
-        return desc;
-    }
-    public void setDesc(String desc) {
-        this.desc = desc;
+
+    public String getTitle() {
+        return title;
     }
 
 }
