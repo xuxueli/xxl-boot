@@ -99,14 +99,14 @@
                    :label-width="formConf.labelWidth + 'px'">
 
             <!-- 拖拽区域内容 -->
-            <draggable class="drawing-board" :list="drawingList" :animation="340" group="componentsGroup"
+            <draggable class="drawing-board" :list="canvas.drawingList" :animation="340" group="componentsGroup"
                        item-key="label">
               <template #item="{ element, index }">
                 <DraggableItem :key="element.renderKey"
-                               :drawing-list="drawingList"
+                               :drawing-list="canvas.drawingList"
                                :element="element"
                                :index="index"
-                               :active-id="activeId"
+                               :active-id="canvas.activeId"
                                :form-conf="formConf" @activeItem="activeFormItem"
                                @copyItem="drawingItemCopy"
                                @deleteItem="drawingItemDelete"/>
@@ -114,7 +114,7 @@
             </draggable>
 
             <!-- 拖拽区域，为空 -->
-            <div v-show="!drawingList.length" class="empty-info">
+            <div v-show="!canvas.drawingList.length" class="empty-info">
               从左侧拖入或点选组件进行表单设计
             </div>
 
@@ -125,15 +125,15 @@
     </div>
 
     <!-- 右侧属性面板 -->
-    <RightPanel :active-data="activeData"
+    <RightPanel :active-data="canvas.activeData"
                 :form-conf="formConf"
-                :show-field="!!drawingList.length"
+                :show-field="!!canvas.drawingList.length"
                 @tag-change="tagChange"/>
 
     <!-- 代码生成类型选择弹窗 -->
-    <CodeTypeDialog v-model="dialogVisible"
+    <CodeTypeDialog v-model="genDialog.dialogVisible"
                     title="选择生成类型"
-                    :showFileName="showFileName"
+                    :genDialog.showFileName="genDialog.showFileName"
                     @confirm="generate"/>
 
     <!-- 隐藏的复制节点 -->
@@ -167,47 +167,63 @@ import RightPanel from './RightPanel'
 import CodeTypeDialog from './CodeTypeDialog'
 import {onMounted, watch} from 'vue'
 
+
+// --------------------------------- ref data ---------------------------------
+
+// 初始化画布默认配置
 initDrawingDefaultValue()
 
-/* 状态变量 */
-const drawingList = ref(drawingDefaultValue)  /* 画布中的组件列表 */
-const dialogVisible = ref(false)               /* 生成类型弹窗 */
-const showFileName = ref(false)                /* 是否显示文件名输入 */
-const operationType = ref('')                  /* 操作类型：copy / download */
-const idGlobal = ref(100)                      /* 全局组件 ID 自增 */
-provide('idGlobal', idGlobal)
-const activeData = ref(drawingDefaultValue[0]) /* 当前选中组件 */
-const activeId = ref(drawingDefaultValue[0].formId) /* 当前选中组件 ID */
-const generateConf = ref(null)                 /* 生成配置 */
-const formData = ref({})                       /* 表单组装数据 */
-const formConf = ref(formConfData)             /* 表单全局配置 */
+
+/* 画布状态 */
+const canvas = ref({
+  drawingList: drawingDefaultValue,            /* 画布中的组件列表 */
+  activeData: drawingDefaultValue[0],          /* 当前选中组件 */
+  activeId: drawingDefaultValue[0].formId      /* 当前选中组件 ID */
+})
 let oldActiveId                                /* 上一次选中 ID，用于 placeholder 联动 */
 let tempActiveData                             /* 拖拽结束暂存激活组件 */
+
+/* 生成代码弹窗状态 */
+const genDialog = ref({
+  dialogVisible: false,  /* 生成类型弹窗 */
+  showFileName: false,   /* 是否显示文件名输入 */
+  operationType: '',     /* 操作类型：copy / download */
+  generateConf: null,    /* 生成配置 */
+  formData: {}           /* 表单组装数据 */
+})
+
+/* 全局配置 */
+const idGlobal = ref(100)                      /* 全局组件 ID 自增 */
+provide('idGlobal', idGlobal)
+const formConf = ref(formConfData)             /* 表单全局配置 */
+
+
+// --------------------------------- fun ---------------------------------
 
 /**
  * 激活选中组件
  */
 function activeFormItem(element) {
-  activeData.value = element
-  activeId.value = element.formId
+  canvas.value.activeData = element
+  canvas.value.activeId = element.formId
 }
 
 /**
  * 复制代码：打开弹框，不显示文件
  */
 function copy() {
-  dialogVisible.value = true
-  showFileName.value = false
-  operationType.value = 'copy'
+  genDialog.value.dialogVisible = true
+  genDialog.value.showFileName = false
+  genDialog.value.operationType = 'copy'
 }
 
 /**
  * 下载 vue 文件：打开弹框，显示文件属性
  */
 function download() {
-  dialogVisible.value = true
-  showFileName.value = true
-  operationType.value = 'download'
+  genDialog.value.dialogVisible = true
+  genDialog.value.showFileName = true
+  genDialog.value.operationType = 'download'
 }
 
 /**
@@ -216,7 +232,7 @@ function download() {
 function empty() {
   modal.confirm('确定要清空所有组件吗？', '提示', {type: 'warning'}).then(() => {
         idGlobal.value = 100
-        drawingList.value = []
+        canvas.value.drawingList = []
         cleanDrawingDefaultValue()
       }
   )
@@ -227,8 +243,8 @@ function empty() {
  */
 function onEnd(obj) {
   if (obj.from !== obj.to) {
-    activeData.value = tempActiveData
-    activeId.value = idGlobal.value
+    canvas.value.activeData = tempActiveData
+    canvas.value.activeId = idGlobal.value
   }
 }
 
@@ -237,7 +253,7 @@ function onEnd(obj) {
  */
 function addComponent(item) {
   const clone = cloneComponent(item)
-  drawingList.value.push(clone)
+  canvas.value.drawingList.push(clone)
   activeFormItem(clone)
 }
 
@@ -296,9 +312,9 @@ function createIdAndKey(item) {
 function drawingItemDelete(index, parent) {
   parent.splice(index, 1)
   nextTick(() => {
-    const len = drawingList.value.length
+    const len = canvas.value.drawingList.length
     if (len) {
-      activeFormItem(drawingList.value[len - 1])
+      activeFormItem(canvas.value.drawingList[len - 1])
     }
   })
 }
@@ -308,27 +324,27 @@ function drawingItemDelete(index, parent) {
  */
 function tagChange(newTag) {
   newTag = cloneComponent(newTag)
-  newTag.vModel = activeData.value.vModel
-  newTag.formId = activeId.value
-  newTag.span = activeData.value.span
-  delete activeData.value.tag
-  delete activeData.value.tagIcon
-  delete activeData.value.document
+  newTag.vModel = canvas.value.activeData.vModel
+  newTag.formId = canvas.value.activeId
+  newTag.span = canvas.value.activeData.span
+  delete canvas.value.activeData.tag
+  delete canvas.value.activeData.tagIcon
+  delete canvas.value.activeData.document
   Object.keys(newTag).forEach(key => {
-    if (activeData.value[key] !== undefined
-        && typeof activeData.value[key] === typeof newTag[key]) {
-      newTag[key] = activeData.value[key]
+    if (canvas.value.activeData[key] !== undefined
+        && typeof canvas.value.activeData[key] === typeof newTag[key]) {
+      newTag[key] = canvas.value.activeData[key]
     }
   })
-  activeData.value = newTag
-  updateDrawingList(newTag, drawingList.value)
+  canvas.value.activeData = newTag
+  updateDrawingList(newTag, canvas.value.drawingList)
 }
 
 /**
  * 更新画布中的组件数据
  */
 function updateDrawingList(newTag, list) {
-  const index = list.findIndex(item => item.formId === activeId.value)
+  const index = list.findIndex(item => item.formId === canvas.value.activeId)
   if (index > -1) {
     list.splice(index, 1, newTag)
   } else {
@@ -342,9 +358,9 @@ function updateDrawingList(newTag, list) {
  * 生成代码：组件回调- 弹窗确认后执行
  */
 function generate(data) {
-  generateConf.value = data
+  genDialog.value.generateConf = data
   nextTick(() => {
-    switch (operationType.value) {
+    switch (genDialog.value.operationType) {
       case 'copy':
         execCopy(data)
         break
@@ -377,35 +393,38 @@ function execCopy(data) {
  * 组装表单数据：画布组件 + 全局配置
  */
 function AssembleFormData() {
-  formData.value = {fields: JSON.parse(JSON.stringify(drawingList.value)), ...formConf.value}
+  genDialog.value.formData = {fields: JSON.parse(JSON.stringify(canvas.value.drawingList)), ...formConf.value}
 }
 
 /**
  * 生成 vue 代码（html + script + css）
  */
 function generateCode() {
-  const {type} = generateConf.value
+  const {type} = genDialog.value.generateConf
   AssembleFormData()
-  const script = vueScript(makeUpJs(formData.value, type))
-  const html = vueTemplate(makeUpHtml(formData.value, type))
-  const css = cssStyle(makeUpCss(formData.value))
+  const script = vueScript(makeUpJs(genDialog.value.formData, type))
+  const html = vueTemplate(makeUpHtml(genDialog.value.formData, type))
+  const css = cssStyle(makeUpCss(genDialog.value.formData))
   return beautifier.html(html + script + css, beautifierConf.html)
 }
 
+
+// --------------------------------- init ---------------------------------
+
 /* 监听标题变化，同步更新占位提示 */
-watch(() => activeData.value.label, (val, oldVal) => {
+watch(() => canvas.value.activeData.label, (val, oldVal) => {
   if (
-      activeData.value.placeholder === undefined
-      || !activeData.value.tag
-      || oldActiveId !== activeId.value
+      canvas.value.activeData.placeholder === undefined
+      || !canvas.value.activeData.tag
+      || oldActiveId !== canvas.value.activeId
   ) {
     return
   }
-  activeData.value.placeholder = activeData.value.placeholder.replace(oldVal, '') + val
+  canvas.value.activeData.placeholder = canvas.value.activeData.placeholder.replace(oldVal, '') + val
 })
 
 /* 记录当前激活 ID，用于上文 watch */
-watch(activeId, (val) => {
+watch(() => canvas.value.activeId, (val) => {
   oldActiveId = val
 }, {immediate: true})
 
@@ -426,6 +445,7 @@ onMounted(() => {
 onUnmounted(() => {
   clipboard.destroy()
 })
+
 </script>
 
 <style lang='scss'>
