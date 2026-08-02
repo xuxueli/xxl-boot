@@ -6,7 +6,7 @@
   <div class="right-board">
 
     <!-- TAB -->
-    <el-tabs v-model="currentTab" stretch class="center-tabs">
+    <el-tabs v-model="panelState.currentTab" stretch class="center-tabs">
       <el-tab-pane label="组件属性" name="field"/>
       <el-tab-pane label="表单属性" name="form"/>
     </el-tabs>
@@ -24,7 +24,7 @@
       <!-- 组件属性滚动区域 -->
       <el-scrollbar class="right-scrollbar">
         <!-- 组件属性 -->
-        <el-form v-show="currentTab === 'field' && showField" size="default" label-width="90px" label-position="top"
+        <el-form v-show="panelState.currentTab === 'field' && showField" size="default" label-width="90px" label-position="top"
                  style="">
 
           <!-- 组件类型 -->
@@ -502,7 +502,7 @@
         </el-form>
 
         <!-- 表单属性 -->
-        <el-form v-show="currentTab === 'form'" label-width="90px" label-position="top">
+        <el-form v-show="panelState.currentTab === 'form'" label-width="90px" label-position="top">
           <el-form-item label="表单名">
             <el-input v-model="formConf.formRef" placeholder="请输入表单名（ref）"/>
           </el-form-item>
@@ -547,10 +547,10 @@
     </div>
 
     <!-- 图标选择弹窗 -->
-    <IconsDialog v-model="iconsVisible" :current="activeData[currentIconModel]" @select="setIcon"/>
+    <IconsDialog v-model="panelState.iconsVisible" :current="activeData[panelState.currentIconModel]" @select="setIcon"/>
 
     <!-- 树节点弹窗 -->
-    <TreeNodeDialog v-model="dialogVisible" @commit="addNode"/>
+    <TreeNodeDialog v-model="panelState.dialogVisible" @commit="addNode"/>
 
   </div>
 </template>
@@ -580,58 +580,47 @@ const props = defineProps({
   formConf: Object       /* 表单全局配置 */
 })
 
-/* 面板状态与选项配置 */
-const data = reactive({
-  currentTab: 'field',                   /* 当前 tab：组件属性 / 表单属性 */
-  currentNode: null,                     /* 当前操作树节点 */
-  dialogVisible: false,                  /* 树节点弹窗 */
-  iconsVisible: false,                   /* 图标选择弹窗 */
-  currentIconModel: null,                /* 当前编辑的图标模型名 */
-  dateTypeOptions: [                     /* 日期类型选项 */
-    {label: '日(date)', value: 'date'},
-    {label: '周(week)', value: 'week'},
-    {label: '月(month)', value: 'month'},
-    {label: '年(year)', value: 'year'},
-    {label: '日期时间(datetime)', value: 'datetime'}
-  ],
-  dateRangeTypeOptions: [                /* 日期范围类型选项 */
-    {label: '日期范围(daterange)', value: 'daterange'},
-    {label: '月范围(monthrange)', value: 'monthrange'},
-    {label: '日期时间范围(datetimerange)', value: 'datetimerange'}
-  ],
-  colorFormatOptions: [                  /* 颜色格式选项 */
-    {label: 'hex', value: 'hex'},
-    {label: 'rgb', value: 'rgb'},
-    {label: 'rgba', value: 'rgba'},
-    {label: 'hsv', value: 'hsv'},
-    {label: 'hsl', value: 'hsl'}
-  ],
-  justifyOptions: [                     /* flex 水平排列选项 */
-    {label: 'start', value: 'start'},
-    {label: 'end', value: 'end'},
-    {label: 'center', value: 'center'},
-    {label: 'space-around', value: 'space-around'},
-    {label: 'space-between', value: 'space-between'}
-  ],
-  layoutTreeProps: {                    /* 布局树展示配置 */
-    label(data) {
-      return data.componentName || `${data.label}: ${data.vModel}`
-    }
-  }
+/* 面板 UI 状态 */
+const panelState = ref({
+  currentTab: 'field',        /* 当前 tab：组件属性 / 表单属性 */
+  currentNode: null,          /* 当前操作树节点 */
+  dialogVisible: false,       /* 树节点弹窗 */
+  iconsVisible: false,        /* 图标选择弹窗 */
+  currentIconModel: null      /* 当前编辑的图标模型名 */
 })
 
-const {
-  currentTab,
-  currentNode,
-  dialogVisible,
-  iconsVisible,
-  currentIconModel,
-  dateTypeOptions,
-  dateRangeTypeOptions,
-  colorFormatOptions,
-  justifyOptions,
-  layoutTreeProps
-} = toRefs(data)
+/* 面板选项配置（静态） */
+const dateTypeOptions = [                     /* 日期类型选项 */
+  {label: '日(date)', value: 'date'},
+  {label: '周(week)', value: 'week'},
+  {label: '月(month)', value: 'month'},
+  {label: '年(year)', value: 'year'},
+  {label: '日期时间(datetime)', value: 'datetime'}
+]
+const dateRangeTypeOptions = [                /* 日期范围类型选项 */
+  {label: '日期范围(daterange)', value: 'daterange'},
+  {label: '月范围(monthrange)', value: 'monthrange'},
+  {label: '日期时间范围(datetimerange)', value: 'datetimerange'}
+]
+const colorFormatOptions = [                  /* 颜色格式选项 */
+  {label: 'hex', value: 'hex'},
+  {label: 'rgb', value: 'rgb'},
+  {label: 'rgba', value: 'rgba'},
+  {label: 'hsv', value: 'hsv'},
+  {label: 'hsl', value: 'hsl'}
+]
+const justifyOptions = [                     /* flex 水平排列选项 */
+  {label: 'start', value: 'start'},
+  {label: 'end', value: 'end'},
+  {label: 'center', value: 'center'},
+  {label: 'space-around', value: 'space-around'},
+  {label: 'space-between', value: 'space-between'}
+]
+const layoutTreeProps = {                    /* 布局树展示配置 */
+  label(data) {
+    return data.componentName || `${data.label}: ${data.vModel}`
+  }
+}
 
 const documentLink = computed(() => props.activeData.document || 'https://element-plus.org/zh-CN/guide/installation')
 
@@ -639,9 +628,9 @@ const documentLink = computed(() => props.activeData.document || 'https://elemen
 const dateOptions = computed(() => {
   if (props.activeData.type !== undefined && props.activeData.tag === 'el-date-picker') {
     if (props.activeData['start-placeholder'] === undefined) {
-      return dateTypeOptions.value
+      return dateTypeOptions
     }
-    return dateRangeTypeOptions.value
+    return dateRangeTypeOptions
   }
   return []
 })
@@ -652,6 +641,7 @@ const tagList = ref([
   {label: '选择型组件', options: selectComponents}
 ])
 
+/** 组件事件：向父组件通知标签切换 */
 const emit = defineEmits(['tag-change'])
 
 /** 添加正则校验规则 */
@@ -667,8 +657,8 @@ function addSelectItem() {
 /** 添加树节点（cascader） */
 function addTreeItem() {
   ++idGlobal.value
-  dialogVisible.value = true
-  currentNode.value = props.activeData.options
+  panelState.value.dialogVisible = true
+  panelState.value.currentNode = props.activeData.options
 }
 
 /** 渲染树节点操作按钮（添加子级 / 删除） */
@@ -706,8 +696,8 @@ function append(data) {
   if (!data.children) {
     data.children = []
   }
-  dialogVisible.value = true
-  currentNode.value = data.children
+  panelState.value.dialogVisible = true
+  panelState.value.currentNode = data.children
 }
 
 /** 删除节点 */
@@ -720,7 +710,7 @@ function remove(node, data) {
 
 /** 接收弹窗返回的树节点 */
 function addNode(data) {
-  currentNode.value.push(data)
+  panelState.value.currentNode.push(data)
 }
 
 /** 设置选项值：数字字符串转数字 */
@@ -812,13 +802,13 @@ function colorFormatChange(val) {
 
 /** 打开图标选择弹窗 */
 function openIconsDialog(model) {
-  iconsVisible.value = true
-  currentIconModel.value = model
+  panelState.value.iconsVisible = true
+  panelState.value.currentIconModel = model
 }
 
 /** 设置选中图标 */
 function setIcon(val) {
-  props.activeData[currentIconModel.value] = val
+  props.activeData[panelState.value.currentIconModel] = val
 }
 
 /** 切换组件类型 */

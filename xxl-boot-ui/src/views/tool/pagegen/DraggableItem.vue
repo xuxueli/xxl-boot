@@ -51,10 +51,12 @@ const props = defineProps({
   },
   formConf: Object
 })
-const className = ref('')
-const draggableItemRef = ref(null)
+const className = ref('')             /* 组件样式类名（选中/拖拽态） */
+const draggableItemRef = ref(null)    /* 拖拽项元素 ref */
 
-/* 组件回调 */
+/*
+* 组件回调：选中 / 复制 / 删除组件
+*/
 const emits = defineEmits(['activeItem', 'copyItem', 'deleteItem'])
 
 /** 选中当前组件 */

@@ -4,86 +4,51 @@
 -->
 <template>
   <div class="app-container">
-
-    <!-- 查询表单 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
-
-      <!-- 表名称 -->
+    <!-- 搜索栏 -->
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
       <el-form-item label="表名称" prop="tableName">
         <el-input
-            v-model="queryParams.tableName"
-            placeholder="请输入表名称"
-            clearable
-            style="width: 200px"
-            @keyup.enter="handleQuery"
+          v-model="queryParams.tableName"
+          placeholder="请输入表名称"
+          clearable
+          style="width: 200px"
+          @keyup.enter="handleQuery"
         />
       </el-form-item>
-
-      <!-- 表描述 -->
       <el-form-item label="表描述" prop="tableComment">
         <el-input
-            v-model="queryParams.tableComment"
-            placeholder="请输入表描述"
-            clearable
-            style="width: 200px"
-            @keyup.enter="handleQuery"
+          v-model="queryParams.tableComment"
+          placeholder="请输入表描述"
+          clearable
+          style="width: 200px"
+          @keyup.enter="handleQuery"
         />
       </el-form-item>
-
-      <!-- 操作按钮 -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
-
     </el-form>
 
-    <!-- 操作区域 -->
+    <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-            type="primary"
-            plain
-            icon="Plus"
-            @click="openCreateTable"
-        >创建
-        </el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateDialog" v-hasRole="['admin']">创建</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="success"
-            plain
-            icon="Edit"
-            :disabled="single"
-            @click="handleEditTable"
-        >修改
-        </el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleEditTable" v-hasRole="['admin']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="danger"
-            plain
-            icon="Delete"
-            :disabled="multiple"
-            @click="handleDelete"
-        >删除
-        </el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="primary"
-            plain
-            icon="Download"
-            :disabled="multiple"
-            @click="handleGenTable"
-        >生成
-        </el-button>
+        <el-button type="primary" plain icon="Download" :disabled="table.multiple" @click="handleGenTable" v-hasRole="['admin']">生成</el-button>
       </el-col>
-      <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
+      <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
     <!-- 表格区域 -->
-    <el-table ref="genRef" v-loading="loading" :data="tableList" @selection-change="handleSelectionChange">
+    <el-table ref="genRef" v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center" width="55"></el-table-column>
       <el-table-column label="序号" type="index" width="50" align="center">
         <template #default="scope">
@@ -97,16 +62,16 @@
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-tooltip content="编辑" placement="top">
-            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)">编辑</el-button>
+            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)" v-hasRole="['admin']">编辑</el-button>
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
           </el-tooltip>
           <el-tooltip content="预览" placement="top">
-            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)">预览</el-button>
+            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasRole="['admin']">预览</el-button>
           </el-tooltip>
           <el-tooltip content="生成代码" placement="top">
-            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)">生成代码</el-button>
+            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasRole="['admin']">生成代码</el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -114,21 +79,21 @@
 
     <!-- 分页 -->
     <Pagination
-        v-show="total>0"
-        :total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="getList"
+      v-show="table.total>0"
+      :total="table.total"
+      v-model:page="queryParams.pageNum"
+      v-model:limit="queryParams.pageSize"
+      @pagination="getList"
     />
 
     <!-- 预览界面 -->
     <el-dialog :title="preview.title" v-model="preview.open" width="80%" top="5vh" append-to-body class="scrollbar">
       <el-tabs v-model="preview.activeName">
         <el-tab-pane
-            v-for="(value, key) in preview.data"
-            :label="key.substring(key.lastIndexOf('/')+1,key.indexOf('.ftl'))"
-            :name="key.substring(key.lastIndexOf('/')+1,key.indexOf('.ftl'))"
-            :key="value"
+          v-for="(value, key) in preview.data"
+          :label="key.substring(key.lastIndexOf('/')+1,key.indexOf('.ftl'))"
+          :name="key.substring(key.lastIndexOf('/')+1,key.indexOf('.ftl'))"
+          :key="value"
         >
           <el-link underline="never" icon="DocumentCopy" v-copyText="value" v-copyText:callback="copyTextSuccess"
                    style="float:right">&nbsp;复制
@@ -138,61 +103,74 @@
       </el-tabs>
     </el-dialog>
 
-    <!--  创建表弹窗  -->
-    <el-dialog v-model="createVisible" title="创建表" width="800px" top="5vh" append-to-body>
+    <!-- 创建表弹窗 -->
+    <el-dialog v-model="createDialog.visible" title="创建表" width="800px" top="5vh" append-to-body>
       <span>创建表语句(支持多个建表语句)：</span>
-      <el-input type="textarea" :rows="10" placeholder="请输入文本" v-model="createContent"></el-input>
+      <el-input type="textarea" :rows="10" placeholder="请输入文本" v-model="createDialog.content"></el-input>
       <template #footer>
         <el-button type="primary" @click="handleCreateTable">确 定</el-button>
-        <el-button @click="createVisible = false">取 消</el-button>
+        <el-button @click="createDialog.visible = false">取 消</el-button>
       </template>
     </el-dialog>
 
     <!-- 编辑代码生成信息 -->
-    <editTable ref="editRef" @ok="handleQuery"/>
-
+    <EditTable ref="editRef" @ok="handleQuery"/>
   </div>
 </template>
 
 <script setup name="Gen">
-import {listTable, previewTable, delTable, createTable} from "@/api/tool/codegen"
-import {useFormReset} from '@/composables/useFormReset'
+import { listTable, previewTable, delTable, createTable } from "@/api/tool/codegen"
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import downloadPlugin from '@/utils/download'
-import editTable from "./editTable"
+import EditTable from "./editTable"
 
+const resetForm = useFormReset()
+
+/* --------------------------------- ref data --------------------------------- */
+
+// 路由参数
 const route = useRoute()             /* 当前路由 */
-const resetForm = useFormReset()     /* 表单重置方法 */
-const createVisible = ref(false)     /* 创建表弹窗可见 */
-const createContent = ref("")        /* 创建表 SQL 语句 */
-const editRef = ref(null)            /* 编辑弹窗 ref */
-const genRef = ref(null)             /* 表格 ref */
-
-const tableList = ref([])            /* 表列表数据 */
-const loading = ref(true)            /* 加载中 */
-const showSearch = ref(true)         /* 是否显示搜索栏 */
-const ids = ref([])                  /* 选中行 ID 数组 */
-const single = ref(true)             /* 是否单选 */
-const multiple = ref(true)           /* 是否多选 */
-const total = ref(0)                 /* 总条数 */
 const uniqueId = ref("")             /* 页面路由唯一标识 */
 
-const data = reactive({
-  queryParams: {
-    pageNum: 1,
-    pageSize: 10,
-    tableName: undefined,
-    tableComment: undefined
-  },
-  preview: {
-    open: false,
-    title: "代码预览",
-    data: {},
-    activeName: "entity.java"
-  }
+// 组件实例引用
+const editRef = ref(null)            /* 编辑弹窗 ref */
+
+// 搜索栏：查询参数
+const queryParams = ref({
+  pageNum: 1,        /* 当前页码 */
+  pageSize: 10,      /* 每页条数 */
+  tableName: undefined,  /* 表名称 */
+  tableComment: undefined /* 表描述 */
 })
 
-const {queryParams, preview} = toRefs(data)
+// 表格：UI数据
+const table = ref({
+  list: [],          /* 表列表数据 */
+  total: 0,          /* 总条数 */
+  loading: true,     /* 加载状态 */
+  showSearch: true,  /* 是否显示搜索栏 */
+  ids: [],           /* 选中行 ID 数组 */
+  single: true,      /* 是否单选 */
+  multiple: true     /* 是否多选 */
+})
+
+// 预览弹窗
+const preview = ref({
+  open: false,       /* 弹窗显隐 */
+  title: "代码预览",  /* 弹窗标题 */
+  data: {},          /* 预览代码数据 */
+  activeName: "entity.java" /* 激活标签 */
+})
+
+// 创建表弹窗
+const createDialog = ref({
+  visible: false,  /* 弹窗显隐 */
+  content: ""      /* 建表 SQL 语句 */
+})
+
+
+/* --------------------------------- fun --------------------------------- */
 
 /** 页面激活时：若路由携带时间戳且与上次不同，则刷新列表 */
 onActivated(() => {
@@ -207,11 +185,11 @@ onActivated(() => {
 
 /** 查询表集合 */
 function getList() {
-  loading.value = true
+  table.value.loading = true
   listTable(queryParams.value).then(response => {
-    tableList.value = response.data.data
-    total.value = response.data.total
-    loading.value = false
+    table.value.list = response.data.data
+    table.value.total = response.data.total
+    table.value.loading = false
   })
 }
 
@@ -221,9 +199,23 @@ function handleQuery() {
   getList()
 }
 
+/** 重置按钮操作 */
+function resetQuery() {
+  resetForm("queryRef")
+  queryParams.value.pageNum = 1
+  getList()
+}
+
+/** 多选框选中数据 */
+function handleSelectionChange(selection) {
+  table.value.ids = selection.map(item => item.id)
+  table.value.single = selection.length != 1
+  table.value.multiple = !selection.length
+}
+
 /** 生成代码操作 */
 function handleGenTable(row) {
-  const idList = row.id !== undefined ? [row.id] : ids.value
+  const idList = row && row.id != null ? [row.id] : table.value.ids
   if (!idList || idList.length === 0) {
     modal.msgError("请选择要生成的数据")
     return
@@ -234,29 +226,22 @@ function handleGenTable(row) {
 }
 
 /** 打开创建表弹窗 */
-function openCreateTable() {
-  createContent.value = ""
-  createVisible.value = true
+function openCreateDialog() {
+  createDialog.value.content = ""
+  createDialog.value.visible = true
 }
 
 /** 创建表 */
 function handleCreateTable() {
-  if (createContent.value === "") {
+  if (createDialog.value.content === "") {
     modal.msgError("请输入建表语句")
     return
   }
-  createTable({tableSql: createContent.value}).then(() => {
+  createTable({ tableSql: createDialog.value.content }).then(() => {
     modal.msgSuccess("创建成功")
-    createVisible.value = false
+    createDialog.value.visible = false
     handleQuery()
   })
-}
-
-/** 重置按钮操作 */
-function resetQuery() {
-  resetForm("queryRef")
-  queryParams.value.pageNum = 1
-  getList()
 }
 
 /** 预览按钮 */
@@ -274,21 +259,22 @@ function copyTextSuccess() {
   modal.msgSuccess("复制成功")
 }
 
-// 多选框选中数据
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id)
-  single.value = selection.length != 1
-  multiple.value = !selection.length
-}
-
-/** 修改按钮操作 */
+/** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
 function handleEditTable(row) {
-  editRef.value.open(row.id || ids.value[0])
+  // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
+  const id = row && row.id != null ? row.id : table.value.ids[0]
+  if (id == null) {
+    return
+  }
+  editRef.value.open(id)
 }
 
-/** 删除按钮操作 */
+/** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row) {
-  const tableIds = row.id || ids.value
+  const tableIds = row && row.id != null ? row.id : table.value.ids
+  if (tableIds == null || (Array.isArray(tableIds) && tableIds.length === 0)) {
+    return
+  }
   modal.confirm('是否确认删除表编号为"' + tableIds + '"的数据项？').then(function () {
     return delTable(tableIds)
   }).then(() => {
@@ -298,5 +284,7 @@ function handleDelete(row) {
   })
 }
 
+/* --------------------------------- page init --------------------------------- */
 getList()
+
 </script>

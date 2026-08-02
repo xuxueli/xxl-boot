@@ -42,10 +42,13 @@
 <script setup>
 /** 树节点添加弹窗 - 逻辑 */
 const open = defineModel()
+
+/** 组件事件：确认提交节点 */
 const emit = defineEmits(['commit'])
+
 const formData = ref({
-  label: undefined,
-  value: undefined
+  label: undefined,       /* 选项名 */
+  value: undefined        /* 选项值 */
 })
 const rules = {
   label: [{
@@ -59,13 +62,15 @@ const rules = {
     trigger: 'blur'
   }]
 }
+
 const dataType = ref('string')       /* 值类型 */
-const dataTypeOptions = ref([
+const dataTypeOptions = ref([        /* 值类型选项 */
   { label: '字符串', value: 'string' },
   { label: '数字',   value: 'number' }
 ])
+
 const id = ref(100)                  /* 节点 ID 自增 */
-const treeNodeForm = ref()
+const treeNodeForm = ref()           /* 表单 ref */
 
 /** 弹窗打开：重置表单 */
 function onOpen() {

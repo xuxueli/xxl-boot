@@ -90,7 +90,6 @@
 </template>
 
 <script setup name="Data">
-/* --- import --- */
 import { getType } from "@/api/system/dict/type"
 import { listData, getData, delData, addData, updateData } from "@/api/system/dict/data"
 import { loadEnumItem } from "@/api/system/dict/data"
@@ -100,26 +99,26 @@ import tab from '@/utils/tab'
 
 const resetForm = useFormReset()
 
-/* --- ref data --- */
+/* --------------------------------- ref data --------------------------------- */
 
-/* --- 路由参数 --- */
+// 路由参数
 const route = useRoute()
 const dictId = ref(route.query && route.query.dictId)  /* 当前字典ID（来自路由） */
 
-/* --- 表单引用 --- */
+// 表单引用
 const formRef = ref(null)   /* 编辑表单实例引用 */
 
-/* --- 页面标题：字典名称 --- */
+// 页面标题：字典名称
 const dictName = ref("")    /* 字典名称 */
 
-/* --- 搜索栏：查询参数 --- */
+// 搜索栏：查询参数
 const queryParams = ref({
   pageNum: 1,        /* 当前页码 */
   pageSize: 10,      /* 每页条数 */
   dictId: dictId.value  /* 字典ID */
 })
 
-/* --- 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题） --- */
+// 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
 const formState = ref({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
@@ -145,7 +144,7 @@ const formState = ref({
   },
 })
 
-/* --- 表格：UI数据 --- */
+// 表格：UI数据
 const table = ref({
   list: [],          /* 字典项列表 */
   total: 0,          /* 总条数 */
@@ -155,10 +154,10 @@ const table = ref({
   multiple: true     /* 是否多选 */
 })
 
-/* --- 状态选项（从后端枚举接口加载，枚举项属性为 code、title） --- */
+// 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
 const statusOptions = ref([])
 
-/* --- fun --- */
+/* --------------------------------- fun --------------------------------- */
 
 /** 从后端枚举接口加载状态选项 */
 function loadOptions() {
@@ -292,7 +291,7 @@ function handleDelete(row) {
   }).catch(() => {})
 }
 
-/* --- page init --- */
+/* --------------------------------- page init --------------------------------- */
 // 页面初始化：加载字典名称、状态选项 + 字典项列表
 getDictName()
 loadOptions()

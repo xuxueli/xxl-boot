@@ -39,17 +39,21 @@ const props = defineProps({
   showFileName: Boolean   /* 是否显示文件名输入 */
 })
 
-// 组件回调
+/**
+ * 组件回调
+ *
+ * 组件事件：确认提交
+ */
 const emit = defineEmits(['confirm'])
 
 // 响应式数据
 const formData = ref({
-  fileName: undefined,
-  type: 'file'            /* 默认生成页面 */
+  fileName: undefined,            /* 文件名 */
+  type: 'file'                    /* 默认生成页面 */
 })
 
 // 表单 + 规则
-const codeTypeForm = ref()
+const codeTypeForm = ref()        /* 表单 ref */
 const rules = {
   fileName: [{
     required: true,

@@ -177,7 +177,7 @@ const operationType = ref('')                  /* 操作类型：copy / download
 const idGlobal = ref(100)                      /* 全局组件 ID 自增 */
 provide('idGlobal', idGlobal)
 const activeData = ref(drawingDefaultValue[0]) /* 当前选中组件 */
-const activeId = ref(drawingDefaultValue[0].formId)
+const activeId = ref(drawingDefaultValue[0].formId) /* 当前选中组件 ID */
 const generateConf = ref(null)                 /* 生成配置 */
 const formData = ref({})                       /* 表单组装数据 */
 const formConf = ref(formConfData)             /* 表单全局配置 */
