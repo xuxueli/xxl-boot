@@ -44,7 +44,7 @@ public class ResourceServiceImpl implements ResourceService {
 			if (resource == null) {
 				return Response.ofFail("操作失败，parentId非法");
 			}
-			if (ResourceTypeEnum.BUTTOM.getValue() == resource.getType()) {
+			if (ResourceTypeEnum.BUTTOM.getCode() == resource.getType()) {
 				return Response.ofFail("操作失败，按钮无法添加子资源");
 			}
 		}
@@ -131,13 +131,13 @@ public class ResourceServiceImpl implements ResourceService {
 
 	/*@Override
 	public List<XxlBootResourceDTO> treeListByUserId(int userId) {
-		List<XxlBootResource> resourceList = resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getValue());
+		List<XxlBootResource> resourceList = resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getCode());
 		return generateTreeList(resourceList);
 	}*/
 
 	@Override
 	public List<Resource> queryResourceByUserid(int userId, int visible) {
-        return resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getValue(), visible);
+        return resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getCode(), visible);
 	}
 
 	/**

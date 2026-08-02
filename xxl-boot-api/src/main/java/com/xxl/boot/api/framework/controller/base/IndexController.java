@@ -84,7 +84,7 @@ public class IndexController {
 		// 按 parentId 分组
 		Map<Integer, List<com.xxl.boot.api.framework.model.entity.Resource>> parentMap = new HashMap<>();
 		for (com.xxl.boot.api.framework.model.entity.Resource resource : resourceList) {
-			if (resource.getType() == ResourceTypeEnum.BUTTOM.getValue()) {
+			if (resource.getType() == ResourceTypeEnum.BUTTOM.getCode()) {
 				continue;
 			}
 			parentMap.computeIfAbsent(resource.getParentId(), k -> new ArrayList<>()).add(resource);
@@ -111,7 +111,7 @@ public class IndexController {
 			boolean isRoot = (resource.getParentId() == 0);
 			List<com.xxl.boot.api.framework.model.entity.Resource> childrenRes = parentMap.get(resource.getId());
 
-			if (type == ResourceTypeEnum.CATALOG.getValue()) {
+			if (type == ResourceTypeEnum.CATALOG.getCode()) {
 				// 目录
 				router.setComponent(isRoot ? "Layout" : "ParentView");
 
@@ -119,7 +119,7 @@ public class IndexController {
 				if (CollectionTool.isNotEmpty(childrenRes)) {
 					router.setChildren(buildRouterChildren(childrenRes, parentMap));
 				}
-			} else if (type == ResourceTypeEnum.MENU.getValue()) {
+			} else if (type == ResourceTypeEnum.MENU.getCode()) {
 				if (isRoot) {
 					// 菜单 - 根节点
 					router.setComponent("Layout");

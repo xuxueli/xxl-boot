@@ -99,7 +99,7 @@ public class LoginController {
 			return Response.ofFail( I18nUtil.getString("login_param_unvalid") );
 		}
 		User xxlBootUser = userResponse.getData();
-		if (xxlBootUser.getStatus() != UserStatuEnum.NORMAL.getStatus()) {
+		if (xxlBootUser.getStatus() != UserStatuEnum.NORMAL.getCode()) {
 			return Response.ofFail( I18nUtil.getString("login_status_invalid") );
 		}
 		String passwordHash = Sha256Tool.sha256(loginRequest.getPassword());

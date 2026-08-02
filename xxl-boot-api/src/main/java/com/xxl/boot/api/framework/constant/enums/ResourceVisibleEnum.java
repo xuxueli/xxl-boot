@@ -1,34 +1,31 @@
 package com.xxl.boot.api.framework.constant.enums;
 
+import com.xxl.boot.api.framework.util.EnumTool;
+
 /**
- * resource visible status
- * @author xuxueli
+ * 资源显示状态枚举
+ *
+ * @author xuxueli 2024-11-03
  */
-public enum ResourceVisibleEnum {
+public enum ResourceVisibleEnum implements EnumTool.IEnum {
 
     SHOW(0, "显示"),
     HIDE(1, "隐藏");
 
-    private int value;
-    private String desc;
+    private int code;       /* 状态编码 */
+    private String title;   /* 状态描述 */
 
-    ResourceVisibleEnum(int value, String desc) {
-        this.value = value;
-        this.desc = desc;
-    }
-
-    public int getValue() {
-        return value;
+    ResourceVisibleEnum(int code, String title) {
+        this.code = code;
+        this.title = title;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public int getCode() {
+        return code;
     }
-    public String getDesc() {
-        return desc;
-    }
-    public void setDesc(String desc) {
-        this.desc = desc;
+
+    public String getTitle() {
+        return title;
     }
 
 }
