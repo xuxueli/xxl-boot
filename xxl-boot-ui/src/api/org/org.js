@@ -1,94 +1,76 @@
 import request from '@/utils/request'
+import { tansParams } from '@/utils/common'
 
 /**
- * 名称：部门管理 API
- * 能力：提供部门树查询、部门维护与排序保存接口。
+ * 名称：组织管理 API
+ * 能力：提供组织树查询、组织详情与组织维护接口。
  */
 
 /**
- * 查询部门列表。
- * @param {Object} query 查询参数。
- * @returns {Promise<any>} 部门列表。
+ * 查询组织树列表（扁平数组，前端需 handleTree 组装）。
+ * @param {Object} query 查询参数（name/status，status 默认 -1 全部）。
+ * @returns {Promise<any>} 组织列表。
  */
-export function listDept(query) {
+export function listOrg(query) {
   return request({
-    url: '/system/dept/list',
+    url: '/org/org/treeList',
     method: 'get',
     params: query
   })
 }
 
 /**
- * 查询部门列表（排除指定节点及其子节点）。
- * @param {string|number} deptId 需要排除的部门 ID。
- * @returns {Promise<any>} 部门列表。
+ * 查询组织详情。
+ * @param {number} id 组织 ID。
+ * @returns {Promise<any>} 组织详情。
  */
-export function listDeptExcludeChild(deptId) {
+export function getOrg(id) {
   return request({
-    url: '/system/dept/list/exclude/' + deptId,
-    method: 'get'
+    url: '/org/org/load',
+    method: 'get',
+    params: { id }
   })
 }
 
 /**
- * 查询部门详情。
- * @param {string|number} deptId 部门 ID。
- * @returns {Promise<any>} 部门详情。
- */
-export function getDept(deptId) {
-  return request({
-    url: '/system/dept/' + deptId,
-    method: 'get'
-  })
-}
-
-/**
- * 新增部门。
- * @param {Object} data 部门数据。
+ * 新增组织（后端为表单参数绑定，通过 urlencoded body 提交）。
+ * @param {Object} data 组织数据。
  * @returns {Promise<any>} 新增结果。
  */
-export function addDept(data) {
+export function addOrg(data) {
   return request({
-    url: '/system/dept',
+    url: '/org/org/insert',
     method: 'post',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    transformRequest: [(params) => tansParams(params)],
     data: data
   })
 }
 
 /**
- * 修改部门。
- * @param {Object} data 部门数据。
- * @returns {Promise<any>} 修改结果。
+ * 更新组织（后端为表单参数绑定，通过 urlencoded body 提交）。
+ * @param {Object} data 组织数据。
+ * @returns {Promise<any>} 更新结果。
  */
-export function updateDept(data) {
+export function updateOrg(data) {
   return request({
-    url: '/system/dept',
-    method: 'put',
+    url: '/org/org/update',
+    method: 'post',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    transformRequest: [(params) => tansParams(params)],
     data: data
   })
 }
 
 /**
- * 保存部门排序。
- * @param {Object} data 排序数据。
- * @returns {Promise<any>} 保存结果。
- */
-export function updateDeptSort(data) {
-  return request({
-    url: '/system/dept/updateSort',
-    method: 'put',
-    data: data
-  })
-}
-
-/**
- * 删除部门。
- * @param {string|number} deptId 部门 ID。
+ * 删除组织。
+ * @param {number|Array} ids 组织 ID 或组织 ID 数组。
  * @returns {Promise<any>} 删除结果。
  */
-export function delDept(deptId) {
+export function delOrg(ids) {
   return request({
-    url: '/system/dept/' + deptId,
-    method: 'delete'
+    url: '/org/org/delete',
+    method: 'post',
+    params: { 'ids[]': ids }
   })
 }

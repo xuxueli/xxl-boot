@@ -8,9 +8,7 @@ import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,23 +17,12 @@ import java.util.List;
  *
  * Created by xuxueli on '2024-09-30 15:38:21'.
  */
-@Controller
+@RestController
 @RequestMapping("/org/org")
 public class OrgController {
 
     @Resource
     private OrgService orgService;
-
-    /**
-     * 页面
-     */
-    @RequestMapping
-    @XxlSso(permission = "org:org")
-    public String index(Model model) {
-
-        model.addAttribute("orgStatuEnum", OrgStatuEnum.values());
-        return "/framework/org/org";
-    }
 
     /**
      * tree数据查询
@@ -50,7 +37,6 @@ public class OrgController {
      *  </pre>
      */
     @RequestMapping("/treeList")
-    @ResponseBody
     @XxlSso(permission = "org:org")
     public Response<List<Org>> treeList(@RequestParam(required = false) String name,
                                                @RequestParam(required = false, defaultValue = "-1") int status) {
@@ -63,7 +49,6 @@ public class OrgController {
      * Load查询
      */
     @RequestMapping("/load")
-    @ResponseBody
     @XxlSso(permission = "org:org")
     public Response<Org> load(int id){
         return orgService.load(id);
@@ -73,7 +58,6 @@ public class OrgController {
      * 新增
      */
     @RequestMapping("/insert")
-    @ResponseBody
     @XxlSso(permission = "org:org")
     public Response<String> insert(Org xxlBootOrg){
         return orgService.insert(xxlBootOrg);
@@ -83,7 +67,6 @@ public class OrgController {
      * 删除
      */
     @RequestMapping("/delete")
-    @ResponseBody
     @XxlSso(permission = "org:org")
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return orgService.delete(ids);
@@ -93,7 +76,6 @@ public class OrgController {
      * 更新
      */
     @RequestMapping("/update")
-    @ResponseBody
     @XxlSso(permission = "org:org")
     public Response<String> update(Org xxlBootOrg){
         return orgService.update(xxlBootOrg);
