@@ -5,7 +5,7 @@
 <template>
   <div class="app-container">
     <!-- 搜索栏 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
       <el-form-item label="字典名称" prop="name">
         <el-input
           v-model="queryParams.name"
@@ -27,7 +27,7 @@
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="字典状态" clearable style="width: 200px">
           <el-option label="全部" :value="-1" />
-          <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option v-for="item in statusOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -42,16 +42,16 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
       </el-col>
-      <RightToolbar v-model:showSearch="showSearch" @queryTable="getList"></RightToolbar>
+      <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
     <!-- 字典类型列表 -->
-    <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" width="80" />
       <el-table-column label="字典名称" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
@@ -80,29 +80,29 @@
 
     <!-- 分页 -->
     <Pagination
-      v-show="total > 0"
-      :total="total"
+      v-show="table.total > 0"
+      :total="table.total"
       v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
 
     <!-- 添加或修改字典对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="dictRef" :model="form" :rules="rules" label-width="100px">
+    <el-dialog :title="formState.title" v-model="formState.visible" width="500px" append-to-body>
+      <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="100px">
         <el-form-item label="字典名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入字典名称" />
+          <el-input v-model="formState.form.name" placeholder="请输入字典名称" />
         </el-form-item>
         <el-form-item label="字典Type" prop="type">
-          <el-input v-model="form.type" placeholder="请输入字典Type" :disabled="form.id != undefined" />
+          <el-input v-model="formState.form.type" placeholder="请输入字典Type" :disabled="formState.form.id != undefined" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-radio-group v-model="form.status">
-            <el-radio v-for="item in statusOptions" :key="item.value" :value="item.value">{{ item.label }}</el-radio>
+          <el-radio-group v-model="formState.form.status">
+            <el-radio v-for="item in statusOptions" :key="item.code" :value="item.code">{{ item.title }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入备注"></el-input>
+          <el-input v-model="formState.form.remark" type="textarea" placeholder="请输入备注"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -113,49 +113,40 @@
       </template>
     </el-dialog>
 
-    <DictDataDrawer v-model:visible="drawerVisible" :row="drawerRow" />
+    <DictDataDrawer v-model:visible="drawer.visible" :row="drawer.row" />
   </div>
 </template>
 
 <script setup name="Dict">
 import DictDataDrawer from './detail'
 import { listType, getType, delType, addType, updateType } from "@/api/system/dict/type"
+import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 
 const resetForm = useFormReset()
 
-const dictRef = ref(null)     /* 表单 ref */
+/* --------------------------------- ref data --------------------------------- */
 
-const typeList = ref([])      /* 字典类型列表 */
-const open = ref(false)       /* 对话框显隐 */
-const loading = ref(true)     /* 加载状态 */
-const showSearch = ref(true)  /* 是否显示搜索栏 */
-const ids = ref([])           /* 选中行 ID 数组 */
-const single = ref(true)      /* 是否单选 */
-const multiple = ref(true)    /* 是否多选 */
-const total = ref(0)          /* 总条数 */
-const title = ref("")         /* 对话框标题 */
-const drawerVisible = ref(false)  /* 字典项抽屉显隐 */
-const drawerRow = ref({})     /* 当前查看的字典行 */
+// 表单引用
+const formRef = ref(null)   /* 编辑表单实例引用 */
 
-// 状态选项（0-正常、1-停用）
-const statusOptions = [
-  { label: '正常', value: 0 },
-  { label: '停用', value: 1 }
-]
+// 搜索栏：查询参数
+const queryParams = ref({
+  pageNum: 1,        /* 当前页码 */
+  pageSize: 10,      /* 每页条数 */
+  name: undefined,   /* 字典名称 */
+  type: undefined,   /* 字典Type */
+  status: -1         /* 状态（-1 全部、0 正常、1 停用） */
+})
 
-const data = reactive({
-  form: {},
-  queryParams: {
-    pageNum: 1,        /* 当前页码 */
-    pageSize: 10,      /* 每页条数 */
-    name: undefined,   /* 字典名称 */
-    type: undefined,   /* 字典Type */
-    status: -1         /* 状态（-1 全部、0 正常、1 停用） */
-  },
-  rules: {
+// 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
+const formState = ref({
+  visible: false,  /* 对话框显隐 */
+  title: "",       /* 对话框标题 */
+  form: {},        /* 表单数据 */
+  rules: {         /* 校验规则 */
     name: [{ required: true, message: "字典名称不能为空", trigger: "blur" }],
     type: [
       { required: true, message: "字典Type不能为空", trigger: "blur" },
@@ -165,11 +156,38 @@ const data = reactive({
   },
 })
 
-const { queryParams, form, rules } = toRefs(data)
+// 表格：UI数据
+const table = ref({
+  list: [],          /* 字典类型列表 */
+  total: 0,          /* 总条数 */
+  loading: true,     /* 加载状态 */
+  showSearch: true,  /* 是否显示搜索栏 */
+  ids: [],           /* 选中行 ID 数组 */
+  single: true,      /* 是否单选 */
+  multiple: true     /* 是否多选 */
+})
+
+// 字典项抽屉
+const drawer = ref({
+  visible: false,  /* 抽屉显隐 */
+  row: {}          /* 当前查看的字典行 */
+})
+
+// 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
+const statusOptions = ref([])
+
+/* --------------------------------- fun --------------------------------- */
+
+/** 从后端枚举接口加载状态选项 */
+function loadOptions() {
+  loadEnumItem('DictStatusEnum').then(res => {
+    statusOptions.value = res.data
+  })
+}
 
 /** 查询字典类型列表 */
 function getList() {
-  loading.value = true
+  table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
   const params = {
     ...queryParams.value,
@@ -179,34 +197,34 @@ function getList() {
   delete params.pageNum
   delete params.pageSize
   listType(params).then(response => {
-    typeList.value = response.data.data
-    total.value = response.data.total
-    loading.value = false
+    table.value.list = response.data.data
+    table.value.total = response.data.total
+    table.value.loading = false
   })
 }
 
 /** 状态编码 → 文案 */
 function statusText(status) {
-  const item = statusOptions.find(i => i.value === status)
-  return item ? item.label : status
+  const item = statusOptions.value.find(i => i.code === status)
+  return item ? item.title : status
 }
 
 /** 取消按钮 */
 function cancel() {
-  open.value = false
+  formState.value.visible = false
   reset()
 }
 
 /** 表单重置 */
 function reset() {
-  form.value = {
+  formState.value.form = {
     id: undefined,
     name: undefined,
     type: undefined,
     status: 0,
     remark: undefined
   }
-  resetForm("dictRef")
+  resetForm("formRef")
 }
 
 /** 搜索按钮操作 */
@@ -223,22 +241,21 @@ function resetQuery() {
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id)
-  single.value = selection.length !== 1
-  multiple.value = !selection.length
+  table.value.ids = selection.map(item => item.id)
+  table.value.single = selection.length !== 1
+  table.value.multiple = !selection.length
 }
 
 /** 新增按钮操作 */
 function handleAdd() {
   reset()
-  open.value = true
-  title.value = "新增字典"
+  formState.value.visible = true
+  formState.value.title = "新增字典"
 }
 
 /** 字典项抽屉 */
 function handleViewData(row) {
-  drawerRow.value = row
-  drawerVisible.value = true
+  drawer.value = { visible: true, row }
 }
 
 /** 字典数据列表页面 */
@@ -250,32 +267,32 @@ function handleDataList(row) {
 function handleUpdate(row) {
   reset()
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
-  const id = row && row.id != null ? row.id : ids.value[0]
+  const id = row && row.id != null ? row.id : table.value.ids[0]
   if (id == null) {
     return
   }
   getType(id).then(response => {
-    form.value = response.data
-    open.value = true
-    title.value = "修改字典"
+    formState.value.form = response.data
+    formState.value.visible = true
+    formState.value.title = "修改字典"
   })
 }
 
 /** 提交按钮 */
 function submitForm() {
-  dictRef.value.validate(valid => {
+  formRef.value.validate(valid => {
     if (valid) {
       // 已有 id 走更新，否则走新增
-      if (form.value.id != undefined) {
-        updateType(form.value).then(response => {
+      if (formState.value.form.id != undefined) {
+        updateType(formState.value.form).then(response => {
           modal.msgSuccess("修改成功")
-          open.value = false
+          formState.value.visible = false
           getList()
         })
       } else {
-        addType(form.value).then(response => {
+        addType(formState.value.form).then(response => {
           modal.msgSuccess("新增成功")
-          open.value = false
+          formState.value.visible = false
           getList()
         })
       }
@@ -285,7 +302,7 @@ function submitForm() {
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row) {
-  const dictIds = row && row.id != null ? row.id : ids.value
+  const dictIds = row && row.id != null ? row.id : table.value.ids
   if (dictIds == null || (Array.isArray(dictIds) && dictIds.length === 0)) {
     return
   }
@@ -297,6 +314,9 @@ function handleDelete(row) {
   }).catch(() => {})
 }
 
-// 页面初始化加载字典类型列表
+/* --------------------------------- page init --------------------------------- */
+// 页面初始化：加载状态选项 + 字典类型列表
+loadOptions()
 getList()
+
 </script>

@@ -29,7 +29,7 @@
 ### 2.4 前端规范
 
 - 组件 import 名称与模板使用标签保持一致（统一 PascalCase，如 `import NoticeDetailView` 对应 `<NoticeDetailView>`）
-- vue 前端script代码结构规范，除基础import外，按照“ref data → fun → page init”的顺序组织代码，不同模块顶部 /* --- {功能} --- */ 注释区分。
+- vue 前端script代码结构规范，除基础import外，按照 “ref data → fun → page init” 的顺序组织不同分类代码，不同分类代码顶部 /* ---（前后33个-） {功能} --- */ 注释区分。参考 `views/system/message/index.vue` 中代码。
 - **响应式数据说明**
   - 针对 响应式数据，非必须的情况下 一律使用 `ref`，禁止使用 `reactive` 和通过 `toRefs(data)` 方式解构响应式数据的方式。
   - 针对逻辑相关的一组响应式数据，收敛成对象统一管理，比如 `queryParams（搜索栏数据）`、`table（表格数据和状态数据）`、`formState（表单数据和规则）` 等对象，避免参数零散散落在各处。如 `views/system/message/index.vue` 中代码。
