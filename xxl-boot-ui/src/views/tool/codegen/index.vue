@@ -227,7 +227,18 @@ function handleGenTable(row) {
 
 /** 打开创建表弹窗 */
 function openCreateDialog() {
-  createDialog.value.content = ""
+
+  let demo_sql = `CREATE TABLE \`test01\` (
+      \`id\`            INT             NOT NULL AUTO_INCREMENT      COMMENT '主键ID',
+      \`name\`          VARCHAR(50)     NOT NULL                     COMMENT '名称',
+      \`age\`           INT             NOT NULL                     COMMENT '年龄',
+      \`add_time\`      DATETIME        NOT NULL                     COMMENT '新增时间',
+      \`update_time\`   DATETIME        NOT NULL                     COMMENT '更新时间',
+      PRIMARY KEY (\`id\`)
+  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+  `
+
+  createDialog.value.content = demo_sql
   createDialog.value.visible = true
 }
 
