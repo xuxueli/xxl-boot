@@ -243,7 +243,7 @@ VALUES (1, 1, 1, now(), now()),
        (2, 2, 2, now(), now());
 
 INSERT INTO `xxl_boot_resource` (`id`, `parent_id`, `name`, `type`, `permission`, `url`, `icon`, `order`, `status`, `visible`, `add_time`, `update_time`)
-VALUES (1, 0, '首页', 1, 'dashboard', '/dashboard', 'fa fa-home', 100, 0, 0, now(), now()),
+VALUES (1, 0, '首页', 1, 'dashboard', '/dashboard', 'fa-home', 100, 0, 0, now(), now()),
        (2, 0, '组织管理', 0, 'org', '/org', 'fa-users', 900, 0, 0, now(), now()),
        (3, 2, '用户管理', 1, 'org:user', '/org/user', '', 901, 0, 0, now(), now()),
        (4, 2, '角色管理', 1, 'org:role', '/org/role', '', 902, 0, 0, now(), now()),
