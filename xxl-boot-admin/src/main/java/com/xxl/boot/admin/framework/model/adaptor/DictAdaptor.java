@@ -21,7 +21,7 @@ public class DictAdaptor {
             DictDTO dto = new DictDTO();
             dto.setId(entity.getId());
             dto.setName(entity.getName());
-            dto.setCode(entity.getCode());
+            dto.setType(entity.getType());
             dto.setStatus(entity.getStatus());
             dto.setRemark(entity.getRemark());
             dto.setAddTime(DateTool.formatDateTime(entity.getAddTime()));

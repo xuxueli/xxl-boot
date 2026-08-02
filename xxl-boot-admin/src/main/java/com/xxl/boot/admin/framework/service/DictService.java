@@ -19,7 +19,7 @@ public interface DictService {
 
     public Response<Dict> load(int id);
 
-    public PageModel<DictDTO> pageList(String name, String code, int status, int offset, int pagesize);
+    public PageModel<DictDTO> pageList(String name, String type, int status, int offset, int pagesize);
 
     public Response<String> insertItem(DictItem xxlBootDictItem);
 

@@ -7,8 +7,8 @@ public class DictItemDTO implements Serializable {
 
     private long id;
     private long dictId;
-    private String itemName;
-    private String itemCode;
+    private String name;
+    private int code;
     private int status;
     private int order;
     private String addTime;
@@ -31,20 +31,20 @@ public class DictItemDTO implements Serializable {
         this.dictId = dictId;
     }
 
-    public String getItemName() {
-        return itemName;
+    public String getName() {
+        return name;
     }
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getItemCode() {
-        return itemCode;
+    public int getCode() {
+        return code;
     }
 
-    public void setItemCode(String itemCode) {
-        this.itemCode = itemCode;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public int getStatus() {

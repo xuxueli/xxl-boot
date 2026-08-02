@@ -21,8 +21,8 @@ public class DictItemAdaptor {
             DictItemDTO dto = new DictItemDTO();
             dto.setId(entity.getId());
             dto.setDictId(entity.getDictId());
-            dto.setItemName(entity.getItemName());
-            dto.setItemCode(entity.getItemCode());
+            dto.setName(entity.getName());
+            dto.setCode(entity.getCode());
             dto.setStatus(entity.getStatus());
             dto.setOrder(entity.getOrder());
             dto.setRemark(entity.getRemark());

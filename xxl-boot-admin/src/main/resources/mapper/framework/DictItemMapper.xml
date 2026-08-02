@@ -6,8 +6,8 @@
     <resultMap id="DictItem" type="com.xxl.boot.admin.framework.model.entity.DictItem" >
         <result column="id" property="id" />
         <result column="dict_id" property="dictId" />
-        <result column="item_name" property="itemName" />
-        <result column="item_code" property="itemCode" />
+        <result column="name" property="name" />
+        <result column="code" property="code" />
         <result column="status" property="status" />
         <result column="order" property="order" />
         <result column="add_time" property="addTime" />
@@ -18,8 +18,8 @@
     <sql id="Base_Column_List">
         t.`id`,
         t.`dict_id`,
-        t.`item_name`,
-        t.`item_code`,
+        t.`name`,
+        t.`code`,
         t.`status`,
         t.`order`,
         t.`add_time`,
@@ -30,8 +30,8 @@
     <insert id="insert" parameterType="java.util.Map" >
         INSERT INTO xxl_boot_dict_item (
             `dict_id`,
-            `item_name`,
-            `item_code`,
+            `name`,
+            `code`,
             `status`,
             `order`,
             `remark`,
@@ -40,8 +40,8 @@
         )
         VALUES(
                   #{xxlBootDictItem.dictId} ,
-                  #{xxlBootDictItem.itemName} ,
-                  #{xxlBootDictItem.itemCode} ,
+                  #{xxlBootDictItem.name} ,
+                  #{xxlBootDictItem.code} ,
                   #{xxlBootDictItem.status} ,
                   #{xxlBootDictItem.order} ,
                   #{xxlBootDictItem.remark} ,
@@ -69,8 +69,7 @@
     <update id="update" parameterType="java.util.Map" >
         UPDATE xxl_boot_dict_item
         SET
-            `item_name` = #{xxlBootDictItem.itemName},
-            `item_code` = #{xxlBootDictItem.itemCode},
+            `name` = #{xxlBootDictItem.name},
             `status` = #{xxlBootDictItem.status},
             `order` = #{xxlBootDictItem.order},
             `remark` = #{xxlBootDictItem.remark},

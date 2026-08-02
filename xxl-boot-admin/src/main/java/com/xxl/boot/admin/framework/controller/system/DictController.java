@@ -41,8 +41,8 @@ public class DictController {
                                                         @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                         @RequestParam(required = false, defaultValue = "-1") int status,
                                                         String name,
-                                                        String code) {
-        PageModel<DictDTO> pageModel = dictService.pageList(name, code, status, offset, pagesize);
+                                                        String type) {
+        PageModel<DictDTO> pageModel = dictService.pageList(name, type, status, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 

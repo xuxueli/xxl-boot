@@ -29,8 +29,8 @@
                         </div>
                         <div class="col-xs-3">
                             <div class="input-group">
-                                <span class="input-group-addon">${I18n.dict_code}</span>
-                                <input type="text" class="form-control code" autocomplete="on" >
+                                <span class="input-group-addon">${I18n.dict_type}</span>
+                                <input type="text" class="form-control type" autocomplete="on" >
                             </div>
                         </div>
                         <div class="col-xs-3">
@@ -89,8 +89,8 @@
                                     <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.dict_code}</label>
-                                    <div class="col-sm-10"><input type="text" class="form-control" name="code" placeholder="" maxlength="100" ></div>
+                                    <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.dict_type}</label>
+                                    <div class="col-sm-10"><input type="text" class="form-control" name="type" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.system_status}</label>
@@ -137,8 +137,8 @@
                                     <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.dict_code}</label>
-                                    <div class="col-sm-10"><input type="text" class="form-control" name="code" placeholder="" maxlength="100" ></div>
+                                    <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.dict_type}</label>
+                                    <div class="col-sm-10"><input type="text" class="form-control" name="type" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>${I18n.system_status}</label>
@@ -216,11 +216,11 @@
                             <form class="form-horizontal form" role="form" >
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.dict_item_name}</label>
-                                    <div class="col-sm-9"><input type="text" class="form-control" name="itemName" placeholder="" maxlength="100" ></div>
+                                    <div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.dict_item_code}</label>
-                                    <div class="col-sm-9"><input type="text" class="form-control" name="itemCode" placeholder="" maxlength="100" ></div>
+                                    <div class="col-sm-9"><input type="number" class="form-control" name="code" placeholder="" min="1" max="10000000" ></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.system_status}</label>
@@ -269,11 +269,11 @@
                             <form class="form-horizontal form" role="form" >
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.dict_item_name}</label>
-                                    <div class="col-sm-9"><input type="text" class="form-control" name="itemName" placeholder="" maxlength="100" ></div>
+                                    <div class="col-sm-9"><input type="text" class="form-control" name="name" placeholder="" maxlength="100" ></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.dict_item_code}</label>
-                                    <div class="col-sm-9"><input type="text" class="form-control" name="itemCode" placeholder="" maxlength="100" ></div>
+                                    <div class="col-sm-9"><input type="number" class="form-control" name="code" placeholder="" min="1" max="10000000" ></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-3 control-label"><font color="red">*</font>${I18n.system_status}</label>
@@ -327,9 +327,9 @@
 $(function() {
 
     // valid: dict
-    $.validator.addMethod("dictCodeRule", function(value, element) {
-        return this.optional(element) || /^[a-zA-Z0-9_]+$/.test(value);
-    }, "只允许字母、数字和下划线");
+    $.validator.addMethod("dictTypeRule", function(value, element) {
+        return this.optional(element) || /^[a-z][a-zA-Z0-9]*$/.test(value);
+    }, "以小写字母开头，由字母和数字组成");
 
     // ---------- ---------- ---------- dict table + curd  ---------- ---------- ----------
 
@@ -345,7 +345,7 @@ $(function() {
         queryParams: function (params) {
             var obj = {};
             obj.name = $('#data_filter .name').val();
-            obj.code = $('#data_filter .code').val();
+            obj.type = $('#data_filter .type').val();
             obj.status = $('#data_filter .status').val();
             obj.offset = params.offset;
             obj.pagesize = params.limit;
@@ -363,8 +363,8 @@ $(function() {
                 width: '20',
                 widthUnit: '%'
             }, {
-                title: '${I18n.dict_code}',
-                field: 'code',
+                title: '${I18n.dict_type}',
+                field: 'type',
                 width: '20',
                 widthUnit: '%'
             }, {
@@ -413,10 +413,10 @@ $(function() {
                 required : true,
                 rangelength:[1, 100]
             },
-            code : {
+            type : {
                 required : true,
                 rangelength:[1, 100],
-                dictCodeRule: true
+                dictTypeRule: true
             }
         },
         messages : {
@@ -424,8 +424,8 @@ $(function() {
                 required : "${I18n.system_please_input}${I18n.dict_name}",
                 rangelength: I18n.system_lengh_limit + "[1-100]"
             },
-            code : {
-                required : "${I18n.system_please_input}${I18n.dict_code}",
+            type : {
+                required : "${I18n.system_please_input}${I18n.dict_type}",
                 rangelength: I18n.system_lengh_limit + "[1-100]"
             }
         },
@@ -435,7 +435,7 @@ $(function() {
         readFormData: function() {
             return {
                 "name": $("#addModal .form input[name=name]").val(),
-                "code": $("#addModal .form input[name=code]").val(),
+                "type": $("#addModal .form input[name=type]").val(),
                 "status": $("#addModal .form input[name='status']:checked").val(),
                 "remark": $("#addModal .form textarea[name=remark]").val()
             };
@@ -450,7 +450,7 @@ $(function() {
         writeFormData: function(row) {
             $("#updateModal .form input[name='id']").val( row.id );
             $("#updateModal .form input[name='name']").val( row.name );
-            $("#updateModal .form input[name='code']").val( row.code );
+            $("#updateModal .form input[name='type']").val( row.type );
             $("#updateModal .form input[name='status'][value='" + row.status + "']").iCheck('check');
             $("#updateModal .form textarea[name='remark']").val( row.remark );
         },
@@ -459,10 +459,10 @@ $(function() {
                 required : true,
                 rangelength:[1, 100]
             },
-            code : {
+            type : {
                 required : true,
                 rangelength:[1, 100],
-                dictCodeRule: true
+                dictTypeRule: true
             }
         },
         messages : {
@@ -470,8 +470,8 @@ $(function() {
                 required : "${I18n.system_please_input}${I18n.dict_name}",
                 rangelength: I18n.system_lengh_limit + "[1-100]"
             },
-            code : {
-                required : "${I18n.system_please_input}${I18n.dict_code}",
+            type : {
+                required : "${I18n.system_please_input}${I18n.dict_type}",
                 rangelength: I18n.system_lengh_limit + "[1-100]"
             }
         },
@@ -479,7 +479,7 @@ $(function() {
             return {
                 "id": $("#updateModal .form input[name=id]").val(),
                 "name": $("#updateModal .form input[name=name]").val(),
-                "code": $("#updateModal .form input[name=code]").val(),
+                "type": $("#updateModal .form input[name=type]").val(),
                 "status": $("#updateModal .form input[name='status']:checked").val(),
                 "remark": $("#updateModal .form textarea[name=remark]").val()
             };
@@ -536,12 +536,12 @@ $(function() {
                 widthUnit: '%'
             }, {
                 title: '${I18n.dict_item_name}',
-                field: 'itemName',
+                field: 'name',
                 width: '15',
                 widthUnit: '%'
             }, {
                 title: '${I18n.dict_item_code}',
-                field: 'itemCode',
+                field: 'code',
                 width: '15',
                 widthUnit: '%'
             }, {
@@ -627,24 +627,23 @@ $(function() {
         errorClass : 'help-block',
         focusInvalid : true,
         rules : {
-            itemName : {
+            name : {
                 required : true,
                 rangelength:[1, 100]
             },
-            itemCode : {
+            code : {
                 required : true,
-                rangelength:[1, 100],
-                dictCodeRule: true
+                range:[1, 10000000]
             }
         },
         messages : {
-            itemName : {
+            name : {
                 required : "${I18n.system_please_input}${I18n.dict_item_name}",
                 rangelength: I18n.system_lengh_limit + "[1-100]"
             },
-            itemCode : {
+            code : {
                 required : "${I18n.system_please_input}${I18n.dict_item_code}",
-                rangelength: I18n.system_lengh_limit + "[1-100]"
+                range: "${I18n.dict_item_code}" + "[1-10000000]"
             }
         },
         highlight : function(element) {
@@ -660,8 +659,8 @@ $(function() {
         submitHandler : function(form) {
             var data = {
                 "dictId": $("#itemAddModal .form input[name=dictId]").val(),
-                "itemName": $("#itemAddModal .form input[name=itemName]").val(),
-                "itemCode": $("#itemAddModal .form input[name=itemCode]").val(),
+                "name": $("#itemAddModal .form input[name=name]").val(),
+                "code": $("#itemAddModal .form input[name=code]").val(),
                 "status": $("#itemAddModal .form input[name='status']:checked").val(),
                 "order": $("#itemAddModal .form input[name=order]").val(),
                 "remark": $("#itemAddModal .form textarea[name=remark]").val()
@@ -730,8 +729,8 @@ $(function() {
         itemUpdateModalValidate.resetForm();
         $("#itemUpdateModal .form input[name='id']").val(row.id);
         $("#itemUpdateModal .form input[name='dictId']").val(row.dictId);
-        $("#itemUpdateModal .form input[name='itemName']").val(row.itemName);
-        $("#itemUpdateModal .form input[name='itemCode']").val(row.itemCode);
+        $("#itemUpdateModal .form input[name='name']").val(row.name);
+        $("#itemUpdateModal .form input[name='code']").val(row.code);
         $("#itemUpdateModal .form input[name='status'][value='" + row.status + "']").iCheck('check');
         $("#itemUpdateModal .form input[name='order']").val(row.order);
         $("#itemUpdateModal .form textarea[name='remark']").val(row.remark);
@@ -742,24 +741,23 @@ $(function() {
         errorClass : 'help-block',
         focusInvalid : true,
         rules : {
-            itemName : {
+            name : {
                 required : true,
                 rangelength:[1, 100]
             },
-            itemCode : {
+            code : {
                 required : true,
-                rangelength:[1, 100],
-                dictCodeRule: true
+                range:[1, 10000000]
             }
         },
         messages : {
-            itemName : {
+            name : {
                 required : "${I18n.system_please_input}${I18n.dict_item_name}",
                 rangelength: I18n.system_lengh_limit + "[1-100]"
             },
-            itemCode : {
+            code : {
                 required : "${I18n.system_please_input}${I18n.dict_item_code}",
-                rangelength: I18n.system_lengh_limit + "[1-100]"
+                range: "${I18n.dict_item_code}" + "[1-10000000]"
             }
         },
         highlight : function(element) {
@@ -776,8 +774,8 @@ $(function() {
             var data = {
                 "id": $("#itemUpdateModal .form input[name=id]").val(),
                 "dictId": $("#itemUpdateModal .form input[name=dictId]").val(),
-                "itemName": $("#itemUpdateModal .form input[name=itemName]").val(),
-                "itemCode": $("#itemUpdateModal .form input[name=itemCode]").val(),
+                "name": $("#itemUpdateModal .form input[name=name]").val(),
+                "code": $("#itemUpdateModal .form input[name=code]").val(),
                 "status": $("#itemUpdateModal .form input[name='status']:checked").val(),
                 "order": $("#itemUpdateModal .form input[name=order]").val(),
                 "remark": $("#itemUpdateModal .form textarea[name=remark]").val()

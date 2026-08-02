@@ -18,13 +18,13 @@ public interface DictMapper {
     public Dict load(@Param("id") int id);
 
     public List<Dict> pageList(@Param("name") String name,
-                                      @Param("code") String code,
+                                      @Param("type") String type,
                                       @Param("status") int status,
                                       @Param("offset") int offset,
                                       @Param("pagesize") int pagesize);
 
     public int pageListCount(@Param("name") String name,
-                             @Param("code") String code,
+                             @Param("type") String type,
                              @Param("status") int status,
                              @Param("offset") int offset,
                              @Param("pagesize") int pagesize);

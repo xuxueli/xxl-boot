@@ -34,8 +34,8 @@ public class DictServiceImpl implements DictService {
         if (StringTool.isBlank(xxlBootDict.getName())) {
             return Response.ofFail("请输入字典名称");
         }
-        if (StringTool.isBlank(xxlBootDict.getCode())) {
-            return Response.ofFail("请输入字典标识");
+        if (StringTool.isBlank(xxlBootDict.getType())) {
+            return Response.ofFail("请输入字典Type");
         }
         dictMapper.insert(xxlBootDict);
         return Response.ofSuccess();
@@ -61,9 +61,9 @@ public class DictServiceImpl implements DictService {
     }
 
     @Override
-    public PageModel<DictDTO> pageList(String name, String code, int status, int offset, int pagesize) {
-        List<Dict> pageList = dictMapper.pageList(name, code, status, offset, pagesize);
-        int totalCount = dictMapper.pageListCount(name, code, status, offset, pagesize);
+    public PageModel<DictDTO> pageList(String name, String type, int status, int offset, int pagesize) {
+        List<Dict> pageList = dictMapper.pageList(name, type, status, offset, pagesize);
+        int totalCount = dictMapper.pageListCount(name, type, status, offset, pagesize);
 
         List<DictDTO> dtoList = DictAdaptor.adaptor(pageList);
 
@@ -79,11 +79,11 @@ public class DictServiceImpl implements DictService {
         if (xxlBootDictItem == null) {
             return Response.ofFail("必要参数缺失");
         }
-        if (StringTool.isBlank(xxlBootDictItem.getItemName())) {
+        if (StringTool.isBlank(xxlBootDictItem.getName())) {
             return Response.ofFail("请输入字典项名称");
         }
-        if (StringTool.isBlank(xxlBootDictItem.getItemCode())) {
-            return Response.ofFail("请输入字典项标识");
+        if (xxlBootDictItem.getCode() < 1 || xxlBootDictItem.getCode() > 10000000) {
+            return Response.ofFail("字典项Code需在1-10000000之间");
         }
         dictItemMapper.insert(xxlBootDictItem);
         return Response.ofSuccess();

@@ -7,7 +7,7 @@ public class DictDTO implements Serializable {
 
     private long id;
     private String name;
-    private String code;
+    private String type;
     private int status;
     private String addTime;
     private String updateTime;
@@ -29,12 +29,12 @@ public class DictDTO implements Serializable {
         this.name = name;
     }
 
-    public String getCode() {
-        return code;
+    public String getType() {
+        return type;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public int getStatus() {
