@@ -29,7 +29,7 @@
 </template>
 
 <script setup name="ReadUsers">
-import { listNoticeReadUsers } from "@/api/system/message"
+import { listMessageReadUsers } from "@/api/system/message"
 import { parseTime } from '@/utils/common'
 
 // 弹窗：UI数据
@@ -72,7 +72,7 @@ function getList() {
   }
   delete params.pageNum
   delete params.pageSize
-  listNoticeReadUsers(params).then(res => {
+  listMessageReadUsers(params).then(res => {
     table.value.list = res.data.data
     table.value.total = res.data.total
   }).finally(() => {

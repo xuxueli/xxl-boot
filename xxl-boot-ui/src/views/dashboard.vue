@@ -74,7 +74,7 @@
     </el-row>
 
     <!-- 消息详情 -->
-    <NoticeDetailView ref="noticeDetailRef" />
+    <MessageDetailView ref="messageDetailRef" />
 
   </div>
 </template>
@@ -82,10 +82,10 @@
 <script setup name="Index">
 
 import {getStats, getLogTrend} from '@/api/dashboard'
-import {listNoticeTop, markNoticeRead} from '@/api/system/message'
+import {listMessageTop, markMessageRead} from '@/api/system/message'
 import {parseTime} from '@/utils/common'
 import * as echarts from 'echarts'
-import NoticeDetailView from '@/layout/components/Navbar/HeaderNoticeDetail.vue'
+import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
 
 // 指标卡片
 const stats = ref([
@@ -98,7 +98,7 @@ const stats = ref([
 const messages = ref([])
 const chartRef = ref(null)
 const chartDays = ref(30)
-const noticeDetailRef = ref(null)
+const messageDetailRef = ref(null)
 let chartInstance = null
 
 /**
@@ -134,7 +134,7 @@ function loadStats() {
  * 消息列表 - 数据加载
  */
 function loadMessages() {
-  listNoticeTop().then(res => {
+  listMessageTop().then(res => {
     messages.value = res.data || []
   })
 }
@@ -143,8 +143,8 @@ function loadMessages() {
  * 消息列表 - 点击查看详情，标记已读
  */
 function handleMsgClick(item) {
-  noticeDetailRef.value.open(item.id)
-  markNoticeRead(item.id)
+  messageDetailRef.value.open(item.id)
+  markMessageRead(item.id)
 }
 
 /**

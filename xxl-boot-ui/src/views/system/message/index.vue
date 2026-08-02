@@ -140,15 +140,15 @@
         </div>
       </template>
     </el-dialog>
-    <NoticeDetailView ref="noticeViewRef" />
+    <MessageDetailView ref="messageViewRef" />
     <ReadUsersDialog ref="readUsersRef" />
   </div>
 </template>
 
 <script setup name="Message">
 import ReadUsersDialog from "./ReadUsers"
-import NoticeDetailView from '@/layout/components/Navbar/HeaderNoticeDetail.vue'
-import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/system/message"
+import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
+import { listMessage, getMessage, delMessage, addMessage, updateMessage } from "@/api/system/message"
 import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
@@ -160,7 +160,7 @@ const resetForm = useFormReset()
 
 // 组件实例引用：模板 ref
 const formRef = ref(null)             /* 编辑表单 ref */
-const noticeViewRef = ref(null)       /* 消息详情弹框 ref： */
+const messageViewRef = ref(null)       /* 消息详情弹框 ref： */
 const readUsersRef = ref(null)        /* 已读弹框 ref */
 
 // 筛选项数据：消息分类 + 消息状态
@@ -222,7 +222,7 @@ function getList() {
   }
   delete params.pageNum
   delete params.pageSize
-  listNotice(params).then(response => {
+  listMessage(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -293,7 +293,7 @@ function handleUpdate(row) {
   if (id == null) {
     return
   }
-  getNotice(id).then(response => {
+  getMessage(id).then(response => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = "修改站内消息"
@@ -306,13 +306,13 @@ function submitForm() {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateNotice(formState.value.form).then(response => {
+        updateMessage(formState.value.form).then(response => {
           modal.msgSuccess("修改成功")
           formState.value.visible = false
           getList()
         })
       } else {
-        addNotice(formState.value.form).then(response => {
+        addMessage(formState.value.form).then(response => {
           modal.msgSuccess("新增成功")
           formState.value.visible = false
           getList()
@@ -324,7 +324,7 @@ function submitForm() {
 
 /** 查看消息详情 */
 function handleViewData(row) {
-  noticeViewRef.value.open(row.id)
+  messageViewRef.value.open(row.id)
 }
 
 /** 查看已读用户 */
@@ -339,7 +339,7 @@ function handleDelete(row) {
     return
   }
   modal.confirm('是否确认删除消息编号为"' + messageIds + '"的数据项？').then(function() {
-    return delNotice(messageIds)
+    return delMessage(messageIds)
   }).then(() => {
     getList()
     modal.msgSuccess("删除成功")

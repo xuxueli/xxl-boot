@@ -10,7 +10,7 @@ import request from '@/utils/request'
  * @param {Object} query 查询参数（title/status/offset/pagesize）。
  * @returns {Promise<any>} 消息分页列表。
  */
-export function listNotice(query) {
+export function listMessage(query) {
   return request({
     url: '/system/message/pageList',
     method: 'get',
@@ -20,14 +20,14 @@ export function listNotice(query) {
 
 /**
  * 查询单条消息详情。
- * @param {number} noticeId 消息ID。
+ * @param {number} id 消息ID。
  * @returns {Promise<any>} 消息详情。
  */
-export function getNotice(noticeId) {
+export function getMessage(id) {
   return request({
     url: '/system/message/load',
     method: 'get',
-    params: { id: noticeId }
+    params: { id: id }
   })
 }
 
@@ -36,7 +36,7 @@ export function getNotice(noticeId) {
  * @param {Object} data 消息数据。
  * @returns {Promise<any>} 新增结果。
  */
-export function addNotice(data) {
+export function addMessage(data) {
   return request({
     url: '/system/message/insert',
     method: 'post',
@@ -49,7 +49,7 @@ export function addNotice(data) {
  * @param {Object} data 消息数据。
  * @returns {Promise<any>} 更新结果。
  */
-export function updateNotice(data) {
+export function updateMessage(data) {
   return request({
     url: '/system/message/update',
     method: 'post',
@@ -59,14 +59,14 @@ export function updateNotice(data) {
 
 /**
  * 删除消息。
- * @param {number|Array} noticeId 消息ID 或消息ID数组。
+ * @param {number|Array} id 消息ID 或消息ID数组。
  * @returns {Promise<any>} 删除结果。
  */
-export function delNotice(noticeId) {
+export function delMessage(id) {
   return request({
     url: '/system/message/delete',
     method: 'post',
-    params: { 'ids[]': noticeId }
+    params: { 'ids[]': id }
   })
 }
 
@@ -74,7 +74,7 @@ export function delNotice(noticeId) {
  * 查询首页顶部消息列表（最近5条，附带是否已读）。
  * @returns {Promise<any>} 顶部消息列表。
  */
-export function listNoticeTop() {
+export function listMessageTop() {
   return request({
     url: '/system/message/listTop',
     method: 'get'
@@ -83,14 +83,14 @@ export function listNoticeTop() {
 
 /**
  * 标记单条消息已读。
- * @param {number} noticeId 消息ID。
+ * @param {number} id 消息ID。
  * @returns {Promise<any>} 标记结果。
  */
-export function markNoticeRead(noticeId) {
+export function markMessageRead(id) {
   return request({
     url: '/system/message/markRead',
     method: 'post',
-    params: { messageId: noticeId }
+    params: { messageId: id }
   })
 }
 
@@ -99,7 +99,7 @@ export function markNoticeRead(noticeId) {
  * @param {string} ids 消息ID，逗号分隔字符串。
  * @returns {Promise<any>} 批量标记结果。
  */
-export function markNoticeReadAll(ids) {
+export function markMessageReadAll(ids) {
   return request({
     url: '/system/message/markReadAll',
     method: 'post',
@@ -112,7 +112,7 @@ export function markNoticeReadAll(ids) {
  * @param {Object} query 查询参数（messageId/offset/pagesize）。
  * @returns {Promise<any>} 已读用户分页列表。
  */
-export function listNoticeReadUsers(query) {
+export function listMessageReadUsers(query) {
   return request({
     url: '/system/message/readUsers',
     method: 'get',

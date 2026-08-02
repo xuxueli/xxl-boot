@@ -49,7 +49,7 @@
         </el-tooltip>
         <!-- 通知 -->
         <el-tooltip content="消息通知" effect="dark" placement="bottom">
-          <HeaderNotice id="header-notice" class="right-menu-item hover-effect" />
+          <HeaderMessage id="header-message" class="right-menu-item hover-effect" />
         </el-tooltip>
       </template>
 
@@ -99,7 +99,7 @@ import Hamburger from './Hamburger.vue'
 import Screenfull from './Screenfull.vue'
 import SizeSelect from './SizeSelect.vue'
 import HeaderSearch from './HeaderSearch.vue'
-import HeaderNotice from './HeaderNotice.vue'
+import HeaderMessage from './HeaderMessage.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 import settings from '@/settings'
 

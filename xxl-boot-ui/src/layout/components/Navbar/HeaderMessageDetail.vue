@@ -1,38 +1,38 @@
 <!--
-  组件：HeaderNoticeDetail（站内消息详情抽屉）
+  组件：HeaderMessageDetail（站内消息详情抽屉）
   功能：从右侧滑出抽屉展示消息完整详情内容
 -->
 <template>
   <!-- 右侧滑出抽屉，半屏展示 -->
-  <el-drawer v-model="visible" title="站内消息详情" direction="rtl" size="50%" append-to-body :before-close="handleClose" class="notice-detail-drawer">
-    <div v-loading="loading" class="notice-detail-drawer__body">
+  <el-drawer v-model="visible" title="站内消息详情" direction="rtl" size="50%" append-to-body :before-close="handleClose" class="message-detail-drawer">
+    <div v-loading="loading" class="message-detail-drawer__body">
       <!-- 无数据状态 -->
-      <div v-if="!detail" class="notice-empty">
+      <div v-if="!detail" class="message-empty">
         <el-icon><Document /></el-icon>
         <span>暂无数据</span>
       </div>
 
       <!-- 详情内容 -->
-      <div v-else class="notice-page">
+      <div v-else class="message-page">
 
         <!-- 类型标签：通知 / 公告 / 消息 -->
-        <div class="notice-type-wrap">
-          <span v-if="detail.category === 1" class="notice-type-tag type-notify">
+        <div class="message-type-wrap">
+          <span v-if="detail.category === 1" class="message-type-tag type-notify">
             <el-icon><Bell /></el-icon> 通知
           </span>
-          <span v-else-if="detail.category === 2" class="notice-type-tag type-announce">
+          <span v-else-if="detail.category === 2" class="message-type-tag type-announce">
             <el-icon><Message /></el-icon> 公告
           </span>
-          <span v-else class="notice-type-tag type-notify">
+          <span v-else class="message-type-tag type-notify">
             <el-icon><Document /></el-icon> 消息
           </span>
         </div>
 
         <!-- 公告标题 -->
-        <h1 class="notice-title">{{ detail.title }}</h1>
+        <h1 class="message-title">{{ detail.title }}</h1>
 
         <!-- 公告元数据：发布人 / 发布时间 / 状态 -->
-        <div class="notice-meta">
+        <div class="message-meta">
           <span class="meta-item">
             <el-icon><User /></el-icon>
             <span>{{ detail.sender || '—' }}</span>
@@ -48,16 +48,16 @@
         </div>
 
         <!-- 装饰分隔线 -->
-        <div class="notice-divider">
-          <span class="notice-divider-dot"></span>
-          <span class="notice-divider-dot"></span>
-          <span class="notice-divider-dot"></span>
+        <div class="message-divider">
+          <span class="message-divider-dot"></span>
+          <span class="message-divider-dot"></span>
+          <span class="message-divider-dot"></span>
         </div>
 
         <!-- 公告正文 -->
-        <div class="notice-body">
-          <div v-if="hasContent" class="notice-content" v-html="detail.content" />
-          <div v-else class="notice-empty notice-empty--inner">
+        <div class="message-body">
+          <div v-if="hasContent" class="message-content" v-html="detail.content" />
+          <div v-else class="message-empty message-empty--inner">
             <el-icon><Document /></el-icon> 暂无内容
           </div>
         </div>
@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import { getNotice } from '@/api/system/message.js'
+import { getMessage } from '@/api/system/message.js'
 
 const visible = ref(false)  /* 抽屉显隐 */
 const loading = ref(false)  /* 接口加载状态 */
@@ -91,18 +91,18 @@ const hasContent = computed(() => {
 })
 
 /*
-* 打开详情：支持传入完整公告对象（直接展示）或 noticeId（请求接口加载）
+* 打开详情：支持传入完整公告对象（直接展示）或 messageId（请求接口加载）
 *   payload 类型分支：
-*     - object → 含 noticeContent 则直接展示（预设模式），否则只取 id 发请求
-*     - string/number → 视为 noticeId 请求接口加载
+*     - object → 含 messageContent 则直接展示（预设模式），否则只取 id 发请求
+*     - string/number → 视为 messageId 请求接口加载
 */
 function open(payload) {
   /* 处理入参 */
   let id = null
   let preset = null
   if (payload != null && typeof payload === 'object') {
-    id = payload.noticeId
-    if (payload.noticeContent != null) preset = payload
+    id = payload.messageId
+    if (payload.messageContent != null) preset = payload
   } else {
     id = payload
   }
@@ -120,10 +120,10 @@ function open(payload) {
     return
   }
 
-  /* 传入 noticeId：调接口获取详情 */
+  /* 传入 messageId：调接口获取详情 */
   loading.value = true
   detail.value = null
-  getNotice(id).then(res => {
+  getMessage(id).then(res => {
     detail.value = res.data
   }).catch(() => {
     detail.value = null
@@ -148,14 +148,14 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-.notice-page {
+.message-page {
   max-width: 760px;
   margin: 0 auto;
   padding: 8px 8px 20px;
-  animation: notice-fade-up 0.28s ease both;
+  animation: message-fade-up 0.28s ease both;
 }
 
-@keyframes notice-fade-up {
+@keyframes message-fade-up {
   from {
     opacity: 0;
     transform: translateY(14px);
@@ -166,7 +166,7 @@ defineExpose({
   }
 }
 
-.notice-type-tag {
+.message-type-tag {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -191,7 +191,7 @@ defineExpose({
   border-left: 3px solid #38a169;
 }
 
-.notice-title {
+.message-title {
   font-size: 22px;
   font-weight: 700;
   color: #1a202c;
@@ -200,7 +200,7 @@ defineExpose({
   letter-spacing: -0.2px;
 }
 
-.notice-meta {
+.message-meta {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -240,29 +240,29 @@ defineExpose({
   background: #e53e3e;
 }
 
-.notice-divider {
+.message-divider {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 24px;
 }
 
-.notice-divider::before,
-.notice-divider::after {
+.message-divider::before,
+.message-divider::after {
   content: '';
   flex: 1;
   height: 1px;
   background: linear-gradient(to right, transparent, #dee2e6, transparent);
 }
 
-.notice-divider-dot {
+.message-divider-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: #cbd5e0;
 }
 
-.notice-body {
+.message-body {
   background: #fff;
   border-radius: 6px;
   padding: 28px 32px;
@@ -270,63 +270,63 @@ defineExpose({
   min-height: 120px;
 }
 
-.notice-content {
+.message-content {
   font-size: 14px;
   line-height: 1.85;
   color: #2d3748;
   word-break: break-word;
 }
 
-.notice-content :deep(p) {
+.message-content :deep(p) {
   margin: 0 0 1em;
 }
 
-.notice-content :deep(h1),
-.notice-content :deep(h2),
-.notice-content :deep(h3) {
+.message-content :deep(h1),
+.message-content :deep(h2),
+.message-content :deep(h3) {
   font-weight: 700;
   color: #1a202c;
   margin: 1.4em 0 0.6em;
 }
 
-.notice-content :deep(h1) {
+.message-content :deep(h1) {
   font-size: 18px;
 }
 
-.notice-content :deep(h2) {
+.message-content :deep(h2) {
   font-size: 16px;
 }
 
-.notice-content :deep(h3) {
+.message-content :deep(h3) {
   font-size: 14px;
 }
 
-.notice-content :deep(a) {
+.message-content :deep(a) {
   color: #3182ce;
   text-decoration: underline;
 }
 
-.notice-content :deep(a:hover) {
+.message-content :deep(a:hover) {
   color: #2b6cb0;
 }
 
-.notice-content :deep(img) {
+.message-content :deep(img) {
   max-width: 100%;
   border-radius: 4px;
   margin: 8px 0;
 }
 
-.notice-content :deep(ul),
-.notice-content :deep(ol) {
+.message-content :deep(ul),
+.message-content :deep(ol) {
   padding-left: 20px;
   margin: 0 0 1em;
 }
 
-.notice-content :deep(li) {
+.message-content :deep(li) {
   margin-bottom: 4px;
 }
 
-.notice-content :deep(blockquote) {
+.message-content :deep(blockquote) {
   border-left: 3px solid #cbd5e0;
   margin: 1em 0;
   padding: 6px 16px;
@@ -334,42 +334,42 @@ defineExpose({
   background: #f7fafc;
 }
 
-.notice-content :deep(table) {
+.message-content :deep(table) {
   border-collapse: collapse;
   width: 100%;
   margin: 1em 0;
   font-size: 13px;
 }
 
-.notice-content :deep(table th),
-.notice-content :deep(table td) {
+.message-content :deep(table th),
+.message-content :deep(table td) {
   border: 1px solid #e2e8f0;
   padding: 7px 12px;
 }
 
-.notice-content :deep(table th) {
+.message-content :deep(table th) {
   background: #f7fafc;
   font-weight: 600;
 }
 
-.notice-empty {
+.message-empty {
   text-align: center;
   padding: 40px 0;
   color: #a0aec0;
   font-size: 13px;
 }
 
-.notice-empty .el-icon {
+.message-empty .el-icon {
   font-size: 28px;
   display: inline-flex;
   margin-bottom: 10px;
 }
 
-.notice-empty--inner {
+.message-empty--inner {
   padding: 32px 0;
 }
 
-.notice-detail-drawer__body {
+.message-detail-drawer__body {
   height: 100%;
   overflow: auto;
   padding: 10px 16px 22px;
@@ -377,7 +377,7 @@ defineExpose({
 </style>
 
 <style lang="scss">
-.notice-detail-drawer {
+.message-detail-drawer {
   .el-drawer__header {
     margin-bottom: 0;
     padding: 16px 20px;
