@@ -1,13 +1,10 @@
 package com.xxl.boot.api.framework.controller.org;
 
-import com.xxl.boot.api.framework.constant.enums.OrgStatuEnum;
 import com.xxl.boot.api.framework.model.entity.Org;
 import com.xxl.boot.api.framework.service.OrgService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,7 +36,7 @@ public class OrgController {
     @RequestMapping("/treeList")
     @XxlSso(permission = "org:org")
     public Response<List<Org>> treeList(@RequestParam(required = false) String name,
-                                               @RequestParam(required = false, defaultValue = "-1") int status) {
+                                        @RequestParam(required = false, defaultValue = "-1") int status) {
 
         List<Org> treeListData = orgService.treeList(name, status);
         return Response.ofSuccess(treeListData);
@@ -59,7 +56,7 @@ public class OrgController {
      */
     @RequestMapping("/insert")
     @XxlSso(permission = "org:org")
-    public Response<String> insert(Org xxlBootOrg){
+    public Response<String> insert(@RequestBody(required = false) Org xxlBootOrg){
         return orgService.insert(xxlBootOrg);
     }
 
@@ -77,8 +74,18 @@ public class OrgController {
      */
     @RequestMapping("/update")
     @XxlSso(permission = "org:org")
-    public Response<String> update(Org xxlBootOrg){
+    public Response<String> update(@RequestBody(required = false) Org xxlBootOrg){
         return orgService.update(xxlBootOrg);
+    }
+
+    /**
+     * 保存排序（批量更新组织顺序）
+     */
+    @RequestMapping("/updateSort")
+    @XxlSso(permission = "org:org")
+    public Response<String> updateSort(@RequestParam("ids[]") List<Integer> ids,
+                                       @RequestParam("orders[]") List<Integer> orders){
+        return orgService.updateSort(ids, orders);
     }
 
 }

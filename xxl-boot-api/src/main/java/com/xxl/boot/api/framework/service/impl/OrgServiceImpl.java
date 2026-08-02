@@ -9,6 +9,7 @@ import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,8 +60,57 @@ public class OrgServiceImpl implements OrgService {
 	*/
 	@Override
 	public Response<String> update(Org xxlBootOrg) {
+		// valid
+		if (xxlBootOrg == null) {
+			return Response.ofFail("必要参数缺失");
+		}
+
+		// 上级组织不能是自己
+		if (xxlBootOrg.getId() == xxlBootOrg.getParentId()) {
+			return Response.ofFail("上级组织不能选择自己或其下级组织");
+		}
+
+		// 上级组织不能是自身的子孙组织（逐层下钻校验，避免成环）
+		List<Integer> descendantIdList = new ArrayList<>();
+		descendantIdList.add(xxlBootOrg.getId());
+		while (CollectionTool.isNotEmpty(descendantIdList)) {
+			List<Org> childOrgList = orgMapper.queryByParentIds(descendantIdList);
+			if (CollectionTool.isEmpty(childOrgList)) {
+				break;
+			}
+			descendantIdList = new ArrayList<>();
+			for (Org childOrg : childOrgList) {
+				if (childOrg.getId() == xxlBootOrg.getParentId()) {
+					return Response.ofFail("上级组织不能选择自己或其下级组织");
+				}
+				descendantIdList.add(childOrg.getId());
+			}
+		}
+
 		int ret = orgMapper.update(xxlBootOrg);
 		return ret>0? Response.ofSuccess() : Response.ofFail() ;
+	}
+
+	/**
+	* 保存排序
+	*/
+	@Override
+	public Response<String> updateSort(List<Integer> ids, List<Integer> orders) {
+		// valid
+		if (CollectionTool.isEmpty(ids) || CollectionTool.isEmpty(orders)) {
+			return Response.ofFail("参数缺失");
+		}
+
+		// valid size
+		if (ids.size() != orders.size()) {
+			return Response.ofFail("参数数量不一致");
+		}
+
+		// 逐个更新组织顺序
+		for (int i = 0; i < ids.size(); i++) {
+			orgMapper.updateOrder(ids.get(i), orders.get(i));
+		}
+		return Response.ofSuccess();
 	}
 
 	/**

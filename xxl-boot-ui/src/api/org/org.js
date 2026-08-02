@@ -1,9 +1,8 @@
 import request from '@/utils/request'
-import { tansParams } from '@/utils/common'
 
 /**
  * 名称：组织管理 API
- * 能力：提供组织树查询、组织详情与组织维护接口。
+ * 能力：提供组织树查询、组织维护与排序保存接口。
  */
 
 /**
@@ -20,7 +19,7 @@ export function listOrg(query) {
 }
 
 /**
- * 查询组织详情。
+ * 查询组织详情
  * @param {number} id 组织 ID。
  * @returns {Promise<any>} 组织详情。
  */
@@ -33,7 +32,7 @@ export function getOrg(id) {
 }
 
 /**
- * 新增组织（后端为表单参数绑定，通过 urlencoded body 提交）。
+ * 新增组织
  * @param {Object} data 组织数据。
  * @returns {Promise<any>} 新增结果。
  */
@@ -41,14 +40,12 @@ export function addOrg(data) {
   return request({
     url: '/org/org/insert',
     method: 'post',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    transformRequest: [(params) => tansParams(params)],
     data: data
   })
 }
 
 /**
- * 更新组织（后端为表单参数绑定，通过 urlencoded body 提交）。
+ * 更新组织
  * @param {Object} data 组织数据。
  * @returns {Promise<any>} 更新结果。
  */
@@ -56,9 +53,20 @@ export function updateOrg(data) {
   return request({
     url: '/org/org/update',
     method: 'post',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    transformRequest: [(params) => tansParams(params)],
     data: data
+  })
+}
+
+/**
+ * 保存组织排序（批量更新顺序，ids[]/orders[] 数组参数）。
+ * @param {Object} data 排序数据（{ ids: [], orders: [] }）。
+ * @returns {Promise<any>} 保存结果。
+ */
+export function updateOrgSort(data) {
+  return request({
+    url: '/org/org/updateSort',
+    method: 'post',
+    params: { 'ids[]': data.ids, 'orders[]': data.orders }
   })
 }
 

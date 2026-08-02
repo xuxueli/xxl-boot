@@ -66,6 +66,13 @@
         WHERE `id` = #{xxlBootOrg.id}
     </update>
 
+    <update id="updateOrder" parameterType="java.util.Map" >
+        UPDATE xxl_boot_org
+        SET `order` = #{order},
+            update_time = NOW()
+        WHERE `id` = #{id}
+    </update>
+
 
     <select id="load" parameterType="java.util.Map" resultMap="Org">
         SELECT <include refid="Base_Column_List" />

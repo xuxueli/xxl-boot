@@ -24,9 +24,17 @@ public interface OrgService {
     public Response<String> delete(List<Integer> ids);
 
     /**
-    * 更新
-    */
+     * 更新
+     */
     public Response<String> update(Org xxlBootOrg);
+
+    /**
+     * 保存排序
+     *
+     * @param ids    组织ID列表
+     * @param orders 顺序列表（与 ids 一一对应）
+     */
+    public Response<String> updateSort(List<Integer> ids, List<Integer> orders);
 
     /**
     * Load查询

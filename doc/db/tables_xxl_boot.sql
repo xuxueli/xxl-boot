@@ -281,6 +281,11 @@ VALUES (1, 1, 1, now(), now()),
        (19, 2, 14, now(), now()),
        (20, 2, 15, now(), now());
 
+INSERT INTO `xxl_boot_org` (`id`, `parent_id`, `name`, `order`, `status`, `manager`, `add_time`, `update_time`)
+VALUES (1, 0, 'XXL-BOOT项目组', 1, 0, 'admin', now(), now()),
+       (2, 1, '研发A组', 11, 0, '11', now(), now()),
+       (3, 1, '研发B组', 12, 0, '12', now(), now());
+
 INSERT INTO `xxl_boot_message` (`category`, `title`, `content`, `sender`, `status`, `add_time`, `update_time`)
 VALUES (0, 'XXL-BOOT | 快速开发平台', '<p><strong>XXL-BOOT </strong>是一个快速开发平台，易学易用、灵活扩展、开箱即用。内置安全登录、权限管控、端到端代码生成、响应式布局、多语言、通告触达&hellip;&hellip;等能力。整合前后端流行技术，致力为 中小企业、个人开发者 打造开箱即用的中后台解决方案。</p>', 'admin', 0, now(), now()),
        (0, 'XXL-BOOT | 快速开发平台', '<p><strong>XXL-BOOT </strong>是一个快速开发平台，易学易用、灵活扩展、开箱即用。内置安全登录、权限管控、端到端代码生成、响应式布局、多语言、通告触达&hellip;&hellip;等能力。整合前后端流行技术，致力为 中小企业、个人开发者 打造开箱即用的中后台解决方案。</p>', 'admin', 0, now(), now()),

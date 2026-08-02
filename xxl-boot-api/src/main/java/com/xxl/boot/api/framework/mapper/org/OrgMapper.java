@@ -30,6 +30,11 @@ public interface OrgMapper {
     public int update(@Param("xxlBootOrg")  Org xxlBootOrg);
 
     /**
+     * 更新顺序
+     */
+    public int updateOrder(@Param("id") int id, @Param("order") int order);
+
+    /**
     * Load查询
     */
     public Org load(@Param("id") int id);
