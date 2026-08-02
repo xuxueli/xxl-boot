@@ -30,7 +30,7 @@
 
 - 组件 import 名称与模板使用标签保持一致（统一 PascalCase，如 `import NoticeDetailView` 对应 `<NoticeDetailView>`）
 - **响应式数据说明**
-  - 针对 响应式数据，非必须的情况下 一律使用 `ref`，避免使用 `reactive`，并通过 `toRefs(data)` 方式解构响应式数据。
+  - 针对 响应式数据，非必须的情况下 一律使用 `ref`，禁止使用 `reactive` 和通过 `toRefs(data)` 方式解构响应式数据的方式。
   - 针对逻辑相关的一组ref，比如 `list、total、loading、showSearch、ids、multiple` 统一放在一个 table 对象中，避免散落在各处。如 `views/system/log/index.vue` 中代码。
 - **避免啰嗦写法**：
   - 不要用 `defineProps` 声明 visible + `defineEmits(['update:visible'])` + computed get/set 桥接来实现 v-model 双向绑定，直接 `defineModel('visible')` + 模板 `v-model="visible"` 即可。
