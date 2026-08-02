@@ -1,10 +1,11 @@
 <!--
-  ${codegen.functionName} 列表页
+  ${codegen.functionName}（列表页）
   Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 -->
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <!-- 搜索栏 -->
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch" label-width="68px">
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isQuery == "1">
@@ -43,23 +44,25 @@
       </el-form-item>
     </el-form>
 
+    <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:edit']">修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:remove']">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:export']">导出</el-button>
       </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
+      <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList" />
     </el-row>
 
-    <el-table v-loading="loading" :data="${codegen.businessName?uncap_first}List" @selection-change="handleSelectionChange">
+    <!-- 数据列表 -->
+    <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" type="index" width="50" align="center">
         <template #default="scope">
@@ -81,55 +84,57 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+    <!-- 分页 -->
+    <Pagination v-show="table.total > 0" :total="table.total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form ref="${codegen.businessName?uncap_first}Ref" :model="form" :rules="rules" label-width="80px">
+    <!-- 添加或修改${codegen.functionName}对话框 -->
+    <el-dialog :title="formState.title" v-model="formState.visible" width="600px" append-to-body>
+      <el-form ref="${codegen.businessName?uncap_first}Ref" :model="formState.form" :rules="formState.rules" label-width="80px">
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isInsert == "1" || field.isEdit == "1">
 <#assign comment = field.columnComment!field.javaField />
 <#if field.htmlType == "input">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <el-input v-model="form.${field.javaField}" placeholder="请输入${comment}" />
+          <el-input v-model="formState.form.${field.javaField}" placeholder="请输入${comment}" />
         </el-form-item>
 <#elseif field.htmlType == "textarea">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <el-input v-model="form.${field.javaField}" type="textarea" placeholder="请输入${comment}" />
+          <el-input v-model="formState.form.${field.javaField}" type="textarea" placeholder="请输入${comment}" />
         </el-form-item>
 <#elseif field.htmlType == "select">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <el-select v-model="form.${field.javaField}" placeholder="请选择${comment}">
+          <el-select v-model="formState.form.${field.javaField}" placeholder="请选择${comment}">
             <el-option v-for="dict in ${field.dictType!'[]'}" :key="dict.value" :label="dict.label" :value="dict.value" />
           </el-select>
         </el-form-item>
 <#elseif field.htmlType == "radio">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <el-radio-group v-model="form.${field.javaField}">
+          <el-radio-group v-model="formState.form.${field.javaField}">
             <el-radio v-for="dict in ${field.dictType!'[]'}" :key="dict.value" :label="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
 <#elseif field.htmlType == "checkbox">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <el-checkbox-group v-model="form.${field.javaField}">
+          <el-checkbox-group v-model="formState.form.${field.javaField}">
             <el-checkbox v-for="dict in ${field.dictType!'[]'}" :key="dict.value" :label="dict.value">{{ dict.label }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
 <#elseif field.htmlType == "datetime">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <el-date-picker v-model="form.${field.javaField}" type="datetime" placeholder="选择${comment}" />
+          <el-date-picker v-model="formState.form.${field.javaField}" type="datetime" placeholder="选择${comment}" />
         </el-form-item>
 <#elseif field.htmlType == "imageUpload">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <image-upload v-model="form.${field.javaField}" />
+          <image-upload v-model="formState.form.${field.javaField}" />
         </el-form-item>
 <#elseif field.htmlType == "fileUpload">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <file-upload v-model="form.${field.javaField}" />
+          <file-upload v-model="formState.form.${field.javaField}" />
         </el-form-item>
 <#elseif field.htmlType == "editor">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <editor v-model="form.${field.javaField}" />
+          <editor v-model="formState.form.${field.javaField}" />
         </el-form-item>
 </#if>
 </#if>
@@ -153,51 +158,91 @@ import modal from '@/utils/modal'
 
 const resetForm = useFormReset()
 
-const ${codegen.businessName?uncap_first}List = ref([])
-const open = ref(false)
-const loading = ref(true)
-const showSearch = ref(true)
-const ids = ref([])
-const single = ref(true)
-const multiple = ref(true)
-const total = ref(0)
-const title = ref("")
-const dateRange = ref([])
 
-const data = reactive({
-  form: {},
-  queryParams: {
-    pageNum: 1,
-    pageSize: 10
-  },
-  rules: {}
+// --------------------------------- ref data ---------------------------------
+
+// 搜索栏：查询参数
+const queryParams = ref({
+  pageNum: 1,        /* 当前页码 */
+  pageSize: 10,      /* 每页条数 */
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.isQuery == "1" && (field.htmlType == "input" || field.htmlType == "select" || field.htmlType == "radio" || (field.htmlType == "datetime" && field.queryType != "BETWEEN"))>
+  ${field.javaField}: undefined, /* ${field.columnComment!field.javaField} */
+</#if>
+</#list>
+</#if>
 })
 
-const { queryParams, form, rules } = toRefs(data)
+// 日期范围：between 查询字段的日期区间
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.isQuery == "1" && field.htmlType == "datetime" && field.queryType == "BETWEEN">
+const dateRange${field.javaField?cap_first} = ref([]) /* ${field.columnComment!field.javaField} 查询区间 */
+</#if>
+</#list>
+</#if>
+
+// 表格：UI 数据
+const table = ref({
+  list: [],          /* 数据列表 */
+  total: 0,          /* 总条数 */
+  loading: true,     /* 加载状态 */
+  showSearch: true,  /* 是否显示搜索栏 */
+  ids: [],           /* 选中行 ID 数组 */
+  single: true,      /* 是否单选 */
+  multiple: true     /* 是否多选 */
+})
+
+// 编辑表单：数据状态
+const formState = ref({
+  visible: false,  /* 对话框显隐 */
+  title: "",       /* 对话框标题 */
+  form: {},        /* 表单数据 */
+  rules: {}        /* 校验规则 */
+})
+
+
+// --------------------------------- fun ---------------------------------
 
 /** 查询${codegen.functionName}列表 */
 function getList() {
-  loading.value = true
-  list${codegen.businessName}(addDateRange(queryParams.value, dateRange.value)).then(res => {
-    ${codegen.businessName?uncap_first}List.value = res.data.data
-    total.value = res.data.total
-    loading.value = false
+  table.value.loading = true
+  // 前端分页参数 → 后端分页参数（offset/pagesize）
+  const params = {
+    ...queryParams.value,
+    offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
+    pagesize: queryParams.value.pageSize
+  }
+  delete params.pageNum
+  delete params.pageSize
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.isQuery == "1" && field.htmlType == "datetime" && field.queryType == "BETWEEN">
+  addDateRange(params, dateRange${field.javaField?cap_first}.value, "${field.javaField?cap_first}")
+</#if>
+</#list>
+</#if>
+  list${codegen.businessName}(params).then(response => {
+    table.value.list = response.data.data
+    table.value.total = response.data.total
+    table.value.loading = false
   })
 }
 
 /** 取消按钮 */
 function cancel() {
-  open.value = false
+  formState.value.visible = false
   reset()
 }
 
 /** 表单重置 */
 function reset() {
-  form.value = {
+  formState.value.form = {
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isInsert == "1" || field.isEdit == "1">
-    ${field.javaField}: undefined,
+    ${field.javaField}: undefined, /* ${field.columnComment!field.javaField} */
 </#if>
 </#list>
 </#if>
@@ -214,33 +259,43 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  dateRange.value = []
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.isQuery == "1" && field.htmlType == "datetime" && field.queryType == "BETWEEN">
+  dateRange${field.javaField?cap_first}.value = []
+</#if>
+</#list>
+</#if>
   resetForm("queryRef")
   handleQuery()
 }
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id)
-  single.value = selection.length != 1
-  multiple.value = !selection.length
+  table.value.ids = selection.map(item => item.id)
+  table.value.single = selection.length !== 1
+  table.value.multiple = !selection.length
 }
 
 /** 新增按钮操作 */
 function handleAdd() {
   reset()
-  open.value = true
-  title.value = "添加${codegen.functionName}"
+  formState.value.visible = true
+  formState.value.title = "添加${codegen.functionName}"
 }
 
-/** 修改按钮操作 */
+/** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
 function handleUpdate(row) {
   reset()
-  const id = row.id || ids.value[0]
-  get${codegen.businessName}(id).then(res => {
-    form.value = res.data
-    open.value = true
-    title.value = "修改${codegen.functionName}"
+  // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
+  const id = row && row.id != null ? row.id : table.value.ids[0]
+  if (id == null) {
+    return
+  }
+  get${codegen.businessName}(id).then(response => {
+    formState.value.form = response.data
+    formState.value.visible = true
+    formState.value.title = "修改${codegen.functionName}"
   })
 }
 
@@ -248,16 +303,17 @@ function handleUpdate(row) {
 function submitForm() {
   ${codegen.businessName?uncap_first}Ref.value.validate(valid => {
     if (valid) {
-      if (form.value.id != undefined) {
-        update${codegen.businessName}(form.value).then(() => {
+      // 已有 id 走更新，否则走新增
+      if (formState.value.form.id != undefined) {
+        update${codegen.businessName}(formState.value.form).then(response => {
           modal.msgSuccess("修改成功")
-          open.value = false
+          formState.value.visible = false
           getList()
         })
       } else {
-        add${codegen.businessName}(form.value).then(() => {
+        add${codegen.businessName}(formState.value.form).then(response => {
           modal.msgSuccess("新增成功")
-          open.value = false
+          formState.value.visible = false
           getList()
         })
       }
@@ -265,10 +321,13 @@ function submitForm() {
   })
 }
 
-/** 删除按钮操作 */
+/** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row) {
-  const delIds = row.id || ids.value
-  modal.confirm('是否确认删除编号为"' + delIds + '"的数据项？').then(() => {
+  const delIds = row && row.id != null ? row.id : table.value.ids
+  if (delIds == null || (Array.isArray(delIds) && delIds.length === 0)) {
+    return
+  }
+  modal.confirm('是否确认删除编号为"' + delIds + '"的数据项？').then(function() {
     return del${codegen.businessName}(delIds)
   }).then(() => {
     getList()
@@ -283,5 +342,10 @@ function handleExport() {
   }, "${codegen.businessName?lower_case}_" + new Date().getTime() + ".xlsx")
 }
 
+
+// --------------------------------- page init ---------------------------------
+
+// 页面初始化：加载${codegen.functionName}列表
 getList()
+
 </script>

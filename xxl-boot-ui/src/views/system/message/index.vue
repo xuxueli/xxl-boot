@@ -1,6 +1,6 @@
 <!--
-  页面：Message（站内消息管理）
-  功能：查询、新增、修改、删除消息，查看消息详情与已读用户
+  Message（站内消息管理）
+  Created by xxl-boot on '2025-08-02'.
 -->
 <template>
   <div class="app-container">
