@@ -71,7 +71,9 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>{{ footerContent }}</span>
+      {{ footerContent }}
+      <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px;text-decoration:underline;" >xuxueli</a>
+      <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px;text-decoration:underline;" >github</a>
     </div>
   </div>
 </template>

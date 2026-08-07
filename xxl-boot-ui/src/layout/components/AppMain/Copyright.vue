@@ -5,9 +5,11 @@
 <template>
   <footer v-if="visible" class="copyright">
 
-    Powered by <b>XXL-BOOT</b> v{{version}}
-    ｜
-    <span>{{ content }}</span>
+    <!-- Powered by <b>XXL-BOOT</b> v{{version}}
+    ｜-->
+    <span>{{ footerContent }}</span>
+    <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px;text-decoration:underline;" >xuxueli</a>
+    <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px;text-decoration:underline;" >github</a>
 
   </footer>
 </template>
@@ -18,8 +20,8 @@ import { useSettingsStore } from '@/store'
 
 const settingsStore = useSettingsStore()
 const visible = computed(() => settingsStore.footerVisible)
-const content = computed(() => settingsStore.footerContent)
-const version = computed(() => settingsStore.version)
+const footerContent = computed(() => settingsStore.footerContent)
+/*const version = computed(() => settingsStore.version)*/
 </script>
 
 
@@ -30,7 +32,7 @@ const version = computed(() => settingsStore.version)
   left: 0;
   right: 0;
   height: 36px;
-  padding: 10px 20px;
+  padding: 6px 20px;
   text-align: right;
   background-color: #f8f8f8;
   color: #666;

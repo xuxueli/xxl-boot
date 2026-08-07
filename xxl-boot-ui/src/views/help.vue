@@ -41,11 +41,9 @@
         Powered by <b>XXL-BOOT</b> v{{ version }}
 
         <span style="float: right">
-          Copyright © 2015- {{ new Date().getFullYear() }}
-          &nbsp;
-          <a href="https://www.xuxueli.com/" target="_blank" >xuxueli</a>
-          &nbsp;
-          <a href="https://github.com/xuxueli/xxl-boot" target="_blank" >github</a>
+          {{ footerContent }}
+          <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px;text-decoration:underline;" >xuxueli</a>
+          <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px;text-decoration:underline;" >github</a>
         </span>
       </p>
 
@@ -57,8 +55,9 @@
 // 引入
 import defaultSettings from '@/settings'
 
-const title = defaultSettings.title           // 系统标题
-const version = defaultSettings.version       // 版本号
+const title = defaultSettings.title
+const version = defaultSettings.version
+const footerContent = defaultSettings.footerContent
 
 /** 跳转外部链接 */
 function goTarget(url) {
