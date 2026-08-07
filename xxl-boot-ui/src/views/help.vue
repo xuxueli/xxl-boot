@@ -38,7 +38,7 @@
 
       <el-divider class="divider" />
       <p>
-        Powered by XXL-BOOT v{{ version }}
+        Powered by <b>XXL-BOOT</b> v{{ version }}
 
         <span style="float: right">
           Copyright © 2015- {{ new Date().getFullYear() }}

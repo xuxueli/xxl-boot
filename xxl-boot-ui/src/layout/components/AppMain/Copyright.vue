@@ -5,7 +5,7 @@
 <template>
   <footer v-if="visible" class="copyright">
 
-    Powered by <b>XXL-BOOT</b> {{version}}
+    Powered by <b>XXL-BOOT</b> v{{version}}
     ｜
     <span>{{ content }}</span>
 
