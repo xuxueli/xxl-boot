@@ -247,11 +247,11 @@ public class UserServiceImpl implements UserService {
      * 分页查询
      */
     @Override
-    public PageModel<UserDTO> pageList(int offset, int pagesize, String username, int status, int orgId) {
+    public PageModel<UserDTO> pageList(int offset, int pagesize, String username, int status, List<Integer> orgIds) {
 
         // data
-        List<User> pageList = userMapper.pageList(offset, pagesize, username, status, orgId);
-        int totalCount = userMapper.pageListCount(offset, pagesize, username, status, orgId);
+        List<User> pageList = userMapper.pageList(offset, pagesize, username, status, orgIds);
+        int totalCount = userMapper.pageListCount(offset, pagesize, username, status, orgIds);
 
         // adaptor
         List<UserDTO> pageListDto = new ArrayList<>();

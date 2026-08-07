@@ -119,8 +119,11 @@
 			<if test="status gt -1">
 				AND t.status = #{status}
 			</if>
-			<if test="orgId gt 0">
-				AND t.org_id = #{orgId}
+			<if test="orgIds != null and orgIds.size() > 0">
+				AND t.org_id in
+				<foreach collection="orgIds" item="item" open="(" close=")" separator="," >
+					#{item}
+				</foreach>
 			</if>
 		</trim>
 		ORDER BY username ASC
@@ -137,8 +140,11 @@
 			<if test="status gt -1">
 				AND t.status = #{status}
 			</if>
-			<if test="orgId gt 0">
-				AND t.org_id = #{orgId}
+			<if test="orgIds != null and orgIds.size() > 0">
+				AND t.org_id in
+				<foreach collection="orgIds" item="item" open="(" close=")" separator="," >
+					#{item}
+				</foreach>
 			</if>
 		</trim>
 	</select>

@@ -52,7 +52,7 @@ public interface UserService {
     /**
      * 分页查询
      */
-    public PageModel<UserDTO> pageList(int offset, int pagesize, String username, int status, int orgId);
+    public PageModel<UserDTO> pageList(int offset, int pagesize, String username, int status, List<Integer> orgIds);
 
     /**
      * 更新登录token

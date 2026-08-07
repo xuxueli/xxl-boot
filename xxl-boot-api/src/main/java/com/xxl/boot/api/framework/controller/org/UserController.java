@@ -3,10 +3,7 @@ package com.xxl.boot.api.framework.controller.org;
 import com.xxl.boot.api.framework.annotation.XxlLog;
 import com.xxl.boot.api.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.api.framework.constant.enums.LogTypeEnum;
-import com.xxl.boot.api.framework.constant.enums.UserStatuEnum;
 import com.xxl.boot.api.framework.model.dto.UserDTO;
-import com.xxl.boot.api.framework.model.entity.Org;
-import com.xxl.boot.api.framework.model.entity.Role;
 import com.xxl.boot.api.framework.service.OrgService;
 import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.boot.api.framework.service.UserService;
@@ -17,19 +14,17 @@ import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
  * @author xuxueli 2019-05-04 16:39:50
  */
-@Controller
+@RestController
 @RequestMapping("/org/user")
 public class UserController {
 
@@ -40,35 +35,19 @@ public class UserController {
     @Resource
     private OrgService orgService;
 
-    @RequestMapping
-    @XxlSso(permission = "org:user")
-    public String index(Model model) {
-
-        PageModel<Role> pageModel = roleService.pageList(0, 999, null, -1);
-        List<Org> orgTree = orgService.treeList(null, -1);
-
-        model.addAttribute("roleList", pageModel.getData());
-        model.addAttribute("userStatuEnum", UserStatuEnum.values());
-        model.addAttribute("orgTree", orgTree);
-
-        return "/framework/org/user";
-    }
-
     @RequestMapping("/pageList")
-    @ResponseBody
     @XxlSso(permission = "org:user")
     public Response<PageModel<UserDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                        @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                        String username,
-                                                        @RequestParam(required = false, defaultValue = "-1") int status,
-                                                        @RequestParam(required = false, defaultValue = "0") int orgId) {
+                                                 @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                 String username,
+                                                 @RequestParam(required = false, defaultValue = "-1") int status,
+                                                 @RequestParam(required = false) List<Integer> orgIds) {
 
-        PageModel<UserDTO> pageModel = userService.pageList(offset, pagesize, username, status, orgId);
+        PageModel<UserDTO> pageModel = userService.pageList(offset, pagesize, username, status, orgIds);
         return Response.ofSuccess(pageModel);
     }
 
     @RequestMapping("/add")
-    @ResponseBody
     @XxlSso(permission = "org:user")
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER, title = "新增用户")
     public Response<String> add(UserDTO xxlJobUser) {
@@ -76,7 +55,6 @@ public class UserController {
     }
 
     @RequestMapping("/update")
-    @ResponseBody
     @XxlSso(permission = "org:user")
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER, title = "更新用户")
     public Response<String> update(HttpServletRequest request, UserDTO xxlJobUser) {
@@ -87,7 +65,6 @@ public class UserController {
     }
 
     @RequestMapping("/delete")
-    @ResponseBody
     @XxlSso(permission = "org:user")
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER, title = "删除用户")
     public Response<String> delete(HttpServletRequest request,
@@ -102,7 +79,6 @@ public class UserController {
      * updatePwd
      */
     @RequestMapping("/updatePwd")
-    @ResponseBody
     @XxlSso
     public Response<String> updatePwd(HttpServletRequest request, String oldPassword, String newPassword){
 
@@ -116,7 +92,6 @@ public class UserController {
      * 加载个人中心信息
      */
     @RequestMapping("/loadProfile")
-    @ResponseBody
     @XxlSso
     public Response<UserDTO> loadProfile(HttpServletRequest request) {
 
@@ -130,7 +105,6 @@ public class UserController {
      * 更新个人中心信息
      */
     @RequestMapping("/updateProfile")
-    @ResponseBody
     @XxlSso
     public Response<String> updateProfile(HttpServletRequest request, @RequestBody UserDTO userDTO) {
 
