@@ -1,5 +1,5 @@
 
--- ================== Vue 版本：菜单 icon 等属性存在差异；执行如下SQL重置 xxl_boot_resource 表数据  ====================
+-- ================== A、单体项目初始化SQL脚本（xxl-boot-admin 版本）  ====================
 
 UPDATE `xxl_boot_resource`
 SET `icon` = CASE `id`
@@ -24,7 +24,7 @@ SET `icon` = CASE `id`
 WHERE `id` IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
 
 
--- ================== AdminLTE 版本：菜单 icon 等属性存在差异；执行如下SQL重置 xxl_boot_resource 表数据  ====================
+-- ================== B、前后端分离项目初始化SQL脚本（xxl-boot-api/ui 版本）  ====================
 
 UPDATE `xxl_boot_resource`
 SET `icon` = CASE `id`

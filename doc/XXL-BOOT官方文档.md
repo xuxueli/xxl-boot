@@ -56,6 +56,7 @@ XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即�
 - Maven：3+
 - Jdk：17+
 - Mysql：8.0+
+- Redis：7.0+（可选：前后端分析项目需要）
 
 ### 1.5 发展历程
 XXL-BOOT 前身为 xxl-permission、xxl-code-generator 等多个历史项目，以及 XXL-JOB、XXL-CONF 等系列开源软件所所沉淀中后台能力，经过整合演进最终诞生。
@@ -65,26 +66,36 @@ XXL-BOOT 前身为 xxl-permission、xxl-code-generator 等多个历史项目，�
 ## 二、快速入门
 
 ### 2.1 初始化数据库
-请下载项目源码并解压，获取 "数据库初始化SQL脚本" 并执行即可。"调度数据库初始化SQL脚本" 位置为:
+请下载项目源码并解压，获取 "数据库初始化SQL脚本" 并执行即可。数据库初始化SQL脚本 位置为:
+
 ```
-/xxl-boot/doc/db/tables_xxl_boot.sql
+/xxl-boot/doc/db/
+    - tables_xxl_boot.sql                   ：系统初始化SQL脚本
+    - tables_xxl_boot_custom.sql            ：系统数据定制SQL脚本  
+        - A、单体项目初始化SQL脚本
+        - B、前后端分离项目初始化SQL脚本
 ```
-项目支持集群部署，集群情况下各节点务必连接同一个mysql实例。
+
+补充说明：如需部署单体项目，只需要执行 `tables_xxl_boot.sql` 即可；如需切换部署 “前后端分离项目/单体项目”，需要执行 `tables_xxl_boot_custom.sql` 中的 A 或者 B 部分。
 
 ### 2.2 编译源码
 解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下：
+
 ```
-- xxl-boot
-    - xxl-boot-admin        : 【单体项目】中后台系统模块
-    - xxx-boot-api          : 【分离项目】后端API服务
-    - xxl-boot-ui           : 【分离项目】前端UI服务
+- xxl-boot/
+    - xxl-boot-admin        : 【单体项目】单体项目服务
+    - xxx-boot-api          : 【前后端分离项目】后端API服务
+    - xxl-boot-ui           : 【前后端分离项目】前端UI服务
 ```
 
-### 2.3 配置部署
+补充说明：如需部署“单体项目”，只需要部署 `xxl-boot-admin` 模块即可；如需部署 “前后端分离项目”，需要部署 `xxl-boot-api` + `xxl-boot-ui`。
+
+### 2.3 配置部署（单体项目）
+
 - 部署项目：xxl-boot-admin
-- 项目说明：中后台系统模块，内置“安全登录验证、RBAC权限体系、一站式代码生成、通告触达、审计日志……”等能力。
+- 项目说明：单体模式 中后台系统，前后端分别选型典型的 “SpringBoot/Mybatis/XXL-SSO/FreeMarker” 与 “AdminLTE/Bootstrap”；内置 “组织权限、系统工具、前后端代码生成” 等能力。
 
-#### 步骤一：配置文件设置
+#### 步骤一：配置文件
 配置文件地址：
 ```
 /xxl-boot/xxl-boot-admin/src/main/resources/application.properties
@@ -99,8 +110,7 @@ spring.datasource.password=root_pwd
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
 
-
-#### 步骤二：部署项目：
+#### 步骤二：部署项目
 项目打包部署后，可通过如下地址及账号进行登录。
 - 访问地址：http://localhost:8080 
 - 默认登录账号："admin/123456"
@@ -111,10 +121,11 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 系统首页截图示例：
 ![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_002.png "在这里输入图片标题")
 
-#### 步骤三：集群部署（可选）：
-项目支持集群部署，提升系统容灾和可用性。 集群部署时，几点要求和建议：
-- DB配置保持一致；
-- 集群机器时钟保持一致（单机集群忽视）；
+
+### 2.4 配置部署（前后端分离项目）
+
+
+
 
 ## 三、操作指南
 
@@ -163,6 +174,8 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 代码生成截图示例：
 ![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_013.png "在这里输入图片标题")
+
+### 2.4 配置部署（前后端分离项目）
 
 
 ## 四、总体设计
@@ -300,14 +313,14 @@ xxl-boot/
 
 当前提供多项 开箱即用 的业务扩展，可结合实际业务诉求选择性启用。
 
-| 模块        | 功能         | 描述                   |
-|-----------|------------|----------------------|
-| AI模块      | Model配置    | Model配置管理，支持多Model类型，包括：基础模型、文本模型、视觉模型...等；支持多模型供应商，包括：Ollama、OpenAI...等。
-| AI模块      | Chat对话     | Chat对话管理，支持自定义Prompt、Model参数；支持历史对话消息持久化，保留历史对话记忆；可基于此支持多场景，包括：智能客服、聊天助手...等；
-| AI模块      | 知识库        | 知识库管理，支持知识库管理、索引、检索等；支持多知识库类型，包括：Text、Word、PDF、图片...等；
-| AI模块      | WorkFlow定义 | WorkFlow定义管理，支持工作流及Agent/模型的编排定义；工作流执行及日志记录，支持分布式工作流执行以及执行日志记录；
-| AI模块      | Agent生图    | 文生图、图生图；生图流程设计，支持集成多模型供应商；
-| AI模块      | Agent生视频   | 文生视频、图生视频；支持集成多模型供应商；
+| 模块   | 功能         | 描述                                                                                                                                     |
+|--------|--------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| AI模块 | Model配置    | Model配置管理，支持多Model类型，包括：基础模型、文本模型、视觉模型...等；支持多模型供应商，包括：Ollama、OpenAI...等。                   |
+| AI模块 | Chat对话     | Chat对话管理，支持自定义Prompt、Model参数；支持历史对话消息持久化，保留历史对话记忆；可基于此支持多场景，包括：智能客服、聊天助手...等； |
+| AI模块 | 知识库       | 知识库管理，支持知识库管理、索引、检索等；支持多知识库类型，包括：Text、Word、PDF、图片...等；                                           |
+| AI模块 | WorkFlow定义 | WorkFlow定义管理，支持工作流及Agent/模型的编排定义；工作流执行及日志记录，支持分布式工作流执行以及执行日志记录；                         |
+| AI模块 | Agent生图    | 文生图、图生图；生图流程设计，支持集成多模型供应商；                                                                                     |
+| AI模块 | Agent生视频  | 文生视频、图生视频；支持集成多模型供应商；                                                                                               |
 
 ### 5.2 扩展模块说明：AI模块
 
