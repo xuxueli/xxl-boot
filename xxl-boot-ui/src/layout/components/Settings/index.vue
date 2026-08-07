@@ -163,8 +163,19 @@ const theme = computed({
   get: () => settingsStore.theme,
   set: v => settingsStore.setTheme(v)
 })
-// 主题色：预设颜色
-const predefineColors = ref(["#409EFF", "#ff4500", "#ff8c00", "#ffd700", "#90ee90", "#00ced1", "#1e90ff", "#c71585"])
+// 主题色：预设颜色（参考 Ant Design 主色板 + Tailwind 500 级调校色值；默认色置顶，其余按色相环冷→暖→冷完整一圈）
+const predefineColors = ref([
+    "#409EFF",   /* 主题蓝（默认） */
+    "#6366F1",   /* 靛蓝 */
+    "#8B5CF6",   /* 紫 */
+    "#EC4899",   /* 玫红 */
+    "#EF4444",   /* 红 */
+    "#F97316",   /* 橙 */
+    "#F59E0B",   /* 金 */
+    "#22C55E",   /* 绿 */
+    "#14B8A6",   /* 青 */
+    "#8c8c8c"    /* 灰 */
+])
 
 /*
 * 侧边栏主题：theme-dark / theme-light
