@@ -44,11 +44,10 @@ XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即�
 
 #### 源码仓库地址
 
-源码仓库地址 | Release Download
---- | ---
-[https://github.com/xuxueli/xxl-boot](https://github.com/xuxueli/xxl-boot) | [Download](https://github.com/xuxueli/xxl-boot/releases)
-[https://gitee.com/xuxueli0323/xxl-boot](https://gitee.com/xuxueli0323/xxl-boot) | [Download](https://gitee.com/xuxueli0323/xxl-boot/releases)  
-
+| 源码仓库地址                                                                     | Release Download                                            |
+|----------------------------------------------------------------------------------|-------------------------------------------------------------|
+| [https://github.com/xuxueli/xxl-boot](https://github.com/xuxueli/xxl-boot)       | [Download](https://github.com/xuxueli/xxl-boot/releases)    |
+| [https://gitee.com/xuxueli0323/xxl-boot](https://gitee.com/xuxueli0323/xxl-boot) | [Download](https://gitee.com/xuxueli0323/xxl-boot/releases) |
 
 #### 技术交流
 - [社区交流](https://www.xuxueli.com/page/community.html)

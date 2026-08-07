@@ -216,7 +216,7 @@ public class KbEmbeddingServiceImpl implements KbEmbeddingService {
         // build embedding model
         return OllamaEmbeddingModel
                 .builder()
-                .defaultOptions(OllamaEmbeddingOptions
+                .options(OllamaEmbeddingOptions
                         .builder()
                         .model(EMBEDDING_MODEL_NAME)
                         .dimensions(VECTOR_DIMENSION)

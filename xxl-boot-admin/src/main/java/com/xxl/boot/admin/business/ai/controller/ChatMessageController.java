@@ -247,7 +247,7 @@ public class ChatMessageController {
                                     )
                             ))
                             .build())
-                    .defaultOptions(
+                    .options(
                             OllamaChatOptions.builder()
                                     .model(modelName)
                                     .build()
