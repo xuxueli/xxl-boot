@@ -16,7 +16,7 @@ public interface RoleService {
     /**
     * 新增
     */
-    public Response<String> insert(Role xxlBootRole);
+    public Response<Integer> insert(Role xxlBootRole);
 
     /**
     * 删除

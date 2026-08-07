@@ -2,8 +2,10 @@ package com.xxl.boot.api.framework.service.impl;
 
 import com.xxl.boot.api.framework.mapper.org.RoleMapper;
 import com.xxl.boot.api.framework.mapper.org.RoleResMapper;
+import com.xxl.boot.api.framework.mapper.org.UserRoleMapper;
 import com.xxl.boot.api.framework.model.entity.Role;
 import com.xxl.boot.api.framework.model.entity.RoleRes;
+import com.xxl.boot.api.framework.model.entity.UserRole;
 import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.boot.api.framework.util.I18nUtil;
 import com.xxl.tool.core.CollectionTool;
@@ -30,12 +32,14 @@ public class RoleServiceImpl implements RoleService {
 	private RoleMapper roleMapper;
 	@Resource
 	private RoleResMapper roleResMapper;
+	@Resource
+	private UserRoleMapper userRoleMapper;
 
 	/**
     * 新增
     */
 	@Override
-	public Response<String> insert(Role xxlBootRole) {
+	public Response<Integer> insert(Role xxlBootRole) {
 
 		// valid
 		if (xxlBootRole == null) {
@@ -49,7 +53,7 @@ public class RoleServiceImpl implements RoleService {
 		}
 
 		int ret = roleMapper.insert(xxlBootRole);
-		return Response.ofSuccess();
+		return ret>0 ? Response.ofSuccess(xxlBootRole.getId()) : Response.ofFail();
 	}
 
 	/**
@@ -62,9 +66,17 @@ public class RoleServiceImpl implements RoleService {
 		if (CollectionTool.isEmpty(ids)) {
 			return Response.ofFail(I18nUtil.getString("system_please_choose") + I18nUtil.getString("role_tips"));
 		}
+
+		// valid 关联资源
 		List<RoleRes> roleResList = roleResMapper.queryRoleRes(ids);
 		if (CollectionTool.isNotEmpty(roleResList)) {
 			return Response.ofFail("无法删除，请先取消关联资源");
+		}
+
+		// valid 关联用户
+		List<UserRole> userRoleList = userRoleMapper.queryByRoleIds(ids);
+		if (CollectionTool.isNotEmpty(userRoleList)) {
+			return Response.ofFail("无法删除，请先取消关联用户");
 		}
 
 		int ret = roleMapper.deleteByIds(ids);

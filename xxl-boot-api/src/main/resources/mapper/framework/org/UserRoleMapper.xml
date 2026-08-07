@@ -51,4 +51,13 @@
         </foreach>
     </select>
 
+    <select id="queryByRoleIds" parameterType="java.util.Map" resultMap="UserRole">
+        SELECT <include refid="Base_Column_List" />
+        FROM xxl_boot_user_role AS t
+        WHERE t.`role_id` in
+        <foreach collection="roleIds" item="roleId" index="index"  separator="," open="(" close=")"  >
+            #{roleId}
+        </foreach>
+    </select>
+
 </mapper>

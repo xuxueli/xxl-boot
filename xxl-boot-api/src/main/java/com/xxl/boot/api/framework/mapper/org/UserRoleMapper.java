@@ -31,4 +31,9 @@ public interface UserRoleMapper {
 
     public List<UserRole> queryByUserIds(@Param("userIds") List<Integer> userIds);
 
+    /**
+     * 根据角色ID集合查询关联列表（删除前校验）
+     */
+    public List<UserRole> queryByRoleIds(@Param("roleIds") List<Integer> roleIds);
+
 }

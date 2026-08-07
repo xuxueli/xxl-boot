@@ -2,17 +2,17 @@ import request from '@/utils/request'
 
 /**
  * 名称：角色管理 API
- * 能力：提供角色维护、数据权限配置与角色用户授权管理接口。
+ * 能力：提供角色维护、角色资源授权与角色用户授权管理接口。
  */
 
 /**
- * 查询角色列表。
- * @param {Object} query 查询参数。
- * @returns {Promise<any>} 角色分页列表。
+ * 分页查询角色列表。
+ * @param {Object} query 查询参数（offset/pagesize/name/status）。
+ * @returns {Promise<any>} 角色分页列表（response.data.data / response.data.total）。
  */
 export function listRole(query) {
   return request({
-    url: '/system/role/list',
+    url: '/org/role/pageList',
     method: 'get',
     params: query
   })
@@ -20,158 +20,79 @@ export function listRole(query) {
 
 /**
  * 查询角色详情。
- * @param {string|number} roleId 角色 ID。
+ * @param {string|number} id 角色 ID。
  * @returns {Promise<any>} 角色详细信息。
  */
-export function getRole(roleId) {
+export function getRole(id) {
   return request({
-    url: '/system/role/' + roleId,
-    method: 'get'
+    url: '/org/role/load',
+    method: 'get',
+    params: { id }
   })
 }
 
 /**
- * 新增角色。
+ * 新增角色（后端以请求参数绑定实体）。
  * @param {Object} data 角色数据。
  * @returns {Promise<any>} 新增结果。
  */
 export function addRole(data) {
   return request({
-    url: '/system/role',
+    url: '/org/role/insert',
     method: 'post',
-    data: data
+    params: data
   })
 }
 
 /**
- * 修改角色。
+ * 修改角色（后端以请求参数绑定实体）。
  * @param {Object} data 角色数据。
  * @returns {Promise<any>} 修改结果。
  */
 export function updateRole(data) {
   return request({
-    url: '/system/role',
-    method: 'put',
-    data: data
-  })
-}
-
-/**
- * 配置角色数据权限。
- * @param {Object} data 数据权限配置。
- * @returns {Promise<any>} 保存结果。
- */
-export function dataScope(data) {
-  return request({
-    url: '/system/role/dataScope',
-    method: 'put',
-    data: data
-  })
-}
-
-/**
- * 修改角色状态。
- * @param {string|number} roleId 角色 ID。
- * @param {string} status 状态值。
- * @returns {Promise<any>} 修改结果。
- */
-export function changeRoleStatus(roleId, status) {
-  const data = {
-    roleId,
-    status
-  }
-  return request({
-    url: '/system/role/changeStatus',
-    method: 'put',
-    data: data
+    url: '/org/role/update',
+    method: 'post',
+    params: data
   })
 }
 
 /**
  * 删除角色。
- * @param {string|number} roleId 角色 ID。
+ * @param {string|number|Array} ids 角色 ID 或角色 ID 数组。
  * @returns {Promise<any>} 删除结果。
  */
-export function delRole(roleId) {
+export function delRole(ids) {
   return request({
-    url: '/system/role/' + roleId,
-    method: 'delete'
+    url: '/org/role/delete',
+    method: 'post',
+    params: { 'ids[]': ids }
   })
 }
 
 /**
- * 查询已授权用户列表。
- * @param {Object} query 查询参数。
- * @returns {Promise<any>} 已授权用户列表。
- */
-export function allocatedUserList(query) {
-  return request({
-    url: '/system/role/authUser/allocatedList',
-    method: 'get',
-    params: query
-  })
-}
-
-/**
- * 查询未授权用户列表。
- * @param {Object} query 查询参数。
- * @returns {Promise<any>} 未授权用户列表。
- */
-export function unallocatedUserList(query) {
-  return request({
-    url: '/system/role/authUser/unallocatedList',
-    method: 'get',
-    params: query
-  })
-}
-
-/**
- * 取消单个用户角色授权。
- * @param {Object} data 取消授权参数。
- * @returns {Promise<any>} 处理结果。
- */
-export function authUserCancel(data) {
-  return request({
-    url: '/system/role/authUser/cancel',
-    method: 'put',
-    data: data
-  })
-}
-
-/**
- * 批量取消用户角色授权。
- * @param {Object} data 批量取消参数。
- * @returns {Promise<any>} 处理结果。
- */
-export function authUserCancelAll(data) {
-  return request({
-    url: '/system/role/authUser/cancelAll',
-    method: 'put',
-    params: data
-  })
-}
-
-/**
- * 批量授权用户角色。
- * @param {Object} data 授权参数。
- * @returns {Promise<any>} 处理结果。
- */
-export function authUserSelectAll(data) {
-  return request({
-    url: '/system/role/authUser/selectAll',
-    method: 'put',
-    params: data
-  })
-}
-
-/**
- * 根据角色 ID 查询部门树。
+ * 根据角色 ID 查询角色资源。
  * @param {string|number} roleId 角色 ID。
- * @returns {Promise<any>} 部门树结构。
+ * @returns {Promise<any>} 角色资源 ID 列表（response.data）。
  */
-export function deptTreeSelect(roleId) {
+export function roleMenuTreeselect(roleId) {
   return request({
-    url: '/system/role/deptTree/' + roleId,
-    method: 'get'
+    url: '/org/role/loadRoleRes',
+    method: 'get',
+    params: { roleId }
+  })
+}
+
+/**
+ * 更新角色资源授权。
+ * @param {string|number} roleId 角色 ID。
+ * @param {Array} resourceIds 资源 ID 列表。
+ * @returns {Promise<any>} 保存结果。
+ */
+export function updateRoleRes(roleId, resourceIds) {
+  return request({
+    url: '/org/role/updateRoleRes',
+    method: 'post',
+    params: { roleId, 'resourceIds[]': resourceIds }
   })
 }

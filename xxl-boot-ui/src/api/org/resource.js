@@ -83,16 +83,3 @@ export function delResource(ids) {
     params: { 'ids[]': ids }
   })
 }
-
-/**
- * 根据角色 ID 查询角色资源。
- * @param {string|number} roleId 角色 ID。
- * @returns {Promise<any>} 角色资源 ID 列表。
- */
-export function roleMenuTreeselect(roleId) {
-  return request({
-    url: '/org/role/loadRoleRes',
-    method: 'get',
-    params: { roleId }
-  })
-}
