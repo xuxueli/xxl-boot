@@ -51,12 +51,13 @@
           <el-table-column label="所属组织" align="center" prop="orgName" width="120" :show-overflow-tooltip="true" />
           <el-table-column label="状态" align="center" width="100">
             <template #default="scope">
-                            <el-switch
+              <el-switch
                 v-model="scope.row.status"
                 :active-value="0"
                 :inactive-value="1"
                 @change="handleStatusChange(scope.row)"
-              ></el-switch>            </template>
+              ></el-switch>
+            </template>
           </el-table-column>
           <el-table-column label="创建时间" align="center" width="170">
             <template #default="scope">
@@ -67,11 +68,11 @@
             <template #default="scope">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:user']">修改</el-button>
               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:user']">删除</el-button>
-              <el-dropdown trigger="click" @command="(cmd) => handleCommand(cmd, scope.row)">
+              <el-dropdown trigger="click" @command="() => handleResetPwd(scope.row)">
                 <el-button link type="primary" icon="DArrowRight">更多</el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item v-if="checkPermi(['org:user'])" command="resetPwd" icon="Key">重置密码</el-dropdown-item>
+                    <el-dropdown-item icon="Key">重置密码</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -171,13 +172,8 @@ import { useFormReset } from '@/composables/useFormReset'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import { ElMessageBox } from 'element-plus'
-import { useUserStore } from '@/store'
 
-const userStore = useUserStore()
 const resetForm = useFormReset()
-
-// 校验权限（供 el-dropdown-item 等组件内使用，指令不适用于组件根节点）
-const checkPermi = (value) => userStore.checkPermi(value)
 
 
 // --------------------------------- ref data ---------------------------------
@@ -246,12 +242,6 @@ function loadStatusOptions() {
   loadEnumItem('UserStatuEnum').then(res => {
     statusOptions.value = res.data
   })
-}
-
-/** 状态编码 → 文案 */
-function statusText(status) {
-  const item = statusOptions.value.find(i => i.code === status)
-  return item ? item.title : status
 }
 
 /** 加载角色选项（用于编辑表单角色多选） */
@@ -343,8 +333,9 @@ function cancel() {
   reset()
 }
 
-/** 表单重置 */
+/** 表单重置：先清除校验状态，再赋默认值 */
 function reset() {
+  resetForm("formRef")
   formState.value.form = {
     id: undefined,
     username: undefined,
@@ -356,7 +347,6 @@ function reset() {
     status: 0,
     roleIds: []
   }
-  resetForm("formRef")
 }
 
 /** 新增按钮操作 */
@@ -397,9 +387,7 @@ function submitForm() {
       delete submitData.updateTime
       delete submitData.orgName
       delete submitData.roleNames
-      if (submitData.orgId === 0 || submitData.orgId == null) {
-        submitData.orgId = 0
-      }
+      submitData.orgId = submitData.orgId || 0
 
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
@@ -419,17 +407,6 @@ function submitForm() {
   })
 }
 
-/** 更多操作下拉指令分发 */
-function handleCommand(command, row) {
-  switch (command) {
-    case "resetPwd":
-      handleResetPwd(row)
-      break
-    default:
-      break
-  }
-}
-
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row) {
   const userIds = row && row.id != null ? row.id : table.value.ids
@@ -444,22 +421,15 @@ function handleDelete(row) {
   }).catch(() => {})
 }
 
-/** 重置密码按钮操作（通过 update 接口传递 id + password，需带上其余字段避免覆盖为空；密码复用 passwordRules 规则校验） */
+/** 重置密码按钮操作（通过 update 接口传递 id + password，需带上其余字段避免覆盖为空；密码校验与表单规则一致） */
 function handleResetPwd(row) {
   ElMessageBox.prompt(`请输入「${row.username}」的新密码`, "重置密码", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     closeOnClickModal: false,
     inputValidator: (value) => {
-      // 复用密码表单校验规则：必填 + 长度 4-20
-      const requiredRule = passwordRules.find(rule => rule.required)
-      if (requiredRule && !value) {
-        return requiredRule.message
-      }
-      const lengthRule = passwordRules.find(rule => rule.min !== undefined)
-      if (lengthRule && value && (value.length < lengthRule.min || value.length > lengthRule.max)) {
-        return lengthRule.message
-      }
+      if (!value) return "密码不能为空"
+      if (value.length < 4 || value.length > 20) return "密码长度 4-20"
       return true
     }
   }).then(({ value }) => {
