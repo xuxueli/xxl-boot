@@ -38,92 +38,52 @@
             z-index: 999999;
         }
 
-        /* 主加载动画圆圈样式 */
+        /* 主加载动画：现代圆点脉冲样式 */
         #loader {
-            display: block;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            position: absolute;
             left: 50%;
             top: 50%;
-            width: 150px;
-            height: 150px;
-            margin: -75px 0 0 -75px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: #FFF;
-            /* 圆圈速度-1：最外层大圈旋转周期，最显眼的主旋转    */
-            -webkit-animation: spin 1s linear infinite;
-            -ms-animation: spin 1s linear infinite;
-            -moz-animation: spin 1s linear infinite;
-            -o-animation: spin 1s linear infinite;
-            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
             z-index: 1001;
         }
 
-        /* 加载动画内层圆圈（第一层伪元素） */
-        #loader:before {
-            content: "";
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            right: 5px;
-            bottom: 5px;
+        /* 加载动画圆点 */
+        #loader span {
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: #FFF;
-            /* 圆圈速度-2：中间层伪元素圈，旋转最慢，产生"追赶"视觉效果 */
-            -webkit-animation: spin 1.5s linear infinite;
-            -moz-animation: spin 1.5s linear infinite;
-            -o-animation: spin 1.5s linear infinite;
-            -ms-animation: spin 1.5s linear infinite;
-            animation: spin 1.5s linear infinite;
+            background: #409EFF;
+            opacity: 0.2;
+            /* 圆点依次延迟，形成从左到右的脉冲波浪 */
+            animation: dotPulse 1.4s ease-in-out infinite;
         }
 
-        /* 加载动画最内层圆圈（第二层伪元素） */
-        #loader:after {
-            content: "";
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            bottom: 15px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: #FFF;
-            /* 圆圈速度-3：最内层伪元素圈，旋转最快，增加层次动感   */
-            -moz-animation: spin 0.8s linear infinite;
-            -o-animation: spin 0.8s linear infinite;
-            -ms-animation: spin 0.8s linear infinite;
-            -webkit-animation: spin 0.8s linear infinite;
-            animation: spin 0.8s linear infinite;
+        /* 第二个圆点延迟触发 */
+        #loader span:nth-child(2) {
+            animation-delay: 0.2s;
         }
 
-        /* WebKit 浏览器旋转动画关键帧定义 */
-        @-webkit-keyframes spin {
-            0% {
-                -webkit-transform: rotate(0deg);
-                -ms-transform: rotate(0deg);
-                transform: rotate(0deg);
-            }
+        /* 第三个圆点延迟触发 */
+        #loader span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
 
+        /* 圆点脉冲动画关键帧定义：放大 + 淡入淡出 */
+        @keyframes dotPulse {
+            0%,
+            80%,
             100% {
-                -webkit-transform: rotate(360deg);
-                -ms-transform: rotate(360deg);
-                transform: rotate(360deg);
-            }
-        }
-
-        /* 标准旋转动画关键帧定义 */
-        @keyframes spin {
-            0% {
-                -webkit-transform: rotate(0deg);
-                -ms-transform: rotate(0deg);
-                transform: rotate(0deg);
+                opacity: 0.2;
+                transform: scale(0.6);
             }
 
-            100% {
-                -webkit-transform: rotate(360deg);
-                -ms-transform: rotate(360deg);
-                transform: rotate(360deg);
+            40% {
+                opacity: 1;
+                transform: scale(1);
             }
         }
 
@@ -133,8 +93,8 @@
             top: 0;
             width: 51%;
             height: 100%;
-            /* 遮罩层背景色 */
-            background: #3c8dbc;
+            /* 遮罩层背景色：与登录页一致的浅灰色 */
+            background: #d2d6de;
             z-index: 1000;
             -webkit-transform: translateX(0);
             -ms-transform: translateX(0);
@@ -203,13 +163,13 @@
         /* 加载提示文字样式 */
         #loader-wrapper .load_title {
             font-family: 'Open Sans', serif;
-            color: #FFF;
+            color: #666;
             font-size: 19px;
             width: 100%;
             text-align: center;
             z-index: 9999999999999;
             position: absolute;
-            top: 68%;
+            top: 56%;
             opacity: 1;
             line-height: 30px;
         }
@@ -219,7 +179,7 @@
             font-weight: normal;
             font-style: italic;
             font-size: 13px;
-            color: #FFF;
+            color: #999;
             opacity: 0.5;
         }
     </style>
@@ -228,10 +188,10 @@
 <body>
 <div id="app">
     <div id="loader-wrapper">
-        <div id="loader"></div>
+        <div id="loader"><span></span><span></span><span></span></div>
         <div class="loader-section section-left"></div>
         <div class="loader-section section-right"></div>
-        <div class="load_title">正在加载系统资源，请耐心等待 ...</div>
+        <div class="load_title">loading</div>
     </div>
 </div>
 <script type="module" src="/src/main.js"></script>
