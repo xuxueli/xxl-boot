@@ -69,8 +69,8 @@ public class ResourceServiceImpl implements ResourceService {
 	}
 
 	/**
-	 * 更新
-	 */
+	* 更新
+	*/
 	@Override
 	public Response<String> update(Resource xxlBootResource) {
 
@@ -79,6 +79,21 @@ public class ResourceServiceImpl implements ResourceService {
 		}
 
 		int ret = resourceMapper.update(xxlBootResource);
+		return ret>0? Response.ofSuccess() : Response.ofFail();
+	}
+
+	/**
+	 * 批量更新排序
+	 */
+	@Override
+	public Response<String> updateSort(List<Integer> ids, List<Integer> orders) {
+
+		// valid：id 与 排序值 列表均非空且长度一致
+		if (CollectionTool.isEmpty(ids) || CollectionTool.isEmpty(orders) || ids.size() != orders.size()) {
+			return Response.ofFail("必要参数缺失");
+		}
+
+		int ret = resourceMapper.updateSort(ids, orders);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
 	}
 
@@ -113,20 +128,6 @@ public class ResourceServiceImpl implements ResourceService {
 		List<Resource> resourceList = resourceMapper.queryResource(name, status);
 		//return generateTreeList(resourceList);
 		return resourceList.stream().map(resource -> new ResourceDTO(resource, null)).toList();
-	}
-
-	@Override
-	public List<ResourceDTO> simpleTreeList(String name, int status) {
-		List<Resource> resourceList = resourceMapper.queryResource(name, status);
-		List<ResourceDTO> result = new ArrayList<>();
-
-		for (Resource resource : resourceList) {
-			ResourceDTO resourceDTO = new ResourceDTO(resource, null);
-			resourceDTO.setUrl(null);
-			resourceDTO.setIcon(null);
-			result.add(resourceDTO);
-		}
-		return result;
 	}
 
 	/*@Override

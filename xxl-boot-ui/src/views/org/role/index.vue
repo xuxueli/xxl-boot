@@ -243,7 +243,7 @@ icon="Delete"
 
 <script setup name="Role">
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/org/role"
-import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/org/resource.js"
+import { roleMenuTreeselect, listResource as menuTreeselect } from "@/api/org/resource.js"
 import { useDict } from '@/composables/useDict'
 import { parseTime, addDateRange } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'

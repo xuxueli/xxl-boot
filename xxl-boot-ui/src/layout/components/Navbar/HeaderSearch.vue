@@ -201,8 +201,8 @@ function generateRoutes(routes, basePath = '', prefixTitle = []) {
       continue
     }
 
-    /* 节点初始化 */
-    const p = r.path.length > 0 && r.path[0] === '/' ? r.path : '/' + r.path
+    /* 节点初始化：无 path 的纯目录节点以空串占位，仅作子路由前缀 */
+    const p = r.path ? (r.path.length > 0 && r.path[0] === '/' ? r.path : '/' + r.path) : ''
     const data = {
       path: !isHttp(r.path) ? getNormalPath(p) : r.path,
       title: [...prefixTitle],

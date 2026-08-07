@@ -25,9 +25,14 @@ public interface ResourceService {
     public Response<String> delete(List<Integer> ids);
 
     /**
-    * 更新
-    */
+     * 更新
+     */
     public Response<String> update(Resource xxlBootResource);
+
+    /**
+     * 批量更新排序
+     */
+    public Response<String> updateSort(List<Integer> ids, List<Integer> orders);
 
     /**
     * Load查询
@@ -43,11 +48,6 @@ public interface ResourceService {
      * Tree查询
      */
     public List<ResourceDTO> treeList(String name, int status);
-
-    /**
-     * 简单Tree查询
-     */
-    public List<ResourceDTO> simpleTreeList(String name, int status);
 
     /**
      * Tree查询（已授权）

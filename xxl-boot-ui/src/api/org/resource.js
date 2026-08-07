@@ -1,16 +1,16 @@
 import request from '@/utils/request'
 
 /**
- * 名称：菜单管理 API
- * 能力：提供菜单查询、维护、排序及角色菜单树能力。
+ * 名称：资源管理 API
+ * 能力：提供资源树查询、维护、排序及角色资源能力。
  */
 
 /**
- * 查询菜单列表。
- * @param {Object} query 查询参数。
- * @returns {Promise<any>} 菜单列表。
+ * 查询资源树列表（扁平数据，由前端转树）。
+ * @param {Object} query 查询参数（name/status）。
+ * @returns {Promise<any>} 资源列表。
  */
-export function listMenu(query) {
+export function listResource(query) {
   return request({
     url: '/org/resource/treeList',
     method: 'get',
@@ -19,90 +19,80 @@ export function listMenu(query) {
 }
 
 /**
- * 查询菜单详情。
- * @param {string|number} menuId 菜单 ID。
- * @returns {Promise<any>} 菜单详情。
+ * 查询资源详情。
+ * @param {string|number} id 资源 ID。
+ * @returns {Promise<any>} 资源详情。
  */
-export function getMenu(menuId) {
+export function getResource(id) {
   return request({
     url: '/org/resource/load',
     method: 'get',
-    params: { id: menuId }
+    params: { id }
   })
 }
 
 /**
- * 查询菜单下拉树。
- * @returns {Promise<any>} 菜单树结构。
+ * 新增资源（后端以请求参数绑定实体）。
+ * @param {Object} data 资源数据。
+ * @returns {Promise<any>} 新增结果。
  */
-export function treeselect() {
+export function addResource(data) {
   return request({
-    url: '/org/resource/simpleTreeList',
-    method: 'get'
+    url: '/org/resource/insert',
+    method: 'post',
+    params: data
   })
 }
 
 /**
- * 根据角色 ID 查询菜单下拉树。
+ * 修改资源（后端以请求参数绑定实体）。
+ * @param {Object} data 资源数据。
+ * @returns {Promise<any>} 修改结果。
+ */
+export function updateResource(data) {
+  return request({
+    url: '/org/resource/update',
+    method: 'post',
+    params: data
+  })
+}
+
+/**
+ * 批量更新资源排序。
+ * @param {Array} ids 资源 ID 列表。
+ * @param {Array} orders 排序值列表（与 ids 一一对应）。
+ * @returns {Promise<any>} 保存结果。
+ */
+export function updateResourceSort(ids, orders) {
+  return request({
+    url: '/org/resource/updateSort',
+    method: 'post',
+    params: { 'ids[]': ids, 'orders[]': orders }
+  })
+}
+
+/**
+ * 删除资源。
+ * @param {string|number|Array} ids 资源 ID 或资源 ID 数组。
+ * @returns {Promise<any>} 删除结果。
+ */
+export function delResource(ids) {
+  return request({
+    url: '/org/resource/delete',
+    method: 'post',
+    params: { 'ids[]': ids }
+  })
+}
+
+/**
+ * 根据角色 ID 查询角色资源。
  * @param {string|number} roleId 角色 ID。
- * @returns {Promise<any>} 菜单树结构。
+ * @returns {Promise<any>} 角色资源 ID 列表。
  */
 export function roleMenuTreeselect(roleId) {
   return request({
     url: '/org/role/loadRoleRes',
     method: 'get',
     params: { roleId }
-  })
-}
-
-/**
- * 新增菜单。
- * @param {Object} data 菜单数据。
- * @returns {Promise<any>} 新增结果。
- */
-export function addMenu(data) {
-  return request({
-    url: '/org/resource/insert',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 修改菜单。
- * @param {Object} data 菜单数据。
- * @returns {Promise<any>} 修改结果。
- */
-export function updateMenu(data) {
-  return request({
-    url: '/org/resource/update',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 保存菜单排序。
- * @param {Object} data 排序数据。
- * @returns {Promise<any>} 保存结果。
- */
-export function updateMenuSort(data) {
-  return request({
-    url: '/org/resource/update',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 删除菜单。
- * @param {string|number} menuId 菜单 ID。
- * @returns {Promise<any>} 删除结果。
- */
-export function delMenu(menuId) {
-  return request({
-    url: '/org/resource/delete',
-    method: 'post',
-    params: { 'ids[]': menuId }
   })
 }

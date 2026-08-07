@@ -1,18 +1,13 @@
 package com.xxl.boot.api.framework.controller.org;
 
-import com.xxl.boot.api.framework.constant.enums.ResourceStatuEnum;
-import com.xxl.boot.api.framework.constant.enums.ResourceTypeEnum;
-import com.xxl.boot.api.framework.constant.enums.ResourceVisibleEnum;
 import com.xxl.boot.api.framework.model.dto.ResourceDTO;
 import com.xxl.boot.api.framework.model.entity.Resource;
 import com.xxl.boot.api.framework.service.ResourceService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.Response;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -21,26 +16,13 @@ import java.util.List;
  *
  * Created by xuxueli on '2024-07-28 12:52:39'.
  */
-@Controller
+@RestController
 @RequestMapping("/org/resource")
 public class ResourceController {
 
     @jakarta.annotation.Resource
     private ResourceService resourceService;
 
-    /**
-     * 页面
-     */
-    @RequestMapping
-    @XxlSso(permission = "org:resource")
-    public String index(Model model) {
-
-        model.addAttribute("resourceStatuEnum", ResourceStatuEnum.values());
-        model.addAttribute("resourceTypeEnum", ResourceTypeEnum.values());
-        model.addAttribute("resourceVisibleEnum", ResourceVisibleEnum.values());
-
-        return "/framework/org/resource";
-    }
 
     /**
      * tree数据查询
@@ -64,7 +46,6 @@ public class ResourceController {
      *  </pre>
      */
     @RequestMapping("/treeList")
-    @ResponseBody
     @XxlSso(permission = "org:resource")
     public Response<List<ResourceDTO>> treeList(@RequestParam(required = false) String name,
                                                        @RequestParam(required = false, defaultValue = "-1") int status) {
@@ -74,33 +55,11 @@ public class ResourceController {
     }
 
     /**
-     * 简单tree数据查询
-     *
-     * <pre>
-     *     [
-     * 			  {id: 1, pId: 0, name: "资源A", open: true},
-     *            {id: 5, pId: 1, name: "资源A1"},
-     *            {id: 2, pId: 0, name: "资源B", open: false},
-     *            {id: 11, pId: 2, name: "资源B2"}
-     * 		]
-     * </pre>
-     */
-    @RequestMapping("/simpleTreeList")
-    @ResponseBody
-    @XxlSso(permission = "org:resource")
-    public Response<List<ResourceDTO>> simpleTreeList(@RequestParam(required = false) String name,
-                                                             @RequestParam(required = false, defaultValue = "-1") int status) {
-        List<ResourceDTO> treeListData = resourceService.simpleTreeList(name, status);
-        return Response.ofSuccess(treeListData);
-    }
-
-    /**
      * Load查询
      */
     @RequestMapping("/load")
-    @ResponseBody
     @XxlSso(permission = "org:resource")
-    public Response<Resource> load(int id){
+    public Response<Resource> load(@RequestParam("id") int id){
         return resourceService.load(id);
     }
 
@@ -108,7 +67,6 @@ public class ResourceController {
      * 新增
      */
     @RequestMapping("/insert")
-    @ResponseBody
     @XxlSso(permission = "org:resource")
     public Response<String> insert(Resource xxlBootResource){
         return resourceService.insert(xxlBootResource);
@@ -118,7 +76,6 @@ public class ResourceController {
      * 删除
      */
     @RequestMapping("/delete")
-    @ResponseBody
     @XxlSso(permission = "org:resource")
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
         return resourceService.delete(ids);
@@ -128,10 +85,19 @@ public class ResourceController {
      * 更新
      */
     @RequestMapping("/update")
-    @ResponseBody
     @XxlSso(permission = "org:resource")
     public Response<String> update(Resource xxlBootResource){
         return resourceService.update(xxlBootResource);
+    }
+
+    /**
+     * 批量更新排序
+     */
+    @RequestMapping("/updateSort")
+    @XxlSso(permission = "org:resource")
+    public Response<String> updateSort(@RequestParam("ids[]") List<Integer> ids,
+                                       @RequestParam("orders[]") List<Integer> orders){
+        return resourceService.updateSort(ids, orders);
     }
 
 }

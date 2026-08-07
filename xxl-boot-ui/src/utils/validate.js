@@ -57,6 +57,7 @@ export function isEmpty(value) {
  * @returns {boolean} 包含 http:// 或 https:// 时返回 true
  */
 export function isHttp(url) {
+  if (!url) return false
   return url.indexOf('http://') !== -1 || url.indexOf('https://') !== -1
 }
 

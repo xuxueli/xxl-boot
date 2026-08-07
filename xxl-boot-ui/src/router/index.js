@@ -144,7 +144,8 @@ router.beforeEach(async (to, from) => {
                 await useRoutesStore().initRoutes()
                 const accessRoutes = useRoutesStore().getFlattenRoutes()
                 accessRoutes.forEach(route => {
-                    if (!isHttp(route.path)) {
+                    // 无 path 的纯目录节点无需外链判断，其余排除外链路由后逐条注入
+                    if (!route.path || !isHttp(route.path)) {
                         router.addRoute(route)
                     }
                 })
@@ -154,7 +155,7 @@ router.beforeEach(async (to, from) => {
             } catch (err) {
                 // 路由初始化异常：退出登录
                 await useUserStore().logout()
-                ElMessage.error('Init Router Error:' + JSON.stringify(err))
+                ElMessage.error('Init Router Error:' + (err && err.message ? err.message : JSON.stringify(err)))
                 return {path: '/'}
             }
         }

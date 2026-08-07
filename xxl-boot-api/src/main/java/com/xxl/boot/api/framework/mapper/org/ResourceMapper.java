@@ -25,9 +25,14 @@ import java.util.List;
     public int delete(@Param("ids") List<Integer> ids);
 
     /**
-    * 更新
-    */
+     * 更新
+     */
     public int update(@Param("xxlBootResource") Resource xxlBootResource);
+
+    /**
+     * 批量更新排序
+     */
+    public int updateSort(@Param("ids") List<Integer> ids, @Param("orders") List<Integer> orders);
 
     /**
     * Load查询

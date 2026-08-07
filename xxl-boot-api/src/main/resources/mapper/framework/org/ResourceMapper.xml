@@ -86,6 +86,20 @@
         WHERE `id` = #{xxlBootResource.id}
     </update>
 
+    <update id="updateSort" parameterType="java.util.Map" >
+        UPDATE xxl_boot_resource
+        SET `order` = CASE `id`
+            <foreach collection="ids" item="id" index="i" separator=" ">
+                WHEN #{id} THEN #{orders[${i}]}
+            </foreach>
+        END,
+        update_time = NOW()
+        WHERE `id` IN
+        <foreach collection="ids" item="id" open="(" close=")" separator="," >
+            #{id}
+        </foreach>
+    </update>
+
     <select id="load" parameterType="java.util.Map" resultMap="Resource">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_resource AS t
