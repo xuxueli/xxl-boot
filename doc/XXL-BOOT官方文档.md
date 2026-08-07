@@ -17,7 +17,7 @@
 XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即用。内置安全登录、权限管控、端到端代码生成、响应式UI、国际化、分布式扩展……等能力。整合前后端流行技术，致力为 中小企业、个人开发者 打造开箱即用的中后台解决方案。
 
 ### 1.2 特性
-- 1、安全登录：基于token设计登录、注销能力，系统支持集群部署及登录，保障账号及用户资产安全。
+- 1、账号安全：基于token设计账号登录生命周期能力，支持集群部署及SSO集成，保障账号体系安全性与扩展性。
 - 2、权限管控：基于RBAC设计的用户角色权限管控能力，支持动态菜单&按钮级资源定义、灵活用户角色权限管控，管控防护系统资源。
 - 3、用户管理：针对系统用户进行管理，进行用户新增、管理、角色授权等操作。
 - 4、角色管理：针对系统权限角色进行动态管理，进行角色新增、管理、菜单分配等操作。
@@ -36,7 +36,7 @@ XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即�
 - 17、分布式扩展：系统设计预留丰富扩展能力，可低成本扩展接入RPC、MQ、JOB、CONF、KV、SSO…等分布式中间件能力。
 - 18、在线用户：实时查看分析当前在线用户，支持一键踢出异常用户登录态。
 - 19、系统监控：针对服务器硬件资源监控，如CPU使用率、JVM状态、磁盘利用率……等；支持一键GC等系统主动优化能力。
-
+- 20、Monorepo：基于Monorepo仓库模式，单体项目 与 前后端分离项目统一托管，统一版本管理与依赖管理，便于协同开发与一键构建。
 
 ### 1.3 下载
 
@@ -134,7 +134,7 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ### 2.4 配置部署（前后端分离项目）
 
 - 部署项目：xxl-boot-api + xxl-boot-ui
-- 项目说明：前后端分离模式，后端API与前端UI独立部署、独立运行。后端选型 "SpringBoot/Mybatis/XXL-SSO/Redis"，前端选型 "Vue3/Vite/ElementPlus"。
+- 项目说明：前后端分离模式，后端API与前端UI独立部署、独立运行。后端选型 "SpringBoot/Mybatis/XXL-SSO"，前端选型 "Vue3/Vite/ElementPlus"。
 
 #### 步骤一：后端配置文件
 配置文件地址：
@@ -271,16 +271,97 @@ server {
 
 ![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_008.png "在这里输入图片标题")
 
+### 3.3、站内消息
+略
+
+### 3.4、审计日志
+略
+
 
 ## 四、总体设计
 
 ### 4.1、Monorepo仓库
-略
+
+项目采用 Monorepo 仓库模式，将 单体项目 与 前后端分离项目 维护在同一个代码仓库中，通过不同目录模块隔离维护，统一版本管理与依赖管理，便于协同开发与一键构建。
+
+- 后端统一通过 Maven 父工程管理，根目录 `pom.xml` 集中维护模块依赖版本（如 SpringBoot、Mybatis、MySQL、XXL-SSO 等），子模块 `xxl-boot-admin`、`xxl-boot-api` 继承使用；
+- 前端模块 `xxl-boot-ui` 独立通过 npm 管理依赖（Vue3、Vite、ElementPlus 等），与后端 Maven 工程解耦。
+
+仓库目录结构如下：
+```
+xxl-boot/
+│
+├── pom.xml                                    # 父工程Maven配置：统一管理模块及依赖版本
+│
+├── doc/                                       # 文档目录
+│   ├── db/                                    # 数据库初始化SQL脚本目录
+│   │   ├── tables_xxl_boot.sql                # 系统初始化SQL脚本
+│   │   ├── tables_xxl_boot_custom.sql         # 系统数据定制SQL脚本
+│   ├── images/                                # 文档图片目录
+│   └── XXL-BOOT官方文档.md                    # 官方文档
+│
+├── xxl-boot-admin/                            # 【单体项目】单体服务模块
+│   ├── pom.xml                                # Maven配置（继承父工程）
+│   └── src/main/
+│       ├── java/com/xxl/boot/admin/
+│       │   ├── XxlBootAdminApplication.java   # 启动类
+│       │   ├── framework/                     # 核心包：项目配置、系统管理、工具组件等
+│       │   └── business/                      # 【扩展点】业务扩展包（可插拔）
+│       └── resources/
+│           ├── application.properties         # 主配置文件
+│           ├── mapper/
+│           │   ├── framework/                 # 核心 MyBatis 映射文件
+│           │   └── business/                  # 【扩展点】业务扩展 MyBatis 映射文件
+│           ├── templates/
+│           │   ├── framework/                 # 核心 模板文件（FreeMarker）
+│           │   └── business/                  # 【扩展点】业务扩展 模板文件
+│           └── static/                        # 前端静态资源（AdminLTE/Bootstrap）
+│
+├── xxl-boot-api/                              # 【前后端分离项目】后端API服务模块
+│   ├── pom.xml                                # Maven配置（继承父工程）
+│   └── src/main/
+│       ├── java/com/xxl/boot/api/
+│       │   ├── XxlBootApiApplication.java     # 启动类
+│       │   ├── framework/                     # 核心包：项目配置、系统管理、工具组件等
+│       │   └── business/                      # 【扩展点】业务扩展包（可插拔）
+│       └── resources/
+│           ├── application.properties         # 主配置文件
+│           ├── mapper/
+│           │   ├── framework/                 # 核心 MyBatis 映射文件
+│           │   └── business/                  # 【扩展点】业务扩展 MyBatis 映射文件
+│           ├── templates/
+│           │   └── tool/codegen/              # 代码生成 模板文件
+│           └── i18n/                          # 国际化资源文件
+│
+└── xxl-boot-ui/                               # 【前后端分离项目】前端UI服务模块
+    ├── package.json                           # 前端依赖配置
+    ├── vite.config.js                         # Vite构建配置
+    └── src/
+        ├── main.js                            # 入口文件
+        ├── App.vue                            # 根组件
+        ├── router/                            # 路由配置
+        ├── store/                             # 状态管理
+        ├── api/                               # 接口封装
+        ├── views/                             # 页面组件
+        ├── components/                        # 通用组件
+        ├── layout/                            # 布局组件
+        ├── composables/                       # 组合式函数
+        ├── utils/                             # 工具类
+        ├── directive/                         # 自定义指令
+        ├── assets/                            # 静态资源
+        └── settings.js                        # 全局配置
+```
+
+补充说明：
+- 构建：后端模块在仓库根目录执行 `mvn clean package` 即可一键编译全部 Maven 模块；前端模块进入 `xxl-boot-ui` 目录执行 `npm install`、`npm run build:prod` 构建；
+- 部署：单体项目部署 `xxl-boot-admin` 模块；前后端分离项目部署 `xxl-boot-api` + `xxl-boot-ui` 两个模块，参考 “2.3 配置部署（单体项目）” 与 “2.4 配置部署（前后端分离项目）”；
+- 扩展：新增业务模块时，可在各模块 `business` 扩展包中开发，并配套放置 MyBatis 映射文件、模板文件及配置文件，参考 “五、业务扩展”。
 
 ### 4.2、RBAC权限体系
 
 项目进行安全的用户权限体系设计，基于RBAC（Role-Based Access Control，基于角色的访问控制）这种广泛采用的权限管理模型，通过将权限授予角色，然后将角色分配给用户，从而实现对系统资源的访问控制。
 RBAC 的设计目标是简化对系统资源的访问管理，提高系统的安全性和可维护性。以下是项目 RBAC 权限体系相关实体表：
+
 ```
 xxl_boot_user           : 用户表
 xxl_boot_role           : 角色表
@@ -292,18 +373,19 @@ xxl_boot_role_res       : 角色-资源关系表
 ### 4.3、安全登录验证
 
 项目进行安全的登录验证防护设计，针对需要登录验证、以及需要强权限校验的页面、操作等资源控制场景，抽象出如下权限注解：
+
 ```
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Permission {
 
 	/**
-	 * permission value (need login)    // 权限标识，为空则不校验，非空则需要通过RBAC权限体系进行相关资源授权才可访问
+	 * 权限标识，为空则不校验，非空则需要通过RBAC权限体系进行相关资源授权才可访问    
 	 */
 	String value() default "";
 
 	/**
-	 * need login                       // 是否需要登录验证，默认全部需要，特殊情况可定制
+	 * 是否需要登录验证，默认全部需要，特殊情况可定制
 	 */
 	boolean login() default true;
 	
@@ -313,25 +395,19 @@ public @interface Permission {
 示例：
 ```
 // 1、需要登录态
-@Permission						: need login, but not valid permission
+@Permission						
 
 // 2、需要登录态，同时需要进行RBAC权限授权相关资源
-@Permission("xxx")				: need login, and valid permission
+@Permission("xxx")			
 
 // 3、不需要登录态
-@Permission(login = false)		: not need login, not valid anything
+@Permission(login = false)		
 ```
 
-### 4.4、一站式代码生成
+### 4.4、代码生成
 参考上文 “3.1、代码生成”。
 
-### 4.5、通告触达
-略
-
-### 4.6、审计日志
-略
-
-### 4.7 Docker镜像构建
+### 4.5、Docker镜像构建
 除通过原始方式部署外，可以通过以下命令快速构建项目，并启动运行；
 
 ```
@@ -360,70 +436,9 @@ docker run -d \
 xuxueli/xxl-boot-admin:{指定版本}
 ```
 
-## 五、业务扩展
 
-### 5.1 仓库扩展说明
-
-项目支持灵活扩展集成业务模块，详细仓库目录结构如下，扩展SQL脚本 以及 系统扩展点 说明如下：
-  - 扩展SQL脚本：用于 业务扩展模块 数据库初始化；
-  - 系统扩展点：
-    - 扩展点A：扩展代码包，存放业务扩展模块代码；参考仓库中 ai 扩展代码包模块；
-    - 扩展点B：扩展配置文件：存放业务扩展模块配置文件，如 spring-ai 属性配置；
-    - 扩展点C：扩展MyBatis文件：存放业务扩展模块 MyBatis 映射文件；
-    - 扩展点D：扩展模板文件：存放业务扩展模块模板文件，如 freemarker文件；
-
-```
-xxl-boot/
-│
-├── doc/                                # 文档目录
-│   ├── db/                             
-│   │   ├── tables_xxl_boot.sql         # 核心表结构
-│   │   └── tables_xxl_boot_plugin.sql  # 【扩展】业务扩展模块SQL脚本
-│   ├── XXL-BOOT官方文档.md              # 官方文档
-│
-├── xxl-boot-admin/                   # 管理后台模块（核心）
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/com/xxl/boot/
-│   │   │   │   ├── XxlBootAdminApplication.java  # 启动类
-│   │   │   │   ├── admin/                        # 核心包：项目配置、系统管理、工具组件等。
-│   │   │   │   └── business/                     # 【扩展点A】业务扩展包
-│   │   │   │       ├── ai/                           # AI业务扩展模块
-│   │   │   │       └── workflow/                     # 工作流扩展模块
-│   │   │   └── resources/
-│   │   │       ├── application.properties        # 主配置文件
-│   │   │       ├── application-plugin.properties # 【扩展点B】业务扩展配置文件
-│   │   │       └── mapper/                       
-│   │   │           ├── /framework/*.xml              # 核心 MyBatis 文件
-│   │   │           ├── /business/*.xml           # 【扩展点C】业务扩展模块 MyBatis 文件
-│   │   │       └── templates/                    # 模板文件
-│   │   │           ├── /framework/*.xml              # 核心 模板文件
-│   │   │           └── /business/*.xml           # 【扩展点D】业务扩展模块 模板文件
-│   └── pom.xml                                   # Maven配置
-│
-```
-
-### 5.2 官方业务扩展明细
-
-当前提供多项 开箱即用 的业务扩展，可结合实际业务诉求选择性启用。
-
-| 模块   | 功能         | 描述                                                                                                                                     |
-|--------|--------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| AI模块 | Model配置    | Model配置管理，支持多Model类型，包括：基础模型、文本模型、视觉模型...等；支持多模型供应商，包括：Ollama、OpenAI...等。                   |
-| AI模块 | Chat对话     | Chat对话管理，支持自定义Prompt、Model参数；支持历史对话消息持久化，保留历史对话记忆；可基于此支持多场景，包括：智能客服、聊天助手...等； |
-| AI模块 | 知识库       | 知识库管理，支持知识库管理、索引、检索等；支持多知识库类型，包括：Text、Word、PDF、图片...等；                                           |
-| AI模块 | WorkFlow定义 | WorkFlow定义管理，支持工作流及Agent/模型的编排定义；工作流执行及日志记录，支持分布式工作流执行以及执行日志记录；                         |
-| AI模块 | Agent生图    | 文生图、图生图；生图流程设计，支持集成多模型供应商；                                                                                     |
-| AI模块 | Agent生视频  | 文生视频、图生视频；支持集成多模型供应商；                                                                                               |
-
-### 5.2 扩展模块说明：AI模块
-
-- Model配置：Model配置管理，支持多Model类型，包括：基础模型、文本模型、视觉模型...等；支持多模型供应商，包括：Ollama、OpenAI...等。
-- Chat对话：Chat对话管理，支持自定义Prompt、Model参数；支持历史对话消息持久化，保留历史对话记忆；可基于此支持多场景，包括：智能客服、聊天助手...等；
-- 知识库：知识库管理，支持知识库管理、索引、检索等；支持多知识库类型，包括：Text、Word、PDF、图片...等；
-- WorkFlow定义：WorkFlow定义管理，支持工作流及Agent/模型的编排定义；工作流执行及日志记录，支持分布式工作流执行以及执行日志记录；
-- Agent生图：文生图、图生图；生图流程设计，支持集成多模型供应商；
-- Agent生视频：文生视频、图生视频；支持集成多模型供应商；
+## 五、新增业务模块
+略
 
 
 ## 六、版本更新日志
@@ -533,6 +548,13 @@ xxl-boot/
 - 5、知识库：知识库管理，知识库检索；
 - 6、iframe弹框居中优化；
 - 7、【ING】左侧菜单改为JS方式；
+- 8、AI项目独立：
+  - Model配置：Model配置管理，支持多Model类型，包括：基础模型、文本模型、视觉模型...等；支持多模型供应商，包括：Ollama、OpenAI...等。
+  - Chat对话：Chat对话管理，支持自定义Prompt、Model参数；支持历史对话消息持久化，保留历史对话记忆；可基于此支持多场景，包括：智能客服、聊天助手...等；
+  - 知识库：知识库管理，支持知识库管理、索引、检索等；支持多知识库类型，包括：Text、Word、PDF、图片...等；
+  - WorkFlow定义：WorkFlow定义管理，支持工作流及Agent/模型的编排定义；工作流执行及日志记录，支持分布式工作流执行以及执行日志记录；
+  - Agent生图：文生图、图生图；生图流程设计，支持集成多模型供应商；
+  - Agent生视频：文生视频、图生视频；支持集成多模型供应商；
 
 ## 七、其他
 
