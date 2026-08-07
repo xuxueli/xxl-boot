@@ -27,7 +27,7 @@ public class IndexControllerTest extends AbstractSpringMvcTest {
             .param("userName", "admin")
             .param("password", "123456")
     ).andReturn();
-    cookie = ret.getResponse().getCookie(Const.XXL_SSO_TOKEN);
+    cookie = ret.getResponse().getCookie("xxl-sso-login-token");
   }
 
   @Test

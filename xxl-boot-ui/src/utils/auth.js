@@ -21,7 +21,7 @@ import Cookies from 'js-cookie'
 const TOKEN_KEY_LOCAL = 'Admin-Token'
 
 // 认证令牌：Header 中传参key
-const TOKEN_KEY_HEADER = 'xxl_sso_token';
+const TOKEN_KEY_HEADER = 'xxl-sso-login-token';
 
 /**
  * 读取当前认证令牌

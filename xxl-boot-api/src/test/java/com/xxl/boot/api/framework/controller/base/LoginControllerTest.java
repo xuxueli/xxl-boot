@@ -20,7 +20,7 @@ public class LoginControllerTest {
     private static final String API_SERVICE_URL = "http://localhost:8090";
     private static final String TEST_USER = "admin";
     private static final String TEST_PASS = "123456";
-    private static final String TEST_TOKEN_KEY = "xxl_sso_token";
+    private static final String TEST_TOKEN_KEY = "xxl-sso-login-token";
     private static final String TEST_TOKEN_VALUE = "eyJ1c2VySWQiOiIxIiwiZXhwaXJlVGltZSI6MCwic2lnbmF0dXJlIjoiNjdhMjNkZjE3OTk5NGNjMDgyNmVmYjMzNmY3MWIyMjMifQ";
 
     @Test
