@@ -333,9 +333,8 @@ function cancel() {
   reset()
 }
 
-/** 表单重置：先清除校验状态，再赋默认值 */
+/** 表单重置 */
 function reset() {
-  resetForm("formRef")
   formState.value.form = {
     id: undefined,
     username: undefined,
@@ -347,6 +346,7 @@ function reset() {
     status: 0,
     roleIds: []
   }
+  resetForm("formRef")
 }
 
 /** 新增按钮操作 */
