@@ -407,35 +407,39 @@ public @interface Permission {
 ### 4.4、代码生成
 参考上文 “3.1、代码生成”。
 
-### 4.5、Docker镜像构建
-除通过原始方式部署外，可以通过以下命令快速构建项目，并启动运行；
+### 4.5、Docker Compose 部署（单体项目）
+支持通过 Docker Compose 方式部署并启动，包括：数据库、系统服务。
+
+- 第一步：前往仓库目录
 
 ```
-/**
-* build package
-*/ 
-mvn clean package
-
-/**
-* build docker image
-*/ 
-docker build -t xuxueli/xxl-boot-admin:{指定版本} ./xxl-boot-admin
-
-/**
-* 如需自定义 “项目配置文件” 中配置项，比如 mysql 配置，可通过 "-e PARAMS" 指定，参数格式: -e PARAMS="--key=value --key2=value2"；
-* （配置项参考文件：/xxl-boot/xxl-boot-admin/src/main/resources/application.properties）
-* 如需自定义 “JVM内存参数”，可通过 "-e JAVA_OPTS" 指定，参数格式: -e JAVA_OPTS="-Xmx512m"
-* 如需自定义 “日志文件目录”，可通过 "-e LOG_HOME" 指定，参数格式: -e LOG_HOME=/data/applogs
-*/
-
-docker run -d \
--e PARAMS="--spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_boot?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai" \
--p 8080:8080 \
--v /tmp:/data/applogs \
---name xxl-boot-admin \
-xuxueli/xxl-boot-admin:{指定版本}
+cd ./xxl-boot
 ```
 
+- 第二步：项目构建
+
+```
+// 注意：如下命令需要在项目仓库根目录执行
+mvn clean package -Dmaven.test.skip=true
+```
+
+- 第三步：项目配置
+
+```
+// 注意：前往docker目录，自定义 .env 配置；如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
+cd ./docker/monolith/
+cat .env
+```
+
+- 第四步：启动项目
+
+```
+// 启动 
+docker compose up -d
+
+// 停止
+docker compose down
+```
 
 ## 五、新增业务模块
 略

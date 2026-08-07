@@ -1,5 +1,5 @@
 # base image
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:17-jre
 
 # maintainer
 MAINTAINER xuxueli
@@ -13,6 +13,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # copy jar
 ADD target/xxl-boot-admin-*.jar /app.jar
+
+# expose port
+EXPOSE 8080
 
 # command
 # log home: -e LOG_HOME=/data/applogs
