@@ -74,7 +74,7 @@ XXL-BOOT 定位为 快速开发平台，整合流行前后端技术能力，致�
 ## 二、快速入门
 
 ### 2.1 初始化数据库
-请下载项目源码并解压，获取 "数据库初始化SQL脚本" 并执行即可。数据库初始化SQL脚本 位置为:
+下载项目源码并解压，获取 "数据库初始化SQL脚本" 并执行即可。数据库初始化SQL脚本 位置为:
 
 ```
 /xxl-boot/doc/db/
@@ -233,10 +233,10 @@ server {
 - 默认登录账号："admin/123456"
 
 登录页截图示例：
-![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_001.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_014.png "在这里输入图片标题")
 
 系统首页截图示例：
-![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_002.png "在这里输入图片标题")
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_015.png "在这里输入图片标题")
 
 
 ## 三、操作指南
@@ -267,29 +267,14 @@ server {
 点击右上角 "生成代码按钮"，即可完整多层代码的生成，非常方便；
 
 #### 第三步：Finish
-代码生成后，可在界面查看和使用 "controller/service/dao/mybatis/model" 多层源代码。部分截图如下：
+代码生成后，可在界面查看和使用 "controller/service/mapper/mybatis/entity..." 多层源代码。部分截图如下：
 
-代码生成截图示例：
 ![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_008.png "在这里输入图片标题")
 
-代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_009.png "在这里输入图片标题")
-
-代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_010.png "在这里输入图片标题")
-
-代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_011.png "在这里输入图片标题")
-
-代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_012.png "在这里输入图片标题")
-
-代码生成截图示例：
-![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_013.png "在这里输入图片标题")
 
 ## 四、总体设计
 
-### 4.1、系统架构
+### 4.1、Monorepo仓库
 略
 
 ### 4.2、RBAC权限体系
