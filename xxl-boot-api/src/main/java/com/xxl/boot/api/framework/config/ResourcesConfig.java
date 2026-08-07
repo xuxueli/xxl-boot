@@ -1,9 +1,16 @@
 package com.xxl.boot.api.framework.config;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.ResourceResolver;
+import org.springframework.web.servlet.resource.ResourceResolverChain;
+
+import java.util.List;
 
 /**
  * 通用配置：文件上传路径与静态资源映射
@@ -50,7 +57,20 @@ public class ResourcesConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler(getResourcePrefix() + "/**")
-                .addResourceLocations("file:" + getProfile() + "/");
+                .addResourceLocations("file:" + getProfile() + "/")
+                .resourceChain(true)
+                .addResolver(new ResourceResolver() {
+                    // 安全防护：资源链最前端拦截路径穿越（.. / \，含 %2e%2e 等编码形式），防止通过 /profile/../xxx 越权读取 /profile 之外的文件。
+                    @Override
+                    public Resource resolveResource(HttpServletRequest request, @NonNull String requestPath, @NonNull List<? extends Resource> locations, @NonNull ResourceResolverChain chain) {
+                        // 命中路径穿越则拒绝访问，否则交给资源链默认解析
+                        return requestPath.contains("..") || requestPath.contains("\\") ? null : chain.resolveResource(request, requestPath, locations);
+                    }
+                    @Override
+                    public String resolveUrlPath(@NonNull String resourcePath, @NonNull List<? extends Resource> locations, @NonNull ResourceResolverChain chain) {
+                        return chain.resolveUrlPath(resourcePath, locations);
+                    }
+                });
     }
 
 }
