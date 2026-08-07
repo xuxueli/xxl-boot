@@ -41,7 +41,7 @@
         <mysql-connector-j.version>9.7.0</mysql-connector-j.version>
 
         <!-- xxl-sso -->
-        <xxl-sso.version>2.4.0</xxl-sso.version>
+        <xxl-sso.version>2.4.1</xxl-sso.version>
         <!-- poi (excel ) -->
         <poi.version>5.5.1</poi.version>
         <!-- ip2region -->

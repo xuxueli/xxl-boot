@@ -19,21 +19,23 @@ XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即�
 ### 1.2 特性
 - 1、安全登录：基于token设计登录、注销能力，系统支持集群部署及登录，保障账号及用户资产安全。
 - 2、权限管控：基于RBAC设计的用户角色权限管控能力，支持动态菜单&按钮级资源定义、灵活用户角色权限管控，管控防护系统资源。
-- 3、端到端代码生成：内置代码生成器，支持前后端、全流程代码生成，覆盖“controller/servie/dao/entity/js…”等多层。只需提供SQL将会自动生成全部代码，加速研发效率。
-- 4、响应式UI：集成流行、可复用前端组件，支持丰富的UI组件、布局和样式，支持响应式布局，保障用户体验及交互。
-- 5、国际化：支持国际化设置，提供中文、英文两种可选语言，可结合实际诉求定制扩展，默认为中文；
-- 6、研发规范：基于标准分层架构设计，统一数据响应结构体，规范化项目目录结构。
-- 7、异常机制：严谨设计全局异常处理机制、ErrorPage异常处理机制，保障系统底限安全体验。
-- 8、分布式扩展：系统设计预留丰富扩展能力，可低成本扩展接入RPC、MQ、JOB、CONF、KV、SSO…等分布式中间件能力。
-- 9、审计日志：记录系统操作及活动的日志，用于系统的监控、审计和安全分析，可快速了解系统运行情况、发现异常行为、追溯问题源头，以及评估系统的安全性。
-- 10、通知管理：针对系统用户推送通知消息，支持自定义推送范围（全员、部分圈选），支持触达率、打开率监控。
-- 11、用户管理：针对系统用户进行管理，进行用户新增、管理、角色授权等操作。
-- 12、角色管理：针对系统权限角色进行动态管理，进行角色新增、管理、菜单分配等操作。
-- 13、资源管理：针对系统资源进行细粒度管理，支持页面、按钮等多类型资源管理，进行新增、管理等操作。
-- 14、组织管理：针对部门组织架构进行管理，进行多层级组织架构的新增、管理、排序等操作。
-- 15、配置中心： 针对常用业务数据进行动态配置，如业务参数、数据字典等，进行新增、管理等操作。
-- 16、在线用户：实时查看分析当前在线用户，支持一键踢出异常用户登录态。
-- 17、系统监控：针对服务器硬件资源监控，如CPU使用率、JVM状态、磁盘利用率……等；支持一键GC等系统主动优化能力。
+- 3、用户管理：针对系统用户进行管理，进行用户新增、管理、角色授权等操作。
+- 4、角色管理：针对系统权限角色进行动态管理，进行角色新增、管理、菜单分配等操作。
+- 5、资源管理：针对系统资源进行细粒度管理，支持目录、菜单、按钮等多类型资源管理，进行新增、管理等操作。
+- 6、组织管理：针对部门组织架构进行管理，进行多层级组织架构的新增、管理、排序等操作。
+- 7、字典管理：针对系统字典进行线上化管理，包括字典定义、字典数据等，动态定义及扩展。
+- 8、配置中心：针对常用业务数据进行动态配置，包括配置定义、配置值管理等，在线管理并实时生效。
+- 9、站内消息：针对系统用户推送站内消息，包括站内消息发布及维护管理、触达及已读查阅分析等。
+- 10、审计日志：记录系统操作及活动的日志，用于系统的监控、审计和安全分析，可快速了解系统运行情况、发现异常行为、追溯问题源头，以及评估系统的安全性。
+- 11、代码生成：内置代码生成器，支持前后端、全流程代码生成，覆盖“controller/servie/mapper&xml/entity/js/view…”等多层。只需提供SQL将会自动生成全部代码，加速研发效率。
+- 12、表单生成：内置表单/页面生成器，支持组件拖拽方式生成表单/页面，支持多种组件、布局和样式，支持响应式布局，保障用户体验及交互。
+- 13、响应式UI：集成流行、可复用前端组件，支持丰富的UI组件、布局和样式，支持响应式布局，保障用户体验及交互。
+- 14、国际化：支持国际化设置，提供中文、英文两种可选语言，可结合实际诉求定制扩展，默认为中文；
+- 15、研发规范：基于标准分层架构设计，统一数据响应结构体，规范化项目目录结构。
+- 16、异常防护：严谨设计全局异常处理机制、ErrorPage异常处理机制，保障系统底限安全体验。
+- 17、分布式扩展：系统设计预留丰富扩展能力，可低成本扩展接入RPC、MQ、JOB、CONF、KV、SSO…等分布式中间件能力。
+- 18、在线用户：实时查看分析当前在线用户，支持一键踢出异常用户登录态。
+- 19、系统监控：针对服务器硬件资源监控，如CPU使用率、JVM状态、磁盘利用率……等；支持一键GC等系统主动优化能力。
 
 
 ### 1.3 下载
@@ -42,7 +44,7 @@ XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即�
 
 - [中文文档](https://www.xuxueli.com/xxl-boot/)
 
-#### 源码仓库地址
+#### 源码仓库
 
 | 源码仓库地址                                                                     | Release Download                                            |
 |----------------------------------------------------------------------------------|-------------------------------------------------------------|
@@ -56,12 +58,18 @@ XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即�
 - Maven：3+
 - Jdk：17+
 - Mysql：8.0+
-- Redis：7.0+（可选：前后端分析项目需要）
+- Redis：7.0+（可选：前后端分离项目需要）
 
 ### 1.5 发展历程
-XXL-BOOT 前身为 xxl-permission、xxl-code-generator 等多个历史项目，以及 XXL-JOB、XXL-CONF 等系列开源软件所所沉淀中后台能力，经过整合演进最终诞生。
-- 1、xxl-code-generator：首版发布于2018年5月，一个覆盖"controller/service/dao/entity/……"的多层代码生成系统。只需要提供SQL，将会自动生成全部代码。(已废弃，整合至XXL-BOOT)
-- 2、xxl-permission：首版完成于2015年，一个基于RBAC实现的后台管理系统，支持动态菜单资源定义、用户角色权限管控，前后端端到端有效封装，开箱即用。(已废弃，整合至XXL-BOOT)
+
+于2015年中，发布 xxl-permission 项目，定位基于RBAC实现的后台管理系统，支持动态菜单资源定义、用户角色权限管控，前后端端到端有效封装，开箱即用。
+
+于2018年5月，发布 xxl-code-generator 项目，定位覆盖 "controller/service/mapper/entity/……"的多层代码生成系统。只需要提供SQL，将会自动生成全部代码。
+
+于2024年11月，xxl-code-generator 项目更名 XXL-BOOT，整合xxl-permission、xxl-code-generator多个历史项目，并吸收 XXL-JOB、XXL-CONF 等系列开源软件所所沉淀中后台能力。
+XXL-BOOT 定位为 快速开发平台，整合流行前后端技术能力，致力为中小企业与个人开发者打造开箱即用的快速开发解决方案。
+
+于2026年8月，XXL-BOOT 整合主流技术栈，推出前后端分离版本。业务方可以根据实际业务诉求，自行选择 单体版本、前后端分离版本。
 
 ## 二、快速入门
 
@@ -78,7 +86,8 @@ XXL-BOOT 前身为 xxl-permission、xxl-code-generator 等多个历史项目，�
 
 补充说明：如需部署单体项目，只需要执行 `tables_xxl_boot.sql` 即可；如需切换部署 “前后端分离项目/单体项目”，需要执行 `tables_xxl_boot_custom.sql` 中的 A 或者 B 部分。
 
-### 2.2 编译源码
+### 2.2 编译源码    
+项目为 Monorepo仓库，单体项目 与 前后端分离项目 维护在同一个代码仓库中，通过不同目录模块隔离维护。
 解压源码,按照maven格式将源码导入IDE, 使用maven进行编译即可，源码结构如下：
 
 ```
@@ -124,7 +133,110 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 ### 2.4 配置部署（前后端分离项目）
 
+- 部署项目：xxl-boot-api + xxl-boot-ui
+- 项目说明：前后端分离模式，后端API与前端UI独立部署、独立运行。后端选型 "SpringBoot/Mybatis/XXL-SSO/Redis"，前端选型 "Vue3/Vite/ElementPlus"。
 
+#### 步骤一：后端配置文件
+配置文件地址：
+```
+/xxl-boot/xxl-boot-api/src/main/resources/application.properties
+```
+
+配置内容说明（数据库配置，与 ”2.1 初始化数据库“ 章节初始化的数据库保持一致）：
+```
+### xxl-boot, datasource。 数据库配置
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_boot?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+spring.datasource.username=root
+spring.datasource.password=root_pwd
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+### xxl-boot, redis。 缓存配置（前后端分离项目依赖，用于登录态存储等）
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
+spring.data.redis.database=0
+spring.data.redis.password=
+```
+
+补充说明：
+- 后端服务默认端口为 `8081`，可通过 `server.port` 调整；
+- 前后端分离项目依赖 Redis，部署前需确保 Redis 服务可用。
+
+#### 步骤二：部署后端项目
+项目打包部署后，后端API服务启动成功，可通过 `http://localhost:8081` 访问。
+
+#### 步骤三：前端环境配置
+配置文件地址（按环境区分）：
+```
+/xxl-boot/xxl-boot-ui/.env.development        # 开发环境
+/xxl-boot/xxl-boot-ui/.env.staging            # 预发布环境
+/xxl-boot/xxl-boot-ui/.env.production         # 生产环境
+```
+
+配置内容说明：
+```
+# 前端端口号
+VITE_APP_PORT=3000
+
+# 后端API地址
+VITE_API_URL=http://localhost:8081
+# 后端路由前缀
+VITE_APP_BASE_API='/api'
+```
+
+补充说明：
+- `VITE_API_URL`：后端API服务地址，开发模式下由 Vite 代理转发，生产模式下由前端 Web 服务器（如 Nginx）反向代理；
+- `VITE_APP_BASE_API`：后端路由前缀，默认 `/api`，前端请求会统一添加此前缀，代理或反向代理时需将其移除并转发至后端服务。
+
+#### 步骤四：部署前端项目（本地）
+开发模式下，进入 `xxl-boot-ui` 目录，安装依赖并启动即可：
+```
+cd /xxl-boot/xxl-boot-ui
+npm install
+npm run dev
+```
+启动后访问 `http://localhost:3000`，开发服务器会将 `/api` 前缀的请求自动代理至 `VITE_API_URL` 指定的后端服务。
+
+#### 步骤五：部署前端项目（生产）
+
+生产模式下，构建产物后部署至 Web 服务器（如 Nginx），并配置反向代理转发 API 请求：
+```
+cd /xxl-boot/xxl-boot-ui
+npm run build:prod          # 构建产物输出至 dist 目录
+```
+
+Nginx 反向代理配置示例：
+```
+server {
+    listen       3000;
+    server_name  localhost;
+
+    # 前端静态资源
+    root  /data/xxl-boot-ui/dist;
+    index index.html;
+
+    # 单页应用路由支持（前端 History 模式）
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # 后端API反向代理
+    location /api/ {
+        proxy_pass   http://127.0.0.1:8081/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+项目部署完成后，可通过如下地址及账号进行登录。
+- 访问地址：http://localhost:3000 （按实际部署配置调整）
+- 默认登录账号："admin/123456"
+
+登录页截图示例：
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_001.png "在这里输入图片标题")
+
+系统首页截图示例：
+![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_002.png "在这里输入图片标题")
 
 
 ## 三、操作指南
@@ -174,9 +286,6 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 代码生成截图示例：
 ![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_013.png "在这里输入图片标题")
-
-### 2.4 配置部署（前后端分离项目）
-
 
 ## 四、总体设计
 
