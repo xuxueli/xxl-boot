@@ -150,11 +150,9 @@ function setLayout() {
 * 主题切换：浅色、暗色
 *   - 支持 View Transition API 实现圆形扩散动画
 *   - fallback 分支（无 API / 减少动效模式）：直接切换
-*   - animation 分支：startViewTransition + clipPath 圆形过渡
+*   - animation 分支：startViewTransition + clipPath 圆形过渡，固定从左上角扩散
 */
-async function toggleTheme(event) {
-  const x = event?.clientX || window.innerWidth / 2
-  const y = event?.clientY || window.innerHeight / 2
+async function toggleTheme() {
   const wasDark = settingsStore.isDark
 
   const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -175,8 +173,10 @@ async function toggleTheme(event) {
     })
     await transition.ready
 
-    /* 从点击位置向外扩散的 clipPath 动画 */
-    const endRadius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
+    /* 固定起点：左上角，向外扩散的 clipPath 动画 */
+    const x = 0
+    const y = 0
+    const endRadius = Math.hypot(window.innerWidth, window.innerHeight)
     const clipPath = [`circle(0px at ${x}px ${y}px)`, `circle(${endRadius}px at ${x}px ${y}px)`]
     document.documentElement.animate(
       {
