@@ -106,11 +106,13 @@ XXL-BOOT 定位为 快速开发平台，整合流行前后端技术能力，致�
 
 #### 步骤一：配置文件
 配置文件地址：
+
 ```
 /xxl-boot/xxl-boot-admin/src/main/resources/application.properties
 ```
 
 配置内容说明：
+
 ```
 ### xxl-boot, datasource。 数据库配置，与 ”2.1 初始化数据库“ 章节初始化的数据库保持一致。
 spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_boot?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
@@ -138,11 +140,13 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 #### 步骤一：后端配置文件
 配置文件地址：
+
 ```
 /xxl-boot/xxl-boot-api/src/main/resources/application.properties
 ```
 
 配置内容说明（数据库配置，与 ”2.1 初始化数据库“ 章节初始化的数据库保持一致）：
+
 ```
 ### xxl-boot, datasource。 数据库配置
 spring.datasource.url=jdbc:mysql://127.0.0.1:3306/xxl_boot?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
@@ -166,6 +170,7 @@ spring.data.redis.password=
 
 #### 步骤三：前端环境配置
 配置文件地址（按环境区分）：
+
 ```
 /xxl-boot/xxl-boot-ui/.env.development        # 开发环境
 /xxl-boot/xxl-boot-ui/.env.staging            # 预发布环境
@@ -173,6 +178,7 @@ spring.data.redis.password=
 ```
 
 配置内容说明：
+
 ```
 # 前端端口号
 VITE_APP_PORT=3000
@@ -189,11 +195,13 @@ VITE_APP_BASE_API='/api'
 
 #### 步骤四：部署前端项目（本地）
 开发模式下，进入 `xxl-boot-ui` 目录，安装依赖并启动即可：
+
 ```
 cd /xxl-boot/xxl-boot-ui
 npm install
 npm run dev
 ```
+
 启动后访问 `http://localhost:3000`，开发服务器会将 `/api` 前缀的请求自动代理至 `VITE_API_URL` 指定的后端服务。
 
 #### 步骤五：部署前端项目（生产）
@@ -410,25 +418,26 @@ public @interface Permission {
 ### 4.5、Docker Compose 部署（单体项目）
 支持通过 Docker Compose 方式部署并启动，如下介绍 单体项目 部署方式：
 
-- 第一步：前往仓库目录
+#### 第一步：前往仓库目录
 ```
 cd ./xxl-boot
 ```
 
-- 第二步：项目构建
+#### 第二步：项目构建
 ```
 // 注意：如下命令需要在项目仓库根目录执行
 mvn clean package -Dmaven.test.skip=true
 ```
 
-- 第三步：项目配置
+#### 第三步：项目配置
 ```
 // 注意：前往docker目录，自定义 .env 配置；如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
 cd ./docker/monolith/
 cat .env
 ```
 
-- 第四步：启动项目
+#### 第四步：启动项目
+
 ```
 // 启动 
 docker compose up -d
@@ -440,25 +449,25 @@ docker compose down
 ### 4.6、Docker Compose 部署（前后端分离项目）
 支持通过 Docker Compose 方式部署并启动，如下介绍 前后端分离项目 部署方式：
 
-- 第一步：前往仓库目录
+#### 第一步：前往仓库目录
 ```
 cd ./xxl-boot
 ```
 
-- 第二步：项目构建
+#### 第二步：项目构建
 ```
 // 注意：如下命令需要在项目仓库根目录执行
 mvn clean package -Dmaven.test.skip=true
 ```
 
-- 第三步：项目配置
+#### 第三步：项目配置
 ```
 // 注意：前往docker目录，自定义 .env 配置；如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
 cd ./docker/modular/
 cat .env
 ```
 
-- 第四步：启动项目
+#### 第四步：启动项目
 ```
 // 启动 
 docker compose up -d
@@ -466,8 +475,6 @@ docker compose up -d
 // 停止
 docker compose down
 ```
-
-
 
 ## 五、新增业务模块
 略
@@ -555,19 +562,39 @@ docker compose down
 - 7、【优化】Maven依赖管理优化，统一各模块依赖版本号引用，便于集中维护管理
 - 8、【优化】代码生成SQL解析逻辑优化，解决字段类型大小写识别不兼容问题；
 
-### 版本 v2.0.0 Release Notes[ING]
-- 1、【新增】XXL-BOOT 前后端分离版本：支持多技术栈，前端UI模块独立部署，后端API模块独立部署；
+### 版本 v2.0.0 Release Notes[2026-08-08]
+- 1、【新增】XXL-BOOT 前后端分离版本 发布：支持 单体项目、前后端分析项目 多模式；
   - 前后端分离模式：
     - 前端UI模块：xxl-boot-ui，支持独立部署，提供前端UI服务；
     - 后端API模块：xxl-boot-api，支持独立部署，提供后端API服务；
   - 单体模式：xxl-boot-admin，提供前后端一体化服务；
-- 2、【TODO】升级TS版本；EnumTool、XXL-SSO 升级；
-- 2、【新增】AI模块升级：支持知识库管理
-- 3、【新增】代码生成工具：支持指定 author、package 和 业务实体名等；
-- 4、【强化】代码生成工具：SQL解析兼容性增强，表字段无引号兼容、大小写兼容、非Filed过滤；
-- 5、【新增】表单构建工具：支持拖拽表单字段动态排序，并生产表单代码；
-- 6、【升级】升级多项依赖至较新版本；
+- 2、【新增】Docker Compose部署：新增 Docker Compose 配置，支持一键配置部署启动；
 
+<details>
+    <summary>Docker Compose启动步骤：</summary>    
+
+    ```
+    // 第一步：前往仓库目录
+    cd ./xxl-boot
+    // 第二步：项目构建
+    mvn clean package -Dmaven.test.skip=true
+    // 第三步：项目配置（注意：前往docker/modular目录并自定义 .env 配置；如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；）
+    cd ./docker/modular/
+    cat .env
+    // 启动、停止项目
+    docker compose up -d
+    docker compose down
+    ```
+</details>
+
+- 3、【重构】Monorepo：基于Monorepo模式重构仓库，单体项目 与 前后端分离项目统一托管，统一版本管理与依赖管理，便于协同开发与一键构建。
+- 4、【新增】AI模块升级：支持知识库管理，支持知识分片、向量化存储及检索等；
+- 5、【新增】代码生成工具：支持指定 author、package 和 业务实体名等；
+- 6、【强化】代码生成工具：SQL解析兼容性增强，表字段无引号兼容、大小写兼容、非Filed过滤；
+- 7、【新增】表单构建工具：支持拖拽表单字段动态排序，并生产表单代码；
+- 8、【升级】升级多项依赖至较新版本；
+
+### 版本 v2.0.1 Release Notes[ING]
 
 ### TODO LIST
 - 1、代码生成：支持自定义代码层级目录；
