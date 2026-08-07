@@ -6,9 +6,9 @@ services:
     image: mysql:8.4
     container_name: xxl-boot-mysql
     environment:
-      # 1、数据库密码设置，需要与Admin中配置一致：
+      # 1、数据库密码设置，需要与系统中配置一致：
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      # 2、数据库实例名称，需要与Admin中配置一致；
+      # 2、数据库实例名称，需要与系统中配置一致；
       MYSQL_DATABASE: xxl_boot
     ports:
       - "3306:3306"
