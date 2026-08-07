@@ -51,15 +51,16 @@
 
 ### 4.1 统一返回结构
 
-- 后端统一返回结构体 `Response(code、msg、data)`。
-- 前端处理时从 `response.data` 中获取数据，不要直接拿返回值操作。
-- `response.code` 为 200 表示成功，其他表示失败。
+- 后端统一返回结构体 `Response`，包含属性 `code、msg、data`，其中：
+  - `code` 为状态码，200 表示成功，其他表示失败。
+  - `msg` 为提示信息；
+  - `data` 为返回数据。
+- 前端处理时，注意从 `response.data` 中获取数据，不要直接拿返回值操作。
 
 ### 4.2 分页返回结构
 
 - 后端分页返回结构体 `Response<PageModel>`。
-- `PageModel`（data、total）存放于 `response.data` 属性中。
-- 前端处理时：
-  - 从 `response.data.data` 获取数据列表；
-  - 从 `response.data.total` 获取总条数。
-- 注意取数据层级。
+- `PageModel` 存放于 `response.data` 属性中，包含属性 `data、total`，其中：
+  - `data` 为数据列表；
+  - `total` 为总条数。
+- 前端处理时，注意从 `response.data.data` 获取数据列表，从 `response.data.total` 获取总条数。

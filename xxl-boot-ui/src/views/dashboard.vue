@@ -32,7 +32,7 @@
             <div class="card-header">
               <div class="card-header-left">
                 <SvgIcon icon-class="chart"/>
-                <span>审计日志趋势</span>
+                <span>审计日志</span>
               </div>
               <el-radio-group v-model="chartDays" size="small" @change="loadChart">
                 <el-radio-button :value="7">7天</el-radio-button>
@@ -52,7 +52,7 @@
             <div class="card-header">
               <div class="card-header-left">
                 <SvgIcon icon-class="list"/>
-                <span>消息列表</span>
+                <span>站内消息</span>
               </div>
             </div>
           </template>
