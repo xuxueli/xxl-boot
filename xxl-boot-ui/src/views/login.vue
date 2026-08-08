@@ -78,21 +78,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // 导入依赖
 import { getCodeImg } from "@/api/login"
 import { useUserStore } from '@/store'
 import defaultSettings from '@/settings'
+import type { LoginParams } from '@/types/api'
+import type { FormInstance, FormRules } from 'element-plus'
 
 const title = defaultSettings.title                   // 系统标题
 const footerContent = defaultSettings.footerContent   // 页脚版权信息
 const userStore = useUserStore()
 const route = useRoute()                              // 路由
 const router = useRouter()                            // 路由
-const loginRef = ref(null)                            // 登录表单 ref
+const loginRef = ref<FormInstance>()                  // 登录表单 ref
 
 // 登录表单数据
-const loginForm = ref({
+const loginForm = ref<LoginParams>({
   username: "",
   password: "",
   rememberMe: false,
@@ -101,7 +103,7 @@ const loginForm = ref({
 })
 
 // 表单校验规则
-const loginRules = {
+const loginRules: FormRules = {
   username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
   password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
   captchaResult: [{ required: true, trigger: "change", message: "请输入验证码" }]
@@ -110,12 +112,12 @@ const loginRules = {
 const codeUrl = ref("")                   // 验证码图片 base64
 const loading = ref(false)                // 登录按钮 loading
 const captchaEnabled = ref(true)          // 验证码开关（默认开启，实际由后端 /auth/captcha 返回的 enable 决定）
-const redirect = ref(undefined)           // 登录后重定向地址
+const redirect = ref<string>()            // 登录后重定向地址
 
 
 // 监听路由参数，获取重定向地址
 watch(route, (newRoute) => {
-    redirect.value = newRoute.query && newRoute.query.redirect
+    redirect.value = (newRoute.query && newRoute.query.redirect) as string | undefined
 }, { immediate: true })
 
 
@@ -126,13 +128,13 @@ watch(route, (newRoute) => {
  *    - →路由跳转
  */
 function handleLogin() {
-  loginRef.value.validate(valid => {
+  loginRef.value!.validate(valid => {
     if (valid) {
       loading.value = true
       // 执行登录
       userStore.login(loginForm.value).then(() => {
         const query = route.query
-        const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
+        const otherQueryParams = Object.keys(query).reduce((acc: Record<string, any>, cur) => {
           if (cur !== "redirect") {
             acc[cur] = query[cur]
           }

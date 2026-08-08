@@ -10,7 +10,7 @@
   </component>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { isExternal } from '@/utils/validate'
 
 const props = defineProps({
@@ -41,7 +41,7 @@ const type = computed(() => {
 * 是否为外部链接（http/https/mailto 等）
 */
 const isExt = computed(() => {
-  return isExternal(props.to)
+  return isExternal(props.to as string)
 })
 
 /*

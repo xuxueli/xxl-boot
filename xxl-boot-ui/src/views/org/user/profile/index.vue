@@ -81,25 +81,29 @@
   </div>
 </template>
 
-<script setup name="Profile">
+<script setup name="Profile" lang="ts">
 
 // 引入
-import userInfo from "./userInfo"
-import resetPwd from "./resetPwd"
+import userInfo from "./userInfo.vue"
+import resetPwd from "./resetPwd.vue"
 import {getUserProfile} from "@/api/org/user"
+import type { User } from '@/types/api'
 
 const route = useRoute()                // 路由
 const selectedTab = ref("userinfo")     // 当前选中的 tab
-const state = reactive({                // 用户信息、角色、岗位数据
+const state = reactive<{                // 用户信息、角色数据
+  user: User
+  roleNames: string
+}>({
   user: {},                 // 用户信息
-  roleNames: {}             // 角色名称列表
+  roleNames: ''             // 角色名称列表
 })
 
 /** 获取当前登录用户个人信息 */
 function getUser() {
   getUserProfile().then(res => {
     state.user = res.data
-    state.roleNames = (state.user.roleNames || []).join(', ')
+    state.roleNames = ((state.user.roleNames as string[]) || []).join(', ')
   })
 }
 
@@ -107,7 +111,7 @@ function getUser() {
 onMounted(() => {
   const activeTab = route.params && route.params.activeTab
   if (activeTab) {
-    selectedTab.value = activeTab
+    selectedTab.value = activeTab as string
   }
   getUser()
 })

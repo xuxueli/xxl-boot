@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useWindowSize } from '@vueuse/core'
 import { AppMain, Navbar, Settings, TagsView, Sidebar } from './components'
 import { useAppStore, useSettingsStore } from '@/store'
@@ -95,12 +95,12 @@ function handleClickOutside() {
   appStore.closeSideBar({ withoutAnimation: false })
 }
 
-const settingRef = ref(null)
+const settingRef = ref<InstanceType<typeof Settings> | null>(null)
 /*
 * 打开布局设置面板
 */
 function setLayout() {
-  settingRef.value.openSetting()
+  settingRef.value?.openSetting()
 }
 </script>
 

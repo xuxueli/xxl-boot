@@ -28,16 +28,16 @@
     </el-dialog>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 /** 图标选择弹窗 - 逻辑 */
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-const iconList = ref([])     /* 当前展示的图标列表 */
-const originList = []        /* 全量图标列表 */
+const iconList = ref<string[]>([])   /* 当前展示的图标列表 */
+const originList: string[] = []      /* 全量图标列表 */
 const key = ref('')          /* 搜索关键词 */
 const active = ref('')       /* 当前选中图标 */
 const emit = defineEmits(['select'])
-const value = defineModel()
+const value = defineModel<boolean>()
 
 /* 初始化：加载所有 Element Plus 图标 */
 for (const [key] of Object.entries(ElementPlusIconsVue)) {
@@ -49,7 +49,7 @@ function onOpen() {}
 function onClose() {}
 
 /** 选择图标 */
-function onSelect(icon) {
+function onSelect(icon: string) {
   active.value = icon
   emit('select', icon)
   value.value = false

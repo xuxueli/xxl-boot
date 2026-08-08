@@ -36,7 +36,7 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 import Copyright from './Copyright.vue'
 import { useTagsViewStore } from '@/store'
 

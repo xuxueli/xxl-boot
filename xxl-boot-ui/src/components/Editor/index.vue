@@ -35,15 +35,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import axios from 'axios'
 import {QuillEditor} from "@vueup/vue-quill"
 import "@vueup/vue-quill/dist/vue-quill.snow.css"
 import {getAuthHeaders} from "@/utils/auth"
 import modal from '@/utils/modal'
 
-const quillEditorRef = ref()          // Quill 编辑器实例
-const uploadRef = ref(null)           // 图片上传 input 引用
+const quillEditorRef = ref<any>()          // Quill 编辑器实例
+const uploadRef = ref<any>(null)           // 图片上传 input 引用
 const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + "/file/upload")  // 上传接口地址
 const headers = ref(getAuthHeaders())   // 上传请求头（携带 token）
 
@@ -83,7 +83,7 @@ const props = defineProps({
 })
 
 // Quill 编辑器配置：主题、工具栏、只读模式
-const options = ref({
+const options = ref<any>({
   theme: "snow",
   bounds: document.body,
   debug: "warn",
@@ -107,7 +107,7 @@ const options = ref({
 
 // 编辑器样式：最小高度 / 高度
 const styles = computed(() => {
-  let style = {}
+  let style: Record<string, any> = {}
   if (props.minHeight) {
     style.minHeight = `${props.minHeight}px`
   }
@@ -126,11 +126,11 @@ watch(() => props.modelValue, (v) => {
 }, {immediate: true})
 
 // 编辑器初始化完成后：劫持工具栏图片按钮 + 监听粘贴事件
-function onEditorReady(quill) {
+function onEditorReady(quill: any) {
   if (props.type === 'url') {
     let toolbar = quill.getModule("toolbar")
     // 劫持工具栏图片按钮
-    toolbar.addHandler("image", (value) => {
+    toolbar.addHandler("image", (value: any) => {
       if (value) {
         uploadRef.value.click()
       } else {
@@ -154,7 +154,7 @@ onBeforeUnmount(() => {
 })
 
 // 上传前校验格式和大小
-function handleBeforeUpload(file) {
+function handleBeforeUpload(file: any) {
   const type = ["image/jpeg", "image/jpg", "image/png", "image/svg"]
   const isJPG = type.includes(file.type)
   //检验文件格式
@@ -174,7 +174,7 @@ function handleBeforeUpload(file) {
 }
 
 // 上传成功：在光标位置插入图片
-function handleUploadSuccess(res, file) {
+function handleUploadSuccess(res: any, file?: any) {
   if (res.code === 200) {
     let quill = toRaw(quillEditorRef.value).getQuill()
     // 获取光标位置
@@ -194,8 +194,8 @@ function handleUploadError() {
 }
 
 // 粘贴板包含图片时：阻止默认粘贴，改为直接上传图片
-function handlePasteCapture(e) {
-  const clipboard = e.clipboardData || window.clipboardData
+function handlePasteCapture(e: ClipboardEvent) {
+  const clipboard = e.clipboardData || (window as any).clipboardData
   if (clipboard && clipboard.items) {
     for (let i = 0; i < clipboard.items.length; i++) {
       const item = clipboard.items[i]
@@ -209,7 +209,7 @@ function handlePasteCapture(e) {
 }
 
 // 粘贴图片时上传到服务器
-function insertImage(file) {
+function insertImage(file: any) {
   const formData = new FormData()
   formData.append("file", file)
   axios.post(uploadUrl.value, formData, {

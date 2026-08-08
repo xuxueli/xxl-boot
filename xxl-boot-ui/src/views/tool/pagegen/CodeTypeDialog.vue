@@ -30,9 +30,11 @@
   </el-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 /** 弹窗：显示状态 */
-const open = defineModel()
+import type { FormInstance } from 'element-plus'
+
+const open = defineModel<boolean>()
 
 // 组件属性
 const props = defineProps({
@@ -47,13 +49,16 @@ const props = defineProps({
 const emit = defineEmits(['confirm'])
 
 // 响应式数据
-const formData = ref({
-  fileName: undefined,            /* 文件名 */
-  type: 'file'                    /* 默认生成页面 */
+const formData = ref<{
+  fileName?: string            /* 文件名 */
+  type: string                 /* 生成类型 */
+}>({
+  fileName: undefined,
+  type: 'file'                 /* 默认生成页面 */
 })
 
 // 表单 + 规则
-const codeTypeForm = ref()        /* 表单 ref */
+const codeTypeForm = ref<FormInstance>()        /* 表单 ref */
 const rules = {
   fileName: [{
     required: true,
@@ -87,7 +92,7 @@ function onClose() {
 
 /** 确认生成 */
 function handelConfirm() {
-  codeTypeForm.value.validate(valid => {
+  codeTypeForm.value!.validate(valid => {
     if (!valid) return
     emit('confirm', { ...formData.value })
     onClose()

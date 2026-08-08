@@ -118,12 +118,13 @@
   </div>
 </template>
 
-<script setup name="Gen">
+<script setup lang="ts" name="Gen">
 import { listTable, previewTable, delTable, createTable } from "@/api/tool/codegen"
+import type { CodegenTable } from "@/api/tool/codegen"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import downloadPlugin from '@/utils/download'
-import EditTable from "./editTable"
+import EditTable from "./editTable.vue"
 
 const resetForm = useFormReset()
 
@@ -134,7 +135,7 @@ const route = useRoute()             /* 当前路由 */
 const uniqueId = ref("")             /* 页面路由唯一标识 */
 
 // 组件实例引用
-const editRef = ref(null)            /* 编辑弹窗 ref */
+const editRef = ref<InstanceType<typeof EditTable> | null>(null)            /* 编辑弹窗 ref */
 
 // 搜索栏：查询参数
 const queryParams = ref({
@@ -146,11 +147,11 @@ const queryParams = ref({
 
 // 表格：UI数据
 const table = ref({
-  list: [],          /* 表列表数据 */
+  list: [] as CodegenTable[],  /* 表列表数据 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
   showSearch: true,  /* 是否显示搜索栏 */
-  ids: [],           /* 选中行 ID 数组 */
+  ids: [] as any[],  /* 选中行 ID 数组 */
   single: true,      /* 是否单选 */
   multiple: true     /* 是否多选 */
 })
@@ -159,7 +160,7 @@ const table = ref({
 const preview = ref({
   open: false,       /* 弹窗显隐 */
   title: "代码预览",  /* 弹窗标题 */
-  data: {},          /* 预览代码数据 */
+  data: {} as Record<string, string>,          /* 预览代码数据 */
   activeName: "entity.java" /* 激活标签 */
 })
 
@@ -176,7 +177,7 @@ const createDialog = ref({
 onActivated(() => {
   const time = route.query.t
   if (time != null && time !== uniqueId.value) {
-    uniqueId.value = time
+    uniqueId.value = time as string
     queryParams.value.pageNum = Number(route.query.pageNum)
     resetForm("queryForm")
     getList()
@@ -207,14 +208,14 @@ function resetQuery() {
 }
 
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
+function handleSelectionChange(selection: any[]) {
   table.value.ids = selection.map(item => item.id)
   table.value.single = selection.length != 1
   table.value.multiple = !selection.length
 }
 
 /** 生成代码操作 */
-function handleGenTable(row) {
+function handleGenTable(row: any) {
   const idList = row && row.id != null ? [row.id] : table.value.ids
   if (!idList || idList.length === 0) {
     modal.msgError("请选择要生成的数据")
@@ -256,7 +257,7 @@ function handleCreateTable() {
 }
 
 /** 预览按钮 */
-function handlePreview(row) {
+function handlePreview(row: any) {
   previewTable(row.id).then(response => {
     preview.value.data = response.data
     preview.value.open = true
@@ -271,17 +272,17 @@ function copyTextSuccess() {
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
-function handleEditTable(row) {
+function handleEditTable(row: any) {
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
   const id = row && row.id != null ? row.id : table.value.ids[0]
   if (id == null) {
     return
   }
-  editRef.value.open(id)
+  editRef.value!.open(id)
 }
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
-function handleDelete(row) {
+function handleDelete(row: any) {
   const tableIds = row && row.id != null ? row.id : table.value.ids
   if (tableIds == null || (Array.isArray(tableIds) && tableIds.length === 0)) {
     return

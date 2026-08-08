@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // 引入
 import settings from '@/settings'
 

@@ -19,7 +19,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 /* 是否展开：父组件传入，true=展开，false=收起 */
 defineProps({
   isActive: {
@@ -31,7 +31,7 @@ defineProps({
 /*
 * emit: 通知父组件切换侧边栏折叠状态，通知事件 “toggleClick”
 */
-const emit = defineEmits()
+const emit = defineEmits(['toggleClick'])
 const toggleClick = () => {
   emit('toggleClick')
 }

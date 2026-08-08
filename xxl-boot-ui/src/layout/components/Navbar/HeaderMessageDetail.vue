@@ -67,12 +67,29 @@
   </el-drawer>
 </template>
 
-<script setup>
-import { getMessage } from '@/api/system/message.js'
+<script setup lang="ts">
+import { getMessage } from '@/api/system/message'
+
+/*
+* 消息详情：覆盖 Message 常用字段，status 支持字符串/数字两种形态，并支持预设模式（messageId / messageContent）入参
+*/
+interface MessageDetail {
+  id?: number
+  category?: number
+  title?: string
+  content?: string
+  sender?: string
+  status?: number | string
+  addTime?: string
+  updateTime?: string
+  messageId?: number
+  messageContent?: string
+  [key: string]: unknown
+}
 
 const visible = ref(false)  /* 抽屉显隐 */
 const loading = ref(false)  /* 接口加载状态 */
-const detail = ref(null)    /* 消息详情数据 */
+const detail = ref<MessageDetail | null>(null)    /* 消息详情数据 */
 
 /*
 * 公告状态：'0' 为正常
@@ -96,12 +113,12 @@ const hasContent = computed(() => {
 *     - object → 含 messageContent 则直接展示（预设模式），否则只取 id 发请求
 *     - string/number → 视为 messageId 请求接口加载
 */
-function open(payload) {
+function open(payload: MessageDetail | number | string | null) {
   /* 处理入参 */
-  let id = null
-  let preset = null
+  let id: number | string | null = null
+  let preset: MessageDetail | null = null
   if (payload != null && typeof payload === 'object') {
-    id = payload.messageId
+    id = payload.messageId ?? null
     if (payload.messageContent != null) preset = payload
   } else {
     id = payload
@@ -123,8 +140,8 @@ function open(payload) {
   /* 传入 messageId：调接口获取详情 */
   loading.value = true
   detail.value = null
-  getMessage(id).then(res => {
-    detail.value = res.data
+  getMessage(id as number).then(res => {
+    detail.value = res.data as MessageDetail
   }).catch(() => {
     detail.value = null
   }).finally(() => {

@@ -199,9 +199,10 @@
   </el-dialog>
 </template>
 
-<script setup name="GenEdit">
+<script setup lang="ts" name="GenEdit">
 import {getGenTable, updateGenTable} from "@/api/tool/codegen"
 import {queryDictList} from "@/api/system/dict/type"
+import type { FormInstance } from 'element-plus'
 import modal from '@/utils/modal'
 import Sortable from 'sortablejs'
 
@@ -209,17 +210,17 @@ import Sortable from 'sortablejs'
 const emit = defineEmits(["ok"])          /* 提交成功后通知父组件刷新列表 */
 
 /* 表单 ref */
-const basicFormRef = ref(null)             /* 基本信息表单 */
-const genFormRef = ref(null)               /* 生成信息表单 */
+const basicFormRef = ref<FormInstance>()             /* 基本信息表单 */
+const genFormRef = ref<FormInstance>()               /* 生成信息表单 */
 
 /* 状态变量 */
 const activeName = ref("basic")            /* 当前 TAB */
-const columns = ref([])                    /* 字段列表 */
-const dictOptions = ref([])                /* 字典类型选项 */
-const info = ref({})                       /* 表配置信息 */
+const columns = ref<any[]>([])                    /* 字段列表 */
+const dictOptions = ref<any[]>([])                /* 字典类型选项 */
+const info = ref<Record<string, any>>({})          /* 表配置信息 */
 const visible = ref(false)                 /* 弹框显隐 */
 const tableId = ref(0)                     /* 当前编辑的表 ID */
-const dragTableRef = ref(null)             /* 字段表格 ref，用于拖拽排序 */
+const dragTableRef = ref<any>(null)        /* 字段表格 ref，用于拖拽排序 */
 
 /** 基本信息 - 表单校验规则 */
 const basicRules = {
@@ -238,7 +239,7 @@ const genRules = {
  * 打开编辑弹框 （暴露 组件方法）
  * @param {number} id 表编码
  */
-function open(id) {
+function open(id: number) {
   tableId.value = id
   activeName.value = "basic"
   info.value = {formColNum: 1, tplWebType: 'element-plus'}
@@ -246,7 +247,7 @@ function open(id) {
 
   /* 加载表配置 + 字段列表 */
   getGenTable(id).then(res => {
-    const {fieldList, ...rest} = res.data || {}
+    const {fieldList, ...rest} = (res.data || {}) as {fieldList?: any[]; [key: string]: any}
     info.value = {formColNum: 1, tplWebType: 'element-plus', ...rest}
     columns.value = fieldList || []
     /* 校验默认值是否在可选范围内 */
@@ -263,7 +264,7 @@ function open(id) {
 /** 提交保存 */
 function submitForm() {
   /* 校验两个表单 */
-  Promise.all([basicFormRef.value.validate(), genFormRef.value.validate()]).then(res => {
+  Promise.all([basicFormRef.value!.validate(), genFormRef.value!.validate()]).then(res => {
     if (res.every(Boolean)) {
       const genTable = Object.assign({}, info.value)
       genTable.fieldList = columns.value
@@ -284,17 +285,17 @@ function submitForm() {
 watch(activeName, (name) => {
   if (name !== 'columnInfo' || !columns.value || columns.value.length === 0) return
   nextTick(() => {
-    const tbody = dragTableRef.value?.$el?.querySelector('tbody')
-    if (!tbody || tbody.__sortable) return
-    tbody.__sortable = Sortable.create(tbody, {
+    const tbody = dragTableRef.value?.$el?.querySelector('tbody') as HTMLElement | null
+    if (!tbody || (tbody as any).__sortable) return
+    ;(tbody as any).__sortable = Sortable.create(tbody, {
       handle: '.allowDrag',
       animation: 150,
       ghostClass: 'sortable-ghost',
       onStart: () => document.onselectstart = () => false,
       onEnd: (evt) => {
         document.onselectstart = null
-        const item = columns.value.splice(evt.oldIndex, 1)[0]
-        columns.value.splice(evt.newIndex, 0, item)
+        const item = columns.value.splice(evt.oldIndex!, 1)[0]
+        columns.value.splice(evt.newIndex!, 0, item)
         columns.value.forEach((c, i) => c.sort = i + 1)
       }
     })

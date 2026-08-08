@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useFullscreen } from '@vueuse/core'
 /* 解构：isFullscreen 当前全屏状态，toggle 切换方法 */
 const { isFullscreen, toggle } = useFullscreen()

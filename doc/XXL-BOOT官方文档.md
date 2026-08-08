@@ -594,8 +594,9 @@ docker compose down
 - 7、【新增】表单构建工具：支持拖拽表单字段动态排序，并生产表单代码；
 - 8、【升级】升级多项依赖至较新版本；
 
-### 版本 v2.0.1 Release Notes[ING]
-- 1、【ING】升级TS版本；
+### 版本 v2.1.0 Release Notes[ING]
+- 1、【新增】前端UI模块（xxl-boot-ui）升级至 TypeScript;
+
 
 ### TODO LIST
 - 1、单体版本，代码生成 支持自定义代码层级目录；

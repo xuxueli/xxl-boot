@@ -23,8 +23,10 @@
   </el-scrollbar>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useTagsViewStore } from '@/store'
+import type { TagView } from '@/store/modules/tagsView'
+import type { ScrollbarInstance } from 'element-plus'
 
 const tagsViewStore = useTagsViewStore()
 const visitedViews = computed(() => tagsViewStore.visitedViews)
@@ -32,9 +34,9 @@ const visitedViews = computed(() => tagsViewStore.visitedViews)
 // 标签与相邻标签之间的间隔（px）。用于计算目标标签是否超出左右边界。
 const tagAndTagSpacing = ref(4)
 // el-scrollbar 组件实例引用。
-const scrollContainer = ref(null)
+const scrollContainer = ref<ScrollbarInstance | null>(null)
 // el-scrollbar 内部原生滚动容器 DOM（el-scrollbar__wrap）。
-const scrollWrapper = computed(() => scrollContainer.value.$refs.wrapRef)
+const scrollWrapper = computed(() => (scrollContainer.value as any)?.$refs?.wrapRef as HTMLElement)
 /*
 * 通知父组件：通过 emits 触发 “scroll、updateArrows” 等自定义事件
 *
@@ -73,14 +75,14 @@ const emitScroll = () => {
 /*
 * 平滑滚动到指定位置，300ms 动画
 */
-function smoothScrollTo(target) {
+function smoothScrollTo(target: number) {
   const $scrollWrapper = scrollWrapper.value
   const start = $scrollWrapper.scrollLeft
   const distance = target - start
   const duration = 300
-  let startTime = null
+  let startTime: number | null = null
 
-  function step(timestamp) {
+  function step(timestamp: number) {
     if (!startTime) startTime = timestamp
     const elapsed = timestamp - startTime
     $scrollWrapper.scrollLeft = ease(elapsed, start, distance, duration)
@@ -97,7 +99,7 @@ function smoothScrollTo(target) {
 /*
 * 缓动函数：easeInOutQuad
 */
-function ease(t, b, c, d) {
+function ease(t: number, b: number, c: number, d: number) {
   t /= d / 2
   if (t < 1) return c / 2 * t * t + b
   t--
@@ -107,8 +109,8 @@ function ease(t, b, c, d) {
 /*
 * 滚轮事件：累积 scrollLeft
 */
-function handleScroll(e) {
-  const eventDelta = e.wheelDelta || -e.deltaY * 40
+function handleScroll(e: WheelEvent) {
+  const eventDelta = (e as any).wheelDelta || -e.deltaY * 40
   scrollWrapper.value.scrollLeft += eventDelta / 4
   emits('updateArrows')
 }
@@ -117,8 +119,8 @@ function handleScroll(e) {
 /*
 * 将目标标签滚动到可视区域
 */
-function moveToTarget(currentTag) {
-  const $container = scrollContainer.value.$el
+function moveToTarget(currentTag: TagView) {
+  const $container = scrollContainer.value?.$el as HTMLElement
   const $containerWidth = $container.offsetWidth
   const $scrollWrapper = scrollWrapper.value
 
@@ -133,23 +135,23 @@ function moveToTarget(currentTag) {
     smoothScrollTo($scrollWrapper.scrollWidth - $containerWidth)
   } else {
     /* 中间标签：计算前后相邻标签位置，确保目标完整可见 */
-    const tagListDom = document.getElementsByClassName('tags-view-item')
+    const tagListDom = Array.from(document.getElementsByClassName('tags-view-item') as HTMLCollectionOf<HTMLElement>)
     const currentIndex = visitedViews.value.findIndex(item => item === currentTag)
-    let prevTag = null
-    let nextTag = null
-    for (const k in tagListDom) {
-      if (k !== 'length' && Object.hasOwnProperty.call(tagListDom, k)) {
-        if (tagListDom[k].dataset.path === visitedViews.value[currentIndex - 1].path) prevTag = tagListDom[k]
-        if (tagListDom[k].dataset.path === visitedViews.value[currentIndex + 1].path) nextTag = tagListDom[k]
-      }
+    let prevTag: HTMLElement | null = null
+    let nextTag: HTMLElement | null = null
+    for (const el of tagListDom) {
+      if (el.dataset.path === visitedViews.value[currentIndex - 1]?.path) prevTag = el
+      if (el.dataset.path === visitedViews.value[currentIndex + 1]?.path) nextTag = el
     }
     /* 目标超出右侧可见区 -> 向右滚；超出左侧 -> 向左滚 */
-    const afterNext = nextTag.offsetLeft + nextTag.offsetWidth + tagAndTagSpacing.value
-    const beforePrev = prevTag.offsetLeft - tagAndTagSpacing.value
-    if (afterNext > $scrollWrapper.scrollLeft + $containerWidth) {
-      smoothScrollTo(afterNext - $containerWidth)
-    } else if (beforePrev < $scrollWrapper.scrollLeft) {
-      smoothScrollTo(beforePrev)
+    if (nextTag && prevTag) {
+      const afterNext = nextTag.offsetLeft + nextTag.offsetWidth + tagAndTagSpacing.value
+      const beforePrev = prevTag.offsetLeft - tagAndTagSpacing.value
+      if (afterNext > $scrollWrapper.scrollLeft + $containerWidth) {
+        smoothScrollTo(afterNext - $containerWidth)
+      } else if (beforePrev < $scrollWrapper.scrollLeft) {
+        smoothScrollTo(beforePrev)
+      }
     }
   }
 }

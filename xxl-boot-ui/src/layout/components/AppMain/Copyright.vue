@@ -15,7 +15,7 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 import { useSettingsStore } from '@/store'
 
 const settingsStore = useSettingsStore()

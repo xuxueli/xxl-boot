@@ -91,22 +91,35 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Fuse from 'fuse.js'
+import { Search } from '@element-plus/icons-vue'
 import {getNormalPath} from '@/utils/common'
 import {isHttp} from '@/utils/validate'
 import {useSettingsStore, useRoutesStore} from '@/store'
+import type { InputInstance } from 'element-plus'
+import type { RouteData } from '@/store/modules/routes'
+
+/*
+* 搜索项：可搜索菜单节点
+*/
+interface SearchItem {
+  path: string
+  title: string[]
+  icon: string
+  query?: string
+}
 
 const settingsStore = useSettingsStore()
 const routesStore = useRoutesStore()
 
 const search = ref('')                    /* 搜索关键词 */
-const options = ref([])                   /* 当前搜索结果列表 */
-const searchPool = ref([])                /* 所有可搜索菜单的完整索引 */
+const options = ref<SearchItem[]>([])     /* 当前搜索结果列表 */
+const searchPool = ref<SearchItem[]>([])  /* 所有可搜索菜单的完整索引 */
 const activeIndex = ref(-1)               /* 键盘选中项索引 */
 const show = ref(false)                   /* 弹窗显隐 */
-const fuse = ref(undefined)               /* Fuse 模糊搜索实例 */
-const headerSearchSelectRef = ref(null)   /* 输入框 DOM 引用 */
+const fuse = ref<Fuse<SearchItem> | undefined>(undefined)   /* Fuse 模糊搜索实例 */
+const headerSearchSelectRef = ref<InputInstance | null>(null)   /* 输入框 DOM 引用 */
 const router = useRouter()
 const theme = computed(() => settingsStore.theme)
 const routes = computed(() => routesStore.fullRoutes)
@@ -145,7 +158,7 @@ function close() {
 /*
 * 选中搜索结果：外部链接新窗口打开，内部路由 router.push 跳转
 */
-function change(val) {
+function change(val: SearchItem) {
   const p = val.path
   /*const query = val.query*/
   if (isHttp(p)) {
@@ -172,7 +185,7 @@ function change(val) {
 /*
 * 初始化 Fuse 模糊搜索实例
 */
-function initFuse(list) {
+function initFuse(list: SearchItem[]) {
   fuse.value = new Fuse(list, {
     shouldSort: true,
     threshold: 0.2,
@@ -193,8 +206,8 @@ function initFuse(list) {
 *   - 每项含 path / title（路径层级串联）/ icon / query
 *   - 叶节点（无 children 或 children 为空）才加入结果，非叶节点作为前缀聚合
 */
-function generateRoutes(routes, basePath = '', prefixTitle = []) {
-  let res = []
+function generateRoutes(routes: RouteData[], basePath = '', prefixTitle: string[] = []): SearchItem[] {
+  let res: SearchItem[] = []
   for (const r of routes) {
     /* 跳过隐藏路由 */
     if (r.hidden) {
@@ -203,8 +216,8 @@ function generateRoutes(routes, basePath = '', prefixTitle = []) {
 
     /* 节点初始化：无 path 的纯目录节点以空串占位，仅作子路由前缀 */
     const p = r.path ? (r.path.length > 0 && r.path[0] === '/' ? r.path : '/' + r.path) : ''
-    const data = {
-      path: !isHttp(r.path) ? getNormalPath(p) : r.path,
+    const data: SearchItem = {
+      path: !isHttp(r.path as string) ? getNormalPath(p) : (r.path as string),
       title: [...prefixTitle],
       icon: ''
     }
@@ -212,7 +225,7 @@ function generateRoutes(routes, basePath = '', prefixTitle = []) {
     /* 有 meta.title 时追加到标题链中 */
     if (r.meta && r.meta.title) {
       data.title = [...data.title, r.meta.title]
-      data.icon = r.meta.icon
+      data.icon = r.meta.icon as string
 
       /* 叶节点：加入搜索结果 */
       if (!r.children || r.children.length === 0) {
@@ -222,7 +235,7 @@ function generateRoutes(routes, basePath = '', prefixTitle = []) {
 
     /* 携带 query 参数 */
     if (r.query) {
-      data.query = r.query
+      data.query = r.query as string
     }
 
     /* 递归子路由 */
@@ -242,7 +255,7 @@ function generateRoutes(routes, basePath = '', prefixTitle = []) {
 *   - fuseMatches：Fuse 模糊匹配（召回率高）
 *   - 合并规则：以 pathMatches 为基，fuseMatches 补充未命中项
 */
-function querySearch(query) {
+function querySearch(query: string) {
   activeIndex.value = -1
   if (query !== '') {
     const q = query.toLowerCase()
@@ -253,7 +266,7 @@ function querySearch(query) {
     )
 
     /* Fuse 模糊匹配 */
-    const fuseMatches = fuse.value.search(query).map(item => item.item)
+    const fuseMatches = fuse.value ? fuse.value.search(query).map(item => item.item) : []
 
     /* 合并去重 */
     const merged = [...pathMatches]
@@ -271,7 +284,7 @@ function querySearch(query) {
 /*
 * 当前激活项高亮样式
 */
-function activeStyle(index) {
+function activeStyle(index: number) {
   if (index !== activeIndex.value) return {}
   return {
     "background-color": theme.value,
@@ -282,7 +295,7 @@ function activeStyle(index) {
 /*
 * 键盘上下键切换选中项
 */
-function navigateResult(direction) {
+function navigateResult(direction: 'up' | 'down') {
   if (direction === "up") {
     activeIndex.value = activeIndex.value <= 0 ? options.value.length - 1 : activeIndex.value - 1
   } else if (direction === "down") {
@@ -302,7 +315,7 @@ function selectActiveResult() {
 /*
 * 高亮搜索结果中的匹配关键词
 */
-function highlightText(text) {
+function highlightText(text: string) {
   if (!text) return ''
   if (!search.value) return text
   const keyword = escapeRegExp(search.value)
@@ -313,7 +326,7 @@ function highlightText(text) {
 /*
 * 转义正则特殊字符
 */
-function escapeRegExp(str) {
+function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 

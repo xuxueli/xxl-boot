@@ -11,7 +11,7 @@
   </svg>
 </template>
 
-<script>
+<script lang="ts">
 /*
 * defineComponent：标准组件导出
 *   - props：定义组件接收的外部参数

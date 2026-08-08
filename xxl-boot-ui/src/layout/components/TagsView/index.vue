@@ -19,7 +19,7 @@
         :key="tag.path"
         :data-path="tag.path"
         :class="{ 'active': isActive(tag), 'has-icon': tagsIcon }"
-        :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
+        :to="{ path: tag.path, query: tag.query as any }"
         class="tags-view-item"
         :style="tagActiveStyle(tag)"
         @click.middle="!isAffix(tag) ? closeSelectedTag(tag) : ''"
@@ -78,10 +78,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import ScrollPane from './ScrollPane.vue'
 import { getNormalPath } from '@/utils/common'
 import { useTagsViewStore, useRoutesStore, useSettingsStore } from '@/store'
+import type { TagView } from '@/store/modules/tagsView'
+import type { RouteData } from '@/store/modules/routes'
 import tab from '@/utils/tab'
 import settings from '@/settings'
 
@@ -93,18 +95,18 @@ const settingsStore = useSettingsStore()
 const visible = ref(false)
 const top = ref(0)
 const left = ref(0)
-const selectedTag = ref({})
+const selectedTag = ref<Record<string, any>>({})
 // 持久化Tab
-const affixTags = ref([])
+const affixTags = ref<any[]>([])
 // Tab数据
-const scrollPaneRef = ref(null)
+const scrollPaneRef = ref<InstanceType<typeof ScrollPane> | null>(null)
 // 左右箭头状态：是否可点击
 const canScrollLeft = ref(false)
 const canScrollRight = ref(false)
 // 页内全屏状态
 const isFullscreen = ref(false)
 // 全屏隐藏/恢复元素列表：记录隐藏的 navbar/sidebar 信息，退出时恢复
-const hiddenElements = ref([])
+const hiddenElements = ref<{ el: HTMLElement | null; originalDisplay: string }[]>([])
 
 const route = useRoute()
 const router = useRouter()
@@ -117,7 +119,7 @@ const tagsViewPersist = computed(() => settingsStore.tagsViewPersist)
 const tagsViewStyle = computed(() => settingsStore.tagsViewStyle)
 
 // 下拉菜单针对当前激活的 tag
-const selectedDropdownTag = computed(() => visitedViews.value.find(v => isActive(v)) || {})
+const selectedDropdownTag = computed<TagView>(() => visitedViews.value.find(v => isActive(v)) || ({} as TagView))
 
 /*
 * 路由变化时添加新标签并滚动到当前标签
@@ -157,7 +159,7 @@ onBeforeUnmount(() => {
 /*
 * Esc 退出全屏
 */
-function handleKeyDown(event) {
+function handleKeyDown(event: KeyboardEvent) {
   if (event.key === 'Escape' && isFullscreen.value) {
     toggleFullscreen()
   }
@@ -166,14 +168,14 @@ function handleKeyDown(event) {
 /*
 * 当前路由是否为标签页
 */
-function isActive(r) {
+function isActive(r: Record<string, any>) {
   return r.path === route.path
 }
 
 /*
 * 激活标签高亮样式（card 模式下）
 */
-function tagActiveStyle(tag) {
+function tagActiveStyle(tag: Record<string, any>) {
   if (!isActive(tag) || tagsViewStyle.value !== 'card') return {}
   return {
     'background-color': theme.value,
@@ -184,7 +186,7 @@ function tagActiveStyle(tag) {
 /*
 * 是否为固定标签（不可关闭）
 */
-function isAffix(tag) {
+function isAffix(tag: Record<string, any>) {
   return tag && tag.meta && tag.meta.affix
 }
 
@@ -215,11 +217,11 @@ function isLastView() {
 /*
 * 递归收集带 affix 标记的固定标签（首页/特殊页面）
 */
-function filterAffixTags(routes, basePath = '') {
-  let tags = []
+function filterAffixTags(routes: RouteData[], basePath = '') {
+  let tags: TagView[] = []
   routes.forEach(route => {
     if (route.meta && route.meta.affix) {
-      const tagPath = route.path.startsWith('/') ? getNormalPath(route.path) : getNormalPath(basePath + '/' + route.path)
+      const tagPath = route.path!.startsWith('/') ? getNormalPath(route.path!) : getNormalPath(basePath + '/' + route.path!)
       tags.push({
         fullPath: tagPath,
         path: tagPath,
@@ -259,7 +261,7 @@ function initTags() {
 function addTags() {
   const { name } = route
   if (name) {
-    tagsViewStore.addView(route)
+    tagsViewStore.addView(route as any)
   }
 }
 
@@ -270,9 +272,9 @@ function moveToCurrentTag() {
   nextTick(() => {
     for (const r of visitedViews.value) {
       if (r.path === route.path) {
-        scrollPaneRef.value.moveToTarget(r)
+        scrollPaneRef.value?.moveToTarget(r)
         if (r.fullPath !== route.fullPath) {
-          tagsViewStore.updateVisitedView(route)
+          tagsViewStore.updateVisitedView(route as any)
         }
       }
     }
@@ -284,12 +286,12 @@ function moveToCurrentTag() {
 */
 function scrollLeft() {
   if (!canScrollLeft.value) return
-  scrollPaneRef.value.scrollToStart()
+  scrollPaneRef.value?.scrollToStart()
 }
 
 function scrollRight() {
   if (!canScrollRight.value) return
-  scrollPaneRef.value.scrollToEnd()
+  scrollPaneRef.value?.scrollToEnd()
 }
 
 /*
@@ -310,9 +312,9 @@ function updateArrowState() {
 * 全屏模式：隐藏 navbar/sidebar 使内容区占满视口
 */
 function toggleFullscreen() {
-  const mainContainer = document.querySelector('.main-container')
-  const navbar = document.querySelector('.navbar')
-  const sidebar = document.querySelector('.sidebar-container')
+  const mainContainer = document.querySelector<HTMLElement>('.main-container')
+  const navbar = document.querySelector<HTMLElement>('.navbar')
+  const sidebar = document.querySelector<HTMLElement>('.sidebar-container')
   if (!mainContainer) return
 
   if (!isFullscreen.value) {
@@ -336,7 +338,7 @@ function toggleFullscreen() {
       }
     })
     hiddenElements.value = []
-    document.querySelector('.tags-action-btn').blur()
+    document.querySelector<HTMLElement>('.tags-action-btn')?.blur()
     isFullscreen.value = false
   }
 }
@@ -344,7 +346,7 @@ function toggleFullscreen() {
 /*
 * 下拉菜单命令分发
 */
-function handleDropdownCommand(command) {
+function handleDropdownCommand(command: string | number | object) {
   const tag = selectedDropdownTag.value
   selectedTag.value = tag
   switch (command) {
@@ -361,15 +363,15 @@ function handleDropdownCommand(command) {
 /*
 * 刷新指定标签页
 */
-function refreshSelectedTag(view) {
+function refreshSelectedTag(view: Record<string, any>) {
   tab.refreshPage(view)
 }
 
 /*
 * 关闭标签：若关闭的是当前标签则跳转到最后标签
 */
-function closeSelectedTag(view) {
-  tab.closePage(view).then(({ visitedViews }) => {
+function closeSelectedTag(view: Record<string, any>) {
+  tab.closePage(view).then(({ visitedViews }: any) => {
     if (isActive(view)) {
       toLastView(visitedViews, view)
     }
@@ -411,7 +413,7 @@ function closeOthersTags() {
 /*
 * 关闭全部标签（固定标签保留），若当前页被关则回退
 */
-function closeAllTags(view) {
+function closeAllTags(view: Record<string, any>) {
   tab.closeAllPage().then(({ visitedViews }) => {
     if (affixTags.value.some(tag => tag.path === route.path)) {
       return
@@ -423,10 +425,10 @@ function closeAllTags(view) {
 /*
 * 跳转到最后标签。无标签时：Dashboard 走 redirect 刷新，其他跳首页
 */
-function toLastView(visitedViews, view) {
+function toLastView(visitedViews: TagView[], view?: Record<string, any>) {
   const latestView = visitedViews.slice(-1)[0]
   if (latestView) {
-    router.push(latestView.fullPath)
+    router.push(latestView.fullPath || '/')
   } else {
     if (view && view.name === 'Dashboard') {
       router.replace({ path: '/redirect' + view.fullPath })
@@ -439,7 +441,7 @@ function toLastView(visitedViews, view) {
 /*
 * 右键菜单：记录位置和选中标签
 */
-function openMenu(tag, e) {
+function openMenu(tag: Record<string, any>, e: MouseEvent) {
   left.value = e.clientX
   top.value = e.clientY
   visible.value = true

@@ -11,11 +11,11 @@
   >
     <!-- 可见的一级菜单项：前 visibleNumber 条 -->
     <template v-for="(item, index) in topMenus">
-      <el-menu-item :style="{'--theme': theme}" :index="item.path" :key="index" v-if="index < visibleNumber">
+      <el-menu-item :style="{'--theme': theme}" :index="item.path || ''" :key="index" v-if="index < visibleNumber">
         <SvgIcon
             v-if="item.meta && item.meta.icon && item.meta.icon !== '#'"
             :icon-class="item.meta.icon"/>
-        {{ item.meta.title }}
+        {{ item.meta?.title }}
       </el-menu-item>
     </template>
 
@@ -24,7 +24,7 @@
       <template #title>更多菜单</template>
       <template v-for="(item, index) in topMenus">
         <el-menu-item
-            :index="item.path"
+            :index="item.path || ''"
             :key="index"
             v-if="index >= visibleNumber">
           <!-- icon -->
@@ -32,18 +32,19 @@
               v-if="item.meta && item.meta.icon && item.meta.icon !== '#'"
               :icon-class="item.meta.icon"/>
           <!-- title -->
-          {{ item.meta.title }}
+          {{ item.meta?.title }}
         </el-menu-item>
       </template>
     </el-sub-menu>
   </el-menu>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {constantRoutes} from "@/router"
 import {isHttp} from '@/utils/validate'
 import {useAppStore, useRoutesStore, useSettingsStore} from '@/store'
 import settings from '@/settings'
+import type { RouteData } from '@/store/modules/routes'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
@@ -54,21 +55,21 @@ const router = useRouter()                      /* 控制‌路由跳转、后�
 const theme = computed(() => settingsStore.theme)
 const routers = computed(() => routesStore.dynamicRoutes)
 
-const visibleNumber = ref(null)                 /* 可见菜单数量阈值，动态计算 */
-const currentIndex = ref(null)                  /* 当前选中菜单索引 */
+const visibleNumber = ref(0)                    /* 可见菜单数量阈值，动态计算 */
+const currentIndex = ref<string | null>(null)   /* 当前选中菜单索引 */
 const hideList = [settings.homePath]            /* 路由列表中不显示侧边栏的路径 */
 
 /*
 * 顶部菜单列表
 *   - meta=null 的 Layout 容器用子路由替代
 */
-const topMenus = computed(() => {
-  let topMenus = []
+const topMenus = computed<RouteData[]>(() => {
+  let topMenus: RouteData[] = []
   routers.value.map((menu) => {
     if (menu.hidden !== true) {
       /* meta=null 的菜单是 Layout 父容器（如 isMenuFrame），直接取其第一个子路由替代父级 */
       if (!menu.meta && menu.children && menu.children.length > 0) {
-        topMenus.push(menu.children[0])
+        topMenus.push(menu.children[0] as RouteData)
       } else {
         topMenus.push(menu)
       }
@@ -81,17 +82,18 @@ const topMenus = computed(() => {
 * 所有子路由扁平列表，用于左侧侧边栏联动
 *   - 将 routers 下所有 children 拍平，并补充 parentPath 指向父级路由
 */
-const childrenMenus = computed(() => {
-  let childrenMenus = []
-  routers.value.map((router) => {
-    for (let item in router.children) {
-      if (router.children[item].parentPath === undefined) {
-        router.children[item].parentPath = router.path
+const childrenMenus = computed<RouteData[]>(() => {
+  let childrenMenus: RouteData[] = []
+  routers.value.forEach((menu) => {
+    if (!menu.children) return
+    menu.children.forEach((child) => {
+      if (child.parentPath === undefined) {
+        child.parentPath = menu.path
       }
-      childrenMenus.push(router.children[item])
-    }
+      childrenMenus.push(child)
+    })
   })
-  return constantRoutes.concat(childrenMenus)
+  return [...constantRoutes, ...childrenMenus]
 })
 
 /*
@@ -132,7 +134,7 @@ const activeMenu = computed(() => {
 * 在顶级菜单树中递归查找包含当前路由的顶级菜单
 *   - 遍历 routers，对每个菜单调用 descendantMatches 判断当前路径是否在其子孙中
 */
-function findActiveTopMenu(currentPath) {
+function findActiveTopMenu(currentPath: string) {
   if (!routers.value) return null
   for (const menu of routers.value) {
     if (menu.hidden) continue
@@ -149,7 +151,7 @@ function findActiveTopMenu(currentPath) {
 *   - 递归：先查直接子路由，再查孙子路由
 *   - 匹配条件：targetPath === child.path 或 targetPath 以 child.path + '/' 或 '?' 开头
 */
-function descendantMatches(route, targetPath) {
+function descendantMatches(route: RouteData, targetPath: string) {
   if (!route.children) return false
   for (const child of route.children) {
     if (!child.path) continue
@@ -174,7 +176,7 @@ function descendantMatches(route, targetPath) {
 */
 function setVisibleNumber() {
   const width = document.body.getBoundingClientRect().width / 3
-  visibleNumber.value = Math.max(1, parseInt(width / 85))
+  visibleNumber.value = Math.max(1, parseInt(String(width / 85)))
 }
 
 /*
@@ -183,7 +185,7 @@ function setVisibleNumber() {
 *   - 无子路由直接跳转并隐藏侧栏
 *   - 有子路由联动左侧菜单
 */
-function handleSelect(key, keyPath) {
+function handleSelect(key: string, keyPath: string[]) {
   currentIndex.value = key
   const route = routers.value.find(item => item.path === key)
 
@@ -194,7 +196,7 @@ function handleSelect(key, keyPath) {
     /* 无子路由分支：直接 router.push 跳转，携带 query，隐藏侧边栏 */
     const routeMenu = childrenMenus.value.find(item => item.path === key)
     if (routeMenu && routeMenu.query) {
-      let query = JSON.parse(routeMenu.query)
+      let query = JSON.parse(routeMenu.query as string)
       router.push({path: key, query: query})
     } else {
       router.push({path: key})
@@ -213,9 +215,9 @@ function handleSelect(key, keyPath) {
 *   - key：当前选中顶级菜单 path
 *   - 作用：通过 routesStore.setScope 写入 _scope，Sidebar 的 sidebarRouters 据此过滤菜单
 */
-function activeRoutes(key) {
+function activeRoutes(key: string) {
   // 匹配子菜单
-  let routes = []
+  let routes: RouteData[] = []
   if (childrenMenus.value && childrenMenus.value.length > 0) {
     childrenMenus.value.map((item) => {
       /* 匹配条件：parentPath 等于 key，或首页（index）对应空 path */

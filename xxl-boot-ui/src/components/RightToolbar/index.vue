@@ -59,53 +59,64 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import cache from '@/utils/cache'
 
-const props = defineProps({
+// 表格列配置项类型定义
+interface ColumnItem {
+  // 列标识
+  key: string | number
+  // 列显示名称
+  label: string
+  // 列是否可见
+  visible: boolean
+}
+
+// 表格列配置：数组或对象（key 为列标识）
+type ColumnsType = ColumnItem[] | { [key: string]: ColumnItem }
+
+const props = withDefaults(defineProps<{
   // "搜索区域" 是否显示（v-model 双向绑定）
-  search: {
-    type: Boolean,
-    default: true
-  },
+  search?: boolean
   // "搜索区域" 默认显示/隐藏状态
-  showSearch: {
-    type: Boolean,
-    default: true
-  },
+  showSearch?: boolean
   // 表格列配置：[{ key, label, visible }] 或 { key: { label, visible } }
-  columns: {
-    type: [Array, Object],
-    default: () => ({})
-  },
+  columns?: ColumnsType
   // 列显隐控制类型：checkbox（下拉复选框）/ transfer（穿梭框对话框）
-  showColumnsType: {
-    type: String,
-    default: "checkbox"
-  },
+  showColumnsType?: string
   // 右侧外边距
-  gutter: {
-    type: Number,
-    default: 10
-  },
+  gutter?: number
   // 列显隐持久化 key：传入则自动读写 localStorage
-  storageKey: {
-    type: String,
-    default: ""
-  }
+  storageKey?: string
+}>(), {
+  // "搜索区域" 默认显示
+  search: true,
+  // "搜索区域" 默认显示
+  showSearch: true,
+  // 表格列配置默认空对象
+  columns: () => ({}),
+  // 默认使用 checkbox 显隐控制
+  showColumnsType: "checkbox",
+  // 右侧外边距默认 10
+  gutter: 10,
+  // 默认不持久化
+  storageKey: "",
 })
 
 
-const emits = defineEmits(['update:showSearch', 'queryTable'])
+const emits = defineEmits<{
+  (e: 'update:showSearch', value: boolean): void
+  (e: 'queryTable'): void
+}>()
 
-const value = ref([])               // “隐藏列” 的索引列表
+const value = ref<Array<string | number>>([])   // “隐藏列” 的索引列表
 const title = ref("显示/隐藏")       // transfer模式，弹出层标题
 const open = ref(false)             // transfer模式，弹出层显隐状态
-const rightToolbarRef = ref(null)
+const rightToolbarRef = ref<any>(null)
 
 // checkbox弹框，left间距计算
 const style = computed(() => {
-  const ret = {}
+  const ret: Record<string, any> = {}
   if (props.gutter) {
     ret.marginRight = `${props.gutter / 2}px`
   }
@@ -123,10 +134,16 @@ const isChecked = computed({
 const isIndeterminate = computed(() => Array.isArray(props.columns) ? props.columns.some((col) => col.visible) && !isChecked.value : Object.values(props.columns).some((col) => col.visible) && !isChecked.value)
 
 // transfer 数据源
-const transferData = computed(() => Array.isArray(props.columns) ? props.columns.map((item, index) => ({
-  key: index,
-  label: item.label
-})) : Object.keys(props.columns).map((key, index) => ({key: index, label: props.columns[key].label})))
+const transferData = computed(() => {
+  const columns = props.columns
+  if (Array.isArray(columns)) {
+    return columns.map((item, index) => ({
+      key: index,
+      label: item.label
+    }))
+  }
+  return Object.keys(columns).map((key, index) => ({key: index, label: columns[key].label}))
+})
 
 /**
  * “搜索区域” 展示/隐藏开关
@@ -147,7 +164,7 @@ function toggleSearch() {
  * 搜索区域折叠/展开动画：
  *  - 操作 el-form 的 max-height 过渡
  */
-function animateSearch(el, isHide) {
+function animateSearch(el: HTMLElement, isHide: boolean) {
   const DURATION = 260
   const TRANSITION = 'max-height 0.25s ease, opacity 0.2s ease'
   const clear = () => Object.assign(el.style, {transition: '', maxHeight: '', opacity: '', overflow: ''})
@@ -183,16 +200,17 @@ function refresh() {
  * transfer 穿梭框变化：更新列显隐
  *    - data：待 隐藏 列信息
  */
-function dataChange(data) {
-  if (Array.isArray(props.columns)) {
+function dataChange(data: Array<string | number>) {
+  const columns = props.columns
+  if (Array.isArray(columns)) {
     //
-    for (let item in props.columns) {
-      const key = props.columns[item].key
-      props.columns[item].visible = !data.includes(key)
+    for (let item in columns) {
+      const key = columns[item].key
+      columns[item].visible = !data.includes(key)
     }
   } else {
-    Object.keys(props.columns).forEach((key, index) => {
-      props.columns[key].visible = !data.includes(index)
+    Object.keys(columns).forEach((key, index) => {
+      columns[key].visible = !data.includes(index)
     })
   }
   saveStorage()
@@ -208,15 +226,16 @@ function showColumn() {
 // 从 localStorage 恢复列显隐状态
 if (props.storageKey) {
   try {
-    const saved = cache.local.getJSON(props.storageKey)
+    const saved: any = cache.local.getJSON(props.storageKey)
+    const columns = props.columns
     if (saved && typeof saved === 'object') {
-      if (Array.isArray(props.columns)) {
-        props.columns.forEach((col, index) => {
+      if (Array.isArray(columns)) {
+        columns.forEach((col, index) => {
           if (saved[index] !== undefined) col.visible = saved[index]
         })
       } else {
-        Object.keys(props.columns).forEach(key => {
-          if (saved[key] !== undefined) props.columns[key].visible = saved[key]
+        Object.keys(columns).forEach(key => {
+          if (saved[key] !== undefined) columns[key].visible = saved[key]
         })
       }
     }
@@ -225,15 +244,16 @@ if (props.storageKey) {
 }
 if (props.showColumnsType === "transfer") {
   // transfer穿梭显隐列初始默认隐藏列
-  if (Array.isArray(props.columns)) {
-    for (let item in props.columns) {
-      if (props.columns[item].visible === false) {
+  const columns = props.columns
+  if (Array.isArray(columns)) {
+    for (let item in columns) {
+      if (columns[item].visible === false) {
         value.value.push(parseInt(item))
       }
     }
   } else {
-    Object.keys(props.columns).forEach((key, index) => {
-      if (props.columns[key].visible === false) {
+    Object.keys(columns).forEach((key, index) => {
+      if (columns[key].visible === false) {
         value.value.push(index)
       }
     })
@@ -241,11 +261,12 @@ if (props.showColumnsType === "transfer") {
 }
 
 // 单列显隐切换（checkbox 模式）
-function checkboxChange(event, key) {
-  if (Array.isArray(props.columns)) {
-    props.columns.filter(item => item.key === key)[0].visible = event
+function checkboxChange(event: any, key: any) {
+  const columns = props.columns
+  if (Array.isArray(columns)) {
+    columns.filter(item => item.key === key)[0].visible = event
   } else {
-    props.columns[key].visible = event
+    columns[key].visible = event
   }
   saveStorage()
 }
@@ -269,14 +290,15 @@ function toggleCheckAll() {
 function saveStorage() {
   if (!props.storageKey) return
   try {
-    let state = {}
-    if (Array.isArray(props.columns)) {
-      props.columns.forEach((col, index) => {
+    let state: Record<string | number, any> = {}
+    const columns = props.columns
+    if (Array.isArray(columns)) {
+      columns.forEach((col, index) => {
         state[index] = col.visible
       })
     } else {
-      Object.keys(props.columns).forEach(key => {
-        state[key] = props.columns[key].visible
+      Object.keys(columns).forEach(key => {
+        state[key] = columns[key].visible
       })
     }
     cache.local.setJSON(props.storageKey, state)

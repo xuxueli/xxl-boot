@@ -5,7 +5,7 @@
 <template>
   <div>
     <!-- popover 面板：鼠标悬停触发 -->
-    <el-popover ref="messagePopover" placement="bottom-end" :width="320" trigger="manual" v-model:visible="messageVisible"
+    <el-popover ref="messagePopover" placement="bottom-end" :width="320" :trigger="'manual' as any" v-model:visible="messageVisible"
                 popper-class="message-popover">
 
       <!-- popover 触发器 -->
@@ -63,17 +63,24 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import HeaderMessageDetail from './HeaderMessageDetail.vue'
-import {listMessageTop, markMessageRead, markMessageReadAll} from '@/api/system/message.js'
+import { listMessageTop, markMessageRead, markMessageReadAll } from '@/api/system/message'
+import type { Message } from '@/types/api'
+import type { PopoverInstance } from 'element-plus'
 
-const messagePopover = ref(null)         /* popover 实例引用 */
-const messageList = ref([])              /* 公告列表 */
-const unreadCount = ref(0)              /* 未读数量 */
-const messageLoading = ref(false)        /* 加载状态 */
-const messageVisible = ref(false)        /* popover 显隐 */
-const messageLeaveTimer = ref(null)      /* 延时关闭定时器 */
-const messageViewRef = ref(null)         /* 抽屉组件引用 */
+/*
+* 站内消息项：Message + 本地已读标记
+*/
+type MessageItem = Message & { isRead?: boolean }
+
+const messagePopover = ref<PopoverInstance | null>(null)  /* popover 实例引用 */
+const messageList = ref<MessageItem[]>([])                /* 公告列表 */
+const unreadCount = ref(0)                                /* 未读数量 */
+const messageLoading = ref(false)                         /* 加载状态 */
+const messageVisible = ref(false)                         /* popover 显隐 */
+const messageLeaveTimer = ref<ReturnType<typeof setTimeout> | null>(null)   /* 延时关闭定时器 */
+const messageViewRef = ref<InstanceType<typeof HeaderMessageDetail> | null>(null)  /* 抽屉组件引用 */
 
 /*
 * 加载顶部公告列表，统计未读数
@@ -94,7 +101,7 @@ onMounted(() => loadMessageTop())
 * 鼠标移入铃铛：显示 popover，绑定 popover 内的 hover 事件实现延时关闭
 */
 function onMessageEnter() {
-  clearTimeout(messageLeaveTimer.value)
+  clearTimeout(messageLeaveTimer.value ?? undefined)
   messageVisible.value = true
 
   // DOM加载完成后触发
@@ -125,10 +132,10 @@ function onMessageLeave() {
 /*
 * 点击公告：未读则标记已读，预览详情
 */
-function previewMessage(item) {
+function previewMessage(item: MessageItem) {
   if (!item.isRead) {
     // 已读标记
-    markMessageRead(item.id).catch(() => {
+    markMessageRead(item.id as number).catch(() => {
     })
 
     // 更新已读列表
@@ -140,7 +147,7 @@ function previewMessage(item) {
   }
 
   // 预览公告
-  messageViewRef.value.open(item.id)
+  messageViewRef.value?.open(item.id as number)
 }
 
 /*

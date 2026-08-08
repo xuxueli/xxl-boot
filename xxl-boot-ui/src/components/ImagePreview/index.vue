@@ -24,7 +24,7 @@
   </el-image>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {isExternal} from "@/utils/validate"
 
 const props = defineProps({
@@ -71,7 +71,7 @@ const realSrcList = computed(() => {
     return
   }
   let real_src_list = props.src.split(",")
-  let srcList = []
+  let srcList: string[] = []
   real_src_list.forEach(item => {
     if (isExternal(item)) {
       return srcList.push(item)

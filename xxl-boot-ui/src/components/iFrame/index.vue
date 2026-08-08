@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const props = defineProps({
   // 要嵌入的页面 URL（必传）
   src: {

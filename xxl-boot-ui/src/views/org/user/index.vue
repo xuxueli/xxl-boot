@@ -113,7 +113,7 @@
           <el-col :span="12">
             <el-form-item label="角色">
               <el-select v-model="formState.form.roleIds" multiple placeholder="请选择角色" style="width: 100%">
-                <el-option v-for="item in roleOptions" :key="item.id" :label="item.name" :value="item.id" :disabled="item.status == 1" />
+                <el-option v-for="item in roleOptions" :key="item.id" :label="item.name" :value="item.id as number" :disabled="item.status == 1" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -122,7 +122,7 @@
               <el-tree-select
                 v-model="formState.form.orgId"
                 :data="orgOptions"
-                :props="{ value: 'id', label: 'name', children: 'children' }"
+                :props="{ label: 'name', children: 'children' }"
                 value-key="id"
                 placeholder="请选择归属组织"
                 clearable
@@ -162,8 +162,8 @@
   </div>
 </template>
 
-<script setup name="User">
-import UserViewDrawer from "./view"
+<script setup name="User" lang="ts">
+import UserViewDrawer from "./view.vue"
 import { listUser, addUser, updateUser, delUser } from "@/api/org/user"
 import { listRole } from "@/api/org/role"
 import { listOrg } from "@/api/org/org"
@@ -172,29 +172,66 @@ import { useFormReset } from '@/composables/useFormReset'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import { ElMessageBox } from 'element-plus'
+import type { User, Org, Role } from '@/types/api'
+import type { DictOption } from '@/types'
+import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
+/** 搜索表单查询参数 */
+interface UserQuery {
+  pageNum: number
+  pageSize: number
+  username?: string
+  status: number
+  orgIds: number[]
+}
+
+/** 表格状态 */
+interface TableState {
+  list: User[]
+  total: number
+  loading: boolean
+  showSearch: boolean
+  ids: number[]
+  single: boolean
+  multiple: boolean
+}
+
+/** 编辑表单数据（User 基础上补充表单用到的附加字段） */
+interface UserFormData extends User {
+  phone?: string
+  email?: string
+  roleIds?: number[]
+}
+
+/** 编辑弹窗状态 */
+interface FormState {
+  visible: boolean
+  title: string
+  form: UserFormData
+  rules: FormRules
+}
 
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
-const formRef = ref(null)            /* 编辑表单 ref */
-const deptTreeRef = ref(null)        /* 左侧组织树 ref */
-const userViewRef = ref(null)        /* 用户详情抽屉 ref */
+const formRef = ref<FormInstance>()   /* 编辑表单 ref */
+const deptTreeRef = ref<any>()        /* 左侧组织树 ref */
+const userViewRef = ref<any>()        /* 用户详情抽屉 ref */
 
 // 用户状态枚举选项（UserStatuEnum）
-const statusOptions = ref([])
+const statusOptions = ref<DictOption[]>([])
 
 // 角色选项（编辑表单角色多选）
-const roleOptions = ref([])
+const roleOptions = ref<Role[]>([])
 
 // 组织树：左侧树形结构 + 编辑表单归属组织下拉树
-const deptOptions = ref([])          /* 左侧组织树 */
-const orgOptions = ref([])           /* 编辑表单归属组织下拉树 */
+const deptOptions = ref<Org[]>([])    /* 左侧组织树 */
+const orgOptions = ref<Org[]>([])     /* 编辑表单归属组织下拉树 */
 
 // 搜索栏：查询参数
-const queryParams = ref({
+const queryParams = ref<UserQuery>({
   pageNum: 1,          /* 当前页码 */
   pageSize: 10,        /* 每页条数 */
   username: undefined, /* 用户名称关键词 */
@@ -203,7 +240,7 @@ const queryParams = ref({
 })
 
 // 表格：UI数据
-const table = ref({
+const table = ref<TableState>({
   list: [],          /* 用户列表 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
@@ -214,7 +251,7 @@ const table = ref({
 })
 
 // 编辑表单：数据状态
-const formState = ref({
+const formState = ref<FormState>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */
@@ -229,7 +266,7 @@ const formState = ref({
   }
 })
 // 密码校验规则（仅新增时生效，编辑时密码只读不校验）
-const passwordRules = [
+const passwordRules: FormItemRule[] = [
   { required: true, message: "密码不能为空", trigger: "blur" },
   { min: 4, max: 20, message: "密码长度 4-20", trigger: "blur" }
 ]
@@ -253,7 +290,7 @@ function loadRoleOptions() {
 
 /** 查询组织树列表 */
 function getDeptTree() {
-  listOrg().then(response => {
+  listOrg({}).then(response => {
     // handleTree 会就地修改数组并填充 children，需对原始数据分别深拷贝，避免相互污染导致子节点重复
     deptOptions.value = handleTree(JSON.parse(JSON.stringify(response.data)), 'id')
     // 归属组织下拉树：默认追加「未选择」节点（id=0），对齐后端 org_id 默认值 0
@@ -265,14 +302,14 @@ function getDeptTree() {
 }
 
 /** 组织树节点过滤方法（字段为 name，非 TreePanel 默认的 label） */
-function filterOrg(value, data) {
+function filterOrg(value: string, data: Org) {
   if (!value) return true
   return data.name && data.name.indexOf(value) !== -1
 }
 
 /** 递归收集节点及其全部子节点 ID */
-function collectOrgIds(node) {
-  const ids = [node.id]
+function collectOrgIds(node: Org): number[] {
+  const ids = [node.id as number]
   if (node.children && node.children.length) {
     node.children.forEach(child => {
       ids.push(...collectOrgIds(child))
@@ -282,7 +319,7 @@ function collectOrgIds(node) {
 }
 
 /** 节点单击事件：选中组织及其全部子组织作为查询条件 */
-function handleNodeClick(data) {
+function handleNodeClick(data: Org) {
   queryParams.value.orgIds = collectOrgIds(data)
   handleQuery()
 }
@@ -291,14 +328,13 @@ function handleNodeClick(data) {
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
+  const { pageNum, pageSize, orgIds, ...rest } = queryParams.value
   const params = {
-    ...queryParams.value,
-    offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
-    pagesize: queryParams.value.pageSize,
-    orgIds: queryParams.value.orgIds.join(',') || undefined
+    ...rest,
+    orgIds: orgIds.join(',') || undefined,
+    offset: (pageNum - 1) * pageSize,
+    pagesize: pageSize
   }
-  delete params.pageNum
-  delete params.pageSize
   listUser(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
@@ -321,8 +357,8 @@ function resetQuery() {
 }
 
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  table.value.ids = selection.map(item => item.id)
+function handleSelectionChange(selection: User[]) {
+  table.value.ids = selection.map(item => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -359,7 +395,7 @@ function handleAdd() {
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
-function handleUpdate(row) {
+function handleUpdate(row: any) {
   reset()
   getDeptTree()
   loadRoleOptions()
@@ -379,7 +415,7 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value.validate(valid => {
+  formRef.value!.validate(valid => {
     if (valid) {
       // 后端 update 会自动维护 update_time，回传 addTime/updateTime 会导致 Date 绑定失败
       const submitData = { ...formState.value.form }
@@ -408,7 +444,7 @@ function submitForm() {
 }
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
-function handleDelete(row) {
+function handleDelete(row: any) {
   const userIds = row && row.id != null ? row.id : table.value.ids
   if (userIds == null || (Array.isArray(userIds) && userIds.length === 0)) {
     return
@@ -422,7 +458,7 @@ function handleDelete(row) {
 }
 
 /** 重置密码按钮操作（通过 update 接口传递 id + password，需带上其余字段避免覆盖为空；密码校验与表单规则一致） */
-function handleResetPwd(row) {
+function handleResetPwd(row: User) {
   ElMessageBox.prompt(`请输入「${row.username}」的新密码`, "重置密码", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -433,7 +469,7 @@ function handleResetPwd(row) {
       return true
     }
   }).then(({ value }) => {
-    const submitData = { ...row, password: value }
+    const submitData: User = { ...row, password: value }
     delete submitData.addTime
     delete submitData.updateTime
     delete submitData.orgName
@@ -445,9 +481,9 @@ function handleResetPwd(row) {
 }
 
 /** 用户状态快速切换（通过 update 接口传递完整行数据，避免其余字段被覆盖） */
-function handleStatusChange(row) {
+function handleStatusChange(row: User) {
   const text = Number(row.status) === 0 ? "正常" : "停用"
-  const submitData = { ...row, status: Number(row.status) }
+  const submitData: User = { ...row, status: Number(row.status) }
   delete submitData.addTime
   delete submitData.updateTime
   delete submitData.orgName
@@ -461,7 +497,7 @@ function handleStatusChange(row) {
 }
 
 /** 详情按钮操作（点击账号展示用户详情抽屉） */
-function handleViewData(row) {
+function handleViewData(row: User) {
   userViewRef.value.open(row)
 }
 

@@ -28,32 +28,53 @@
   </el-dialog>
 </template>
 
-<script setup name="ReadUsers">
+<script setup name="ReadUsers" lang="ts">
 import { listMessageReadUsers } from "@/api/system/message"
 import { parseTime } from '@/utils/common'
+import type { Message, User } from '@/types/api'
+
+/** 弹窗状态 */
+interface DialogState {
+  visible: boolean
+  title: string | undefined
+}
+
+/** 表格状态 */
+interface TableState {
+  list: User[]
+  total: number
+  loading: boolean
+}
+
+/** 查询参数 */
+interface QueryState {
+  pageNum: number
+  pageSize: number
+  messageId?: number
+}
 
 // 弹窗：UI数据
-const dialog = ref({
+const dialog = ref<DialogState>({
   visible: false,  /* 弹窗显隐 */
   title: ""        /* 消息标题 */
 })
 
 // 表格：UI数据
-const table = ref({
+const table = ref<TableState>({
   list: [],        /* 已读用户列表 */
   total: 0,        /* 已读人数 */
   loading: false   /* 加载状态 */
 })
 
 // 查询参数
-const queryParams = ref({
+const queryParams = ref<QueryState>({
   pageNum: 1,       /* 当前页码 */
   pageSize: 10,     /* 每页条数 */
   messageId: undefined  /* 消息ID */
 })
 
 /** 打开弹窗：回显消息信息并加载已读用户列表 */
-function open(row) {
+function open(row: Message) {
   queryParams.value.messageId = row.id
   dialog.value.title = row.title
   queryParams.value.pageNum = 1
@@ -65,13 +86,12 @@ function open(row) {
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
+  const { pageNum, pageSize, ...rest } = queryParams.value
   const params = {
-    ...queryParams.value,
-    offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
-    pagesize: queryParams.value.pageSize
+    ...rest,
+    offset: (pageNum - 1) * pageSize,
+    pagesize: pageSize
   }
-  delete params.pageNum
-  delete params.pageSize
   listMessageReadUsers(params).then(res => {
     table.value.list = res.data.data
     table.value.total = res.data.total

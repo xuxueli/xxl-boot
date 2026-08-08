@@ -89,7 +89,7 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 import { ElMessageBox } from 'element-plus'
 import Breadcrumb from './Breadcrumb.vue'
 import TopBarMix from './TopBarMix.vue'
@@ -111,13 +111,13 @@ const settingsStore = useSettingsStore()
 * 切换侧边栏展开/收起
 */
 function toggleSideBar() {
-  appStore.toggleSideBar()
+  appStore.toggleSideBar(false)
 }
 
 /*
 * 用户下拉菜单命令处理
 */
-function handleCommand(command) {
+function handleCommand(command: string | number | object) {
   switch (command) {
     case "setLayout": setLayout(); break
     case "logout":    logout(); break
@@ -166,7 +166,7 @@ async function toggleTheme() {
 
   /* animation：圆形扩散过渡动画 */
   try {
-    const transition = document.startViewTransition(async () => {
+    const transition = document.startViewTransition!(async () => {
       await new Promise((resolve) => setTimeout(resolve, 10))
       settingsStore.toggleTheme()
       await nextTick()

@@ -20,7 +20,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const props = defineProps({
   src: {
     type: String,
@@ -33,7 +33,7 @@ const props = defineProps({
 
 const loading = ref(true)
 const height = ref(document.documentElement.clientHeight - 94.5 + 'px')
-const iframeRef = ref(null)
+const iframeRef = ref<HTMLIFrameElement | null>(null)
 
 /*
 * iframe 加载完成后隐藏 loading

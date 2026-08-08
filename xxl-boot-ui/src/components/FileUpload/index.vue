@@ -51,7 +51,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {getAuthHeaders} from "@/utils/auth"
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
@@ -109,22 +109,22 @@ const props = defineProps({
 })
 
 // defineEmits：子传父（modelValue 通过 update:modelValue 回传）
-const emit = defineEmits()
+const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
-const fileUpload = ref(null)                  // el-upload 组件引用
-const uploadFileList = ref(null)              // 文件列表 DOM 引用（用于 sortablejs 拖拽）
+const fileUpload = ref<any>(null)                  // el-upload 组件引用
+const uploadFileList = ref<any>(null)              // 文件列表 DOM 引用（用于 sortablejs 拖拽）
 const number = ref(0)                         // 正在上传的文件计数
-const uploadList = ref([])                    // 本次上传成功的文件列表
+const uploadList = ref<Array<{name: string, url: string}>>([])   // 本次上传成功的文件列表
 const baseUrl = import.meta.env.VITE_APP_BASE_API                                   // API 基础地址
 const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)         // 上传接口完整地址
 const headers = ref(getAuthHeaders())                                          // 上传请求头（携带 token）
-const fileList = ref([])                      // 已上传文件列表 [{name, url}]
+const fileList = ref<any[]>([])                      // 已上传文件列表 [{name, url}]
 const showTip = computed(                     // 是否显示文件格式/大小提示
     () => props.isShowTip && (props.fileType || props.fileSize)
 )
 
 // 监听外部 modelValue 变化，同步到文件列表
-watch(() => props.modelValue, val => {
+watch(() => props.modelValue, (val: any) => {
   if (val) {
     // 统一转为数组：字符串按逗号分割，数组直接使用
     const list = Array.isArray(val) ? val : String(val).split(',')
@@ -146,7 +146,7 @@ watch(() => props.modelValue, val => {
 }, {deep: true, immediate: true})
 
 // 上传前置校验：文件类型、文件名、文件大小，全部通过后显示 loading
-function handleBeforeUpload(file) {
+function handleBeforeUpload(file: any) {
   // 校检文件类型
   if (props.fileType.length) {
     const fileName = file.name.split('.')
@@ -181,13 +181,13 @@ function handleExceed() {
 }
 
 // 上传失败处理
-function handleUploadError(err) {
+function handleUploadError(err: any) {
   modal.msgError("上传文件失败")
   modal.closeLoading()
 }
 
 // 上传成功回调：
-function handleUploadSuccess(res, file) {
+function handleUploadSuccess(res: any, file: any) {
   if (res.code === 200) {
     // 上传成功，添加到本次成功列表
     uploadList.value.push({name: res.fileName, url: res.fileName})
@@ -203,7 +203,7 @@ function handleUploadSuccess(res, file) {
 }
 
 // 删除文件列表中的指定项
-function handleDelete(index) {
+function handleDelete(index: number) {
   fileList.value.splice(index, 1)
   emit("update:modelValue", listToString(fileList.value))
 }
@@ -223,7 +223,7 @@ function uploadedSuccessfully() {
 }
 
 // 从 URL 或文件名中提取纯文件名（去掉路径前缀）
-function getFileName(name) {
+function getFileName(name: string) {
   // 含路径时取最后一段，如 "/path/to/file.pdf" → "file.pdf"
   if (name.lastIndexOf("/") > -1) {
     return name.slice(name.lastIndexOf("/") + 1)
@@ -233,7 +233,7 @@ function getFileName(name) {
 }
 
 // 文件列表转逗号分隔的 URL 字符串（v-model 输出格式）
-function listToString(list, separator) {
+function listToString(list: any[], separator?: string) {
   let strs = ""
   separator = separator || ","
   for (let i in list) {
@@ -256,8 +256,8 @@ onMounted(() => {
         ghostClass: 'file-upload-darg',
         // 拖拽结束后更新 fileList 顺序并同步 v-model
         onEnd: (evt) => {
-          const movedItem = fileList.value.splice(evt.oldIndex, 1)[0]
-          fileList.value.splice(evt.newIndex, 0, movedItem)
+          const movedItem = fileList.value.splice(evt.oldIndex!, 1)[0]
+          fileList.value.splice(evt.newIndex!, 0, movedItem)
           emit('update:modelValue', listToString(fileList.value))
         }
       })

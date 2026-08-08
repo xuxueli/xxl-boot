@@ -79,27 +79,38 @@
   </div>
 </template>
 
-<script setup name="Index">
+<script setup name="Index" lang="ts">
 
 import {getStats, getLogTrend} from '@/api/dashboard'
 import {listMessageTop, markMessageRead} from '@/api/system/message'
 import {parseTime} from '@/utils/common'
 import * as echarts from 'echarts'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
+import type { ECharts } from 'echarts'
+import type { Message } from '@/types/api'
+
+/** 指标卡片项 */
+interface StatItem {
+  label: string
+  value: number
+  icon: string
+  color: string
+  bg: string
+}
 
 // 指标卡片
-const stats = ref([
+const stats = ref<StatItem[]>([
   {label: '用户数量', value: 0, icon: 'user', color: '#5b6abf', bg: '#eef0fb'},
   {label: '角色数量', value: 0, icon: 'peoples', color: '#319c8a', bg: '#e8f6f3'},
   {label: '日志数量', value: 0, icon: 'log', color: '#d4943c', bg: '#fcf4e8'},
   {label: '消息数量', value: 0, icon: 'message', color: '#c5566a', bg: '#fbeef1'}
 ])
 
-const messages = ref([])
-const chartRef = ref(null)
+const messages = ref<Message[]>([])
+const chartRef = ref<HTMLElement>()
 const chartDays = ref(30)
-const messageDetailRef = ref(null)
-let chartInstance = null
+const messageDetailRef = ref<InstanceType<typeof MessageDetailView>>()
+let chartInstance: ECharts | null = null
 
 /**
  * init
@@ -142,9 +153,9 @@ function loadMessages() {
 /**
  * 消息列表 - 点击查看详情，标记已读
  */
-function handleMsgClick(item) {
-  messageDetailRef.value.open(item.id)
-  markMessageRead(item.id)
+function handleMsgClick(item: Message) {
+  messageDetailRef.value!.open(item.id as number)
+  markMessageRead(item.id as number)
 }
 
 /**
@@ -163,14 +174,14 @@ function loadChart() {
     const list = res.data || []
 
     // 1、转为 Map：date → count，方便按日期查找
-    const dateMap = {}
+    const dateMap: Record<string, number> = {}
     list.forEach(i => {
       dateMap[i.date] = i.count
     })
 
     // 2、生成连续日期序列，每天对应一个数据点
-    const dates = []
-    const counts = []
+    const dates: string[] = []
+    const counts: number[] = []
     const now = new Date()
     for (let i = days - 1; i >= 0; i--) {
       // format day time
@@ -179,15 +190,15 @@ function loadChart() {
       const key = parseTime(d, '{y}-{m}-{d}')
 
       // write day date
-      dates.push(key)
-      counts.push(dateMap[key] || 0)      // 无数据日期补 0
+      dates.push(key || '')
+      counts.push(dateMap[key || ''] || 0)      // 无数据日期补 0
     }
 
     // 3、渲染折线图（渐变面积 + 平滑曲线）
     if (chartInstance) {
       chartInstance.dispose()
     }
-    chartInstance = echarts.init(chartRef.value)
+    chartInstance = echarts.init(chartRef.value as HTMLElement)
     chartInstance.setOption({
       tooltip: {trigger: 'axis'},                              // 悬浮提示：轴触发
       grid: {left: 40, right: 20, bottom: 30, top: 20},        // 图表边距

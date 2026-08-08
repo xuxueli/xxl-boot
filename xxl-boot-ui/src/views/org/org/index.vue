@@ -87,7 +87,7 @@
               <el-tree-select
                 v-model="formState.form.parentId"
                 :data="orgOptions"
-                :props="{ value: 'id', label: 'name', children: 'children' }"
+                :props="{ label: 'name', children: 'children' }"
                 value-key="id"
                 placeholder="选择上级组织"
                 check-strictly
@@ -128,29 +128,54 @@
   </div>
 </template>
 
-<script setup name="Org">
+<script setup name="Org" lang="ts">
 import { listOrg, getOrg, delOrg, addOrg, updateOrg, updateOrgSort } from "@/api/org/org"
 import { loadEnumItem } from "@/api/system/dict/data"
 import { handleTree, parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
+import type { Org } from '@/types/api'
+import type { DictOption } from '@/types'
+import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
+/** 搜索表单查询参数 */
+interface OrgQuery {
+  name?: string
+  status: number
+}
+
+/** 表格状态 */
+interface TableState {
+  list: Org[]
+  loading: boolean
+  showSearch: boolean
+  isExpandAll: boolean
+  refreshTable: boolean
+}
+
+/** 编辑弹窗状态 */
+interface FormState {
+  visible: boolean
+  title: string
+  form: Org
+  rules: FormRules
+}
 
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：编辑表单 ref
-const formRef = ref(null)           /* 编辑表单 ref */
+const formRef = ref<FormInstance>()   /* 编辑表单 ref */
 
 // 搜索栏：查询参数
-const queryParams = ref({
+const queryParams = ref<OrgQuery>({
   name: undefined,   /* 组织名称关键词 */
   status: -1         /* 状态（-1 全部、0 正常、1 禁用） */
 })
 
 // 表格：UI数据
-const table = ref({
+const table = ref<TableState>({
   list: [],          /* 组织树列表 */
   loading: true,     /* 加载状态 */
   showSearch: true,  /* 是否显示搜索栏 */
@@ -159,7 +184,7 @@ const table = ref({
 })
 
 // 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
-const formState = ref({
+const formState = ref<FormState>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */
@@ -170,13 +195,13 @@ const formState = ref({
 })
 
 // 上级组织树选项
-const orgOptions = ref([])
+const orgOptions = ref<Org[]>([])
 
 // 排序：原始顺序快照（用于对比是否发生变更）
-const originalOrders = ref({})
+const originalOrders = ref<Record<number, number | undefined>>({})
 
 // 状态选项（从后端 OrgStatuEnum 枚举加载）
-const statusOptions = ref([])
+const statusOptions = ref<DictOption[]>([])
 
 
 // --------------------------------- fun ---------------------------------
@@ -200,13 +225,13 @@ function getList() {
 
 /** 查询上级组织树选项（保留完整树，保存时再校验不能选自己或其子孙） */
 function loadOrgOptions() {
-  listOrg().then(response => {
+  listOrg({}).then(response => {
     orgOptions.value = handleTree(response.data, 'id')
   })
 }
 
 /** 状态编码 → 文案 */
-function statusText(status) {
+function statusText(status: number) {
   const item = statusOptions.value.find(i => i.code === status)
   return item ? item.title : status
 }
@@ -251,7 +276,7 @@ function toggleExpandAll() {
 }
 
 /** 新增按钮操作（不传 row 新增顶级组织，传 row 新增下级组织） */
-function handleAdd(row) {
+function handleAdd(row: any) {
   reset()
   loadOrgOptions()
   if (row !== undefined) {
@@ -262,10 +287,10 @@ function handleAdd(row) {
 }
 
 /** 修改按钮操作 */
-function handleUpdate(row) {
+function handleUpdate(row: Org) {
   reset()
   loadOrgOptions()
-  getOrg(row.id).then(response => {
+  getOrg(row.id as number).then(response => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = "修改组织"
@@ -282,7 +307,7 @@ function validParentId() {
     return false
   }
   // 递归判断子孙节点中是否包含选中的上级组织
-  const findInChildren = (children) => {
+  const findInChildren = (children: Org[]) => {
     for (const child of children) {
       if (child.id === form.parentId) {
         return true
@@ -293,7 +318,7 @@ function validParentId() {
     }
     return false
   }
-  const isParentInDescendants = (list) => {
+  const isParentInDescendants = (list: Org[]) => {
     for (const item of list) {
       if (item.id === form.id) {
         return findInChildren(item.children || [])
@@ -309,7 +334,7 @@ function validParentId() {
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value.validate(valid => {
+  formRef.value!.validate(valid => {
     if (valid) {
       // 上级组织不能选自己或自己的子孙
       if (!validParentId()) {
@@ -335,9 +360,9 @@ function submitForm() {
 }
 
 /** 递归记录原始顺序 */
-function recordOriginalOrders(list) {
+function recordOriginalOrders(list: Org[]) {
   list.forEach(item => {
-    originalOrders.value[item.id] = item.order
+    originalOrders.value[item.id as number] = item.order
     if (item.children && item.children.length) {
       recordOriginalOrders(item.children)
     }
@@ -346,13 +371,13 @@ function recordOriginalOrders(list) {
 
 /** 保存排序：收集变更项后批量提交 */
 function handleSaveSort() {
-  const changedIds = []
-  const changedOrders = []
-  const collectChanged = (list) => {
+  const changedIds: number[] = []
+  const changedOrders: number[] = []
+  const collectChanged = (list: Org[]) => {
     list.forEach(item => {
-      if (String(originalOrders.value[item.id]) !== String(item.order)) {
-        changedIds.push(item.id)
-        changedOrders.push(item.order)
+      if (String(originalOrders.value[item.id as number]) !== String(item.order)) {
+        changedIds.push(item.id as number)
+        changedOrders.push(item.order as number)
       }
       if (item.children && item.children.length) {
         collectChanged(item.children)
@@ -371,9 +396,9 @@ function handleSaveSort() {
 }
 
 /** 删除按钮操作 */
-function handleDelete(row) {
+function handleDelete(row: Org) {
   modal.confirm('是否确认删除名称为"' + row.name + '"的数据项？').then(function() {
-    return delOrg([row.id])
+    return delOrg([row.id as number])
   }).then(() => {
     getList()
     modal.msgSuccess("删除成功")

@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 /**
  * Svg Icon全量导入：
@@ -84,7 +84,7 @@ const filteredIcons = computed(() => {
 })
 
 // 选中图标：派发事件并关闭弹窗
-function selectedIcon(name) {
+function selectedIcon(name: string) {
   emit('selected', name)
   document.body.click()
 }

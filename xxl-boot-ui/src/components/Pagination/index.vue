@@ -20,60 +20,52 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { scrollTo } from '@/utils/scroll-to'
 
-const props = defineProps({
+const props = withDefaults(defineProps<{
   // 总记录数（必填）：用于计算分页器页码与边界。
-  total: {
-    required: true,
-    type: Number
-  },
+  total: number
   // 当前页码：由父组件传入，默认第 1 页。
-  page: {
-    type: Number,
-    default: 1
-  },
+  page?: number
   // 每页条数：由父组件传入，默认 20 条。
-  limit: {
-    type: Number,
-    default: 20
-  },
+  limit?: number
   // 每页条数列表（可选）：用于 sizes 下拉选项。
-  pageSizes: {
-    type: Array,
-    default() {
-      return [10, 20, 50, 100]
-    }
-  },
+  pageSizes?: number[]
   // 页码按钮数：移动端收敛为 5，桌面端默认 7，避免过度拥挤。
-  pagerCount: {
-    type: Number,
-    default: document.body.clientWidth < 992 ? 5 : 7
-  },
+  pagerCount?: number
   // 分页器布局：“控制总数、每页条数切换、上一页、页码、下一页、跳转输入框”
-  layout: {
-    type: String,
-    default: 'total, sizes, prev, pager, next, jumper'
-  },
+  layout?: string
   // 是否展示背景样式。
-  background: {
-    type: Boolean,
-    default: true
-  },
+  background?: boolean
   // 翻页后是否自动滚动到顶部附近。
-  autoScroll: {
-    type: Boolean,
-    default: true
-  },
+  autoScroll?: boolean
   // 是否隐藏整个分页组件。
-  hidden: {
-    type: Boolean,
-    default: false
-  }
+  hidden?: boolean
+}>(), {
+  // 当前页码默认第 1 页
+  page: 1,
+  // 每页条数默认 20 条
+  limit: 20,
+  // 每页条数列表默认值
+  pageSizes: () => [10, 20, 50, 100],
+  // 页码按钮数：移动端收敛为 5，桌面端默认 7
+  pagerCount: document.body.clientWidth < 992 ? 5 : 7,
+  // 分页器布局默认值
+  layout: 'total, sizes, prev, pager, next, jumper',
+  // 默认展示背景样式
+  background: true,
+  // 默认翻页后自动滚动到顶部
+  autoScroll: true,
+  // 默认展示分页组件
+  hidden: false,
 })
 
-const emit = defineEmits()
+const emit = defineEmits<{
+  (e: 'update:page', value: number): void
+  (e: 'update:limit', value: number): void
+  (e: 'pagination', value: { page: number; limit: number }): void
+}>()
 
 /**
  * currentPage 计算
@@ -113,7 +105,7 @@ const pageSize = computed({
  *    - 2）向父组件派发 pagination 事件，通知重新拉取数据；
  *    - 3）按需滚动到顶部，提升翻页后的浏览体验。
  */
-function handleSizeChange(val) {
+function handleSizeChange(val: number) {
   if (currentPage.value * val > props.total) {
     currentPage.value = 1
   }
@@ -128,7 +120,7 @@ function handleSizeChange(val) {
  *    - 1）派发 pagination 事件并携带最新页码与每页条数；
  *    - 2）按需触发自动滚动，保持列表阅读连贯性。
  */
-function handleCurrentChange(val) {
+function handleCurrentChange(val: number) {
   emit('pagination', { page: val, limit: pageSize.value })
   if (props.autoScroll) {
     scrollTo(0, 800)

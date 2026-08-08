@@ -30,7 +30,7 @@
       <!-- 子菜单列表 -->
       <SidebarItem
         v-for="(child, index) in item.children"
-        :key="child.path + index"
+        :key="(child.path || '') + index"
         :is-nest="true"
         :item="child"
         :base-path="resolvePath(child.path)"
@@ -40,40 +40,40 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { isExternal } from '@/utils/validate'
 import SidebarLink from './SidebarLink.vue'
 import { getNormalPath } from '@/utils/common'
+import type { RouteData } from '@/store/modules/routes'
 
-const props = defineProps({
+/*
+* 组件属性
+*/
+interface MenuItemProps {
   /*
   * 父路由对象：包含 path / meta / children / hidden 等属性
   */
-  item: {
-    type: Object,
-    required: true
-  },
+  item: RouteData
   /*
   * 是否嵌套子菜单：true 表示当前已在 el-sub-menu 内，叶子结点无需再缩进
   */
-  isNest: {
-    type: Boolean,
-    default: false
-  },
+  isNest?: boolean
   /*
   * 父路由path：子路由若为相对路径，据此拼接为绝对路径
   */
-  basePath: {
-    type: String,
-    default: ''
-  }
+  basePath?: string
+}
+
+const props = withDefaults(defineProps<MenuItemProps>(), {
+  isNest: false,
+  basePath: ''
 })
 
 /*
 * hasOneShowingChild 的判断结果暂存区。
 * 满足"只有一个可见子路由"时存储该子路由对象，模板据此决定渲染 el-menu-item 还是 el-sub-menu。
 */
-const onlyOneChild = ref({})
+const onlyOneChild = ref<Record<string, any>>({})
 
 /*
 * 判断当前菜单是否只有一个可见子菜单：
@@ -82,7 +82,7 @@ const onlyOneChild = ref({})
 *   3）≥ 2 个可见子路由 → 渲染 el-sub-menu，继续递归。
 * 每次调用会将筛选结果写入 onlyOneChild，供模板访问。
 */
-function hasOneShowingChild(children = [], parent) {
+function hasOneShowingChild(children: RouteData[] = [], parent: RouteData) {
   if (!children) {
     children = []
   }
@@ -123,11 +123,13 @@ function hasOneShowingChild(children = [], parent) {
 *   - 相对路径 → 拼接 basePath 前缀。
 *   - routeQuery 存在时一并返回，用于携带路由参数。
 */
-function resolvePath(routePath, routeQuery) {
+function resolvePath(routePath?: string): string
+function resolvePath(routePath: string | undefined, routeQuery?: string): string | { path: string; query: any }
+function resolvePath(routePath: string | undefined, routeQuery?: string): string | { path: string; query: any } {
 
   /* 子路由本身是外部链接：直接返回，不走内部路由拼接 */
-  if (isExternal(routePath)) {
-    return routePath
+  if (isExternal(routePath || '')) {
+    return routePath as string
   }
 
   /* 父级基准路径是外部链接：子路由也无法拼接，直接返回父级路径 */
@@ -150,14 +152,14 @@ function resolvePath(routePath, routeQuery) {
     let query = JSON.parse(routeQuery)
     return { path: getNormalPath(props.basePath + '/' + routePath), query: query }
   }
-  return getNormalPath(props.basePath + '/' + routePath)
+  return getNormalPath(props.basePath + '/' + (routePath || ''))
 }
 
 /*
 * 标题超长时显示 tooltip
 */
-function hasTitle(title) {
-  if (title.length > 5) {
+function hasTitle(title: string | undefined) {
+  if (title && title.length > 5) {
     return title
   } else {
     return ""

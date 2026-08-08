@@ -114,22 +114,53 @@
   </div>
 </template>
 
-<script setup name="Config">
+<script setup name="Config" lang="ts">
 import { listConfig, getConfig, delConfig, addConfig, updateConfig } from "@/api/system/config"
 import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
+import type { Config } from '@/types/api'
+import type { DictOption } from '@/types'
+import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
+
+/** 搜索表单查询参数 */
+interface ConfigQuery {
+  pageNum: number
+  pageSize: number
+  name?: string
+  key?: string
+  status?: number
+}
+
+/** 表格状态 */
+interface TableState {
+  list: Config[]
+  total: number
+  loading: boolean
+  showSearch: boolean
+  ids: number[]
+  single: boolean
+  multiple: boolean
+}
+
+/** 编辑弹窗状态 */
+interface FormState {
+  visible: boolean
+  title: string
+  form: Config
+  rules: FormRules
+}
 
 
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
-const formRef = ref(null)   /* 编辑表单实例引用 */
+const formRef = ref<FormInstance>()   /* 编辑表单实例引用 */
 
 // 搜索栏：查询参数
-const queryParams = ref({
+const queryParams = ref<ConfigQuery>({
   pageNum: 1,        /* 当前页码 */
   pageSize: 10,      /* 每页条数 */
   name: undefined,   /* 配置名称 */
@@ -138,7 +169,7 @@ const queryParams = ref({
 })
 
 // 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
-const formState = ref({
+const formState = ref<FormState>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */
@@ -154,7 +185,7 @@ const formState = ref({
 })
 
 // 表格：UI数据
-const table = ref({
+const table = ref<TableState>({
   list: [],          /* 配置列表 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
@@ -165,7 +196,7 @@ const table = ref({
 })
 
 // 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
-const statusOptions = ref([])
+const statusOptions = ref<DictOption[]>([])
 
 
 // --------------------------------- fun ---------------------------------
@@ -181,13 +212,12 @@ function loadOptions() {
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
+  const { pageNum, pageSize, ...rest } = queryParams.value
   const params = {
-    ...queryParams.value,
-    offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
-    pagesize: queryParams.value.pageSize
+    ...rest,
+    offset: (pageNum - 1) * pageSize,
+    pagesize: pageSize
   }
-  delete params.pageNum
-  delete params.pageSize
   listConfig(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
@@ -196,7 +226,7 @@ function getList() {
 }
 
 /** 状态编码 → 文案 */
-function statusText(status) {
+function statusText(status: number) {
   const item = statusOptions.value.find(i => i.code === status)
   return item ? item.title : status
 }
@@ -233,8 +263,8 @@ function resetQuery() {
 }
 
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  table.value.ids = selection.map(item => item.id)
+function handleSelectionChange(selection: Config[]) {
+  table.value.ids = selection.map(item => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -247,7 +277,7 @@ function handleAdd() {
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
-function handleUpdate(row) {
+function handleUpdate(row: any) {
   reset()
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
   const id = row && row.id != null ? row.id : table.value.ids[0]
@@ -263,7 +293,7 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value.validate(valid => {
+  formRef.value!.validate(valid => {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
@@ -284,7 +314,7 @@ function submitForm() {
 }
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
-function handleDelete(row) {
+function handleDelete(row: any) {
   const configIds = row && row.id != null ? row.id : table.value.ids
   if (configIds == null || (Array.isArray(configIds) && configIds.length === 0)) {
     return

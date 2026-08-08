@@ -73,18 +73,25 @@
   </el-drawer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { listData } from '@/api/system/dict/data'
+import type { Dict, DictItem } from '@/types/api'
 
-const props = defineProps({
-  visible: { type: Boolean, default: false },
-  row: { type: Object, default: () => ({}) }
+/** 抽屉入参 */
+interface DrawerProps {
+  visible: boolean
+  row: Dict
+}
+
+const props = withDefaults(defineProps<DrawerProps>(), {
+  visible: false,
+  row: () => ({})
 })
 
 const emit = defineEmits(['update:visible'])
 
 const loading = ref(false)   /* 加载状态 */
-const dataList = ref([])     /* 字典项列表 */
+const dataList = ref<DictItem[]>([])     /* 字典项列表 */
 
 const normalCount = computed(() => dataList.value.filter(r => r.status === 0).length)
 const disabledCount = computed(() => dataList.value.filter(r => r.status !== 0).length)

@@ -19,13 +19,14 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 import settings from '@/settings'
+import type { RouteRecordNormalized } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
 /* 面包屑层级列表 */
-const levelList = ref([])
+const levelList = ref<RouteRecordNormalized[]>([])
 
 /*
 * 生成面包屑列表：从 route.matched 取 Vue Router 已解析的完整匹配链路
@@ -45,7 +46,7 @@ function getBreadcrumb() {
 /*
 * 点击面包屑节点跳转
 */
-function handleLink(item) {
+function handleLink(item: RouteRecordNormalized) {
   router.push(item.path)
 }
 

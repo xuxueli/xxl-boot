@@ -51,7 +51,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // 引入
 import defaultSettings from '@/settings'
 
@@ -60,7 +60,7 @@ const version = defaultSettings.version
 const footerContent = defaultSettings.footerContent
 
 /** 跳转外部链接 */
-function goTarget(url) {
+function goTarget(url: string) {
   window.open(url, '__blank')
 }
 </script>

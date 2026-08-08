@@ -22,7 +22,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useAppStore } from '@/store'
 import modal from '@/utils/modal'
 
@@ -38,7 +38,7 @@ const sizeOptions = ref([
 /*
 * 切换布局尺寸：保存后刷新页面生效
 */
-function handleSetSize(size) {
+function handleSetSize(size: string) {
   modal.loading("正在设置布局大小，请稍候...")
   appStore.setSize(size)
   setTimeout(function () {

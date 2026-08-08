@@ -39,16 +39,22 @@
     </el-dialog>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 /** 树节点添加弹窗 - 逻辑 */
-const open = defineModel()
+import type { FormInstance } from 'element-plus'
+
+const open = defineModel<boolean>()
 
 /** 组件事件：确认提交节点 */
 const emit = defineEmits(['commit'])
 
-const formData = ref({
-  label: undefined,       /* 选项名 */
-  value: undefined        /* 选项值 */
+const formData = ref<{
+  label?: string       /* 选项名 */
+  value?: string | number  /* 选项值 */
+  id?: number          /* 节点 ID */
+}>({
+  label: undefined,
+  value: undefined
 })
 const rules = {
   label: [{
@@ -64,13 +70,17 @@ const rules = {
 }
 
 const dataType = ref('string')       /* 值类型 */
-const dataTypeOptions = ref([        /* 值类型选项 */
+const dataTypeOptions = ref<{        /* 值类型选项 */
+  label: string
+  value: string
+  disabled?: boolean
+}[]>([
   { label: '字符串', value: 'string' },
   { label: '数字',   value: 'number' }
 ])
 
 const id = ref(100)                  /* 节点 ID 自增 */
-const treeNodeForm = ref()           /* 表单 ref */
+const treeNodeForm = ref<FormInstance>()           /* 表单 ref */
 
 /** 弹窗打开：重置表单 */
 function onOpen() {
@@ -87,10 +97,10 @@ function onClose() {
 
 /** 确认添加节点 */
 function handelConfirm() {
-  treeNodeForm.value.validate(valid => {
+  treeNodeForm.value!.validate(valid => {
     if (!valid) return
     if (dataType.value === 'number') {
-      formData.value.value = parseFloat(formData.value.value)
+      formData.value.value = parseFloat(formData.value.value as string)
     }
     formData.value.id = id.value++
     emit('commit', formData.value)

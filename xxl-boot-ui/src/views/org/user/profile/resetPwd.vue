@@ -21,27 +21,35 @@
   </el-form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 // 引入
 import {usePasswordRule} from "@/composables/usePasswordRule"
 import {updateUserPwd} from "@/api/org/user"
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
+import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
+
+/** 密码表单数据 */
+interface PwdForm {
+  oldPassword?: string
+  newPassword?: string
+  confirmPassword?: string
+}
 
 // 表单 ref
-const pwdRef = ref(null)
+const pwdRef = ref<FormInstance>()
 const {infoPwdValidator} = usePasswordRule()
 
 // 密码表单数据
-const user = reactive({
+const user = reactive<PwdForm>({
   oldPassword: undefined,
   newPassword: undefined,
   confirmPassword: undefined
 })
 
 /** 校验两次密码是否一致 */
-const equalToPassword = (rule, value, callback) => {
+const equalToPassword: FormItemRule['validator'] = (rule, value, callback) => {
   if (user.newPassword !== value) {
     callback(new Error("两次输入的密码不一致"))
   } else {
@@ -50,7 +58,7 @@ const equalToPassword = (rule, value, callback) => {
 }
 
 // 表单校验规则
-const rules = ref({
+const rules = ref<FormRules>({
   oldPassword: [{required: true, message: "旧密码不能为空", trigger: "blur"}],
   confirmPassword: [{required: true, message: "确认密码不能为空", trigger: "blur"}, {
     required: true,
@@ -61,9 +69,9 @@ const rules = ref({
 
 /** 提交按钮 */
 function submit() {
-  pwdRef.value.validate(valid => {
+  pwdRef.value!.validate(valid => {
     if (valid) {
-      updateUserPwd(user.oldPassword, user.newPassword).then(res => {
+      updateUserPwd(user.oldPassword as string, user.newPassword as string).then(res => {
         modal.msgSuccess("修改成功")
         user.oldPassword = undefined
         user.newPassword = undefined

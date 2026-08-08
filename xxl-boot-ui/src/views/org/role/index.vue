@@ -132,34 +132,63 @@
   </div>
 </template>
 
-<script setup name="Role">
+<script setup name="Role" lang="ts">
 import { listRole, getRole, addRole, updateRole, delRole, roleMenuTreeselect, updateRoleRes } from "@/api/org/role"
 import { listResource as menuTreeselect } from "@/api/org/resource"
 import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
+import type { Role, Resource } from '@/types/api'
+import type { DictOption } from '@/types'
+import type { CheckboxValueType, FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
+/** 搜索表单查询参数 */
+interface RoleQuery {
+  pageNum: number
+  pageSize: number
+  name?: string
+  status: number
+}
+
+/** 表格状态 */
+interface TableState {
+  list: Role[]
+  total: number
+  loading: boolean
+  showSearch: boolean
+  ids: number[]
+  single: boolean
+  multiple: boolean
+}
+
+/** 编辑弹窗状态 */
+interface FormState {
+  visible: boolean
+  title: string
+  form: Role
+  rules: FormRules
+}
 
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
-const formRef = ref(null)       /* 编辑表单 ref */
-const menuRef = ref(null)       /* 菜单权限树 ref */
+const formRef = ref<FormInstance>()   /* 编辑表单 ref */
+const menuRef = ref<any>()            /* 菜单权限树 ref */
 
 // 角色状态枚举选项
-const statusOptions = ref([])
+const statusOptions = ref<DictOption[]>([])
 
 // 菜单权限树数据与交互状态
-const menuOptions = ref([])         /* 菜单权限树数据 */
-const menuExpand = ref(false)       /* 展开/折叠 */
-const menuNodeAll = ref(false)      /* 全选/全不选 */
-const menuCheckStrictly = ref(true) /* 父子联动 */
+const menuOptions = ref<Resource[]>([])   /* 菜单权限树数据 */
+const menuExpand = ref(false)             /* 展开/折叠 */
+const menuNodeAll = ref(false)            /* 全选/全不选 */
+const menuCheckStrictly = ref(true)       /* 父子联动 */
 
 // 搜索栏：查询参数
-const queryParams = ref({
+const queryParams = ref<RoleQuery>({
   pageNum: 1,        /* 当前页码 */
   pageSize: 10,      /* 每页条数 */
   name: undefined,   /* 角色名称关键词 */
@@ -167,7 +196,7 @@ const queryParams = ref({
 })
 
 // 表格：UI数据
-const table = ref({
+const table = ref<TableState>({
   list: [],          /* 角色列表 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
@@ -178,7 +207,7 @@ const table = ref({
 })
 
 // 编辑表单：数据状态
-const formState = ref({
+const formState = ref<FormState>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */
@@ -199,7 +228,7 @@ function loadOptions() {
 }
 
 /** 状态编码 → 文案 */
-function statusText(status) {
+function statusText(status: number) {
   const item = statusOptions.value.find(i => i.code === status)
   return item ? item.title : status
 }
@@ -208,13 +237,12 @@ function statusText(status) {
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
+  const { pageNum, pageSize, ...rest } = queryParams.value
   const params = {
-    ...queryParams.value,
-    offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
-    pagesize: queryParams.value.pageSize
+    ...rest,
+    offset: (pageNum - 1) * pageSize,
+    pagesize: pageSize
   }
-  delete params.pageNum
-  delete params.pageSize
   listRole(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
@@ -235,8 +263,8 @@ function resetQuery() {
 }
 
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  table.value.ids = selection.map(item => item.id)
+function handleSelectionChange(selection: Role[]) {
+  table.value.ids = selection.map(item => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -266,7 +294,7 @@ function reset() {
 
 /** 查询菜单权限树结构 */
 function getMenuTreeselect() {
-  return menuTreeselect().then(response => {
+  return menuTreeselect({}).then(response => {
     menuOptions.value = handleTree(response.data, "id")
   })
 }
@@ -280,7 +308,7 @@ function handleAdd() {
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
-function handleUpdate(row) {
+function handleUpdate(row: any) {
   reset()
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
   const id = row && row.id != null ? row.id : table.value.ids[0]
@@ -307,20 +335,20 @@ function handleUpdate(row) {
 }
 
 /** 树权限（展开/折叠） */
-function handleCheckedTreeExpand(value) {
+function handleCheckedTreeExpand(value: CheckboxValueType) {
   const treeList = menuOptions.value
   for (let i = 0; i < treeList.length; i++) {
-    menuRef.value.store.nodesMap[treeList[i].id].expanded = value
+    menuRef.value.store.nodesMap[treeList[i].id as number].expanded = value
   }
 }
 
 /** 树权限（全选/全不选） */
-function handleCheckedTreeNodeAll(value) {
+function handleCheckedTreeNodeAll(value: CheckboxValueType) {
   menuRef.value.setCheckedNodes(value ? menuOptions.value : [])
 }
 
 /** 树权限（父子联动） */
-function handleCheckedTreeConnect(value) {
+function handleCheckedTreeConnect(value: CheckboxValueType) {
   menuCheckStrictly.value = value ? true : false
 }
 
@@ -336,7 +364,7 @@ function getMenuAllCheckedKeys() {
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value.validate(valid => {
+  formRef.value!.validate(valid => {
     if (valid) {
       // 后端 update 会自动维护 update_time，回传 addTime/updateTime 会导致 Date 绑定失败
       const submitData = { ...formState.value.form }
@@ -347,7 +375,7 @@ function submitForm() {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
         updateRole(submitData).then(() => {
-          return updateRoleRes(submitData.id, resourceIds)
+          return updateRoleRes(submitData.id as number, resourceIds)
         }).then(() => {
           modal.msgSuccess("修改成功")
           formState.value.visible = false
@@ -356,7 +384,7 @@ function submitForm() {
       } else {
         addRole(submitData).then(response => {
           // 新增返回新角色ID，用于保存菜单权限
-          return updateRoleRes(response.data, resourceIds)
+          return updateRoleRes(response.data as number, resourceIds)
         }).then(() => {
           modal.msgSuccess("新增成功")
           formState.value.visible = false
@@ -368,7 +396,7 @@ function submitForm() {
 }
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
-function handleDelete(row) {
+function handleDelete(row: any) {
   const roleIds = row && row.id != null ? row.id : table.value.ids
   if (roleIds == null || (Array.isArray(roleIds) && roleIds.length === 0)) {
     return

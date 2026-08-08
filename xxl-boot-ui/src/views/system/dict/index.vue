@@ -117,23 +117,60 @@
   </div>
 </template>
 
-<script setup name="Dict">
-import DictDataDrawer from './detail'
+<script setup name="Dict" lang="ts">
+import DictDataDrawer from './detail.vue'
 import { listType, getType, delType, addType, updateType } from "@/api/system/dict/type"
 import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
+import type { Dict } from '@/types/api'
+import type { DictOption } from '@/types'
+import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
+
+/** 搜索表单查询参数 */
+interface DictQuery {
+  pageNum: number
+  pageSize: number
+  name?: string
+  type?: string
+  status?: number
+}
+
+/** 表格状态 */
+interface TableState {
+  list: Dict[]
+  total: number
+  loading: boolean
+  showSearch: boolean
+  ids: number[]
+  single: boolean
+  multiple: boolean
+}
+
+/** 编辑弹窗状态 */
+interface FormState {
+  visible: boolean
+  title: string
+  form: Dict
+  rules: FormRules
+}
+
+/** 字典项抽屉状态 */
+interface DrawerState {
+  visible: boolean
+  row: Dict
+}
 
 /* --------------------------------- ref data --------------------------------- */
 
 // 表单引用
-const formRef = ref(null)   /* 编辑表单实例引用 */
+const formRef = ref<FormInstance>()   /* 编辑表单实例引用 */
 
 // 搜索栏：查询参数
-const queryParams = ref({
+const queryParams = ref<DictQuery>({
   pageNum: 1,        /* 当前页码 */
   pageSize: 10,      /* 每页条数 */
   name: undefined,   /* 字典名称 */
@@ -142,7 +179,7 @@ const queryParams = ref({
 })
 
 // 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
-const formState = ref({
+const formState = ref<FormState>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */
@@ -157,7 +194,7 @@ const formState = ref({
 })
 
 // 表格：UI数据
-const table = ref({
+const table = ref<TableState>({
   list: [],          /* 字典类型列表 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
@@ -168,13 +205,13 @@ const table = ref({
 })
 
 // 字典项抽屉
-const drawer = ref({
+const drawer = ref<DrawerState>({
   visible: false,  /* 抽屉显隐 */
   row: {}          /* 当前查看的字典行 */
 })
 
 // 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
-const statusOptions = ref([])
+const statusOptions = ref<DictOption[]>([])
 
 /* --------------------------------- fun --------------------------------- */
 
@@ -189,13 +226,12 @@ function loadOptions() {
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
+  const { pageNum, pageSize, ...rest } = queryParams.value
   const params = {
-    ...queryParams.value,
-    offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
-    pagesize: queryParams.value.pageSize
+    ...rest,
+    offset: (pageNum - 1) * pageSize,
+    pagesize: pageSize
   }
-  delete params.pageNum
-  delete params.pageSize
   listType(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
@@ -204,7 +240,7 @@ function getList() {
 }
 
 /** 状态编码 → 文案 */
-function statusText(status) {
+function statusText(status: number) {
   const item = statusOptions.value.find(i => i.code === status)
   return item ? item.title : status
 }
@@ -240,8 +276,8 @@ function resetQuery() {
 }
 
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  table.value.ids = selection.map(item => item.id)
+function handleSelectionChange(selection: Dict[]) {
+  table.value.ids = selection.map(item => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -254,17 +290,17 @@ function handleAdd() {
 }
 
 /** 字典项抽屉 */
-function handleViewData(row) {
+function handleViewData(row: Dict) {
   drawer.value = { visible: true, row }
 }
 
 /** 字典数据列表页面 */
-function handleDataList(row) {
-  tab.openPage("字典数据", '/system/dict/data', { dictId: row.id })
+function handleDataList(row: Dict) {
+  tab.openPage("字典数据", '/system/dict/data', { dictId: String(row.id) })
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
-function handleUpdate(row) {
+function handleUpdate(row: any) {
   reset()
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
   const id = row && row.id != null ? row.id : table.value.ids[0]
@@ -280,7 +316,7 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value.validate(valid => {
+  formRef.value!.validate(valid => {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
@@ -301,7 +337,7 @@ function submitForm() {
 }
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
-function handleDelete(row) {
+function handleDelete(row: any) {
   const dictIds = row && row.id != null ? row.id : table.value.ids
   if (dictIds == null || (Array.isArray(dictIds) && dictIds.length === 0)) {
     return

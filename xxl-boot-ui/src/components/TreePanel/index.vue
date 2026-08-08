@@ -82,114 +82,95 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 /**
  * defineProps 父传子
  */
-const props = defineProps({
+const props = withDefaults(defineProps<{
   // 树形数据
-  treeData: {
-    type: Array,
-    default: () => []
-  },
+  treeData?: any[]
   // 标题
-  title: {
-    type: String,
-    default: '树形结构'
-  },
+  title?: string
   // 标题图标
-  titleIcon: {
-    type: [String, Object],
-    default: 'OfficeBuilding'
-  },
+  titleIcon?: any
   // 是否显示搜索框
-  showSearch: {
-    type: Boolean,
-    default: true
-  },
+  showSearch?: boolean
   // 搜索框占位符
-  searchPlaceholder: {
-    type: String,
-    default: '请输入名称'
-  },
+  searchPlaceholder?: string
   // 是否默认收起侧边栏
-  defaultCollapsed: {
-    type: Boolean,
-    default: false
-  },
+  defaultCollapsed?: boolean
   // 树配置项
-  treeProps: {
-    type: Object,
-    default: () => ({
-      children: "children",   // 子节点
-      label: "label"          // 节点名称
-    })
-  },
+  treeProps?: Record<string, string>
   // 节点唯一标识字段
-  nodeKey: {
-    type: String,
-    default: 'id'
-  },
+  nodeKey?: string
   // 是否在点击节点时展开或收起
-  expandOnClickNode: {
-    type: Boolean,
-    default: false
-  },
+  expandOnClickNode?: boolean
   // 是否显示复选框
-  showCheckbox: {
-    type: Boolean,
-    default: false
-  },
+  showCheckbox?: boolean
   // 是否严格的遵循父子不互相关联
-  checkStrictly: {
-    type: Boolean,
-    default: false
-  },
+  checkStrictly?: boolean
   // 是否默认展开所有节点
-  defaultExpandAll: {
-    type: Boolean,
-    default: false
-  },
+  defaultExpandAll?: boolean
   // 默认展开的节点的key数组
-  defaultExpandedKeys: {
-    type: Array,
-    default: () => []
-  },
+  defaultExpandedKeys?: Array<string | number>
   // 默认宽度
-  defaultWidth: {
-    type: Number,
-    default: 220
-  },
+  defaultWidth?: number
   // 收起时的宽度
-  collapsedWidth: {
-    type: Number,
-    default: 20
-  },
+  collapsedWidth?: number
   // 最小宽度
-  minWidth: {
-    type: Number,
-    default: 180
-  },
+  minWidth?: number
   // 最大宽度
-  maxWidth: {
-    type: Number,
-    default: 400
-  },
+  maxWidth?: number
   // 本地存储的宽度key
-  storageKey: {
-    type: String,
-    default: 'tree-sidebar-width'
-  },
+  storageKey?: string
   // 是否启用本地存储宽度
-  enableStorage: {
-    type: Boolean,
-    default: true
-  },
+  enableStorage?: boolean
   // 自定义过滤方法
-  filterMethod: {
-    type: Function,
-    default: null
-  }
+  filterMethod?: ((value: string, data: any) => boolean) | null
+}>(), {
+  // 树形数据默认空数组
+  treeData: () => [],
+  // 标题默认
+  title: '树形结构',
+  // 标题图标默认
+  titleIcon: 'OfficeBuilding',
+  // 默认显示搜索框
+  showSearch: true,
+  // 搜索框占位符默认
+  searchPlaceholder: '请输入名称',
+  // 默认不收起侧边栏
+  defaultCollapsed: false,
+  // 树配置项默认：children/label 字段
+  treeProps: () => ({
+    children: "children",   // 子节点
+    label: "label"          // 节点名称
+  }),
+  // 节点唯一标识字段默认 id
+  nodeKey: 'id',
+  // 默认点击节点不展开
+  expandOnClickNode: false,
+  // 默认不显示复选框
+  showCheckbox: false,
+  // 默认父子不关联关闭
+  checkStrictly: false,
+  // 默认不展开所有节点
+  defaultExpandAll: false,
+  // 默认展开节点 key 数组为空
+  defaultExpandedKeys: () => [],
+  // 默认宽度
+  defaultWidth: 220,
+  // 收起时的宽度
+  collapsedWidth: 20,
+  // 最小宽度
+  minWidth: 180,
+  // 最大宽度
+  maxWidth: 400,
+  // 本地存储的宽度key
+  storageKey: 'tree-sidebar-width',
+  // 默认启用本地存储宽度
+  enableStorage: true,
+  // 自定义过滤方法默认无
+  filterMethod: null,
 })
 
 /**
@@ -206,7 +187,7 @@ const emit = defineEmits([
   'search'
 ])
 
-const treeRef = ref(null)
+const treeRef = ref<any>(null)
 
 // 响应式数据
 const searchKeyword = ref('')                           // 搜索关键词
@@ -215,8 +196,8 @@ const sidebarWidth = ref(props.defaultCollapsed ? props.collapsedWidth : props.d
 const isResizing = ref(false)                            // 是否正在拖拽调整宽度
 const startX = ref(0)                                    // 拖拽起始鼠标 X 坐标
 const startWidth = ref(0)                                // 拖拽起始宽度
-const saveWidthTimer = ref(null)                         // 宽度持久化防抖定时器
-const rafId = ref(null)                                  // requestAnimationFrame ID
+const saveWidthTimer = ref<number | null>(null)          // 宽度持久化防抖定时器
+const rafId = ref<number | null>(null)                   // requestAnimationFrame ID
 const isLoadingFromStorage = ref(false)                   // 是否正在从本地存储加载宽度
 const expandedAll = ref(props.defaultExpandAll)           // 是否全部展开
 
@@ -229,7 +210,7 @@ const isExpandedAll = computed({
 })
 
 // 节点过滤方法
-const filterNodeMethod = (value, data) => {
+const filterNodeMethod = (value: string, data: any) => {
   if (props.filterMethod) {
     return props.filterMethod(value, data)
   }
@@ -278,7 +259,7 @@ const cleanup = () => {
 }
 
 // 处理收起/展开状态变化
-const handleCollapseChange = (isCollapsed) => {
+const handleCollapseChange = (isCollapsed: boolean) => {
   if (isCollapsed) {
     saveWidthToStorage()
     sidebarWidth.value = props.collapsedWidth
@@ -339,13 +320,13 @@ const expandAllNodes = () => {
 }
 
 // 获取所有节点
-const getAllNodes = (rootNode) => {
-  const nodes = []
-  const traverse = (node) => {
+const getAllNodes = (rootNode: any) => {
+  const nodes: any[] = []
+  const traverse = (node: any) => {
     if (!node) return
     nodes.push(node)
     if (node.childNodes && node.childNodes.length) {
-      node.childNodes.forEach(child => traverse(child))
+      node.childNodes.forEach((child: any) => traverse(child))
     }
   }
   traverse(rootNode)
@@ -369,27 +350,27 @@ const handleRefresh = () => {
 }
 
 // 节点点击事件
-const onNodeClick = (data, node, e) => {
+const onNodeClick = (data: any, node: any, e: any) => {
   emit('node-click', data, node, e)
 }
 
 // 复选框选中事件
-const onCheck = (data, checkedInfo) => {
+const onCheck = (data: any, checkedInfo: any) => {
   emit('check', data, checkedInfo)
 }
 
 // 节点展开事件
-const onNodeExpand = (data, node, e) => {
+const onNodeExpand = (data: any, node: any, e: any) => {
   emit('node-expand', data, node, e)
 }
 
 // 节点折叠事件
-const onNodeCollapse = (data, node, e) => {
+const onNodeCollapse = (data: any, node: any, e: any) => {
   emit('node-collapse', data, node, e)
 }
 
 // 设置当前选中节点
-const setCurrentKey = (key) => {
+const setCurrentKey = (key: any) => {
   if (treeRef.value) {
     treeRef.value.setCurrentKey(key)
   }
@@ -412,7 +393,7 @@ const getCurrentKey = () => {
 }
 
 // 设置勾选节点
-const setCheckedKeys = (keys) => {
+const setCheckedKeys = (keys: any) => {
   if (treeRef.value && props.showCheckbox) {
     treeRef.value.setCheckedKeys(keys)
   }
@@ -443,12 +424,12 @@ const clearSearch = () => {
 }
 
 // 主动触发搜索过滤
-const filter = (value) => {
+const filter = (value: any) => {
   searchKeyword.value = value
 }
 
 // 开始拖拽调整宽度
-const startResize = (e) => {
+const startResize = (e: any) => {
   e.preventDefault()
   e.stopPropagation()
   isResizing.value = true
@@ -466,7 +447,7 @@ const startResize = (e) => {
 }
 
 // 拖拽过程中实时计算宽度
-const handleResizeMove = (e) => {
+const handleResizeMove = (e: any) => {
   if (!isResizing.value) return
   if (rafId.value) {
     cancelAnimationFrame(rafId.value)
@@ -506,16 +487,16 @@ const stopResize = () => {
 const disableUserSelect = () => {
   document.body.style.userSelect = 'none'
   document.body.style.webkitUserSelect = 'none'
-  document.body.style.mozUserSelect = 'none'
-  document.body.style.msUserSelect = 'none'
+  ;(document.body.style as any).mozUserSelect = 'none'
+  ;(document.body.style as any).msUserSelect = 'none'
 }
 
 // 恢复文本选中
 const enableUserSelect = () => {
   document.body.style.userSelect = ''
   document.body.style.webkitUserSelect = ''
-  document.body.style.mozUserSelect = ''
-  document.body.style.msUserSelect = ''
+  ;(document.body.style as any).mozUserSelect = ''
+  ;(document.body.style as any).msUserSelect = ''
 }
 
 // 重置为默认宽度
@@ -530,7 +511,7 @@ const getCurrentWidth = () => {
 }
 
 // 设置宽度
-const setWidth = (width) => {
+const setWidth = (width: number) => {
   if (typeof width === 'number' && width >= props.minWidth && width <= props.maxWidth) {
     sidebarWidth.value = width
     if (!collapsed.value) {

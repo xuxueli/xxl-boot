@@ -36,7 +36,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // 引入
 import errImage from "@/assets/images/301.gif"
 

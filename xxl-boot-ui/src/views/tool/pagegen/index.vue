@@ -142,7 +142,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 /**
  * 表单设计器 - 主逻辑
  * 1. 左侧组件库：输入型、选择型、布局型组件列表
@@ -150,7 +150,8 @@
  * 3. 右侧面板：组件属性 / 表单属性配置
  * 4. 代码生成：导出 vue 文件或复制代码
  */
-import draggable from "vuedraggable/dist/vuedraggable.common"
+import type { FormConf, FormItemConf } from '@/utils/generator/config'
+import draggable from 'vuedraggable'
 import ClipboardJS from 'clipboard'
 import beautifier from 'js-beautify'
 import {inputComponents, selectComponents, layoutComponents, formConf as formConfData} from '@/utils/generator/config'
@@ -162,9 +163,9 @@ import {makeUpCss} from '@/utils/generator/css'
 import Download from '@/utils/download'
 import modal from '@/utils/modal'
 import {ElNotification} from 'element-plus'
-import DraggableItem from './DraggableItem'
-import RightPanel from './RightPanel'
-import CodeTypeDialog from './CodeTypeDialog'
+import DraggableItem from './DraggableItem.vue'
+import RightPanel from './RightPanel.vue'
+import CodeTypeDialog from './CodeTypeDialog.vue'
 import {onMounted, watch} from 'vue'
 
 
@@ -175,21 +176,25 @@ initDrawingDefaultValue()
 
 
 /* 画布状态 */
-const canvas = ref({
-  drawingList: drawingDefaultValue,            /* 画布中的组件列表 */
-  activeData: drawingDefaultValue[0],          /* 当前选中组件 */
-  activeId: drawingDefaultValue[0].formId      /* 当前选中组件 ID */
+const canvas = ref<{
+  drawingList: FormItemConf[]   /* 画布中的组件列表 */
+  activeData: FormItemConf      /* 当前选中组件 */
+  activeId: number | string     /* 当前选中组件 ID */
+}>({
+  drawingList: drawingDefaultValue,
+  activeData: drawingDefaultValue[0],
+  activeId: drawingDefaultValue[0].formId!
 })
-let oldActiveId                                /* 上一次选中 ID，用于 placeholder 联动 */
-let tempActiveData                             /* 拖拽结束暂存激活组件 */
+let oldActiveId: number | string | undefined            /* 上一次选中 ID，用于 placeholder 联动 */
+let tempActiveData: FormItemConf | undefined            /* 拖拽结束暂存激活组件 */
 
 /* 生成代码弹窗状态 */
 const genDialog = ref({
   dialogVisible: false,  /* 生成类型弹窗 */
   showFileName: false,   /* 是否显示文件名输入 */
   operationType: '',     /* 操作类型：copy / download */
-  generateConf: null,    /* 生成配置 */
-  formData: {}           /* 表单组装数据 */
+  generateConf: null as any,    /* 生成配置 */
+  formData: {} as FormConf & { fields: FormItemConf[] }  /* 表单组装数据 */
 })
 
 /* 全局配置 */
@@ -203,9 +208,9 @@ const formConf = ref(formConfData)             /* 表单全局配置 */
 /**
  * 激活选中组件
  */
-function activeFormItem(element) {
+function activeFormItem(element: FormItemConf) {
   canvas.value.activeData = element
-  canvas.value.activeId = element.formId
+  canvas.value.activeId = element.formId!
 }
 
 /**
@@ -230,7 +235,7 @@ function download() {
  * 清空画布所有组件
  */
 function empty() {
-  modal.confirm('确定要清空所有组件吗？', '提示', {type: 'warning'}).then(() => {
+  modal.confirm('确定要清空所有组件吗？').then(() => {
         idGlobal.value = 100
         canvas.value.drawingList = []
         cleanDrawingDefaultValue()
@@ -241,9 +246,9 @@ function empty() {
 /**
  * 拖拽结束回调：从组件库拖入画布时，激活拖入的组件
  */
-function onEnd(obj) {
+function onEnd(obj: any) {
   if (obj.from !== obj.to) {
-    canvas.value.activeData = tempActiveData
+    canvas.value.activeData = tempActiveData!
     canvas.value.activeId = idGlobal.value
   }
 }
@@ -251,7 +256,7 @@ function onEnd(obj) {
 /**
  * 点击添加组件到画布
  */
-function addComponent(item) {
+function addComponent(item: FormItemConf) {
   const clone = cloneComponent(item)
   canvas.value.drawingList.push(clone)
   activeFormItem(clone)
@@ -260,8 +265,8 @@ function addComponent(item) {
 /**
  * 克隆组件：生成新 ID、设置 vModel / componentName
  */
-function cloneComponent(origin) {
-  const clone = JSON.parse(JSON.stringify(origin))
+function cloneComponent(origin: FormItemConf): FormItemConf {
+  const clone: FormItemConf = JSON.parse(JSON.stringify(origin))
   clone.formId = ++idGlobal.value
   clone.span = formConf.value.span
   clone.renderKey = +new Date()      /* 改变 renderKey 实现强制更新 */
@@ -276,14 +281,14 @@ function cloneComponent(origin) {
     clone.gutter = formConf.value.gutter
     tempActiveData = clone
   }
-  return tempActiveData
+  return tempActiveData as FormItemConf
 }
 
 /**
  * 复制画布中的组件
  */
-function drawingItemCopy(item, parent) {
-  let clone = JSON.parse(JSON.stringify(item))
+function drawingItemCopy(item: FormItemConf, parent: FormItemConf[]) {
+  let clone = JSON.parse(JSON.stringify(item)) as FormItemConf
   clone = createIdAndKey(clone)
   parent.push(clone)
   activeFormItem(clone)
@@ -292,7 +297,7 @@ function drawingItemCopy(item, parent) {
 /**
  * 递归生成新 ID 和 renderKey
  */
-function createIdAndKey(item) {
+function createIdAndKey(item: FormItemConf): FormItemConf {
   item.formId = ++idGlobal.value
   item.renderKey = +new Date()
   if (item.layout === 'colFormItem') {
@@ -309,8 +314,8 @@ function createIdAndKey(item) {
 /**
  * 删除画布中的组件
  */
-function drawingItemDelete(index, parent) {
-  parent.splice(index, 1)
+function drawingItemDelete(index: number | undefined, parent: FormItemConf[]) {
+  parent.splice(index as number, 1)
   nextTick(() => {
     const len = canvas.value.drawingList.length
     if (len) {
@@ -322,7 +327,7 @@ function drawingItemDelete(index, parent) {
 /**
  * 切换组件类型：保留 vModel / formId / span，替换其他属性
  */
-function tagChange(newTag) {
+function tagChange(newTag: FormItemConf) {
   newTag = cloneComponent(newTag)
   newTag.vModel = canvas.value.activeData.vModel
   newTag.formId = canvas.value.activeId
@@ -343,7 +348,7 @@ function tagChange(newTag) {
 /**
  * 更新画布中的组件数据
  */
-function updateDrawingList(newTag, list) {
+function updateDrawingList(newTag: FormItemConf, list: FormItemConf[]) {
   const index = list.findIndex(item => item.formId === canvas.value.activeId)
   if (index > -1) {
     list.splice(index, 1, newTag)
@@ -357,7 +362,7 @@ function updateDrawingList(newTag, list) {
 /**
  * 生成代码：组件回调- 弹窗确认后执行
  */
-function generate(data) {
+function generate(data: any) {
   genDialog.value.generateConf = data
   nextTick(() => {
     switch (genDialog.value.operationType) {
@@ -376,7 +381,7 @@ function generate(data) {
 /**
  * 下载 vue 文件
  */
-function execDownload(data) {
+function execDownload(data: any) {
   const codeStr = generateCode()
   const blob = new Blob([codeStr], {type: 'text/plain;charset=utf-8'})
   Download.saveAs(blob, data.fileName)
@@ -385,8 +390,8 @@ function execDownload(data) {
 /**
  * 复制代码到剪切板
  */
-function execCopy(data) {
-  document.getElementById('copyNode').click()
+function execCopy(data: any) {
+  document.getElementById('copyNode')!.click()
 }
 
 /**
@@ -429,7 +434,7 @@ watch(() => canvas.value.activeId, (val) => {
 }, {immediate: true})
 
 /* 初始化剪切板复制 */
-let clipboard = null
+let clipboard: ClipboardJS | null = null
 onMounted(() => {
   clipboard = new ClipboardJS('#copyNode', {
     text: trigger => {
@@ -443,7 +448,7 @@ onMounted(() => {
   })
 })
 onUnmounted(() => {
-  clipboard.destroy()
+  clipboard?.destroy()
 })
 
 </script>

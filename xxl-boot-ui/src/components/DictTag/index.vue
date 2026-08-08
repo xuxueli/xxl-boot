@@ -35,28 +35,38 @@
   </div>
 </template>
 
-<script setup>
-// 未匹配字典项的 key 集合
-const unmatchArray = ref([])
+<script setup lang="ts">
+// 字典选项类型定义
+interface DictOption {
+  // 字典值
+  value: string | number
+  // 字典显示文案
+  label: string
+  // el-tag 类型
+  elTagType: any
+  // 自定义 class
+  elTagClass: any
+}
 
-const props = defineProps({
+// 未匹配字典项的 key 集合
+const unmatchArray = ref<Array<string | number>>([])
+
+const props = withDefaults(defineProps<{
   // 字典选项列表：[{ value, label, elTagType, elTagClass }]
-  options: {
-    type: Array,
-    default: null,
-  },
+  options: DictOption[]
   // 当前值：支持 Number / String / Array 三种类型
-  value: [Number, String, Array],
+  value?: number | string | Array<string | number> | null
   // 字符串分隔符：value 为逗号分隔字符串时使用
-  separator: {
-    type: String,
-    default: ",",
-  },
+  separator?: string
   // 未匹配时是否显示原始 value
-  showValue: {
-    type: Boolean,
-    default: true,
-  }
+  showValue?: boolean
+}>(), {
+  // 字典选项列表，默认空数组
+  options: () => [],
+  // 字符串分隔符
+  separator: ",",
+  // 未匹配时显示原始 value
+  showValue: true,
 })
 
 // 将 props.value 统一转为字符串数组，方便后续匹配
@@ -86,7 +96,7 @@ const unmatch = computed(() => {
 })
 
 // 数组转空格分隔字符串，用于显示未匹配项
-function handleArray(array) {
+function handleArray(array: Array<string | number>) {
   if (array.length === 0) return ""
   return array.reduce((pre, cur) => {
     return pre + " " + cur
@@ -94,7 +104,7 @@ function handleArray(array) {
 }
 
 // 判断某个字典值是否与当前 value 匹配
-function isValueMatch(itemValue) {
+function isValueMatch(itemValue: string | number) {
   return values.value.some(val => val === itemValue)
 }
 </script>

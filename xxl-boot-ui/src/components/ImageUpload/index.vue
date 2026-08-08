@@ -57,7 +57,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {getAuthHeaders} from "@/utils/auth"
 import {isExternal} from "@/utils/validate"
 import Sortable from 'sortablejs'
@@ -116,30 +116,30 @@ const props = defineProps({
 })
 
 // defineEmits：子传父（modelValue 通过 update:modelValue 回传）
-const emit = defineEmits()
+const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
-const imageUpload = ref(null)                  // el-upload 组件引用
+const imageUpload = ref<any>(null)                  // el-upload 组件引用
 const number = ref(0)                          // 正在上传的图片计数
-const uploadList = ref([])                     // 本次上传成功的图片列表
+const uploadList = ref<Array<{name: string, url: string}>>([])   // 本次上传成功的图片列表
 const dialogImageUrl = ref("")                 // 预览大图的 URL
 const dialogVisible = ref(false)               // 预览弹窗显示/隐藏
 const baseUrl = import.meta.env.VITE_APP_BASE_API                                   // API 基础地址
 const uploadImgUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)          // 上传接口完整地址
 const headers = ref(getAuthHeaders())                                          // 上传请求头（携带 token）
-const fileList = ref([])                       // 已上传图片列表 [{name, url}]
+const fileList = ref<any[]>([])                       // 已上传图片列表 [{name, url}]
 const showTip = computed(                      // 是否显示格式/大小提示
     () => props.isShowTip && (props.fileType || props.fileSize)
 )
 
 // 监听外部 modelValue 变化，同步到文件列表，自动补齐 baseUrl
-watch(() => props.modelValue, val => {
+watch(() => props.modelValue, (val: any) => {
   if (val) {
     // 统一转为数组：字符串按逗号分割，数组直接使用
     const list = Array.isArray(val) ? val : String(val).split(",")
     fileList.value = list.map(item => {
       if (typeof item === "string") {
         // 缺少 baseUrl 且非外链时补齐，如 "2024/01/abc.jpg" → "/dev-api/2024/01/abc.jpg"
-        if (item.indexOf(baseUrl) === -1 && !isExternal(item)) {
+        if (item.indexOf(baseUrl as string) === -1 && !isExternal(item)) {
           item = {name: baseUrl + item, url: baseUrl + item}
         } else {
           item = {name: item, url: item}
@@ -154,7 +154,7 @@ watch(() => props.modelValue, val => {
 }, {deep: true, immediate: true})
 
 // 上传前校验：图片格式、文件名、文件大小，通过后显示 loading
-function handleBeforeUpload(file) {
+function handleBeforeUpload(file: any) {
   let isImg = false
   if (props.fileType.length) {
     // 从 file.type（MIME）和文件扩展名双重校验
@@ -162,7 +162,7 @@ function handleBeforeUpload(file) {
     if (file.name.lastIndexOf(".") > -1) {
       fileExtension = file.name.slice(file.name.lastIndexOf(".") + 1)
     }
-    isImg = props.fileType.some(type => {
+    isImg = props.fileType.some((type: any) => {
       if (file.type.indexOf(type) > -1) return true
       if (fileExtension && fileExtension.indexOf(type) > -1) return true
       return false
@@ -198,7 +198,7 @@ function handleExceed() {
 }
 
 // 上传成功回调：后端返回 200 则记录；否则回滚计数并从列表中移除
-function handleUploadSuccess(res, file) {
+function handleUploadSuccess(res: any, file: any) {
   if (res.code === 200) {
     // 上传成功，添加到本次成功列表
     uploadList.value.push({name: res.fileName, url: res.fileName})
@@ -214,7 +214,7 @@ function handleUploadSuccess(res, file) {
 }
 
 // 处理删除图片：仅在上传全部完成后允许删除，删除后同步 v-model
-function handleDelete(file) {
+function handleDelete(file: any): any {
   // 找到当前文件在 fileList 中的索引（按 name 匹配）
   const findex = fileList.value.map(f => f.name).indexOf(file.name)
   // 仅在所有文件上传完毕时允许删除（uploadList.length === number.value 表示无进行中的上传）
@@ -246,13 +246,13 @@ function handleUploadError() {
 }
 
 // 预览大图：设置预览 URL 并打开弹窗
-function handlePictureCardPreview(file) {
+function handlePictureCardPreview(file: any) {
   dialogImageUrl.value = file.url
   dialogVisible.value = true
 }
 
 // 图片列表转逗号分隔的相对路径字符串（去掉 baseUrl 和 blob 临时路径）
-function listToString(list, separator) {
+function listToString(list: any[], separator?: string) {
   let strs = ""
   separator = separator || ","
   for (let i in list) {
@@ -275,8 +275,8 @@ onMounted(() => {
       Sortable.create(element, {
         // 拖拽结束后更新 fileList 顺序并同步 v-model
         onEnd: (evt) => {
-          const movedItem = fileList.value.splice(evt.oldIndex, 1)[0]
-          fileList.value.splice(evt.newIndex, 0, movedItem)
+          const movedItem = fileList.value.splice(evt.oldIndex!, 1)[0]
+          fileList.value.splice(evt.newIndex!, 0, movedItem)
           emit('update:modelValue', listToString(fileList.value))
         }
       })

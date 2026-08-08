@@ -34,11 +34,12 @@
   </el-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {getAuthHeaders} from '@/utils/auth'
 import {download} from '@/utils/request'
 import modal from '@/utils/modal'
 import {ElMessageBox} from 'element-plus'
+import type {UploadFile, UploadFiles} from 'element-plus'
 
 /**
  * defineProps：父传子
@@ -89,9 +90,9 @@ defineExpose({open})
 const emit = defineEmits(['success'])
 
 
-const uploadRef = ref(null)             // el-upload 组件引用
+const uploadRef = ref<any>(null)             // el-upload 组件引用
 const visible = ref(false)              // 弹窗显示/隐藏
-const selectedFile = ref(null)          // 当前选中的文件
+const selectedFile = ref<any>(null)          // 当前选中的文件
 const isUploading = ref(false)          // 是否正在上传中
 const updateSupport = ref(false)        // 是否覆盖更新已有数据
 const headers = getAuthHeaders()   // 上传请求头（el-upload 不走 axios 拦截器，需手动注入）
@@ -134,17 +135,17 @@ function handleProgress() {
 }
 
 // 文件选择处理：记录选中文件
-const handleFileChange = (file, fileList) => {
+const handleFileChange = (file: UploadFile, fileList: UploadFiles) => {
   selectedFile.value = file
 }
 
 // 文件删除处理：清空选中文件
-const handleFileRemove = (file, fileList) => {
+const handleFileRemove = (file: UploadFile, fileList: UploadFiles) => {
   selectedFile.value = null
 }
 
 // 上传成功：关闭弹窗，弹出导入结果消息
-function handleSuccess(response) {
+function handleSuccess(response: any) {
   visible.value = false
   isUploading.value = false
   selectedFile.value = null

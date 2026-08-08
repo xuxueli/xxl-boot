@@ -79,7 +79,7 @@
         <el-col :span="24">
           <div class="info-item">
             <label class="info-label">创建时间：</label>
-            <span class="info-value plaintext">{{ parseTime(info.addTime) }}</span>
+            <span class="info-value plaintext">{{ parseTime(info.addTime as string) }}</span>
           </div>
         </el-col>
       </el-row>
@@ -87,7 +87,7 @@
         <el-col :span="24">
           <div class="info-item">
             <label class="info-label">更新时间：</label>
-            <span class="info-value plaintext">{{ parseTime(info.updateTime) }}</span>
+            <span class="info-value plaintext">{{ parseTime(info.updateTime as string) }}</span>
           </div>
         </el-col>
       </el-row>
@@ -95,30 +95,33 @@
   </el-drawer>
 </template>
 
-<script setup name="UserView">
+<script setup name="UserView" lang="ts">
 import { listRole } from '@/api/org/role'
 import { loadEnumItem } from '@/api/system/dict/data'
 import { parseTime } from '@/utils/common'
+import type { User, Role } from '@/types/api'
+import type { DictOption } from '@/types'
 
 const visible = ref(false)
 const loading = ref(false)
-const info = ref({})
-const statusOptions = ref([])
-const roleOptions = ref([])
+const info = ref<User>({})
+const statusOptions = ref<DictOption[]>([])
+const roleOptions = ref<Role[]>([])
 
 const roleNames = computed(() => {
-  if (!info.value.roleIds || !info.value.roleIds.length) return ''
-  return roleOptions.value.filter(r => info.value.roleIds.includes(r.id)).map(r => r.name).join('、') || ''
+  const roleIds = info.value.roleIds as number[] | undefined
+  if (!roleIds || !roleIds.length) return ''
+  return roleOptions.value.filter(r => roleIds.includes(r.id as number)).map(r => r.name).join('、') || ''
 })
 
 /** 状态编码 → 文案 */
-function statusText(status) {
+function statusText(status?: number) {
   const item = statusOptions.value.find(i => i.code === status)
   return item ? item.title : status
 }
 
 /** 打开详情抽屉 */
-function open(row) {
+function open(row: User) {
   visible.value = true
   loading.value = true
   info.value = { ...row }

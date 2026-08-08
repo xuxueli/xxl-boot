@@ -20,7 +20,7 @@
   </el-menu>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import SidebarItem from '../Sidebar/SidebarItem.vue'
 import { useRoutesStore, useSettingsStore } from '@/store'
 
@@ -46,14 +46,14 @@ const activeMenu = computed(() => {
 * 顶部一级菜单：取前 N 条可见路由（N 由容器宽度动态计算）
 */
 const topMenus = computed(() => {
-  return routesStore.fullRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value)
+  return routesStore.fullRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value) as { path: string }[]
 })
 
 /*
 * 超出折叠的更多菜单：取 visibleNumber 之后的路由
 */
 const moreRoutes = computed(() => {
-  return routesStore.fullRoutes.filter((f) => !f.hidden).slice(visibleNumber.value)
+  return routesStore.fullRoutes.filter((f) => !f.hidden).slice(visibleNumber.value) as { path: string }[]
 })
 
 /*
@@ -62,7 +62,7 @@ const moreRoutes = computed(() => {
 function setVisibleNumber() {
   // 可视区域1/3计算可显示菜单
   const width = document.body.getBoundingClientRect().width / 3
-  visibleNumber.value = Math.max(1, parseInt(width / 85))
+  visibleNumber.value = Math.max(1, parseInt(String(width / 85)))
 }
 
 onMounted(() => {

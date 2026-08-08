@@ -23,7 +23,7 @@
         <!-- 菜单项 -->
         <SidebarItem
           v-for="(route, index) in sidebarRouters"
-          :key="route.path + index"
+          :key="(route.path || '') + index"
           :item="route"
           :base-path="route.path"
         />
@@ -32,11 +32,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import SidebarLogo from './SidebarLogo.vue'
 import SidebarItem from './SidebarItem.vue'
 import variables from '@/assets/styles/variables.module.scss'
 import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
+import type { RouteData } from '@/store/modules/routes'
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -51,8 +52,8 @@ const store = useRoutesStore()
 * computed：
 *   - 自动追踪依赖（现有的响应式数据），当依赖变化时自动重新计算
 */
-const sidebarRouters = computed(() => {
-  const routes = store.fullRoutes
+const sidebarRouters = computed<RouteData[]>(() => {
+  const routes: RouteData[] = store.fullRoutes
   /*
   * _scope 由 TopBarMix 的 setScope 设置，标识当前激活的顶级菜单 path。
   * 默认scope为 ''/假值，不会过滤。

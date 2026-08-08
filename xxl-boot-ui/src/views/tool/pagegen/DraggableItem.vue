@@ -6,7 +6,7 @@
   <el-col :span="element.span" :class="className" @click.stop="activeItem(element)">
 
     <!-- 表单项 -->
-    <el-form-item :label="element.label" :label-width="element.labelWidth ? element.labelWidth + 'px' : null"
+    <el-form-item :label="element.label" :label-width="element.labelWidth ? element.labelWidth + 'px' : undefined"
                   :required="element.required" v-if="element.layout === 'colFormItem'">
       <render :key="element.tag" :conf="element" v-model="element.defaultValue"/>
     </el-form-item>
@@ -17,7 +17,7 @@
       <draggable group="componentsGroup" :animation="340" :list="element.children" class="drag-wrapper" item-key="label"
                  ref="draggableItemRef" :component-data="getComponentData()">
         <template #item="scoped">
-          <DraggableItem :key="scoped.element.renderKey" :drawing-list="element.children" :element="scoped.element"
+          <DraggableItem :key="scoped.element.renderKey" :drawing-list="element.children!" :element="scoped.element"
                          :index="index" :active-id="activeId" :form-conf="formConf"
                          @activeItem="activeItem(scoped.element)"
                          @copyItem="copyItem(scoped.element, element.children)"
@@ -36,20 +36,21 @@
 
   </el-col>
 </template>
-<script setup name="DraggableItem">
+<script setup lang="ts" name="DraggableItem">
 /** 可拖拽表单项 - 逻辑 */
-import draggable from "vuedraggable/dist/vuedraggable.common"
+import type { FormConf, FormItemConf } from '@/utils/generator/config'
+import draggable from 'vuedraggable'
 import render from '@/utils/generator/render'
 
 /* 组件属性 */
 const props = defineProps({
-  element: Object,
+  element: { type: Object as PropType<FormItemConf>, required: true },
   index: Number,
-  drawingList: Array,
+  drawingList: { type: Array as PropType<FormItemConf[]>, required: true },
   activeId: {
-    type: [String, Number]
+    type: [String, Number] as PropType<string | number>
   },
-  formConf: Object
+  formConf: { type: Object as PropType<FormConf>, required: true }
 })
 const className = ref('')             /* 组件样式类名（选中/拖拽态） */
 const draggableItemRef = ref(null)    /* 拖拽项元素 ref */
@@ -60,17 +61,17 @@ const draggableItemRef = ref(null)    /* 拖拽项元素 ref */
 const emits = defineEmits(['activeItem', 'copyItem', 'deleteItem'])
 
 /** 选中当前组件 */
-function activeItem(item) {
+function activeItem(item: FormItemConf) {
   emits('activeItem', item)
 }
 
 /** 复制当前组件 */
-function copyItem(item, parent) {
+function copyItem(item: FormItemConf, parent?: FormItemConf[]) {
   emits('copyItem', item, parent ?? props.drawingList)
 }
 
 /** 删除当前组件 */
-function deleteItem(item, parent) {
+function deleteItem(item: number | undefined, parent?: FormItemConf[]) {
   emits('deleteItem', item, parent ?? props.drawingList)
 }
 

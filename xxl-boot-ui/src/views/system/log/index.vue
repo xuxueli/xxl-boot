@@ -83,22 +83,55 @@
   </div>
 </template>
 
-<script setup name="Log">
-import LogDetail from './detail'
+<script setup name="Log" lang="ts">
+import LogDetail from './detail.vue'
 import { pageList, delOperlog } from "@/api/system/log"
 import { loadEnumItem } from "@/api/system/dict/data"
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import { download } from '@/utils/request'
+import type { Log } from '@/types/api'
+import type { DictOption } from '@/types'
 
 const resetForm = useFormReset()
+
+/** 搜索表单查询参数 */
+interface LogQuery {
+  pageNum: number
+  pageSize: number
+  type: number
+  module: number
+  title?: string
+}
+
+/** 表格状态 */
+interface TableState {
+  list: Log[]
+  total: number
+  loading: boolean
+  showSearch: boolean
+  ids: number[]
+  multiple: boolean
+}
+
+/** 详情弹窗状态 */
+interface DetailState {
+  visible: boolean
+  row: Log
+}
+
+/** 枚举数据状态（下拉选项 + 编码 → 名称映射） */
+interface DictState {
+  options: DictOption[]
+  map: Record<number | string, string | undefined>
+}
 
 
 // --------------------------------- ref data ---------------------------------
 
 // 筛选：表单数据
-const queryParams = ref({
+const queryParams = ref<LogQuery>({
   pageNum: 1,       /* 当前页码 */
   pageSize: 10,     /* 每页条数 */
   type: -1,         /* 日志类型（-1 全部） */
@@ -107,7 +140,7 @@ const queryParams = ref({
 })
 
 // 表格：UI数据
-const table = ref({
+const table = ref<TableState>({
   list: [],          /* 表格：列表数据 */
   total: 0,          /* 表格：总条数 */
   loading: true,     /* 表格：加载状态 */
@@ -117,17 +150,17 @@ const table = ref({
 })
 
 // 详情弹框：UI数据
-const detail = ref({
+const detail = ref<DetailState>({
   visible: false,  /* 详情弹窗：可见状态 */
   row: {}          /* 详情弹窗：当前查看的日志行 */
 })
 
 // 枚举数据（下拉选项 + 编码→名称映射）
-const typeDict = ref({
+const typeDict = ref<DictState>({
   options: [],  /* 日志类型下拉选项 */
   map: {}       /* 日志类型编码 → 名称映射 */
 })
-const moduleDict = ref({
+const moduleDict = ref<DictState>({
   options: [],  /* 系统模块下拉选项 */
   map: {}       /* 系统模块编码 → 名称映射 */
 })
@@ -139,13 +172,12 @@ const moduleDict = ref({
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
+  const { pageNum, pageSize, ...rest } = queryParams.value
   const params = {
-    ...queryParams.value,
-    offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
-    pagesize: queryParams.value.pageSize
+    ...rest,
+    offset: (pageNum - 1) * pageSize,
+    pagesize: pageSize
   }
-  delete params.pageNum
-  delete params.pageSize
   pageList(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
@@ -154,7 +186,7 @@ function getList() {
 }
 
 /** 日志类型编码 → 文案 */
-function typeText(type) {
+function typeText(type: number) {
   const item = typeDict.value.options.find(i => i.code === type)
   return item ? item.title : type
 }
@@ -173,18 +205,18 @@ function resetQuery() {
 }
 
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  table.value.ids = selection.map(item => item.id)
+function handleSelectionChange(selection: Log[]) {
+  table.value.ids = selection.map(item => item.id as number)
   table.value.multiple = !selection.length
 }
 
 /** 查看日志详情 */
-function handleDetail(row) {
+function handleDetail(row: Log) {
   detail.value = { visible: true, row }
 }
 
 /** 删除日志（顶部按钮 @click 传事件对象，取勾选 ids） */
-function handleDelete(row) {
+function handleDelete(row: any) {
   const logIds = row && row.id != null ? row.id : table.value.ids
   // 无勾选数据时直接返回
   if (logIds == null || (Array.isArray(logIds) && logIds.length === 0)) {

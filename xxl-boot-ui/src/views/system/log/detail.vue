@@ -64,7 +64,7 @@
   </el-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import modal from '@/utils/modal'
 
 /**
@@ -85,18 +85,24 @@ import modal from '@/utils/modal'
  */
 const visible = defineModel('visible', { type: Boolean, default: false })
 
+/** 组件入参类型 */
+interface DetailProps {
+  row?: any
+  moduleMap?: Record<number | string, string | undefined>
+}
+
 /**
  * 组件入参: 通过 :xxx + defineProps 单项数据同步
  */
-const props = defineProps({
-  row: { type: Object, default: () => ({}) },  /* 当前行数据 */
-  moduleMap: { type: Object, default: () => ({}) } /* 系统模块编码 → 名称映射 */
+const props = withDefaults(defineProps<DetailProps>(), {
+  row: () => ({}),  /* 当前行数据 */
+  moduleMap: () => ({}) /* 系统模块编码 → 名称映射 */
 })
 
 /**
  * 复制文本到剪贴板
  */
-function copyText(str) {
+function copyText(str: string | undefined) {
   const text = str || ''
   // 优先使用 Clipboard API，不支持时降级为 execCommand
   if (navigator.clipboard) {
