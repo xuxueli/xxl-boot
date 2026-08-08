@@ -11,7 +11,10 @@ import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default tseslint.config(
   // 忽略构建产物与自动生成文件
-  { ignores: ['dist', 'node_modules', 'auto-imports.d.ts'] },
+  {
+    name: 'ignores',
+    ignores: ['dist', 'node_modules', 'auto-imports.d.ts']
+  },
 
   // JS 基础规则
   js.configs.recommended,
@@ -22,7 +25,9 @@ export default tseslint.config(
   // Vue 基础规则（essential 级别，避免过度约束）
   ...pluginVue.configs['flat/essential'],
 
+  // 项目源码通用规则
   {
+    name: 'project/source',
     files: ['**/*.{ts,vue}'],
     languageOptions: {
       // 浏览器全局（document/window/Blob 等）；Vue/Router/Pinia API 由 no-undef 关闭兜底
@@ -38,7 +43,7 @@ export default tseslint.config(
       // --- 全局/TS 规则调整 ---
       'no-undef': 'off', // 由 TS 类型检查覆盖 (确保 tsconfig 包含 auto-imports.d.ts)
 
-      // 允许显式 any (动态场景/代码生成器需要)
+      // 允许显式 any（动态场景/代码生成器需要）
       '@typescript-eslint/no-explicit-any': 'off',
 
       // 未使用变量/表达式：交由 TS 编译器 (noUnusedLocals/Parameters) 处理，避免 ESLint 误报
@@ -64,6 +69,7 @@ export default tseslint.config(
       'vue/no-unused-vars': 'off', // 交由 TS 约束
     }
   },
+
   // 关闭与 Prettier 冲突的格式规则（放在最后）
   eslintConfigPrettier
 )

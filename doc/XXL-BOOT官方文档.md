@@ -594,8 +594,8 @@ public @interface Permission {
 
 ### 版本 v2.1.0 Release Notes[ING]
 - 1、【新增】前端UI模块（xxl-boot-ui）升级至 TypeScript;
-- 2、【TODO】代码生成工具升级，兼容支持 TypeScript；支持 type 文件；
-- 3、【TODO】ESLint + Prettier 配置；Agents 规范完善；
+- 2、【新增】前端UI模块 ESLint + Prettier 增强，提升代码规范性和可维护性；
+- 3、【TODO】代码生成工具升级，兼容支持 TypeScript；支持 type 文件；
 
 
 ### TODO LIST
