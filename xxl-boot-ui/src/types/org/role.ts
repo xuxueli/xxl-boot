@@ -16,3 +16,13 @@ export interface Role {
   updateTime?: string
   [key: string]: unknown
 }
+
+/** 角色分页查询参数（搜索栏表单形态） */
+export interface RoleQuery {
+  pageNum: number
+  pageSize: number
+  /** 名称关键词 */
+  name?: string
+  /** 状态：-1 全部 */
+  status: number
+}

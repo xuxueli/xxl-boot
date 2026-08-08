@@ -16,3 +16,15 @@ export interface Config {
   remark?: string
   [key: string]: unknown
 }
+
+/** 配置分页查询参数（搜索栏表单形态） */
+export interface ConfigQuery {
+  pageNum: number
+  pageSize: number
+  /** 名称关键词 */
+  name?: string
+  /** 配置Key */
+  key?: string
+  /** 状态：-1 全部 */
+  status?: number
+}

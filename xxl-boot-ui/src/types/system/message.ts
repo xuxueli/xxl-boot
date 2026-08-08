@@ -18,3 +18,15 @@ export interface Message {
   updateTime?: string
   [key: string]: unknown
 }
+
+/** 消息分页查询参数（搜索栏表单形态） */
+export interface MessageQuery {
+  pageNum: number
+  pageSize: number
+  /** 分类：-1 全部 */
+  category: number
+  /** 状态：-1 全部 */
+  status: number
+  /** 标题关键词 */
+  title?: string
+}

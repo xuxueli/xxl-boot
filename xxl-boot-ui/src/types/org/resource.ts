@@ -25,3 +25,11 @@ export interface Resource {
   children?: Resource[]
   [key: string]: unknown
 }
+
+/** 资源列表查询参数（搜索栏表单形态） */
+export interface ResourceQuery {
+  /** 名称关键词 */
+  name?: string
+  /** 状态：-1 全部 */
+  status: number
+}

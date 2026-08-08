@@ -124,20 +124,11 @@ import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
-import type { Dict } from '@/types/api'
+import type { Dict, DictQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
-
-/** 搜索表单查询参数 */
-interface DictQuery {
-  pageNum: number
-  pageSize: number
-  name?: string
-  type?: string
-  status?: number
-}
 
 /** 表格状态 */
 interface TableState {

@@ -19,3 +19,11 @@ export interface Org {
   children?: Org[]
   [key: string]: unknown
 }
+
+/** 组织列表查询参数（搜索栏表单形态） */
+export interface OrgQuery {
+  /** 名称关键词 */
+  name?: string
+  /** 状态：-1 全部 */
+  status: number
+}

@@ -119,20 +119,11 @@ import { listConfig, getConfig, delConfig, addConfig, updateConfig } from "@/api
 import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
-import type { Config } from '@/types/api'
+import type { Config, ConfigQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
-
-/** 搜索表单查询参数 */
-interface ConfigQuery {
-  pageNum: number
-  pageSize: number
-  name?: string
-  key?: string
-  status?: number
-}
 
 /** 表格状态 */
 interface TableState {

@@ -152,20 +152,11 @@ import { listMessage, getMessage, delMessage, addMessage, updateMessage } from "
 import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
-import type { Message } from '@/types/api'
+import type { Message, MessageQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
-
-/** 搜索表单查询参数 */
-interface MessageQuery {
-  pageNum: number
-  pageSize: number
-  category: number
-  status: number
-  title?: string
-}
 
 /** 表格状态 */
 interface TableState {

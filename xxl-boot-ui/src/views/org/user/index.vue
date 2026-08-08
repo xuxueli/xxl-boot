@@ -172,20 +172,11 @@ import { useFormReset } from '@/composables/useFormReset'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import { ElMessageBox } from 'element-plus'
-import type { User, Org, Role } from '@/types/api'
+import type { User, Org, Role, UserQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
-
-/** 搜索表单查询参数 */
-interface UserQuery {
-  pageNum: number
-  pageSize: number
-  username?: string
-  status: number
-  orgIds: number[]
-}
 
 /** 表格状态 */
 interface TableState {

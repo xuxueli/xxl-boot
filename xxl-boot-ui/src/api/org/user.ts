@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { User, UserForm, UserQuery } from '@/types/api'
+import type { User, UserForm } from '@/types/api'
 import type { PageModel, Response } from '@/types'
 
 /**
@@ -12,7 +12,7 @@ import type { PageModel, Response } from '@/types'
  * @param query 查询参数（offset/pagesize/username/status/orgIds）。
  * @returns 用户分页列表（response.data.data / response.data.total）。
  */
-export function listUser(query: UserQuery): Promise<Response<PageModel<User>>> {
+export function listUser(query: object): Promise<Response<PageModel<User>>> {
   return request({
     url: '/org/user/pageList',
     method: 'get',

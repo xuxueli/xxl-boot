@@ -91,19 +91,10 @@ import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import { download } from '@/utils/request'
-import type { Log } from '@/types/api'
+import type { Log, LogQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 
 const resetForm = useFormReset()
-
-/** 搜索表单查询参数 */
-interface LogQuery {
-  pageNum: number
-  pageSize: number
-  type: number
-  module: number
-  title?: string
-}
 
 /** 表格状态 */
 interface TableState {

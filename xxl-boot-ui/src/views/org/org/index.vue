@@ -134,17 +134,11 @@ import { loadEnumItem } from "@/api/system/dict/data"
 import { handleTree, parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
-import type { Org } from '@/types/api'
+import type { Org, OrgQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
-
-/** 搜索表单查询参数 */
-interface OrgQuery {
-  name?: string
-  status: number
-}
 
 /** 表格状态 */
 interface TableState {

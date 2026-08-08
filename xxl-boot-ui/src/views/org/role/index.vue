@@ -139,19 +139,11 @@ import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
-import type { Role, Resource } from '@/types/api'
+import type { Role, Resource, RoleQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { CheckboxValueType, FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
-
-/** 搜索表单查询参数 */
-interface RoleQuery {
-  pageNum: number
-  pageSize: number
-  name?: string
-  status: number
-}
 
 /** 表格状态 */
 interface TableState {

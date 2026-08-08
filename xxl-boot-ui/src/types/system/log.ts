@@ -20,3 +20,15 @@ export interface Log {
   updateTime?: string
   [key: string]: unknown
 }
+
+/** 日志分页查询参数（搜索栏表单形态） */
+export interface LogQuery {
+  pageNum: number
+  pageSize: number
+  /** 日志类型：-1 全部 */
+  type: number
+  /** 系统模块编码：-1 全部 */
+  module: number
+  /** 标题关键词 */
+  title?: string
+}

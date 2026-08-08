@@ -204,17 +204,11 @@ import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import { handleTree } from '@/utils/common'
 import modal from '@/utils/modal'
-import type { Resource } from '@/types/api'
+import type { Resource, ResourceQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
-
-/** 搜索表单查询参数 */
-interface ResourceQuery {
-  name?: string
-  status: number
-}
 
 /** 表格状态 */
 interface TableState {

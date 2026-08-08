@@ -32,3 +32,23 @@ export interface DictItem {
   remark?: string
   [key: string]: unknown
 }
+
+/** 字典类型分页查询参数（搜索栏表单形态） */
+export interface DictQuery {
+  pageNum: number
+  pageSize: number
+  /** 名称关键词 */
+  name?: string
+  /** 字典标识 */
+  type?: string
+  /** 状态：-1 全部 */
+  status?: number
+}
+
+/** 字典项分页查询参数（搜索栏表单形态） */
+export interface DataQuery {
+  pageNum: number
+  pageSize: number
+  /** 所属字典ID */
+  dictId?: number
+}
