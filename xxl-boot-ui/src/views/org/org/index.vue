@@ -135,7 +135,7 @@ import { handleTree, parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import type { Org } from '@/types/api'
-import type { DictOption } from '@/types'
+import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
@@ -201,7 +201,7 @@ const orgOptions = ref<Org[]>([])
 const originalOrders = ref<Record<number, number | undefined>>({})
 
 // 状态选项（从后端 OrgStatuEnum 枚举加载）
-const statusOptions = ref<DictOption[]>([])
+const statusOptions = ref<EnumOption[]>([])
 
 
 // --------------------------------- fun ---------------------------------

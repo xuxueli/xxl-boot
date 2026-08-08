@@ -2,13 +2,12 @@
  * 名称：路由 Store
  * 功能：将后端菜单数据转换为前端路由
  */
-import { defineStore } from 'pinia'
-import { markRaw } from 'vue'
-import { constantRoutes } from '@/router'
-import { getRouters } from '@/api/login'
+import {defineStore} from 'pinia'
+import {markRaw} from 'vue'
+import {constantRoutes} from '@/router'
+import {getRouters} from '@/api/login'
 import Layout from '@/layout/index.vue'
-import { ParentView, InnerLink } from '@/layout/components'
-import type { MenuRoute } from '@/types/api'
+import {InnerLink, ParentView} from '@/layout/components'
 
 // 预先收集 views 目录下所有 .vue 文件，供后端路由字符串按需映射
 const modules = import.meta.glob('./../../views/**/*.vue')

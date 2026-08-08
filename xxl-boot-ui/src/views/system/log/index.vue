@@ -92,7 +92,7 @@ import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import { download } from '@/utils/request'
 import type { Log } from '@/types/api'
-import type { DictOption } from '@/types'
+import type { EnumOption } from '@/types'
 
 const resetForm = useFormReset()
 
@@ -123,7 +123,7 @@ interface DetailState {
 
 /** 枚举数据状态（下拉选项 + 编码 → 名称映射） */
 interface DictState {
-  options: DictOption[]
+  options: EnumOption[]
   map: Record<number | string, string | undefined>
 }
 

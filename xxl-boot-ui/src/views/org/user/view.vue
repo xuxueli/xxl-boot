@@ -100,12 +100,12 @@ import { listRole } from '@/api/org/role'
 import { loadEnumItem } from '@/api/system/dict/data'
 import { parseTime } from '@/utils/common'
 import type { User, Role } from '@/types/api'
-import type { DictOption } from '@/types'
+import type { EnumOption } from '@/types'
 
 const visible = ref(false)
 const loading = ref(false)
 const info = ref<User>({})
-const statusOptions = ref<DictOption[]>([])
+const statusOptions = ref<EnumOption[]>([])
 const roleOptions = ref<Role[]>([])
 
 const roleNames = computed(() => {

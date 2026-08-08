@@ -125,7 +125,7 @@ import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import type { Dict } from '@/types/api'
-import type { DictOption } from '@/types'
+import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
@@ -211,7 +211,7 @@ const drawer = ref<DrawerState>({
 })
 
 // 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
-const statusOptions = ref<DictOption[]>([])
+const statusOptions = ref<EnumOption[]>([])
 
 /* --------------------------------- fun --------------------------------- */
 

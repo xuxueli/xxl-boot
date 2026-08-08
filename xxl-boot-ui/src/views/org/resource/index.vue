@@ -205,7 +205,7 @@ import { useFormReset } from '@/composables/useFormReset'
 import { handleTree } from '@/utils/common'
 import modal from '@/utils/modal'
 import type { Resource } from '@/types/api'
-import type { DictOption } from '@/types'
+import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
@@ -240,9 +240,9 @@ const formRef = ref<FormInstance>()   /* 编辑表单 ref */
 const iconSelectRef = ref<any>()      /* 图标选择器 ref */
 
 // 枚举选项数据：资源类型、资源状态、显示状态
-const typeOptions = ref<DictOption[]>([])
-const statusOptions = ref<DictOption[]>([])
-const visibleOptions = ref<DictOption[]>([])
+const typeOptions = ref<EnumOption[]>([])
+const statusOptions = ref<EnumOption[]>([])
+const visibleOptions = ref<EnumOption[]>([])
 
 // 上级资源下拉树选项
 const menuOptions = ref<Resource[]>([])

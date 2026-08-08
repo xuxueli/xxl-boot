@@ -1,6 +1,5 @@
 import { request } from '@/utils/request'
-import type { MenuRoute, UserInfo } from '@/types/api'
-import type { Response } from '@/types'
+import type { LoginInfo, MenuRoute, Response } from '@/types'
 
 /**
  * 名称：登录认证 & 路由 API
@@ -42,7 +41,7 @@ export function login(
  * 获取当前登录用户信息。
  * @returns 用户详情（含角色、权限集合）。
  */
-export function getInfo(): Promise<Response<UserInfo>> {
+export function getInfo(): Promise<Response<LoginInfo>> {
   return request({
     url: '/auth/loginCheck',
     method: 'get'

@@ -1,6 +1,6 @@
 import { request } from '@/utils/request'
 import type { DictItem } from '@/types/api'
-import type { DictOption, PageModel, Response } from '@/types'
+import type { EnumOption, PageModel, Response } from '@/types'
 
 /**
  * 名称：字典数据 API
@@ -92,7 +92,7 @@ export function delData(id: number | number[]): Promise<Response<unknown>> {
  * @param enumName 枚举类名。
  * @returns 枚举项列表（{ code, title }）。
  */
-export function loadEnumItem(enumName: string): Promise<Response<DictOption[]>> {
+export function loadEnumItem(enumName: string): Promise<Response<EnumOption[]>> {
   return request({
     url: '/system/dict/loadEnumItem',
     method: 'get',

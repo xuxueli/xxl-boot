@@ -153,7 +153,7 @@ import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import type { Message } from '@/types/api'
-import type { DictOption } from '@/types'
+import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
@@ -195,8 +195,8 @@ const messageViewRef = ref<InstanceType<typeof MessageDetailView> | null>(null) 
 const readUsersRef = ref<InstanceType<typeof ReadUsersDialog> | null>(null)        /* 已读弹框 ref */
 
 // 筛选项数据：消息分类 + 消息状态
-const categoryOptions = ref<DictOption[]>([])
-const statusOptions = ref<DictOption[]>([])
+const categoryOptions = ref<EnumOption[]>([])
+const statusOptions = ref<EnumOption[]>([])
 
 // 搜索栏：查询参数
 const queryParams = ref<MessageQuery>({

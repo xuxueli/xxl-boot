@@ -9,17 +9,7 @@
 import { defineStore } from 'pinia'
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, removeToken, setTokenWithAge } from '@/utils/auth'
-import type { Response } from '@/types'
-import type { UserInfo } from '@/types/api'
-
-/** 登录入参 */
-interface LoginParams {
-  username: string
-  password: string
-  captchaUuid?: string
-  captchaResult?: string
-  rememberMe?: boolean
-}
+import type { LoginInfo, LoginParams, Response } from '@/types'
 
 /** 用户会话状态 */
 interface UserState {
@@ -90,7 +80,7 @@ const useUserStore = defineStore(
        * 获取登录用户信息：拉取资料、角色、权限，检查密码状态
        */
       getInfo() {
-        return new Promise<Response<UserInfo>>((resolve, reject) => {
+        return new Promise<Response<LoginInfo>>((resolve, reject) => {
           getInfo().then(res => {
             const data = res.data
 

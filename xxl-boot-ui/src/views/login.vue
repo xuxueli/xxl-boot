@@ -83,7 +83,7 @@
 import { getCodeImg } from "@/api/login"
 import { useUserStore } from '@/store'
 import defaultSettings from '@/settings'
-import type { LoginParams } from '@/types/api'
+import type { LoginParams } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const title = defaultSettings.title                   // 系统标题

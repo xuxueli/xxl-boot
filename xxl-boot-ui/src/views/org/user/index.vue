@@ -173,7 +173,7 @@ import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import { ElMessageBox } from 'element-plus'
 import type { User, Org, Role } from '@/types/api'
-import type { DictOption } from '@/types'
+import type { EnumOption } from '@/types'
 import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
@@ -221,7 +221,7 @@ const deptTreeRef = ref<any>()        /* 左侧组织树 ref */
 const userViewRef = ref<any>()        /* 用户详情抽屉 ref */
 
 // 用户状态枚举选项（UserStatuEnum）
-const statusOptions = ref<DictOption[]>([])
+const statusOptions = ref<EnumOption[]>([])
 
 // 角色选项（编辑表单角色多选）
 const roleOptions = ref<Role[]>([])

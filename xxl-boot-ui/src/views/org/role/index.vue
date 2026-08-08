@@ -140,7 +140,7 @@ import { useFormReset } from '@/composables/useFormReset'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import type { Role, Resource } from '@/types/api'
-import type { DictOption } from '@/types'
+import type { EnumOption } from '@/types'
 import type { CheckboxValueType, FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
@@ -179,7 +179,7 @@ const formRef = ref<FormInstance>()   /* 编辑表单 ref */
 const menuRef = ref<any>()            /* 菜单权限树 ref */
 
 // 角色状态枚举选项
-const statusOptions = ref<DictOption[]>([])
+const statusOptions = ref<EnumOption[]>([])
 
 // 菜单权限树数据与交互状态
 const menuOptions = ref<Resource[]>([])   /* 菜单权限树数据 */

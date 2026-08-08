@@ -97,7 +97,7 @@ import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import type { DictItem } from '@/types/api'
-import type { DictOption } from '@/types'
+import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
@@ -183,7 +183,7 @@ const table = ref<TableState>({
 })
 
 // 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
-const statusOptions = ref<DictOption[]>([])
+const statusOptions = ref<EnumOption[]>([])
 
 /* --------------------------------- fun --------------------------------- */
 
@@ -208,11 +208,15 @@ function getDictName() {
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
-  const { pageNum, pageSize, ...rest } = queryParams.value
-  const params = {
+  const { pageNum, pageSize, dictId, ...rest } = queryParams.value
+  const params: Record<string, unknown> = {
     ...rest,
     offset: (pageNum - 1) * pageSize,
     pagesize: pageSize
+  }
+  // 字典ID为空（无路由来源进入）时不携带该参数，避免后端可选 long 参数收到空值
+  if (dictId != null) {
+    params.dictId = dictId
   }
   listData(params).then(response => {
     table.value.list = response.data.data

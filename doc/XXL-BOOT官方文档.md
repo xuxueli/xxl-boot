@@ -596,7 +596,8 @@ docker compose down
 
 ### 版本 v2.1.0 Release Notes[ING]
 - 1、【新增】前端UI模块（xxl-boot-ui）升级至 TypeScript;
-- 2、【TODO】代码生成工具升级，兼容支持 TypeScript；
+- 2、【TODO】代码生成工具升级，兼容支持 TypeScript；支持 type 文件；
+- 3、【TODO】ESLint + Prettier 配置；Agents 规范完善；
 
 
 ### TODO LIST

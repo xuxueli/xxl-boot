@@ -105,7 +105,7 @@ public class DictController {
     @XxlSso
     public Response<PageModel<DictItemDTO>> itemPageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                          @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                         long dictId) {
+                                                         @RequestParam(required = false, defaultValue = "0") long dictId) {
         PageModel<DictItemDTO> pageModel = dictService.itemPageList(dictId, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
