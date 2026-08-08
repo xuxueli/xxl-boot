@@ -350,7 +350,7 @@ function resetQuery() {
   handleQuery()
 }
 
-/** 新增按钮操作 */
+/** 新增按钮操作（不传 row 新增顶级资源，传 row 新增下级资源） */
 function handleAdd(row: any) {
   reset()
   getTreeOptions()
@@ -360,7 +360,7 @@ function handleAdd(row: any) {
   formState.value.title = "新增资源"
 }
 
-/** 修改按钮操作 */
+/** 修改按钮操作（行内修改，直接取行数据 id） */
 function handleUpdate(row: Resource) {
   reset()
   getTreeOptions()

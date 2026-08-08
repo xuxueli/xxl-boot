@@ -204,7 +204,7 @@ function handleExport() {
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row: any) {
-  const logIds = row && row.id != null ? row.id : table.value.ids
+  const logIds = row?.id ?? table.value.ids
   if (logIds == null || (Array.isArray(logIds) && logIds.length === 0)) {
     return
   }

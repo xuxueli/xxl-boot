@@ -370,7 +370,7 @@ function handleUpdate(row: any) {
   getDeptTree()
   loadRoleOptions()
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
-  const id = row && row.id != null ? row.id : table.value.ids[0]
+  const id = row?.id ?? table.value.ids[0]
   if (id == null) {
     return
   }
@@ -415,7 +415,7 @@ function submitForm() {
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row: any) {
-  const userIds = row && row.id != null ? row.id : table.value.ids
+  const userIds = row?.id ?? table.value.ids
   if (userIds == null || (Array.isArray(userIds) && userIds.length === 0)) {
     return
   }

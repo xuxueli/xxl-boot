@@ -239,14 +239,14 @@ function handleSelectionChange(selection: Config[]) {
 function handleAdd() {
   reset()
   formState.value.visible = true
-  formState.value.title = "添加配置"
+  formState.value.title = "新增配置"
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
 function handleUpdate(row: any) {
   reset()
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
-  const id = row && row.id != null ? row.id : table.value.ids[0]
+  const id = row?.id ?? table.value.ids[0]
   if (id == null) {
     return
   }
@@ -281,7 +281,7 @@ function submitForm() {
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row: any) {
-  const configIds = row && row.id != null ? row.id : table.value.ids
+  const configIds = row?.id ?? table.value.ids
   if (configIds == null || (Array.isArray(configIds) && configIds.length === 0)) {
     return
   }
