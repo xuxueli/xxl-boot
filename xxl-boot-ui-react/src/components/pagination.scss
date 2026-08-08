@@ -1,0 +1,14 @@
+/**
+ * 分页组件样式（pagination.scss）
+ */
+.pagination-container {
+  background: #fff;
+  padding: 8px 0;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+
+  &.hidden {
+    display: none;
+  }
+}

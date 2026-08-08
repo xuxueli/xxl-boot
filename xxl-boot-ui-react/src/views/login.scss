@@ -1,0 +1,84 @@
+/**
+ * 页面：Login（登录页面）样式
+ */
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #d2d6de;
+  background-size: cover;
+}
+.title {
+  margin: 0px auto 30px auto;
+  text-align: center;
+  color: #444;
+}
+
+.login-form {
+  border-radius: 6px;
+  background: #ffffff;
+  width: 400px;
+  padding: 25px 25px 5px 25px;
+  margin-bottom: 25px;
+  z-index: 1;
+  .ant-input {
+    height: 40px;
+  }
+  .input-icon {
+    height: 39px;
+    width: 14px;
+    margin-left: 0px;
+  }
+}
+.login-tip {
+  font-size: 13px;
+  text-align: center;
+  color: #bfbfbf;
+}
+.login-captcha-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  .ant-input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+.login-code {
+  flex-shrink: 0;
+  height: 40px;
+  img {
+    cursor: pointer;
+    vertical-align: middle;
+  }
+}
+.el-login-footer {
+  height: 40px;
+  line-height: 40px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  color: #666;
+  font-family: Arial;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+.login-code-img {
+  height: 40px;
+  padding-left: 12px;
+}
+
+/* 暗黑模式 */
+html.dark .login {
+  background-color: #d2d6de;
+  .login-form {
+    background: var(--el-bg-color-overlay, #1d1e1f) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+html.dark .title {
+  color: #c5c5c5;
+}

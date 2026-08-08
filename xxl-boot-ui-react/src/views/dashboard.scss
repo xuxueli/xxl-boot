@@ -1,0 +1,127 @@
+/**
+ * Dashboard（首页）样式
+ */
+.dashboard {
+  .stat-card {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    transition: box-shadow 0.2s;
+
+    &:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .stat-body {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .stat-icon-wrap {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .stat-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  .stat-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-value {
+    font-size: 26px;
+    font-weight: 500;
+    color: #1f2937;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: #909399;
+    margin-top: 4px;
+  }
+
+  .row-chart {
+    margin-top: 4px;
+  }
+
+  .chart-card,
+  .msg-card {
+    margin-bottom: 20px;
+    border-radius: 8px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+    color: #303133;
+    width: 100%;
+  }
+
+  .card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chart-box {
+    height: 320px;
+    width: 100%;
+  }
+
+  .msg-empty {
+    text-align: center;
+    padding: 40px 0;
+    color: #bbb;
+    font-size: 13px;
+  }
+
+  .msg-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .msg-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .msg-title {
+    font-size: 13px;
+    color: #303133;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 6px;
+  }
+
+  .msg-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .msg-time {
+    font-size: 11px;
+    color: #bbb;
+  }
+}

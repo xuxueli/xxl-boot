@@ -1,0 +1,30 @@
+/**
+ * Help（帮助中心）样式
+ */
+.help {
+  h2 {
+    margin-top: 10px;
+    font-weight: 200;
+  }
+
+  p {
+    margin-top: 10px;
+    font-weight: normal;
+    font-size: 13px;
+    color: #676a6c;
+
+    b {
+      font-weight: 700;
+    }
+  }
+
+  a {
+    color: #00afff;
+    text-decoration: auto;
+  }
+}
+
+.divider {
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
