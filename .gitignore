@@ -10,6 +10,7 @@
 # for fontend
 node_modules/
 dist/
+.vite/
 package-lock.json
 auto-imports.d.ts
 
