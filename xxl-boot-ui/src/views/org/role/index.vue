@@ -135,8 +135,9 @@
 <script setup name="Role" lang="ts">
 import { listRole, getRole, addRole, updateRole, delRole, roleMenuTreeselect, updateRoleRes } from "@/api/org/role"
 import { listResource as menuTreeselect } from "@/api/org/resource"
-import { loadEnumItem } from "@/api/system/dict/data"
+import { useEnumOption } from "@/composables/useEnumOption"
 import { useFormReset } from '@/composables/useFormReset'
+import { usePageParams } from '@/composables/usePageParams'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import type { Role, Resource, RoleQuery } from '@/types/api'
@@ -171,7 +172,7 @@ const formRef = ref<FormInstance>()   /* 编辑表单 ref */
 const menuRef = ref<any>()            /* 菜单权限树 ref */
 
 // 角色状态枚举选项
-const statusOptions = ref<EnumOption[]>([])
+const { RoleStatusEnum: statusOptions } = useEnumOption('RoleStatusEnum')
 
 // 菜单权限树数据与交互状态
 const menuOptions = ref<Resource[]>([])   /* 菜单权限树数据 */
@@ -213,11 +214,7 @@ const formState = ref<FormState>({
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载角色状态选项 */
-function loadOptions() {
-  loadEnumItem('RoleStatusEnum').then(res => {
-    statusOptions.value = res.data
-  })
-}
+
 
 /** 状态编码 → 文案 */
 function statusText(status: number) {
@@ -226,15 +223,13 @@ function statusText(status: number) {
 }
 
 /** 查询角色列表 */
+// 前端分页参数 → 后端请求参数（offset/pagesize）
+const buildListParams = usePageParams(queryParams)
+
 function getList() {
   table.value.loading = true
-  // 前端分页参数 → 后端分页参数（offset/pagesize）
-  const { pageNum, pageSize, ...rest } = queryParams.value
-  const params = {
-    ...rest,
-    offset: (pageNum - 1) * pageSize,
-    pagesize: pageSize
-  }
+  // 前端分页参数 → 后端请求参数（offset/pagesize）
+  const params = buildListParams()
   listRole(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
@@ -405,6 +400,5 @@ function handleDelete(row: any) {
 // --------------------------------- page init ---------------------------------
 
 // 页面初始化：加载角色状态枚举 + 角色列表
-loadOptions()
 getList()
 </script>

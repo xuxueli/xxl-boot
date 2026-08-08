@@ -92,8 +92,9 @@
 <script setup name="Data" lang="ts">
 import { getType } from "@/api/system/dict/type"
 import { listData, getData, delData, addData, updateData } from "@/api/system/dict/data"
-import { loadEnumItem } from "@/api/system/dict/data"
+import { useEnumOption } from "@/composables/useEnumOption"
 import { useFormReset } from '@/composables/useFormReset'
+import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import type { DictItem, DataQuery, DataListQuery } from '@/types/api'
@@ -176,16 +177,12 @@ const table = ref<TableState>({
 })
 
 // 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
-const statusOptions = ref<EnumOption[]>([])
+const { DictStatusEnum: statusOptions } = useEnumOption('DictStatusEnum')
 
 /* --------------------------------- fun --------------------------------- */
 
 /** 从后端枚举接口加载状态选项 */
-function loadOptions() {
-  loadEnumItem('DictStatusEnum').then(res => {
-    statusOptions.value = res.data
-  })
-}
+
 
 /** 查询当前字典名称 */
 function getDictName() {
@@ -198,18 +195,16 @@ function getDictName() {
 }
 
 /** 查询字典项列表 */
+// 前端分页参数 → 后端请求参数（offset/pagesize）
+const buildListParams = usePageParams(queryParams)
+
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
-  const { pageNum, pageSize, dictId, ...rest } = queryParams.value
-  const params: DataListQuery = {
-    ...rest,
-    offset: (pageNum - 1) * pageSize,
-    pagesize: pageSize
-  }
+  const params = buildListParams()
   // 字典ID为空（无路由来源进入）时不携带该参数，避免后端可选 long 参数收到空值
-  if (dictId != null) {
-    params.dictId = dictId
+  if (dictId.value != null) {
+    params.dictId = dictId.value
   }
   listData(params).then(response => {
     table.value.list = response.data.data
@@ -318,7 +313,6 @@ function handleDelete(row: any) {
 /* --------------------------------- page init --------------------------------- */
 // 页面初始化：加载字典名称、状态选项 + 字典项列表
 getDictName()
-loadOptions()
 getList()
 
 </script>

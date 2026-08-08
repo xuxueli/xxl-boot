@@ -120,8 +120,9 @@
 <script setup name="Dict" lang="ts">
 import DictDataDrawer from './detail.vue'
 import { listType, getType, delType, addType, updateType } from "@/api/system/dict/type"
-import { loadEnumItem } from "@/api/system/dict/data"
+import { useEnumOption } from "@/composables/useEnumOption"
 import { useFormReset } from '@/composables/useFormReset'
+import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import type { Dict, DictQuery } from '@/types/api'
@@ -202,27 +203,21 @@ const drawer = ref<DrawerState>({
 })
 
 // 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
-const statusOptions = ref<EnumOption[]>([])
+const { DictStatusEnum: statusOptions } = useEnumOption('DictStatusEnum')
 
 /* --------------------------------- fun --------------------------------- */
 
 /** 从后端枚举接口加载状态选项 */
-function loadOptions() {
-  loadEnumItem('DictStatusEnum').then(res => {
-    statusOptions.value = res.data
-  })
-}
+
 
 /** 查询字典类型列表 */
+// 前端分页参数 → 后端请求参数（offset/pagesize）
+const buildListParams = usePageParams(queryParams)
+
 function getList() {
   table.value.loading = true
-  // 前端分页参数 → 后端分页参数（offset/pagesize）
-  const { pageNum, pageSize, ...rest } = queryParams.value
-  const params = {
-    ...rest,
-    offset: (pageNum - 1) * pageSize,
-    pagesize: pageSize
-  }
+  // 前端分页参数 → 后端请求参数（offset/pagesize）
+  const params = buildListParams()
   listType(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
@@ -343,7 +338,6 @@ function handleDelete(row: any) {
 
 /* --------------------------------- page init --------------------------------- */
 // 页面初始化：加载状态选项 + 字典类型列表
-loadOptions()
 getList()
 
 </script>

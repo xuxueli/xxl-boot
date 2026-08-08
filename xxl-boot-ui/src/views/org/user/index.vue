@@ -167,7 +167,7 @@ import UserViewDrawer from "./view.vue"
 import { listUser, addUser, updateUser, delUser } from "@/api/org/user"
 import { listRole } from "@/api/org/role"
 import { listOrg } from "@/api/org/org"
-import { loadEnumItem } from "@/api/system/dict/data"
+import { useEnumOption } from "@/composables/useEnumOption"
 import { useFormReset } from '@/composables/useFormReset'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
@@ -212,7 +212,7 @@ const deptTreeRef = ref<any>()        /* 左侧组织树 ref */
 const userViewRef = ref<any>()        /* 用户详情抽屉 ref */
 
 // 用户状态枚举选项（UserStatuEnum）
-const statusOptions = ref<EnumOption[]>([])
+const { UserStatuEnum: statusOptions } = useEnumOption('UserStatuEnum')
 
 // 角色选项（编辑表单角色多选）
 const roleOptions = ref<Role[]>([])
@@ -266,11 +266,7 @@ const passwordRules: FormItemRule[] = [
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载用户状态选项 */
-function loadStatusOptions() {
-  loadEnumItem('UserStatuEnum').then(res => {
-    statusOptions.value = res.data
-  })
-}
+
 
 /** 加载角色选项（用于编辑表单角色多选） */
 function loadRoleOptions() {
@@ -496,7 +492,6 @@ function handleViewData(row: User) {
 // --------------------------------- page init ---------------------------------
 
 // 页面初始化：加载状态枚举、组织树与用户列表
-loadStatusOptions()
 getDeptTree()
 getList()
 </script>

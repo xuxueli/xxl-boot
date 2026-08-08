@@ -130,7 +130,7 @@
 
 <script setup name="Org" lang="ts">
 import { listOrg, getOrg, delOrg, addOrg, updateOrg, updateOrgSort } from "@/api/org/org"
-import { loadEnumItem } from "@/api/system/dict/data"
+import { useEnumOption } from "@/composables/useEnumOption"
 import { handleTree, parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
@@ -195,17 +195,13 @@ const orgOptions = ref<Org[]>([])
 const originalOrders = ref<Record<number, number | undefined>>({})
 
 // 状态选项（从后端 OrgStatuEnum 枚举加载）
-const statusOptions = ref<EnumOption[]>([])
+const { OrgStatuEnum: statusOptions } = useEnumOption('OrgStatuEnum')
 
 
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载状态选项 */
-function loadOptions() {
-  loadEnumItem('OrgStatuEnum').then(res => {
-    statusOptions.value = res.data
-  })
-}
+
 
 /** 查询组织树列表 */
 function getList() {
@@ -403,6 +399,5 @@ function handleDelete(row: Org) {
 // --------------------------------- page init ---------------------------------
 
 // 页面初始化：加载状态选项与组织树
-loadOptions()
 getList()
 </script>

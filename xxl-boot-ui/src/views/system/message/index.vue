@@ -149,8 +149,9 @@
 import ReadUsersDialog from "./ReadUsers.vue"
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
 import { listMessage, getMessage, delMessage, addMessage, updateMessage } from "@/api/system/message"
-import { loadEnumItem } from "@/api/system/dict/data"
+import { useEnumOption } from "@/composables/useEnumOption"
 import { useFormReset } from '@/composables/useFormReset'
+import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import type { Message, MessageQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
@@ -186,8 +187,7 @@ const messageViewRef = ref<InstanceType<typeof MessageDetailView> | null>(null) 
 const readUsersRef = ref<InstanceType<typeof ReadUsersDialog> | null>(null)        /* 已读弹框 ref */
 
 // 筛选项数据：消息分类 + 消息状态
-const categoryOptions = ref<EnumOption[]>([])
-const statusOptions = ref<EnumOption[]>([])
+const { MessageCategoryEnum: categoryOptions, MessageStatusEnum: statusOptions } = useEnumOption('MessageCategoryEnum', 'MessageStatusEnum')
 
 // 搜索栏：查询参数
 const queryParams = ref<MessageQuery>({
@@ -224,25 +224,16 @@ const formState = ref<FormState>({
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载分类、状态选项 */
-function loadOptions() {
-  loadEnumItem('MessageCategoryEnum').then(res => {
-    categoryOptions.value = res.data
-  })
-  loadEnumItem('MessageStatusEnum').then(res => {
-    statusOptions.value = res.data
-  })
-}
+
 
 /** 查询消息列表 */
+// 前端分页参数 → 后端请求参数（offset/pagesize）
+const buildListParams = usePageParams(queryParams)
+
 function getList() {
   table.value.loading = true
-  // 前端分页参数 → 后端分页参数（offset/pagesize）
-  const { pageNum, pageSize, ...rest } = queryParams.value
-  const params = {
-    ...rest,
-    offset: (pageNum - 1) * pageSize,
-    pagesize: pageSize
-  }
+  // 前端分页参数 → 后端请求参数（offset/pagesize）
+  const params = buildListParams()
   listMessage(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
@@ -371,7 +362,6 @@ function handleDelete(row: any) {
 // --------------------------------- page init ---------------------------------
 
 // 页面初始化：加载分类/状态选项 + 消息列表
-loadOptions()
 getList()
 
 </script>

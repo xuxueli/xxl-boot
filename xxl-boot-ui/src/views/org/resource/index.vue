@@ -200,7 +200,7 @@
 
 <script setup name="Resource" lang="ts">
 import { listResource, getResource, addResource, updateResource, delResource, updateResourceSort } from "@/api/org/resource"
-import { loadEnumItem } from "@/api/system/dict/data"
+import { useEnumOption } from "@/composables/useEnumOption"
 import { useFormReset } from '@/composables/useFormReset'
 import { handleTree } from '@/utils/common'
 import modal from '@/utils/modal'
@@ -234,9 +234,7 @@ const formRef = ref<FormInstance>()   /* 编辑表单 ref */
 const iconSelectRef = ref<any>()      /* 图标选择器 ref */
 
 // 枚举选项数据：资源类型、资源状态、显示状态
-const typeOptions = ref<EnumOption[]>([])
-const statusOptions = ref<EnumOption[]>([])
-const visibleOptions = ref<EnumOption[]>([])
+const { ResourceTypeEnum: typeOptions, ResourceStatuEnum: statusOptions, ResourceVisibleEnum: visibleOptions } = useEnumOption('ResourceTypeEnum', 'ResourceStatuEnum', 'ResourceVisibleEnum')
 
 // 上级资源下拉树选项
 const menuOptions = ref<Resource[]>([])
@@ -274,17 +272,7 @@ const originalOrders = ref<Record<number, number | undefined>>({})
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载类型、状态、显示状态选项 */
-function loadOptions() {
-  loadEnumItem('ResourceTypeEnum').then(res => {
-    typeOptions.value = res.data
-  })
-  loadEnumItem('ResourceStatuEnum').then(res => {
-    statusOptions.value = res.data
-  })
-  loadEnumItem('ResourceVisibleEnum').then(res => {
-    visibleOptions.value = res.data
-  })
-}
+
 
 /** 查询资源树列表（后端返回扁平数据，前端转树） */
 function getList() {
@@ -466,6 +454,5 @@ function handleDelete(row: Resource) {
 // --------------------------------- page init ---------------------------------
 
 // 页面初始化：加载枚举选项 + 资源树列表
-loadOptions()
 getList()
 </script>

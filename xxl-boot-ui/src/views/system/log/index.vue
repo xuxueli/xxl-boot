@@ -89,6 +89,7 @@ import { pageList, delOperlog } from "@/api/system/log"
 import { loadEnumItem } from "@/api/system/dict/data"
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
+import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { download } from '@/utils/request'
 import type { Log, LogQuery } from '@/types/api'
@@ -160,15 +161,13 @@ const moduleDict = ref<DictState>({
 // --------------------------------- fun ---------------------------------
 
 /** 查询日志列表 */
+// 前端分页参数 → 后端请求参数（offset/pagesize）
+const buildListParams = usePageParams(queryParams)
+
 function getList() {
   table.value.loading = true
-  // 前端分页参数 → 后端分页参数（offset/pagesize）
-  const { pageNum, pageSize, ...rest } = queryParams.value
-  const params = {
-    ...rest,
-    offset: (pageNum - 1) * pageSize,
-    pagesize: pageSize
-  }
+  // 前端分页参数 → 后端请求参数（offset/pagesize）
+  const params = buildListParams()
   pageList(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total

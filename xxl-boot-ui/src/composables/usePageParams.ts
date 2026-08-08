@@ -1,0 +1,34 @@
+/**
+ * usePageParams - 前端分页参数 → 后端请求参数
+ *
+ * 列表页搜索栏使用 pageNum/pageSize 分页，后端约定 offset/pagesize。
+ * 本组合式函数封装统一的转换逻辑，避免各页面重复编写。
+ *
+ * 用法：
+ *   const buildListParams = usePageParams(queryParams)
+ *   const params = buildListParams()   // { ...筛选字段, offset, pagesize }
+ */
+import type { Ref } from 'vue'
+
+/** 分页表单查询参数：必须含前端分页字段 pageNum/pageSize */
+type PageFormQuery = {
+  pageNum: number
+  pageSize: number
+  [key: string]: unknown
+}
+
+/**
+ * 生成「后端列表请求参数」构建函数
+ * @param queryParams 搜索栏查询参数（含 pageNum/pageSize）
+ * @returns buildListParams()：去除 pageNum/pageSize，补充 offset/pagesize，返回类型与 ListQuery 兼容
+ */
+export function usePageParams<T extends PageFormQuery>(queryParams: Ref<T>) {
+  return function buildListParams(): Omit<T, 'pageNum' | 'pageSize'> & { offset: number; pagesize: number } {
+    const { pageNum, pageSize, ...rest } = queryParams.value
+    return {
+      ...rest,
+      offset: (pageNum - 1) * pageSize,
+      pagesize: pageSize
+    }
+  }
+}
