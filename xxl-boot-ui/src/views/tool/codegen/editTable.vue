@@ -119,22 +119,22 @@
           </el-table-column>
           <el-table-column label="插入" min-width="5%">
             <template #default="scope">
-              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isInsert"></el-checkbox>
+              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isInsert" :disabled="scope.row.javaField === 'id'"></el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label="编辑" min-width="5%">
             <template #default="scope">
-              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isEdit"></el-checkbox>
+              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isEdit" :disabled="scope.row.javaField === 'id'"></el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label="列表" min-width="5%">
             <template #default="scope">
-              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isList"></el-checkbox>
+              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isList" :disabled="scope.row.javaField === 'id'"></el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label="查询" min-width="5%">
             <template #default="scope">
-              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isQuery"></el-checkbox>
+              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isQuery" :disabled="scope.row.javaField === 'id'"></el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label="查询方式" min-width="10%">
@@ -244,6 +244,13 @@ function open(id: number) {
     const { fieldList, ...rest } = (res.data || {}) as { fieldList?: any[]; [key: string]: any }
     info.value = { formColNum: 1, tplWebType: 'element-plus-typescript', ...rest }
     columns.value = fieldList || []
+    /* id 主键字段：插入/编辑不可勾选，强制置 0（自增主键不参与新增/编辑） */
+    columns.value.forEach((col) => {
+      if (col.javaField === 'id') {
+        col.isInsert = '0'
+        col.isEdit = '0'
+      }
+    })
     /* 校验默认值是否在可选范围内 */
     if (![1, 2, 3].includes(info.value.formColNum)) info.value.formColNum = 1
     if (info.value.tplWebType !== 'element-plus-typescript') info.value.tplWebType = 'element-plus-typescript'

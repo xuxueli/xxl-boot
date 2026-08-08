@@ -217,14 +217,14 @@ function handleGenTable(row: any) {
 
 /** 打开创建表弹窗 */
 function openCreateDialog() {
-  let demo_sql = `CREATE TABLE \`test01\` (
+  let demo_sql = `CREATE TABLE \`product01\` (
       \`id\`            INT             NOT NULL AUTO_INCREMENT      COMMENT '主键ID',
-      \`name\`          VARCHAR(50)     NOT NULL                     COMMENT '名称',
-      \`age\`           INT             NOT NULL                     COMMENT '年龄',
+      \`name\`          VARCHAR(50)     NOT NULL                     COMMENT '产品名称',
+      \`num\`           INT             NOT NULL                     COMMENT '产品数量',
       \`add_time\`      DATETIME        NOT NULL                     COMMENT '新增时间',
       \`update_time\`   DATETIME        NOT NULL                     COMMENT '更新时间',
       PRIMARY KEY (\`id\`)
-  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+  ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT='产品信息表';
   `
 
   createDialog.value.content = demo_sql

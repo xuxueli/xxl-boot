@@ -174,8 +174,11 @@ public class CodegenServiceImpl implements CodegenService {
                     f.setJavaType(fi.getFieldClass());
 
                     boolean isWhitelist = List.of("id", "add_time", "update_time").contains(colName);
-                    f.setIsInsert("1");
-                    f.setIsEdit("1");
+                    // id 主键：自增不参与新增/编辑；白名单字段（id/add_time/update_time）不参与列表/查询
+                    boolean isIdField = "id".equals(colName);
+
+                    f.setIsInsert(isIdField ? "0" : "1");
+                    f.setIsEdit(isIdField ? "0" : "1");
                     f.setIsList(isWhitelist ? "0" : "1");
                     f.setIsQuery(isWhitelist ? "0" : "1");
                     f.setIsRequired("0");
@@ -241,6 +244,11 @@ public class CodegenServiceImpl implements CodegenService {
         Codegen codegen = codegenMapper.load(id);
         if (codegen == null) return Response.ofFail("表不存在");
         List<CodegenField> fields = codegenFieldMapper.findByCodegenId(id);
+        // 校验 id 主键字段：前端页面交互（编辑/删除/新增判定）强依赖 id
+        if (!hasIdField(fields)) {
+            return Response.ofFail("业务表缺少 id 主键字段，无法生成代码");
+        }
+
         try {
             Map<String, Object> params = buildTemplateContext(codegen, fields);
 
@@ -284,30 +292,38 @@ public class CodegenServiceImpl implements CodegenService {
                 if (codegen == null) continue;
                 List<CodegenField> fields = codegenFieldMapper.findByCodegenId(codegen.getId());
 
+                // 校验 id 主键字段：缺失时跳过该表
+                if (!hasIdField(fields)) {
+                    logger.warn("代码生成跳过表[{}]：缺少 id 主键字段", codegen.getTableName());
+                    continue;
+                }
+
                 // param
                 Map<String, Object> params = buildTemplateContext(codegen, fields);
                 String pkg = codegen.getPackageName() != null ? codegen.getPackageName().replace('.', '/') : "com.xxl.boot.api.business";
                 String module = codegen.getModuleName() != null ? codegen.getModuleName() : "demo";
                 String cn = codegen.getBusinessName() != null ? codegen.getBusinessName() : "Demo";
+                // 业务名小写：用于 vue 目录、api/types 文件名，与菜单 url（/module/name）及页面 import 路径保持一致
+                String cnLower = cn.toLowerCase();
 
                 // generate java
-                addZipEntry(zos, "main/java/" + pkg + "/entity/" + cn + ".java", render("java/entity.java.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/mapper/" + cn + "Mapper.java", render("java/mapper.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/model/" + cn + ".java", render("java/entity.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/mapper/" + cn + "Mapper.java", render("java/mapper.java.ftl", params));
                 addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "Mapper.xml", render("java/mapper.xml.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/service/" + cn + "Service.java", render("java/service.java.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/service/impl/" + cn + "ServiceImpl.java", render("java/serviceImpl.java.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/controller/" + cn + "Controller.java", render("java/controller.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/service/" + cn + "Service.java", render("java/service.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/service/impl/" + cn + "ServiceImpl.java", render("java/serviceImpl.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/controller/" + cn + "Controller.java", render("java/controller.java.ftl", params));
 
                 // generate sql
                 addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "-init.sql", render("sql/sql.ftl", params));
 
                 // generate vue
-                addZipEntry(zos, "vue/types/" + module + "/" + cn + ".ts", render("vue3/types.ts.ftl", params));
-                addZipEntry(zos, "vue/api/" + module + "/" + cn + ".ts", render("vue3/api.ts.ftl", params));
+                addZipEntry(zos, "vue/types/" + module + "/" + cnLower + ".ts", render("vue3/types.ts.ftl", params));
+                addZipEntry(zos, "vue/api/" + module + "/" + cnLower + ".ts", render("vue3/api.ts.ftl", params));
                 if (codegen.getTplCategory().equals("tree")) {
-                    addZipEntry(zos, "vue/views/" + module + "/" + cn + "/index.vue", render("vue3/index-tree.vue.ftl", params));
+                    addZipEntry(zos, "vue/views/" + module + "/" + cnLower + "/index.vue", render("vue3/index-tree.vue.ftl", params));
                 } else {
-                    addZipEntry(zos, "vue/views/" + module + "/" + cn + "/index.vue", render("vue3/index.vue.ftl", params));
+                    addZipEntry(zos, "vue/views/" + module + "/" + cnLower + "/index.vue", render("vue3/index.vue.ftl", params));
                 }
 
             }
@@ -360,6 +376,25 @@ public class CodegenServiceImpl implements CodegenService {
         ctx.put("codegen", codegen);
         ctx.put("fields", fields);
         return ctx;
+    }
+
+    /**
+     * 校验字段列表是否包含 id 主键字段
+     * 前端生成页面的编辑/删除/新增判定等交互强依赖 id 字段
+     *
+     * @param fields 字段列表
+     * @return 包含 id 字段返回 true
+     */
+    private boolean hasIdField(List<CodegenField> fields) {
+        if (fields == null || fields.isEmpty()) {
+            return false;
+        }
+        for (CodegenField field : fields) {
+            if ("id".equals(field.getJavaField())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

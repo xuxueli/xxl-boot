@@ -5,11 +5,12 @@
         </#if>
     </#list>
 </#if>
-package ${codegen.packageName}.model;
+package ${codegen.packageName}.${codegen.moduleName}.model;
 
 import java.io.Serializable;
 <#if importDdate?? && importDdate>
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 </#if>
 
 /**
@@ -25,6 +26,9 @@ public class ${codegen.businessName} implements Serializable {
     /**
     * ${fieldItem.columnComment}
     */
+<#if fieldItem.javaType == "Date">
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+</#if>
     private ${fieldItem.javaType} ${fieldItem.javaField};
 
 </#list>

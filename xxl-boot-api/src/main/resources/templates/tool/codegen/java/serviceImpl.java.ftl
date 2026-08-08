@@ -1,4 +1,4 @@
-package ${codegen.packageName}.service;
+package ${codegen.packageName}.${codegen.moduleName}.service.impl;
 
 import org.springframework.stereotype.Service;
 
@@ -8,8 +8,9 @@ import java.util.List;
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
-import ${codegen.packageName}.model.${codegen.businessName};
-import ${codegen.packageName}.mapper.${codegen.businessName}Mapper;
+import ${codegen.packageName}.${codegen.moduleName}.model.${codegen.businessName};
+import ${codegen.packageName}.${codegen.moduleName}.mapper.${codegen.businessName}Mapper;
+import ${codegen.packageName}.${codegen.moduleName}.service.${codegen.businessName}Service;
 
 <#assign cn = codegen.businessName />
 <#assign cnLower = cn?uncap_first />

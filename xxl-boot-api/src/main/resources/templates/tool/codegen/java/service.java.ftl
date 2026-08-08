@@ -1,11 +1,11 @@
-package ${codegen.packageName}.service;
+package ${codegen.packageName}.${codegen.moduleName}.service;
 
 import java.util.List;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 
-import ${codegen.packageName}.model.${codegen.businessName};
+import ${codegen.packageName}.${codegen.moduleName}.model.${codegen.businessName};
 
 <#assign cn = codegen.businessName />
 <#assign cnLower = cn?uncap_first />

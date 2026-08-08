@@ -45,7 +45,7 @@
       </el-form-item>
 <#else>
       <el-form-item label="${comment}" prop="${field.javaField}">
-        <el-date-picker v-model="queryParams.${field.javaField}" type="date" placeholder="选择${comment}" />
+        <el-date-picker v-model="queryParams.${field.javaField}" type="date" value-format="YYYY-MM-DD" placeholder="选择${comment}" />
       </el-form-item>
 </#if>
 </#if>
@@ -78,11 +78,7 @@
     <!-- 数据列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" type="index" width="50" align="center">
-        <template #default="scope">
-          <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="序号" prop="id" width="100" align="center" />
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isList == "1">
@@ -103,14 +99,23 @@
 
     <!-- 添加或修改${codegen.functionName}对话框 -->
     <el-dialog :title="formState.title" v-model="formState.visible" width="600px" append-to-body>
+<#assign formColNum = codegen.formColNum!1 />
+<#if formColNum lt 1><#assign formColNum = 1 /></#if>
+<#assign colSpan = (24 / formColNum)?int />
       <el-form ref="${codegen.businessName?uncap_first}Ref" :model="formState.form" :rules="formState.rules" label-width="80px">
+      <el-row :gutter="10">
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
-<#if field.isInsert == "1" || field.isEdit == "1">
+<#if (field.isInsert == "1" || field.isEdit == "1") && field.javaField != "id" && field.javaField != "addTime" && field.javaField != "updateTime">
 <#assign comment = field.columnComment!field.javaField />
+    <el-col :span="${colSpan}">
 <#if field.htmlType == "input">
         <el-form-item label="${comment}" prop="${field.javaField}">
+<#if tsType(field.javaType) == "number">
+          <el-input :model-value="formState.form.${field.javaField}" @input="handleNumInput('${field.javaField}', $event)" placeholder="请输入${comment}" />
+<#else>
           <el-input v-model="formState.form.${field.javaField}" placeholder="请输入${comment}" />
+</#if>
         </el-form-item>
 <#elseif field.htmlType == "textarea">
         <el-form-item label="${comment}" prop="${field.javaField}">
@@ -136,7 +141,7 @@
         </el-form-item>
 <#elseif field.htmlType == "datetime">
         <el-form-item label="${comment}" prop="${field.javaField}">
-          <el-date-picker v-model="formState.form.${field.javaField}" type="datetime" placeholder="选择${comment}" />
+          <el-date-picker v-model="formState.form.${field.javaField}" type="datetime" value-format="YYYY-MM-DD HH:mm:ss" placeholder="选择${comment}" />
         </el-form-item>
 <#elseif field.htmlType == "imageUpload">
         <el-form-item label="${comment}" prop="${field.javaField}">
@@ -151,10 +156,12 @@
           <editor v-model="formState.form.${field.javaField}" />
         </el-form-item>
 </#if>
+    </el-col>
 </#if>
 </#list>
 </#if>
-      </el-form>
+      </el-row>
+    </el-form>
       <template #footer>
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -221,7 +228,15 @@ const formState = ref<FormState<${codegen.businessName}Form>>({
   visible: false, /* 对话框显隐 */
   title: '', /* 对话框标题 */
   form: {}, /* 表单数据 */
-  rules: {} /* 校验规则 */
+  rules: {
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if (field.isInsert == "1" || field.isEdit == "1") && (field.isRequired!"0") == "1" && field.javaField != "id" && field.javaField != "addTime" && field.javaField != "updateTime">
+    ${field.javaField}: [{ required: true, message: '${field.columnComment!field.javaField}不能为空', trigger: '<#if field.htmlType == "input" || field.htmlType == "textarea">blur<#else>change</#if>' }],
+</#if>
+</#list>
+</#if>
+  } /* 校验规则（isRequired=1 字段必填） */
 })
 
 /** 查询${codegen.functionName}列表 */
@@ -252,18 +267,22 @@ function cancel() {
 /** 表单重置 */
 function reset() {
   formState.value.form = {
+    id: undefined, /* 编号 */
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
-<#if field.isInsert == "1" || field.isEdit == "1">
+<#if (field.isInsert == "1" || field.isEdit == "1") && field.javaField != "id" && field.javaField != "addTime" && field.javaField != "updateTime">
     ${field.javaField}: undefined, /* ${field.columnComment!field.javaField} */
 </#if>
 </#list>
 </#if>
-<#if !hasIdField>
-    id: undefined,
-</#if>
   }
   resetForm('${codegen.businessName?uncap_first}Ref')
+}
+
+/** 数字输入过滤：仅允许数字并同步表单（空值置 undefined） */
+function handleNumInput(key: string, value: string) {
+  const filtered = String(value ?? '').replace(/[^0-9]/g, '')
+  ;(formState.value.form as Record<string, unknown>)[key] = filtered === '' ? undefined : Number(filtered)
 }
 
 /** 搜索按钮操作 */
@@ -319,7 +338,7 @@ function submitForm() {
   ${codegen.businessName?uncap_first}Ref.value?.validate((valid) => {
     if (valid) {
       // 已有 id 走更新，否则走新增
-      if (formState.value.form.id != undefined) {
+      if (formState.value.form.id != null) {
         update${codegen.businessName}(formState.value.form).then(() => {
           modal.msgSuccess('修改成功')
           formState.value.visible = false

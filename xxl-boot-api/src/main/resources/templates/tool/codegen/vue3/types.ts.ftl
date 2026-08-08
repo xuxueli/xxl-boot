@@ -36,26 +36,17 @@ export interface ${codegen.businessName}Query {
 </#if>
 }
 
-<#assign hasIdField = false>
-<#if fields?? && fields?size gt 0>
-<#list fields as field>
-<#if field.javaField == "id"><#assign hasIdField = true></#if>
-</#list>
-</#if>
-
 /** ${codegen.functionName}表单（新增/修改入参） */
 export interface ${codegen.businessName}Form {
+  /** 编号 */
+  id?: number
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
-<#if field.isInsert == "1" || field.isEdit == "1">
+<#if (field.isInsert == "1" || field.isEdit == "1") && field.javaField != "id">
   /** ${field.columnComment!field.javaField} */
   ${field.javaField}?: ${tsType(field.javaType)}
 </#if>
 </#list>
-</#if>
-<#if !hasIdField>
-  /** 编号 */
-  id?: number
 </#if>
 }
 

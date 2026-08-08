@@ -47,7 +47,7 @@ export function del${codegen.businessName}(id: number | number[]): Promise<Respo
   return request({
     url: '/${codegen.moduleName}/${codegen.businessName?lower_case}/delete',
     method: 'post',
-    params: { ids: id }
+    params: { 'ids[]': id }
   })
 }
 

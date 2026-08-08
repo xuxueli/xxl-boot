@@ -1,10 +1,9 @@
-package ${codegen.packageName}.controller;
+package ${codegen.packageName}.${codegen.moduleName}.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import jakarta.annotation.Resource;
@@ -13,8 +12,8 @@ import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 import com.xxl.sso.core.annotation.XxlSso;
 
-import ${codegen.packageName}.model.${codegen.businessName};
-import ${codegen.packageName}.service.${codegen.businessName}Service;
+import ${codegen.packageName}.${codegen.moduleName}.model.${codegen.businessName};
+import ${codegen.packageName}.${codegen.moduleName}.service.${codegen.businessName}Service;
 
 <#assign cn = codegen.businessName />
 <#assign cnLower = cn?uncap_first />
@@ -24,27 +23,17 @@ import ${codegen.packageName}.service.${codegen.businessName}Service;
 *
 * Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
 */
-@Controller
-@RequestMapping("/${cnLower}")
+@RestController
+@RequestMapping("/${codegen.moduleName}/${cnLower}")
 public class ${cn}Controller {
 
     @Resource
     private ${cn}Service ${cnLower}Service;
 
     /**
-    * 页面
-    */
-    @RequestMapping
-    @XxlSso
-    public String index(Model model) {
-        return "${cnLower}";
-    }
-
-    /**
     * 分页查询
     */
     @RequestMapping("/pageList")
-    @ResponseBody
     @XxlSso
     public Response<PageModel<${cn}>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                @RequestParam(required = false, defaultValue = "10") int pagesize) {
@@ -56,7 +45,6 @@ public class ${cn}Controller {
     * Load查询
     */
     @RequestMapping("/load")
-    @ResponseBody
     @XxlSso
     public Response<${cn}> load(int id) {
         return ${cnLower}Service.load(id);
@@ -66,9 +54,8 @@ public class ${cn}Controller {
     * 新增
     */
     @RequestMapping("/insert")
-    @ResponseBody
     @XxlSso
-    public Response<String> insert(${cn} ${cnLower}) {
+    public Response<String> insert(@RequestBody ${cn} ${cnLower}) {
         return ${cnLower}Service.insert(${cnLower});
     }
 
@@ -76,7 +63,6 @@ public class ${cn}Controller {
     * 删除
     */
     @RequestMapping("/delete")
-    @ResponseBody
     @XxlSso
     public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
         return ${cnLower}Service.delete(ids);
@@ -86,9 +72,8 @@ public class ${cn}Controller {
     * 更新
     */
     @RequestMapping("/update")
-    @ResponseBody
     @XxlSso
-    public Response<String> update(${cn} ${cnLower}) {
+    public Response<String> update(@RequestBody ${cn} ${cnLower}) {
         return ${cnLower}Service.update(${cnLower});
     }
 

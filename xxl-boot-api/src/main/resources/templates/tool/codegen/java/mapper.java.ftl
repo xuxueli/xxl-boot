@@ -1,11 +1,11 @@
-package ${codegen.packageName}.mapper;
+package ${codegen.packageName}.${codegen.moduleName}.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-import ${codegen.packageName}.model.${codegen.businessName};
+import ${codegen.packageName}.${codegen.moduleName}.model.${codegen.businessName};
 
 <#assign cn = codegen.businessName />
 <#assign cnLower = cn?uncap_first />
