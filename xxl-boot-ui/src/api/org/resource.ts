@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Resource } from '@/types/api'
+import type { Resource, ResourceListQuery } from '@/types/api'
 import type { Response } from '@/types'
 
 /**
@@ -12,7 +12,7 @@ import type { Response } from '@/types'
  * @param query 查询参数（name/status）。
  * @returns 资源列表。
  */
-export function listResource(query: object): Promise<Response<Resource[]>> {
+export function listResource(query: ResourceListQuery): Promise<Response<Resource[]>> {
   return request({
     url: '/org/resource/treeList',
     method: 'get',

@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Message, User } from '@/types/api'
+import type { Message, MessageListQuery, User } from '@/types/api'
 import type { PageModel, Response } from '@/types'
 
 /**
@@ -12,7 +12,7 @@ import type { PageModel, Response } from '@/types'
  * @param query 查询参数（title/status/offset/pagesize）。
  * @returns 消息分页列表。
  */
-export function listMessage(query: object): Promise<Response<PageModel<Message>>> {
+export function listMessage(query: MessageListQuery): Promise<Response<PageModel<Message>>> {
   return request({
     url: '/system/message/pageList',
     method: 'get',

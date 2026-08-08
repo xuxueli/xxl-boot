@@ -27,3 +27,11 @@ export interface OrgQuery {
   /** 状态：-1 全部 */
   status: number
 }
+
+/** 组织列表请求参数（树查询不分页，供 api 使用） */
+export interface OrgListQuery {
+  /** 名称关键词 */
+  name?: string
+  /** 状态：-1 全部 */
+  status?: number
+}

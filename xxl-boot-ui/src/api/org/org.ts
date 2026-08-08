@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Org } from '@/types/api'
+import type { Org, OrgListQuery } from '@/types/api'
 import type { Response } from '@/types'
 
 /**
@@ -12,7 +12,7 @@ import type { Response } from '@/types'
  * @param query 查询参数（name/status，status 默认 -1 全部）。
  * @returns 组织列表。
  */
-export function listOrg(query: object): Promise<Response<Org[]>> {
+export function listOrg(query: OrgListQuery): Promise<Response<Org[]>> {
   return request({
     url: '/org/org/treeList',
     method: 'get',

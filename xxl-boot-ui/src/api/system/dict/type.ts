@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Dict } from '@/types/api'
+import type { Dict, DictListQuery } from '@/types/api'
 import type { PageModel, Response } from '@/types'
 
 /**
@@ -12,7 +12,7 @@ import type { PageModel, Response } from '@/types'
  * @param query 查询参数（name/code/status/offset/pagesize）。
  * @returns 字典类型分页列表。
  */
-export function listType(query: object): Promise<Response<PageModel<Dict>>> {
+export function listType(query: DictListQuery): Promise<Response<PageModel<Dict>>> {
   return request({
     url: '/system/dict/pageList',
     method: 'get',

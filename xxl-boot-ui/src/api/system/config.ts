@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Config } from '@/types/api'
+import type { Config, ConfigListQuery } from '@/types/api'
 import type { PageModel, Response } from '@/types'
 
 /**
@@ -12,7 +12,7 @@ import type { PageModel, Response } from '@/types'
  * @param query 查询参数（name/key/status/offset/pagesize）。
  * @returns 配置分页列表。
  */
-export function listConfig(query: object): Promise<Response<PageModel<Config>>> {
+export function listConfig(query: ConfigListQuery): Promise<Response<PageModel<Config>>> {
   return request({
     url: '/system/config/pageList',
     method: 'get',

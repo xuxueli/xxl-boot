@@ -1,3 +1,4 @@
+import type { PageQuery } from '../index'
 /**
  * 用户管理类型定义（views/org/user 页面）
  * 对应后端 User.java
@@ -38,4 +39,14 @@ export interface UserQuery {
 /** 用户表单（新增/修改入参） */
 export type UserForm = Pick<User, 'id' | 'orgId' | 'username' | 'realName' | 'status' | 'password'> & {
   roleIds?: number[]
+}
+
+/** 用户列表请求参数（请求形态：offset/pagesize，供 api 使用） */
+export interface UserListQuery extends PageQuery {
+  /** 账号关键词 */
+  username?: string
+  /** 组织ID集合（逗号分隔） */
+  orgIds?: string
+  /** 状态：-1 全部 */
+  status?: number
 }

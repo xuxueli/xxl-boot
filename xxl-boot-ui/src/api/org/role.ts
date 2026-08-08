@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Role } from '@/types/api'
+import type { Role, RoleListQuery } from '@/types/api'
 import type { PageModel, Response } from '@/types'
 
 /**
@@ -12,7 +12,7 @@ import type { PageModel, Response } from '@/types'
  * @param query 查询参数（offset/pagesize/name/status）。
  * @returns 角色分页列表（response.data.data / response.data.total）。
  */
-export function listRole(query: object): Promise<Response<PageModel<Role>>> {
+export function listRole(query: RoleListQuery): Promise<Response<PageModel<Role>>> {
   return request({
     url: '/org/role/pageList',
     method: 'get',

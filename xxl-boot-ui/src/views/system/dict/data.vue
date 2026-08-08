@@ -96,7 +96,7 @@ import { loadEnumItem } from "@/api/system/dict/data"
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
-import type { DictItem, DataQuery } from '@/types/api'
+import type { DictItem, DataQuery, DataListQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
@@ -202,7 +202,7 @@ function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
   const { pageNum, pageSize, dictId, ...rest } = queryParams.value
-  const params: Record<string, unknown> = {
+  const params: DataListQuery = {
     ...rest,
     offset: (pageNum - 1) * pageSize,
     pagesize: pageSize

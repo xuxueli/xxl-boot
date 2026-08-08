@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { DictItem } from '@/types/api'
+import type { DictItem, DataListQuery } from '@/types/api'
 import type { EnumOption, PageModel, Response } from '@/types'
 
 /**
@@ -12,7 +12,7 @@ import type { EnumOption, PageModel, Response } from '@/types'
  * @param query 查询参数（dictId/offset/pagesize）。
  * @returns 字典项分页列表。
  */
-export function listData(query: object): Promise<Response<PageModel<DictItem>>> {
+export function listData(query: DataListQuery): Promise<Response<PageModel<DictItem>>> {
   return request({
     url: '/system/dict/itemPageList',
     method: 'get',

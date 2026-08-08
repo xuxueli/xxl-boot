@@ -1,3 +1,4 @@
+import type { PageQuery } from '../index'
 /**
  * 日志管理类型定义（views/system/log 页面）
  * 对应后端 Log.java
@@ -32,3 +33,6 @@ export interface LogQuery {
   /** 标题关键词 */
   title?: string
 }
+
+/** 日志列表请求参数（请求形态：offset/pagesize，供 api 使用） */
+export type LogListQuery = PageQuery & Partial<Omit<LogQuery, 'pageNum' | 'pageSize'>>

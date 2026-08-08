@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Log } from '@/types/api'
+import type { Log, LogListQuery } from '@/types/api'
 import type { PageModel, Response } from '@/types'
 
 /**
@@ -12,7 +12,7 @@ import type { PageModel, Response } from '@/types'
  * @param query 查询参数（type/module/title/offset/pagesize）。
  * @returns 日志分页列表。
  */
-export function pageList(query: object): Promise<Response<PageModel<Log>>> {
+export function pageList(query: LogListQuery): Promise<Response<PageModel<Log>>> {
   return request({
     url: '/system/log/pageList',
     method: 'get',
