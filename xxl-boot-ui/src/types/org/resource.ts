@@ -31,13 +31,6 @@ export interface ResourceQuery {
   /** 名称关键词 */
   name?: string
   /** 状态：-1 全部 */
-  status: number
-}
-
-/** 资源列表请求参数（树查询不分页，供 api 使用） */
-export interface ResourceListQuery {
-  /** 名称关键词 */
-  name?: string
-  /** 状态：-1 全部 */
   status?: number
 }
+
