@@ -1,4 +1,4 @@
-import type { PageQuery } from '../index'
+import type { ListQuery } from '../index'
 /**
  * 数据字典类型定义（views/system/dict 页面）
  * 对应后端 Dict.java、DictItem.java
@@ -55,7 +55,7 @@ export interface DataQuery {
 }
 
 /** 字典类型列表请求参数（请求形态：offset/pagesize，供 api 使用） */
-export type DictListQuery = PageQuery & Partial<Omit<DictQuery, 'pageNum' | 'pageSize'>>
+export type DictListQuery = ListQuery<DictQuery>
 
 /** 字典项列表请求参数（请求形态：offset/pagesize，供 api 使用） */
-export type DataListQuery = PageQuery & Partial<Omit<DataQuery, 'pageNum' | 'pageSize'>>
+export type DataListQuery = ListQuery<DataQuery>

@@ -1,4 +1,4 @@
-import type { PageQuery } from '../index'
+import type { ListQuery } from '../index'
 /**
  * 系统配置类型定义（views/system/config 页面）
  * 对应后端 Config.java
@@ -31,4 +31,4 @@ export interface ConfigQuery {
 }
 
 /** 配置列表请求参数（请求形态：offset/pagesize，供 api 使用） */
-export type ConfigListQuery = PageQuery & Partial<Omit<ConfigQuery, 'pageNum' | 'pageSize'>>
+export type ConfigListQuery = ListQuery<ConfigQuery>

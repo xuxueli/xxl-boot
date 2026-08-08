@@ -1,4 +1,4 @@
-import type { PageQuery } from '../index'
+import type { ListQuery } from '../index'
 /**
  * 站内消息类型定义（views/system/message 页面）
  * 对应后端 Message.java
@@ -33,4 +33,4 @@ export interface MessageQuery {
 }
 
 /** 消息列表请求参数（请求形态：offset/pagesize，供 api 使用） */
-export type MessageListQuery = PageQuery & Partial<Omit<MessageQuery, 'pageNum' | 'pageSize'>>
+export type MessageListQuery = ListQuery<MessageQuery>

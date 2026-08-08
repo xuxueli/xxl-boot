@@ -1,4 +1,4 @@
-import type { PageQuery } from '../index'
+import type { ListQuery } from '../index'
 /**
  * 角色管理类型定义（views/org/role 页面）
  * 对应后端 Role.java
@@ -28,5 +28,7 @@ export interface RoleQuery {
   status: number
 }
 
-/** 角色列表请求参数（请求形态：offset/pagesize，供 api 使用） */
-export type RoleListQuery = PageQuery & Partial<Omit<RoleQuery, 'pageNum' | 'pageSize'>>
+/**
+ * 角色列表请求参数（请求形态：offset/pagesize，供 api 使用）
+ * */
+export type RoleListQuery = ListQuery<RoleQuery>

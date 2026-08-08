@@ -39,6 +39,17 @@ export interface PageQuery {
   [key: string]: unknown
 }
 
+/**
+ * 列表请求参数工具类型
+ * 由「搜索栏表单查询类型」派生为「列表接口请求类型」：
+ * - 去除前端分页字段（pageNum/pageSize）
+ * - 补充后端分页字段（offset/pagesize）
+ * - 筛选字段全部可选（允许只传分页或空对象）
+ *
+ * 用法：export type RoleListQuery = ListQuery<RoleQuery>
+ */
+export type ListQuery<T extends object> = PageQuery & Partial<Omit<T, 'pageNum' | 'pageSize'>>
+
 
 // --------------------------------- 枚举数据（loadEnumItem） ---------------------------------
 
