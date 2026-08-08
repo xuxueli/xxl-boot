@@ -78,13 +78,12 @@ XXL-BOOT 定位为 快速开发平台，整合流行前后端技术能力，致�
 
 ```
 /xxl-boot/doc/db/
-    - tables_xxl_boot.sql                   ：系统初始化SQL脚本
-    - tables_xxl_boot_custom.sql            ：系统数据定制SQL脚本  
-        - A、单体项目初始化SQL脚本
-        - B、前后端分离项目初始化SQL脚本
+    - tables_xxl_boot.sql                   ：系统初始化SQL脚本【必须】
+    - tables_xxl_boot_monolith.sql          ：单体项目初始化SQL脚本【可选，部署单体项目时使用】
+    - tables_xxl_boot_modular.sql           ：前后端分离项目初始化SQL脚本【可选，部署前后端分离项目时使用】
 ```
 
-补充说明：如需部署单体项目，只需要执行 `tables_xxl_boot.sql` 即可；如需切换部署 “前后端分离项目/单体项目”，需要执行 `tables_xxl_boot_custom.sql` 中的 A 或者 B 部分。
+补充说明：如需部署单体项目，只需要执行 `tables_xxl_boot.sql` 即可；如需切换部署 “前后端分离项目”或“单体项目”，则需要执行 `tables_xxl_boot_modular.sql` 或 `tables_xxl_boot_monolith.sql`。
 
 ### 2.2 编译源码    
 项目为 Monorepo仓库，单体项目 与 前后端分离项目 维护在同一个代码仓库中，通过不同目录模块隔离维护。
@@ -245,6 +244,65 @@ server {
 
 系统首页截图示例：
 ![输入图片说明](https://www.xuxueli.com/project/static/xxl-boot/images/img_015.png "在这里输入图片标题")
+
+
+### 2.5 Docker Compose 部署（单体项目）
+项目支持通过 Docker Compose 方式部署并启动，如下介绍 单体项目 部署方式：
+
+第一步：Clone并进入仓库
+```
+git clone https://github.com/xuxueli/xxl-boot.git
+cd ./xxl-boot
+```
+
+第二步：项目构建
+```
+mvn clean package -Dmaven.test.skip=true
+```
+
+第三步：项目配置
+>注意：支持自定义 .env 配置，如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
+
+```
+cd ./docker/monolith/
+cat .env
+```
+
+第四步：启动/停止项目
+
+```
+docker compose up -d
+docker compose down
+```
+
+### 2.5 Docker Compose 部署（前后端分离项目）
+项目支持通过 Docker Compose 方式部署并启动，如下介绍 前后端分离项目 部署方式：
+
+第一步：Clone并进入仓库
+```
+git clone https://github.com/xuxueli/xxl-boot.git
+cd ./xxl-boot
+```
+
+第二步：项目构建
+```
+mvn clean package -Dmaven.test.skip=true
+```
+
+第三步：项目配置
+>注意：支持自定义 .env 配置，如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
+
+```
+cd ./docker/modular/
+cat .env
+```
+
+第四步：启动/停止项目
+
+```
+docker compose up -d
+docker compose down
+```
 
 
 ## 三、操作指南
@@ -415,66 +473,6 @@ public @interface Permission {
 ### 4.4、代码生成
 参考上文 “3.1、代码生成”。
 
-### 4.5、Docker Compose 部署（单体项目）
-支持通过 Docker Compose 方式部署并启动，如下介绍 单体项目 部署方式：
-
-#### 第一步：前往仓库目录
-```
-cd ./xxl-boot
-```
-
-#### 第二步：项目构建
-```
-// 注意：如下命令需要在项目仓库根目录执行
-mvn clean package -Dmaven.test.skip=true
-```
-
-#### 第三步：项目配置
-```
-// 注意：前往docker目录，自定义 .env 配置；如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
-cd ./docker/monolith/
-cat .env
-```
-
-#### 第四步：启动项目
-
-```
-// 启动 
-docker compose up -d
-
-// 停止
-docker compose down
-```
-
-### 4.6、Docker Compose 部署（前后端分离项目）
-支持通过 Docker Compose 方式部署并启动，如下介绍 前后端分离项目 部署方式：
-
-#### 第一步：前往仓库目录
-```
-cd ./xxl-boot
-```
-
-#### 第二步：项目构建
-```
-// 注意：如下命令需要在项目仓库根目录执行
-mvn clean package -Dmaven.test.skip=true
-```
-
-#### 第三步：项目配置
-```
-// 注意：前往docker目录，自定义 .env 配置；如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
-cd ./docker/modular/
-cat .env
-```
-
-#### 第四步：启动项目
-```
-// 启动 
-docker compose up -d
-
-// 停止
-docker compose down
-```
 
 ## 五、新增业务模块
 略

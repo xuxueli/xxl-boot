@@ -15,6 +15,7 @@ services:
     volumes:
       # 说明：仅数据库首次初始化时执行；
       - ../../doc/db/tables_xxl_boot.sql:/docker-entrypoint-initdb.d/tables_xxl_boot.sql:ro
+      - ../../doc/db/tables_xxl_boot_modular.sql:/docker-entrypoint-initdb.d/tables_xxl_boot_modular.sql:ro
       # 3、数据库持久化目录位置，建议自定义：
       - ${MYSQL_PATH}/conf:/etc/mysql/conf.d
       - ${MYSQL_PATH}/logs:/var/log/mysql
