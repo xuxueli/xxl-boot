@@ -84,9 +84,6 @@ function open(row: Message) {
 }
 
 /** 查询已读用户列表 */
-// 前端分页参数 → 后端请求参数（offset/pagesize）
-const buildListParams = usePageParams(queryParams)
-
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）

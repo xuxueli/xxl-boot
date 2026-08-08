@@ -179,13 +179,10 @@ function getDictName() {
 }
 
 /** 查询字典项列表 */
-// 前端分页参数 → 后端请求参数（offset/pagesize）
-const buildListParams = usePageParams(queryParams)
-
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
-  const params = buildListParams()
+  const params = usePageParams(queryParams)()
   // 字典ID为空（无路由来源进入）时不携带该参数，避免后端可选 long 参数收到空值
   if (dictId.value != null) {
     params.dictId = dictId.value

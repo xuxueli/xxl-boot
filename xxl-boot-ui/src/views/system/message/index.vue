@@ -210,13 +210,10 @@ const formState = ref<FormState<Message>>({
 
 
 /** 查询消息列表 */
-// 前端分页参数 → 后端请求参数（offset/pagesize）
-const buildListParams = usePageParams(queryParams)
-
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
-  const params = buildListParams()
+  const params = usePageParams(queryParams)()
   listMessage(params).then(response => {
     table.value.list = response.data.data
     table.value.total = response.data.total
