@@ -50,4 +50,13 @@
         </foreach>
     </select>
 
+    <select id="countByResIds" parameterType="java.util.Map" resultType="int">
+        SELECT count(1)
+        FROM xxl_boot_role_res AS t
+        WHERE `res_id` in
+        <foreach collection="resIds" item="resId" index="index" separator="," open="(" close=")" >
+            #{resId}
+        </foreach>
+    </select>
+
 </mapper>

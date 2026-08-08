@@ -3,6 +3,7 @@ package com.xxl.boot.api.framework.service.impl;
 import com.xxl.boot.api.framework.constant.enums.ResourceStatuEnum;
 import com.xxl.boot.api.framework.constant.enums.ResourceTypeEnum;
 import com.xxl.boot.api.framework.mapper.org.ResourceMapper;
+import com.xxl.boot.api.framework.mapper.org.RoleResMapper;
 import com.xxl.boot.api.framework.model.dto.ResourceDTO;
 import com.xxl.boot.api.framework.model.entity.Resource;
 import com.xxl.boot.api.framework.service.ResourceService;
@@ -26,6 +27,9 @@ public class ResourceServiceImpl implements ResourceService {
 
 	@jakarta.annotation.Resource
 	private ResourceMapper resourceMapper;
+
+	@jakarta.annotation.Resource
+	private RoleResMapper roleResMapper;
 
 	/**
     * 新增
@@ -62,6 +66,12 @@ public class ResourceServiceImpl implements ResourceService {
 		List<Resource> resourceList = resourceMapper.queryByParentIds(ids);
 		if (CollectionTool.isNotEmpty(resourceList)) {
 			return Response.ofFail("删除失败，已关联子资源");
+		}
+
+		// 校验资源是否被角色关联，关联则不允许删除
+		int roleResCount = roleResMapper.countByResIds(ids);
+		if (roleResCount > 0) {
+			return Response.ofFail("删除失败，资源已关联角色，不允许删除");
 		}
 
 		int ret = resourceMapper.delete(ids);

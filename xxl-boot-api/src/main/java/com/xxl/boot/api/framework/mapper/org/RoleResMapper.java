@@ -34,4 +34,9 @@ public interface RoleResMapper {
      */
     public List<RoleRes> queryRoleRes(@Param("roleIds") List<Integer> roleIds);
 
+    /**
+     * 统计资源被角色关联的数量
+     */
+    public int countByResIds(@Param("resIds") List<Integer> resIds);
+
 }
