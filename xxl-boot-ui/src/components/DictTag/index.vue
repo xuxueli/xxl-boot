@@ -53,9 +53,6 @@ interface DictOption {
   elTagClass: any
 }
 
-// 未匹配字典项的 key 集合
-const unmatchArray = ref<Array<string | number>>([])
-
 const props = withDefaults(
   defineProps<{
     // 字典选项列表：[{ value, label, elTagType, elTagClass }]
@@ -85,8 +82,7 @@ const values = computed(() => {
 })
 
 // 检测是否存在未匹配的字典项，存在时记录到 unmatchArray
-const unmatch = computed(() => {
-  unmatchArray.value = []
+const unmatchArray = computed<Array<string | number>>(() => {
   if (
     props.value === null ||
     typeof props.value === 'undefined' ||
@@ -94,17 +90,13 @@ const unmatch = computed(() => {
     !Array.isArray(props.options) ||
     props.options.length === 0
   )
-    return false
-  // 遍历 value 中的每一项，检查是否在 options 中存在
-  let unmatch = false
-  values.value.forEach((item) => {
-    if (!props.options.some((v) => v.value === item)) {
-      unmatchArray.value.push(item)
-      unmatch = true
-    }
-  })
-  return unmatch
+    return []
+  // 遍历 value 中的每一项，收集在 options 中不存在的项（未匹配项）
+  return values.value.filter((item) => !props.options.some((v) => v.value === item))
 })
+
+// 是否存在未匹配的字典项（由 unmatchArray 派生）
+const unmatch = computed(() => unmatchArray.value.length > 0)
 
 // 数组转空格分隔字符串，用于显示未匹配项
 function handleArray(array: Array<string | number>) {
