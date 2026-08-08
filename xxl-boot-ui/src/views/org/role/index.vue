@@ -7,13 +7,7 @@
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
       <el-form-item label="角色名称" prop="name">
-        <el-input
-          v-model="queryParams.name"
-          placeholder="请输入角色名称"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.name" placeholder="请输入角色名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="角色状态" clearable style="width: 200px">
@@ -33,24 +27,14 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['org:role']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="table.single"
-          @click="handleUpdate"
-          v-hasPermi="['org:role']"
-          >修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasPermi="['org:role']"
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="table.multiple"
-          @click="handleDelete"
-          v-hasPermi="['org:role']"
-          >删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasPermi="['org:role']"
+          >删除</el-button
+        >
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -76,10 +60,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:role']"
-            >修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:role']"
-            >删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:role']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:role']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -165,42 +147,42 @@ const resetForm = useFormReset()
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
-const formRef = ref<FormInstance>()   /* 编辑表单 ref */
-const menuRef = ref<any>()            /* 菜单权限树 ref */
+const formRef = ref<FormInstance>() /* 编辑表单 ref */
+const menuRef = ref<any>() /* 菜单权限树 ref */
 
 // 角色状态枚举选项
 const { RoleStatusEnum: statusOptions } = useEnumOption('RoleStatusEnum')
 
 // 菜单权限树数据与交互状态
-const menuOptions = ref<Resource[]>([])   /* 菜单权限树数据 */
-const menuExpand = ref(false)             /* 展开/折叠 */
-const menuNodeAll = ref(false)            /* 全选/全不选 */
-const menuCheckStrictly = ref(true)       /* 父子联动 */
+const menuOptions = ref<Resource[]>([]) /* 菜单权限树数据 */
+const menuExpand = ref(false) /* 展开/折叠 */
+const menuNodeAll = ref(false) /* 全选/全不选 */
+const menuCheckStrictly = ref(true) /* 父子联动 */
 
 // 搜索栏：查询参数
 const queryParams = ref<RoleQuery>({
-  pageNum: 1,        /* 当前页码 */
-  pageSize: 10,      /* 每页条数 */
-  name: undefined,   /* 角色名称关键词 */
-  status: -1         /* 状态（-1 全部、0 正常、1 停用） */
+  pageNum: 1 /* 当前页码 */,
+  pageSize: 10 /* 每页条数 */,
+  name: undefined /* 角色名称关键词 */,
+  status: -1 /* 状态（-1 全部、0 正常、1 停用） */
 })
 
 // 表格：UI数据
 const table = ref<TableState<Role>>({
-  list: [],          /* 角色列表 */
-  total: 0,          /* 总条数 */
-  loading: true,     /* 加载状态 */
-  showSearch: true,  /* 是否显示搜索栏 */
-  ids: [],           /* 选中行 ID 数组 */
-  single: true,      /* 是否单选 */
-  multiple: true     /* 是否多选 */
+  list: [] /* 角色列表 */,
+  total: 0 /* 总条数 */,
+  loading: true /* 加载状态 */,
+  showSearch: true /* 是否显示搜索栏 */,
+  ids: [] /* 选中行 ID 数组 */,
+  single: true /* 是否单选 */,
+  multiple: true /* 是否多选 */
 })
 
 // 编辑表单：数据状态
 const formState = ref<FormState<Role>>({
-  visible: false    /* 对话框显隐 */,
-  title: ''         /* 对话框标题 */,
-  form: {}          /* 表单数据 */,
+  visible: false /* 对话框显隐 */,
+  title: '' /* 对话框标题 */,
+  form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
     name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],

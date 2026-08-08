@@ -28,11 +28,11 @@
  */
 export function isPathMatch(pattern: string, path: string): boolean {
   const regexPattern = pattern
-    .replace(/([.+^${}()|\[\]\\])/g, '\\$1')    // 转义正则元字符
-    .replace(/\*\*/g, '__DOUBLE_STAR__')        // 临时占位，避免被单 * 规则覆盖
-    .replace(/\*/g, '[^/]*')                    // 单 * 匹配单级路径段中任意字符
-    .replace(/__DOUBLE_STAR__/g, '.*')          // ** 匹配任意字符（含 /）
-    .replace(/\?/g, '[^/]')                     // ? 匹配单个非 / 字符
+    .replace(/([.+^${}()|\[\]\\])/g, '\\$1') // 转义正则元字符
+    .replace(/\*\*/g, '__DOUBLE_STAR__') // 临时占位，避免被单 * 规则覆盖
+    .replace(/\*/g, '[^/]*') // 单 * 匹配单级路径段中任意字符
+    .replace(/__DOUBLE_STAR__/g, '.*') // ** 匹配任意字符（含 /）
+    .replace(/\?/g, '[^/]') // ? 匹配单个非 / 字符
   const regex = new RegExp(`^${regexPattern}$`)
   return regex.test(path)
 }

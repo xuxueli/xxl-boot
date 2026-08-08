@@ -4,14 +4,7 @@
 -->
 <template>
   <!-- 弹框组件 -->
-  <el-dialog
-    v-model="dialog.visible"
-    :title="`「${dialog.title}」已读用户`"
-    width="680px"
-    top="6vh"
-    append-to-body
-    @close="handleClose"
-  >
+  <el-dialog v-model="dialog.visible" :title="`「${dialog.title}」已读用户`" width="680px" top="6vh" append-to-body @close="handleClose">
     <!-- 已读用户 table -->
     <el-table v-loading="table.loading" :data="table.list" size="small" stripe height="340px">
       <el-table-column type="index" label="序号" width="70" align="center" />
@@ -63,22 +56,22 @@ interface QueryState {
 
 // 弹窗：UI数据
 const dialog = ref<DialogState>({
-  visible: false,  /* 弹窗显隐 */
-  title: ""        /* 消息标题 */
+  visible: false /* 弹窗显隐 */,
+  title: '' /* 消息标题 */
 })
 
 // 表格：UI数据
 const table = ref<TableState>({
-  list: [],        /* 已读用户列表 */
-  total: 0,        /* 已读人数 */
-  loading: false   /* 加载状态 */
+  list: [] /* 已读用户列表 */,
+  total: 0 /* 已读人数 */,
+  loading: false /* 加载状态 */
 })
 
 // 查询参数
 const queryParams = ref<QueryState>({
-  pageNum: 1,       /* 当前页码 */
-  pageSize: 10,     /* 每页条数 */
-  messageId: undefined  /* 消息ID */
+  pageNum: 1 /* 当前页码 */,
+  pageSize: 10 /* 每页条数 */,
+  messageId: undefined /* 消息ID */
 })
 
 /** 打开弹窗：回显消息信息并加载已读用户列表 */

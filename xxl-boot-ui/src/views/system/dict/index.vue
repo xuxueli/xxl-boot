@@ -7,22 +7,10 @@
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
       <el-form-item label="字典名称" prop="name">
-        <el-input
-          v-model="queryParams.name"
-          placeholder="请输入字典名称"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.name" placeholder="请输入字典名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="字典Type" prop="type">
-        <el-input
-          v-model="queryParams.type"
-          placeholder="请输入字典Type"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.type" placeholder="请输入字典Type" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="字典状态" clearable style="width: 200px">
@@ -42,18 +30,10 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']"
-          >修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="table.multiple"
-          @click="handleDelete"
-          v-hasRole="['admin']"
-          >删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -79,12 +59,9 @@
       <el-table-column label="新增时间" align="center" prop="addTime" width="170" />
       <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']"
-            >修改</el-button>
-          <el-button link type="primary" icon="Operation" @click="handleDataList(scope.row)" v-hasRole="['admin']"
-            >列表</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']"
-            >删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
+          <el-button link type="primary" icon="Operation" @click="handleDataList(scope.row)" v-hasRole="['admin']">列表</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -105,11 +82,7 @@
           <el-input v-model="formState.form.name" placeholder="请输入字典名称" />
         </el-form-item>
         <el-form-item label="字典Type" prop="type">
-          <el-input
-            v-model="formState.form.type"
-            placeholder="请输入字典Type"
-            :disabled="formState.form.id != undefined"
-          />
+          <el-input v-model="formState.form.type" placeholder="请输入字典Type" :disabled="formState.form.id != undefined" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="formState.form.status">
@@ -159,18 +132,18 @@ const formRef = ref<FormInstance>() /* 编辑表单实例引用 */
 
 // 搜索栏：查询参数
 const queryParams = ref<DictQuery>({
-  pageNum: 1,        /* 当前页码 */
-  pageSize: 10,      /* 每页条数 */
-  name: undefined,   /* 字典名称 */
-  type: undefined,   /* 字典Type */
-  status: -1         /* 状态（-1 全部、0 正常、1 停用） */
+  pageNum: 1 /* 当前页码 */,
+  pageSize: 10 /* 每页条数 */,
+  name: undefined /* 字典名称 */,
+  type: undefined /* 字典Type */,
+  status: -1 /* 状态（-1 全部、0 正常、1 停用） */
 })
 
 // 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
 const formState = ref<FormState<Dict>>({
-  visible: false    /* 对话框显隐 */,
-  title: ''         /* 对话框标题 */,
-  form: {}          /* 表单数据 */,
+  visible: false /* 对话框显隐 */,
+  title: '' /* 对话框标题 */,
+  form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
     name: [{ required: true, message: '字典名称不能为空', trigger: 'blur' }],
@@ -184,19 +157,19 @@ const formState = ref<FormState<Dict>>({
 
 // 表格：UI数据
 const table = ref<TableState<Dict>>({
-  list: [],          /* 字典类型列表 */
-  total: 0,          /* 总条数 */
-  loading: true,     /* 加载状态 */
-  showSearch: true,  /* 是否显示搜索栏 */
-  ids: [],           /* 选中行 ID 数组 */
-  single: true,      /* 是否单选 */
-  multiple: true     /* 是否多选 */
+  list: [] /* 字典类型列表 */,
+  total: 0 /* 总条数 */,
+  loading: true /* 加载状态 */,
+  showSearch: true /* 是否显示搜索栏 */,
+  ids: [] /* 选中行 ID 数组 */,
+  single: true /* 是否单选 */,
+  multiple: true /* 是否多选 */
 })
 
 // 字典项抽屉
 const drawer = ref<DrawerState>({
-  visible: false,  /* 抽屉显隐 */
-  row: {}          /* 当前查看的字典行 */
+  visible: false /* 抽屉显隐 */,
+  row: {} /* 当前查看的字典行 */
 })
 
 // 状态选项（从后端枚举接口加载，枚举项属性为 code、title）

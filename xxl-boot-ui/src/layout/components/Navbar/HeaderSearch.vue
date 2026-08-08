@@ -7,14 +7,7 @@
     <!-- 图标：搜索触发 -->
     <SvgIcon class-name="search-icon" icon-class="search" @click.stop="click" />
     <!-- 搜索弹窗 -->
-    <el-dialog
-        v-model="show"
-        width="600"
-        @close="close"
-        @opened="onDialogOpened"
-        :show-close="false"
-        append-to-body
-    >
+    <el-dialog v-model="show" width="600" @close="close" @opened="onDialogOpened" :show-close="false" append-to-body>
       <!-- 搜索输入框：支持 ↑↓ 选择、Enter 确认、Esc 关闭 -->
       <el-input
         v-model="search"
@@ -110,13 +103,13 @@ interface SearchItem {
 const settingsStore = useSettingsStore()
 const routesStore = useRoutesStore()
 
-const search = ref('')                    /* 搜索关键词 */
-const options = ref<SearchItem[]>([])     /* 当前搜索结果列表 */
-const searchPool = ref<SearchItem[]>([])  /* 所有可搜索菜单的完整索引 */
-const activeIndex = ref(-1)               /* 键盘选中项索引 */
-const show = ref(false)                   /* 弹窗显隐 */
-const fuse = ref<Fuse<SearchItem> | undefined>(undefined)   /* Fuse 模糊搜索实例 */
-const headerSearchSelectRef = ref<InputInstance | null>(null)   /* 输入框 DOM 引用 */
+const search = ref('') /* 搜索关键词 */
+const options = ref<SearchItem[]>([]) /* 当前搜索结果列表 */
+const searchPool = ref<SearchItem[]>([]) /* 所有可搜索菜单的完整索引 */
+const activeIndex = ref(-1) /* 键盘选中项索引 */
+const show = ref(false) /* 弹窗显隐 */
+const fuse = ref<Fuse<SearchItem> | undefined>(undefined) /* Fuse 模糊搜索实例 */
+const headerSearchSelectRef = ref<InputInstance | null>(null) /* 输入框 DOM 引用 */
 const router = useRouter()
 const theme = computed(() => settingsStore.theme)
 const routes = computed(() => routesStore.fullRoutes)

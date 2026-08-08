@@ -14,15 +14,12 @@
           <el-col :span="12">
             <div class="detail-item">
               <span class="detail-label">日志类型</span
-              ><span class="detail-value">{{
-                row.type === 0 ? '操作日志' : row.type === 1 ? '登陆日志' : row.type
-              }}</span>
+              ><span class="detail-value">{{ row.type === 0 ? '操作日志' : row.type === 1 ? '登陆日志' : row.type }}</span>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">系统模块</span
-              ><span class="detail-value">{{ moduleMap[row.module] || row.module }}</span>
+              <span class="detail-label">系统模块</span><span class="detail-value">{{ moduleMap[row.module] || row.module }}</span>
             </div>
           </el-col>
         </el-row>

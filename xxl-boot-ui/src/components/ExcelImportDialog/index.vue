@@ -175,11 +175,7 @@ function handleSuccess(response: any) {
 // 提交上传：校验文件格式后执行上传
 function handleSubmit() {
   const file = selectedFile.value
-  if (
-    !file ||
-    file.length === 0 ||
-    (!file.name.toLowerCase().endsWith('.xls') && !file.name.toLowerCase().endsWith('.xlsx'))
-  ) {
+  if (!file || file.length === 0 || (!file.name.toLowerCase().endsWith('.xls') && !file.name.toLowerCase().endsWith('.xlsx'))) {
     modal.msgError('请选择后缀为 “xls”或“xlsx”的文件。')
     return
   }

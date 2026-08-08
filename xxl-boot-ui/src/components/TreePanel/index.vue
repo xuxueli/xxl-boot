@@ -70,13 +70,7 @@
     </div>
 
     <!-- 右侧：拖动条 -->
-    <div
-      v-if="!collapsed"
-      class="resize-handle"
-      @mousedown="startResize"
-      @touchstart="startResize"
-      :class="{ active: isResizing }"
-    />
+    <div v-if="!collapsed" class="resize-handle" @mousedown="startResize" @touchstart="startResize" :class="{ active: isResizing }" />
 
     <!-- 右侧：侧边栏展开/收起按钮 -->
     <div class="collapse-button-container">

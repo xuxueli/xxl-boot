@@ -108,13 +108,7 @@
             :label-width="formConf.labelWidth + 'px'"
           >
             <!-- 拖拽区域内容 -->
-            <draggable
-              class="drawing-board"
-              :list="canvas.drawingList"
-              :animation="340"
-              group="componentsGroup"
-              item-key="label"
-            >
+            <draggable class="drawing-board" :list="canvas.drawingList" :animation="340" group="componentsGroup" item-key="label">
               <template #item="{ element, index }">
                 <DraggableItem
                   :key="element.renderKey"
@@ -138,12 +132,7 @@
     </div>
 
     <!-- 右侧属性面板 -->
-    <RightPanel
-      :active-data="canvas.activeData"
-      :form-conf="formConf"
-      :show-field="!!canvas.drawingList.length"
-      @tag-change="tagChange"
-    />
+    <RightPanel :active-data="canvas.activeData" :form-conf="formConf" :show-field="!!canvas.drawingList.length" @tag-change="tagChange" />
 
     <!-- 代码生成类型选择弹窗 -->
     <CodeTypeDialog
@@ -172,11 +161,7 @@ import ClipboardJS from 'clipboard'
 import beautifier from 'js-beautify'
 import { inputComponents, selectComponents, layoutComponents, formConf as formConfData } from '@/utils/generator/config'
 import { beautifierConf } from '@/utils/generator/config'
-import {
-  drawingDefaultValue,
-  initDrawingDefaultValue,
-  cleanDrawingDefaultValue
-} from '@/utils/generator/drawingDefault'
+import { drawingDefaultValue, initDrawingDefaultValue, cleanDrawingDefaultValue } from '@/utils/generator/drawingDefault'
 import { makeUpHtml, vueTemplate, vueScript, cssStyle } from '@/utils/generator/html'
 import { makeUpJs } from '@/utils/generator/js'
 import { makeUpCss } from '@/utils/generator/css'
@@ -195,30 +180,30 @@ initDrawingDefaultValue()
 
 /* 画布状态 */
 const canvas = ref<{
-  drawingList: FormItemConf[]   /* 画布中的组件列表 */
-  activeData: FormItemConf      /* 当前选中组件 */
-  activeId: number | string     /* 当前选中组件 ID */
+  drawingList: FormItemConf[] /* 画布中的组件列表 */
+  activeData: FormItemConf /* 当前选中组件 */
+  activeId: number | string /* 当前选中组件 ID */
 }>({
   drawingList: drawingDefaultValue,
   activeData: drawingDefaultValue[0],
   activeId: drawingDefaultValue[0].formId!
 })
-let oldActiveId: number | string | undefined            /* 上一次选中 ID，用于 placeholder 联动 */
-let tempActiveData: FormItemConf | undefined            /* 拖拽结束暂存激活组件 */
+let oldActiveId: number | string | undefined /* 上一次选中 ID，用于 placeholder 联动 */
+let tempActiveData: FormItemConf | undefined /* 拖拽结束暂存激活组件 */
 
 /* 生成代码弹窗状态 */
 const genDialog = ref({
-  dialogVisible: false,  /* 生成类型弹窗 */
-  showFileName: false,   /* 是否显示文件名输入 */
-  operationType: '',     /* 操作类型：copy / download */
-  generateConf: null as any,    /* 生成配置 */
-  formData: {} as FormConf & { fields: FormItemConf[] }  /* 表单组装数据 */
+  dialogVisible: false /* 生成类型弹窗 */,
+  showFileName: false /* 是否显示文件名输入 */,
+  operationType: '' /* 操作类型：copy / download */,
+  generateConf: null as any /* 生成配置 */,
+  formData: {} as FormConf & { fields: FormItemConf[] } /* 表单组装数据 */
 })
 
 /* 全局配置 */
-const idGlobal = ref(100)                      /* 全局组件 ID 自增 */
+const idGlobal = ref(100) /* 全局组件 ID 自增 */
 provide('idGlobal', idGlobal)
-const formConf = ref(formConfData)             /* 表单全局配置 */
+const formConf = ref(formConfData) /* 表单全局配置 */
 
 // --------------------------------- fun ---------------------------------
 
@@ -434,11 +419,7 @@ function generateCode() {
 watch(
   () => canvas.value.activeData.label,
   (val, oldVal) => {
-    if (
-      canvas.value.activeData.placeholder === undefined ||
-      !canvas.value.activeData.tag ||
-      oldActiveId !== canvas.value.activeId
-    ) {
+    if (canvas.value.activeData.placeholder === undefined || !canvas.value.activeData.tag || oldActiveId !== canvas.value.activeId) {
       return
     }
     canvas.value.activeData.placeholder = canvas.value.activeData.placeholder.replace(oldVal, '') + val

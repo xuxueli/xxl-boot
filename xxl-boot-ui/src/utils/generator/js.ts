@@ -131,9 +131,7 @@ function buildRules(conf: FormItemConf, ruleList: string[]) {
     if (conf.regList && Array.isArray(conf.regList)) {
       conf.regList.forEach((item: FormItemConf) => {
         if (item.pattern) {
-          rules.push(
-            `{ pattern: new RegExp(${item.pattern}), message: '${item.message}', trigger: '${trigger[conf.tag!]}' }`
-          )
+          rules.push(`{ pattern: new RegExp(${item.pattern}), message: '${item.message}', trigger: '${trigger[conf.tag!]}' }`)
         }
       })
     }

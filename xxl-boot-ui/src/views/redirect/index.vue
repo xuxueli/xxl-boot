@@ -10,8 +10,8 @@
 // 引入
 import { useRoute, useRouter } from 'vue-router'
 
-const route = useRoute()        // 读取‌当前路由信息
-const router = useRouter()      // 控制‌路由跳转、后退、添加路由等
+const route = useRoute() // 读取‌当前路由信息
+const router = useRouter() // 控制‌路由跳转、后退、添加路由等
 const { params, query } = route
 const { path } = params
 

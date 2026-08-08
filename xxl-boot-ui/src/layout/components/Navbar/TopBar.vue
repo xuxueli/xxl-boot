@@ -5,13 +5,7 @@
 -->
 <template>
   <!-- 水平 el-menu，不启用溢出省略，通过 visibleNumber 手动折叠 -->
-  <el-menu
-    class="topbar-menu"
-    :ellipsis="false"
-    :default-active="activeMenu"
-    :active-text-color="theme"
-    mode="horizontal"
-  >
+  <el-menu class="topbar-menu" :ellipsis="false" :default-active="activeMenu" :active-text-color="theme" mode="horizontal">
     <!-- 可见的一级菜单项：前 N 条 -->
     <SidebarItem :key="route.path + index" v-for="(route, index) in topMenus" :item="route" :base-path="route.path" />
 
@@ -20,12 +14,7 @@
       <template #title>
         <span>更多菜单</span>
       </template>
-      <SidebarItem
-        :key="route.path + index"
-        v-for="(route, index) in moreRoutes"
-        :item="route"
-        :base-path="route.path"
-      />
+      <SidebarItem :key="route.path + index" v-for="(route, index) in moreRoutes" :item="route" :base-path="route.path" />
     </el-sub-menu>
   </el-menu>
 </template>

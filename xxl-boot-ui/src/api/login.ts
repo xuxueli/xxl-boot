@@ -14,12 +14,7 @@ import type { LoginInfo, MenuRoute, Response } from '@/types'
  * @param captchaResult 验证码。
  * @returns 登录成功返回 token（response.data）。
  */
-export function login(
-  username: string,
-  password: string,
-  captchaUuid?: string,
-  captchaResult?: string
-): Promise<Response<string>> {
+export function login(username: string, password: string, captchaUuid?: string, captchaResult?: string): Promise<Response<string>> {
   const data = {
     username,
     password,

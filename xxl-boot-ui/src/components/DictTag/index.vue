@@ -12,25 +12,16 @@
       <template v-if="isValueMatch(item.value)">
         <!-- 默认样式(tagType=default 且无自定义class)时使用纯文本，免去多余 el-tag 结构 -->
         <span
-          v-if="
-            (item.elTagType === 'default' || item.elTagType === '') &&
-            (item.elTagClass === '' || item.elTagClass === null)
-          "
+          v-if="(item.elTagType === 'default' || item.elTagType === '') && (item.elTagClass === '' || item.elTagClass === null)"
           :key="item.value"
           :index="index"
           :class="item.elTagClass"
           >{{ item.label + ' ' }}</span
         >
         <!-- 有自定义样式时用 el-tag 渲染 -->
-        <el-tag
-          v-else
-          :disable-transitions="true"
-          :key="item.value + ''"
-          :index="index"
-          :type="item.elTagType"
-          :class="item.elTagClass"
-          >{{ item.label + ' ' }}</el-tag
-        >
+        <el-tag v-else :disable-transitions="true" :key="item.value + ''" :index="index" :type="item.elTagType" :class="item.elTagClass">{{
+          item.label + ' '
+        }}</el-tag>
       </template>
     </template>
     <!-- 存在未匹配项且 showValue 开启时，显示原始值 -->

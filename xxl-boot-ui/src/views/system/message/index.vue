@@ -19,13 +19,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="标题" prop="title">
-        <el-input
-          v-model="queryParams.title"
-          placeholder="请输入标题"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.title" placeholder="请输入标题" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -39,18 +33,10 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']"
-          >修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="table.multiple"
-          @click="handleDelete"
-          v-hasRole="['admin']"
-          >删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -86,12 +72,9 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="User" @click="handleReadUsers(scope.row)" v-hasRole="['admin']"
-            >阅读用户</el-button>
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']"
-            >修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']"
-            >删除</el-button>
+          <el-button link type="primary" icon="User" @click="handleReadUsers(scope.row)" v-hasRole="['admin']">阅读用户</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -117,23 +100,14 @@
           <el-col :span="12">
             <el-form-item label="分类" prop="category">
               <el-select v-model="formState.form.category" placeholder="请选择">
-                <el-option
-                  v-for="item in categoryOptions"
-                  :key="item.code"
-                  :label="item.title"
-                  :value="item.code"
-                ></el-option>
+                <el-option v-for="item in categoryOptions" :key="item.code" :label="item.title" :value="item.code"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="状态">
               <el-radio-group v-model="formState.form.status">
-                <el-radio
-                  v-for="item in statusOptions"
-                  :key="item.code"
-                  :value="item.code"
-                >{{ item.title }}</el-radio>
+                <el-radio v-for="item in statusOptions" :key="item.code" :value="item.code">{{ item.title }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -178,36 +152,33 @@ const messageViewRef = ref<InstanceType<typeof MessageDetailView> | null>(null) 
 const readUsersRef = ref<InstanceType<typeof ReadUsersDialog> | null>(null) /* 已读弹框 ref */
 
 // 筛选项数据：消息分类 + 消息状态
-const { MessageCategoryEnum: categoryOptions, MessageStatusEnum: statusOptions } = useEnumOption(
-  'MessageCategoryEnum',
-  'MessageStatusEnum'
-)
+const { MessageCategoryEnum: categoryOptions, MessageStatusEnum: statusOptions } = useEnumOption('MessageCategoryEnum', 'MessageStatusEnum')
 
 // 搜索栏：查询参数
 const queryParams = ref<MessageQuery>({
-  pageNum: 1,        /* 当前页码 */
-  pageSize: 10,      /* 每页条数 */
-  category: -1,      /* 分类（-1 全部、0 通知、1 公告） */
-  status: -1,        /* 状态（-1 全部、0 正常、1 下线） */
-  title: undefined   /* 标题关键词 */
+  pageNum: 1 /* 当前页码 */,
+  pageSize: 10 /* 每页条数 */,
+  category: -1 /* 分类（-1 全部、0 通知、1 公告） */,
+  status: -1 /* 状态（-1 全部、0 正常、1 下线） */,
+  title: undefined /* 标题关键词 */
 })
 
 // 表格：UI数据
 const table = ref<TableState<Message>>({
-  list: [],          /* 消息列表 */
-  total: 0,          /* 总条数 */
-  loading: true,     /* 加载状态 */
-  showSearch: true,  /* 是否显示搜索栏 */
-  ids: [],           /* 选中行 ID 数组 */
-  single: true,      /* 是否单选 */
-  multiple: true     /* 是否多选 */
+  list: [], // 消息列表
+  total: 0, // 总条数
+  loading: true, // 加载状态
+  showSearch: true, // 是否显示搜索栏
+  ids: [], // 选中行 ID 数组
+  single: true, // 是否单选
+  multiple: true // 是否多选
 })
 
 // 编辑表单：数据状态
 const formState = ref<FormState<Message>>({
-  visible: false      /* 对话框显隐 */,
-  title: ''           /* 对话框标题 */,
-  form: {}            /* 表单数据 */,
+  visible: false /* 对话框显隐 */,
+  title: '' /* 对话框标题 */,
+  form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
     title: [{ required: true, message: '消息标题不能为空', trigger: 'blur' }],

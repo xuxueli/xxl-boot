@@ -68,9 +68,7 @@
           <div class="info-item">
             <label class="info-label">用户状态：</label>
             <span class="info-value plaintext">
-              <el-tag size="small" :type="info.status === 0 ? 'success' : 'danger'">{{
-                statusText(info.status)
-              }}</el-tag>
+              <el-tag size="small" :type="info.status === 0 ? 'success' : 'danger'">{{ statusText(info.status) }}</el-tag>
             </span>
           </div>
         </el-col>

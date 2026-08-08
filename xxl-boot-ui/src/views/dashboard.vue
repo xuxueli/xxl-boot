@@ -195,17 +195,17 @@ function loadChart() {
     }
     chartInstance = echarts.init(chartRef.value as HTMLElement)
     chartInstance.setOption({
-      tooltip: { trigger: 'axis' },                       // 悬浮提示：轴触发
+      tooltip: { trigger: 'axis' }, // 悬浮提示：轴触发
       grid: { left: 40, right: 20, bottom: 30, top: 20 }, // 图表边距
       // X轴：日期
       xAxis: {
         type: 'category',
         data: dates,
-        axisLabel: { fontSize: 11, color: '#909399' }     // X 轴标签样式
+        axisLabel: { fontSize: 11, color: '#909399' } // X 轴标签样式
       },
       yAxis: {
         type: 'value',
-        minInterval: 1,                                   // Y 轴最小间隔为 1
+        minInterval: 1, // Y 轴最小间隔为 1
         axisLabel: { fontSize: 11, color: '#909399' }
       },
       // X轴：数据
@@ -214,7 +214,7 @@ function loadChart() {
           data: counts,
           type: 'line',
           smooth: true, // 平滑曲线
-          lineStyle: { width: 2, color: '#409EFF' },    // 折线样式
+          lineStyle: { width: 2, color: '#409EFF' }, // 折线样式
           areaStyle: {
             // 渐变面积填充
             color: {
@@ -229,7 +229,7 @@ function loadChart() {
               ]
             }
           },
-          itemStyle: { color: '#409EFF' }                     // 数据点颜色
+          itemStyle: { color: '#409EFF' } // 数据点颜色
         }
       ]
     })

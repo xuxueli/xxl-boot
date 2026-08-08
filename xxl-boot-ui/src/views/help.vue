@@ -13,13 +13,7 @@
 
       <p>
         <!-- GitHub -->
-        <el-button
-            type="primary"
-            icon="Cloudy"
-            plain
-            @click="goTarget('https://github.com/xuxueli/xxl-boot')"
-        >访问GitHub
-        </el-button>
+        <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://github.com/xuxueli/xxl-boot')">访问GitHub </el-button>
 
         <!-- 帮助文档 -->
         <el-button icon="HomeFilled" plain @click="goTarget('https://www.xuxueli.com/xxl-boot/')">帮助文档 </el-button>
@@ -43,18 +37,8 @@
 
         <span style="float: right">
           {{ footerContent }}
-          <a
-            href="https://www.xuxueli.com/xxl-boot/"
-            target="_blank"
-            style="margin-left: 5px; text-decoration: underline"
-            >xuxueli</a
-          >
-          <a
-            href="https://github.com/xuxueli/xxl-boot"
-            target="_blank"
-            style="margin-left: 5px; text-decoration: underline"
-            >github</a
-          >
+          <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px; text-decoration: underline">xuxueli</a>
+          <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px; text-decoration: underline">github</a>
         </span>
       </p>
     </el-card>

@@ -654,8 +654,7 @@ export function addDateRange(
   propName?: string
 ): Record<string, any> {
   const search = params
-  search.params =
-    typeof search.params === 'object' && search.params !== null && !Array.isArray(search.params) ? search.params : {}
+  search.params = typeof search.params === 'object' && search.params !== null && !Array.isArray(search.params) ? search.params : {}
   const range = Array.isArray(dateRange) ? dateRange : []
   if (typeof propName === 'undefined') {
     search.params['beginTime'] = range[0]
@@ -707,11 +706,7 @@ export function selectDictLabel(datas: Record<string, any>, value: any): string 
  * 示例：
  *  selectDictLabels([{ value: '1', label: '启用' }, { value: '0', label: '禁用' }], '1,0')  // '启用,禁用'
  */
-export function selectDictLabels(
-  datas: Record<string, any>,
-  value: string | any[] | undefined,
-  separator?: string
-): string {
+export function selectDictLabels(datas: Record<string, any>, value: string | any[] | undefined, separator?: string): string {
   if (value === undefined || value.length === 0) {
     return ''
   }
@@ -754,12 +749,7 @@ export function selectDictLabels(
  *   handleTree([{id:1,parentId:0},{id:2,parentId:1}])
  *   // → [{id:1, children:[{id:2}]}]
  */
-export function handleTree<T extends Record<string, any>>(
-  data: T[],
-  id?: string,
-  parentId?: string,
-  children?: string
-): T[] {
+export function handleTree<T extends Record<string, any>>(data: T[], id?: string, parentId?: string, children?: string): T[] {
   const config = {
     id: id || 'id',
     parentId: parentId || 'parentId',

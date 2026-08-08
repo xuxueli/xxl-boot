@@ -16,14 +16,9 @@
     <el-sub-menu :style="{ '--theme': theme }" index="more" v-if="topMenus.length > visibleNumber">
       <template #title>更多菜单</template>
       <template v-for="(item, index) in topMenus">
-        <el-menu-item
-            :index="item.path || ''"
-            :key="index"
-            v-if="index >= visibleNumber">
+        <el-menu-item :index="item.path || ''" :key="index" v-if="index >= visibleNumber">
           <!-- icon -->
-          <SvgIcon
-              v-if="item.meta && item.meta.icon && item.meta.icon !== '#'"
-              :icon-class="item.meta.icon"/>
+          <SvgIcon v-if="item.meta && item.meta.icon && item.meta.icon !== '#'" :icon-class="item.meta.icon" />
           <!-- title -->
           {{ item.meta?.title }}
         </el-menu-item>
@@ -42,15 +37,15 @@ import type { RouteData } from '@/store/modules/routes'
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const routesStore = useRoutesStore()
-const route = useRoute()                        /* 读取‌当前路由信息 */
-const router = useRouter()                      /* 控制‌路由跳转、后退、添加路由等 */
+const route = useRoute() /* 读取‌当前路由信息 */
+const router = useRouter() /* 控制‌路由跳转、后退、添加路由等 */
 
 const theme = computed(() => settingsStore.theme)
 const routers = computed(() => routesStore.dynamicRoutes)
 
-const visibleNumber = ref(0)                    /* 可见菜单数量阈值，动态计算 */
-const currentIndex = ref<string | null>(null)   /* 当前选中菜单索引 */
-const hideList = [defaultSettings.homePath]            /* 路由列表中不显示侧边栏的路径 */
+const visibleNumber = ref(0) /* 可见菜单数量阈值，动态计算 */
+const currentIndex = ref<string | null>(null) /* 当前选中菜单索引 */
+const hideList = [defaultSettings.homePath] /* 路由列表中不显示侧边栏的路径 */
 
 /*
  * 顶部菜单列表
@@ -150,11 +145,7 @@ function descendantMatches(route: RouteData, targetPath: string) {
     if (!child.path) continue
 
     /* 子节点检测：精确匹配 | 子路径匹配（含 / 和 ? 两种情况） */
-    if (
-      targetPath === child.path ||
-      targetPath.startsWith(child.path + '/') ||
-      targetPath.startsWith(child.path + '?')
-    ) {
+    if (targetPath === child.path || targetPath.startsWith(child.path + '/') || targetPath.startsWith(child.path + '?')) {
       return true
     }
 

@@ -39,12 +39,7 @@
     </div>
 
     <!-- 文件列表 -->
-    <transition-group
-      ref="uploadFileList"
-      class="upload-file-list el-upload-list el-upload-list--text"
-      name="el-fade-in-linear"
-      tag="ul"
-    >
+    <transition-group ref="uploadFileList" class="upload-file-list el-upload-list el-upload-list--text" name="el-fade-in-linear" tag="ul">
       <li :key="file.uid" class="el-upload-list__item ele-upload-list__item-content" v-for="(file, index) in fileList">
         <el-link :href="`${baseUrl}${file.url}`" underline="never" target="_blank">
           <span class="el-icon-document"> {{ getFileName(file.name) }} </span>
@@ -117,14 +112,14 @@ const props = defineProps({
 // defineEmits：子传父（modelValue 通过 update:modelValue 回传）
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
-const fileUpload = ref<any>(null)         // el-upload 组件引用
-const uploadFileList = ref<any>(null)     // 文件列表 DOM 引用（用于 sortablejs 拖拽）
-const number = ref(0)                     // 正在上传的文件计数
-const uploadList = ref<Array<{ name: string; url: string }>>([])    // 本次上传成功的文件列表
-const baseUrl = import.meta.env.VITE_APP_BASE_API                   // API 基础地址
-const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)   // 上传接口完整地址
-const headers = ref(getAuthHeaders())                               // 上传请求头（携带 token）
-const fileList = ref<any[]>([])                                     // 已上传文件列表 [{name, url}]
+const fileUpload = ref<any>(null) // el-upload 组件引用
+const uploadFileList = ref<any>(null) // 文件列表 DOM 引用（用于 sortablejs 拖拽）
+const number = ref(0) // 正在上传的文件计数
+const uploadList = ref<Array<{ name: string; url: string }>>([]) // 本次上传成功的文件列表
+const baseUrl = import.meta.env.VITE_APP_BASE_API // API 基础地址
+const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action) // 上传接口完整地址
+const headers = ref(getAuthHeaders()) // 上传请求头（携带 token）
+const fileList = ref<any[]>([]) // 已上传文件列表 [{name, url}]
 const showTip = computed(
   // 是否显示文件格式/大小提示
   () => props.isShowTip && (props.fileType || props.fileSize)

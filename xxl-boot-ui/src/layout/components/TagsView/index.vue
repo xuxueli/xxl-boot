@@ -4,11 +4,7 @@
         支持 card 和 chrome 两种标签样式。
 -->
 <template>
-  <div
-    id="tags-view-container"
-    class="tags-view-container"
-    :class="{ 'tags-view-container--chrome': tagsViewStyle === 'chrome' }"
-  >
+  <div id="tags-view-container" class="tags-view-container" :class="{ 'tags-view-container--chrome': tagsViewStyle === 'chrome' }">
     <!--  左箭头  -->
     <span class="tags-nav-btn tags-nav-btn--left" :class="{ disabled: !canScrollLeft }" @click="scrollLeft">
       <el-icon><ArrowLeft /></el-icon>
@@ -55,14 +51,20 @@
       </span>
       <template #dropdown>
         <el-dropdown-menu class="tags-dropdown-menu">
-          <el-dropdown-item v-if="!isAffix(selectedDropdownTag)" command="close"><Close style="width: 1em; height: 1em;" />关闭当前</el-dropdown-item>
-          <el-dropdown-item command="closeOthers"><CircleClose style="width: 1em; height: 1em;" />关闭其他</el-dropdown-item>
-          <el-dropdown-item command="closeLeft" :disabled="isFirstView()"><Back style="width: 1em; height: 1em;" />关闭左侧</el-dropdown-item>
-          <el-dropdown-item command="closeRight" :disabled="isLastView()"><Right style="width: 1em; height: 1em;" />关闭右侧</el-dropdown-item>
-          <el-dropdown-item command="closeAll"><CircleClose style="width: 1em; height: 1em;" />全部关闭</el-dropdown-item>
+          <el-dropdown-item v-if="!isAffix(selectedDropdownTag)" command="close"
+            ><Close style="width: 1em; height: 1em" />关闭当前</el-dropdown-item
+          >
+          <el-dropdown-item command="closeOthers"><CircleClose style="width: 1em; height: 1em" />关闭其他</el-dropdown-item>
+          <el-dropdown-item command="closeLeft" :disabled="isFirstView()"
+            ><Back style="width: 1em; height: 1em" />关闭左侧</el-dropdown-item
+          >
+          <el-dropdown-item command="closeRight" :disabled="isLastView()"
+            ><Right style="width: 1em; height: 1em" />关闭右侧</el-dropdown-item
+          >
+          <el-dropdown-item command="closeAll"><CircleClose style="width: 1em; height: 1em" />全部关闭</el-dropdown-item>
           <el-dropdown-item command="fullscreen" divided>
-            <template v-if="!isFullscreen"><FullScreen style="width: 1em; height: 1em;" />全屏显示</template>
-            <template v-else><Close style="width: 1em; height: 1em;" />退出全屏</template>
+            <template v-if="!isFullscreen"><FullScreen style="width: 1em; height: 1em" />全屏显示</template>
+            <template v-else><Close style="width: 1em; height: 1em" />退出全屏</template>
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>
@@ -76,9 +78,7 @@
     <!-- 右键上下文菜单 -->
     <ul v-show="visible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)"><RefreshRight style="width: 1em; height: 1em" />刷新页面</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
-        <Close style="width: 1em; height: 1em" />关闭当前
-      </li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)"><Close style="width: 1em; height: 1em" />关闭当前</li>
       <li @click="closeOthersTags"><CircleClose style="width: 1em; height: 1em" />关闭其他</li>
       <li v-if="!isFirstView()" @click="closeLeftTags"><Back style="width: 1em; height: 1em" />关闭左侧</li>
       <li v-if="!isLastView()" @click="closeRightTags"><Right style="width: 1em; height: 1em" />关闭右侧</li>
@@ -230,9 +230,7 @@ function filterAffixTags(routes: RouteData[], basePath = '') {
   let tags: TagView[] = []
   routes.forEach((route) => {
     if (route.meta && route.meta.affix) {
-      const tagPath = route.path!.startsWith('/')
-        ? getNormalPath(route.path!)
-        : getNormalPath(basePath + '/' + route.path!)
+      const tagPath = route.path!.startsWith('/') ? getNormalPath(route.path!) : getNormalPath(basePath + '/' + route.path!)
       tags.push({
         fullPath: tagPath,
         path: tagPath,
@@ -760,13 +758,13 @@ $tags-bar-height: 34px;
           box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 
           &::before {
-            box-shadow: calc(var(--chrome-wing-r) * 0.5) calc(var(--chrome-wing-r) * 0.5) 0
-              calc(var(--chrome-wing-r) * 0.5) var(--chrome-tab-active-bg);
+            box-shadow: calc(var(--chrome-wing-r) * 0.5) calc(var(--chrome-wing-r) * 0.5) 0 calc(var(--chrome-wing-r) * 0.5)
+              var(--chrome-tab-active-bg);
           }
 
           &::after {
-            box-shadow: calc(var(--chrome-wing-r) * -0.5) calc(var(--chrome-wing-r) * 0.5) 0
-              calc(var(--chrome-wing-r) * 0.5) var(--chrome-tab-active-bg);
+            box-shadow: calc(var(--chrome-wing-r) * -0.5) calc(var(--chrome-wing-r) * 0.5) 0 calc(var(--chrome-wing-r) * 0.5)
+              var(--chrome-tab-active-bg);
           }
         }
       }

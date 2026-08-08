@@ -42,10 +42,10 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { getAuthHeaders } from '@/utils/auth'
 import modal from '@/utils/modal'
 
-const quillEditorRef = ref<any>()         // Quill 编辑器实例
-const uploadRef = ref<any>(null)          // 图片上传 input 引用
-const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + '/file/upload')   // 上传接口地址
-const headers = ref(getAuthHeaders())     // 上传请求头（携带 token）
+const quillEditorRef = ref<any>() // Quill 编辑器实例
+const uploadRef = ref<any>(null) // 图片上传 input 引用
+const uploadUrl = ref(import.meta.env.VITE_APP_BASE_API + '/file/upload') // 上传接口地址
+const headers = ref(getAuthHeaders()) // 上传请求头（携带 token）
 
 /*
  * defineProps：父传子

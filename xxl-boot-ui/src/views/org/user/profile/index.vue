@@ -84,14 +84,15 @@ import resetPwd from './resetPwd.vue'
 import { getUserProfile } from '@/api/org/user'
 import type { User } from '@/types/api'
 
-const route = useRoute()                // 路由
-const selectedTab = ref("userinfo")     // 当前选中的 tab
-const state = reactive<{                // 用户信息、角色数据
+const route = useRoute() // 路由
+const selectedTab = ref('userinfo') // 当前选中的 tab
+const state = reactive<{
+  // 用户信息、角色数据
   user: User
   roleNames: string
 }>({
-  user: {},                 // 用户信息
-  roleNames: ''             // 角色名称列表
+  user: {}, // 用户信息
+  roleNames: '' // 角色名称列表
 })
 
 /** 获取当前登录用户个人信息 */

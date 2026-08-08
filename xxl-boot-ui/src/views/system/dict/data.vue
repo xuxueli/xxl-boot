@@ -15,20 +15,10 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']"
-          >修改</el-button
-        >
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="table.multiple"
-          @click="handleDelete"
-          v-hasRole="['admin']"
-          >删除</el-button
-        >
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Close" @click="handleClose">关闭</el-button>
@@ -53,12 +43,8 @@
       <el-table-column label="新增时间" align="center" prop="addTime" width="170" />
       <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']"
-            >修改</el-button
-          >
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']"
-            >删除</el-button
-          >
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -79,11 +65,7 @@
           <el-input v-model="formState.form.name" placeholder="请输入字典项名称" />
         </el-form-item>
         <el-form-item label="字典项Code" prop="code">
-          <el-input
-            v-model="formState.form.code"
-            placeholder="请输入字典项Code"
-            :disabled="formState.form.id != undefined"
-          />
+          <el-input v-model="formState.form.code" placeholder="请输入字典项Code" :disabled="formState.form.id != undefined" />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="formState.form.status">
@@ -135,19 +117,19 @@ const dictName = ref<string | undefined>('') /* 字典名称 */
 
 // 搜索栏：查询参数
 const queryParams = ref<DataQuery>({
-  pageNum: 1,        /* 当前页码 */
-  pageSize: 10,      /* 每页条数 */
-  dictId: dictId.value  /* 字典ID */
+  pageNum: 1 /* 当前页码 */,
+  pageSize: 10 /* 每页条数 */,
+  dictId: dictId.value /* 字典ID */
 })
 
 // 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
 const formState = ref<FormState<DictItem>>({
-  visible: false,  /* 对话框显隐 */
-  title: "",       /* 对话框标题 */
-  form: {},        /* 表单数据 */
+  visible: false /* 对话框显隐 */,
+  title: '' /* 对话框标题 */,
+  form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
-    name: [{ required: true, message: "字典项名称不能为空", trigger: "blur" }],
+    name: [{ required: true, message: '字典项名称不能为空', trigger: 'blur' }],
     code: [
       { required: true, message: '字典项Code不能为空', trigger: 'blur' },
       { pattern: /^[0-9]+$/, message: '只允许输入数字', trigger: 'blur' },
@@ -169,12 +151,12 @@ const formState = ref<FormState<DictItem>>({
 
 // 表格：UI数据
 const table = ref<TableState<DictItem>>({
-  list: [],          /* 字典项列表 */
-  total: 0,          /* 总条数 */
-  loading: true,     /* 加载状态 */
-  ids: [],           /* 选中行 ID 数组 */
-  single: true,      /* 是否单选 */
-  multiple: true     /* 是否多选 */
+  list: [] /* 字典项列表 */,
+  total: 0 /* 总条数 */,
+  loading: true /* 加载状态 */,
+  ids: [] /* 选中行 ID 数组 */,
+  single: true /* 是否单选 */,
+  multiple: true /* 是否多选 */
 })
 
 // 状态选项（从后端枚举接口加载，枚举项属性为 code、title）

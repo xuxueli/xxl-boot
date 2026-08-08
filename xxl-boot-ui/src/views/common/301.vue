@@ -32,8 +32,8 @@
 // 引入
 import errImage from '@/assets/images/301.gif'
 
-const route = useRoute()      // 路由数据
-const router = useRouter()    // 路由操作
+const route = useRoute() // 路由数据
+const router = useRouter() // 路由操作
 
 // 301 动图（加时间戳防缓存）
 const errGif = ref(errImage + '?' + +new Date())

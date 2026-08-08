@@ -6,12 +6,7 @@
 <template>
   <div class="navbar" :class="'nav' + settingsStore.navType">
     <!-- 侧边栏折叠按钮 -->
-    <Hamburger
-      id="hamburger-container"
-      :is-active="appStore.sidebar.opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    />
+    <Hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <!-- 面包屑导航：导航模式：
         1=左侧菜单（显示面包屑）

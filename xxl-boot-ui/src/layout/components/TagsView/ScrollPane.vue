@@ -7,12 +7,7 @@
   <!--
     el-scrollbar: Element Plus 提供的自定义滚动条组件。封装了原生滚动条，提供了更美观且可定制的滚动体验。
   -->
-  <el-scrollbar
-    ref="scrollContainer"
-    :vertical="false"
-    class="scroll-container"
-    @wheel.prevent="handleScroll"
-  >
+  <el-scrollbar ref="scrollContainer" :vertical="false" class="scroll-container" @wheel.prevent="handleScroll">
     <!--
       slot: 默认插槽。
       父组件传入的内容（如一系列标签、卡片等）将渲染在此处。

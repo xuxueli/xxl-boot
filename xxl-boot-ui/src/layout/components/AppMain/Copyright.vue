@@ -7,9 +7,8 @@
     <!-- Powered by <b>XXL-BOOT</b> v{{version}}
     ｜-->
     <span>{{ footerContent }}</span>
-    <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px;text-decoration:underline;" >xuxueli</a>
-    <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px;text-decoration:underline;" >github</a>
-
+    <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px; text-decoration: underline">xuxueli</a>
+    <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px; text-decoration: underline">github</a>
   </footer>
 </template>
 

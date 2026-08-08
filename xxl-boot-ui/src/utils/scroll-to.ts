@@ -50,10 +50,8 @@ export function scrollTo(to: number, duration?: number, callback?: () => void): 
 const requestAnimFrame: (callback: FrameRequestCallback) => number = (function () {
   return (
     window.requestAnimationFrame ||
-    (window as unknown as { webkitRequestAnimationFrame?: (cb: FrameRequestCallback) => number })
-      .webkitRequestAnimationFrame ||
-    (window as unknown as { mozRequestAnimationFrame?: (cb: FrameRequestCallback) => number })
-      .mozRequestAnimationFrame ||
+    (window as unknown as { webkitRequestAnimationFrame?: (cb: FrameRequestCallback) => number }).webkitRequestAnimationFrame ||
+    (window as unknown as { mozRequestAnimationFrame?: (cb: FrameRequestCallback) => number }).mozRequestAnimationFrame ||
     function (callback: FrameRequestCallback) {
       return window.setTimeout(callback, 1000 / 60)
     }

@@ -15,11 +15,7 @@
     >
       <!-- popover 触发器 -->
       <template #reference>
-        <div
-          class="right-menu-item hover-effect message-trigger"
-          @mouseenter="onMessageEnter"
-          @mouseleave="onMessageLeave"
-        >
+        <div class="right-menu-item hover-effect message-trigger" @mouseenter="onMessageEnter" @mouseleave="onMessageLeave">
           <!-- 图标：铃铛 -->
           <SvgIcon icon-class="bell" />
           <!-- 未读数量角标 -->
@@ -51,8 +47,13 @@
 
       <!-- 公告列表 -->
       <div v-else>
-        <div v-for="item in messageList" :key="item.id" class="message-item" :class="{ 'is-read': item.isRead }"
-             @click="previewMessage(item)">
+        <div
+          v-for="item in messageList"
+          :key="item.id"
+          class="message-item"
+          :class="{ 'is-read': item.isRead }"
+          @click="previewMessage(item)"
+        >
           <!-- 公告标签 -->
           <el-tag size="small" :type="item.category === 1 ? 'warning' : 'success'" class="message-tag">
             {{ item.category === 1 ? '通知' : '公告' }}
@@ -80,13 +81,13 @@ import type { PopoverInstance } from 'element-plus'
  */
 type MessageItem = Message & { isRead?: boolean }
 
-const messagePopover = ref<PopoverInstance | null>(null)  /* popover 实例引用 */
-const messageList = ref<MessageItem[]>([])                /* 公告列表 */
-const unreadCount = ref(0)                                /* 未读数量 */
-const messageLoading = ref(false)                         /* 加载状态 */
-const messageVisible = ref(false)                         /* popover 显隐 */
-const messageLeaveTimer = ref<ReturnType<typeof setTimeout> | null>(null)   /* 延时关闭定时器 */
-const messageViewRef = ref<InstanceType<typeof HeaderMessageDetail> | null>(null)  /* 抽屉组件引用 */
+const messagePopover = ref<PopoverInstance | null>(null) /* popover 实例引用 */
+const messageList = ref<MessageItem[]>([]) /* 公告列表 */
+const unreadCount = ref(0) /* 未读数量 */
+const messageLoading = ref(false) /* 加载状态 */
+const messageVisible = ref(false) /* popover 显隐 */
+const messageLeaveTimer = ref<ReturnType<typeof setTimeout> | null>(null) /* 延时关闭定时器 */
+const messageViewRef = ref<InstanceType<typeof HeaderMessageDetail> | null>(null) /* 抽屉组件引用 */
 
 /*
  * 加载顶部公告列表，统计未读数

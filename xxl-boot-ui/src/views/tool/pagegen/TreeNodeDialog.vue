@@ -59,9 +59,9 @@ const open = defineModel<boolean>()
 const emit = defineEmits(['commit'])
 
 const formData = ref<{
-  label?: string            /* 选项名 */
-  value?: string | number   /* 选项值 */
-  id?: number               /* 节点 ID */
+  label?: string /* 选项名 */
+  value?: string | number /* 选项值 */
+  id?: number /* 节点 ID */
 }>({
   label: undefined,
   value: undefined

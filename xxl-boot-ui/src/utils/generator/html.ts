@@ -133,9 +133,7 @@ const tags: Record<string, (el: FormItemConf) => string> = {
     const showPassword = el['show-password'] ? 'show-password' : ''
     const type = el.type ? `type="${el.type}"` : ''
     const autosize =
-      el.autosize && el.autosize.minRows
-        ? `:autosize="{minRows: ${el.autosize.minRows}, maxRows: ${el.autosize.maxRows}}"`
-        : ''
+      el.autosize && el.autosize.minRows ? `:autosize="{minRows: ${el.autosize.minRows}, maxRows: ${el.autosize.maxRows}}"` : ''
     let child = buildElInputChild(el)
 
     if (child) child = `\n${child}\n` // 换行
@@ -186,8 +184,7 @@ const tags: Record<string, (el: FormItemConf) => string> = {
     const activeColor = el['active-color'] ? `active-color="${el['active-color']}"` : ''
     const inactiveColor = el['inactive-color'] ? `inactive-color="${el['inactive-color']}"` : ''
     const activeValue = el['active-value'] !== true ? `:active-value='${JSON.stringify(el['active-value'])}'` : ''
-    const inactiveValue =
-      el['inactive-value'] !== false ? `:inactive-value='${JSON.stringify(el['inactive-value'])}'` : ''
+    const inactiveValue = el['inactive-value'] !== false ? `:inactive-value='${JSON.stringify(el['inactive-value'])}'` : ''
 
     return `<${el.tag} ${vModel} ${activeText} ${inactiveText} ${activeColor} ${inactiveColor} ${activeValue} ${inactiveValue} ${disabled}></${el.tag}>`
   },
@@ -340,9 +337,7 @@ function buildElUploadChild(conf: FormItemConf): string {
   if (conf['list-type'] === 'picture-card') list.push('<i class="el-icon-plus"></i>')
   else list.push(`<el-button size="small" type="primary" icon="el-icon-upload">${conf.buttonText}</el-button>`)
   if (conf.showTip)
-    list.push(
-      `<div slot="tip" class="el-upload__tip">只能上传不超过 ${conf.fileSize}${conf.sizeUnit} 的${conf.accept}文件</div>`
-    )
+    list.push(`<div slot="tip" class="el-upload__tip">只能上传不超过 ${conf.fileSize}${conf.sizeUnit} 的${conf.accept}文件</div>`)
   return list.join('\n')
 }
 

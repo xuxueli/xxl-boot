@@ -12,8 +12,10 @@
       <SidebarLink v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
           <!-- 图标：优先取子菜单自身的 icon，没有则继承父级 -->
-          <SvgIcon :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"/>
-          <template #title><span class="menu-title" :title="hasTitle(onlyOneChild.meta.title)">{{ onlyOneChild.meta.title }}</span></template>
+          <SvgIcon :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)" />
+          <template #title
+            ><span class="menu-title" :title="hasTitle(onlyOneChild.meta.title)">{{ onlyOneChild.meta.title }}</span></template
+          >
         </el-menu-item>
       </SidebarLink>
     </template>

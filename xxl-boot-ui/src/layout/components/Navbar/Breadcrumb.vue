@@ -10,11 +10,9 @@
       <!-- 导航节点：按 levelList 渲染每一个导航节点 -->
       <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
         <!-- 纯文本节点：当前页或显式 noRedirect 节点仅展示文本，不可点击 -->
-        <span
-          v-if="(item.children && item.children.length > 0) || index === levelList.length - 1"
-          class="no-redirect"
-          >{{ item.meta.title }}</span
-        >
+        <span v-if="(item.children && item.children.length > 0) || index === levelList.length - 1" class="no-redirect">{{
+          item.meta.title
+        }}</span>
         <!-- 可点击节点：点击后交给 handleLink 统一处理 -->
         <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
       </el-breadcrumb-item>

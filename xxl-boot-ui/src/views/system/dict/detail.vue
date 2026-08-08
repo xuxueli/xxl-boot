@@ -3,13 +3,7 @@
   功能：展示指定字典下的全部字典项
 -->
 <template>
-  <el-drawer
-    :model-value="visible"
-    direction="rtl"
-    size="700px"
-    append-to-body
-    @update:model-value="$emit('update:visible', $event)"
-  >
+  <el-drawer :model-value="visible" direction="rtl" size="700px" append-to-body @update:model-value="$emit('update:visible', $event)">
     <!-- 自定义标题 -->
     <template #header>
       <div class="drawer-head">

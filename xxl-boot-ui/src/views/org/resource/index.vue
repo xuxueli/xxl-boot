@@ -7,13 +7,7 @@
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
       <el-form-item label="资源名称" prop="name">
-        <el-input
-          v-model="queryParams.name"
-          placeholder="请输入资源名称"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.name" placeholder="请输入资源名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="资源状态" clearable style="width: 200px">
@@ -87,7 +81,9 @@
       <el-table-column label="操作" align="center" width="210" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:resource']">修改</el-button>
-          <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-if="scope.row.type !== 2" v-hasPermi="['org:resource']">新增</el-button>
+          <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-if="scope.row.type !== 2" v-hasPermi="['org:resource']"
+            >新增</el-button
+          >
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:resource']">删除</el-button>
         </template>
       </el-table-column>
@@ -199,14 +195,7 @@
 </template>
 
 <script setup name="Resource" lang="ts">
-import {
-  listResource,
-  getResource,
-  addResource,
-  updateResource,
-  delResource,
-  updateResourceSort
-} from '@/api/org/resource'
+import { listResource, getResource, addResource, updateResource, delResource, updateResourceSort } from '@/api/org/resource'
 import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import { handleTree } from '@/utils/common'
@@ -237,8 +226,8 @@ interface FormState {
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
-const formRef = ref<FormInstance>()   /* 编辑表单 ref */
-const iconSelectRef = ref<any>()      /* 图标选择器 ref */
+const formRef = ref<FormInstance>() /* 编辑表单 ref */
+const iconSelectRef = ref<any>() /* 图标选择器 ref */
 
 // 枚举选项数据：资源类型、资源状态、显示状态
 const {
@@ -252,24 +241,24 @@ const menuOptions = ref<Resource[]>([])
 
 // 搜索栏：查询参数
 const queryParams = ref<ResourceQuery>({
-  name: undefined,   /* 资源名称关键词 */
-  status: -1         /* 状态（-1 全部、0 正常、1 停用） */
+  name: undefined /* 资源名称关键词 */,
+  status: -1 /* 状态（-1 全部、0 正常、1 停用） */
 })
 
 // 表格：树数据与 UI 状态
 const table = ref<TableState>({
-  list: [],            /* 资源树列表 */
-  loading: true,       /* 加载状态 */
-  showSearch: true,    /* 是否显示搜索栏 */
-  expandAll: false,    /* 是否默认全部展开 */
-  refresh: true        /* 表格刷新开关（展开/折叠时重建） */
+  list: [] /* 资源树列表 */,
+  loading: true /* 加载状态 */,
+  showSearch: true /* 是否显示搜索栏 */,
+  expandAll: false /* 是否默认全部展开 */,
+  refresh: true /* 表格刷新开关（展开/折叠时重建） */
 })
 
 // 编辑表单：数据状态
 const formState = ref<FormState>({
-  visible: false    /* 对话框显隐 */,
-  title: ''         /* 对话框标题 */,
-  form: {}          /* 表单数据 */,
+  visible: false /* 对话框显隐 */,
+  title: '' /* 对话框标题 */,
+  form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
     name: [{ required: true, message: '资源名称不能为空', trigger: 'blur' }],

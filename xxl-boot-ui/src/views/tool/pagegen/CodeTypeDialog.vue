@@ -48,15 +48,15 @@ const emit = defineEmits(['confirm'])
 
 // 响应式数据
 const formData = ref<{
-  fileName?: string            /* 文件名 */
-  type: string                 /* 生成类型 */
+  fileName?: string /* 文件名 */
+  type: string /* 生成类型 */
 }>({
   fileName: undefined,
-  type: 'file'                 /* 默认生成页面 */
+  type: 'file' /* 默认生成页面 */
 })
 
 // 表单 + 规则
-const codeTypeForm = ref<FormInstance>()        /* 表单 ref */
+const codeTypeForm = ref<FormInstance>() /* 表单 ref */
 const rules = {
   fileName: [
     {

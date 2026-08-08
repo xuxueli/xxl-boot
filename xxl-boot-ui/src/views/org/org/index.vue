@@ -7,13 +7,7 @@
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
       <el-form-item label="组织名称" prop="name">
-        <el-input
-          v-model="queryParams.name"
-          placeholder="请输入组织名称"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.name" placeholder="请输入组织名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="组织状态" clearable style="width: 200px">
@@ -71,7 +65,7 @@
       </el-table-column>
       <el-table-column label="操作" align="left" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']" >修改</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
           <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasRole="['admin']">新增</el-button>
           <el-button
             v-if="scope.row.parentId !== 0"
@@ -168,28 +162,28 @@ interface FormState {
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：编辑表单 ref
-const formRef = ref<FormInstance>()   /* 编辑表单 ref */
+const formRef = ref<FormInstance>() /* 编辑表单 ref */
 
 // 搜索栏：查询参数
 const queryParams = ref<OrgQuery>({
-  name: undefined,   /* 组织名称关键词 */
-  status: -1         /* 状态（-1 全部、0 正常、1 禁用） */
+  name: undefined /* 组织名称关键词 */,
+  status: -1 /* 状态（-1 全部、0 正常、1 禁用） */
 })
 
 // 表格：UI数据
 const table = ref<TableState>({
-  list: [],          /* 组织树列表 */
-  loading: true,     /* 加载状态 */
-  showSearch: true,  /* 是否显示搜索栏 */
-  isExpandAll: true, /* 是否展开全部 */
+  list: [] /* 组织树列表 */,
+  loading: true /* 加载状态 */,
+  showSearch: true /* 是否显示搜索栏 */,
+  isExpandAll: true /* 是否展开全部 */,
   refreshTable: true /* 表格刷新开关（展开/折叠时重建） */
 })
 
 // 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
 const formState = ref<FormState>({
-  visible: false    /* 对话框显隐 */,
-  title: ''         /* 对话框标题 */,
-  form: {}          /* 表单数据 */,
+  visible: false /* 对话框显隐 */,
+  title: '' /* 对话框标题 */,
+  form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
     name: [{ required: true, message: '组织名称不能为空', trigger: 'blur' }],

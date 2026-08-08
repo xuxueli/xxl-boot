@@ -19,13 +19,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日志标题" prop="title">
-        <el-input
-          v-model="queryParams.title"
-          placeholder="请输入日志标题"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.title" placeholder="请输入日志标题" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -36,15 +30,7 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="table.multiple"
-          @click="handleDelete"
-          v-hasRole="['admin']"
-          >删除</el-button
-        >
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport" v-hasRole="['admin']">导出</el-button>
@@ -131,21 +117,21 @@ interface DictState {
 
 // 筛选：表单数据
 const queryParams = ref<LogQuery>({
-  pageNum: 1,       /* 当前页码 */
-  pageSize: 10,     /* 每页条数 */
-  type: -1,         /* 日志类型（-1 全部） */
-  module: 0,        /* 系统模块编码（0 全部） */
-  title: undefined  /* 日志标题 */
+  pageNum: 1 /* 当前页码 */,
+  pageSize: 10 /* 每页条数 */,
+  type: -1 /* 日志类型（-1 全部） */,
+  module: 0 /* 系统模块编码（0 全部） */,
+  title: undefined /* 日志标题 */
 })
 
 // 表格：UI数据
 const table = ref<TableState<Log>>({
-  list: [],          /* 表格：列表数据 */
-  total: 0,          /* 表格：总条数 */
-  loading: true,     /* 表格：加载状态 */
-  showSearch: true,  /* 表格：是否显示搜索栏 */
-  ids: [],           /* 表格：选中行 ID 数组 */
-  multiple: true     /* 表格：是否多选 */
+  list: [] /* 表格：列表数据 */,
+  total: 0 /* 表格：总条数 */,
+  loading: true /* 表格：加载状态 */,
+  showSearch: true /* 表格：是否显示搜索栏 */,
+  ids: [] /* 表格：选中行 ID 数组 */,
+  multiple: true /* 表格：是否多选 */
 })
 
 // 详情弹框：UI数据
@@ -156,12 +142,12 @@ const detail = ref<DetailState>({
 
 // 枚举数据（下拉选项 + 编码→名称映射）
 const typeDict = ref<DictState>({
-  options: [],  /* 日志类型下拉选项 */
-  map: {}       /* 日志类型编码 → 名称映射 */
+  options: [] /* 日志类型下拉选项 */,
+  map: {} /* 日志类型编码 → 名称映射 */
 })
 const moduleDict = ref<DictState>({
-  options: [],  /* 系统模块下拉选项 */
-  map: {}       /* 系统模块编码 → 名称映射 */
+  options: [] /* 系统模块下拉选项 */,
+  map: {} /* 系统模块编码 → 名称映射 */
 })
 
 // --------------------------------- fun ---------------------------------

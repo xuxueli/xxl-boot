@@ -7,22 +7,10 @@
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
       <el-form-item label="表名称" prop="tableName">
-        <el-input
-          v-model="queryParams.tableName"
-          placeholder="请输入表名称"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.tableName" placeholder="请输入表名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="表描述" prop="tableComment">
-        <el-input
-          v-model="queryParams.tableComment"
-          placeholder="请输入表描述"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.tableComment" placeholder="请输入表描述" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -36,35 +24,13 @@
         <el-button type="primary" plain icon="Plus" @click="openCreateDialog" v-hasRole="['admin']">创建</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="table.single"
-          @click="handleEditTable"
-          v-hasRole="['admin']"
-          >修改</el-button
-        >
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleEditTable" v-hasRole="['admin']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="table.multiple"
-          @click="handleDelete"
-          v-hasRole="['admin']"
-          >删除</el-button
-        >
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="Download"
-          :disabled="table.multiple"
-          @click="handleGenTable"
-          v-hasRole="['admin']"
+        <el-button type="primary" plain icon="Download" :disabled="table.multiple" @click="handleGenTable" v-hasRole="['admin']"
           >生成</el-button
         >
       </el-col>
@@ -86,24 +52,16 @@
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-tooltip content="编辑" placement="top">
-            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)" v-hasRole="['admin']"
-              >编辑</el-button
-            >
+            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)" v-hasRole="['admin']">编辑</el-button>
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']"
-              >删除</el-button
-            >
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
           </el-tooltip>
           <el-tooltip content="预览" placement="top">
-            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasRole="['admin']"
-              >预览</el-button
-            >
+            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasRole="['admin']">预览</el-button>
           </el-tooltip>
           <el-tooltip content="生成代码" placement="top">
-            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasRole="['admin']"
-              >生成代码</el-button
-            >
+            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasRole="['admin']">生成代码</el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -127,12 +85,7 @@
           :name="key.substring(key.lastIndexOf('/') + 1, key.indexOf('.ftl'))"
           :key="value"
         >
-          <el-link
-            underline="never"
-            icon="DocumentCopy"
-            v-copyText="value"
-            v-copyText:callback="copyTextSuccess"
-            style="float: right"
+          <el-link underline="never" icon="DocumentCopy" v-copyText="value" v-copyText:callback="copyTextSuccess" style="float: right"
             >&nbsp;复制
           </el-link>
           <pre>{{ value }}</pre>
@@ -176,35 +129,35 @@ const editRef = ref<InstanceType<typeof EditTable> | null>(null) /* 编辑弹窗
 
 // 搜索栏：查询参数
 const queryParams = ref({
-  pageNum: 1,             /* 当前页码 */
-  pageSize: 10,           /* 每页条数 */
-  tableName: undefined,   /* 表名称 */
+  pageNum: 1 /* 当前页码 */,
+  pageSize: 10 /* 每页条数 */,
+  tableName: undefined /* 表名称 */,
   tableComment: undefined /* 表描述 */
 })
 
 // 表格：UI数据
 const table = ref({
-  list: [] as CodegenTable[],  /* 表列表数据 */
-  total: 0,          /* 总条数 */
-  loading: true,     /* 加载状态 */
-  showSearch: true,  /* 是否显示搜索栏 */
-  ids: [] as number[],  /* 选中行 ID 数组 */
-  single: true,      /* 是否单选 */
-  multiple: true     /* 是否多选 */
+  list: [] as CodegenTable[] /* 表列表数据 */,
+  total: 0 /* 总条数 */,
+  loading: true /* 加载状态 */,
+  showSearch: true /* 是否显示搜索栏 */,
+  ids: [] as number[] /* 选中行 ID 数组 */,
+  single: true /* 是否单选 */,
+  multiple: true /* 是否多选 */
 })
 
 // 预览弹窗
 const preview = ref({
-  open: false,       /* 弹窗显隐 */
-  title: "代码预览",  /* 弹窗标题 */
-  data: {} as Record<string, string>,          /* 预览代码数据 */
-  activeName: "entity.java" /* 激活标签 */
+  open: false /* 弹窗显隐 */,
+  title: '代码预览' /* 弹窗标题 */,
+  data: {} as Record<string, string> /* 预览代码数据 */,
+  activeName: 'entity.java' /* 激活标签 */
 })
 
 // 创建表弹窗
 const createDialog = ref({
-  visible: false,  /* 弹窗显隐 */
-  content: ""      /* 建表 SQL 语句 */
+  visible: false /* 弹窗显隐 */,
+  content: '' /* 建表 SQL 语句 */
 })
 
 /* --------------------------------- fun --------------------------------- */
@@ -297,8 +250,7 @@ function handlePreview(row: any) {
     preview.value.data = response.data
     preview.value.open = true
     const keys = Object.keys(response.data)
-    preview.value.activeName =
-      keys.length > 0 ? keys[0].substring(keys[0].lastIndexOf('/') + 1, keys[0].indexOf('.ftl')) : 'entity.java'
+    preview.value.activeName = keys.length > 0 ? keys[0].substring(keys[0].lastIndexOf('/') + 1, keys[0].indexOf('.ftl')) : 'entity.java'
   })
 }
 

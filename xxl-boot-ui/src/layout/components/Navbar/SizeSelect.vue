@@ -13,12 +13,7 @@
       <template #dropdown>
         <el-dropdown-menu>
           <!-- 当前选中项 disabled，不可再点击 -->
-          <el-dropdown-item
-            v-for="item of sizeOptions"
-            :key="item.value"
-            :disabled="size === item.value"
-            :command="item.value"
-          >
+          <el-dropdown-item v-for="item of sizeOptions" :key="item.value" :disabled="size === item.value" :command="item.value">
             {{ item.label }}
           </el-dropdown-item>
         </el-dropdown-menu>

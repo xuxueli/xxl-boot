@@ -9,13 +9,7 @@
 
       <!-- 用户名 -->
       <el-form-item prop="username">
-        <el-input
-          v-model="loginForm.username"
-          type="text"
-          size="large"
-          auto-complete="off"
-          placeholder="账号"
-        >
+        <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
           <template #prefix><SvgIcon icon-class="user" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
@@ -52,9 +46,7 @@
       </el-form-item>
 
       <!-- 记住密码 -->
-      <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin: 0px 0px 25px 0px"
-        >记住密码</el-checkbox
-      >
+      <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin: 0px 0px 25px 0px">记住密码</el-checkbox>
 
       <!-- login btn -->
       <el-form-item style="width: 100%">
@@ -67,10 +59,8 @@
     <!--  底部  -->
     <div class="el-login-footer">
       {{ footerContent }}
-      <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px; text-decoration: underline"
-        >xuxueli</a>
-      <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px; text-decoration: underline"
-        >github</a>
+      <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px; text-decoration: underline">xuxueli</a>
+      <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px; text-decoration: underline">github</a>
     </div>
   </div>
 </template>
@@ -83,12 +73,12 @@ import defaultSettings from '@/default-settings'
 import type { LoginParams } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
-const title = defaultSettings.title                   // 系统标题
-const footerContent = defaultSettings.footerContent   // 页脚版权信息
+const title = defaultSettings.title // 系统标题
+const footerContent = defaultSettings.footerContent // 页脚版权信息
 const userStore = useUserStore()
-const route = useRoute()                              // 路由
-const router = useRouter()                            // 路由
-const loginRef = ref<FormInstance>()                  // 登录表单 ref
+const route = useRoute() // 路由
+const router = useRouter() // 路由
+const loginRef = ref<FormInstance>() // 登录表单 ref
 
 // 登录表单数据
 const loginForm = ref<LoginParams>({
@@ -106,10 +96,10 @@ const loginRules: FormRules = {
   captchaResult: [{ required: true, trigger: 'change', message: '请输入验证码' }]
 }
 
-const codeUrl = ref("")                   // 验证码图片 base64
-const loading = ref(false)                // 登录按钮 loading
-const captchaEnabled = ref(true)          // 验证码开关（默认开启，实际由后端 /auth/captcha 返回的 enable 决定）
-const redirect = ref<string>()            // 登录后重定向地址
+const codeUrl = ref('') // 验证码图片 base64
+const loading = ref(false) // 登录按钮 loading
+const captchaEnabled = ref(true) // 验证码开关（默认开启，实际由后端 /auth/captcha 返回的 enable 决定）
+const redirect = ref<string>() // 登录后重定向地址
 
 // 监听路由参数，获取重定向地址
 watch(

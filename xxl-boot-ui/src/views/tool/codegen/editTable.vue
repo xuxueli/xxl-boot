@@ -93,13 +93,7 @@
         <!-- 拖拽区域 -->
         <el-table ref="dragTableRef" :data="columns" row-key="id" max-height="420">
           <el-table-column label="序号" type="index" min-width="5%" class-name="allowDrag" />
-          <el-table-column
-            label="字段列名"
-            prop="columnName"
-            min-width="10%"
-            :show-overflow-tooltip="true"
-            class-name="allowDrag"
-          />
+          <el-table-column label="字段列名" prop="columnName" min-width="10%" :show-overflow-tooltip="true" class-name="allowDrag" />
           <el-table-column label="字段描述" min-width="10%">
             <template #default="scope">
               <el-input v-model="scope.row.columnComment"></el-input>
@@ -180,12 +174,7 @@
           <el-table-column label="字典类型" min-width="12%">
             <template #default="scope">
               <el-select v-model="scope.row.dictType" clearable filterable placeholder="请选择">
-                <el-option
-                  v-for="dict in dictOptions"
-                  :key="dict.dictType"
-                  :label="dict.dictName"
-                  :value="dict.dictType"
-                >
+                <el-option v-for="dict in dictOptions" :key="dict.dictType" :label="dict.dictName" :value="dict.dictType">
                   <span style="float: left">{{ dict.dictName }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{ dict.dictType }}</span>
                 </el-option>
@@ -212,20 +201,20 @@ import modal from '@/utils/modal'
 import Sortable from 'sortablejs'
 
 /* 组件回调 */
-const emit = defineEmits(["ok"])          /* 提交成功后通知父组件刷新列表 */
+const emit = defineEmits(['ok']) /* 提交成功后通知父组件刷新列表 */
 
 /* 表单 ref */
-const basicFormRef = ref<FormInstance>()             /* 基本信息表单 */
-const genFormRef = ref<FormInstance>()               /* 生成信息表单 */
+const basicFormRef = ref<FormInstance>() /* 基本信息表单 */
+const genFormRef = ref<FormInstance>() /* 生成信息表单 */
 
 /* 状态变量 */
-const activeName = ref("basic")            /* 当前 TAB */
-const columns = ref<any[]>([])                    /* 字段列表 */
-const dictOptions = ref<any[]>([])                /* 字典类型选项 */
-const info = ref<Record<string, any>>({})          /* 表配置信息 */
-const visible = ref(false)                 /* 弹框显隐 */
-const tableId = ref(0)                     /* 当前编辑的表 ID */
-const dragTableRef = ref<any>(null)        /* 字段表格 ref，用于拖拽排序 */
+const activeName = ref('basic') /* 当前 TAB */
+const columns = ref<any[]>([]) /* 字段列表 */
+const dictOptions = ref<any[]>([]) /* 字典类型选项 */
+const info = ref<Record<string, any>>({}) /* 表配置信息 */
+const visible = ref(false) /* 弹框显隐 */
+const tableId = ref(0) /* 当前编辑的表 ID */
+const dragTableRef = ref<any>(null) /* 字段表格 ref，用于拖拽排序 */
 
 /** 基本信息 - 表单校验规则 */
 const basicRules = {

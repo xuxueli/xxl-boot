@@ -110,15 +110,15 @@ const props = defineProps({
 // defineEmits：子传父（modelValue 通过 update:modelValue 回传）
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
-const imageUpload = ref<any>(null)        // el-upload 组件引用
-const number = ref(0)                     // 正在上传的图片计数
-const uploadList = ref<Array<{ name: string; url: string }>>([])  // 本次上传成功的图片列表
-const dialogImageUrl = ref('')            // 预览大图的 URL
-const dialogVisible = ref(false)          // 预览弹窗显示/隐藏
-const baseUrl = import.meta.env.VITE_APP_BASE_API                 // API 基础地址
+const imageUpload = ref<any>(null) // el-upload 组件引用
+const number = ref(0) // 正在上传的图片计数
+const uploadList = ref<Array<{ name: string; url: string }>>([]) // 本次上传成功的图片列表
+const dialogImageUrl = ref('') // 预览大图的 URL
+const dialogVisible = ref(false) // 预览弹窗显示/隐藏
+const baseUrl = import.meta.env.VITE_APP_BASE_API // API 基础地址
 const uploadImgUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action) // 上传接口完整地址
-const headers = ref(getAuthHeaders())     // 上传请求头（携带 token）
-const fileList = ref<any[]>([])           // 已上传图片列表 [{name, url}]
+const headers = ref(getAuthHeaders()) // 上传请求头（携带 token）
+const fileList = ref<any[]>([]) // 已上传图片列表 [{name, url}]
 const showTip = computed(
   // 是否显示格式/大小提示
   () => props.isShowTip && (props.fileType || props.fileSize)

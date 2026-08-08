@@ -47,24 +47,12 @@
             <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['org:user']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="success"
-              plain
-              icon="Edit"
-              :disabled="table.single"
-              @click="handleUpdate"
-              v-hasPermi="['org:user']"
+            <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasPermi="['org:user']"
               >修改</el-button
             >
           </el-col>
           <el-col :span="1.5">
-            <el-button
-              type="danger"
-              plain
-              icon="Delete"
-              :disabled="table.multiple"
-              @click="handleDelete"
-              v-hasPermi="['org:user']"
+            <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasPermi="['org:user']"
               >删除</el-button
             >
           </el-col>
@@ -77,9 +65,7 @@
           <el-table-column label="用户编号" align="center" prop="id" width="80" />
           <el-table-column label="账号" align="center" prop="username" width="110" :show-overflow-tooltip="true">
             <template #default="scope">
-              <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{
-                scope.row.username
-              }}</a>
+              <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{ scope.row.username }}</a>
             </template>
           </el-table-column>
           <el-table-column label="用户名称" align="center" prop="realName" width="110" :show-overflow-tooltip="true" />
@@ -101,12 +87,8 @@
           </el-table-column>
           <el-table-column label="操作" align="center" width="190" class-name="small-padding fixed-width">
             <template #default="scope">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:user']"
-                >修改</el-button
-              >
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:user']"
-                >删除</el-button
-              >
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:user']">修改</el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:user']">删除</el-button>
               <el-dropdown trigger="click" @command="() => handleResetPwd(scope.row)">
                 <el-button link type="primary" icon="DArrowRight">更多</el-button>
                 <template #dropdown>
@@ -256,35 +238,36 @@ const { UserStatuEnum: statusOptions } = useEnumOption('UserStatuEnum')
 const roleOptions = ref<Role[]>([])
 
 // 组织树：左侧树形结构 + 编辑表单归属组织下拉树
-const deptOptions = ref<Org[]>([])    /* 左侧组织树 */
-const orgOptions = ref<Org[]>([])     /* 编辑表单归属组织下拉树 */
+const deptOptions = ref<Org[]>([]) /* 左侧组织树 */
+const orgOptions = ref<Org[]>([]) /* 编辑表单归属组织下拉树 */
 
 // 搜索栏：查询参数
 const queryParams = ref<UserQuery>({
-  pageNum: 1,          /* 当前页码 */
-  pageSize: 10,        /* 每页条数 */
-  username: undefined, /* 用户名称关键词 */
-  status: -1,          /* 状态（-1 全部、0 正常、1 停用） */
-  orgIds: []           /* 选中的组织及其全部子组织 ID 列表 */
+  pageNum: 1 /* 当前页码 */,
+  pageSize: 10 /* 每页条数 */,
+  username: undefined /* 用户名称关键词 */,
+  status: -1 /* 状态（-1 全部、0 正常、1 停用） */,
+  orgIds: [] /* 选中的组织及其全部子组织 ID 列表 */
 })
 
 // 表格：UI数据
 const table = ref<TableState<User>>({
-  list: [],          /* 用户列表 */
-  total: 0,          /* 总条数 */
-  loading: true,     /* 加载状态 */
-  showSearch: true,  /* 是否显示搜索栏 */
-  ids: [],           /* 选中行 ID 数组 */
-  single: true,      /* 是否单选 */
-  multiple: true     /* 是否多选 */
+  list: [] /* 用户列表 */,
+  total: 0 /* 总条数 */,
+  loading: true /* 加载状态 */,
+  showSearch: true /* 是否显示搜索栏 */,
+  ids: [] /* 选中行 ID 数组 */,
+  single: true /* 是否单选 */,
+  multiple: true /* 是否多选 */
 })
 
 // 编辑表单：数据状态
 const formState = ref<FormState<UserFormData>>({
-  visible: false,  /* 对话框显隐 */
-  title: "",       /* 对话框标题 */
-  form: {},        /* 表单数据 */
-  rules: {         /* 校验规则 */
+  visible: false /* 对话框显隐 */,
+  title: '' /* 对话框标题 */,
+  form: {} /* 表单数据 */,
+  rules: {
+    /* 校验规则 */
     username: [
       { required: true, message: '账号不能为空', trigger: 'blur' },
       { pattern: /^[a-z][a-z0-9]*$/, message: '格式：小写字母开头，字母/数字', trigger: 'blur' }
