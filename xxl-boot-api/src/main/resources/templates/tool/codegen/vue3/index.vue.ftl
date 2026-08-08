@@ -1,3 +1,11 @@
+<#function tsType javaType>
+  <#local t = (javaType!"")?string />
+  <#if t == "String"><#return "string" /></#if>
+  <#if t == "Integer" || t == "int" || t == "Long" || t == "long" || t == "Short" || t == "Byte" || t == "Double" || t == "double" || t == "Float" || t == "BigDecimal" || t == "Character"><#return "number" /></#if>
+  <#if t == "Boolean" || t == "boolean"><#return "boolean" /></#if>
+  <#if t == "Date" || t == "LocalDate" || t == "LocalDateTime" || t == "LocalTime"><#return "string" /></#if>
+  <#return "any" />
+</#function>
 <!--
   ${codegen.functionName}（列表页）
   Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
@@ -18,7 +26,7 @@
       <el-form-item label="${comment}" prop="${field.javaField}">
         <el-select v-model="queryParams.${field.javaField}" placeholder="请选择${comment}" clearable>
 <#if field.dictType?has_content>
-          <el-option v-for="dict in ${field.dictType}" :key="dict.value" :label="dict.label" :value="dict.value" />
+          <el-option v-for="dict in <#if field.dictType?has_content>(dicts.${field.dictType} || [])<#else>[]</#if>" :key="dict.value" :label="dict.label" :value="dict.value" />
 <#else>
           <el-option label="请选择字典生成" value="" />
 </#if>
@@ -105,19 +113,19 @@
 <#elseif field.htmlType == "select">
         <el-form-item label="${comment}" prop="${field.javaField}">
           <el-select v-model="formState.form.${field.javaField}" placeholder="请选择${comment}">
-            <el-option v-for="dict in ${field.dictType!'[]'}" :key="dict.value" :label="dict.label" :value="dict.value" />
+            <el-option v-for="dict in <#if field.dictType?has_content>(dicts.${field.dictType} || [])<#else>[]</#if>" :key="dict.value" :label="dict.label" :value="dict.value" />
           </el-select>
         </el-form-item>
 <#elseif field.htmlType == "radio">
         <el-form-item label="${comment}" prop="${field.javaField}">
           <el-radio-group v-model="formState.form.${field.javaField}">
-            <el-radio v-for="dict in ${field.dictType!'[]'}" :key="dict.value" :label="dict.value">{{ dict.label }}</el-radio>
+            <el-radio v-for="dict in <#if field.dictType?has_content>(dicts.${field.dictType} || [])<#else>[]</#if>" :key="dict.value" :label="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
 <#elseif field.htmlType == "checkbox">
         <el-form-item label="${comment}" prop="${field.javaField}">
           <el-checkbox-group v-model="formState.form.${field.javaField}">
-            <el-checkbox v-for="dict in ${field.dictType!'[]'}" :key="dict.value" :label="dict.value">{{ dict.label }}</el-checkbox>
+            <el-checkbox v-for="dict in <#if field.dictType?has_content>(dicts.${field.dictType} || [])<#else>[]</#if>" :key="dict.value" :label="dict.value">{{ dict.label }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
 <#elseif field.htmlType == "datetime">
@@ -149,20 +157,47 @@
   </div>
 </template>
 
-<script setup name="${codegen.businessName}">
+<script setup name="${codegen.businessName}" lang="ts">
+import type { FormInstance, FormRules } from 'element-plus'
 import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName}, export${codegen.businessName} } from "@/api/${codegen.moduleName}/${codegen.businessName?lower_case}"
+import type { ${codegen.businessName}, ${codegen.businessName}Form } from "@/api/${codegen.moduleName}/${codegen.businessName?lower_case}"
 import { addDateRange } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import { download } from '@/utils/request'
 import modal from '@/utils/modal'
 
+// 字典选项兜底映射：dictType 字段在此注册空数组，如需字典数据用 useDict 加载替换
+const dicts: Record<string, Array<{ value: any; label: string }>> = {}
+
+<#assign hasIdField = false>
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.javaField == "id"><#assign hasIdField = true></#if>
+</#list>
+</#if>
 const resetForm = useFormReset()
 
 
 // --------------------------------- ref data ---------------------------------
 
+// 表单 ref
+const queryRef = ref<FormInstance>()         /* 搜索栏表单 ref */
+const ${codegen.businessName?uncap_first}Ref = ref<FormInstance>()  /* 编辑表单 ref */
+
 // 搜索栏：查询参数
-const queryParams = ref({
+interface QueryParams {
+  pageNum: number,       /* 当前页码 */
+  pageSize: number,      /* 每页条数 */
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.isQuery == "1" && (field.htmlType == "input" || field.htmlType == "select" || field.htmlType == "radio" || (field.htmlType == "datetime" && field.queryType != "BETWEEN"))>
+  ${field.javaField}?: ${tsType(field.javaType)}, /* ${field.columnComment!field.javaField} */
+</#if>
+</#list>
+</#if>
+}
+
+const queryParams = ref<QueryParams>({
   pageNum: 1,        /* 当前页码 */
   pageSize: 10,      /* 每页条数 */
 <#if fields?? && fields?size gt 0>
@@ -178,13 +213,23 @@ const queryParams = ref({
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isQuery == "1" && field.htmlType == "datetime" && field.queryType == "BETWEEN">
-const dateRange${field.javaField?cap_first} = ref([]) /* ${field.columnComment!field.javaField} 查询区间 */
+const dateRange${field.javaField?cap_first} = ref<string[]>([]) /* ${field.columnComment!field.javaField} 查询区间 */
 </#if>
 </#list>
 </#if>
 
 // 表格：UI 数据
-const table = ref({
+interface TableState {
+  list: ${codegen.businessName}[],      /* 数据列表 */
+  total: number,                        /* 总条数 */
+  loading: boolean,                     /* 加载状态 */
+  showSearch: boolean,                  /* 是否显示搜索栏 */
+  ids: number[],                        /* 选中行 ID 数组 */
+  single: boolean,                      /* 是否单选 */
+  multiple: boolean                     /* 是否多选 */
+}
+
+const table = ref<TableState>({
   list: [],          /* 数据列表 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
@@ -195,7 +240,14 @@ const table = ref({
 })
 
 // 编辑表单：数据状态
-const formState = ref({
+interface FormState {
+  visible: boolean,  /* 对话框显隐 */
+  title: string,     /* 对话框标题 */
+  form: ${codegen.businessName}Form,  /* 表单数据 */
+  rules: FormRules   /* 校验规则 */
+}
+
+const formState = ref<FormState>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */
@@ -209,13 +261,12 @@ const formState = ref({
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端分页参数（offset/pagesize）
+  const { pageNum, pageSize, ...rest } = queryParams.value
   const params = {
-    ...queryParams.value,
-    offset: (queryParams.value.pageNum - 1) * queryParams.value.pageSize,
-    pagesize: queryParams.value.pageSize
+    ...rest,
+    offset: (pageNum - 1) * pageSize,
+    pagesize: pageSize
   }
-  delete params.pageNum
-  delete params.pageSize
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isQuery == "1" && field.htmlType == "datetime" && field.queryType == "BETWEEN">
@@ -246,7 +297,9 @@ function reset() {
 </#if>
 </#list>
 </#if>
+<#if !hasIdField>
     id: undefined
+</#if>
   }
   resetForm("${codegen.businessName?uncap_first}Ref")
 }
@@ -271,8 +324,8 @@ function resetQuery() {
 }
 
 /** 多选框选中数据 */
-function handleSelectionChange(selection) {
-  table.value.ids = selection.map(item => item.id)
+function handleSelectionChange(selection: ${codegen.businessName}[]) {
+  table.value.ids = selection.map(item => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -285,7 +338,7 @@ function handleAdd() {
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
-function handleUpdate(row) {
+function handleUpdate(row: any) {
   reset()
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
   const id = row && row.id != null ? row.id : table.value.ids[0]
@@ -301,7 +354,7 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  ${codegen.businessName?uncap_first}Ref.value.validate(valid => {
+  ${codegen.businessName?uncap_first}Ref.value?.validate(valid => {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
@@ -322,7 +375,7 @@ function submitForm() {
 }
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
-function handleDelete(row) {
+function handleDelete(row: any) {
   const delIds = row && row.id != null ? row.id : table.value.ids
   if (delIds == null || (Array.isArray(delIds) && delIds.length === 0)) {
     return

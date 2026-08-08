@@ -77,7 +77,6 @@
             <el-col :span="12">
               <el-form-item label="前端模板类型" prop="tplWebType">
                 <el-select v-model="info.tplWebType">
-                  <el-option label="Element Plus" value="element-plus"/>
                   <el-option label="Element Plus + TypeScript" value="element-plus-typescript"/>
                 </el-select>
               </el-form-item>
@@ -242,17 +241,17 @@ const genRules = {
 function open(id: number) {
   tableId.value = id
   activeName.value = "basic"
-  info.value = {formColNum: 1, tplWebType: 'element-plus'}
+  info.value = {formColNum: 1, tplWebType: 'element-plus-typescript'}
   visible.value = true
 
   /* 加载表配置 + 字段列表 */
   getGenTable(id).then(res => {
     const {fieldList, ...rest} = (res.data || {}) as {fieldList?: any[]; [key: string]: any}
-    info.value = {formColNum: 1, tplWebType: 'element-plus', ...rest}
+    info.value = {formColNum: 1, tplWebType: 'element-plus-typescript', ...rest}
     columns.value = fieldList || []
     /* 校验默认值是否在可选范围内 */
     if (![1, 2, 3].includes(info.value.formColNum)) info.value.formColNum = 1
-    if (!['element-plus', 'element-plus-typescript'].includes(info.value.tplWebType)) info.value.tplWebType = 'element-plus'
+    if (info.value.tplWebType !== 'element-plus-typescript') info.value.tplWebType = 'element-plus-typescript'
   })
 
   /* 加载字典类型下拉 */

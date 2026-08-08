@@ -61,7 +61,7 @@ const footerContent = defaultSettings.footerContent
 
 /** 跳转外部链接 */
 function goTarget(url: string) {
-  window.open(url, '__blank')
+  window.open(url, '_blank')
 }
 </script>
 
