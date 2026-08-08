@@ -49,7 +49,7 @@
     "globals": "17.9.0",
     "prettier": "3.9.6",
     "sass-embedded": "1.100.0",
-    "typescript": "^5.9.3",
+    "typescript": "6.0.3",
     "typescript-eslint": "8.66.0",
     "unplugin-auto-import": "21.1.0",
     "unplugin-vue-setup-extend-plus": "1.0.1",

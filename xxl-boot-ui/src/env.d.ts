@@ -61,3 +61,9 @@ declare module '*.svg' {
   const src: string
   export default src
 }
+
+/**
+ * vite-plugin-svg-icons 虚拟模块声明
+ * main.ts 中以副作用方式导入（注册 svg sprite），无导出内容
+ */
+declare module 'virtual:svg-icons-register' {}

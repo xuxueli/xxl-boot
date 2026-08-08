@@ -257,6 +257,7 @@ public class CodegenServiceImpl implements CodegenService {
             result.put("sql/sql.ftl", render("sql/sql.ftl", params));
 
             // generate vue
+            result.put("vue3/types.ts.ftl", render("vue3/types.ts.ftl", params));
             result.put("vue3/api.ts.ftl", render("vue3/api.ts.ftl", params));
             if (codegen.getTplCategory().equals("tree")) {
                 result.put("vue3/index-tree.vue.ftl", render("vue3/index-tree.vue.ftl", params));
@@ -301,6 +302,7 @@ public class CodegenServiceImpl implements CodegenService {
                 addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "-init.sql", render("sql/sql.ftl", params));
 
                 // generate vue
+                addZipEntry(zos, "vue/types/" + module + "/" + cn + ".ts", render("vue3/types.ts.ftl", params));
                 addZipEntry(zos, "vue/api/" + module + "/" + cn + ".ts", render("vue3/api.ts.ftl", params));
                 if (codegen.getTplCategory().equals("tree")) {
                     addZipEntry(zos, "vue/views/" + module + "/" + cn + "/index.vue", render("vue3/index-tree.vue.ftl", params));

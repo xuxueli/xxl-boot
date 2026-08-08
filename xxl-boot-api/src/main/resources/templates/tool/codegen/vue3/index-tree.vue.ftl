@@ -6,6 +6,12 @@
   <#if t == "Date" || t == "LocalDate" || t == "LocalDateTime" || t == "LocalTime"><#return "string" /></#if>
   <#return "any" />
 </#function>
+<#assign hasIdField = false>
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.javaField == "id"><#assign hasIdField = true></#if>
+</#list>
+</#if>
 <!--
   ${codegen.functionName}（树表列表页）
   Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
@@ -38,12 +44,12 @@
 
     <!-- 数据列表 -->
     <el-table v-loading="table.loading" :data="table.list" row-key="id" default-expand-all
-      :tree-props="{children: 'children', hasChildren: 'hasChildren'}" @selection-change="handleSelectionChange">
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="名称" prop="name" :show-overflow-tooltip="true" />
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
-      <el-table-column label="${field.columnComment}" prop="${field.javaField}" :show-overflow-tooltip="true" />
+      <el-table-column label="${field.columnComment!field.javaField}" prop="${field.javaField}" :show-overflow-tooltip="true" />
 </#list>
 </#if>
       <el-table-column label="操作" align="center" width="200">
@@ -59,7 +65,7 @@
       <el-form ref="${codegen.businessName?uncap_first}Ref" :model="formState.form" :rules="formState.rules" label-width="80px">
         <el-form-item label="上级" prop="parentId">
           <el-tree-select v-model="formState.form.parentId" :data="table.options" value-key="id"
-            :props="{label: 'name', children: 'children'}" placeholder="请选择上级" check-strictly />
+            :props="{ label: 'name', children: 'children' }" placeholder="请选择上级" check-strictly />
         </el-form-item>
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
@@ -122,88 +128,79 @@
 
 <script setup name="${codegen.businessName}Tree" lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName} } from "@/api/${codegen.moduleName}/${codegen.businessName?lower_case}"
-import type { ${codegen.businessName}, ${codegen.businessName}Form } from "@/api/${codegen.moduleName}/${codegen.businessName?lower_case}"
+import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName} } from '@/api/${codegen.moduleName}/${codegen.businessName?lower_case}'
+import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}Query } from '@/types/${codegen.moduleName}/${codegen.businessName?lower_case}'
 import { useFormReset } from '@/composables/useFormReset'
+import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
+import type { FormState, TableState } from '@/types'
+
+const resetForm = useFormReset()
 
 // 字典选项兜底映射：dictType 字段在此注册空数组，如需字典数据用 useDict 加载替换
 const dicts: Record<string, Array<{ value: any; label: string }>> = {}
-
-const resetForm = useFormReset()
 
 
 // --------------------------------- ref data ---------------------------------
 
 // 表单 ref
-const queryRef = ref<FormInstance>()         /* 搜索栏表单 ref */
-const ${codegen.businessName?uncap_first}Ref = ref<FormInstance>()  /* 编辑表单 ref */
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
+const ${codegen.businessName?uncap_first}Ref = ref<FormInstance>() /* 编辑表单 ref */
+
+/** 树表表格状态：通用 TableState + 上级选项 */
+type ${codegen.businessName}TableState = Omit<TableState<${codegen.businessName}>, 'total'> & { options: ${codegen.businessName}[] }
 
 // 搜索栏：查询参数
-interface QueryParams {
-  name?: string,     /* 名称关键词 */
-  pageNum: number,   /* 当前页码 */
-  pageSize: number   /* 每页条数 */
-}
-
-const queryParams = ref<QueryParams>({
+const queryParams = ref<${codegen.businessName}Query>({
+  pageNum: 1, /* 当前页码 */
+  pageSize: 10, /* 每页条数 */
   name: undefined, /* 名称关键词 */
-  pageNum: 1,      /* 当前页码 */
-  pageSize: 10     /* 每页条数 */
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.isQuery == "1" && field.javaField != "name">
+  ${field.javaField}: undefined, /* ${field.columnComment!field.javaField} */
+</#if>
+</#list>
+</#if>
 })
 
 // 表格：UI 数据
-interface TableState {
-  list: ${codegen.businessName}[],   /* 树表数据 */
-  options: ${codegen.businessName}[],  /* 上级选项数据 */
-  loading: boolean,                 /* 加载状态 */
-  showSearch: boolean,              /* 是否显示搜索栏 */
-  ids: number[],                    /* 选中行 ID 数组 */
-  single: boolean,                  /* 是否单选 */
-  multiple: boolean                 /* 是否多选 */
-}
-
-const table = ref<TableState>({
-  list: [],          /* 树表数据 */
-  options: [],       /* 上级选项数据 */
-  loading: true,     /* 加载状态 */
-  showSearch: true,  /* 是否显示搜索栏 */
-  ids: [],           /* 选中行 ID 数组 */
-  single: true,      /* 是否单选 */
-  multiple: true     /* 是否多选 */
+const table = ref<${codegen.businessName}TableState>({
+  list: [] as ${codegen.businessName}[], /* 树表数据 */
+  options: [] as ${codegen.businessName}[], /* 上级选项数据 */
+  loading: true, /* 加载状态 */
+  showSearch: true, /* 是否显示搜索栏 */
+  ids: [] as number[], /* 选中行 ID 数组 */
+  single: true, /* 是否单选 */
+  multiple: true /* 是否多选 */
 })
 
 // 编辑表单：数据状态
-interface FormState {
-  visible: boolean,  /* 对话框显隐 */
-  title: string,     /* 对话框标题 */
-  form: ${codegen.businessName}Form,  /* 表单数据 */
-  rules: FormRules   /* 校验规则 */
-}
-
-const formState = ref<FormState>({
-  visible: false,  /* 对话框显隐 */
-  title: "",       /* 对话框标题 */
-  form: {},        /* 表单数据 */
-  rules: {}        /* 校验规则 */
+const formState = ref<FormState<${codegen.businessName}Form>>({
+  visible: false, /* 对话框显隐 */
+  title: '', /* 对话框标题 */
+  form: {}, /* 表单数据 */
+  rules: {} /* 校验规则 */
 })
-
-
-// --------------------------------- fun ---------------------------------
 
 /** 查询${codegen.functionName}树表列表 */
 function getList() {
   table.value.loading = true
-  list${codegen.businessName}(queryParams.value).then(res => {
+  // 前端分页参数 → 后端请求参数（offset/pagesize）
+  const params = usePageParams(queryParams)()
+  list${codegen.businessName}(params).then((res) => {
     // 树表接口返回树数组（非分页结构），此处断言处理
     table.value.list = res.data as unknown as ${codegen.businessName}[]
     table.value.loading = false
   })
 }
 
+
+// --------------------------------- fun ---------------------------------
+
 /** 查询上级树选项 */
 function get${codegen.businessName}Treeselect() {
-  list${codegen.businessName}({ pageSize: 999 }).then(res => {
+  list${codegen.businessName}({ offset: 0, pagesize: 999 }).then((res) => {
     table.value.options = res.data as unknown as ${codegen.businessName}[]
   })
 }
@@ -216,8 +213,18 @@ function cancel() {
 
 /** 表单重置 */
 function reset() {
-  formState.value.form = { id: undefined, parentId: 0 }
-  resetForm("${codegen.businessName?uncap_first}Ref")
+  formState.value.form = {
+    id: undefined,
+    parentId: 0,
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if (field.isInsert == "1" || field.isEdit == "1") && field.javaField != "id" && field.javaField != "parentId">
+    ${field.javaField}: undefined, /* ${field.columnComment!field.javaField} */
+</#if>
+</#list>
+</#if>
+  }
+  resetForm('${codegen.businessName?uncap_first}Ref')
 }
 
 /** 搜索按钮操作 */
@@ -228,18 +235,18 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm("queryRef")
+  resetForm('queryRef')
   handleQuery()
 }
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection: ${codegen.businessName}[]) {
-  table.value.ids = selection.map(item => item.id as number)
+  table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
 
-/** 新增按钮操作（行内新增按钮点击传入行数据，用于指定上级） */
+/** 新增按钮操作（不传 row 新增顶级，传 row 新增下级） */
 function handleAdd(row: any) {
   reset()
   get${codegen.businessName}Treeselect()
@@ -248,7 +255,7 @@ function handleAdd(row: any) {
     formState.value.form.parentId = row.id
   }
   formState.value.visible = true
-  formState.value.title = "添加${codegen.functionName}"
+  formState.value.title = '新增${codegen.functionName}'
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -256,31 +263,31 @@ function handleUpdate(row: any) {
   reset()
   get${codegen.businessName}Treeselect()
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
-  const id = row && row.id != null ? row.id : table.value.ids[0]
+  const id = row?.id ?? table.value.ids[0]
   if (id == null) {
     return
   }
-  get${codegen.businessName}(id).then(res => {
+  get${codegen.businessName}(id).then((res) => {
     formState.value.form = res.data
     formState.value.visible = true
-    formState.value.title = "修改${codegen.functionName}"
+    formState.value.title = '修改${codegen.functionName}'
   })
 }
 
 /** 提交按钮 */
 function submitForm() {
-  ${codegen.businessName?uncap_first}Ref.value?.validate(valid => {
+  ${codegen.businessName?uncap_first}Ref.value?.validate((valid) => {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
-        update${codegen.businessName}(formState.value.form).then(res => {
-          modal.msgSuccess("修改成功")
+        update${codegen.businessName}(formState.value.form).then(() => {
+          modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
-        add${codegen.businessName}(formState.value.form).then(res => {
-          modal.msgSuccess("新增成功")
+        add${codegen.businessName}(formState.value.form).then(() => {
+          modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
         })
@@ -291,15 +298,15 @@ function submitForm() {
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row: any) {
-  const delIds = row && row.id != null ? row.id : table.value.ids
-  if (delIds == null || (Array.isArray(delIds) && delIds.length === 0)) {
+  const ${codegen.businessName?uncap_first}Ids = row?.id ?? table.value.ids
+  if (${codegen.businessName?uncap_first}Ids == null || (Array.isArray(${codegen.businessName?uncap_first}Ids) && ${codegen.businessName?uncap_first}Ids.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除编号为"' + delIds + '"的数据项？').then(function() {
-    return del${codegen.businessName}(delIds)
+  modal.confirm('是否确认删除${codegen.functionName}编号为"' + ${codegen.businessName?uncap_first}Ids + '"的数据项？').then(() => {
+    return del${codegen.businessName}(${codegen.businessName?uncap_first}Ids)
   }).then(() => {
     getList()
-    modal.msgSuccess("删除成功")
+    modal.msgSuccess('删除成功')
   }).catch(() => {})
 }
 
@@ -308,5 +315,4 @@ function handleDelete(row: any) {
 
 // 页面初始化：加载${codegen.functionName}树表列表
 getList()
-
 </script>

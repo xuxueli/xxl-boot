@@ -6,6 +6,12 @@
   <#if t == "Date" || t == "LocalDate" || t == "LocalDateTime" || t == "LocalTime"><#return "string" /></#if>
   <#return "any" />
 </#function>
+<#assign hasIdField = false>
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.javaField == "id"><#assign hasIdField = true></#if>
+</#list>
+</#if>
 <!--
   ${codegen.functionName}（列表页）
   Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
@@ -26,7 +32,7 @@
       <el-form-item label="${comment}" prop="${field.javaField}">
         <el-select v-model="queryParams.${field.javaField}" placeholder="请选择${comment}" clearable>
 <#if field.dictType?has_content>
-          <el-option v-for="dict in <#if field.dictType?has_content>(dicts.${field.dictType} || [])<#else>[]</#if>" :key="dict.value" :label="dict.label" :value="dict.value" />
+          <el-option v-for="dict in (dicts.${field.dictType} || [])" :key="dict.value" :label="dict.label" :value="dict.value" />
 <#else>
           <el-option label="请选择字典生成" value="" />
 </#if>
@@ -159,47 +165,28 @@
 
 <script setup name="${codegen.businessName}" lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName}, export${codegen.businessName} } from "@/api/${codegen.moduleName}/${codegen.businessName?lower_case}"
-import type { ${codegen.businessName}, ${codegen.businessName}Form } from "@/api/${codegen.moduleName}/${codegen.businessName?lower_case}"
+import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName}, export${codegen.businessName} } from '@/api/${codegen.moduleName}/${codegen.businessName?lower_case}'
+import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}Query } from '@/types/${codegen.moduleName}/${codegen.businessName?lower_case}'
 import { addDateRange } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
+import { usePageParams } from '@/composables/usePageParams'
 import { download } from '@/utils/request'
 import modal from '@/utils/modal'
+import type { FormState, TableState } from '@/types'
+
+const resetForm = useFormReset()
 
 // 字典选项兜底映射：dictType 字段在此注册空数组，如需字典数据用 useDict 加载替换
 const dicts: Record<string, Array<{ value: any; label: string }>> = {}
 
-<#assign hasIdField = false>
-<#if fields?? && fields?size gt 0>
-<#list fields as field>
-<#if field.javaField == "id"><#assign hasIdField = true></#if>
-</#list>
-</#if>
-const resetForm = useFormReset()
-
-
-// --------------------------------- ref data ---------------------------------
-
 // 表单 ref
-const queryRef = ref<FormInstance>()         /* 搜索栏表单 ref */
-const ${codegen.businessName?uncap_first}Ref = ref<FormInstance>()  /* 编辑表单 ref */
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
+const ${codegen.businessName?uncap_first}Ref = ref<FormInstance>() /* 编辑表单 ref */
 
 // 搜索栏：查询参数
-interface QueryParams {
-  pageNum: number,       /* 当前页码 */
-  pageSize: number,      /* 每页条数 */
-<#if fields?? && fields?size gt 0>
-<#list fields as field>
-<#if field.isQuery == "1" && (field.htmlType == "input" || field.htmlType == "select" || field.htmlType == "radio" || (field.htmlType == "datetime" && field.queryType != "BETWEEN"))>
-  ${field.javaField}?: ${tsType(field.javaType)}, /* ${field.columnComment!field.javaField} */
-</#if>
-</#list>
-</#if>
-}
-
-const queryParams = ref<QueryParams>({
-  pageNum: 1,        /* 当前页码 */
-  pageSize: 10,      /* 每页条数 */
+const queryParams = ref<${codegen.businessName}Query>({
+  pageNum: 1, /* 当前页码 */
+  pageSize: 10, /* 每页条数 */
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isQuery == "1" && (field.htmlType == "input" || field.htmlType == "select" || field.htmlType == "radio" || (field.htmlType == "datetime" && field.queryType != "BETWEEN"))>
@@ -219,62 +206,37 @@ const dateRange${field.javaField?cap_first} = ref<string[]>([]) /* ${field.colum
 </#if>
 
 // 表格：UI 数据
-interface TableState {
-  list: ${codegen.businessName}[],      /* 数据列表 */
-  total: number,                        /* 总条数 */
-  loading: boolean,                     /* 加载状态 */
-  showSearch: boolean,                  /* 是否显示搜索栏 */
-  ids: number[],                        /* 选中行 ID 数组 */
-  single: boolean,                      /* 是否单选 */
-  multiple: boolean                     /* 是否多选 */
-}
-
-const table = ref<TableState>({
-  list: [],          /* 数据列表 */
-  total: 0,          /* 总条数 */
-  loading: true,     /* 加载状态 */
-  showSearch: true,  /* 是否显示搜索栏 */
-  ids: [],           /* 选中行 ID 数组 */
-  single: true,      /* 是否单选 */
-  multiple: true     /* 是否多选 */
+const table = ref<TableState<${codegen.businessName}>>({
+  list: [], /* 数据列表 */
+  total: 0, /* 总条数 */
+  loading: true, /* 加载状态 */
+  showSearch: true, /* 是否显示搜索栏 */
+  ids: [], /* 选中行 ID 数组 */
+  single: true, /* 是否单选 */
+  multiple: true /* 是否多选 */
 })
 
 // 编辑表单：数据状态
-interface FormState {
-  visible: boolean,  /* 对话框显隐 */
-  title: string,     /* 对话框标题 */
-  form: ${codegen.businessName}Form,  /* 表单数据 */
-  rules: FormRules   /* 校验规则 */
-}
-
-const formState = ref<FormState>({
-  visible: false,  /* 对话框显隐 */
-  title: "",       /* 对话框标题 */
-  form: {},        /* 表单数据 */
-  rules: {}        /* 校验规则 */
+const formState = ref<FormState<${codegen.businessName}Form>>({
+  visible: false, /* 对话框显隐 */
+  title: '', /* 对话框标题 */
+  form: {}, /* 表单数据 */
+  rules: {} /* 校验规则 */
 })
-
-
-// --------------------------------- fun ---------------------------------
 
 /** 查询${codegen.functionName}列表 */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 → 后端分页参数（offset/pagesize）
-  const { pageNum, pageSize, ...rest } = queryParams.value
-  const params = {
-    ...rest,
-    offset: (pageNum - 1) * pageSize,
-    pagesize: pageSize
-  }
+  // 前端分页参数 → 后端请求参数（offset/pagesize）
+  const params = usePageParams(queryParams)()
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isQuery == "1" && field.htmlType == "datetime" && field.queryType == "BETWEEN">
-  addDateRange(params, dateRange${field.javaField?cap_first}.value, "${field.javaField?cap_first}")
+  addDateRange(params, dateRange${field.javaField?cap_first}.value, '${field.javaField?cap_first}')
 </#if>
 </#list>
 </#if>
-  list${codegen.businessName}(params).then(response => {
+  list${codegen.businessName}(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -298,10 +260,10 @@ function reset() {
 </#list>
 </#if>
 <#if !hasIdField>
-    id: undefined
+    id: undefined,
 </#if>
   }
-  resetForm("${codegen.businessName?uncap_first}Ref")
+  resetForm('${codegen.businessName?uncap_first}Ref')
 }
 
 /** 搜索按钮操作 */
@@ -319,13 +281,13 @@ function resetQuery() {
 </#if>
 </#list>
 </#if>
-  resetForm("queryRef")
+  resetForm('queryRef')
   handleQuery()
 }
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection: ${codegen.businessName}[]) {
-  table.value.ids = selection.map(item => item.id as number)
+  table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -334,38 +296,38 @@ function handleSelectionChange(selection: ${codegen.businessName}[]) {
 function handleAdd() {
   reset()
   formState.value.visible = true
-  formState.value.title = "添加${codegen.functionName}"
+  formState.value.title = '新增${codegen.functionName}'
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
 function handleUpdate(row: any) {
   reset()
   // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
-  const id = row && row.id != null ? row.id : table.value.ids[0]
+  const id = row?.id ?? table.value.ids[0]
   if (id == null) {
     return
   }
-  get${codegen.businessName}(id).then(response => {
+  get${codegen.businessName}(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = "修改${codegen.functionName}"
+    formState.value.title = '修改${codegen.functionName}'
   })
 }
 
 /** 提交按钮 */
 function submitForm() {
-  ${codegen.businessName?uncap_first}Ref.value?.validate(valid => {
+  ${codegen.businessName?uncap_first}Ref.value?.validate((valid) => {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
-        update${codegen.businessName}(formState.value.form).then(response => {
-          modal.msgSuccess("修改成功")
+        update${codegen.businessName}(formState.value.form).then(() => {
+          modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
-        add${codegen.businessName}(formState.value.form).then(response => {
-          modal.msgSuccess("新增成功")
+        add${codegen.businessName}(formState.value.form).then(() => {
+          modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
         })
@@ -376,29 +338,25 @@ function submitForm() {
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row: any) {
-  const delIds = row && row.id != null ? row.id : table.value.ids
-  if (delIds == null || (Array.isArray(delIds) && delIds.length === 0)) {
+  const ${codegen.businessName?uncap_first}Ids = row?.id ?? table.value.ids
+  if (${codegen.businessName?uncap_first}Ids == null || (Array.isArray(${codegen.businessName?uncap_first}Ids) && ${codegen.businessName?uncap_first}Ids.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除编号为"' + delIds + '"的数据项？').then(function() {
-    return del${codegen.businessName}(delIds)
+  modal.confirm('是否确认删除${codegen.functionName}编号为"' + ${codegen.businessName?uncap_first}Ids + '"的数据项？').then(() => {
+    return del${codegen.businessName}(${codegen.businessName?uncap_first}Ids)
   }).then(() => {
     getList()
-    modal.msgSuccess("删除成功")
+    modal.msgSuccess('删除成功')
   }).catch(() => {})
 }
 
 /** 导出按钮操作 */
 function handleExport() {
   download('/${codegen.moduleName}/${codegen.businessName?lower_case}/export', {
-    ...queryParams.value
-  }, "${codegen.businessName?lower_case}_" + new Date().getTime() + ".xlsx")
+    ...usePageParams(queryParams)()
+  }, '${codegen.businessName?lower_case}_' + new Date().getTime() + '.xlsx')
 }
-
-
-// --------------------------------- page init ---------------------------------
 
 // 页面初始化：加载${codegen.functionName}列表
 getList()
-
 </script>

@@ -12,9 +12,8 @@
     "esModuleInterop": true,          /* 允许对 CommonJS 模块使用默认导入 */
     "skipLibCheck": true,             /* 跳过 node_modules 声明文件检查，提升编译速度 */
     "isolatedModules": true,          /* 单文件独立编译（对齐 esbuild 的转译约束） */
-    "baseUrl": ".",                   /* 相对路径解析基准：项目根目录 */
     "paths": {
-      "@/*": ["src/*"],               /* 路径别名 @ → src 目录 */
+      "@/*": ["./src/*"],             /* 路径别名 @ → src 目录（bundler 模式相对 tsconfig，无需 baseUrl） */
       "~/*": ["./*"]                  /* 路径别名 ~ → 项目根目录 */
     },
     "types": ["vite/client", "element-plus/global"],    /* 注入全局类型：Vite 环境变量 + Element Plus 全局组件 */
