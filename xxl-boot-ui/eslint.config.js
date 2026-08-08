@@ -1,7 +1,7 @@
 /**
  * ESLint Flat Config（eslint.config.js）
  * 覆盖 Vue 3 + TypeScript 项目：代码规范（eslint-plugin-vue / typescript-eslint）
- * 并关闭与 Prettier 冲突的格式规则（eslint-config-prettier），格式统一交由 Prettier 处理。
+ * 并关闭与 Prettier 冲突的格式规则（eslint-config-prettier）。
  */
 import js from '@eslint/js'
 import globals from 'globals'
@@ -25,8 +25,8 @@ export default tseslint.config(
   {
     files: ['**/*.{ts,vue}'],
     languageOptions: {
-      // 浏览器 + Node 全局（document/window/Blob 等）
-      globals: { ...globals.browser, ...globals.node },
+      // 浏览器全局（document/window/Blob 等）；Vue/Router/Pinia API 由 no-undef 关闭兜底
+      globals: { ...globals.browser },
       parserOptions: {
         parser: tseslint.parser,
         extraFileExtensions: ['.vue'],
@@ -35,44 +35,35 @@ export default tseslint.config(
       }
     },
     rules: {
-      // no-undef 关闭：Vue/Vue Router/Pinia 的 API 由 unplugin-auto-import 全局注入（auto-imports.d.ts）
-      'no-undef': 'off',
-      // Vue：组件名允许单字（如 Editor、Pagination）
-      'vue/multi-word-component-names': 'off',
-      // Vue：pagegen 设计器直接修改 prop（activeData）属业务设计，关闭提示
-      'vue/no-mutating-props': 'off',
-      // Vue：pagegen 使用的 v-bind 修饰符写法
-      'vue/valid-v-bind': 'off',
-      // Vue：pagegen 中 Vue2 遗留 slot 属性写法
-      'vue/no-deprecated-slot-attribute': 'off',
-      // Vue：props 解构声明但未使用（如 IconsDialog），交由 TS 约束
-      'vue/no-unused-vars': 'off',
-      // 允许显式 any（generator/pagegen 等动态场景需要）
+      // --- 全局/TS 规则调整 ---
+      'no-undef': 'off', // 由 TS 类型检查覆盖 (确保 tsconfig 包含 auto-imports.d.ts)
+
+      // 允许显式 any (动态场景/代码生成器需要)
       '@typescript-eslint/no-explicit-any': 'off',
-      // 未使用变量：由 TS 的 noUnusedLocals 约束，此处关闭避免误报
+
+      // 未使用变量/表达式：交由 TS 编译器 (noUnusedLocals/Parameters) 处理，避免 ESLint 误报
       '@typescript-eslint/no-unused-vars': 'off',
       'no-unused-vars': 'off',
-      // 未使用表达式（如 request.js 里裸 Promise.reject 等既有写法）
       '@typescript-eslint/no-unused-expressions': 'off',
       'no-unused-expressions': 'off',
-      // 空块（空 catch 等既有写法）
-      'no-empty': 'off',
-      // 正则字符类内的转义（validate.ts）——转义等价，非多余
-      'no-useless-escape': 'off',
-      // 赋值后未在后续使用（ImageUpload 等既有实现）
-      'no-useless-assignment': 'off',
-      // TS 函数重载（SidebarItem resolvePath）误报为重复声明
-      'no-redeclare': 'off',
-      // throw 未附带 cause（request.ts 既有写法）
-      'preserve-caught-error': 'off',
-      // this 别名（tab.ts 的 const self = this）
-      '@typescript-eslint/no-this-alias': 'off',
-      // {} 空对象类型（pagegen/generator 动态类型兜底）
-      '@typescript-eslint/ban-types': 'off',
-      '@typescript-eslint/no-empty-object-type': 'off'
+
+      // --- 既有代码/代码生成器兼容性 ---
+      'no-empty': 'off', // 允许空 catch
+      'no-useless-escape': 'off', // 兼容旧正则写法
+      'no-useless-assignment': 'off', // 兼容既有赋值逻辑
+      'no-redeclare': 'off', // 兼容 TS 函数重载误报
+      'preserve-caught-error': 'off', // 兼容旧错误处理
+      '@typescript-eslint/no-this-alias': 'off', // 兼容 this 别名写法
+      '@typescript-eslint/ban-types': 'off', // 允许 {} 等类型
+      '@typescript-eslint/no-empty-object-type': 'off',
+
+      // --- Vue 特定规则 ---
+      'vue/multi-word-component-names': 'off', // 允许单字组件名
+      'vue/no-mutating-props': 'off', // ⚠️ 业务特定：pagegen 设计器直接修改 prop
+      'vue/valid-v-bind': 'off', // ⚠️ 业务特定：兼容 pagegen 生成的 v-bind 修饰符
+      'vue/no-unused-vars': 'off', // 交由 TS 约束
     }
   },
-
   // 关闭与 Prettier 冲突的格式规则（放在最后）
   eslintConfigPrettier
 )
