@@ -1,30 +1,27 @@
 {
+  /**
+   * 应用代码 TypeScript 配置（tsconfig.json）
+   * 职责：配置 Vue 应用源码（src 目录）的类型检查与编译选项，供 IDE 与 vue-tsc 使用；
+   *       通过 references 关联 Node 侧构建配置（tsconfig.node.json），使 vite.config.ts 获得独立类型检查。
+   */
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "jsx": "preserve",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": false,
-    "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": true,
-    "baseUrl": ".",
+    "target": "ES2022",               /* 编译目标：ES2022（现代浏览器） */
+    "module": "ESNext",               /* 模块系统：ESNext，打包交由 Vite 处理 */
+    "moduleResolution": "bundler",    /* 模块解析策略：bundler（对齐 Vite 的解析行为） */
+    "strict": true,                   /* 严格模式全开（含 noImplicitAny、strictNullChecks 等） */
+    "esModuleInterop": true,          /* 允许对 CommonJS 模块使用默认导入 */
+    "skipLibCheck": true,             /* 跳过 node_modules 声明文件检查，提升编译速度 */
+    "isolatedModules": true,          /* 单文件独立编译（对齐 esbuild 的转译约束） */
+    "baseUrl": ".",                   /* 相对路径解析基准：项目根目录 */
     "paths": {
-      "@/*": ["src/*"],
-      "~/*": ["./*"]
+      "@/*": ["src/*"],               /* 路径别名 @ → src 目录 */
+      "~/*": ["./*"]                  /* 路径别名 ~ → 项目根目录 */
     },
-    "types": ["vite/client", "element-plus/global"],
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "noEmit": true
+    "types": ["vite/client", "element-plus/global"],    /* 注入全局类型：Vite 环境变量 + Element Plus 全局组件 */
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],           /* 引入标准库类型（语言 + 浏览器 DOM） */
+    "noEmit": true                                      /* 仅做类型检查，不产出编译文件（由 Vite/esbuild 负责构建） */
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "auto-imports.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.ts", "src/**/*.vue", "auto-imports.d.ts"],    /* 检查范围：应用源码 + 自动导入声明 */
+  "exclude": ["node_modules", "dist"],
+  "references": [{ "path": "./tsconfig.node.json" }]                  /* 关联 Node 侧配置，供 vite.config.ts 使用 */
 }

@@ -1,13 +1,20 @@
 {
+  /**
+   * Node 侧 TypeScript 配置（tsconfig.node.json）
+   * 职责：独立配置构建脚本（vite.config.ts）的类型检查，注入 Node 全局类型；
+   *       与应用 tsconfig.json 隔离，避免 Node 类型（process/path 等）污染 src 应用代码。
+   */
   "compilerOptions": {
-    "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "target": "ES2022",
-    "strict": true,
-    "skipLibCheck": true,
-    "types": ["node"],
-    "noEmit": true
+    "composite": true,                  /* 项目引用必需：被 tsconfig.json 的 references 指向时强制要求 */
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo", /* 增量构建缓存，放入 .tmp 避免入库 */
+    "module": "ESNext",                 /* 模块系统：ESNext */
+    "moduleResolution": "bundler",      /* 模块解析策略：bundler（对齐 Vite） */
+    "target": "ES2022",                 /* 编译目标：ES2022 */
+    "strict": true,                     /* 严格模式全开 */
+    "skipLibCheck": true,               /* 跳过 node_modules 声明文件检查 */
+    "esModuleInterop": true,            /* 允许默认导入 Node 内置模块（如 import path from 'path'） */
+    "types": ["node"],                  /* 注入 Node 全局类型（process/path/fs 等） */
+    "outDir": "./node_modules/.tmp/tsconfig-node"     /* composite 需产出声明文件，重定向到 .tmp 避免污染源码目录 */
   },
-  "include": ["vite.config.ts", "vite.config.js"]
+  "include": ["vite.config.ts"]
 }
