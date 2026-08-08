@@ -129,8 +129,8 @@
 </template>
 
 <script setup name="Org" lang="ts">
-import { listOrg, getOrg, delOrg, addOrg, updateOrg, updateOrgSort } from "@/api/org/org"
-import { useEnumOption } from "@/composables/useEnumOption"
+import { listOrg, getOrg, delOrg, addOrg, updateOrg, updateOrgSort } from '@/api/org/org'
+import { useEnumOption } from '@/composables/useEnumOption'
 import { handleTree, parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
@@ -385,7 +385,8 @@ function handleSaveSort() {
   })
 }
 
-/** 删除按钮操作 */
+
+/** 删除按钮操作（行内删除，按名称提示） */
 function handleDelete(row: Org) {
   modal.confirm('是否确认删除名称为"' + row.name + '"的数据项？').then(function() {
     return delOrg([row.id as number])

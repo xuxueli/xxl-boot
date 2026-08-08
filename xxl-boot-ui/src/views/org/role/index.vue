@@ -133,9 +133,9 @@
 </template>
 
 <script setup name="Role" lang="ts">
-import { listRole, getRole, addRole, updateRole, delRole, roleMenuTreeselect, updateRoleRes } from "@/api/org/role"
-import { listResource as menuTreeselect } from "@/api/org/resource"
-import { useEnumOption } from "@/composables/useEnumOption"
+import { listRole, getRole, addRole, updateRole, delRole, roleMenuTreeselect, updateRoleRes } from '@/api/org/role'
+import { listResource as menuTreeselect } from '@/api/org/resource'
+import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import { handleTree, parseTime } from '@/utils/common'

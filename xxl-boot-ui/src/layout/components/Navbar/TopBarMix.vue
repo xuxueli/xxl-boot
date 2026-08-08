@@ -40,10 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import {constantRoutes} from "@/router"
+import {constantRoutes} from '@/router'
 import {isHttp} from '@/utils/validate'
 import {useAppStore, useRoutesStore, useSettingsStore} from '@/store'
-import defaultSettings from "@/default-settings"
+import defaultSettings from '@/default-settings'
 import type { RouteData } from '@/store/modules/routes'
 
 const appStore = useAppStore()

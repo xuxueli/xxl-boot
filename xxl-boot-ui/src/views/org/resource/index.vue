@@ -199,8 +199,8 @@
 </template>
 
 <script setup name="Resource" lang="ts">
-import { listResource, getResource, addResource, updateResource, delResource, updateResourceSort } from "@/api/org/resource"
-import { useEnumOption } from "@/composables/useEnumOption"
+import { listResource, getResource, addResource, updateResource, delResource, updateResourceSort } from '@/api/org/resource'
+import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import { handleTree } from '@/utils/common'
 import modal from '@/utils/modal'
@@ -440,7 +440,7 @@ function handleSaveSort() {
   })
 }
 
-/** 删除按钮操作 */
+/** 删除按钮操作（行内删除，按名称提示） */
 function handleDelete(row: Resource) {
   modal.confirm('是否确认删除名称为"' + row.name + '"的数据项?').then(function() {
     return delResource(row.id as number)

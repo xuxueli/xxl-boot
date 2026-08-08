@@ -29,7 +29,7 @@
 </template>
 
 <script setup name="ReadUsers" lang="ts">
-import { listMessageReadUsers } from "@/api/system/message"
+import { listMessageReadUsers } from '@/api/system/message'
 import { parseTime } from '@/utils/common'
 import { usePageParams } from '@/composables/usePageParams'
 import type { Message, User } from '@/types/api'

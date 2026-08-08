@@ -53,7 +53,7 @@ const props = defineProps({
   formConf: { type: Object as PropType<FormConf>, required: true }
 })
 const className = ref('')             /* 组件样式类名（选中/拖拽态） */
-const draggableItemRef = ref(null)    /* 拖拽项元素 ref */
+const draggableItemRef = ref<HTMLElement | null>(null)    /* 拖拽项元素 ref */
 
 /*
 * 组件回调：选中 / 复制 / 删除组件

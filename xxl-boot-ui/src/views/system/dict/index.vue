@@ -119,8 +119,8 @@
 
 <script setup name="Dict" lang="ts">
 import DictDataDrawer from './detail.vue'
-import { listType, getType, delType, addType, updateType } from "@/api/system/dict/type"
-import { useEnumOption } from "@/composables/useEnumOption"
+import { listType, getType, delType, addType, updateType } from '@/api/system/dict/type'
+import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'

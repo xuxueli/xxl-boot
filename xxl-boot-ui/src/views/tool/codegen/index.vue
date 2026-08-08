@@ -119,12 +119,12 @@
 </template>
 
 <script setup lang="ts" name="Gen">
-import { listTable, previewTable, delTable, createTable } from "@/api/tool/codegen"
-import type { CodegenTable } from "@/api/tool/codegen"
+import { listTable, previewTable, delTable, createTable } from '@/api/tool/codegen'
+import type { CodegenTable } from '@/api/tool/codegen'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import downloadPlugin from '@/utils/download'
-import EditTable from "./editTable.vue"
+import EditTable from './editTable.vue'
 
 const resetForm = useFormReset()
 
@@ -287,13 +287,12 @@ function handleDelete(row: any) {
   if (tableIds == null || (Array.isArray(tableIds) && tableIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除表编号为"' + tableIds + '"的数据项？').then(function () {
+  modal.confirm('是否确认删除表编号为"' + tableIds + '"的数据项？').then(function() {
     return delTable(tableIds)
   }).then(() => {
     getList()
     modal.msgSuccess("删除成功")
-  }).catch(() => {
-  })
+  }).catch(() => {})
 }
 
 /* --------------------------------- page init --------------------------------- */

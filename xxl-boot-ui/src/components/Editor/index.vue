@@ -37,9 +37,9 @@
 
 <script setup lang="ts">
 import axios from 'axios'
-import {QuillEditor} from "@vueup/vue-quill"
-import "@vueup/vue-quill/dist/vue-quill.snow.css"
-import {getAuthHeaders} from "@/utils/auth"
+import {QuillEditor} from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import {getAuthHeaders} from '@/utils/auth'
 import modal from '@/utils/modal'
 
 const quillEditorRef = ref<any>()          // Quill 编辑器实例

@@ -115,8 +115,8 @@
 </template>
 
 <script setup name="Config" lang="ts">
-import { listConfig, getConfig, delConfig, addConfig, updateConfig } from "@/api/system/config"
-import { useEnumOption } from "@/composables/useEnumOption"
+import { listConfig, getConfig, delConfig, addConfig, updateConfig } from '@/api/system/config'
+import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
@@ -285,7 +285,7 @@ function handleDelete(row: any) {
   if (configIds == null || (Array.isArray(configIds) && configIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除配置编号为"' + configIds + '"的数据项？').then(function () {
+  modal.confirm('是否确认删除配置编号为"' + configIds + '"的数据项？').then(function() {
     return delConfig(configIds)
   }).then(() => {
     getList()

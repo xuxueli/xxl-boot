@@ -17,7 +17,7 @@ import { getToken } from '@/utils/auth'
 import { isHttp } from '@/utils/validate'
 import { isRelogin } from '@/utils/request'
 import { useUserStore, useRoutesStore, useSettingsStore } from '@/store'
-import defaultSettings from "@/default-settings"
+import defaultSettings from '@/default-settings'
 
 // ==================== 静态路由注册 ====================
 

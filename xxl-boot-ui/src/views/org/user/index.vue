@@ -163,11 +163,11 @@
 </template>
 
 <script setup name="User" lang="ts">
-import UserViewDrawer from "./view.vue"
-import { listUser, addUser, updateUser, delUser } from "@/api/org/user"
-import { listRole } from "@/api/org/role"
-import { listOrg } from "@/api/org/org"
-import { useEnumOption } from "@/composables/useEnumOption"
+import UserViewDrawer from './view.vue'
+import { listUser, addUser, updateUser, delUser } from '@/api/org/user'
+import { listRole } from '@/api/org/role'
+import { listOrg } from '@/api/org/org'
+import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'

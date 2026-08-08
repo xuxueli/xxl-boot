@@ -100,7 +100,7 @@ export function previewTable(tableId: number): Promise<Response<Record<string, s
  * @param tableId 表 ID。
  * @returns 删除结果。
  */
-export function delTable(tableId: number): Promise<Response<unknown>> {
+export function delTable(tableId: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/tool/codegen/delete',
     method: 'post',

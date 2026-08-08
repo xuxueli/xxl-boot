@@ -101,7 +101,7 @@ import SizeSelect from './SizeSelect.vue'
 import HeaderSearch from './HeaderSearch.vue'
 import HeaderMessage from './HeaderMessage.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
-import defaultSettings from "@/default-settings"
+import defaultSettings from '@/default-settings'
 
 const appStore = useAppStore()
 const userStore = useUserStore()

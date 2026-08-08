@@ -146,10 +146,10 @@
 </template>
 
 <script setup name="Message" lang="ts">
-import ReadUsersDialog from "./ReadUsers.vue"
+import ReadUsersDialog from './ReadUsers.vue'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
-import { listMessage, getMessage, delMessage, addMessage, updateMessage } from "@/api/system/message"
-import { useEnumOption } from "@/composables/useEnumOption"
+import { listMessage, getMessage, delMessage, addMessage, updateMessage } from '@/api/system/message'
+import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'

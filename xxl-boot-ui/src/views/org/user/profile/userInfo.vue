@@ -24,7 +24,7 @@
 <script setup lang="ts">
 
 // 引入
-import { updateUserProfile } from "@/api/org/user"
+import { updateUserProfile } from '@/api/org/user'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import type { User } from '@/types/api'

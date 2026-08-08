@@ -85,7 +85,7 @@ import { useTagsViewStore, useRoutesStore, useSettingsStore } from '@/store'
 import type { TagView } from '@/store/modules/tagsView'
 import type { RouteData } from '@/store/modules/routes'
 import tab from '@/utils/tab'
-import defaultSettings from "@/default-settings"
+import defaultSettings from '@/default-settings'
 
 const tagsViewStore = useTagsViewStore()
 const routesStore = useRoutesStore()

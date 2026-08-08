@@ -85,8 +85,8 @@
 
 <script setup name="Log" lang="ts">
 import LogDetail from './detail.vue'
-import { pageList, delOperlog } from "@/api/system/log"
-import { loadEnumItem } from "@/api/system/dict/data"
+import { pageList, delOperlog } from '@/api/system/log'
+import { loadEnumItem } from '@/api/system/dict/data'
 import { parseTime } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
@@ -194,25 +194,26 @@ function handleDetail(row: Log) {
 }
 
 /** 删除日志（顶部按钮 @click 传事件对象，取勾选 ids） */
+
+/** 导出按钮操作 */
+function handleExport() {
+  download("system/log/export", {
+    ...usePageParams(queryParams)()
+  }, `log_${new Date().getTime()}.xlsx`)
+}
+
+/** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
 function handleDelete(row: any) {
   const logIds = row && row.id != null ? row.id : table.value.ids
-  // 无勾选数据时直接返回
   if (logIds == null || (Array.isArray(logIds) && logIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除日志编号为"' + logIds + '"的数据项?').then(function () {
+  modal.confirm('是否确认删除日志编号为"' + logIds + '"的数据项?').then(function() {
     return delOperlog(logIds)
   }).then(() => {
     getList()
     modal.msgSuccess("删除成功")
   }).catch(() => {})
-}
-
-/** 导出按钮操作 */
-function handleExport() {
-  download("system/log/export", {
-    ...queryParams.value
-  }, `log_${new Date().getTime()}.xlsx`)
 }
 
 

@@ -18,7 +18,7 @@ import cache from '@/utils/cache'
 import modal from '@/utils/modal'
 import { saveAs } from 'file-saver'
 import { useUserStore } from '@/store'
-import defaultSettings from "@/default-settings"
+import defaultSettings from '@/default-settings'
 import type { Response } from '@/types'
 
 /**

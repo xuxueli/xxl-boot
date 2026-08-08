@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import type {RouteRecordNormalized} from 'vue-router'
-import defaultSettings from "@/default-settings"
+import defaultSettings from '@/default-settings'
 
 const route = useRoute()
 const router = useRouter()

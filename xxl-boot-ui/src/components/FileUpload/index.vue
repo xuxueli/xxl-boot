@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import {getAuthHeaders} from "@/utils/auth"
+import {getAuthHeaders} from '@/utils/auth'
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
 

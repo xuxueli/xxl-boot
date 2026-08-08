@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 // 引入
-import defaultSettings from "@/default-settings"
+import defaultSettings from '@/default-settings'
 
 // 提示文字
 let message = computed(() => {

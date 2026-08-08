@@ -199,8 +199,8 @@
 </template>
 
 <script setup lang="ts" name="GenEdit">
-import {getGenTable, updateGenTable} from "@/api/tool/codegen"
-import {queryDictList} from "@/api/system/dict/type"
+import {getGenTable, updateGenTable} from '@/api/tool/codegen'
+import {queryDictList} from '@/api/system/dict/type'
 import type { FormInstance } from 'element-plus'
 import modal from '@/utils/modal'
 import Sortable from 'sortablejs'

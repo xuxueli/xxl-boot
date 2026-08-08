@@ -90,9 +90,9 @@
 </template>
 
 <script setup name="Data" lang="ts">
-import { getType } from "@/api/system/dict/type"
-import { listData, getData, delData, addData, updateData } from "@/api/system/dict/data"
-import { useEnumOption } from "@/composables/useEnumOption"
+import { getType } from '@/api/system/dict/type'
+import { listData, getData, delData, addData, updateData } from '@/api/system/dict/data'
+import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'

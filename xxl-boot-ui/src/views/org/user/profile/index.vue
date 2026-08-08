@@ -84,9 +84,9 @@
 <script setup name="Profile" lang="ts">
 
 // 引入
-import userInfo from "./userInfo.vue"
-import resetPwd from "./resetPwd.vue"
-import {getUserProfile} from "@/api/org/user"
+import userInfo from './userInfo.vue'
+import resetPwd from './resetPwd.vue'
+import {getUserProfile} from '@/api/org/user'
 import type { User } from '@/types/api'
 
 const route = useRoute()                // 路由

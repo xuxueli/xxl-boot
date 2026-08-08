@@ -80,7 +80,7 @@
 
 <script setup lang="ts">
 // 导入依赖
-import { getCodeImg } from "@/api/login"
+import { getCodeImg } from '@/api/login'
 import { useUserStore } from '@/store'
 import defaultSettings from '@/default-settings'
 import type { LoginParams } from '@/types'

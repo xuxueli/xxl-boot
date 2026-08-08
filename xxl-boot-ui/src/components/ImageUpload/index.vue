@@ -58,8 +58,8 @@
 </template>
 
 <script setup lang="ts">
-import {getAuthHeaders} from "@/utils/auth"
-import {isExternal} from "@/utils/validate"
+import {getAuthHeaders} from '@/utils/auth'
+import {isExternal} from '@/utils/validate'
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
 
