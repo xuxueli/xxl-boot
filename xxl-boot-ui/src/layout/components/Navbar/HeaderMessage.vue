@@ -5,15 +5,23 @@
 <template>
   <div>
     <!-- popover 面板：鼠标悬停触发 -->
-    <el-popover ref="messagePopover" placement="bottom-end" :width="320" :trigger="'manual' as any" v-model:visible="messageVisible"
-                popper-class="message-popover">
-
+    <el-popover
+      ref="messagePopover"
+      placement="bottom-end"
+      :width="320"
+      :trigger="'manual' as any"
+      v-model:visible="messageVisible"
+      popper-class="message-popover"
+    >
       <!-- popover 触发器 -->
       <template #reference>
-        <div class="right-menu-item hover-effect message-trigger" @mouseenter="onMessageEnter"
-             @mouseleave="onMessageLeave">
+        <div
+          class="right-menu-item hover-effect message-trigger"
+          @mouseenter="onMessageEnter"
+          @mouseleave="onMessageLeave"
+        >
           <!-- 图标：铃铛 -->
-          <SvgIcon icon-class="bell"/>
+          <SvgIcon icon-class="bell" />
           <!-- 未读数量角标 -->
           <span v-if="unreadCount > 0" class="message-badge">{{ unreadCount }}</span>
         </div>
@@ -28,15 +36,15 @@
       <!-- 加载中 -->
       <div v-if="messageLoading" class="message-loading">
         <el-icon class="is-loading">
-          <Loading/>
+          <Loading />
         </el-icon>
         加载中...
       </div>
 
       <!-- 空状态 -->
       <div v-else-if="messageList.length === 0" class="message-empty">
-        <el-icon style="font-size:24px;display:block;margin-bottom:6px;">
-          <Postcard/>
+        <el-icon style="font-size: 24px; display: block; margin-bottom: 6px">
+          <Postcard />
         </el-icon>
         暂无公告
       </div>
@@ -54,12 +62,10 @@
           <span class="message-item-date">{{ item.addTime }}</span>
         </div>
       </div>
-
     </el-popover>
 
     <!-- 公告详情抽屉 -->
-    <HeaderMessageDetail ref="messageViewRef"/>
-
+    <HeaderMessageDetail ref="messageViewRef" />
   </div>
 </template>
 
@@ -70,8 +76,8 @@ import type { Message } from '@/types/api'
 import type { PopoverInstance } from 'element-plus'
 
 /*
-* 站内消息项：Message + 本地已读标记
-*/
+ * 站内消息项：Message + 本地已读标记
+ */
 type MessageItem = Message & { isRead?: boolean }
 
 const messagePopover = ref<PopoverInstance | null>(null)  /* popover 实例引用 */
@@ -83,23 +89,25 @@ const messageLeaveTimer = ref<ReturnType<typeof setTimeout> | null>(null)   /* �
 const messageViewRef = ref<InstanceType<typeof HeaderMessageDetail> | null>(null)  /* 抽屉组件引用 */
 
 /*
-* 加载顶部公告列表，统计未读数
-*/
+ * 加载顶部公告列表，统计未读数
+ */
 function loadMessageTop() {
   messageLoading.value = true
-  listMessageTop().then(res => {
-    messageList.value = res.data || []
-    unreadCount.value = messageList.value.filter(n => !n.isRead).length
-  }).finally(() => {
-    messageLoading.value = false
-  })
+  listMessageTop()
+    .then((res) => {
+      messageList.value = res.data || []
+      unreadCount.value = messageList.value.filter((n) => !n.isRead).length
+    })
+    .finally(() => {
+      messageLoading.value = false
+    })
 }
 
 onMounted(() => loadMessageTop())
 
 /*
-* 鼠标移入铃铛：显示 popover，绑定 popover 内的 hover 事件实现延时关闭
-*/
+ * 鼠标移入铃铛：显示 popover，绑定 popover 内的 hover 事件实现延时关闭
+ */
 function onMessageEnter() {
   clearTimeout(messageLeaveTimer.value ?? undefined)
   messageVisible.value = true
@@ -121,8 +129,8 @@ function onMessageEnter() {
 }
 
 /*
-* 鼠标移出铃铛：延迟关闭，给移入 popover 留出时间
-*/
+ * 鼠标移出铃铛：延迟关闭，给移入 popover 留出时间
+ */
 function onMessageLeave() {
   messageLeaveTimer.value = setTimeout(() => {
     messageVisible.value = false
@@ -130,17 +138,16 @@ function onMessageLeave() {
 }
 
 /*
-* 点击公告：未读则标记已读，预览详情
-*/
+ * 点击公告：未读则标记已读，预览详情
+ */
 function previewMessage(item: MessageItem) {
   if (!item.isRead) {
     // 已读标记
-    markMessageRead(item.id as number).catch(() => {
-    })
+    markMessageRead(item.id as number).catch(() => {})
 
     // 更新已读列表
     const idx = messageList.value.indexOf(item)
-    if (idx !== -1) messageList.value[idx] = {...item, isRead: true}
+    if (idx !== -1) messageList.value[idx] = { ...item, isRead: true }
 
     // 未读数更新
     unreadCount.value = Math.max(0, unreadCount.value - 1)
@@ -151,17 +158,16 @@ function previewMessage(item: MessageItem) {
 }
 
 /*
-* 全部已读：批量标记并更新本地状态
-*/
+ * 全部已读：批量标记并更新本地状态
+ */
 function markAllRead() {
   // 标记全部已读
-  const ids = messageList.value.map(n => n.id).join(',')
+  const ids = messageList.value.map((n) => n.id).join(',')
   if (!ids) return
-  markMessageReadAll(ids).catch(() => {
-  })
+  markMessageReadAll(ids).catch(() => {})
 
   // 本地处理：数据 + 计数
-  messageList.value = messageList.value.map(n => ({...n, isRead: true}))
+  messageList.value = messageList.value.map((n) => ({ ...n, isRead: true }))
   unreadCount.value = 0
 }
 </script>

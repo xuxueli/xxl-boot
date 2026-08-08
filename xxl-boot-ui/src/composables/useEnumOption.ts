@@ -19,9 +19,9 @@ import type { EnumOption } from '@/types'
  */
 export function useEnumOption(...enumNames: string[]): Record<string, Ref<EnumOption[]>> {
   const options: Record<string, Ref<EnumOption[]>> = {}
-  enumNames.forEach(name => {
+  enumNames.forEach((name) => {
     options[name] = ref<EnumOption[]>([])
-    loadEnumItem(name).then(res => {
+    loadEnumItem(name).then((res) => {
       options[name].value = res.data
     })
   })

@@ -5,9 +5,13 @@
 -->
 <template>
   <div class="navbar" :class="'nav' + settingsStore.navType">
-
     <!-- 侧边栏折叠按钮 -->
-    <Hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <Hamburger
+      id="hamburger-container"
+      :is-active="appStore.sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <!-- 面包屑导航：导航模式：
         1=左侧菜单（显示面包屑）
@@ -54,12 +58,13 @@
       </template>
 
       <!-- 用户头像与下拉菜单 -->
-      <el-dropdown @command="handleCommand"
-                   class="avatar-container right-menu-item hover-effect"
-                   trigger="hover"
-                   :show-timeout="50"
-                   :hide-timeout="500">
-
+      <el-dropdown
+        @command="handleCommand"
+        class="avatar-container right-menu-item hover-effect"
+        trigger="hover"
+        :show-timeout="50"
+        :hide-timeout="500"
+      >
         <!-- 用户信息  -->
         <div class="avatar-wrapper">
           <span class="user-realName"> {{ userStore.realName }} </span>
@@ -74,7 +79,7 @@
             </router-link>
             <!-- 布局设置  -->
             <el-dropdown-item command="setLayout" v-if="settingsStore.showSettings">
-                <span>布局设置</span>
+              <span>布局设置</span>
             </el-dropdown-item>
             <!-- 退出登录  -->
             <el-dropdown-item divided command="logout">
@@ -83,11 +88,9 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-
     </div>
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { ElMessageBox } from 'element-plus'
@@ -108,54 +111,62 @@ const userStore = useUserStore()
 const settingsStore = useSettingsStore()
 
 /*
-* 切换侧边栏展开/收起
-*/
+ * 切换侧边栏展开/收起
+ */
 function toggleSideBar() {
   appStore.toggleSideBar(false)
 }
 
 /*
-* 用户下拉菜单命令处理
-*/
+ * 用户下拉菜单命令处理
+ */
 function handleCommand(command: string | number | object) {
   switch (command) {
-    case "setLayout": setLayout(); break
-    case "logout":    logout(); break
+    case 'setLayout':
+      setLayout()
+      break
+    case 'logout':
+      logout()
+      break
   }
 }
 
 /*
-* 退出登录：二次确认后清除登录态并跳转首页
-*/
+ * 退出登录：二次确认后清除登录态并跳转首页
+ */
 function logout() {
   ElMessageBox.confirm('确定注销并退出系统吗？', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'
-  }).then(() => {
-    userStore.logout().then(() => { location.href = defaultSettings.homePath })
-  }).catch(() => {})
+  })
+    .then(() => {
+      userStore.logout().then(() => {
+        location.href = defaultSettings.homePath
+      })
+    })
+    .catch(() => {})
 }
 
 /*
-* 触发布局设置面板打开
-* emit: setLayout（由 layout/index.vue 父组件监听，控制右侧设置面板显隐）
-*/
+ * 触发布局设置面板打开
+ * emit: setLayout（由 layout/index.vue 父组件监听，控制右侧设置面板显隐）
+ */
 const emits = defineEmits(['setLayout'])
 function setLayout() {
   emits('setLayout')
 }
 
 /*
-* 主题切换：浅色、暗色
-*   - 支持 View Transition API 实现圆形扩散动画
-*   - fallback 分支（无 API / 减少动效模式）：直接切换
-*   - animation 分支：startViewTransition + clipPath 圆形过渡，固定从左上角扩散
-*/
+ * 主题切换：浅色、暗色
+ *   - 支持 View Transition API 实现圆形扩散动画
+ *   - fallback 分支（无 API / 减少动效模式）：直接切换
+ *   - animation 分支：startViewTransition + clipPath 圆形过渡，固定从左上角扩散
+ */
 async function toggleTheme() {
   const wasDark = settingsStore.isDark
 
-  const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const isSupported = document.startViewTransition && !isReducedMotion
 
   /* fallback：降级到直接切换 */
@@ -181,23 +192,23 @@ async function toggleTheme() {
     document.documentElement.animate(
       {
         clipPath: !wasDark ? [...clipPath].reverse() : clipPath
-      }, {
+      },
+      {
         duration: 650,
-        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-        fill: "forwards",
-        pseudoElement: !wasDark ? "::view-transition-old(root)" : "::view-transition-new(root)"
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        fill: 'forwards',
+        pseudoElement: !wasDark ? '::view-transition-old(root)' : '::view-transition-new(root)'
       }
     )
     await transition.finished
   } catch (error) {
-    console.warn("View transition failed, falling back to immediate toggle:", error)
+    console.warn('View transition failed, falling back to immediate toggle:', error)
     settingsStore.toggleTheme()
   }
 }
 </script>
 
-
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .navbar.nav3 {
   .hamburger-container {
     display: none !important;
@@ -283,7 +294,7 @@ async function toggleTheme() {
 
         svg {
           transition: transform 0.3s;
-          
+
           &:hover {
             transform: scale(1.15);
           }

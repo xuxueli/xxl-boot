@@ -18,38 +18,37 @@
             <!-- 用户信息列表 -->
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
-                <SvgIcon icon-class="user"/>
+                <SvgIcon icon-class="user" />
                 用户账号
                 <div class="pull-right">{{ state.user.username }}</div>
               </li>
               <li class="list-group-item">
-                <SvgIcon icon-class="phone"/>
+                <SvgIcon icon-class="phone" />
                 手机号码
                 <div class="pull-right">{{ state.user.phone }}</div>
               </li>
               <li class="list-group-item">
-                <SvgIcon icon-class="email"/>
+                <SvgIcon icon-class="email" />
                 用户邮箱
                 <div class="pull-right">{{ state.user.email }}</div>
               </li>
               <li class="list-group-item">
-                <SvgIcon icon-class="tree"/>
+                <SvgIcon icon-class="tree" />
                 所属部门
                 <div class="pull-right">{{ state.user.orgName }}</div>
               </li>
               <li class="list-group-item">
-                <SvgIcon icon-class="peoples"/>
+                <SvgIcon icon-class="peoples" />
                 所属角色
                 <div class="pull-right">{{ state.roleNames }}</div>
               </li>
               <li class="list-group-item">
-                <SvgIcon icon-class="date"/>
+                <SvgIcon icon-class="date" />
                 创建日期
                 <div class="pull-right">{{ state.user.addTime }}</div>
               </li>
             </ul>
           </div>
-
         </el-card>
       </el-col>
 
@@ -62,31 +61,27 @@
             </div>
           </template>
           <el-tabs v-model="selectedTab">
-
             <!-- 基本资料 -->
             <el-tab-pane label="基本资料" name="userinfo">
-              <userInfo :user="state.user"/>
+              <userInfo :user="state.user" />
             </el-tab-pane>
 
             <!-- 修改密码 -->
             <el-tab-pane label="修改密码" name="resetPwd">
-              <resetPwd/>
+              <resetPwd />
             </el-tab-pane>
-
           </el-tabs>
         </el-card>
       </el-col>
-
     </el-row>
   </div>
 </template>
 
 <script setup name="Profile" lang="ts">
-
 // 引入
 import userInfo from './userInfo.vue'
 import resetPwd from './resetPwd.vue'
-import {getUserProfile} from '@/api/org/user'
+import { getUserProfile } from '@/api/org/user'
 import type { User } from '@/types/api'
 
 const route = useRoute()                // 路由
@@ -101,7 +96,7 @@ const state = reactive<{                // 用户信息、角色数据
 
 /** 获取当前登录用户个人信息 */
 function getUser() {
-  getUserProfile().then(res => {
+  getUserProfile().then((res) => {
     state.user = res.data
     state.roleNames = ((state.user.roleNames as string[]) || []).join(', ')
   })

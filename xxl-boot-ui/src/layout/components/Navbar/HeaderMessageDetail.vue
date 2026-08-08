@@ -4,7 +4,15 @@
 -->
 <template>
   <!-- 右侧滑出抽屉，半屏展示 -->
-  <el-drawer v-model="visible" title="站内消息详情" direction="rtl" size="50%" append-to-body :before-close="handleClose" class="message-detail-drawer">
+  <el-drawer
+    v-model="visible"
+    title="站内消息详情"
+    direction="rtl"
+    size="50%"
+    append-to-body
+    :before-close="handleClose"
+    class="message-detail-drawer"
+  >
     <div v-loading="loading" class="message-detail-drawer__body">
       <!-- 无数据状态 -->
       <div v-if="!detail" class="message-empty">
@@ -14,7 +22,6 @@
 
       <!-- 详情内容 -->
       <div v-else class="message-page">
-
         <!-- 类型标签：通知 / 公告 / 消息 -->
         <div class="message-type-wrap">
           <span v-if="detail.category === 1" class="message-type-tag type-notify">
@@ -61,7 +68,6 @@
             <el-icon><Document /></el-icon> 暂无内容
           </div>
         </div>
-
       </div>
     </div>
   </el-drawer>
@@ -71,8 +77,8 @@
 import { getMessage } from '@/api/system/message'
 
 /*
-* 消息详情：覆盖 Message 常用字段，status 支持字符串/数字两种形态，并支持预设模式（messageId / messageContent）入参
-*/
+ * 消息详情：覆盖 Message 常用字段，status 支持字符串/数字两种形态，并支持预设模式（messageId / messageContent）入参
+ */
 interface MessageDetail {
   id?: number
   category?: number
@@ -87,32 +93,32 @@ interface MessageDetail {
   [key: string]: unknown
 }
 
-const visible = ref(false)  /* 抽屉显隐 */
-const loading = ref(false)  /* 接口加载状态 */
-const detail = ref<MessageDetail | null>(null)    /* 消息详情数据 */
+const visible = ref(false) /* 抽屉显隐 */
+const loading = ref(false) /* 接口加载状态 */
+const detail = ref<MessageDetail | null>(null) /* 消息详情数据 */
 
 /*
-* 公告状态：'0' 为正常
-*/
+ * 公告状态：'0' 为正常
+ */
 const isStatusNormal = computed(() => {
   const status = detail.value && detail.value.status
   return status === '0' || status === 0
 })
 
 /*
-* 是否有正文内容（非空字符串）
-*/
+ * 是否有正文内容（非空字符串）
+ */
 const hasContent = computed(() => {
   const content = detail.value && detail.value.content
   return content != null && String(content).trim() !== ''
 })
 
 /*
-* 打开详情：支持传入完整公告对象（直接展示）或 messageId（请求接口加载）
-*   payload 类型分支：
-*     - object → 含 messageContent 则直接展示（预设模式），否则只取 id 发请求
-*     - string/number → 视为 messageId 请求接口加载
-*/
+ * 打开详情：支持传入完整公告对象（直接展示）或 messageId（请求接口加载）
+ *   payload 类型分支：
+ *     - object → 含 messageContent 则直接展示（预设模式），否则只取 id 发请求
+ *     - string/number → 视为 messageId 请求接口加载
+ */
 function open(payload: MessageDetail | number | string | null) {
   /* 处理入参 */
   let id: number | string | null = null
@@ -140,19 +146,21 @@ function open(payload: MessageDetail | number | string | null) {
   /* 传入 messageId：调接口获取详情 */
   loading.value = true
   detail.value = null
-  getMessage(id as number).then(res => {
-    detail.value = res.data as MessageDetail
-  }).catch(() => {
-    detail.value = null
-  }).finally(() => {
-    loading.value = false
-  })
-
+  getMessage(id as number)
+    .then((res) => {
+      detail.value = res.data as MessageDetail
+    })
+    .catch(() => {
+      detail.value = null
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
 /*
-* 关闭抽屉：清空详情数据
-*/
+ * 关闭抽屉：清空详情数据
+ */
 function handleClose() {
   visible.value = false
   detail.value = null
@@ -283,7 +291,9 @@ defineExpose({
   background: #fff;
   border-radius: 6px;
   padding: 28px 32px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
   min-height: 120px;
 }
 
@@ -403,7 +413,7 @@ defineExpose({
     font-weight: 600;
     color: #303133;
   }
-  
+
   .el-drawer__body {
     background: #f5f6f8;
     padding: 0;

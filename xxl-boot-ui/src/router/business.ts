@@ -13,19 +13,19 @@ export type AppRouteRecordRaw = RouteRecordRaw & {
  * 说明：hidden 不显示在侧栏，供 tab.openPage 等内部跳转使用
  */
 export const businessRoutes: AppRouteRecordRaw[] = [
-    // 字典管理-子页面：字典数据页面
-    {
+  // 字典管理-子页面：字典数据页面
+  {
+    path: '/system/dict/data',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        name: 'DictData',
         path: '/system/dict/data',
-        component: Layout,
-        hidden: true,
-        redirect: 'noredirect',
-        children: [
-            {
-                name: 'DictData',
-                path: '/system/dict/data',
-                component: () => import('@/views/system/dict/data.vue'),
-                meta: { title: '字典数据', activeMenu: '/system/dict' }
-            }
-        ]
-    }
+        component: () => import('@/views/system/dict/data.vue'),
+        meta: { title: '字典数据', activeMenu: '/system/dict' }
+      }
+    ]
+  }
 ]

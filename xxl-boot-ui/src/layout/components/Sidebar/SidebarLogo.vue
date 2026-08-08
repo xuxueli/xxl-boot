@@ -3,7 +3,7 @@
   功能：侧边栏顶部 Logo + 标题，展开/收起状态切换显示
 -->
 <template>
-  <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
+  <div class="sidebar-logo-container" :class="{ collapse: collapse }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
@@ -21,28 +21,28 @@
 import logo from '@/assets/images/logo.png'
 import { useSettingsStore } from '@/store'
 import variables from '@/assets/styles/variables.module.scss'
-import defaultSettings from '@/default-settings';
+import defaultSettings from '@/default-settings'
 
 /*
-* collapse：侧边栏是否折叠，折叠时只显示 Logo 图片，标题隐藏
-*
-* defineProps用法：“父传子”通信工具：
-*   - 子组件声明组件接收的 props（属性）
-*   - 父组件向子组件传递数据
-*
-*   <pre>
-*     父组件：
-*       <SidebarLogo v-if="showLogo" :collapse="isCollapse" />
-*       ...
-*       const isCollapse = computed(() => !appStore.sidebar.opened)
-*     子组件：SidebarLogo.vue
-*       defineProps({   collapse: { type: Boolean, required: true }   })
-*       ...
-*       <template>
-*         <div :class="{ 'collapse': collapse }"></div>
-*       <template>
-*   </pre>>
-*/
+ * collapse：侧边栏是否折叠，折叠时只显示 Logo 图片，标题隐藏
+ *
+ * defineProps用法：“父传子”通信工具：
+ *   - 子组件声明组件接收的 props（属性）
+ *   - 父组件向子组件传递数据
+ *
+ *   <pre>
+ *     父组件：
+ *       <SidebarLogo v-if="showLogo" :collapse="isCollapse" />
+ *       ...
+ *       const isCollapse = computed(() => !appStore.sidebar.opened)
+ *     子组件：SidebarLogo.vue
+ *       defineProps({   collapse: { type: Boolean, required: true }   })
+ *       ...
+ *       <template>
+ *         <div :class="{ 'collapse': collapse }"></div>
+ *       <template>
+ *   </pre>>
+ */
 defineProps({
   collapse: {
     type: Boolean,
@@ -55,8 +55,8 @@ const settingsStore = useSettingsStore()
 const sideTheme = computed(() => settingsStore.sideTheme)
 
 /*
-* Logo 背景色：深色模式 / 顶部导航 / theme-dark / theme-light
-*/
+ * Logo 背景色：深色模式 / 顶部导航 / theme-dark / theme-light
+ */
 const getLogoBackground = computed(() => {
   if (settingsStore.isDark) {
     return 'var(--sidebar-bg)'
@@ -69,8 +69,8 @@ const getLogoBackground = computed(() => {
 })
 
 /*
-* Logo 文字色：深色模式 / 顶部导航 / theme-dark / theme-light
-*/
+ * Logo 文字色：深色模式 / 顶部导航 / theme-dark / theme-light
+ */
 const getLogoTextColor = computed(() => {
   if (settingsStore.isDark) {
     return 'var(--sidebar-logo-text)'
@@ -119,7 +119,12 @@ const getLogoTextColor = computed(() => {
       font-weight: 600;
       line-height: 50px;
       font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      font-family:
+        Avenir,
+        Helvetica Neue,
+        Arial,
+        Helvetica,
+        sans-serif;
       vertical-align: middle;
     }
   }

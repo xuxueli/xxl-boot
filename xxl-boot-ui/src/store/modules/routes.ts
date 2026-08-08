@@ -2,12 +2,12 @@
  * 名称：路由 Store
  * 功能：将后端菜单数据转换为前端路由
  */
-import {defineStore} from 'pinia'
-import {markRaw} from 'vue'
-import {constantRoutes} from '@/router'
-import {getRouters} from '@/api/login'
+import { defineStore } from 'pinia'
+import { markRaw } from 'vue'
+import { constantRoutes } from '@/router'
+import { getRouters } from '@/api/login'
 import Layout from '@/layout/index.vue'
-import {InnerLink, ParentView} from '@/layout/components'
+import { InnerLink, ParentView } from '@/layout/components'
 
 // 预先收集 views 目录下所有 .vue 文件，供后端路由字符串按需映射
 const modules = import.meta.glob('./../../views/**/*.vue')
@@ -55,52 +55,50 @@ interface RoutesState {
   _scope: string
 }
 
-const useRoutesStore = defineStore(
-  'routes',
-  {
-    state: (): RoutesState => ({
-      dynamicRoutes: [],
-      flattenRoutes: [],
-      _scope: ''
-    }),
-    getters: {
-      /**
-       * 静态+动态 全量路由（constantRoutes + dynamicRoutes）
-       */
-      fullRoutes: (state) => [...constantRoutes, ...state.dynamicRoutes]
+const useRoutesStore = defineStore('routes', {
+  state: (): RoutesState => ({
+    dynamicRoutes: [],
+    flattenRoutes: [],
+    _scope: ''
+  }),
+  getters: {
+    /**
+     * 静态+动态 全量路由（constantRoutes + dynamicRoutes）
+     */
+    fullRoutes: (state) => [...constantRoutes, ...state.dynamicRoutes]
+  },
+  actions: {
+    /**
+     * 初始化：请求后端菜单 → 转换组件映射 → 写入 dynamicRoutes，同时缓存拍平路由
+     */
+    initRoutes(roles?: string[]) {
+      return getRouters().then((res) => {
+        const raw = res.data
+
+        // 未拍平：保留树结构，供菜单渲染
+        const dynamicRoutes = transformRoutes(JSON.parse(JSON.stringify(raw)))
+        setFirstAffix(dynamicRoutes)
+        this.dynamicRoutes = dynamicRoutes
+
+        // 拍平：供 router.addRoute 直接取用
+        this.flattenRoutes = transformRoutes(JSON.parse(JSON.stringify(raw)), true)
+        setFirstAffix(this.flattenRoutes)
+      })
     },
-    actions: {
-      /**
-       * 初始化：请求后端菜单 → 转换组件映射 → 写入 dynamicRoutes，同时缓存拍平路由
-       */
-      initRoutes(roles?: string[]) {
-        return getRouters().then(res => {
-          const raw = res.data
-
-          // 未拍平：保留树结构，供菜单渲染
-          const dynamicRoutes = transformRoutes(JSON.parse(JSON.stringify(raw)))
-          setFirstAffix(dynamicRoutes)
-          this.dynamicRoutes = dynamicRoutes
-
-          // 拍平：供 router.addRoute 直接取用
-          this.flattenRoutes = transformRoutes(JSON.parse(JSON.stringify(raw)), true)
-          setFirstAffix(this.flattenRoutes)
-        })
-      },
-      /**
-       * 获取拍平路由：返回 initRoutes 时生成的数据，供 router.addRoute
-       */
-      getFlattenRoutes() {
-        return this.flattenRoutes
-      },
-      /**
-       * 设置混合模式下侧边栏联动过滤的顶级菜单路径：支持 混合菜单 模式；
-       */
-      setScope(path: string) {
-        this._scope = path
-      }
+    /**
+     * 获取拍平路由：返回 initRoutes 时生成的数据，供 router.addRoute
+     */
+    getFlattenRoutes() {
+      return this.flattenRoutes
+    },
+    /**
+     * 设置混合模式下侧边栏联动过滤的顶级菜单路径：支持 混合菜单 模式；
+     */
+    setScope(path: string) {
+      this._scope = path
     }
-  })
+  }
+})
 
 /**
  * 首个标签 affix 固定：首个路由标记 affix，作为 TagsView 固定首页标签
@@ -120,10 +118,8 @@ function setFirstAffix(routes: RouteData[]) {
  * 转换路由：字符串组件名 → 真实组件对象，递归处理子路由
  */
 function transformRoutes(routerMap: RouteData[], flatten = false): RouteData[] {
-
-  return routerMap.filter(route => {
+  return routerMap.filter((route) => {
     try {
-
       // flatten=true 时拍平 ParentView 层级（用于 router.addRoute）
       if (flatten && route.children) {
         route.children = filterChildren(route.children)
@@ -138,29 +134,24 @@ function transformRoutes(routerMap: RouteData[], flatten = false): RouteData[] {
         } else if (route.component === 'InnerLink') {
           route.component = markRaw(InnerLink)
         } else {
-
           // 普通页面-1：定制 component 定位组件位置，通过 loadView 异步加载
           const _component = loadView(route.component as string)
           if (typeof _component === 'undefined') {
             console.error(`transformRoutes loadView fail, route.component：[${route.component}]，重定向到 404`)
             route.component = markRaw(() => import('@/views/common/404.vue'))
           } else {
-            route.component = markRaw(_component);
+            route.component = markRaw(_component)
           }
-
         }
-
       } else if (route.path) {
-
         // 普通页面-2：默认通过 path 匹配组件位置
         const _component = loadView(route.path)
         if (typeof _component === 'undefined') {
           console.error(`transformRoutes loadView fail, route.path：[${route.path}]，重定向到 404`)
           route.component = markRaw(() => import('@/views/common/404.vue'))
         } else {
-          route.component = markRaw(_component);
+          route.component = markRaw(_component)
         }
-
       }
 
       // 有子节点则递归转换，无子节点则删除 children 使叶子闭合
@@ -182,7 +173,7 @@ function transformRoutes(routerMap: RouteData[], flatten = false): RouteData[] {
  */
 function filterChildren(childrenMap: RouteData[]): RouteData[] {
   const children: RouteData[] = []
-  childrenMap.forEach(el => {
+  childrenMap.forEach((el) => {
     el._rawPath = el.path
     if (el.children && el.children.length && el.component === 'ParentView') {
       // ParentView 节点：递归拍平，子节点直接提升至当前数组
@@ -203,7 +194,6 @@ function filterChildren(childrenMap: RouteData[]): RouteData[] {
  *   2) /path         → 尝试匹配 views/path/index.vue（目录格式，自动补全 index）
  */
 export const loadView = (view: string): (() => Promise<unknown>) | undefined => {
-
   let res: (() => Promise<unknown>) | undefined
   // 去掉 view 可能携带的前导 "/"，统一匹配格式
   const key = view.replace(/^\//, '')

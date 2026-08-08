@@ -4,7 +4,6 @@
  *    - 由 store/modules/settings.ts 读取并支持从 localStorage 覆盖。
  */
 export default {
-
   /**
    * 网页标题
    */
@@ -94,5 +93,4 @@ export default {
    * 底部版权文本内容
    */
   footerContent: `Copyright © 2015-${new Date().getFullYear()}`
-
 }

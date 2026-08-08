@@ -5,7 +5,13 @@
 -->
 <template>
   <!-- 水平 el-menu，不启用溢出省略，通过 visibleNumber 手动折叠 -->
-  <el-menu class="topbar-menu" :ellipsis="false" :default-active="activeMenu" :active-text-color="theme" mode="horizontal">
+  <el-menu
+    class="topbar-menu"
+    :ellipsis="false"
+    :default-active="activeMenu"
+    :active-text-color="theme"
+    mode="horizontal"
+  >
     <!-- 可见的一级菜单项：前 N 条 -->
     <SidebarItem :key="route.path + index" v-for="(route, index) in topMenus" :item="route" :base-path="route.path" />
 
@@ -14,9 +20,13 @@
       <template #title>
         <span>更多菜单</span>
       </template>
-      <SidebarItem :key="route.path + index" v-for="(route, index) in moreRoutes" :item="route" :base-path="route.path" />
+      <SidebarItem
+        :key="route.path + index"
+        v-for="(route, index) in moreRoutes"
+        :item="route"
+        :base-path="route.path"
+      />
     </el-sub-menu>
-
   </el-menu>
 </template>
 
@@ -29,11 +39,11 @@ const settingsStore = useSettingsStore()
 const routesStore = useRoutesStore()
 const theme = computed(() => settingsStore.theme)
 
-const visibleNumber = ref(5)  /* 可见菜单数量阈值，动态计算 */
+const visibleNumber = ref(5) /* 可见菜单数量阈值，动态计算 */
 
 /*
-* 当前激活菜单：优先取 meta.activeMenu（路由配置的激活项），否则取 route.path
-*/
+ * 当前激活菜单：优先取 meta.activeMenu（路由配置的激活项），否则取 route.path
+ */
 const activeMenu = computed(() => {
   const { meta, path } = route
   if (meta.activeMenu) {
@@ -43,22 +53,22 @@ const activeMenu = computed(() => {
 })
 
 /*
-* 顶部一级菜单：取前 N 条可见路由（N 由容器宽度动态计算）
-*/
+ * 顶部一级菜单：取前 N 条可见路由（N 由容器宽度动态计算）
+ */
 const topMenus = computed(() => {
   return routesStore.fullRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value) as { path: string }[]
 })
 
 /*
-* 超出折叠的更多菜单：取 visibleNumber 之后的路由
-*/
+ * 超出折叠的更多菜单：取 visibleNumber 之后的路由
+ */
 const moreRoutes = computed(() => {
   return routesStore.fullRoutes.filter((f) => !f.hidden).slice(visibleNumber.value) as { path: string }[]
 })
 
 /*
-* 根据容器宽度计算可显示的菜单数量
-*/
+ * 根据容器宽度计算可显示的菜单数量
+ */
 function setVisibleNumber() {
   // 可视区域1/3计算可显示菜单
   const width = document.body.getBoundingClientRect().width / 3
@@ -76,7 +86,8 @@ onBeforeUnmount(() => {
 
 <style lang="scss">
 /* menu item */
-.topbar-menu.el-menu--horizontal .el-submenu__title, .topbar-menu.el-menu--horizontal .el-menu-item {
+.topbar-menu.el-menu--horizontal .el-submenu__title,
+.topbar-menu.el-menu--horizontal .el-menu-item {
   padding: 0 10px !important;
 }
 
@@ -89,7 +100,10 @@ onBeforeUnmount(() => {
   margin: 0 10px !important;
 }
 
-.el-sub-menu.is-active .svg-icon, .el-menu-item.is-active .svg-icon + span, .el-sub-menu.is-active .svg-icon + span, .el-sub-menu.is-active .el-sub-menu__title span {
+.el-sub-menu.is-active .svg-icon,
+.el-menu-item.is-active .svg-icon + span,
+.el-sub-menu.is-active .svg-icon + span,
+.el-sub-menu.is-active .el-sub-menu__title span {
   color: v-bind(theme);
 }
 
@@ -98,7 +112,7 @@ onBeforeUnmount(() => {
   float: left;
   line-height: 50px !important;
   color: #303133 !important;
-  margin: 0 15px -3px!important;
+  margin: 0 15px -3px !important;
 }
 
 /* topbar more arrow */
@@ -110,7 +124,8 @@ onBeforeUnmount(() => {
 }
 
 /* menu__title el-menu-item */
-.topbar-menu.el-menu--horizontal .el-sub-menu__title, .topbar-menu.el-menu--horizontal .el-menu-item {
+.topbar-menu.el-menu--horizontal .el-sub-menu__title,
+.topbar-menu.el-menu--horizontal .el-menu-item {
   height: 60px;
 }
 </style>

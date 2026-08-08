@@ -14,7 +14,7 @@ export default {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {
     const { value, arg } = binding
     // callback 模式：只注册回调，不绑定点击
-    if (arg === "callback") {
+    if (arg === 'callback') {
       el.$copyCallback = value as (msg: string) => void
     } else {
       // 默认模式：绑定点击复制
@@ -26,9 +26,9 @@ export default {
           el.$copyCallback(el.$copyValue || '')
         }
       }
-      el.addEventListener("click", handler)
+      el.addEventListener('click', handler)
       // 保存解绑函数，供 unmounted 阶段清理
-      el.$destroyCopy = () => el.removeEventListener("click", handler)
+      el.$destroyCopy = () => el.removeEventListener('click', handler)
     }
   },
   unmounted(el: HTMLElement) {
@@ -69,7 +69,9 @@ function copyTextToClipboard(input: string, { target = document.body }: { target
   let isSuccess = false
   try {
     isSuccess = document.execCommand('copy')
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 
   element.remove()
 

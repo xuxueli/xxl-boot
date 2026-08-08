@@ -7,50 +7,75 @@
     <div class="detail-wrap">
       <!-- 基本信息 -->
       <div class="detail-card">
-        <div class="detail-card-title"><el-icon><InfoFilled /></el-icon> 基本信息</div>
+        <div class="detail-card-title">
+          <el-icon><InfoFilled /></el-icon> 基本信息
+        </div>
         <el-row class="detail-row">
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">日志类型</span><span class="detail-value">{{
-              row.type === 0 ? '操作日志' : row.type === 1 ? '登陆日志' : row.type }}</span></div>
+            <div class="detail-item">
+              <span class="detail-label">日志类型</span
+              ><span class="detail-value">{{
+                row.type === 0 ? '操作日志' : row.type === 1 ? '登陆日志' : row.type
+              }}</span>
+            </div>
           </el-col>
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">系统模块</span><span class="detail-value">{{ moduleMap[row.module] || row.module }}</span></div>
+            <div class="detail-item">
+              <span class="detail-label">系统模块</span
+              ><span class="detail-value">{{ moduleMap[row.module] || row.module }}</span>
+            </div>
           </el-col>
         </el-row>
         <el-row class="detail-row">
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">日志编号</span><span class="detail-value">{{ row.id }}</span></div>
+            <div class="detail-item">
+              <span class="detail-label">日志编号</span><span class="detail-value">{{ row.id }}</span>
+            </div>
           </el-col>
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">日志标题</span><span class="detail-value">{{ row.title }}</span></div>
+            <div class="detail-item">
+              <span class="detail-label">日志标题</span><span class="detail-value">{{ row.title }}</span>
+            </div>
           </el-col>
         </el-row>
       </div>
 
       <!-- 操作人信息 -->
       <div class="detail-card">
-        <div class="detail-card-title"><el-icon><User /></el-icon> 操作人信息</div>
+        <div class="detail-card-title">
+          <el-icon><User /></el-icon> 操作人信息
+        </div>
         <el-row class="detail-row">
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">操作人</span><span class="detail-value">{{ row.operator }}</span></div>
+            <div class="detail-item">
+              <span class="detail-label">操作人</span><span class="detail-value">{{ row.operator }}</span>
+            </div>
           </el-col>
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">操作时间</span><span class="detail-value">{{ row.addTime }}</span></div>
+            <div class="detail-item">
+              <span class="detail-label">操作时间</span><span class="detail-value">{{ row.addTime }}</span>
+            </div>
           </el-col>
         </el-row>
         <el-row class="detail-row">
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">操作IP</span><span class="detail-value">{{ row.ip }}</span></div>
+            <div class="detail-item">
+              <span class="detail-label">操作IP</span><span class="detail-value">{{ row.ip }}</span>
+            </div>
           </el-col>
           <el-col :span="12">
-            <div class="detail-item"><span class="detail-label">操作地址</span><span class="detail-value">{{ row.ipAddress || row.ip }}</span></div>
+            <div class="detail-item">
+              <span class="detail-label">操作地址</span><span class="detail-value">{{ row.ipAddress || row.ip }}</span>
+            </div>
           </el-col>
         </el-row>
       </div>
 
       <!-- 日志内容 -->
       <div class="detail-card">
-        <div class="detail-card-title"><el-icon><Document /></el-icon> 日志内容</div>
+        <div class="detail-card-title">
+          <el-icon><Document /></el-icon> 日志内容
+        </div>
         <div class="code-body">
           <div class="code-wrap">
             <div class="code-action">
@@ -95,7 +120,7 @@ interface DetailProps {
  * 组件入参: 通过 :xxx + defineProps 单项数据同步
  */
 const props = withDefaults(defineProps<DetailProps>(), {
-  row: () => ({}),  /* 当前行数据 */
+  row: () => ({}) /* 当前行数据 */,
   moduleMap: () => ({}) /* 系统模块编码 → 名称映射 */
 })
 

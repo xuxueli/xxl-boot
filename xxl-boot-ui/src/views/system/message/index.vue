@@ -39,10 +39,18 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']"
+          >修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button
+          type="danger"
+          plain
+          icon="Delete"
+          :disabled="table.multiple"
+          @click="handleDelete"
+          v-hasRole="['admin']"
+          >删除</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -53,7 +61,7 @@
       <el-table-column label="序号" align="center" prop="id" width="100" />
       <el-table-column label="消息标题" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
-          <a class="link-type" style="cursor:pointer" @click="handleViewData(scope.row)">{{ scope.row.title }}</a>
+          <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{ scope.row.title }}</a>
         </template>
       </el-table-column>
       <el-table-column label="分类" align="center" width="100">
@@ -78,9 +86,12 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="User" @click="handleReadUsers(scope.row)" v-hasRole="['admin']" >阅读用户</el-button>
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']" >修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']" >删除</el-button>
+          <el-button link type="primary" icon="User" @click="handleReadUsers(scope.row)" v-hasRole="['admin']"
+            >阅读用户</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']"
+            >修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']"
+            >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -128,7 +139,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="内容">
-              <Editor v-model="formState.form.content" :min-height="192"/>
+              <Editor v-model="formState.form.content" :min-height="192" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -159,18 +170,18 @@ import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
-
-
-
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
-const formRef = ref<FormInstance>()             /* 编辑表单 ref */
-const messageViewRef = ref<InstanceType<typeof MessageDetailView> | null>(null)       /* 消息详情弹框 ref： */
-const readUsersRef = ref<InstanceType<typeof ReadUsersDialog> | null>(null)        /* 已读弹框 ref */
+const formRef = ref<FormInstance>() /* 编辑表单 ref */
+const messageViewRef = ref<InstanceType<typeof MessageDetailView> | null>(null) /* 消息详情弹框 ref： */
+const readUsersRef = ref<InstanceType<typeof ReadUsersDialog> | null>(null) /* 已读弹框 ref */
 
 // 筛选项数据：消息分类 + 消息状态
-const { MessageCategoryEnum: categoryOptions, MessageStatusEnum: statusOptions } = useEnumOption('MessageCategoryEnum', 'MessageStatusEnum')
+const { MessageCategoryEnum: categoryOptions, MessageStatusEnum: statusOptions } = useEnumOption(
+  'MessageCategoryEnum',
+  'MessageStatusEnum'
+)
 
 // 搜索栏：查询参数
 const queryParams = ref<MessageQuery>({
@@ -194,27 +205,26 @@ const table = ref<TableState<Message>>({
 
 // 编辑表单：数据状态
 const formState = ref<FormState<Message>>({
-  visible: false,  /* 对话框显隐 */
-  title: "",       /* 对话框标题 */
-  form: {},        /* 表单数据 */
-  rules: {         /* 校验规则 */
-    title: [{ required: true, message: "消息标题不能为空", trigger: "blur" }],
-    category: [{ required: true, message: "分类不能为空", trigger: "change" }]
-  },
+  visible: false      /* 对话框显隐 */,
+  title: ''           /* 对话框标题 */,
+  form: {}            /* 表单数据 */,
+  rules: {
+    /* 校验规则 */
+    title: [{ required: true, message: '消息标题不能为空', trigger: 'blur' }],
+    category: [{ required: true, message: '分类不能为空', trigger: 'change' }]
+  }
 })
-
 
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载分类、状态选项 */
-
 
 /** 查询消息列表 */
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
   const params = usePageParams(queryParams)()
-  listMessage(params).then(response => {
+  listMessage(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -223,13 +233,13 @@ function getList() {
 
 /** 分类编码 → 文案 */
 function categoryText(category: number) {
-  const item = categoryOptions.value.find(i => i.code === category)
+  const item = categoryOptions.value.find((i) => i.code === category)
   return item ? item.title : category
 }
 
 /** 状态编码 → 文案 */
 function statusText(status: number) {
-  const item = statusOptions.value.find(i => i.code === status)
+  const item = statusOptions.value.find((i) => i.code === status)
   return item ? item.title : status
 }
 
@@ -248,7 +258,7 @@ function reset() {
     content: undefined,
     status: 0
   }
-  resetForm("formRef")
+  resetForm('formRef')
 }
 
 /** 搜索按钮操作 */
@@ -259,13 +269,13 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm("queryRef")
+  resetForm('queryRef')
   handleQuery()
 }
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection: Message[]) {
-  table.value.ids = selection.map(item => item.id as number)
+  table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -274,7 +284,7 @@ function handleSelectionChange(selection: Message[]) {
 function handleAdd() {
   reset()
   formState.value.visible = true
-  formState.value.title = "新增站内消息"
+  formState.value.title = '新增站内消息'
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -285,27 +295,27 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  getMessage(id).then(response => {
+  getMessage(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = "修改站内消息"
+    formState.value.title = '修改站内消息'
   })
 }
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value!.validate(valid => {
+  formRef.value!.validate((valid) => {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateMessage(formState.value.form).then(response => {
-          modal.msgSuccess("修改成功")
+        updateMessage(formState.value.form).then((response) => {
+          modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
-        addMessage(formState.value.form).then(response => {
-          modal.msgSuccess("新增成功")
+        addMessage(formState.value.form).then((response) => {
+          modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
         })
@@ -330,18 +340,20 @@ function handleDelete(row: any) {
   if (messageIds == null || (Array.isArray(messageIds) && messageIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除消息编号为"' + messageIds + '"的数据项？').then(function() {
-    return delMessage(messageIds)
-  }).then(() => {
-    getList()
-    modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  modal
+    .confirm('是否确认删除消息编号为"' + messageIds + '"的数据项？')
+    .then(function () {
+      return delMessage(messageIds)
+    })
+    .then(() => {
+      getList()
+      modal.msgSuccess('删除成功')
+    })
+    .catch(() => {})
 }
-
 
 // --------------------------------- page init ---------------------------------
 
 // 页面初始化：加载分类/状态选项 + 消息列表
 getList()
-
 </script>

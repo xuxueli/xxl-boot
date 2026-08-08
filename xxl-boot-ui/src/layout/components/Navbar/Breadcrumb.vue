@@ -10,7 +10,11 @@
       <!-- 导航节点：按 levelList 渲染每一个导航节点 -->
       <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
         <!-- 纯文本节点：当前页或显式 noRedirect 节点仅展示文本，不可点击 -->
-        <span v-if="(item.children && item.children.length > 0) || index === levelList.length - 1" class="no-redirect">{{ item.meta.title }}</span>
+        <span
+          v-if="(item.children && item.children.length > 0) || index === levelList.length - 1"
+          class="no-redirect"
+          >{{ item.meta.title }}</span
+        >
         <!-- 可点击节点：点击后交给 handleLink 统一处理 -->
         <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
       </el-breadcrumb-item>
@@ -18,9 +22,8 @@
   </el-breadcrumb>
 </template>
 
-
 <script setup lang="ts">
-import type {RouteRecordNormalized} from 'vue-router'
+import type { RouteRecordNormalized } from 'vue-router'
 import defaultSettings from '@/default-settings'
 
 const route = useRoute()
@@ -29,8 +32,8 @@ const router = useRouter()
 const levelList = ref<RouteRecordNormalized[]>([])
 
 /*
-* 生成面包屑列表：从 route.matched 取 Vue Router 已解析的完整匹配链路
-*/
+ * 生成面包屑列表：从 route.matched 取 Vue Router 已解析的完整匹配链路
+ */
 function getBreadcrumb() {
   /* 取 Vue Router 已解析的完整匹配链路，过滤无 title 的容器节点 */
   let matched = route.matched.filter((item) => item.meta && item.meta.title)
@@ -44,15 +47,15 @@ function getBreadcrumb() {
 }
 
 /*
-* 点击面包屑节点跳转
-*/
+ * 点击面包屑节点跳转
+ */
 function handleLink(item: RouteRecordNormalized) {
   router.push(item.path)
 }
 
 /*
-* 监听路由变化更新面包屑，redirect 路径不更新避免闪烁
-*/
+ * 监听路由变化更新面包屑，redirect 路径不更新避免闪烁
+ */
 watchEffect(() => {
   if (route.path.startsWith('/redirect/')) return
   getBreadcrumb()
@@ -61,8 +64,7 @@ watchEffect(() => {
 getBreadcrumb()
 </script>
 
-
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .app-breadcrumb.el-breadcrumb {
   display: inline-block;
   font-size: 14px;

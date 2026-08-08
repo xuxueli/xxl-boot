@@ -42,10 +42,20 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']"
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button
+          type="danger"
+          plain
+          icon="Delete"
+          :disabled="table.multiple"
+          @click="handleDelete"
+          v-hasRole="['admin']"
+          >删除</el-button
+        >
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -68,8 +78,12 @@
       <el-table-column label="新增时间" align="center" prop="addTime" width="170" />
       <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']"
+            >修改</el-button
+          >
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -90,7 +104,11 @@
           <el-input v-model="formState.form.name" placeholder="请输入配置名称" />
         </el-form-item>
         <el-form-item label="配置Key" prop="key">
-          <el-input v-model="formState.form.key" placeholder="请输入配置Key" :disabled="formState.form.id != undefined" />
+          <el-input
+            v-model="formState.form.key"
+            placeholder="请输入配置Key"
+            :disabled="formState.form.id != undefined"
+          />
         </el-form-item>
         <el-form-item label="配置Value" prop="value">
           <el-input v-model="formState.form.value" type="textarea" placeholder="请输入配置Value" />
@@ -126,9 +144,6 @@ import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
-
-
-
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
@@ -145,18 +160,19 @@ const queryParams = ref<ConfigQuery>({
 
 // 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
 const formState = ref<FormState<Config>>({
-  visible: false,  /* 对话框显隐 */
-  title: "",       /* 对话框标题 */
-  form: {},        /* 表单数据 */
-  rules: {         /* 校验规则 */
-    name: [{ required: true, message: "配置名称不能为空", trigger: "blur" }],
+  visible: false    /* 对话框显隐 */,
+  title: ''         /* 对话框标题 */,
+  form: {}          /* 表单数据 */,
+  rules: {
+    /* 校验规则 */
+    name: [{ required: true, message: '配置名称不能为空', trigger: 'blur' }],
     key: [
-      { required: true, message: "配置Key不能为空", trigger: "blur" },
-      { pattern: /^[a-z][a-z0-9.]*$/, message: "以小写字母开头，只能由小写字母、数字和点组成", trigger: "blur" },
-      { min: 4, max: 100, message: "长度需在4-100之间", trigger: "blur" }
+      { required: true, message: '配置Key不能为空', trigger: 'blur' },
+      { pattern: /^[a-z][a-z0-9.]*$/, message: '以小写字母开头，只能由小写字母、数字和点组成', trigger: 'blur' },
+      { min: 4, max: 100, message: '长度需在4-100之间', trigger: 'blur' }
     ],
-    value: [{ required: true, message: "配置Value不能为空", trigger: "blur" }]
-  },
+    value: [{ required: true, message: '配置Value不能为空', trigger: 'blur' }]
+  }
 })
 
 // 表格：UI数据
@@ -173,18 +189,16 @@ const table = ref<TableState<Config>>({
 // 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
 const { ConfigStatusEnum: statusOptions } = useEnumOption('ConfigStatusEnum')
 
-
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载状态选项 */
-
 
 /** 查询配置列表 */
 function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
   const params = usePageParams(queryParams)()
-  listConfig(params).then(response => {
+  listConfig(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -193,7 +207,7 @@ function getList() {
 
 /** 状态编码 → 文案 */
 function statusText(status: number) {
-  const item = statusOptions.value.find(i => i.code === status)
+  const item = statusOptions.value.find((i) => i.code === status)
   return item ? item.title : status
 }
 
@@ -213,7 +227,7 @@ function reset() {
     status: 0,
     remark: undefined
   }
-  resetForm("formRef")
+  resetForm('formRef')
 }
 
 /** 搜索按钮操作 */
@@ -224,13 +238,13 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm("queryRef")
+  resetForm('queryRef')
   handleQuery()
 }
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection: Config[]) {
-  table.value.ids = selection.map(item => item.id as number)
+  table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -239,7 +253,7 @@ function handleSelectionChange(selection: Config[]) {
 function handleAdd() {
   reset()
   formState.value.visible = true
-  formState.value.title = "新增配置"
+  formState.value.title = '新增配置'
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -250,27 +264,27 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  getConfig(id).then(response => {
+  getConfig(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = "修改配置"
+    formState.value.title = '修改配置'
   })
 }
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value!.validate(valid => {
+  formRef.value!.validate((valid) => {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
-        updateConfig(formState.value.form).then(response => {
-          modal.msgSuccess("修改成功")
+        updateConfig(formState.value.form).then((response) => {
+          modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
-        addConfig(formState.value.form).then(response => {
-          modal.msgSuccess("新增成功")
+        addConfig(formState.value.form).then((response) => {
+          modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
         })
@@ -285,18 +299,20 @@ function handleDelete(row: any) {
   if (configIds == null || (Array.isArray(configIds) && configIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除配置编号为"' + configIds + '"的数据项？').then(function() {
-    return delConfig(configIds)
-  }).then(() => {
-    getList()
-    modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  modal
+    .confirm('是否确认删除配置编号为"' + configIds + '"的数据项？')
+    .then(function () {
+      return delConfig(configIds)
+    })
+    .then(() => {
+      getList()
+      modal.msgSuccess('删除成功')
+    })
+    .catch(() => {})
 }
-
 
 // --------------------------------- page init ---------------------------------
 
 // 页面初始化：加载状态选项 + 配置列表
 getList()
-
 </script>

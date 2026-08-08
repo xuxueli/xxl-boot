@@ -47,20 +47,20 @@ import { getNormalPath } from '@/utils/common'
 import type { RouteData } from '@/store/modules/routes'
 
 /*
-* 组件属性
-*/
+ * 组件属性
+ */
 interface MenuItemProps {
   /*
-  * 父路由对象：包含 path / meta / children / hidden 等属性
-  */
+   * 父路由对象：包含 path / meta / children / hidden 等属性
+   */
   item: RouteData
   /*
-  * 是否嵌套子菜单：true 表示当前已在 el-sub-menu 内，叶子结点无需再缩进
-  */
+   * 是否嵌套子菜单：true 表示当前已在 el-sub-menu 内，叶子结点无需再缩进
+   */
   isNest?: boolean
   /*
-  * 父路由path：子路由若为相对路径，据此拼接为绝对路径
-  */
+   * 父路由path：子路由若为相对路径，据此拼接为绝对路径
+   */
   basePath?: string
 }
 
@@ -70,23 +70,23 @@ const props = withDefaults(defineProps<MenuItemProps>(), {
 })
 
 /*
-* hasOneShowingChild 的判断结果暂存区。
-* 满足"只有一个可见子路由"时存储该子路由对象，模板据此决定渲染 el-menu-item 还是 el-sub-menu。
-*/
+ * hasOneShowingChild 的判断结果暂存区。
+ * 满足"只有一个可见子路由"时存储该子路由对象，模板据此决定渲染 el-menu-item 还是 el-sub-menu。
+ */
 const onlyOneChild = ref<Record<string, any>>({})
 
 /*
-* 判断当前菜单是否只有一个可见子菜单：
-*   1）1 个可见子路由 → 直接展开为该子路由（不包 el-sub-menu），减少菜单层级。
-*   2）0 个可见子路由 → 父级自身作为叶子菜单展示（用父级的 title/icon 填充）。
-*   3）≥ 2 个可见子路由 → 渲染 el-sub-menu，继续递归。
-* 每次调用会将筛选结果写入 onlyOneChild，供模板访问。
-*/
+ * 判断当前菜单是否只有一个可见子菜单：
+ *   1）1 个可见子路由 → 直接展开为该子路由（不包 el-sub-menu），减少菜单层级。
+ *   2）0 个可见子路由 → 父级自身作为叶子菜单展示（用父级的 title/icon 填充）。
+ *   3）≥ 2 个可见子路由 → 渲染 el-sub-menu，继续递归。
+ * 每次调用会将筛选结果写入 onlyOneChild，供模板访问。
+ */
 function hasOneShowingChild(children: RouteData[] = [], parent: RouteData) {
   if (!children) {
     children = []
   }
-  const showingChildren = children.filter(item => {
+  const showingChildren = children.filter((item) => {
     /* hidden 标记为 true 的路由不展示，不计入可见子菜单 */
     if (item.hidden) {
       return false
@@ -100,14 +100,14 @@ function hasOneShowingChild(children: RouteData[] = [], parent: RouteData) {
     return true
   }
   /*
-  * 无可见子菜单：把父级自身当叶子结点展示。
-  * 设 path='' 避免跳转到无效路由
-  *
-  *
-  * 对象展开运算符（Spread Operator）‌：
-  *   - 作用：创建一个新对象，该对象包含了 oldObject 对象的所有可枚举属性，并将 filed01 属性设置为新值；
-  *   - 格式：{ ...oldObject, filed01: '' }
-  */
+   * 无可见子菜单：把父级自身当叶子结点展示。
+   * 设 path='' 避免跳转到无效路由
+   *
+   *
+   * 对象展开运算符（Spread Operator）‌：
+   *   - 作用：创建一个新对象，该对象包含了 oldObject 对象的所有可枚举属性，并将 filed01 属性设置为新值；
+   *   - 格式：{ ...oldObject, filed01: '' }
+   */
   if (showingChildren.length === 0) {
     onlyOneChild.value = { ...parent, path: '' }
     return true
@@ -117,16 +117,15 @@ function hasOneShowingChild(children: RouteData[] = [], parent: RouteData) {
 }
 
 /*
-* 解析路由路径，返回值类型可能是 string 或 { path, query }。
-*   - 外部链接 → 原样返回；
-*   - 绝对路径（以 / 开头）→ 直接使用；
-*   - 相对路径 → 拼接 basePath 前缀。
-*   - routeQuery 存在时一并返回，用于携带路由参数。
-*/
+ * 解析路由路径，返回值类型可能是 string 或 { path, query }。
+ *   - 外部链接 → 原样返回；
+ *   - 绝对路径（以 / 开头）→ 直接使用；
+ *   - 相对路径 → 拼接 basePath 前缀。
+ *   - routeQuery 存在时一并返回，用于携带路由参数。
+ */
 function resolvePath(routePath?: string): string
 function resolvePath(routePath: string | undefined, routeQuery?: string): string | { path: string; query: any }
 function resolvePath(routePath: string | undefined, routeQuery?: string): string | { path: string; query: any } {
-
   /* 子路由本身是外部链接：直接返回，不走内部路由拼接 */
   if (isExternal(routePath || '')) {
     return routePath as string
@@ -156,13 +155,13 @@ function resolvePath(routePath: string | undefined, routeQuery?: string): string
 }
 
 /*
-* 标题超长时显示 tooltip
-*/
+ * 标题超长时显示 tooltip
+ */
 function hasTitle(title: string | undefined) {
   if (title && title.length > 5) {
     return title
   } else {
-    return ""
+    return ''
   }
 }
 </script>

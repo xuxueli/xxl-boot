@@ -4,35 +4,27 @@
 -->
 <template>
   <div class="errPage-container">
-
     <!-- 返回按钮 -->
-    <el-button icon="ArrowLeft" class="pan-back-btn" @click="back">
-      返回
-    </el-button>
+    <el-button icon="ArrowLeft" class="pan-back-btn" @click="back"> 返回 </el-button>
 
     <el-row>
       <!-- 提示信息 -->
       <el-col :span="12">
-        <h1 class="text-jumbo text-ginormous">
-          301错误!
-        </h1>
+        <h1 class="text-jumbo text-ginormous">301错误!</h1>
         <h2>您没有访问权限！</h2>
         <h6>对不起，您没有访问权限，请不要进行非法操作！您可以返回主页面</h6>
         <ul class="list-unstyled">
           <li class="link-type">
-            <router-link to="/">
-              回首页
-            </router-link>
+            <router-link to="/"> 回首页 </router-link>
           </li>
         </ul>
       </el-col>
 
       <!-- 插画 -->
       <el-col :span="12">
-        <img :src="errGif" width="313" height="428" alt="Girl has dropped her ice cream.">
+        <img :src="errGif" width="313" height="428" alt="Girl has dropped her ice cream." />
       </el-col>
     </el-row>
-
   </div>
 </template>
 
@@ -44,13 +36,13 @@ const route = useRoute()      // 路由数据
 const router = useRouter()    // 路由操作
 
 // 301 动图（加时间戳防缓存）
-const errGif = ref(errImage + "?" + +new Date())
+const errGif = ref(errImage + '?' + +new Date())
 
 /** 返回上一页或首页 */
 function back() {
   if (route.query.noGoBack) {
     // 标记不回退时跳转首页
-    router.push({ path: "/" })
+    router.push({ path: '/' })
   } else {
     router.go(-1)
   }

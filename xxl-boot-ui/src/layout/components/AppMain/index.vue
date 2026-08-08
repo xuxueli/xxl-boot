@@ -24,7 +24,7 @@
           解决同一组件不同参数（如 /user/1 vs /user/2）不刷新的问题。
         -->
         <keep-alive :include="tagsViewStore.cachedViews">
-          <component :is="Component" :key="route.path"/>
+          <component :is="Component" :key="route.path" />
         </keep-alive>
       </transition>
     </router-view>
@@ -35,14 +35,12 @@
   </section>
 </template>
 
-
 <script setup lang="ts">
 import Copyright from './Copyright.vue'
 import { useTagsViewStore } from '@/store'
 
 const tagsViewStore = useTagsViewStore()
 </script>
-
 
 <style lang="scss" scoped>
 .app-main {

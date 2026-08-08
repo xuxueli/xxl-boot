@@ -4,11 +4,11 @@
 -->
 <template>
   <div class="app-container help">
-
     <el-card>
       <h2>XXL-BOOT｜{{ title }}</h2>
       <p>
-        XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即用。整合前后端流行技术，致力为 中小企业、个人开发者 打造开箱即用的中后台解决方案。
+        XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即用。整合前后端流行技术，致力为 中小企业、个人开发者
+        打造开箱即用的中后台解决方案。
       </p>
 
       <p>
@@ -22,18 +22,19 @@
         </el-button>
 
         <!-- 帮助文档 -->
-        <el-button
-            icon="HomeFilled"
-            plain
-            @click="goTarget('https://www.xuxueli.com/xxl-boot/')"
-        >帮助文档
-        </el-button>
+        <el-button icon="HomeFilled" plain @click="goTarget('https://www.xuxueli.com/xxl-boot/')">帮助文档 </el-button>
 
         <!-- icon -->
         &nbsp;&nbsp;｜&nbsp;&nbsp;
-        <iframe src="https://ghbtns.com/github-btn.html?user=xuxueli&repo=xxl-boot&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px" style="margin-bottom:-5px;"></iframe>
-        <br><br>
-
+        <iframe
+          src="https://ghbtns.com/github-btn.html?user=xuxueli&repo=xxl-boot&type=star&count=true"
+          frameborder="0"
+          scrolling="0"
+          width="170px"
+          height="20px"
+          style="margin-bottom: -5px"
+        ></iframe>
+        <br /><br />
       </p>
 
       <el-divider class="divider" />
@@ -42,11 +43,20 @@
 
         <span style="float: right">
           {{ footerContent }}
-          <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px;text-decoration:underline;" >xuxueli</a>
-          <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px;text-decoration:underline;" >github</a>
+          <a
+            href="https://www.xuxueli.com/xxl-boot/"
+            target="_blank"
+            style="margin-left: 5px; text-decoration: underline"
+            >xuxueli</a
+          >
+          <a
+            href="https://github.com/xuxueli/xxl-boot"
+            target="_blank"
+            style="margin-left: 5px; text-decoration: underline"
+            >github</a
+          >
         </span>
       </p>
-
     </el-card>
   </div>
 </template>
@@ -66,8 +76,7 @@ function goTarget(url: string) {
 </script>
 
 <style>
-.help{
-
+.help {
   h2 {
     margin-top: 10px;
     font-weight: 200;
@@ -88,7 +97,6 @@ function goTarget(url: string) {
     color: #00afff;
     text-decoration: auto;
   }
-
 }
 
 .divider {

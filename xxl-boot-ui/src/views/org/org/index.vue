@@ -71,9 +71,17 @@
       </el-table-column>
       <el-table-column label="操作" align="left" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']" >修改</el-button>
           <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasRole="['admin']">新增</el-button>
-          <el-button v-if="scope.row.parentId !== 0" link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
+          <el-button
+            v-if="scope.row.parentId !== 0"
+            link
+            type="primary"
+            icon="Delete"
+            @click="handleDelete(scope.row)"
+            v-hasRole="['admin']"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -179,12 +187,13 @@ const table = ref<TableState>({
 
 // 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
 const formState = ref<FormState>({
-  visible: false,  /* 对话框显隐 */
-  title: "",       /* 对话框标题 */
-  form: {},        /* 表单数据 */
-  rules: {         /* 校验规则 */
-    name: [{ required: true, message: "组织名称不能为空", trigger: "blur" }],
-    order: [{ required: true, message: "顺序不能为空", trigger: "blur" }]
+  visible: false    /* 对话框显隐 */,
+  title: ''         /* 对话框标题 */,
+  form: {}          /* 表单数据 */,
+  rules: {
+    /* 校验规则 */
+    name: [{ required: true, message: '组织名称不能为空', trigger: 'blur' }],
+    order: [{ required: true, message: '顺序不能为空', trigger: 'blur' }]
   }
 })
 
@@ -197,16 +206,14 @@ const originalOrders = ref<Record<number, number | undefined>>({})
 // 状态选项（从后端 OrgStatuEnum 枚举加载）
 const { OrgStatuEnum: statusOptions } = useEnumOption('OrgStatuEnum')
 
-
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载状态选项 */
 
-
 /** 查询组织树列表 */
 function getList() {
   table.value.loading = true
-  listOrg(queryParams.value).then(response => {
+  listOrg(queryParams.value).then((response) => {
     table.value.list = handleTree(response.data, 'id')
     recordOriginalOrders(table.value.list)
     table.value.loading = false
@@ -215,14 +222,14 @@ function getList() {
 
 /** 查询上级组织树选项（保留完整树，保存时再校验不能选自己或其子孙） */
 function loadOrgOptions() {
-  listOrg({}).then(response => {
+  listOrg({}).then((response) => {
     orgOptions.value = handleTree(response.data, 'id')
   })
 }
 
 /** 状态编码 → 文案 */
 function statusText(status: number) {
-  const item = statusOptions.value.find(i => i.code === status)
+  const item = statusOptions.value.find((i) => i.code === status)
   return item ? item.title : status
 }
 
@@ -242,7 +249,7 @@ function reset() {
     status: 0,
     manager: undefined
   }
-  resetForm("formRef")
+  resetForm('formRef')
 }
 
 /** 搜索按钮操作 */
@@ -252,7 +259,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm("queryRef")
+  resetForm('queryRef')
   handleQuery()
 }
 
@@ -273,17 +280,17 @@ function handleAdd(row: any) {
     formState.value.form.parentId = row.id
   }
   formState.value.visible = true
-  formState.value.title = "新增组织"
+  formState.value.title = '新增组织'
 }
 
 /** 修改按钮操作（行内修改，直接取行数据 id） */
 function handleUpdate(row: Org) {
   reset()
   loadOrgOptions()
-  getOrg(row.id as number).then(response => {
+  getOrg(row.id as number).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = "修改组织"
+    formState.value.title = '修改组织'
   })
 }
 
@@ -324,23 +331,23 @@ function validParentId() {
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value!.validate(valid => {
+  formRef.value!.validate((valid) => {
     if (valid) {
       // 上级组织不能选自己或自己的子孙
       if (!validParentId()) {
-        modal.msgError("上级组织不能选择自己或其下级组织")
+        modal.msgError('上级组织不能选择自己或其下级组织')
         return
       }
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateOrg(formState.value.form).then(response => {
-          modal.msgSuccess("修改成功")
+        updateOrg(formState.value.form).then((response) => {
+          modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
-        addOrg(formState.value.form).then(response => {
-          modal.msgSuccess("新增成功")
+        addOrg(formState.value.form).then((response) => {
+          modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
         })
@@ -351,7 +358,7 @@ function submitForm() {
 
 /** 递归记录原始顺序 */
 function recordOriginalOrders(list: Org[]) {
-  list.forEach(item => {
+  list.forEach((item) => {
     originalOrders.value[item.id as number] = item.order
     if (item.children && item.children.length) {
       recordOriginalOrders(item.children)
@@ -364,7 +371,7 @@ function handleSaveSort() {
   const changedIds: number[] = []
   const changedOrders: number[] = []
   const collectChanged = (list: Org[]) => {
-    list.forEach(item => {
+    list.forEach((item) => {
       if (String(originalOrders.value[item.id as number]) !== String(item.order)) {
         changedIds.push(item.id as number)
         changedOrders.push(item.order as number)
@@ -376,26 +383,28 @@ function handleSaveSort() {
   }
   collectChanged(table.value.list)
   if (changedIds.length === 0) {
-    modal.msgWarning("未检测到排序修改")
+    modal.msgWarning('未检测到排序修改')
     return
   }
   updateOrgSort({ ids: changedIds, orders: changedOrders }).then(() => {
-    modal.msgSuccess("排序保存成功")
+    modal.msgSuccess('排序保存成功')
     recordOriginalOrders(table.value.list)
   })
 }
 
-
 /** 删除按钮操作（行内删除，按名称提示） */
 function handleDelete(row: Org) {
-  modal.confirm('是否确认删除名称为"' + row.name + '"的数据项？').then(function() {
-    return delOrg([row.id as number])
-  }).then(() => {
-    getList()
-    modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  modal
+    .confirm('是否确认删除名称为"' + row.name + '"的数据项？')
+    .then(function () {
+      return delOrg([row.id as number])
+    })
+    .then(() => {
+      getList()
+      modal.msgSuccess('删除成功')
+    })
+    .catch(() => {})
 }
-
 
 // --------------------------------- page init ---------------------------------
 

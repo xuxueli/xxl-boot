@@ -4,7 +4,7 @@
         混合模式下只显示当前顶级菜单的子路由。
 -->
 <template>
-  <div :class="['sidebar-theme-wrapper', {'has-logo':showLogo}, sideTheme]" class="sidebar-container">
+  <div :class="['sidebar-theme-wrapper', { 'has-logo': showLogo }, sideTheme]" class="sidebar-container">
     <!-- Logo -->
     <SidebarLogo v-if="showLogo" :collapse="isCollapse" />
     <!-- 菜单滚动容器 -->
@@ -45,21 +45,21 @@ const settingsStore = useSettingsStore()
 const store = useRoutesStore()
 
 /*
-* 侧边栏路由列表。
-*   - 混合模式（navType=2）且存在顶级作用域 _scope 时，只显示该顶级菜单下的子路由；
-*   - 否则全量展示。
-*
-* computed：
-*   - 自动追踪依赖（现有的响应式数据），当依赖变化时自动重新计算
-*/
+ * 侧边栏路由列表。
+ *   - 混合模式（navType=2）且存在顶级作用域 _scope 时，只显示该顶级菜单下的子路由；
+ *   - 否则全量展示。
+ *
+ * computed：
+ *   - 自动追踪依赖（现有的响应式数据），当依赖变化时自动重新计算
+ */
 const sidebarRouters = computed<RouteData[]>(() => {
   const routes: RouteData[] = store.fullRoutes
   /*
-  * _scope 由 TopBarMix 的 setScope 设置，标识当前激活的顶级菜单 path。
-  * 默认scope为 ''/假值，不会过滤。
-  */
+   * _scope 由 TopBarMix 的 setScope 设置，标识当前激活的顶级菜单 path。
+   * 默认scope为 ''/假值，不会过滤。
+   */
   if (settingsStore.navType === 2 && store._scope) {
-    const menu = routes.find(r => r.path === store._scope)
+    const menu = routes.find((r) => r.path === store._scope)
     if (menu?.children) return menu.children
   }
   return routes
@@ -71,8 +71,8 @@ const theme = computed(() => settingsStore.theme)
 const isCollapse = computed(() => !appStore.sidebar.opened)
 
 /*
-* 菜单背景色：深色模式 / theme-dark / theme-light
-*/
+ * 菜单背景色：深色模式 / theme-dark / theme-light
+ */
 const getMenuBackground = computed(() => {
   if (settingsStore.isDark) {
     return 'var(--sidebar-bg)'
@@ -81,8 +81,8 @@ const getMenuBackground = computed(() => {
 })
 
 /*
-* 菜单文字色：深色模式 / theme-dark / theme-light
-*/
+ * 菜单文字色：深色模式 / theme-dark / theme-light
+ */
 const getMenuTextColor = computed(() => {
   if (settingsStore.isDark) {
     return 'var(--sidebar-text)'
@@ -91,8 +91,8 @@ const getMenuTextColor = computed(() => {
 })
 
 /*
-* 当前激活菜单：优先取 meta.activeMenu，否则取 route.path
-*/
+ * 当前激活菜单：优先取 meta.activeMenu，否则取 route.path
+ */
 const activeMenu = computed(() => {
   const { meta, path } = route
   if (meta.activeMenu) {
@@ -105,7 +105,7 @@ const activeMenu = computed(() => {
 <style lang="scss" scoped>
 .sidebar-container {
   background-color: v-bind(getMenuBackground);
-  
+
   .scrollbar-wrapper {
     background-color: v-bind(getMenuBackground);
   }
@@ -114,8 +114,9 @@ const activeMenu = computed(() => {
     border: none;
     height: 100%;
     width: 100% !important;
-    
-    .el-menu-item, .el-sub-menu__title {
+
+    .el-menu-item,
+    .el-sub-menu__title {
       &:hover {
         background-color: var(--menu-hover, rgba(0, 0, 0, 0.06)) !important;
       }
@@ -123,7 +124,7 @@ const activeMenu = computed(() => {
 
     .el-menu-item {
       color: v-bind(getMenuTextColor);
-      
+
       &.is-active {
         color: var(--menu-active-text, #409eff);
         background-color: var(--menu-hover, rgba(0, 0, 0, 0.06)) !important;

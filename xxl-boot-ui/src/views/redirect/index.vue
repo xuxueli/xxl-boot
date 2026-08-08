@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-
 // 引入
 import { useRoute, useRouter } from 'vue-router'
 
@@ -18,5 +17,4 @@ const { path } = params
 
 // 重定向到目标路径（保留 query 参数）
 router.replace({ path: '/' + (path as string), query })
-
 </script>

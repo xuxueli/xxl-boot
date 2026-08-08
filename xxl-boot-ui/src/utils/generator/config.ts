@@ -83,7 +83,7 @@ export const formConf: FormConf = {
   gutter: 15,
   disabled: false,
   span: 24,
-  formBtns: true,
+  formBtns: true
 }
 
 export const inputComponents: FormItemConf[] = [
@@ -109,7 +109,7 @@ export const inputComponents: FormItemConf[] = [
     required: true,
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/input',
+    document: 'https://element-plus.org/zh-CN/component/input'
   },
   {
     label: '多行文本',
@@ -122,7 +122,7 @@ export const inputComponents: FormItemConf[] = [
     labelWidth: null,
     autosize: {
       minRows: 4,
-      maxRows: 4,
+      maxRows: 4
     },
     style: { width: '100%' },
     maxlength: null,
@@ -132,7 +132,7 @@ export const inputComponents: FormItemConf[] = [
     required: true,
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/input',
+    document: 'https://element-plus.org/zh-CN/component/input'
   },
   {
     label: '密码',
@@ -157,7 +157,7 @@ export const inputComponents: FormItemConf[] = [
     required: true,
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/input',
+    document: 'https://element-plus.org/zh-CN/component/input'
   },
   {
     label: '计数器',
@@ -177,8 +177,8 @@ export const inputComponents: FormItemConf[] = [
     required: true,
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/input-number',
-  },
+    document: 'https://element-plus.org/zh-CN/component/input-number'
+  }
 ]
 
 export const selectComponents: FormItemConf[] = [
@@ -199,16 +199,16 @@ export const selectComponents: FormItemConf[] = [
     options: [
       {
         label: '选项一',
-        value: 1,
+        value: 1
       },
       {
         label: '选项二',
-        value: 2,
-      },
+        value: 2
+      }
     ],
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/select',
+    document: 'https://element-plus.org/zh-CN/component/select'
   },
   {
     label: '级联选择',
@@ -221,8 +221,8 @@ export const selectComponents: FormItemConf[] = [
     style: { width: '100%' },
     props: {
       props: {
-        multiple: false,
-      },
+        multiple: false
+      }
     },
     'show-all-levels': true,
     disabled: false,
@@ -238,10 +238,10 @@ export const selectComponents: FormItemConf[] = [
           {
             id: 2,
             value: 2,
-            label: '选项1-1',
-          },
-        ],
-      },
+            label: '选项1-1'
+          }
+        ]
+      }
     ],
     dataType: 'dynamic',
     labelKey: 'label',
@@ -250,7 +250,7 @@ export const selectComponents: FormItemConf[] = [
     separator: '/',
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/cascader',
+    document: 'https://element-plus.org/zh-CN/component/cascader'
   },
   {
     label: '单选框组',
@@ -268,16 +268,16 @@ export const selectComponents: FormItemConf[] = [
     options: [
       {
         label: '选项一',
-        value: 1,
+        value: 1
       },
       {
         label: '选项二',
-        value: 2,
-      },
+        value: 2
+      }
     ],
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/radio',
+    document: 'https://element-plus.org/zh-CN/component/radio'
   },
   {
     label: '多选框组',
@@ -295,16 +295,16 @@ export const selectComponents: FormItemConf[] = [
     options: [
       {
         label: '选项一',
-        value: 1,
+        value: 1
       },
       {
         label: '选项二',
-        value: 2,
-      },
+        value: 2
+      }
     ],
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/checkbox',
+    document: 'https://element-plus.org/zh-CN/component/checkbox'
   },
   {
     label: '开关',
@@ -324,7 +324,7 @@ export const selectComponents: FormItemConf[] = [
     'inactive-value': false,
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/switch',
+    document: 'https://element-plus.org/zh-CN/component/switch'
   },
   {
     label: '滑块',
@@ -342,7 +342,7 @@ export const selectComponents: FormItemConf[] = [
     range: false,
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/slider',
+    document: 'https://element-plus.org/zh-CN/component/slider'
   },
   {
     label: '时间选择',
@@ -360,7 +360,7 @@ export const selectComponents: FormItemConf[] = [
     'value-format': 'HH:mm:ss',
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/time-picker',
+    document: 'https://element-plus.org/zh-CN/component/time-picker'
   },
   {
     label: '时间范围',
@@ -381,7 +381,7 @@ export const selectComponents: FormItemConf[] = [
     'value-format': 'HH:mm:ss',
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/time-picker',
+    document: 'https://element-plus.org/zh-CN/component/time-picker'
   },
   {
     label: '日期选择',
@@ -401,7 +401,7 @@ export const selectComponents: FormItemConf[] = [
     readonly: false,
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/date-picker',
+    document: 'https://element-plus.org/zh-CN/component/date-picker'
   },
   {
     label: '日期范围',
@@ -423,7 +423,7 @@ export const selectComponents: FormItemConf[] = [
     readonly: false,
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/date-picker',
+    document: 'https://element-plus.org/zh-CN/component/date-picker'
   },
   {
     label: '评分',
@@ -441,7 +441,7 @@ export const selectComponents: FormItemConf[] = [
     required: true,
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/rate',
+    document: 'https://element-plus.org/zh-CN/component/rate'
   },
   {
     label: '颜色选择',
@@ -456,7 +456,7 @@ export const selectComponents: FormItemConf[] = [
     size: 'default',
     regList: [],
     changeTag: true,
-    document: 'https://element-plus.org/zh-CN/component/color-picker',
+    document: 'https://element-plus.org/zh-CN/component/color-picker'
   },
   {
     label: '上传',
@@ -480,8 +480,8 @@ export const selectComponents: FormItemConf[] = [
     changeTag: true,
     document: 'https://element-plus.org/zh-CN/component/upload',
     tip: '只能上传不超过 2MB 的文件',
-    style: { width: '100%' },
-  },
+    style: { width: '100%' }
+  }
 ]
 
 export const layoutComponents: FormItemConf[] = [
@@ -494,7 +494,7 @@ export const layoutComponents: FormItemConf[] = [
     label: '行容器',
     layoutTree: true,
     children: [],
-    document: 'https://element-plus.org/zh-CN/component/layout',
+    document: 'https://element-plus.org/zh-CN/component/layout'
   },
   {
     layout: 'colFormItem',
@@ -509,8 +509,8 @@ export const layoutComponents: FormItemConf[] = [
     icon: 'Search',
     size: 'default',
     disabled: false,
-    document: 'https://element-plus.org/zh-CN/component/button',
-  },
+    document: 'https://element-plus.org/zh-CN/component/button'
+  }
 ]
 
 // 组件rule的触发方式，无触发方式的组件不生成rule
@@ -523,7 +523,7 @@ export const trigger: Record<string, string> = {
   'el-cascader': 'change',
   'el-time-picker': 'change',
   'el-date-picker': 'change',
-  'el-rate': 'change',
+  'el-rate': 'change'
 }
 
 /**
@@ -543,9 +543,7 @@ export function makeMap(str: string, expectsLowerCase?: boolean): (val: string) 
   for (let i = 0; i < list.length; i++) {
     map[list[i]] = true
   }
-  return expectsLowerCase
-    ? (val: string) => map[val.toLowerCase()]
-    : (val: string) => map[val]
+  return expectsLowerCase ? (val: string) => map[val.toLowerCase()] : (val: string) => map[val]
 }
 
 /**

@@ -38,23 +38,23 @@ const scrollContainer = ref<ScrollbarInstance | null>(null)
 // el-scrollbar 内部原生滚动容器 DOM（el-scrollbar__wrap）。
 const scrollWrapper = computed(() => (scrollContainer.value as any)?.$refs?.wrapRef as HTMLElement)
 /*
-* 通知父组件：通过 emits 触发 “scroll、updateArrows” 等自定义事件
-*
-* defineEmits用法：“子传父”通信工具。
-*   - 子组件声明组件触发的事件，返回 emit 函数（方法）。
-*   - 子组件向父组件传递数据 / 通知。
-*
-*   <pre>
-*     父组件：
-*     <Child @my-event="handleEvent" />
-*     ...
-*     const handleEvent = (msg) => {    console.log(msg)  }
-*     子组件：
-*     const emit = defineEmits(['my-event', 'submit'])
-*     ...
-*     const handleClick = () => {   emit('my-event', 'Hello Parent!')    }   // 触发 'my-event' 事件
-*   </pre>
-*/
+ * 通知父组件：通过 emits 触发 “scroll、updateArrows” 等自定义事件
+ *
+ * defineEmits用法：“子传父”通信工具。
+ *   - 子组件声明组件触发的事件，返回 emit 函数（方法）。
+ *   - 子组件向父组件传递数据 / 通知。
+ *
+ *   <pre>
+ *     父组件：
+ *     <Child @my-event="handleEvent" />
+ *     ...
+ *     const handleEvent = (msg) => {    console.log(msg)  }
+ *     子组件：
+ *     const emit = defineEmits(['my-event', 'submit'])
+ *     ...
+ *     const handleClick = () => {   emit('my-event', 'Hello Parent!')    }   // 触发 'my-event' 事件
+ *   </pre>
+ */
 const emits = defineEmits(['scroll', 'updateArrows'])
 
 onMounted(() => {
@@ -65,16 +65,16 @@ onBeforeUnmount(() => {
 })
 
 /*
-* 触发父组件箭头状态更新
-*/
+ * 触发父组件箭头状态更新
+ */
 const emitScroll = () => {
   emits('scroll')
   emits('updateArrows')
 }
 
 /*
-* 平滑滚动到指定位置，300ms 动画
-*/
+ * 平滑滚动到指定位置，300ms 动画
+ */
 function smoothScrollTo(target: number) {
   const $scrollWrapper = scrollWrapper.value
   const start = $scrollWrapper.scrollLeft
@@ -97,28 +97,27 @@ function smoothScrollTo(target: number) {
 }
 
 /*
-* 缓动函数：easeInOutQuad
-*/
+ * 缓动函数：easeInOutQuad
+ */
 function ease(t: number, b: number, c: number, d: number) {
   t /= d / 2
-  if (t < 1) return c / 2 * t * t + b
+  if (t < 1) return (c / 2) * t * t + b
   t--
-  return -c / 2 * (t * (t - 2) - 1) + b
+  return (-c / 2) * (t * (t - 2) - 1) + b
 }
 
 /*
-* 滚轮事件：累积 scrollLeft
-*/
+ * 滚轮事件：累积 scrollLeft
+ */
 function handleScroll(e: WheelEvent) {
   const eventDelta = (e as any).wheelDelta || -e.deltaY * 40
   scrollWrapper.value.scrollLeft += eventDelta / 4
   emits('updateArrows')
 }
 
-
 /*
-* 将目标标签滚动到可视区域
-*/
+ * 将目标标签滚动到可视区域
+ */
 function moveToTarget(currentTag: TagView) {
   const $container = scrollContainer.value?.$el as HTMLElement
   const $containerWidth = $container.offsetWidth
@@ -136,7 +135,7 @@ function moveToTarget(currentTag: TagView) {
   } else {
     /* 中间标签：计算前后相邻标签位置，确保目标完整可见 */
     const tagListDom = Array.from(document.getElementsByClassName('tags-view-item') as HTMLCollectionOf<HTMLElement>)
-    const currentIndex = visitedViews.value.findIndex(item => item === currentTag)
+    const currentIndex = visitedViews.value.findIndex((item) => item === currentTag)
     let prevTag: HTMLElement | null = null
     let nextTag: HTMLElement | null = null
     for (const el of tagListDom) {
@@ -157,8 +156,8 @@ function moveToTarget(currentTag: TagView) {
 }
 
 /*
-* 滚动到最左 / 最右
-*/
+ * 滚动到最左 / 最右
+ */
 function scrollToStart() {
   smoothScrollTo(0)
 }
@@ -167,8 +166,8 @@ function scrollToEnd() {
 }
 
 /*
-* 返回左右箭头是否可用
-*/
+ * 返回左右箭头是否可用
+ */
 function getScrollState() {
   const $scrollWrapper = scrollWrapper.value
   return {
@@ -198,8 +197,7 @@ function getScrollState() {
 defineExpose({ moveToTarget, scrollToStart, scrollToEnd, getScrollState })
 </script>
 
-
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .scroll-container {
   white-space: nowrap;
   position: relative;

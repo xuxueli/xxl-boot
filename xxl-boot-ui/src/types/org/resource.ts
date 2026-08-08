@@ -33,4 +33,3 @@ export interface ResourceQuery {
   /** 状态：-1 全部 */
   status?: number
 }
-

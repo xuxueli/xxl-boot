@@ -3,7 +3,15 @@
   展示用户基本信息、角色信息及账号相关数据
 -->
 <template>
-  <el-drawer title="用户详情" v-model="visible" direction="rtl" size="680px" append-to-body :before-close="handleClose" class="detail-drawer">
+  <el-drawer
+    title="用户详情"
+    v-model="visible"
+    direction="rtl"
+    size="680px"
+    append-to-body
+    :before-close="handleClose"
+    class="detail-drawer"
+  >
     <div v-loading="loading" class="drawer-content">
       <!-- 基本信息 -->
       <h4 class="section-header">基本信息</h4>
@@ -60,7 +68,9 @@
           <div class="info-item">
             <label class="info-label">用户状态：</label>
             <span class="info-value plaintext">
-              <el-tag size="small" :type="info.status === 0 ? 'success' : 'danger'">{{ statusText(info.status) }}</el-tag>
+              <el-tag size="small" :type="info.status === 0 ? 'success' : 'danger'">{{
+                statusText(info.status)
+              }}</el-tag>
             </span>
           </div>
         </el-col>
@@ -111,12 +121,17 @@ const roleOptions = ref<Role[]>([])
 const roleNames = computed(() => {
   const roleIds = info.value.roleIds as number[] | undefined
   if (!roleIds || !roleIds.length) return ''
-  return roleOptions.value.filter(r => roleIds.includes(r.id as number)).map(r => r.name).join('、') || ''
+  return (
+    roleOptions.value
+      .filter((r) => roleIds.includes(r.id as number))
+      .map((r) => r.name)
+      .join('、') || ''
+  )
 })
 
 /** 状态编码 → 文案 */
 function statusText(status?: number) {
-  const item = statusOptions.value.find(i => i.code === status)
+  const item = statusOptions.value.find((i) => i.code === status)
   return item ? item.title : status
 }
 
@@ -125,14 +140,16 @@ function open(row: User) {
   visible.value = true
   loading.value = true
   info.value = { ...row }
-  listRole({ offset: 0, pagesize: 999 }).then(response => {
+  listRole({ offset: 0, pagesize: 999 }).then((response) => {
     roleOptions.value = response.data.data
   })
-  loadEnumItem('UserStatuEnum').then(res => {
-    statusOptions.value = res.data
-  }).finally(() => {
-    loading.value = false
-  })
+  loadEnumItem('UserStatuEnum')
+    .then((res) => {
+      statusOptions.value = res.data
+    })
+    .finally(() => {
+      loading.value = false
+    })
 }
 
 /** 关闭详情抽屉 */

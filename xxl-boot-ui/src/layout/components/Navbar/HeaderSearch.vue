@@ -5,7 +5,7 @@
 <template>
   <div class="header-search">
     <!-- 图标：搜索触发 -->
-    <SvgIcon class-name="search-icon" icon-class="search" @click.stop="click"/>
+    <SvgIcon class-name="search-icon" icon-class="search" @click.stop="click" />
     <!-- 搜索弹窗 -->
     <el-dialog
         v-model="show"
@@ -17,16 +17,16 @@
     >
       <!-- 搜索输入框：支持 ↑↓ 选择、Enter 确认、Esc 关闭 -->
       <el-input
-          v-model="search"
-          ref="headerSearchSelectRef"
-          size="large"
-          @input="querySearch"
-          :prefix-icon="Search"
-          placeholder="菜单搜索，支持标题、URL模糊查询"
-          clearable
-          @keyup.enter="selectActiveResult"
-          @keydown.up.prevent="navigateResult('up')"
-          @keydown.down.prevent="navigateResult('down')"
+        v-model="search"
+        ref="headerSearchSelectRef"
+        size="large"
+        @input="querySearch"
+        :prefix-icon="Search"
+        placeholder="菜单搜索，支持标题、URL模糊查询"
+        clearable
+        @keyup.enter="selectActiveResult"
+        @keydown.up.prevent="navigateResult('up')"
+        @keydown.down.prevent="navigateResult('down')"
       >
       </el-input>
 
@@ -41,18 +41,18 @@
           <!-- 有结果：循环渲染 -->
           <template v-if="options.length > 0">
             <div
-                class="search-item"
-                tabindex="1"
-                v-for="(item, index) in options"
-                :key="item.path"
-                :class="{ 'is-active': index === activeIndex }"
-                :style="activeStyle(index)"
-                @mouseenter="activeIndex = index"
-                @mouseleave="activeIndex = -1"
+              class="search-item"
+              tabindex="1"
+              v-for="(item, index) in options"
+              :key="item.path"
+              :class="{ 'is-active': index === activeIndex }"
+              :style="activeStyle(index)"
+              @mouseenter="activeIndex = index"
+              @mouseleave="activeIndex = -1"
             >
               <!-- icon -->
               <div class="left">
-                <SvgIcon class="menu-icon" :icon-class="item.icon"/>
+                <SvgIcon class="menu-icon" :icon-class="item.icon" />
               </div>
               <!-- menu -->
               <div class="search-info" @click="change(item)">
@@ -60,16 +60,19 @@
                 <div class="menu-path" v-html="highlightText(item.path)"></div>
               </div>
               <!-- enter icon -->
-              <SvgIcon icon-class="enter" v-show="index === activeIndex"/>
+              <SvgIcon icon-class="enter" v-show="index === activeIndex" />
             </div>
           </template>
 
           <!-- 无结果 -->
           <div class="empty-state" v-else-if="search && options.length === 0">
             <el-icon class="empty-icon">
-              <Search/>
+              <Search />
             </el-icon>
-            <p class="empty-text">未找到 "<strong>{{ search }}</strong>" 相关菜单</p>
+            <p class="empty-text">
+              未找到 "<strong>{{ search }}</strong
+              >" 相关菜单
+            </p>
             <p class="empty-tip">试试其他关键词或路径</p>
           </div>
         </el-scrollbar>
@@ -77,15 +80,9 @@
 
       <!-- 快捷键说明 -->
       <div class="search-footer">
-        <span class="shortcut-item">
-          <kbd>↑</kbd><kbd>↓</kbd> 切换
-        </span>
-        <span class="shortcut-item">
-          <kbd>↵</kbd> 选择
-        </span>
-        <span class="shortcut-item">
-          <kbd>Esc</kbd> 关闭
-        </span>
+        <span class="shortcut-item"> <kbd>↑</kbd><kbd>↓</kbd> 切换 </span>
+        <span class="shortcut-item"> <kbd>↵</kbd> 选择 </span>
+        <span class="shortcut-item"> <kbd>Esc</kbd> 关闭 </span>
       </div>
     </el-dialog>
   </div>
@@ -94,15 +91,15 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
 import { Search } from '@element-plus/icons-vue'
-import {getNormalPath} from '@/utils/common'
-import {isHttp} from '@/utils/validate'
-import {useSettingsStore, useRoutesStore} from '@/store'
+import { getNormalPath } from '@/utils/common'
+import { isHttp } from '@/utils/validate'
+import { useSettingsStore, useRoutesStore } from '@/store'
 import type { InputInstance } from 'element-plus'
 import type { RouteData } from '@/store/modules/routes'
 
 /*
-* 搜索项：可搜索菜单节点
-*/
+ * 搜索项：可搜索菜单节点
+ */
 interface SearchItem {
   path: string
   title: string[]
@@ -125,8 +122,8 @@ const theme = computed(() => settingsStore.theme)
 const routes = computed(() => routesStore.fullRoutes)
 
 /*
-* 切换搜索弹窗显隐
-*/
+ * 切换搜索弹窗显隐
+ */
 function click() {
   show.value = !show.value
   if (show.value) {
@@ -135,8 +132,8 @@ function click() {
 }
 
 /*
-* 弹窗打开后自动聚焦输入框
-*/
+ * 弹窗打开后自动聚焦输入框
+ */
 function onDialogOpened() {
   // DOM 更新完成执行（nextTick）
   nextTick(() => {
@@ -145,8 +142,8 @@ function onDialogOpened() {
 }
 
 /*
-* 关闭弹窗：重置搜索状态
-*/
+ * 关闭弹窗：重置搜索状态
+ */
 function close() {
   headerSearchSelectRef.value && headerSearchSelectRef.value.blur()
   search.value = ''
@@ -156,14 +153,14 @@ function close() {
 }
 
 /*
-* 选中搜索结果：外部链接新窗口打开，内部路由 router.push 跳转
-*/
+ * 选中搜索结果：外部链接新窗口打开，内部路由 router.push 跳转
+ */
 function change(val: SearchItem) {
   const p = val.path
   /*const query = val.query*/
   if (isHttp(p)) {
     /* 外部链接分支：http(s):// 路径新窗口打开 */
-    window.open(p, "_blank")
+    window.open(p, '_blank')
     /*const pindex = p.indexOf("http")
     window.open(p.substr(pindex, p.length), "_blank")*/
   } else {
@@ -183,29 +180,32 @@ function change(val: SearchItem) {
 }
 
 /*
-* 初始化 Fuse 模糊搜索实例
-*/
+ * 初始化 Fuse 模糊搜索实例
+ */
 function initFuse(list: SearchItem[]) {
   fuse.value = new Fuse(list, {
     shouldSort: true,
     threshold: 0.2,
     distance: 100,
     minMatchCharLength: 1,
-    keys: [{
-      name: 'title',
-      weight: 0.7
-    }, {
-      name: 'path',
-      weight: 0.3
-    }]
+    keys: [
+      {
+        name: 'title',
+        weight: 0.7
+      },
+      {
+        name: 'path',
+        weight: 0.3
+      }
+    ]
   })
 }
 
 /*
-* 递归遍历路由树，生成可搜索列表
-*   - 每项含 path / title（路径层级串联）/ icon / query
-*   - 叶节点（无 children 或 children 为空）才加入结果，非叶节点作为前缀聚合
-*/
+ * 递归遍历路由树，生成可搜索列表
+ *   - 每项含 path / title（路径层级串联）/ icon / query
+ *   - 叶节点（无 children 或 children 为空）才加入结果，非叶节点作为前缀聚合
+ */
 function generateRoutes(routes: RouteData[], basePath = '', prefixTitle: string[] = []): SearchItem[] {
   let res: SearchItem[] = []
   for (const r of routes) {
@@ -250,28 +250,26 @@ function generateRoutes(routes: RouteData[], basePath = '', prefixTitle: string[
 }
 
 /*
-* 输入关键词实时搜索：路径匹配 + Fuse 模糊匹配，合并去重
-*   - pathMatches：以关键词为前缀的路径匹配（精确度高）
-*   - fuseMatches：Fuse 模糊匹配（召回率高）
-*   - 合并规则：以 pathMatches 为基，fuseMatches 补充未命中项
-*/
+ * 输入关键词实时搜索：路径匹配 + Fuse 模糊匹配，合并去重
+ *   - pathMatches：以关键词为前缀的路径匹配（精确度高）
+ *   - fuseMatches：Fuse 模糊匹配（召回率高）
+ *   - 合并规则：以 pathMatches 为基，fuseMatches 补充未命中项
+ */
 function querySearch(query: string) {
   activeIndex.value = -1
   if (query !== '') {
     const q = query.toLowerCase()
 
     /* 路径前缀匹配 */
-    const pathMatches = searchPool.value.filter(item =>
-        item.path.toLowerCase().includes(q)
-    )
+    const pathMatches = searchPool.value.filter((item) => item.path.toLowerCase().includes(q))
 
     /* Fuse 模糊匹配 */
-    const fuseMatches = fuse.value ? fuse.value.search(query).map(item => item.item) : []
+    const fuseMatches = fuse.value ? fuse.value.search(query).map((item) => item.item) : []
 
     /* 合并去重 */
     const merged = [...pathMatches]
-    fuseMatches.forEach(item => {
-      if (!merged.find(m => m.path === item.path)) {
+    fuseMatches.forEach((item) => {
+      if (!merged.find((m) => m.path === item.path)) {
         merged.push(item)
       }
     })
@@ -282,30 +280,30 @@ function querySearch(query: string) {
 }
 
 /*
-* 当前激活项高亮样式
-*/
+ * 当前激活项高亮样式
+ */
 function activeStyle(index: number) {
   if (index !== activeIndex.value) return {}
   return {
-    "background-color": theme.value,
-    "color": "#fff"
+    'background-color': theme.value,
+    color: '#fff'
   }
 }
 
 /*
-* 键盘上下键切换选中项
-*/
+ * 键盘上下键切换选中项
+ */
 function navigateResult(direction: 'up' | 'down') {
-  if (direction === "up") {
+  if (direction === 'up') {
     activeIndex.value = activeIndex.value <= 0 ? options.value.length - 1 : activeIndex.value - 1
-  } else if (direction === "down") {
+  } else if (direction === 'down') {
     activeIndex.value = activeIndex.value >= options.value.length - 1 ? 0 : activeIndex.value + 1
   }
 }
 
 /*
-* 回车确认选中项
-*/
+ * 回车确认选中项
+ */
 function selectActiveResult() {
   if (options.value.length > 0 && activeIndex.value >= 0) {
     change(options.value[activeIndex.value])
@@ -313,8 +311,8 @@ function selectActiveResult() {
 }
 
 /*
-* 高亮搜索结果中的匹配关键词
-*/
+ * 高亮搜索结果中的匹配关键词
+ */
 function highlightText(text: string) {
   if (!text) return ''
   if (!search.value) return text
@@ -324,8 +322,8 @@ function highlightText(text: string) {
 }
 
 /*
-* 转义正则特殊字符
-*/
+ * 转义正则特殊字符
+ */
 function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
@@ -339,7 +337,7 @@ watch(searchPool, (list) => {
 })
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 :deep(.el-dialog__header) {
   padding: 6px !important;
 }

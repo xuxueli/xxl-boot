@@ -3,11 +3,17 @@
   功能：展示指定字典下的全部字典项
 -->
 <template>
-  <el-drawer :model-value="visible" direction="rtl" size="700px" append-to-body @update:model-value="$emit('update:visible', $event)">
+  <el-drawer
+    :model-value="visible"
+    direction="rtl"
+    size="700px"
+    append-to-body
+    @update:model-value="$emit('update:visible', $event)"
+  >
     <!-- 自定义标题 -->
     <template #header>
       <div class="drawer-head">
-        <el-icon style="color:#5b9bd5;margin-right:8px;"><List /></el-icon>
+        <el-icon style="color: #5b9bd5; margin-right: 8px"><List /></el-icon>
         <span class="drawer-head-name">{{ row.name }}</span>
         <span class="drawer-head-type">{{ row.type }}</span>
       </div>
@@ -22,7 +28,7 @@
 
       <!-- 空数据 -->
       <div v-else-if="!dataList.length" class="drawer-empty">
-        <el-icon style="font-size:36px;"><Document /></el-icon>
+        <el-icon style="font-size: 36px"><Document /></el-icon>
         <div>暂无字典数据</div>
       </div>
 
@@ -90,31 +96,37 @@ const props = withDefaults(defineProps<DrawerProps>(), {
 
 const emit = defineEmits(['update:visible'])
 
-const loading = ref(false)   /* 加载状态 */
-const dataList = ref<DictItem[]>([])     /* 字典项列表 */
+const loading = ref(false) /* 加载状态 */
+const dataList = ref<DictItem[]>([]) /* 字典项列表 */
 
-const normalCount = computed(() => dataList.value.filter(r => r.status === 0).length)
-const disabledCount = computed(() => dataList.value.filter(r => r.status !== 0).length)
+const normalCount = computed(() => dataList.value.filter((r) => r.status === 0).length)
+const disabledCount = computed(() => dataList.value.filter((r) => r.status !== 0).length)
 
 /* 弹窗打开时加载数据，关闭时清空 */
-watch(() => props.visible, (val) => {
-  if (val) {
-    loadData()
-  } else {
-    dataList.value = []
+watch(
+  () => props.visible,
+  (val) => {
+    if (val) {
+      loadData()
+    } else {
+      dataList.value = []
+    }
   }
-})
+)
 
 /** 加载字典项列表 */
 function loadData() {
   if (!props.row?.id) return
   loading.value = true
   dataList.value = []
-  listData({ dictId: props.row.id, offset: 0, pagesize: 100 }).then(response => {
-    dataList.value = response.data.data || []
-  }).catch(() => {}).finally(() => {
-    loading.value = false
-  })
+  listData({ dictId: props.row.id, offset: 0, pagesize: 100 })
+    .then((response) => {
+      dataList.value = response.data.data || []
+    })
+    .catch(() => {})
+    .finally(() => {
+      loading.value = false
+    })
 }
 </script>
 
@@ -171,8 +183,12 @@ function loadData() {
   font-weight: 700;
   color: #2c3e50;
 }
-.stat-num.success { color: #27ae60; }
-.stat-num.danger  { color: #e74c3c; }
+.stat-num.success {
+  color: #27ae60;
+}
+.stat-num.danger {
+  color: #e74c3c;
+}
 .stat-label {
   font-size: 11px;
   color: #95a5a6;

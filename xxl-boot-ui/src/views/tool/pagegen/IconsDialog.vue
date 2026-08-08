@@ -4,14 +4,25 @@
 -->
 <template>
   <div class="icon-dialog">
-    <el-dialog v-model="value" width="980px" :close-on-click-modal="false" :modal-append-to-body="false" @open="onOpen"
-      @close="onClose">
-
+    <el-dialog
+      v-model="value"
+      width="980px"
+      :close-on-click-modal="false"
+      :modal-append-to-body="false"
+      @open="onOpen"
+      @close="onClose"
+    >
       <!-- 选择 -->
       <template #header="{ close, titleId, titleClass }">
         选择图标
-        <el-input v-model="key" size="small" :style="{ width: '260px' }" placeholder="请输入图标名称" prefix-icon="Search"
-          clearable />
+        <el-input
+          v-model="key"
+          size="small"
+          :style="{ width: '260px' }"
+          placeholder="请输入图标名称"
+          prefix-icon="Search"
+          clearable
+        />
       </template>
 
       <!-- 图标列表 -->
@@ -58,7 +69,7 @@ function onSelect(icon: string) {
 /* 搜索过滤 */
 watch(key, (val) => {
   if (val) {
-    iconList.value = originList.filter(name => name.indexOf(val) > -1)
+    iconList.value = originList.filter((name) => name.indexOf(val) > -1)
   } else {
     iconList.value = originList
   }
@@ -90,7 +101,7 @@ watch(key, (val) => {
 
     &.active-item {
       background: #e1f3fb;
-      color: #7a6df0
+      color: #7a6df0;
     }
 
     i {

@@ -4,9 +4,15 @@
 -->
 <template>
   <div>
-    <el-dialog title="添加选项" v-model="open" width="800px" :close-on-click-modal="false" :modal-append-to-body="false"
-      @open="onOpen" @close="onClose">
-
+    <el-dialog
+      title="添加选项"
+      v-model="open"
+      width="800px"
+      :close-on-click-modal="false"
+      :modal-append-to-body="false"
+      @open="onOpen"
+      @close="onClose"
+    >
       <!-- 表单 -->
       <el-form ref="treeNodeForm" :model="formData" :rules="rules" label-width="100px">
         <el-col :span="24">
@@ -19,11 +25,15 @@
             <el-input v-model="formData.value" placeholder="请输入选项值" clearable>
               <template #append>
                 <el-select v-model="dataType" :style="{ width: '100px' }">
-                  <el-option v-for="(item, index) in dataTypeOptions" :key="index" :label="item.label" :value="item.value"
-                    :disabled="item.disabled" />
+                  <el-option
+                    v-for="(item, index) in dataTypeOptions"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                    :disabled="item.disabled"
+                  />
                 </el-select>
               </template>
-
             </el-input>
           </el-form-item>
         </el-col>
@@ -49,38 +59,45 @@ const open = defineModel<boolean>()
 const emit = defineEmits(['commit'])
 
 const formData = ref<{
-  label?: string       /* 选项名 */
-  value?: string | number  /* 选项值 */
-  id?: number          /* 节点 ID */
+  label?: string            /* 选项名 */
+  value?: string | number   /* 选项值 */
+  id?: number               /* 节点 ID */
 }>({
   label: undefined,
   value: undefined
 })
 const rules = {
-  label: [{
-    required: true,
-    message: '请输入选项名',
-    trigger: 'blur'
-  }],
-  value: [{
-    required: true,
-    message: '请输入选项值',
-    trigger: 'blur'
-  }]
+  label: [
+    {
+      required: true,
+      message: '请输入选项名',
+      trigger: 'blur'
+    }
+  ],
+  value: [
+    {
+      required: true,
+      message: '请输入选项值',
+      trigger: 'blur'
+    }
+  ]
 }
 
-const dataType = ref('string')       /* 值类型 */
-const dataTypeOptions = ref<{        /* 值类型选项 */
-  label: string
-  value: string
-  disabled?: boolean
-}[]>([
+const dataType = ref('string') /* 值类型 */
+const dataTypeOptions = ref<
+  {
+    /* 值类型选项 */
+    label: string
+    value: string
+    disabled?: boolean
+  }[]
+>([
   { label: '字符串', value: 'string' },
-  { label: '数字',   value: 'number' }
+  { label: '数字', value: 'number' }
 ])
 
-const id = ref(100)                  /* 节点 ID 自增 */
-const treeNodeForm = ref<FormInstance>()           /* 表单 ref */
+const id = ref(100) /* 节点 ID 自增 */
+const treeNodeForm = ref<FormInstance>() /* 表单 ref */
 
 /** 弹窗打开：重置表单 */
 function onOpen() {
@@ -97,7 +114,7 @@ function onClose() {
 
 /** 确认添加节点 */
 function handelConfirm() {
-  treeNodeForm.value!.validate(valid => {
+  treeNodeForm.value!.validate((valid) => {
     if (!valid) return
     if (dataType.value === 'number') {
       formData.value.value = parseFloat(formData.value.value as string)

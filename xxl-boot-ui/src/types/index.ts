@@ -5,7 +5,6 @@
  */
 import type { FormRules } from 'element-plus'
 
-
 // --------------------------------- 通用返回结构 ---------------------------------
 
 /**
@@ -51,7 +50,6 @@ export interface PageQuery {
  */
 export type ListQuery<T extends object> = PageQuery & Partial<Omit<T, 'pageNum' | 'pageSize'>>
 
-
 // --------------------------------- 枚举数据（loadEnumItem） ---------------------------------
 
 /**
@@ -65,7 +63,6 @@ export interface EnumOption {
   title?: string
   [key: string]: unknown
 }
-
 
 // --------------------------------- 字典数据（useDict / loadDictItem） ---------------------------------
 
@@ -83,7 +80,6 @@ export interface DictTagOption {
   /** Element Plus 标签自定义类（预留） */
   elTagClass?: string
 }
-
 
 // --------------------------------- 登录认证 ---------------------------------
 
@@ -119,7 +115,6 @@ export interface LoginInfo {
   [key: string]: unknown
 }
 
-
 // --------------------------------- 动态路由（后端菜单） ---------------------------------
 
 /**
@@ -145,7 +140,6 @@ export interface MenuRoute {
   children?: MenuRoute[]
   [key: string]: unknown
 }
-
 
 // --------------------------------- 页面 UI 状态（列表页通用） ---------------------------------
 

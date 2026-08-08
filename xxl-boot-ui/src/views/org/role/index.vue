@@ -33,10 +33,24 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['org:role']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasPermi="['org:role']">修改</el-button>
+        <el-button
+          type="success"
+          plain
+          icon="Edit"
+          :disabled="table.single"
+          @click="handleUpdate"
+          v-hasPermi="['org:role']"
+          >修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasPermi="['org:role']">删除</el-button>
+        <el-button
+          type="danger"
+          plain
+          icon="Delete"
+          :disabled="table.multiple"
+          @click="handleDelete"
+          v-hasPermi="['org:role']"
+          >删除</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -62,8 +76,10 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:role']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:role']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:role']"
+            >修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:role']"
+            >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -146,8 +162,6 @@ import type { CheckboxValueType, FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
-
-
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
@@ -184,24 +198,23 @@ const table = ref<TableState<Role>>({
 
 // 编辑表单：数据状态
 const formState = ref<FormState<Role>>({
-  visible: false,  /* 对话框显隐 */
-  title: "",       /* 对话框标题 */
-  form: {},        /* 表单数据 */
-  rules: {         /* 校验规则 */
-    name: [{ required: true, message: "角色名称不能为空", trigger: "blur" }],
-    code: [{ required: true, message: "权限字符不能为空", trigger: "blur" }]
-  },
+  visible: false    /* 对话框显隐 */,
+  title: ''         /* 对话框标题 */,
+  form: {}          /* 表单数据 */,
+  rules: {
+    /* 校验规则 */
+    name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],
+    code: [{ required: true, message: '权限字符不能为空', trigger: 'blur' }]
+  }
 })
-
 
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载角色状态选项 */
 
-
 /** 状态编码 → 文案 */
 function statusText(status: number) {
-  const item = statusOptions.value.find(i => i.code === status)
+  const item = statusOptions.value.find((i) => i.code === status)
   return item ? item.title : status
 }
 
@@ -210,7 +223,7 @@ function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
   const params = usePageParams(queryParams)()
-  listRole(params).then(response => {
+  listRole(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -225,13 +238,13 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm("queryRef")
+  resetForm('queryRef')
   handleQuery()
 }
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection: Role[]) {
-  table.value.ids = selection.map(item => item.id as number)
+  table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -256,13 +269,13 @@ function reset() {
   }
   menuExpand.value = false
   menuNodeAll.value = false
-  resetForm("formRef")
+  resetForm('formRef')
 }
 
 /** 查询菜单权限树结构 */
 function getMenuTreeselect() {
-  return menuTreeselect({}).then(response => {
-    menuOptions.value = handleTree(response.data, "id")
+  return menuTreeselect({}).then((response) => {
+    menuOptions.value = handleTree(response.data, 'id')
   })
 }
 
@@ -271,7 +284,7 @@ function handleAdd() {
   reset()
   getMenuTreeselect()
   formState.value.visible = true
-  formState.value.title = "新增角色"
+  formState.value.title = '新增角色'
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -282,22 +295,24 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  getRole(id).then(response => {
+  getRole(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = "修改角色"
+    formState.value.title = '修改角色'
     // 加载菜单权限树后，再勾选角色已授权资源
-    getMenuTreeselect().then(() => {
-      return roleMenuTreeselect(id)
-    }).then(res => {
-      nextTick(() => {
-        res.data.forEach(resId => {
-          nextTick(() => {
-            menuRef.value.setChecked(resId, true, false)
+    getMenuTreeselect()
+      .then(() => {
+        return roleMenuTreeselect(id)
+      })
+      .then((res) => {
+        nextTick(() => {
+          res.data.forEach((resId) => {
+            nextTick(() => {
+              menuRef.value.setChecked(resId, true, false)
+            })
           })
         })
       })
-    })
   })
 }
 
@@ -331,7 +346,7 @@ function getMenuAllCheckedKeys() {
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value!.validate(valid => {
+  formRef.value!.validate((valid) => {
     if (valid) {
       // 后端 update 会自动维护 update_time，回传 addTime/updateTime 会导致 Date 绑定失败
       const submitData = { ...formState.value.form }
@@ -341,22 +356,26 @@ function submitForm() {
 
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateRole(submitData).then(() => {
-          return updateRoleRes(submitData.id as number, resourceIds)
-        }).then(() => {
-          modal.msgSuccess("修改成功")
-          formState.value.visible = false
-          getList()
-        })
+        updateRole(submitData)
+          .then(() => {
+            return updateRoleRes(submitData.id as number, resourceIds)
+          })
+          .then(() => {
+            modal.msgSuccess('修改成功')
+            formState.value.visible = false
+            getList()
+          })
       } else {
-        addRole(submitData).then(response => {
-          // 新增返回新角色ID，用于保存菜单权限
-          return updateRoleRes(response.data as number, resourceIds)
-        }).then(() => {
-          modal.msgSuccess("新增成功")
-          formState.value.visible = false
-          getList()
-        })
+        addRole(submitData)
+          .then((response) => {
+            // 新增返回新角色ID，用于保存菜单权限
+            return updateRoleRes(response.data as number, resourceIds)
+          })
+          .then(() => {
+            modal.msgSuccess('新增成功')
+            formState.value.visible = false
+            getList()
+          })
       }
     }
   })
@@ -368,14 +387,17 @@ function handleDelete(row: any) {
   if (roleIds == null || (Array.isArray(roleIds) && roleIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除角色编号为"' + roleIds + '"的数据项？').then(function() {
-    return delRole(roleIds)
-  }).then(() => {
-    getList()
-    modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  modal
+    .confirm('是否确认删除角色编号为"' + roleIds + '"的数据项？')
+    .then(function () {
+      return delRole(roleIds)
+    })
+    .then(() => {
+      getList()
+      modal.msgSuccess('删除成功')
+    })
+    .catch(() => {})
 }
-
 
 // --------------------------------- page init ---------------------------------
 

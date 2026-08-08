@@ -10,6 +10,9 @@
     "build:prod": "vue-tsc --noEmit --skipLibCheck && vite build",
     "build:stage": "vue-tsc --noEmit --skipLibCheck && vite build --mode staging",
     "type-check": "vue-tsc --noEmit --skipLibCheck",
+    "lint": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{ts,vue,scss}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,vue,scss}\"",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -31,6 +34,7 @@
     "vuedraggable": "4.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@types/file-saver": "2.0.7",
     "@types/js-beautify": "1.14.3",
     "@types/js-cookie": "3.0.6",
@@ -38,11 +42,17 @@
     "@types/nprogress": "0.2.3",
     "@types/sortablejs": "1.15.9",
     "@vitejs/plugin-vue": "6.0.8",
-    "fast-glob": "^3.3.3",
+    "eslint": "10.8.1",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-vue": "10.10.0",
+    "prettier": "3.9.6",
+    "globals": "17.9.0",
+    "fast-glob": "3.3.3",
     "sass-embedded": "1.100.0",
-    "typescript": "5.9.3",
+    "typescript-eslint": "8.66.0",
     "unplugin-auto-import": "21.1.0",
     "unplugin-vue-setup-extend-plus": "1.0.1",
+    "typescript": "5.9.3",
     "vite": "8.2.1",
     "vite-plugin-compression": "0.5.1",
     "vite-plugin-svg-icons": "2.0.1",

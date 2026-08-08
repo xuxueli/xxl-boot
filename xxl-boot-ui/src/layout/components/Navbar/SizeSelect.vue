@@ -13,7 +13,12 @@
       <template #dropdown>
         <el-dropdown-menu>
           <!-- 当前选中项 disabled，不可再点击 -->
-          <el-dropdown-item v-for="item of sizeOptions" :key="item.value" :disabled="size === item.value" :command="item.value">
+          <el-dropdown-item
+            v-for="item of sizeOptions"
+            :key="item.value"
+            :disabled="size === item.value"
+            :command="item.value"
+          >
             {{ item.label }}
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -30,16 +35,16 @@ const appStore = useAppStore()
 const size = computed(() => appStore.size)
 /* 可选尺寸列表 */
 const sizeOptions = ref([
-  { label: "较大", value: "large" },
-  { label: "默认", value: "default" },
-  { label: "稍小", value: "small" },
+  { label: '较大', value: 'large' },
+  { label: '默认', value: 'default' },
+  { label: '稍小', value: 'small' }
 ])
 
 /*
-* 切换布局尺寸：保存后刷新页面生效
-*/
+ * 切换布局尺寸：保存后刷新页面生效
+ */
 function handleSetSize(size: string) {
-  modal.loading("正在设置布局大小，请稍候...")
+  modal.loading('正在设置布局大小，请稍候...')
   appStore.setSize(size)
   setTimeout(function () {
     window.location.reload()
@@ -47,7 +52,7 @@ function handleSetSize(size: string) {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .size-icon--style {
   font-size: 18px;
   line-height: 50px;

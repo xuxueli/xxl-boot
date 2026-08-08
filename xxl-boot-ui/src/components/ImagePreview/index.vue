@@ -7,17 +7,17 @@
 <template>
   <!-- 图片预览组件 -->
   <el-image
-      :src="`${realSrc}`"
-      fit="cover"
-      :style="`width:${realWidth};height:${realHeight};`"
-      :preview-src-list="realSrcList"
-      preview-teleported
+    :src="`${realSrc}`"
+    fit="cover"
+    :style="`width:${realWidth};height:${realHeight};`"
+    :preview-src-list="realSrcList"
+    preview-teleported
   >
     <!-- 错误插槽：当图片加载失败时显示的内容 -->
     <template #error>
       <div class="image-slot">
         <el-icon>
-          <PictureFilled/>
+          <PictureFilled />
         </el-icon>
       </div>
     </template>
@@ -25,23 +25,23 @@
 </template>
 
 <script setup lang="ts">
-import {isExternal} from '@/utils/validate'
+import { isExternal } from '@/utils/validate'
 
 const props = defineProps({
   // 图片 URL，多张用逗号分隔（第一张为主图，全部进入预览列表）
   src: {
     type: String,
-    default: ""
+    default: ''
   },
   // 显示宽度，如 "100px" 或 100
   width: {
     type: [Number, String],
-    default: ""
+    default: ''
   },
   // 显示高度，如 "100px" 或 100
   height: {
     type: [Number, String],
-    default: ""
+    default: ''
   }
 })
 
@@ -49,12 +49,12 @@ const props = defineProps({
  * 主图 src：取第一张
  *    - 外部 URL：不拼接 base API
  *    - 内部 URL：拼接 base API
-  */
+ */
 const realSrc = computed(() => {
   if (!props.src) {
     return
   }
-  let real_src = props.src.split(",")[0]
+  let real_src = props.src.split(',')[0]
   if (isExternal(real_src)) {
     return real_src
   }
@@ -65,14 +65,14 @@ const realSrc = computed(() => {
  * 预览列表：所有图片
  *    - 外部 URL：原样保留
  *    - 内部 URL：拼接 base API
-  */
+ */
 const realSrcList = computed(() => {
   if (!props.src) {
     return
   }
-  let real_src_list = props.src.split(",")
+  let real_src_list = props.src.split(',')
   let srcList: string[] = []
-  real_src_list.forEach(item => {
+  real_src_list.forEach((item) => {
     if (isExternal(item)) {
       return srcList.push(item)
     }
@@ -82,14 +82,10 @@ const realSrcList = computed(() => {
 })
 
 // image width
-const realWidth = computed(() =>
-    typeof props.width == "string" ? props.width : `${props.width}px`
-)
+const realWidth = computed(() => (typeof props.width == 'string' ? props.width : `${props.width}px`))
 
 // image height
-const realHeight = computed(() =>
-    typeof props.height == "string" ? props.height : `${props.height}px`
-)
+const realHeight = computed(() => (typeof props.height == 'string' ? props.height : `${props.height}px`))
 </script>
 
 <style lang="scss" scoped>

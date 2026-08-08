@@ -87,9 +87,9 @@ export function queryDictList(): Promise<Response<DictSelectOption[]>> {
   return request<Dict[]>({
     url: '/system/dict/queryDictList',
     method: 'get'
-  }).then(response => {
+  }).then((response) => {
     // 后端 dict 字段（id/name/code）→ 前端通用结构（dictId/dictName/dictType）
-    response.data = (response.data || []).map(item => ({
+    response.data = (response.data || []).map((item) => ({
       dictId: item.id,
       dictName: item.name,
       dictType: item.type

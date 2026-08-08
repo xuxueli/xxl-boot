@@ -47,33 +47,30 @@
           <template #prefix><SvgIcon icon-class="validCode" class="el-input__icon input-icon" /></template>
         </el-input>
         <div class="login-code">
-          <img :src="codeUrl" @click="getCode" class="login-code-img"/>
+          <img :src="codeUrl" @click="getCode" class="login-code-img" />
         </div>
       </el-form-item>
 
       <!-- 记住密码 -->
-      <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
+      <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin: 0px 0px 25px 0px"
+        >记住密码</el-checkbox
+      >
 
       <!-- login btn -->
-      <el-form-item style="width:100%;">
-        <el-button
-          :loading="loading"
-          size="large"
-          type="primary"
-          style="width:100%;"
-          @click.prevent="handleLogin"
-        >
+      <el-form-item style="width: 100%">
+        <el-button :loading="loading" size="large" type="primary" style="width: 100%" @click.prevent="handleLogin">
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </el-button>
       </el-form-item>
-
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
       {{ footerContent }}
-      <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px;text-decoration:underline;" >xuxueli</a>
-      <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px;text-decoration:underline;" >github</a>
+      <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px; text-decoration: underline"
+        >xuxueli</a>
+      <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px; text-decoration: underline"
+        >github</a>
     </div>
   </div>
 </template>
@@ -95,18 +92,18 @@ const loginRef = ref<FormInstance>()                  // 登录表单 ref
 
 // 登录表单数据
 const loginForm = ref<LoginParams>({
-  username: "",
-  password: "",
+  username: '',
+  password: '',
   rememberMe: false,
-  captchaResult: "",
-  captchaUuid: ""
+  captchaResult: '',
+  captchaUuid: ''
 })
 
 // 表单校验规则
 const loginRules: FormRules = {
-  username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
-  password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
-  captchaResult: [{ required: true, trigger: "change", message: "请输入验证码" }]
+  username: [{ required: true, trigger: 'blur', message: '请输入您的账号' }],
+  password: [{ required: true, trigger: 'blur', message: '请输入您的密码' }],
+  captchaResult: [{ required: true, trigger: 'change', message: '请输入验证码' }]
 }
 
 const codeUrl = ref("")                   // 验证码图片 base64
@@ -114,12 +111,14 @@ const loading = ref(false)                // 登录按钮 loading
 const captchaEnabled = ref(true)          // 验证码开关（默认开启，实际由后端 /auth/captcha 返回的 enable 决定）
 const redirect = ref<string>()            // 登录后重定向地址
 
-
 // 监听路由参数，获取重定向地址
-watch(route, (newRoute) => {
+watch(
+  route,
+  (newRoute) => {
     redirect.value = (newRoute.query && newRoute.query.redirect) as string | undefined
-}, { immediate: true })
-
+  },
+  { immediate: true }
+)
 
 /**
  * 处理登录：
@@ -128,33 +127,36 @@ watch(route, (newRoute) => {
  *    - →路由跳转
  */
 function handleLogin() {
-  loginRef.value!.validate(valid => {
+  loginRef.value!.validate((valid) => {
     if (valid) {
       loading.value = true
       // 执行登录
-      userStore.login(loginForm.value).then(() => {
-        const query = route.query
-        const otherQueryParams = Object.keys(query).reduce((acc: Record<string, any>, cur) => {
-          if (cur !== "redirect") {
-            acc[cur] = query[cur]
+      userStore
+        .login(loginForm.value)
+        .then(() => {
+          const query = route.query
+          const otherQueryParams = Object.keys(query).reduce((acc: Record<string, any>, cur) => {
+            if (cur !== 'redirect') {
+              acc[cur] = query[cur]
+            }
+            return acc
+          }, {})
+          router.push({ path: redirect.value || '/', query: otherQueryParams })
+        })
+        .catch(() => {
+          loading.value = false
+          // 重新获取验证码
+          if (captchaEnabled.value) {
+            getCode()
           }
-          return acc
-        }, {})
-        router.push({ path: redirect.value || "/", query: otherQueryParams })
-      }).catch(() => {
-        loading.value = false
-        // 重新获取验证码
-        if (captchaEnabled.value) {
-          getCode()
-        }
-      })
+        })
     }
   })
 }
 
 /** 获取验证码图片，根据开关控制显示 */
 function getCode() {
-  getCodeImg().then(res => {
+  getCodeImg().then((res) => {
     captchaEnabled.value = res.data.enable
     codeUrl.value = res.data.image
     loginForm.value.captchaUuid = res.data.uuid
@@ -163,11 +165,9 @@ function getCode() {
 
 /** 初始化：获取验证码 */
 getCode()
-
 </script>
 
-
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .login {
   display: flex;
   justify-content: center;

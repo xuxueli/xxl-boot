@@ -136,9 +136,9 @@
                         v-if="formState.form.icon"
                         :icon-class="formState.form.icon"
                         class="el-input__icon"
-                        style="height: 32px;width: 16px;"
+                        style="height: 32px; width: 16px"
                       />
-                      <el-icon v-else style="height: 32px;width: 16px;"><Search /></el-icon>
+                      <el-icon v-else style="height: 32px; width: 16px"><Search /></el-icon>
                     </template>
                   </el-input>
                 </template>
@@ -199,7 +199,14 @@
 </template>
 
 <script setup name="Resource" lang="ts">
-import { listResource, getResource, addResource, updateResource, delResource, updateResourceSort } from '@/api/org/resource'
+import {
+  listResource,
+  getResource,
+  addResource,
+  updateResource,
+  delResource,
+  updateResourceSort
+} from '@/api/org/resource'
 import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import { handleTree } from '@/utils/common'
@@ -234,7 +241,11 @@ const formRef = ref<FormInstance>()   /* 编辑表单 ref */
 const iconSelectRef = ref<any>()      /* 图标选择器 ref */
 
 // 枚举选项数据：资源类型、资源状态、显示状态
-const { ResourceTypeEnum: typeOptions, ResourceStatuEnum: statusOptions, ResourceVisibleEnum: visibleOptions } = useEnumOption('ResourceTypeEnum', 'ResourceStatuEnum', 'ResourceVisibleEnum')
+const {
+  ResourceTypeEnum: typeOptions,
+  ResourceStatuEnum: statusOptions,
+  ResourceVisibleEnum: visibleOptions
+} = useEnumOption('ResourceTypeEnum', 'ResourceStatuEnum', 'ResourceVisibleEnum')
 
 // 上级资源下拉树选项
 const menuOptions = ref<Resource[]>([])
@@ -256,29 +267,28 @@ const table = ref<TableState>({
 
 // 编辑表单：数据状态
 const formState = ref<FormState>({
-  visible: false,   /* 对话框显隐 */
-  title: "",        /* 对话框标题 */
-  form: {},         /* 表单数据 */
-  rules: {          /* 校验规则 */
-    name: [{ required: true, message: "资源名称不能为空", trigger: "blur" }],
-    order: [{ required: true, message: "显示排序不能为空", trigger: "blur" }]
-  },
+  visible: false    /* 对话框显隐 */,
+  title: ''         /* 对话框标题 */,
+  form: {}          /* 表单数据 */,
+  rules: {
+    /* 校验规则 */
+    name: [{ required: true, message: '资源名称不能为空', trigger: 'blur' }],
+    order: [{ required: true, message: '显示排序不能为空', trigger: 'blur' }]
+  }
 })
 
 // 排序备份：树加载时的原始排序，用于保存排序时比对变更
 const originalOrders = ref<Record<number, number | undefined>>({})
 
-
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载类型、状态、显示状态选项 */
 
-
 /** 查询资源树列表（后端返回扁平数据，前端转树） */
 function getList() {
   table.value.loading = true
-  listResource(queryParams.value).then(response => {
-    table.value.list = handleTree(response.data, "id")
+  listResource(queryParams.value).then((response) => {
+    table.value.list = handleTree(response.data, 'id')
     recordOriginalOrders(table.value.list)
     table.value.loading = false
   })
@@ -286,23 +296,23 @@ function getList() {
 
 /** 查询上级资源下拉树结构 */
 function getTreeOptions() {
-  listResource({}).then(response => {
+  listResource({}).then((response) => {
     // 后端以 parentId=0 表示顶级节点，补一个"顶级"根节点供选择
-    const topNode: Resource = { id: 0, parentId: -1, name: "根节点", children: [] }
-    topNode.children = handleTree(response.data, "id")
+    const topNode: Resource = { id: 0, parentId: -1, name: '根节点', children: [] }
+    topNode.children = handleTree(response.data, 'id')
     menuOptions.value = [topNode]
   })
 }
 
 /** 状态编码 → 文案 */
 function statusText(status: number) {
-  const item = statusOptions.value.find(i => i.code === status)
+  const item = statusOptions.value.find((i) => i.code === status)
   return item ? item.title : status
 }
 
 /** 显示状态编码 → 文案 */
 function visibleText(visible: number) {
-  const item = visibleOptions.value.find(i => i.code === visible)
+  const item = visibleOptions.value.find((i) => i.code === visible)
   return item ? item.title : visible
 }
 
@@ -326,7 +336,7 @@ function reset() {
     status: 0,
     visible: 0
   }
-  resetForm("formRef")
+  resetForm('formRef')
 }
 
 /** 展示下拉图标 */
@@ -346,7 +356,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm("queryRef")
+  resetForm('queryRef')
   handleQuery()
 }
 
@@ -355,19 +365,19 @@ function handleAdd(row: any) {
   reset()
   getTreeOptions()
   // 行内新增时以上级为当前行，顶部新增时上级为顶级（0）
-  formState.value.form.parentId = (row != null && row.id) ? row.id : 0
+  formState.value.form.parentId = row != null && row.id ? row.id : 0
   formState.value.visible = true
-  formState.value.title = "新增资源"
+  formState.value.title = '新增资源'
 }
 
 /** 修改按钮操作（行内修改，直接取行数据 id） */
 function handleUpdate(row: Resource) {
   reset()
   getTreeOptions()
-  getResource(row.id as number).then(response => {
+  getResource(row.id as number).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = "修改资源"
+    formState.value.title = '修改资源'
   })
 }
 
@@ -382,7 +392,7 @@ function toggleExpandAll() {
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value!.validate(valid => {
+  formRef.value!.validate((valid) => {
     if (valid) {
       // 后端 update 会自动维护 update_time，回传 addTime/updateTime 会导致 Date 绑定失败
       const submitData = { ...formState.value.form }
@@ -390,14 +400,14 @@ function submitForm() {
       delete submitData.updateTime
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateResource(submitData).then(response => {
-          modal.msgSuccess("修改成功")
+        updateResource(submitData).then((response) => {
+          modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
-        addResource(submitData).then(response => {
-          modal.msgSuccess("新增成功")
+        addResource(submitData).then((response) => {
+          modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
         })
@@ -408,7 +418,7 @@ function submitForm() {
 
 /** 递归记录原始排序 */
 function recordOriginalOrders(list: Resource[]) {
-  list.forEach(item => {
+  list.forEach((item) => {
     originalOrders.value[item.id as number] = item.order
     if (item.children && item.children.length) {
       recordOriginalOrders(item.children)
@@ -420,7 +430,7 @@ function recordOriginalOrders(list: Resource[]) {
 function handleSaveSort() {
   const changedList: Resource[] = []
   const collectChanged = (list: Resource[]) => {
-    list.forEach(item => {
+    list.forEach((item) => {
       if (String(originalOrders.value[item.id as number]) !== String(item.order)) {
         changedList.push(item)
       }
@@ -431,25 +441,31 @@ function handleSaveSort() {
   }
   collectChanged(table.value.list)
   if (changedList.length === 0) {
-    modal.msgWarning("未检测到排序修改")
+    modal.msgWarning('未检测到排序修改')
     return
   }
-  updateResourceSort(changedList.map(item => item.id as number), changedList.map(item => item.order as number)).then(() => {
-    modal.msgSuccess("排序保存成功")
+  updateResourceSort(
+    changedList.map((item) => item.id as number),
+    changedList.map((item) => item.order as number)
+  ).then(() => {
+    modal.msgSuccess('排序保存成功')
     recordOriginalOrders(table.value.list)
   })
 }
 
 /** 删除按钮操作（行内删除，按名称提示） */
 function handleDelete(row: Resource) {
-  modal.confirm('是否确认删除名称为"' + row.name + '"的数据项?').then(function() {
-    return delResource(row.id as number)
-  }).then(() => {
-    getList()
-    modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  modal
+    .confirm('是否确认删除名称为"' + row.name + '"的数据项?')
+    .then(function () {
+      return delResource(row.id as number)
+    })
+    .then(() => {
+      getList()
+      modal.msgSuccess('删除成功')
+    })
+    .catch(() => {})
 }
-
 
 // --------------------------------- page init ---------------------------------
 

@@ -28,7 +28,7 @@
  */
 export function isPathMatch(pattern: string, path: string): boolean {
   const regexPattern = pattern
-    .replace(/([.+^${}()|\[\]\\])/g, '\\$1') // 转义正则元字符
+    .replace(/([.+^${}()|\[\]\\])/g, '\\$1')    // 转义正则元字符
     .replace(/\*\*/g, '__DOUBLE_STAR__')        // 临时占位，避免被单 * 规则覆盖
     .replace(/\*/g, '[^/]*')                    // 单 * 匹配单级路径段中任意字符
     .replace(/__DOUBLE_STAR__/g, '.*')          // ** 匹配任意字符（含 /）
@@ -44,7 +44,7 @@ export function isPathMatch(pattern: string, path: string): boolean {
  * @returns 为空时返回 true
  */
 export function isEmpty(value: unknown): boolean {
-  if (value == null || value == "" || value == undefined || value == "undefined") {
+  if (value == null || value == '' || value == undefined || value == 'undefined') {
     return true
   }
   return false
@@ -112,7 +112,8 @@ export function validAlphabets(str: string): boolean {
  * @returns 格式合法时返回 true
  */
 export function validEmail(email: string): boolean {
-  const reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  const reg =
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return reg.test(email)
 }
 

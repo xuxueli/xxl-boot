@@ -4,32 +4,34 @@
 -->
 <template>
   <div class="container">
-
     <!-- 左侧面板 -->
     <div class="left-board">
-
       <!-- 标题 -->
       <div class="logo-wrapper">
-        <div class="logo">
-          表单生成器 / Form Generator
-        </div>
+        <div class="logo">表单生成器 / Form Generator</div>
       </div>
 
       <!-- 组件选择区 -->
       <el-scrollbar class="left-scrollbar">
         <div class="components-list">
-
           <div class="components-title">
-            <SvgIcon icon-class="component"/>
+            <SvgIcon icon-class="component" />
             输入型组件
           </div>
-          <draggable class="components-draggable" :list="inputComponents"
-                     :group="{ name: 'componentsGroup', pull: 'clone', put: false }" :clone="cloneComponent"
-                     draggable=".components-item" :sort="false" @end="onEnd" item-key="label">
+          <draggable
+            class="components-draggable"
+            :list="inputComponents"
+            :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
+            :clone="cloneComponent"
+            draggable=".components-item"
+            :sort="false"
+            @end="onEnd"
+            item-key="label"
+          >
             <template #item="{ element, index }">
               <div :key="index" class="components-item" @click="addComponent(element)">
                 <div class="components-body">
-                  <SvgIcon :icon-class="element.tagIcon"/>
+                  <SvgIcon :icon-class="element.tagIcon" />
                   {{ element.label }}
                 </div>
               </div>
@@ -37,16 +39,23 @@
           </draggable>
 
           <div class="components-title">
-            <SvgIcon icon-class="component"/>
+            <SvgIcon icon-class="component" />
             选择型组件
           </div>
-          <draggable class="components-draggable" :list="selectComponents"
-                     :group="{ name: 'componentsGroup', pull: 'clone', put: false }" :clone="cloneComponent"
-                     draggable=".components-item" :sort="false" @end="onEnd" item-key="label">
+          <draggable
+            class="components-draggable"
+            :list="selectComponents"
+            :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
+            :clone="cloneComponent"
+            draggable=".components-item"
+            :sort="false"
+            @end="onEnd"
+            item-key="label"
+          >
             <template #item="{ element, index }">
               <div :key="index" class="components-item" @click="addComponent(element)">
                 <div class="components-body">
-                  <SvgIcon :icon-class="element.tagIcon"/>
+                  <SvgIcon :icon-class="element.tagIcon" />
                   {{ element.label }}
                 </div>
               </div>
@@ -54,91 +63,98 @@
           </draggable>
 
           <div class="components-title">
-            <SvgIcon icon-class="component"/>
+            <SvgIcon icon-class="component" />
             布局型组件
           </div>
-          <draggable class="components-draggable" :list="layoutComponents"
-                     :group="{ name: 'componentsGroup', pull: 'clone', put: false }" :clone="cloneComponent"
-                     draggable=".components-item" :sort="false" @end="onEnd" item-key="label">
+          <draggable
+            class="components-draggable"
+            :list="layoutComponents"
+            :group="{ name: 'componentsGroup', pull: 'clone', put: false }"
+            :clone="cloneComponent"
+            draggable=".components-item"
+            :sort="false"
+            @end="onEnd"
+            item-key="label"
+          >
             <template #item="{ element, index }">
               <div :key="index" class="components-item" @click="addComponent(element)">
                 <div class="components-body">
-                  <SvgIcon :icon-class="element.tagIcon"/>
+                  <SvgIcon :icon-class="element.tagIcon" />
                   {{ element.label }}
                 </div>
               </div>
             </template>
           </draggable>
-
         </div>
       </el-scrollbar>
     </div>
 
     <!-- 中间画布 -->
     <div class="center-board">
-
       <!-- 中间画布操作栏 -->
       <div class="action-bar">
-        <el-button icon="Download" type="primary" text @click="download">
-          导出vue文件
-        </el-button>
-        <el-button class="copy-btn-main" icon="DocumentCopy" type="primary" text @click="copy">
-          复制代码
-        </el-button>
-        <el-button class="delete-btn" icon="Delete" text @click="empty" type="danger">
-          清空
-        </el-button>
+        <el-button icon="Download" type="primary" text @click="download"> 导出vue文件 </el-button>
+        <el-button class="copy-btn-main" icon="DocumentCopy" type="primary" text @click="copy"> 复制代码 </el-button>
+        <el-button class="delete-btn" icon="Delete" text @click="empty" type="danger"> 清空 </el-button>
       </div>
 
       <!-- 中间画布 -->
       <el-scrollbar class="center-scrollbar">
         <el-row class="center-board-row" :gutter="formConf.gutter">
-          <el-form :size="formConf.size"
-                   :label-position="formConf.labelPosition"
-                   :disabled="formConf.disabled"
-                   :label-width="formConf.labelWidth + 'px'">
-
+          <el-form
+            :size="formConf.size"
+            :label-position="formConf.labelPosition"
+            :disabled="formConf.disabled"
+            :label-width="formConf.labelWidth + 'px'"
+          >
             <!-- 拖拽区域内容 -->
-            <draggable class="drawing-board" :list="canvas.drawingList" :animation="340" group="componentsGroup"
-                       item-key="label">
+            <draggable
+              class="drawing-board"
+              :list="canvas.drawingList"
+              :animation="340"
+              group="componentsGroup"
+              item-key="label"
+            >
               <template #item="{ element, index }">
-                <DraggableItem :key="element.renderKey"
-                               :drawing-list="canvas.drawingList"
-                               :element="element"
-                               :index="index"
-                               :active-id="canvas.activeId"
-                               :form-conf="formConf" @activeItem="activeFormItem"
-                               @copyItem="drawingItemCopy"
-                               @deleteItem="drawingItemDelete"/>
+                <DraggableItem
+                  :key="element.renderKey"
+                  :drawing-list="canvas.drawingList"
+                  :element="element"
+                  :index="index"
+                  :active-id="canvas.activeId"
+                  :form-conf="formConf"
+                  @activeItem="activeFormItem"
+                  @copyItem="drawingItemCopy"
+                  @deleteItem="drawingItemDelete"
+                />
               </template>
             </draggable>
 
             <!-- 拖拽区域，为空 -->
-            <div v-show="!canvas.drawingList.length" class="empty-info">
-              从左侧拖入或点选组件进行表单设计
-            </div>
-
+            <div v-show="!canvas.drawingList.length" class="empty-info">从左侧拖入或点选组件进行表单设计</div>
           </el-form>
         </el-row>
       </el-scrollbar>
-
     </div>
 
     <!-- 右侧属性面板 -->
-    <RightPanel :active-data="canvas.activeData"
-                :form-conf="formConf"
-                :show-field="!!canvas.drawingList.length"
-                @tag-change="tagChange"/>
+    <RightPanel
+      :active-data="canvas.activeData"
+      :form-conf="formConf"
+      :show-field="!!canvas.drawingList.length"
+      @tag-change="tagChange"
+    />
 
     <!-- 代码生成类型选择弹窗 -->
-    <CodeTypeDialog v-model="genDialog.dialogVisible"
-                    title="选择生成类型"
-                    :genDialog.showFileName="genDialog.showFileName"
-                    @confirm="generate"/>
+    <CodeTypeDialog
+      v-model="genDialog.dialogVisible"
+      title="选择生成类型"
+      :genDialog.showFileName="genDialog.showFileName"
+      @confirm="generate"
+    />
 
     <!-- 隐藏的复制节点 -->
-    <input id="copyNode" type="hidden">
-
+    <input id="copyNode" type="hidden" />
   </div>
 </template>
 
@@ -154,26 +170,28 @@ import type { FormConf, FormItemConf } from '@/utils/generator/config'
 import draggable from 'vuedraggable'
 import ClipboardJS from 'clipboard'
 import beautifier from 'js-beautify'
-import {inputComponents, selectComponents, layoutComponents, formConf as formConfData} from '@/utils/generator/config'
-import {beautifierConf} from '@/utils/generator/config'
-import {drawingDefaultValue, initDrawingDefaultValue, cleanDrawingDefaultValue} from '@/utils/generator/drawingDefault'
-import {makeUpHtml, vueTemplate, vueScript, cssStyle} from '@/utils/generator/html'
-import {makeUpJs} from '@/utils/generator/js'
-import {makeUpCss} from '@/utils/generator/css'
+import { inputComponents, selectComponents, layoutComponents, formConf as formConfData } from '@/utils/generator/config'
+import { beautifierConf } from '@/utils/generator/config'
+import {
+  drawingDefaultValue,
+  initDrawingDefaultValue,
+  cleanDrawingDefaultValue
+} from '@/utils/generator/drawingDefault'
+import { makeUpHtml, vueTemplate, vueScript, cssStyle } from '@/utils/generator/html'
+import { makeUpJs } from '@/utils/generator/js'
+import { makeUpCss } from '@/utils/generator/css'
 import Download from '@/utils/download'
 import modal from '@/utils/modal'
-import {ElNotification} from 'element-plus'
+import { ElNotification } from 'element-plus'
 import DraggableItem from './DraggableItem.vue'
 import RightPanel from './RightPanel.vue'
 import CodeTypeDialog from './CodeTypeDialog.vue'
-import {onMounted, watch} from 'vue'
-
+import { onMounted, watch } from 'vue'
 
 // --------------------------------- ref data ---------------------------------
 
 // 初始化画布默认配置
 initDrawingDefaultValue()
-
 
 /* 画布状态 */
 const canvas = ref<{
@@ -201,7 +219,6 @@ const genDialog = ref({
 const idGlobal = ref(100)                      /* 全局组件 ID 自增 */
 provide('idGlobal', idGlobal)
 const formConf = ref(formConfData)             /* 表单全局配置 */
-
 
 // --------------------------------- fun ---------------------------------
 
@@ -236,11 +253,10 @@ function download() {
  */
 function empty() {
   modal.confirm('确定要清空所有组件吗？').then(() => {
-        idGlobal.value = 100
-        canvas.value.drawingList = []
-        cleanDrawingDefaultValue()
-      }
-  )
+    idGlobal.value = 100
+    canvas.value.drawingList = []
+    cleanDrawingDefaultValue()
+  })
 }
 
 /**
@@ -269,7 +285,7 @@ function cloneComponent(origin: FormItemConf): FormItemConf {
   const clone: FormItemConf = JSON.parse(JSON.stringify(origin))
   clone.formId = ++idGlobal.value
   clone.span = formConf.value.span
-  clone.renderKey = +new Date()      /* 改变 renderKey 实现强制更新 */
+  clone.renderKey = +new Date() /* 改变 renderKey 实现强制更新 */
   if (!clone.layout) clone.layout = 'colFormItem'
   if (clone.layout === 'colFormItem') {
     clone.vModel = `field${idGlobal.value}`
@@ -306,7 +322,7 @@ function createIdAndKey(item: FormItemConf): FormItemConf {
     item.componentName = `row${idGlobal.value}`
   }
   if (Array.isArray(item.children)) {
-    item.children = item.children.map(childItem => createIdAndKey(childItem))
+    item.children = item.children.map((childItem) => createIdAndKey(childItem))
   }
   return item
 }
@@ -335,9 +351,8 @@ function tagChange(newTag: FormItemConf) {
   delete canvas.value.activeData.tag
   delete canvas.value.activeData.tagIcon
   delete canvas.value.activeData.document
-  Object.keys(newTag).forEach(key => {
-    if (canvas.value.activeData[key] !== undefined
-        && typeof canvas.value.activeData[key] === typeof newTag[key]) {
+  Object.keys(newTag).forEach((key) => {
+    if (canvas.value.activeData[key] !== undefined && typeof canvas.value.activeData[key] === typeof newTag[key]) {
       newTag[key] = canvas.value.activeData[key]
     }
   })
@@ -349,11 +364,11 @@ function tagChange(newTag: FormItemConf) {
  * 更新画布中的组件数据
  */
 function updateDrawingList(newTag: FormItemConf, list: FormItemConf[]) {
-  const index = list.findIndex(item => item.formId === canvas.value.activeId)
+  const index = list.findIndex((item) => item.formId === canvas.value.activeId)
   if (index > -1) {
     list.splice(index, 1, newTag)
   } else {
-    list.forEach(item => {
+    list.forEach((item) => {
       if (Array.isArray(item.children)) updateDrawingList(newTag, item.children)
     })
   }
@@ -383,7 +398,7 @@ function generate(data: any) {
  */
 function execDownload(data: any) {
   const codeStr = generateCode()
-  const blob = new Blob([codeStr], {type: 'text/plain;charset=utf-8'})
+  const blob = new Blob([codeStr], { type: 'text/plain;charset=utf-8' })
   Download.saveAs(blob, data.fileName)
 }
 
@@ -398,14 +413,14 @@ function execCopy(data: any) {
  * 组装表单数据：画布组件 + 全局配置
  */
 function AssembleFormData() {
-  genDialog.value.formData = {fields: JSON.parse(JSON.stringify(canvas.value.drawingList)), ...formConf.value}
+  genDialog.value.formData = { fields: JSON.parse(JSON.stringify(canvas.value.drawingList)), ...formConf.value }
 }
 
 /**
  * 生成 vue 代码（html + script + css）
  */
 function generateCode() {
-  const {type} = genDialog.value.generateConf
+  const { type } = genDialog.value.generateConf
   AssembleFormData()
   const script = vueScript(makeUpJs(genDialog.value.formData, type))
   const html = vueTemplate(makeUpHtml(genDialog.value.formData, type))
@@ -413,48 +428,53 @@ function generateCode() {
   return beautifier.html(html + script + css, beautifierConf.html)
 }
 
-
 // --------------------------------- init ---------------------------------
 
 /* 监听标题变化，同步更新占位提示 */
-watch(() => canvas.value.activeData.label, (val, oldVal) => {
-  if (
-      canvas.value.activeData.placeholder === undefined
-      || !canvas.value.activeData.tag
-      || oldActiveId !== canvas.value.activeId
-  ) {
-    return
+watch(
+  () => canvas.value.activeData.label,
+  (val, oldVal) => {
+    if (
+      canvas.value.activeData.placeholder === undefined ||
+      !canvas.value.activeData.tag ||
+      oldActiveId !== canvas.value.activeId
+    ) {
+      return
+    }
+    canvas.value.activeData.placeholder = canvas.value.activeData.placeholder.replace(oldVal, '') + val
   }
-  canvas.value.activeData.placeholder = canvas.value.activeData.placeholder.replace(oldVal, '') + val
-})
+)
 
 /* 记录当前激活 ID，用于上文 watch */
-watch(() => canvas.value.activeId, (val) => {
-  oldActiveId = val
-}, {immediate: true})
+watch(
+  () => canvas.value.activeId,
+  (val) => {
+    oldActiveId = val
+  },
+  { immediate: true }
+)
 
 /* 初始化剪切板复制 */
 let clipboard: ClipboardJS | null = null
 onMounted(() => {
   clipboard = new ClipboardJS('#copyNode', {
-    text: trigger => {
+    text: (trigger) => {
       const codeStr = generateCode()
-      ElNotification({title: '成功', message: '代码已复制到剪切板，可粘贴。', type: 'success'})
+      ElNotification({ title: '成功', message: '代码已复制到剪切板，可粘贴。', type: 'success' })
       return codeStr
     }
   })
-  clipboard.on('error', e => {
+  clipboard.on('error', (e) => {
     modal.msgError('代码复制失败')
   })
 })
 onUnmounted(() => {
   clipboard?.destroy()
 })
-
 </script>
 
-<style lang='scss'>
-$lighterBlue: #409EFF;
+<style lang="scss">
+$lighterBlue: #409eff;
 
 .container {
   position: relative;
@@ -490,7 +510,6 @@ $lighterBlue: #409EFF;
           display: inline-block;
           vertical-align: sub;
           margin-left: 15px;
-
         }
       }
     }
@@ -552,8 +571,6 @@ $lighterBlue: #409EFF;
               }
             }
           }
-
-
         }
       }
     }
@@ -569,7 +586,7 @@ $lighterBlue: #409EFF;
       position: relative;
       height: 42px;
       padding: 0 15px;
-      box-sizing: border-box;;
+      box-sizing: border-box;
       border: 1px solid var(--el-border-color-extra-light);
       border-top: none;
       border-left: none;
@@ -578,7 +595,7 @@ $lighterBlue: #409EFF;
       justify-content: flex-end;
 
       u .delete-btn {
-        color: #F56C6C;
+        color: #f56c6c;
       }
     }
 
@@ -618,7 +635,7 @@ $lighterBlue: #409EFF;
               overflow: hidden;
 
               &::before {
-                content: " ";
+                content: ' ';
                 position: absolute;
                 left: 0;
                 right: 0;
@@ -760,12 +777,12 @@ $lighterBlue: #409EFF;
 
             & > .drawing-item-delete {
               right: 24px;
-              border-color: #F56C6C;
-              color: #F56C6C;
+              border-color: #f56c6c;
+              color: #f56c6c;
               background: #fff;
 
               &:hover {
-                background: #F56C6C;
+                background: #f56c6c;
                 color: #fff;
               }
             }
@@ -781,7 +798,6 @@ $lighterBlue: #409EFF;
             color: #ccb1ea;
             letter-spacing: 4px;
           }
-
         }
       }
     }

@@ -4,17 +4,23 @@
         处理桌面端与移动端布局切换、侧边栏收展联动、主题变量注入
 -->
 <template>
-  <div :class="classObj" class="app-wrapper" :style="{ '--current-color': theme, '--current-color-light': theme + '1a', '--current-color-dark-bg': theme + '33' }">
-
+  <div
+    :class="classObj"
+    class="app-wrapper"
+    :style="{
+      '--current-color': theme,
+      '--current-color-light': theme + '1a',
+      '--current-color-dark-bg': theme + '33'
+    }"
+  >
     <!-- 移动端遮罩：侧栏展开时显示，点击关闭侧栏 -->
-    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
+    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
 
     <!-- 侧边栏（左侧） -->
     <Sidebar v-if="!sidebar.hide" class="sidebar-container" />
 
     <!-- 主内容区（中间） -->
     <div :class="{ hasTagsView: needTagsView, sidebarHide: sidebar.hide }" class="main-container">
-
       <!-- 固定头部（中间：顶部）：含导航栏和标签页 -->
       <div :class="{ 'fixed-header': fixedHeader }">
         <!-- 导航栏：含面包屑/菜单搜索/用户菜单等 -->
@@ -28,9 +34,7 @@
 
       <!-- 布局设置面板（中间：右侧边栏） -->
       <Settings ref="settingRef" />
-
     </div>
-
   </div>
 </template>
 
@@ -48,8 +52,8 @@ const needTagsView = computed(() => settingsStore.tagsView)
 const fixedHeader = computed(() => settingsStore.fixedHeader)
 
 /*
-* 布局 CSS 类名组合：侧栏收展状态 + 设备类型
-*/
+ * 布局 CSS 类名组合：侧栏收展状态 + 设备类型
+ */
 const classObj = computed(() => ({
   hideSidebar: !sidebar.value.opened,
   openSidebar: sidebar.value.opened,
@@ -61,13 +65,16 @@ const { width, height } = useWindowSize()
 const WIDTH = 992 // refer to Bootstrap's responsive design
 
 /*
-* 设备切换：切换到 mobile 时收起侧栏
-*/
-watch(() => device.value, () => {
-  if (device.value === 'mobile' && sidebar.value.opened) {
-    appStore.closeSideBar({ withoutAnimation: false })
+ * 设备切换：切换到 mobile 时收起侧栏
+ */
+watch(
+  () => device.value,
+  () => {
+    if (device.value === 'mobile' && sidebar.value.opened) {
+      appStore.closeSideBar({ withoutAnimation: false })
+    }
   }
-})
+)
 
 /*
  * 窗口响应式：宽度 < 992 切换 mobile，无动画收起侧栏
@@ -89,16 +96,16 @@ watch(width, (newVal, oldVal) => {
 })
 
 /*
-* 移动端遮罩点击 -> 关闭侧栏
-*/
+ * 移动端遮罩点击 -> 关闭侧栏
+ */
 function handleClickOutside() {
   appStore.closeSideBar({ withoutAnimation: false })
 }
 
 const settingRef = ref<InstanceType<typeof Settings> | null>(null)
 /*
-* 打开布局设置面板
-*/
+ * 打开布局设置面板
+ */
 function setLayout() {
   settingRef.value?.openSetting()
 }
@@ -106,11 +113,11 @@ function setLayout() {
 
 <!-- 组件私有样式 -->
 <style lang="scss" scoped>
-@use "@/assets/styles/variables.module.scss" as vars;
+@use '@/assets/styles/variables.module.scss' as vars;
 
 .app-wrapper {
   &:after {
-    content: "";
+    content: '';
     display: table;
     clear: both;
   }
@@ -165,19 +172,18 @@ function setLayout() {
   布局组件专属样式：需要影响全局/子组件的样式
 -->
 <style lang="scss">
-@use "@/assets/styles/variables.module.scss" as vars;
+@use '@/assets/styles/variables.module.scss' as vars;
 
 #app {
-
   .main-container {
     min-height: 100%;
-    transition: margin-left .28s;
+    transition: margin-left 0.28s;
     margin-left: vars.$base-sidebar-width;
     position: relative;
   }
 
   .sidebarHide {
-    margin-left: 0!important;
+    margin-left: 0 !important;
   }
 
   .sidebar-container {
@@ -191,11 +197,14 @@ function setLayout() {
     left: 0;
     z-index: 1001;
     overflow: hidden;
-    -webkit-box-shadow: 2px 0 6px rgba(0,21,41,.35);
+    -webkit-box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
     box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.1);
 
     .horizontal-collapse-transition {
-      transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
+      transition:
+        0s width ease-in-out,
+        0s padding-left ease-in-out,
+        0s padding-right ease-in-out;
     }
 
     .scrollbar-wrapper {
@@ -236,7 +245,8 @@ function setLayout() {
       width: 100% !important;
     }
 
-    .el-menu-item, .menu-title {
+    .el-menu-item,
+    .menu-title {
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
@@ -259,7 +269,7 @@ function setLayout() {
       color: vars.$base-menu-color-active !important;
     }
 
-    & .nest-menu .el-sub-menu>.el-sub-menu__title,
+    & .nest-menu .el-sub-menu > .el-sub-menu__title,
     & .el-sub-menu .el-menu-item {
       min-width: vars.$base-sidebar-width !important;
 
@@ -268,7 +278,7 @@ function setLayout() {
       }
     }
 
-    & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
+    & .theme-dark .nest-menu .el-sub-menu > .el-sub-menu__title,
     & .theme-dark .el-sub-menu .el-menu-item {
       background-color: vars.$base-sub-menu-background;
 
@@ -291,7 +301,7 @@ function setLayout() {
           background-color: var(--current-color-dark-bg, rgba(64, 158, 255, 0.2));
           pointer-events: none;
           z-index: 1;
-          border-right: 3px solid var(--current-color,#409eff);
+          border-right: 3px solid var(--current-color, #409eff);
         }
       }
 
@@ -340,7 +350,7 @@ function setLayout() {
           background-color: var(--current-color-light, #ecf5ff);
           pointer-events: none;
           z-index: 1;
-          border-right: 3px solid var(--current-color,#409eff);
+          border-right: 3px solid var(--current-color, #409eff);
         }
       }
 
@@ -391,27 +401,26 @@ function setLayout() {
     .el-sub-menu {
       overflow: hidden;
 
-      &>.el-sub-menu__title {
+      & > .el-sub-menu__title {
         padding: 0 !important;
 
         .svg-icon {
           margin-left: 20px;
         }
-
       }
     }
 
     .el-menu--collapse {
       .el-sub-menu {
-        &>.el-sub-menu__title {
-          &>span {
+        & > .el-sub-menu__title {
+          & > span {
             height: 0;
             width: 0;
             overflow: hidden;
             visibility: hidden;
             display: inline-block;
           }
-          &>i {
+          & > i {
             height: 0;
             width: 0;
             overflow: hidden;
@@ -433,7 +442,7 @@ function setLayout() {
     }
 
     .sidebar-container {
-      transition: transform .28s;
+      transition: transform 0.28s;
       width: vars.$base-sidebar-width !important;
     }
 
@@ -447,7 +456,6 @@ function setLayout() {
   }
 
   .withoutAnimation {
-
     .main-container,
     .sidebar-container {
       transition: none;
@@ -456,20 +464,20 @@ function setLayout() {
 }
 
 .el-menu--vertical {
-  &>.el-menu {
+  & > .el-menu {
     .svg-icon {
       margin-right: 16px;
     }
   }
 
-  .nest-menu .el-sub-menu>.el-sub-menu__title,
+  .nest-menu .el-sub-menu > .el-sub-menu__title,
   .el-menu-item {
     &:hover {
       background-color: rgba(0, 0, 0, 0.06) !important;
     }
   }
 
-  >.el-menu--popup {
+  > .el-menu--popup {
     max-height: 100vh;
     overflow-y: auto;
 

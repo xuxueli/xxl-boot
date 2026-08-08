@@ -8,36 +8,48 @@
   <div ref="rightToolbarRef" class="top-right-btn" :style="style">
     <el-row>
       <!-- “搜索” 展示/隐藏开关 -->
-      <el-tooltip class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" v-if="search">
-        <el-button circle icon="Search" @click="toggleSearch()"/>
+      <el-tooltip
+        class="item"
+        effect="dark"
+        :content="showSearch ? '隐藏搜索' : '显示搜索'"
+        placement="top"
+        v-if="search"
+      >
+        <el-button circle icon="Search" @click="toggleSearch()" />
       </el-tooltip>
 
       <!-- “刷新” 按钮 -->
       <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-        <el-button circle icon="Refresh" @click="refresh()"/>
+        <el-button circle icon="Refresh" @click="refresh()" />
       </el-tooltip>
 
       <!-- “显隐列” 按钮 -->
       <el-tooltip class="item" effect="dark" content="显隐列" placement="top" v-if="Object.keys(columns).length > 0">
         <!-- transfer 模式 -->
-        <el-button circle icon="Menu" @click="showColumn()" v-if="showColumnsType === 'transfer'"/>
+        <el-button circle icon="Menu" @click="showColumn()" v-if="showColumnsType === 'transfer'" />
         <!-- checkbox 模式 -->
-        <el-dropdown trigger="click" :hide-on-click="false" style="padding-left: 12px" v-if="showColumnsType === 'checkbox'">
+        <el-dropdown
+          trigger="click"
+          :hide-on-click="false"
+          style="padding-left: 12px"
+          v-if="showColumnsType === 'checkbox'"
+        >
           <!-- icon -->
-          <el-button circle icon="Menu"/>
+          <el-button circle icon="Menu" />
           <!-- 下拉框 -->
           <template #dropdown>
             <el-dropdown-menu>
               <!-- 全选/反选 按钮 -->
               <el-dropdown-item>
-                <el-checkbox :indeterminate="isIndeterminate" v-model="isChecked" @change="toggleCheckAll"> 列展示
+                <el-checkbox :indeterminate="isIndeterminate" v-model="isChecked" @change="toggleCheckAll">
+                  列展示
                 </el-checkbox>
               </el-dropdown-item>
               <div class="check-line"></div>
               <!-- 单列控制 -->
               <template v-for="(item, key) in columns" :key="item.key">
                 <el-dropdown-item>
-                  <el-checkbox v-model="item.visible" @change="checkboxChange($event, key)" :label="item.label"/>
+                  <el-checkbox v-model="item.visible" @change="checkboxChange($event, key)" :label="item.label" />
                 </el-dropdown-item>
               </template>
             </el-dropdown-menu>
@@ -48,14 +60,8 @@
 
     <!-- transfer 模式：弹框 -->
     <el-dialog :title="title" v-model="open" append-to-body>
-      <el-transfer
-          :titles="['显示', '隐藏']"
-          v-model="value"
-          :data="transferData"
-          @change="dataChange"
-      ></el-transfer>
+      <el-transfer :titles="['显示', '隐藏']" v-model="value" :data="transferData" @change="dataChange"></el-transfer>
     </el-dialog>
-
   </div>
 </template>
 
@@ -75,43 +81,45 @@ interface ColumnItem {
 // 表格列配置：数组或对象（key 为列标识）
 type ColumnsType = ColumnItem[] | { [key: string]: ColumnItem }
 
-const props = withDefaults(defineProps<{
-  // "搜索区域" 是否显示（v-model 双向绑定）
-  search?: boolean
-  // "搜索区域" 默认显示/隐藏状态
-  showSearch?: boolean
-  // 表格列配置：[{ key, label, visible }] 或 { key: { label, visible } }
-  columns?: ColumnsType
-  // 列显隐控制类型：checkbox（下拉复选框）/ transfer（穿梭框对话框）
-  showColumnsType?: string
-  // 右侧外边距
-  gutter?: number
-  // 列显隐持久化 key：传入则自动读写 localStorage
-  storageKey?: string
-}>(), {
-  // "搜索区域" 默认显示
-  search: true,
-  // "搜索区域" 默认显示
-  showSearch: true,
-  // 表格列配置默认空对象
-  columns: () => ({}),
-  // 默认使用 checkbox 显隐控制
-  showColumnsType: "checkbox",
-  // 右侧外边距默认 10
-  gutter: 10,
-  // 默认不持久化
-  storageKey: "",
-})
-
+const props = withDefaults(
+  defineProps<{
+    // "搜索区域" 是否显示（v-model 双向绑定）
+    search?: boolean
+    // "搜索区域" 默认显示/隐藏状态
+    showSearch?: boolean
+    // 表格列配置：[{ key, label, visible }] 或 { key: { label, visible } }
+    columns?: ColumnsType
+    // 列显隐控制类型：checkbox（下拉复选框）/ transfer（穿梭框对话框）
+    showColumnsType?: string
+    // 右侧外边距
+    gutter?: number
+    // 列显隐持久化 key：传入则自动读写 localStorage
+    storageKey?: string
+  }>(),
+  {
+    // "搜索区域" 默认显示
+    search: true,
+    // "搜索区域" 默认显示
+    showSearch: true,
+    // 表格列配置默认空对象
+    columns: () => ({}),
+    // 默认使用 checkbox 显隐控制
+    showColumnsType: 'checkbox',
+    // 右侧外边距默认 10
+    gutter: 10,
+    // 默认不持久化
+    storageKey: ''
+  }
+)
 
 const emits = defineEmits<{
   (e: 'update:showSearch', value: boolean): void
   (e: 'queryTable'): void
 }>()
 
-const value = ref<Array<string | number>>([])   // “隐藏列” 的索引列表
-const title = ref("显示/隐藏")       // transfer模式，弹出层标题
-const open = ref(false)             // transfer模式，弹出层显隐状态
+const value = ref<Array<string | number>>([]) // “隐藏列” 的索引列表
+const title = ref('显示/隐藏') // transfer模式，弹出层标题
+const open = ref(false) // transfer模式，弹出层显隐状态
 const rightToolbarRef = ref<any>(null)
 
 // checkbox弹框，left间距计算
@@ -125,13 +133,19 @@ const style = computed(() => {
 
 // checkbox 判断是否“全选”
 const isChecked = computed({
-  get: () => Array.isArray(props.columns) ? props.columns.every(col => col.visible) : Object.values(props.columns).every((col) => col.visible),
-  set: () => {
-  }
+  get: () =>
+    Array.isArray(props.columns)
+      ? props.columns.every((col) => col.visible)
+      : Object.values(props.columns).every((col) => col.visible),
+  set: () => {}
 })
 
 // checkbox 判断是否（部分选中）
-const isIndeterminate = computed(() => Array.isArray(props.columns) ? props.columns.some((col) => col.visible) && !isChecked.value : Object.values(props.columns).some((col) => col.visible) && !isChecked.value)
+const isIndeterminate = computed(() =>
+  Array.isArray(props.columns)
+    ? props.columns.some((col) => col.visible) && !isChecked.value
+    : Object.values(props.columns).some((col) => col.visible) && !isChecked.value
+)
 
 // transfer 数据源
 const transferData = computed(() => {
@@ -142,7 +156,7 @@ const transferData = computed(() => {
       label: item.label
     }))
   }
-  return Object.keys(columns).map((key, index) => ({key: index, label: columns[key].label}))
+  return Object.keys(columns).map((key, index) => ({ key: index, label: columns[key].label }))
 })
 
 /**
@@ -167,22 +181,24 @@ function toggleSearch() {
 function animateSearch(el: HTMLElement, isHide: boolean) {
   const DURATION = 260
   const TRANSITION = 'max-height 0.25s ease, opacity 0.2s ease'
-  const clear = () => Object.assign(el.style, {transition: '', maxHeight: '', opacity: '', overflow: ''})
-  Object.assign(el.style, {overflow: 'hidden', transition: ''})
+  const clear = () => Object.assign(el.style, { transition: '', maxHeight: '', opacity: '', overflow: '' })
+  Object.assign(el.style, { overflow: 'hidden', transition: '' })
   if (isHide) {
-    Object.assign(el.style, {maxHeight: el.scrollHeight + 'px', opacity: '1', transition: TRANSITION})
-    requestAnimationFrame(() => Object.assign(el.style, {maxHeight: '0', opacity: '0'}))
+    Object.assign(el.style, { maxHeight: el.scrollHeight + 'px', opacity: '1', transition: TRANSITION })
+    requestAnimationFrame(() => Object.assign(el.style, { maxHeight: '0', opacity: '0' }))
     setTimeout(() => {
-      emits('update:showSearch', false);
+      emits('update:showSearch', false)
       clear()
     }, DURATION)
   } else {
     emits('update:showSearch', true)
     nextTick(() => {
-      Object.assign(el.style, {maxHeight: '0', opacity: '0'})
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        Object.assign(el.style, {transition: TRANSITION, maxHeight: el.scrollHeight + 'px', opacity: '1'})
-      }))
+      Object.assign(el.style, { maxHeight: '0', opacity: '0' })
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          Object.assign(el.style, { transition: TRANSITION, maxHeight: el.scrollHeight + 'px', opacity: '1' })
+        })
+      )
       setTimeout(clear, DURATION)
     })
   }
@@ -191,9 +207,9 @@ function animateSearch(el: HTMLElement, isHide: boolean) {
 /**
  * 刷新表格数据
  *  - 触发父组件 queryTable 方法
-*/
+ */
 function refresh() {
-  emits("queryTable")
+  emits('queryTable')
 }
 
 /**
@@ -218,7 +234,7 @@ function dataChange(data: Array<string | number>) {
 
 /**
  * 打开显隐列对话框（transfer 模式）
-  */
+ */
 function showColumn() {
   open.value = true
 }
@@ -234,15 +250,14 @@ if (props.storageKey) {
           if (saved[index] !== undefined) col.visible = saved[index]
         })
       } else {
-        Object.keys(columns).forEach(key => {
+        Object.keys(columns).forEach((key) => {
           if (saved[key] !== undefined) columns[key].visible = saved[key]
         })
       }
     }
-  } catch (e) {
-  }
+  } catch (e) {}
 }
-if (props.showColumnsType === "transfer") {
+if (props.showColumnsType === 'transfer') {
   // transfer穿梭显隐列初始默认隐藏列
   const columns = props.columns
   if (Array.isArray(columns)) {
@@ -264,7 +279,7 @@ if (props.showColumnsType === "transfer") {
 function checkboxChange(event: any, key: any) {
   const columns = props.columns
   if (Array.isArray(columns)) {
-    columns.filter(item => item.key === key)[0].visible = event
+    columns.filter((item) => item.key === key)[0].visible = event
   } else {
     columns[key].visible = event
   }
@@ -273,7 +288,7 @@ function checkboxChange(event: any, key: any) {
 
 /**
  * 全选/反选切换
-  */
+ */
 function toggleCheckAll() {
   const newValue = !isChecked.value
   if (Array.isArray(props.columns)) {
@@ -297,17 +312,16 @@ function saveStorage() {
         state[index] = col.visible
       })
     } else {
-      Object.keys(columns).forEach(key => {
+      Object.keys(columns).forEach((key) => {
         state[key] = columns[key].visible
       })
     }
     cache.local.setJSON(props.storageKey, state)
-  } catch (e) {
-  }
+  } catch (e) {}
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 :deep(.el-transfer__button) {
   border-radius: 50%;
   display: block;

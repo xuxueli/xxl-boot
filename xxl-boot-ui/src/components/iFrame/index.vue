@@ -6,11 +6,7 @@
 -->
 <template>
   <div v-loading="loading" :style="'height:' + height">
-    <iframe 
-      :src="url" 
-      frameborder="no" 
-      style="width: 100%; height: 100%" 
-      scrolling="auto" />
+    <iframe :src="url" frameborder="no" style="width: 100%; height: 100%" scrolling="auto" />
   </div>
 </template>
 
@@ -24,13 +20,12 @@ const props = defineProps({
 })
 
 // 动态高度：视口高度减去导航栏/标签栏占位
-const height = ref(document.documentElement.clientHeight - 94.5 + "px;")
+const height = ref(document.documentElement.clientHeight - 94.5 + 'px;')
 // 加载状态：初始 true，300ms 后自动关闭（给 iframe 加载缓冲时间）
 const loading = ref(true)
 const url = computed(() => props.src)
 
 onMounted(() => {
-
   // 加载状态，300ms 后自动关闭（给 iframe 加载缓冲时间）
   setTimeout(() => {
     loading.value = false
@@ -38,7 +33,7 @@ onMounted(() => {
 
   // 窗口大小变化时重新计算 iframe 高度
   window.onresize = function temp() {
-    height.value = document.documentElement.clientHeight - 94.5 + "px;"
+    height.value = document.documentElement.clientHeight - 94.5 + 'px;'
   }
 })
 </script>

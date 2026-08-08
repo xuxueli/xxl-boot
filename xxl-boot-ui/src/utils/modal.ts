@@ -17,7 +17,6 @@ import { ElMessage, ElMessageBox, ElNotification, ElLoading } from 'element-plus
 let loadingInstance: ReturnType<typeof ElLoading.service> | null = null
 
 export default {
-
   // ==================== 一、轻量消息（Message） ====================
   /** 信息消息：用于普通流程提示 */
   msg(content: string): void {
@@ -39,19 +38,19 @@ export default {
   // ==================== 二、对话框（MessageBox） ====================
   /** 普通提示框：只需确认，不关心返回值 */
   alert(content: string): void {
-    ElMessageBox.alert(content, "系统提示")
+    ElMessageBox.alert(content, '系统提示')
   },
   /** 错误提示框：强调错误语义（type = error） */
   alertError(content: string): void {
-    ElMessageBox.alert(content, "系统提示", { type: 'error' })
+    ElMessageBox.alert(content, '系统提示', { type: 'error' })
   },
   /** 成功提示框：强调成功语义（type = success） */
   alertSuccess(content: string): void {
-    ElMessageBox.alert(content, "系统提示", { type: 'success' })
+    ElMessageBox.alert(content, '系统提示', { type: 'success' })
   },
   /** 警告提示框：强调警告语义（type = warning） */
   alertWarning(content: string): void {
-    ElMessageBox.alert(content, "系统提示", { type: 'warning' })
+    ElMessageBox.alert(content, '系统提示', { type: 'warning' })
   },
 
   // ==================== 三、通知（Notification） ====================
@@ -79,10 +78,10 @@ export default {
    *   modal.confirm('确认删除？').then(() => { 确定操作 }).catch(() => { 取消 })
    */
   confirm(content: string): Promise<unknown> {
-    return ElMessageBox.confirm(content, "系统提示", {
+    return ElMessageBox.confirm(content, '系统提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
-      type: "warning",
+      type: 'warning'
     })
   },
   /**
@@ -90,10 +89,10 @@ export default {
    *   modal.prompt('请输入原因').then(({ value }) => { ... })
    */
   prompt(content: string): Promise<{ value: string }> {
-    return ElMessageBox.prompt(content, "系统提示", {
+    return ElMessageBox.prompt(content, '系统提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
-      type: "warning",
+      type: 'warning'
     })
   },
 
@@ -107,7 +106,7 @@ export default {
     loadingInstance = ElLoading.service({
       lock: true,
       text: content,
-      background: "rgba(0, 0, 0, 0.7)",
+      background: 'rgba(0, 0, 0, 0.7)'
     })
   },
   /**

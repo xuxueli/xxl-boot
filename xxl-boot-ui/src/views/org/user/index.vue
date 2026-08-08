@@ -4,13 +4,30 @@
 -->
 <template>
   <div class="app-container tree-sidebar-manage-wrap">
-    <TreePanel title="组织机构" :tree-data="deptOptions" :tree-props="{ label: 'name', children: 'children' }" :filter-method="filterOrg" search-placeholder="请输入组织名称" storage-key="boot-user-org-sidebar-width" :defaultExpandAll="true" @node-click="handleNodeClick" @refresh="getDeptTree" ref="deptTreeRef" />
+    <TreePanel
+      title="组织机构"
+      :tree-data="deptOptions"
+      :tree-props="{ label: 'name', children: 'children' }"
+      :filter-method="filterOrg"
+      search-placeholder="请输入组织名称"
+      storage-key="boot-user-org-sidebar-width"
+      :defaultExpandAll="true"
+      @node-click="handleNodeClick"
+      @refresh="getDeptTree"
+      ref="deptTreeRef"
+    />
     <div class="tree-sidebar-content">
       <div class="content-inner">
         <!-- 搜索栏 -->
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
           <el-form-item label="用户名称" prop="username">
-            <el-input v-model="queryParams.username" placeholder="请输入用户名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+            <el-input
+              v-model="queryParams.username"
+              placeholder="请输入用户名称"
+              clearable
+              style="width: 200px"
+              @keyup.enter="handleQuery"
+            />
           </el-form-item>
           <el-form-item label="状态" prop="status">
             <el-select v-model="queryParams.status" placeholder="用户状态" clearable style="width: 200px">
@@ -30,10 +47,26 @@
             <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['org:user']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasPermi="['org:user']">修改</el-button>
+            <el-button
+              type="success"
+              plain
+              icon="Edit"
+              :disabled="table.single"
+              @click="handleUpdate"
+              v-hasPermi="['org:user']"
+              >修改</el-button
+            >
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasPermi="['org:user']">删除</el-button>
+            <el-button
+              type="danger"
+              plain
+              icon="Delete"
+              :disabled="table.multiple"
+              @click="handleDelete"
+              v-hasPermi="['org:user']"
+              >删除</el-button
+            >
           </el-col>
           <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
         </el-row>
@@ -44,7 +77,9 @@
           <el-table-column label="用户编号" align="center" prop="id" width="80" />
           <el-table-column label="账号" align="center" prop="username" width="110" :show-overflow-tooltip="true">
             <template #default="scope">
-              <a class="link-type" style="cursor:pointer" @click="handleViewData(scope.row)">{{ scope.row.username }}</a>
+              <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{
+                scope.row.username
+              }}</a>
             </template>
           </el-table-column>
           <el-table-column label="用户名称" align="center" prop="realName" width="110" :show-overflow-tooltip="true" />
@@ -66,8 +101,12 @@
           </el-table-column>
           <el-table-column label="操作" align="center" width="190" class-name="small-padding fixed-width">
             <template #default="scope">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:user']">修改</el-button>
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:user']">删除</el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['org:user']"
+                >修改</el-button
+              >
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['org:user']"
+                >删除</el-button
+              >
               <el-dropdown trigger="click" @command="() => handleResetPwd(scope.row)">
                 <el-button link type="primary" icon="DArrowRight">更多</el-button>
                 <template #dropdown>
@@ -97,12 +136,24 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="账号" prop="username">
-              <el-input v-model="formState.form.username" placeholder="请输入账号" maxlength="20" :disabled="formState.form.id !== undefined" />
+              <el-input
+                v-model="formState.form.username"
+                placeholder="请输入账号"
+                maxlength="20"
+                :disabled="formState.form.id !== undefined"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="密码" prop="password" :rules="formState.form.id === undefined ? passwordRules : []">
-              <el-input v-model="formState.form.password" placeholder="请输入密码" type="password" maxlength="20" show-password :disabled="formState.form.id !== undefined" />
+              <el-input
+                v-model="formState.form.password"
+                placeholder="请输入密码"
+                type="password"
+                maxlength="20"
+                show-password
+                :disabled="formState.form.id !== undefined"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -113,7 +164,13 @@
           <el-col :span="12">
             <el-form-item label="角色">
               <el-select v-model="formState.form.roleIds" multiple placeholder="请选择角色" style="width: 100%">
-                <el-option v-for="item in roleOptions" :key="item.id" :label="item.name" :value="item.id as number" :disabled="item.status == 1" />
+                <el-option
+                  v-for="item in roleOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id as number"
+                  :disabled="item.status == 1"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -178,7 +235,6 @@ import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
-
 /** 编辑表单数据（User 基础上补充表单用到的附加字段） */
 interface UserFormData extends User {
   phone?: string
@@ -186,13 +242,12 @@ interface UserFormData extends User {
   roleIds?: number[]
 }
 
-
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
-const formRef = ref<FormInstance>()   /* 编辑表单 ref */
-const deptTreeRef = ref<any>()        /* 左侧组织树 ref */
-const userViewRef = ref<any>()        /* 用户详情抽屉 ref */
+const formRef = ref<FormInstance>() /* 编辑表单 ref */
+const deptTreeRef = ref<any>() /* 左侧组织树 ref */
+const userViewRef = ref<any>() /* 用户详情抽屉 ref */
 
 // 用户状态枚举选项（UserStatuEnum）
 const { UserStatuEnum: statusOptions } = useEnumOption('UserStatuEnum')
@@ -231,36 +286,34 @@ const formState = ref<FormState<UserFormData>>({
   form: {},        /* 表单数据 */
   rules: {         /* 校验规则 */
     username: [
-      { required: true, message: "账号不能为空", trigger: "blur" },
-      { pattern: /^[a-z][a-z0-9]*$/, message: "格式：小写字母开头，字母/数字", trigger: "blur" }
+      { required: true, message: '账号不能为空', trigger: 'blur' },
+      { pattern: /^[a-z][a-z0-9]*$/, message: '格式：小写字母开头，字母/数字', trigger: 'blur' }
     ],
-    realName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }],
-    phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "手机号码格式不正确", trigger: "blur" }],
-    email: [{ type: "email", message: "邮箱格式不正确", trigger: ["blur", "change"] }]
+    realName: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
+    phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '手机号码格式不正确', trigger: 'blur' }],
+    email: [{ type: 'email', message: '邮箱格式不正确', trigger: ['blur', 'change'] }]
   }
 })
 // 密码校验规则（仅新增时生效，编辑时密码只读不校验）
 const passwordRules: FormItemRule[] = [
-  { required: true, message: "密码不能为空", trigger: "blur" },
-  { min: 4, max: 20, message: "密码长度 4-20", trigger: "blur" }
+  { required: true, message: '密码不能为空', trigger: 'blur' },
+  { min: 4, max: 20, message: '密码长度 4-20', trigger: 'blur' }
 ]
-
 
 // --------------------------------- fun ---------------------------------
 
 /** 从后端枚举接口加载用户状态选项 */
 
-
 /** 加载角色选项（用于编辑表单角色多选） */
 function loadRoleOptions() {
-  listRole({ offset: 0, pagesize: 999 }).then(response => {
+  listRole({ offset: 0, pagesize: 999 }).then((response) => {
     roleOptions.value = response.data.data
   })
 }
 
 /** 查询组织树列表 */
 function getDeptTree() {
-  listOrg({}).then(response => {
+  listOrg({}).then((response) => {
     // handleTree 会就地修改数组并填充 children，需对原始数据分别深拷贝，避免相互污染导致子节点重复
     deptOptions.value = handleTree(JSON.parse(JSON.stringify(response.data)), 'id')
     // 归属组织下拉树：默认追加「未选择」节点（id=0），对齐后端 org_id 默认值 0
@@ -281,7 +334,7 @@ function filterOrg(value: string, data: Org) {
 function collectOrgIds(node: Org): number[] {
   const ids = [node.id as number]
   if (node.children && node.children.length) {
-    node.children.forEach(child => {
+    node.children.forEach((child) => {
       ids.push(...collectOrgIds(child))
     })
   }
@@ -305,7 +358,7 @@ function getList() {
     offset: (pageNum - 1) * pageSize,
     pagesize: pageSize
   }
-  listUser(params).then(response => {
+  listUser(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -320,7 +373,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm("queryRef")
+  resetForm('queryRef')
   queryParams.value.orgIds = []
   deptTreeRef.value.setCurrentKey(null)
   handleQuery()
@@ -328,7 +381,7 @@ function resetQuery() {
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection: User[]) {
-  table.value.ids = selection.map(item => item.id as number)
+  table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -352,7 +405,7 @@ function reset() {
     status: 0,
     roleIds: []
   }
-  resetForm("formRef")
+  resetForm('formRef')
 }
 
 /** 新增按钮操作 */
@@ -361,7 +414,7 @@ function handleAdd() {
   getDeptTree()
   loadRoleOptions()
   formState.value.visible = true
-  formState.value.title = "新增用户"
+  formState.value.title = '新增用户'
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -374,18 +427,18 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  const current = table.value.list.find(item => item.id === id)
+  const current = table.value.list.find((item) => item.id === id)
   if (!current) {
     return
   }
   formState.value.form = { ...current }
   formState.value.visible = true
-  formState.value.title = "修改用户"
+  formState.value.title = '修改用户'
 }
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value!.validate(valid => {
+  formRef.value!.validate((valid) => {
     if (valid) {
       // 后端 update 会自动维护 update_time，回传 addTime/updateTime 会导致 Date 绑定失败
       const submitData = { ...formState.value.form }
@@ -398,13 +451,13 @@ function submitForm() {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
         updateUser(submitData).then(() => {
-          modal.msgSuccess("修改成功")
+          modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
         addUser(submitData).then(() => {
-          modal.msgSuccess("新增成功")
+          modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
         })
@@ -419,58 +472,65 @@ function handleDelete(row: any) {
   if (userIds == null || (Array.isArray(userIds) && userIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function() {
-    return delUser(userIds)
-  }).then(() => {
-    getList()
-    modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  modal
+    .confirm('是否确认删除用户编号为"' + userIds + '"的数据项？')
+    .then(function () {
+      return delUser(userIds)
+    })
+    .then(() => {
+      getList()
+      modal.msgSuccess('删除成功')
+    })
+    .catch(() => {})
 }
 
 /** 重置密码按钮操作（通过 update 接口传递 id + password，需带上其余字段避免覆盖为空；密码校验与表单规则一致） */
 function handleResetPwd(row: User) {
-  ElMessageBox.prompt(`请输入「${row.username}」的新密码`, "重置密码", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
+  ElMessageBox.prompt(`请输入「${row.username}」的新密码`, '重置密码', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
     closeOnClickModal: false,
     inputValidator: (value) => {
-      if (!value) return "密码不能为空"
-      if (value.length < 4 || value.length > 20) return "密码长度 4-20"
+      if (!value) return '密码不能为空'
+      if (value.length < 4 || value.length > 20) return '密码长度 4-20'
       return true
     }
-  }).then(({ value }) => {
-    const submitData: User = { ...row, password: value }
-    delete submitData.addTime
-    delete submitData.updateTime
-    delete submitData.orgName
-    delete submitData.roleNames
-    updateUser(submitData).then(() => {
-      modal.msgSuccess("修改成功，新密码是：" + value)
+  })
+    .then(({ value }) => {
+      const submitData: User = { ...row, password: value }
+      delete submitData.addTime
+      delete submitData.updateTime
+      delete submitData.orgName
+      delete submitData.roleNames
+      updateUser(submitData).then(() => {
+        modal.msgSuccess('修改成功，新密码是：' + value)
+      })
     })
-  }).catch(() => {})
+    .catch(() => {})
 }
 
 /** 用户状态快速切换（通过 update 接口传递完整行数据，避免其余字段被覆盖） */
 function handleStatusChange(row: User) {
-  const text = Number(row.status) === 0 ? "正常" : "停用"
+  const text = Number(row.status) === 0 ? '正常' : '停用'
   const submitData: User = { ...row, status: Number(row.status) }
   delete submitData.addTime
   delete submitData.updateTime
   delete submitData.orgName
   delete submitData.roleNames
-  updateUser(submitData).then(() => {
-    modal.msgSuccess(text + "成功")
-  }).catch(() => {
-    // 失败时回滚开关状态
-    row.status = Number(row.status) === 0 ? 1 : 0
-  })
+  updateUser(submitData)
+    .then(() => {
+      modal.msgSuccess(text + '成功')
+    })
+    .catch(() => {
+      // 失败时回滚开关状态
+      row.status = Number(row.status) === 0 ? 1 : 0
+    })
 }
 
 /** 详情按钮操作（点击账号展示用户详情抽屉） */
 function handleViewData(row: User) {
   userViewRef.value.open(row)
 }
-
 
 // --------------------------------- page init ---------------------------------
 

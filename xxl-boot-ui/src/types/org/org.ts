@@ -27,4 +27,3 @@ export interface OrgQuery {
   /** 状态：-1 全部 */
   status?: number
 }
-

@@ -23,7 +23,7 @@ export function useDict(...args: string[]): Record<string, import('vue').Ref<Dic
   const res = ref<Record<string, DictTagOption[]>>({})
   // IIFE 确保同步返回 ref 对象，异步数据在请求完成后填充
   return (() => {
-    args.forEach(dictType => {
+    args.forEach((dictType) => {
       // 初始化空数组占位，避免模板访问报错
       res.value[dictType] = []
       const dicts = dictStore.getDict(dictType)
@@ -32,13 +32,13 @@ export function useDict(...args: string[]): Record<string, import('vue').Ref<Dic
         res.value[dictType] = dicts
       } else {
         // 缓存未命中，请求接口并写入缓存
-        loadDictItem(dictType).then(resp => {
+        loadDictItem(dictType).then((resp) => {
           // 后端字段 → 前端通用字段名
-          res.value[dictType] = resp.data.map(p => ({
+          res.value[dictType] = resp.data.map((p) => ({
             label: p.name,
             value: p.code,
-            elTagType: undefined,   // p.listClass,
-            elTagClass: undefined   // p.cssClass
+            elTagType: undefined, // p.listClass,
+            elTagClass: undefined // p.cssClass
           }))
           // 写入 store 缓存，下次同类型请求直接命中
           dictStore.setDict(dictType, res.value[dictType])

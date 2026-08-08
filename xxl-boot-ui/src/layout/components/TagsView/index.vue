@@ -4,8 +4,11 @@
         支持 card 和 chrome 两种标签样式。
 -->
 <template>
-  <div id="tags-view-container" class="tags-view-container" :class="{ 'tags-view-container--chrome': tagsViewStyle === 'chrome' }">
-
+  <div
+    id="tags-view-container"
+    class="tags-view-container"
+    :class="{ 'tags-view-container--chrome': tagsViewStyle === 'chrome' }"
+  >
     <!--  左箭头  -->
     <span class="tags-nav-btn tags-nav-btn--left" :class="{ disabled: !canScrollLeft }" @click="scrollLeft">
       <el-icon><ArrowLeft /></el-icon>
@@ -18,7 +21,7 @@
         v-for="tag in visitedViews"
         :key="tag.path"
         :data-path="tag.path"
-        :class="{ 'active': isActive(tag), 'has-icon': tagsIcon }"
+        :class="{ active: isActive(tag), 'has-icon': tagsIcon }"
         :to="{ path: tag.path, query: tag.query as any }"
         class="tags-view-item"
         :style="tagActiveStyle(tag)"
@@ -26,7 +29,11 @@
         @contextmenu.prevent="openMenu(tag, $event)"
       >
         <!-- icon -->
-        <SvgIcon v-if="tagsIcon && tag.meta && tag.meta.icon && tag.meta.icon !== '#'" :icon-class="tag.meta.icon" style="margin-right: 3px;" />
+        <SvgIcon
+          v-if="tagsIcon && tag.meta && tag.meta.icon && tag.meta.icon !== '#'"
+          :icon-class="tag.meta.icon"
+          style="margin-right: 3px"
+        />
         <!-- title -->
         {{ tag.title }}
         <!-- close -->
@@ -63,17 +70,19 @@
 
     <!-- 刷新按钮 -->
     <span class="tags-action-btn tags-refresh-btn" title="刷新页面" @click="refreshSelectedTag(selectedDropdownTag)">
-      <el-icon><RefreshRight/></el-icon> 刷新
+      <el-icon><RefreshRight /></el-icon> 刷新
     </span>
 
     <!-- 右键上下文菜单 -->
     <ul v-show="visible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)"><RefreshRight style="width: 1em; height: 1em;" />刷新页面</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)"><Close style="width: 1em; height: 1em;" />关闭当前</li>
-      <li @click="closeOthersTags"><CircleClose style="width: 1em; height: 1em;" />关闭其他</li>
-      <li v-if="!isFirstView()" @click="closeLeftTags"><Back style="width: 1em; height: 1em;" />关闭左侧</li>
-      <li v-if="!isLastView()" @click="closeRightTags"><Right style="width: 1em; height: 1em;" />关闭右侧</li>
-      <li @click="closeAllTags(selectedTag)"><CircleClose style="width: 1em; height: 1em;" />全部关闭</li>
+      <li @click="refreshSelectedTag(selectedTag)"><RefreshRight style="width: 1em; height: 1em" />刷新页面</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
+        <Close style="width: 1em; height: 1em" />关闭当前
+      </li>
+      <li @click="closeOthersTags"><CircleClose style="width: 1em; height: 1em" />关闭其他</li>
+      <li v-if="!isFirstView()" @click="closeLeftTags"><Back style="width: 1em; height: 1em" />关闭左侧</li>
+      <li v-if="!isLastView()" @click="closeRightTags"><Right style="width: 1em; height: 1em" />关闭右侧</li>
+      <li @click="closeAllTags(selectedTag)"><CircleClose style="width: 1em; height: 1em" />全部关闭</li>
     </ul>
   </div>
 </template>
@@ -119,19 +128,19 @@ const tagsViewPersist = computed(() => settingsStore.tagsViewPersist)
 const tagsViewStyle = computed(() => settingsStore.tagsViewStyle)
 
 // 下拉菜单针对当前激活的 tag
-const selectedDropdownTag = computed<TagView>(() => visitedViews.value.find(v => isActive(v)) || ({} as TagView))
+const selectedDropdownTag = computed<TagView>(() => visitedViews.value.find((v) => isActive(v)) || ({} as TagView))
 
 /*
-* 路由变化时添加新标签并滚动到当前标签
-*/
+ * 路由变化时添加新标签并滚动到当前标签
+ */
 watch(route, () => {
   addTags()
   moveToCurrentTag()
 })
 
 /*
-* 右键菜单显隐时切换 body 点击监听
-*/
+ * 右键菜单显隐时切换 body 点击监听
+ */
 watch(visible, (value) => {
   if (value) {
     document.body.addEventListener('click', closeMenu)
@@ -157,8 +166,8 @@ onBeforeUnmount(() => {
 })
 
 /*
-* Esc 退出全屏
-*/
+ * Esc 退出全屏
+ */
 function handleKeyDown(event: KeyboardEvent) {
   if (event.key === 'Escape' && isFullscreen.value) {
     toggleFullscreen()
@@ -166,15 +175,15 @@ function handleKeyDown(event: KeyboardEvent) {
 }
 
 /*
-* 当前路由是否为标签页
-*/
+ * 当前路由是否为标签页
+ */
 function isActive(r: Record<string, any>) {
   return r.path === route.path
 }
 
 /*
-* 激活标签高亮样式（card 模式下）
-*/
+ * 激活标签高亮样式（card 模式下）
+ */
 function tagActiveStyle(tag: Record<string, any>) {
   if (!isActive(tag) || tagsViewStyle.value !== 'card') return {}
   return {
@@ -184,15 +193,15 @@ function tagActiveStyle(tag: Record<string, any>) {
 }
 
 /*
-* 是否为固定标签（不可关闭）
-*/
+ * 是否为固定标签（不可关闭）
+ */
 function isAffix(tag: Record<string, any>) {
   return tag && tag.meta && tag.meta.affix
 }
 
 /*
-* 是否为最左标签（首页索引为 1 的标签）
-*/
+ * 是否为最左标签（首页索引为 1 的标签）
+ */
 function isFirstView() {
   try {
     const tag = selectedTag.value && selectedTag.value.fullPath ? selectedTag.value : selectedDropdownTag.value
@@ -203,8 +212,8 @@ function isFirstView() {
 }
 
 /*
-* 是否为最右标签
-*/
+ * 是否为最右标签
+ */
 function isLastView() {
   try {
     const tag = selectedTag.value && selectedTag.value.fullPath ? selectedTag.value : selectedDropdownTag.value
@@ -215,13 +224,15 @@ function isLastView() {
 }
 
 /*
-* 递归收集带 affix 标记的固定标签（首页/特殊页面）
-*/
+ * 递归收集带 affix 标记的固定标签（首页/特殊页面）
+ */
 function filterAffixTags(routes: RouteData[], basePath = '') {
   let tags: TagView[] = []
-  routes.forEach(route => {
+  routes.forEach((route) => {
     if (route.meta && route.meta.affix) {
-      const tagPath = route.path!.startsWith('/') ? getNormalPath(route.path!) : getNormalPath(basePath + '/' + route.path!)
+      const tagPath = route.path!.startsWith('/')
+        ? getNormalPath(route.path!)
+        : getNormalPath(basePath + '/' + route.path!)
       tags.push({
         fullPath: tagPath,
         path: tagPath,
@@ -240,8 +251,8 @@ function filterAffixTags(routes: RouteData[], basePath = '') {
 }
 
 /*
-* 初始化：持久化恢复 + 固定标签注册
-*/
+ * 初始化：持久化恢复 + 固定标签注册
+ */
 function initTags() {
   if (tagsViewPersist.value) {
     tagsViewStore.loadPersistedViews()
@@ -256,8 +267,8 @@ function initTags() {
 }
 
 /*
-* 当前路由加入标签页
-*/
+ * 当前路由加入标签页
+ */
 function addTags() {
   const { name } = route
   if (name) {
@@ -266,8 +277,8 @@ function addTags() {
 }
 
 /*
-* 滚动到当前标签，同步路由更新
-*/
+ * 滚动到当前标签，同步路由更新
+ */
 function moveToCurrentTag() {
   nextTick(() => {
     for (const r of visitedViews.value) {
@@ -282,8 +293,8 @@ function moveToCurrentTag() {
 }
 
 /*
-* 左 / 右箭头滚动标签栏
-*/
+ * 左 / 右箭头滚动标签栏
+ */
 function scrollLeft() {
   if (!canScrollLeft.value) return
   scrollPaneRef.value?.scrollToStart()
@@ -295,8 +306,8 @@ function scrollRight() {
 }
 
 /*
-* 更新左右箭头可用状态
-*/
+ * 更新左右箭头可用状态
+ */
 function updateArrowState() {
   // 下次 DOM 更新循环结束之后执行延迟回调‌
   nextTick(() => {
@@ -309,8 +320,8 @@ function updateArrowState() {
 }
 
 /*
-* 全屏模式：隐藏 navbar/sidebar 使内容区占满视口
-*/
+ * 全屏模式：隐藏 navbar/sidebar 使内容区占满视口
+ */
 function toggleFullscreen() {
   const mainContainer = document.querySelector<HTMLElement>('.main-container')
   const navbar = document.querySelector<HTMLElement>('.navbar')
@@ -320,8 +331,11 @@ function toggleFullscreen() {
   if (!isFullscreen.value) {
     mainContainer.classList.add('fullscreen-mode')
     document.body.style.overflow = 'hidden'
-    const elementsToHide = [{ el: navbar, originalDisplay: navbar?.style.display || '' }, { el: sidebar, originalDisplay: sidebar?.style.display || '' }]
-    elementsToHide.forEach(item => {
+    const elementsToHide = [
+      { el: navbar, originalDisplay: navbar?.style.display || '' },
+      { el: sidebar, originalDisplay: sidebar?.style.display || '' }
+    ]
+    elementsToHide.forEach((item) => {
       if (item.el && item.el.style.display !== 'none') {
         item.originalDisplay = item.el.style.display
         item.el.style.display = 'none'
@@ -332,7 +346,7 @@ function toggleFullscreen() {
   } else {
     mainContainer.classList.remove('fullscreen-mode')
     document.body.style.overflow = ''
-    hiddenElements.value.forEach(item => {
+    hiddenElements.value.forEach((item) => {
       if (item.el) {
         item.el.style.display = item.originalDisplay
       }
@@ -344,32 +358,46 @@ function toggleFullscreen() {
 }
 
 /*
-* 下拉菜单命令分发
-*/
+ * 下拉菜单命令分发
+ */
 function handleDropdownCommand(command: string | number | object) {
   const tag = selectedDropdownTag.value
   selectedTag.value = tag
   switch (command) {
-    case 'refresh':     refreshSelectedTag(tag); break
-    case 'fullscreen':  toggleFullscreen(); break
-    case 'close':       closeSelectedTag(tag); break
-    case 'closeOthers': closeOthersTags(); break
-    case 'closeLeft':   closeLeftTags(); break
-    case 'closeRight':  closeRightTags(); break
-    case 'closeAll':    closeAllTags(tag); break
+    case 'refresh':
+      refreshSelectedTag(tag)
+      break
+    case 'fullscreen':
+      toggleFullscreen()
+      break
+    case 'close':
+      closeSelectedTag(tag)
+      break
+    case 'closeOthers':
+      closeOthersTags()
+      break
+    case 'closeLeft':
+      closeLeftTags()
+      break
+    case 'closeRight':
+      closeRightTags()
+      break
+    case 'closeAll':
+      closeAllTags(tag)
+      break
   }
 }
 
 /*
-* 刷新指定标签页
-*/
+ * 刷新指定标签页
+ */
 function refreshSelectedTag(view: Record<string, any>) {
   tab.refreshPage(view)
 }
 
 /*
-* 关闭标签：若关闭的是当前标签则跳转到最后标签
-*/
+ * 关闭标签：若关闭的是当前标签则跳转到最后标签
+ */
 function closeSelectedTag(view: Record<string, any>) {
   tab.closePage(view).then(({ visitedViews }: any) => {
     if (isActive(view)) {
@@ -379,43 +407,43 @@ function closeSelectedTag(view: Record<string, any>) {
 }
 
 /*
-* 关闭右侧标签，若当前标签被关则回退
-*/
+ * 关闭右侧标签，若当前标签被关则回退
+ */
 function closeRightTags() {
-  tab.closeRightPage(selectedTag.value).then(visitedViews => {
-    if (!visitedViews.find(i => i.fullPath === route.fullPath)) {
+  tab.closeRightPage(selectedTag.value).then((visitedViews) => {
+    if (!visitedViews.find((i) => i.fullPath === route.fullPath)) {
       toLastView(visitedViews)
     }
   })
 }
 
 /*
-* 关闭左侧标签，若当前标签被关则回退
-*/
+ * 关闭左侧标签，若当前标签被关则回退
+ */
 function closeLeftTags() {
-  tab.closeLeftPage(selectedTag.value).then(visitedViews => {
-    if (!visitedViews.find(i => i.fullPath === route.fullPath)) {
+  tab.closeLeftPage(selectedTag.value).then((visitedViews) => {
+    if (!visitedViews.find((i) => i.fullPath === route.fullPath)) {
       toLastView(visitedViews)
     }
   })
 }
 
 /*
-* 关闭其他标签：先跳转到目标标签再关闭其他
-*/
+ * 关闭其他标签：先跳转到目标标签再关闭其他
+ */
 function closeOthersTags() {
-  router.push(selectedTag.value).catch(() => { })
+  router.push(selectedTag.value).catch(() => {})
   tab.closeOtherPage(selectedTag.value).then(() => {
     moveToCurrentTag()
   })
 }
 
 /*
-* 关闭全部标签（固定标签保留），若当前页被关则回退
-*/
+ * 关闭全部标签（固定标签保留），若当前页被关则回退
+ */
 function closeAllTags(view: Record<string, any>) {
   tab.closeAllPage().then(({ visitedViews }) => {
-    if (affixTags.value.some(tag => tag.path === route.path)) {
+    if (affixTags.value.some((tag) => tag.path === route.path)) {
       return
     }
     toLastView(visitedViews, view)
@@ -423,8 +451,8 @@ function closeAllTags(view: Record<string, any>) {
 }
 
 /*
-* 跳转到最后标签。无标签时：Dashboard 走 redirect 刷新，其他跳首页
-*/
+ * 跳转到最后标签。无标签时：Dashboard 走 redirect 刷新，其他跳首页
+ */
 function toLastView(visitedViews: TagView[], view?: Record<string, any>) {
   const latestView = visitedViews.slice(-1)[0]
   if (latestView) {
@@ -439,8 +467,8 @@ function toLastView(visitedViews: TagView[], view?: Record<string, any>) {
 }
 
 /*
-* 右键菜单：记录位置和选中标签
-*/
+ * 右键菜单：记录位置和选中标签
+ */
 function openMenu(tag: Record<string, any>, e: MouseEvent) {
   left.value = e.clientX
   top.value = e.clientY
@@ -449,21 +477,20 @@ function openMenu(tag: Record<string, any>, e: MouseEvent) {
 }
 
 /*
-* 关闭右键菜单
-*/
+ * 关闭右键菜单
+ */
 function closeMenu() {
   visible.value = false
 }
 
 /*
-* 滚动时关闭右键菜单，更新箭头状态
-*/
+ * 滚动时关闭右键菜单，更新箭头状态
+ */
 function handleScroll() {
   closeMenu()
   updateArrowState()
 }
 </script>
-
 
 <style lang="scss" scoped>
 $tags-bar-height: 34px;
@@ -495,7 +522,9 @@ $tags-bar-height: 34px;
     color: $btn-color;
     font-size: 13px;
     user-select: none;
-    transition: background 0.15s, color 0.15s;
+    transition:
+      background 0.15s,
+      color 0.15s;
 
     &:hover:not(.disabled) {
       background: $btn-hover-bg;
@@ -507,8 +536,12 @@ $tags-bar-height: 34px;
       cursor: not-allowed;
     }
 
-    &--left  { border-right: $divider; }
-    &--right { border-left: $divider; }
+    &--left {
+      border-right: $divider;
+    }
+    &--right {
+      border-left: $divider;
+    }
   }
 
   .tags-view-wrapper {
@@ -534,8 +567,12 @@ $tags-bar-height: 34px;
       vertical-align: middle;
       padding-top: 2px !important;
 
-      &:first-of-type { margin-left: 6px; }
-      &:last-of-type  { margin-right: 15px; }
+      &:first-of-type {
+        margin-left: 6px;
+      }
+      &:last-of-type {
+        margin-right: 15px;
+      }
     }
   }
 
@@ -577,7 +614,9 @@ $tags-bar-height: 34px;
     font-size: 13px;
     border-left: $divider;
     user-select: none;
-    transition: background 0.15s, color 0.15s;
+    transition:
+      background 0.15s,
+      color 0.15s;
 
     &:hover {
       background: $btn-hover-bg;
@@ -600,7 +639,7 @@ $tags-bar-height: 34px;
     font-size: 12px;
     font-weight: 400;
     color: var(--tags-item-text, #333);
-    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
     border: 1px solid var(--el-border-color-light, #e4e7ed);
 
     li {
@@ -658,7 +697,10 @@ $tags-bar-height: 34px;
         color: var(--chrome-tab-text);
         padding-top: 0 !important;
         box-shadow: none !important;
-        transition: background 0.12s ease, color 0.12s ease, border-radius 0.12s ease;
+        transition:
+          background 0.12s ease,
+          color 0.12s ease,
+          border-radius 0.12s ease;
 
         &::before,
         &::after {
@@ -718,11 +760,13 @@ $tags-bar-height: 34px;
           box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 
           &::before {
-            box-shadow: calc(var(--chrome-wing-r) * 0.5) calc(var(--chrome-wing-r) * 0.5) 0 calc(var(--chrome-wing-r) * 0.5) var(--chrome-tab-active-bg);
+            box-shadow: calc(var(--chrome-wing-r) * 0.5) calc(var(--chrome-wing-r) * 0.5) 0
+              calc(var(--chrome-wing-r) * 0.5) var(--chrome-tab-active-bg);
           }
 
           &::after {
-            box-shadow: calc(var(--chrome-wing-r) * -0.5) calc(var(--chrome-wing-r) * 0.5) 0 calc(var(--chrome-wing-r) * 0.5) var(--chrome-tab-active-bg);
+            box-shadow: calc(var(--chrome-wing-r) * -0.5) calc(var(--chrome-wing-r) * 0.5) 0
+              calc(var(--chrome-wing-r) * 0.5) var(--chrome-tab-active-bg);
           }
         }
       }
@@ -744,7 +788,7 @@ $tags-bar-height: 34px;
       border-radius: 50%;
       transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
       cursor: pointer;
-      
+
       .el-icon-close {
         width: 1em;
         height: 1em;
@@ -754,10 +798,10 @@ $tags-bar-height: 34px;
         align-items: center;
         justify-content: center;
       }
-      
+
       &:hover {
         background-color: var(--tags-close-hover, #b4bccc);
-        
+
         .el-icon-close {
           color: #fff;
         }

@@ -54,7 +54,9 @@ function saveVisitedViews(views: TagView[]): void {
    * 2. 只提取标签恢复所需的关键字段（路径、名称、标题、查询参数和 meta），
    *    避免把页面运行过程中临时挂载的响应式数据或其他冗余属性一并持久化，降低缓存体积，也减少恢复时的歧义。
    */
-  const toSave = views.filter(v => !(v.meta && v.meta.affix)).map(v => ({ path: v.path, fullPath: v.fullPath, name: v.name, title: v.title, query: v.query, meta: v.meta }))
+  const toSave = views
+    .filter((v) => !(v.meta && v.meta.affix))
+    .map((v) => ({ path: v.path, fullPath: v.fullPath, name: v.name, title: v.title, query: v.query, meta: v.meta }))
   cache.local.setJSON(PERSIST_KEY, toSave)
 }
 
@@ -83,267 +85,265 @@ interface ViewsResult {
 /**
  * 标签页视图 Store
  */
-const useTagsViewStore = defineStore(
-  'tags-view',
-  {
+const useTagsViewStore = defineStore('tags-view', {
+  /**
+   * 状态定义
+   *
+   * 1. visitedViews：
+   *    - 供 `layout/components/TagsView/index.vue` 和 `ScrollPane.vue` 渲染顶部标签、滚动定位、右键菜单和关闭逻辑；
+   *    - 保存的是"可导航标签对象"，需要保留 path、fullPath、title、query、meta 等信息，才能正确展示标题、恢复路由和做持久化；
+   *    - 它是标签体系的主数据源，普通页签与 affix 固定页签都会进入这里。
+   *
+   * 2. cachedViews：
+   *    - 供 `layout/components/AppMain.vue` 的 `<keep-alive :include="...">` 直接消费；
+   *    - 这里只需要组件 `name` 字符串集合，因为 keep-alive 只按组件名决定是否缓存，不关心标题、query、是否 affix 等展示信息；
+   *    - 因此它和 visitedViews 虽然关联紧密，但数据结构、去重规则和使用场景都不同，不能简单合并为一份。
+   */
+  state: () => ({
+    visitedViews: [] as TagView[],
+    cachedViews: [] as string[]
+  }),
+  /**
+   * 动作方法定义
+   *
+   * 这些方法围绕"单个标签操作"和"批量标签整理"两类场景展开，并在必要时同步持久化。
+   */
+  actions: {
     /**
-     * 状态定义
-     *
-     * 1. visitedViews：
-     *    - 供 `layout/components/TagsView/index.vue` 和 `ScrollPane.vue` 渲染顶部标签、滚动定位、右键菜单和关闭逻辑；
-     *    - 保存的是"可导航标签对象"，需要保留 path、fullPath、title、query、meta 等信息，才能正确展示标题、恢复路由和做持久化；
-     *    - 它是标签体系的主数据源，普通页签与 affix 固定页签都会进入这里。
-     *
-     * 2. cachedViews：
-     *    - 供 `layout/components/AppMain.vue` 的 `<keep-alive :include="...">` 直接消费；
-     *    - 这里只需要组件 `name` 字符串集合，因为 keep-alive 只按组件名决定是否缓存，不关心标题、query、是否 affix 等展示信息；
-     *    - 因此它和 visitedViews 虽然关联紧密，但数据结构、去重规则和使用场景都不同，不能简单合并为一份。
+     * 同时新增访问标签和缓存标签，是页面进入时最常用的统一入口。
      */
-    state: () => ({
-      visitedViews: [] as TagView[],
-      cachedViews: [] as string[]
-    }),
+    addView(view: TagView) {
+      this.addVisitedView(view)
+      this.addCachedView(view)
+    },
     /**
-     * 动作方法定义
-     *
-     * 这些方法围绕"单个标签操作"和"批量标签整理"两类场景展开，并在必要时同步持久化。
+     * 新增普通访问标签，并在成功新增后刷新持久化数据。
      */
-    actions: {
-      /**
-       * 同时新增访问标签和缓存标签，是页面进入时最常用的统一入口。
-       */
-      addView(view: TagView) {
-        this.addVisitedView(view)
-        this.addCachedView(view)
-      },
-      /**
-       * 新增普通访问标签，并在成功新增后刷新持久化数据。
-       */
-      addVisitedView(view: TagView) {
-        if (this.visitedViews.some(v => v.path === view.path)) return
-        this.visitedViews.push(
-          Object.assign({}, view, {
-            title: view.meta && view.meta.title ? view.meta.title : 'no-name'
-          })
-        )
-        saveVisitedViews(this.visitedViews)
-      },
-      /**
-       * 新增固定标签。
-       *
-       * affix 标签通常在应用初始化时插入到头部，因此使用 unshift 保持固定标签靠前展示。
-       */
-      addAffixView(view: TagView) {
-        if (this.visitedViews.some(v => v.path === view.path)) return
-        this.visitedViews.unshift(
-          Object.assign({}, view, {
-            title: view.meta && view.meta.title ? view.meta.title : 'no-name'
-          })
-        )
-      },
-      /**
-       * 新增缓存标签。
-       *
-       * 页面声明了 name 即可进入 keep-alive 缓存列表。
-       */
-      addCachedView(view: TagView) {
-        if (typeof view.name !== 'string') return
-        if (this.cachedViews.includes(view.name)) return
-        if (['Dashboard'].includes(view.name)) {
-          this.cachedViews.push(view.name)
-        }
-      },
-      /**
-       * 删除单个标签的统一入口，同时删除访问记录与缓存记录。
-       */
-      delView(view: TagView) {
-        return new Promise<ViewsResult>(resolve => {
-          this.delVisitedView(view)
-          this.delCachedView(view)
-          resolve({
-            visitedViews: [...this.visitedViews],
-            cachedViews: [...this.cachedViews]
-          })
+    addVisitedView(view: TagView) {
+      if (this.visitedViews.some((v) => v.path === view.path)) return
+      this.visitedViews.push(
+        Object.assign({}, view, {
+          title: view.meta && view.meta.title ? view.meta.title : 'no-name'
         })
-      },
-      /**
-       * 删除单个访问标签，同时刷新持久化缓存。
-       */
-      delVisitedView(view: TagView) {
-        return new Promise<TagView[]>(resolve => {
-          for (const [i, v] of this.visitedViews.entries()) {
-            if (v.path === view.path) {
-              this.visitedViews.splice(i, 1)
-              break
-            }
-          }
-          saveVisitedViews(this.visitedViews)
-          resolve([...this.visitedViews])
+      )
+      saveVisitedViews(this.visitedViews)
+    },
+    /**
+     * 新增固定标签。
+     *
+     * affix 标签通常在应用初始化时插入到头部，因此使用 unshift 保持固定标签靠前展示。
+     */
+    addAffixView(view: TagView) {
+      if (this.visitedViews.some((v) => v.path === view.path)) return
+      this.visitedViews.unshift(
+        Object.assign({}, view, {
+          title: view.meta && view.meta.title ? view.meta.title : 'no-name'
         })
-      },
-      /**
-       * 删除单个缓存标签。
-       */
-      delCachedView(view: TagView) {
-        return new Promise<string[]>(resolve => {
-          const index = typeof view.name === 'string' ? this.cachedViews.indexOf(view.name) : -1
-          index > -1 && this.cachedViews.splice(index, 1)
-          resolve([...this.cachedViews])
+      )
+    },
+    /**
+     * 新增缓存标签。
+     *
+     * 页面声明了 name 即可进入 keep-alive 缓存列表。
+     */
+    addCachedView(view: TagView) {
+      if (typeof view.name !== 'string') return
+      if (this.cachedViews.includes(view.name)) return
+      if (['Dashboard'].includes(view.name)) {
+        this.cachedViews.push(view.name)
+      }
+    },
+    /**
+     * 删除单个标签的统一入口，同时删除访问记录与缓存记录。
+     */
+    delView(view: TagView) {
+      return new Promise<ViewsResult>((resolve) => {
+        this.delVisitedView(view)
+        this.delCachedView(view)
+        resolve({
+          visitedViews: [...this.visitedViews],
+          cachedViews: [...this.cachedViews]
         })
-      },
-      /**
-       * 删除当前标签之外的其他标签，是"关闭其他"操作的统一入口。
-       */
-      delOthersViews(view: TagView) {
-        return new Promise<ViewsResult>(resolve => {
-          this.delOthersVisitedViews(view)
-          this.delOthersCachedViews(view)
-          resolve({
-            visitedViews: [...this.visitedViews],
-            cachedViews: [...this.cachedViews]
-          })
-        })
-      },
-      /**
-       * 删除其他访问标签，但保留固定标签和当前标签。
-       */
-      delOthersVisitedViews(view: TagView) {
-        return new Promise<TagView[]>(resolve => {
-          this.visitedViews = this.visitedViews.filter(v => {
-            return (v.meta && v.meta.affix) || v.path === view.path
-          })
-          saveVisitedViews(this.visitedViews)
-          resolve([...this.visitedViews])
-        })
-      },
-      /**
-       * 删除其他缓存标签，只保留当前页对应的缓存项。
-       */
-      delOthersCachedViews(view: TagView) {
-        return new Promise<string[]>(resolve => {
-          const index = typeof view.name === 'string' ? this.cachedViews.indexOf(view.name) : -1
-          if (index > -1) {
-            this.cachedViews = this.cachedViews.slice(index, index + 1)
-          } else {
-            this.cachedViews = []
-          }
-          resolve([...this.cachedViews])
-        })
-      },
-      /**
-       * 删除全部标签的统一入口。
-       */
-      delAllViews(view?: TagView) {
-        return new Promise<ViewsResult>(resolve => {
-          this.delAllVisitedViews(view)
-          this.delAllCachedViews(view)
-          resolve({
-            visitedViews: [...this.visitedViews],
-            cachedViews: [...this.cachedViews]
-          })
-        })
-      },
-      /**
-       * 删除全部访问标签，但固定标签始终保留。
-       */
-      delAllVisitedViews(view?: TagView) {
-        return new Promise<TagView[]>(resolve => {
-          const affixTags = this.visitedViews.filter(tag => tag.meta && tag.meta.affix)
-          this.visitedViews = affixTags
-          clearVisitedViewsData()
-          resolve([...this.visitedViews])
-        })
-      },
-      /**
-       * 对外暴露的清理持久化缓存入口。
-       */
-      clearVisitedViews() {
-        clearVisitedViewsData()
-      },
-      /**
-       * 删除全部缓存标签。
-       */
-      delAllCachedViews(view?: TagView) {
-        return new Promise<string[]>(resolve => {
-          this.cachedViews = []
-          resolve([...this.cachedViews])
-        })
-      },
-      /**
-       * 更新单个访问标签的最新信息。
-       *
-       * 常用于页面参数或标题变化后，保持标签展示内容同步。
-       */
-      updateVisitedView(view: TagView) {
-        for (const v of this.visitedViews) {
+      })
+    },
+    /**
+     * 删除单个访问标签，同时刷新持久化缓存。
+     */
+    delVisitedView(view: TagView) {
+      return new Promise<TagView[]>((resolve) => {
+        for (const [i, v] of this.visitedViews.entries()) {
           if (v.path === view.path) {
-            Object.assign(v, view)
+            this.visitedViews.splice(i, 1)
             break
           }
         }
-      },
-      /**
-       * 删除当前标签右侧的所有标签。
-       */
-      delRightTags(view: TagView) {
-        return new Promise<TagView[]>(resolve => {
-          const index = this.visitedViews.findIndex(v => v.path === view.path)
-          if (index === -1) {
-            return
-          }
-          this.visitedViews = this.visitedViews.filter((item, idx) => {
-            if (idx <= index || (item.meta && item.meta.affix)) {
-              return true
-            }
-            if (typeof item.name === 'string') {
-              const i = this.cachedViews.indexOf(item.name)
-              if (i > -1) {
-                this.cachedViews.splice(i, 1)
-              }
-            }
-            return false
-          })
-          saveVisitedViews(this.visitedViews)
-          resolve([...this.visitedViews])
+        saveVisitedViews(this.visitedViews)
+        resolve([...this.visitedViews])
+      })
+    },
+    /**
+     * 删除单个缓存标签。
+     */
+    delCachedView(view: TagView) {
+      return new Promise<string[]>((resolve) => {
+        const index = typeof view.name === 'string' ? this.cachedViews.indexOf(view.name) : -1
+        index > -1 && this.cachedViews.splice(index, 1)
+        resolve([...this.cachedViews])
+      })
+    },
+    /**
+     * 删除当前标签之外的其他标签，是"关闭其他"操作的统一入口。
+     */
+    delOthersViews(view: TagView) {
+      return new Promise<ViewsResult>((resolve) => {
+        this.delOthersVisitedViews(view)
+        this.delOthersCachedViews(view)
+        resolve({
+          visitedViews: [...this.visitedViews],
+          cachedViews: [...this.cachedViews]
         })
-      },
-      /**
-       * 删除当前标签左侧的所有标签。
-       */
-      delLeftTags(view: TagView) {
-        return new Promise<TagView[]>(resolve => {
-          const index = this.visitedViews.findIndex(v => v.path === view.path)
-          if (index === -1) {
-            return
-          }
-          this.visitedViews = this.visitedViews.filter((item, idx) => {
-            if (idx >= index || (item.meta && item.meta.affix)) {
-              return true
-            }
-            if (typeof item.name === 'string') {
-              const i = this.cachedViews.indexOf(item.name)
-              if (i > -1) {
-                this.cachedViews.splice(i, 1)
-              }
-            }
-            return false
-          })
-          saveVisitedViews(this.visitedViews)
-          resolve([...this.visitedViews])
+      })
+    },
+    /**
+     * 删除其他访问标签，但保留固定标签和当前标签。
+     */
+    delOthersVisitedViews(view: TagView) {
+      return new Promise<TagView[]>((resolve) => {
+        this.visitedViews = this.visitedViews.filter((v) => {
+          return (v.meta && v.meta.affix) || v.path === view.path
         })
-      },
-      /**
-       * 恢复持久化的 tags。
-       *
-       * 逐条调用 addVisitedView 进行恢复，复用现有去重与标准化逻辑。
-       */
-      loadPersistedViews() {
-        const views = loadVisitedViews()
-        views.forEach(view => {
-          this.addVisitedView(view)
+        saveVisitedViews(this.visitedViews)
+        resolve([...this.visitedViews])
+      })
+    },
+    /**
+     * 删除其他缓存标签，只保留当前页对应的缓存项。
+     */
+    delOthersCachedViews(view: TagView) {
+      return new Promise<string[]>((resolve) => {
+        const index = typeof view.name === 'string' ? this.cachedViews.indexOf(view.name) : -1
+        if (index > -1) {
+          this.cachedViews = this.cachedViews.slice(index, index + 1)
+        } else {
+          this.cachedViews = []
+        }
+        resolve([...this.cachedViews])
+      })
+    },
+    /**
+     * 删除全部标签的统一入口。
+     */
+    delAllViews(view?: TagView) {
+      return new Promise<ViewsResult>((resolve) => {
+        this.delAllVisitedViews(view)
+        this.delAllCachedViews(view)
+        resolve({
+          visitedViews: [...this.visitedViews],
+          cachedViews: [...this.cachedViews]
         })
+      })
+    },
+    /**
+     * 删除全部访问标签，但固定标签始终保留。
+     */
+    delAllVisitedViews(view?: TagView) {
+      return new Promise<TagView[]>((resolve) => {
+        const affixTags = this.visitedViews.filter((tag) => tag.meta && tag.meta.affix)
+        this.visitedViews = affixTags
+        clearVisitedViewsData()
+        resolve([...this.visitedViews])
+      })
+    },
+    /**
+     * 对外暴露的清理持久化缓存入口。
+     */
+    clearVisitedViews() {
+      clearVisitedViewsData()
+    },
+    /**
+     * 删除全部缓存标签。
+     */
+    delAllCachedViews(view?: TagView) {
+      return new Promise<string[]>((resolve) => {
+        this.cachedViews = []
+        resolve([...this.cachedViews])
+      })
+    },
+    /**
+     * 更新单个访问标签的最新信息。
+     *
+     * 常用于页面参数或标题变化后，保持标签展示内容同步。
+     */
+    updateVisitedView(view: TagView) {
+      for (const v of this.visitedViews) {
+        if (v.path === view.path) {
+          Object.assign(v, view)
+          break
+        }
       }
+    },
+    /**
+     * 删除当前标签右侧的所有标签。
+     */
+    delRightTags(view: TagView) {
+      return new Promise<TagView[]>((resolve) => {
+        const index = this.visitedViews.findIndex((v) => v.path === view.path)
+        if (index === -1) {
+          return
+        }
+        this.visitedViews = this.visitedViews.filter((item, idx) => {
+          if (idx <= index || (item.meta && item.meta.affix)) {
+            return true
+          }
+          if (typeof item.name === 'string') {
+            const i = this.cachedViews.indexOf(item.name)
+            if (i > -1) {
+              this.cachedViews.splice(i, 1)
+            }
+          }
+          return false
+        })
+        saveVisitedViews(this.visitedViews)
+        resolve([...this.visitedViews])
+      })
+    },
+    /**
+     * 删除当前标签左侧的所有标签。
+     */
+    delLeftTags(view: TagView) {
+      return new Promise<TagView[]>((resolve) => {
+        const index = this.visitedViews.findIndex((v) => v.path === view.path)
+        if (index === -1) {
+          return
+        }
+        this.visitedViews = this.visitedViews.filter((item, idx) => {
+          if (idx >= index || (item.meta && item.meta.affix)) {
+            return true
+          }
+          if (typeof item.name === 'string') {
+            const i = this.cachedViews.indexOf(item.name)
+            if (i > -1) {
+              this.cachedViews.splice(i, 1)
+            }
+          }
+          return false
+        })
+        saveVisitedViews(this.visitedViews)
+        resolve([...this.visitedViews])
+      })
+    },
+    /**
+     * 恢复持久化的 tags。
+     *
+     * 逐条调用 addVisitedView 进行恢复，复用现有去重与标准化逻辑。
+     */
+    loadPersistedViews() {
+      const views = loadVisitedViews()
+      views.forEach((view) => {
+        this.addVisitedView(view)
+      })
     }
-  })
+  }
+})
 
 export default useTagsViewStore

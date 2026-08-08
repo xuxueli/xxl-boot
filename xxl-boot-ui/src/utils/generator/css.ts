@@ -13,12 +13,12 @@ function addCss(cssList: string[], el: FormItemConf) {
   const css = el.tag ? styles[el.tag] : undefined
   css && cssList.indexOf(css) === -1 && cssList.push(css)
   if (el.children) {
-    el.children.forEach(el2 => addCss(cssList, el2))
+    el.children.forEach((el2) => addCss(cssList, el2))
   }
 }
 
 export function makeUpCss(conf: FormConf & { fields: FormItemConf[] }): string {
   const cssList: string[] = []
-  conf.fields.forEach(el => addCss(cssList, el))
+  conf.fields.forEach((el) => addCss(cssList, el))
   return cssList.join('\n')
 }

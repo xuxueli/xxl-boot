@@ -5,7 +5,6 @@
 <template>
   <el-dialog v-model="open" width="500px" title="选择生成类型" @open="onOpen" @close="onClose">
     <el-form ref="codeTypeForm" :model="formData" :rules="rules" label-width="100px">
-
       <!-- 生成类型选择 -->
       <el-form-item label="生成类型" prop="type">
         <el-radio-group v-model="formData.type">
@@ -26,7 +25,6 @@
       <el-button type="primary" @click="handelConfirm">确定</el-button>
       <el-button @click="onClose">取消</el-button>
     </template>
-
   </el-dialog>
 </template>
 
@@ -38,7 +36,7 @@ const open = defineModel<boolean>()
 
 // 组件属性
 const props = defineProps({
-  showFileName: Boolean   /* 是否显示文件名输入 */
+  showFileName: Boolean /* 是否显示文件名输入 */
 })
 
 /**
@@ -60,16 +58,20 @@ const formData = ref<{
 // 表单 + 规则
 const codeTypeForm = ref<FormInstance>()        /* 表单 ref */
 const rules = {
-  fileName: [{
-    required: true,
-    message: '请输入文件名',
-    trigger: 'blur'
-  }],
-  type: [{
-    required: true,
-    message: '生成类型不能为空',
-    trigger: 'change'
-  }]
+  fileName: [
+    {
+      required: true,
+      message: '请输入文件名',
+      trigger: 'blur'
+    }
+  ],
+  type: [
+    {
+      required: true,
+      message: '生成类型不能为空',
+      trigger: 'change'
+    }
+  ]
 }
 
 // 生成类型
@@ -92,7 +94,7 @@ function onClose() {
 
 /** 确认生成 */
 function handelConfirm() {
-  codeTypeForm.value!.validate(valid => {
+  codeTypeForm.value!.validate((valid) => {
     if (!valid) return
     emit('confirm', { ...formData.value })
     onClose()

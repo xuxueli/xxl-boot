@@ -16,30 +16,30 @@
  * @param callback   动画结束后的回调函数（可选）
  */
 export function scrollTo(to: number, duration?: number, callback?: () => void): void {
-    const start = position()           // 起始滚动位置
-    const change = to - start          // 需要变化的距离（正数向下，负数向上）
-    const increment = 20               // 每帧时间步长（ms），约等于 50fps
-    let currentTime = 0
-    const totalDuration = (typeof (duration) === 'undefined') ? 500 : duration
+  const start = position() // 起始滚动位置
+  const change = to - start // 需要变化的距离（正数向下，负数向上）
+  const increment = 20 // 每帧时间步长（ms），约等于 50fps
+  let currentTime = 0
+  const totalDuration = typeof duration === 'undefined' ? 500 : duration
 
-    // 动画循环函数
-    const animateScroll = function (): void {
-        // 推进时间
-        currentTime += increment
-        // 用缓动函数计算当前帧位置
-        const val = Math.easeInOutQuad(currentTime, start, change, totalDuration)
-        // 设置滚动位置
-        move(val)
-        // 未到达目标时间则继续下一帧，否则结束并执行回调
-        if (currentTime < totalDuration) {
-            requestAnimFrame(animateScroll)
-        } else {
-            if (callback && typeof (callback) === 'function') {
-                callback()
-            }
-        }
+  // 动画循环函数
+  const animateScroll = function (): void {
+    // 推进时间
+    currentTime += increment
+    // 用缓动函数计算当前帧位置
+    const val = Math.easeInOutQuad(currentTime, start, change, totalDuration)
+    // 设置滚动位置
+    move(val)
+    // 未到达目标时间则继续下一帧，否则结束并执行回调
+    if (currentTime < totalDuration) {
+      requestAnimFrame(animateScroll)
+    } else {
+      if (callback && typeof callback === 'function') {
+        callback()
+      }
     }
-    animateScroll()
+  }
+  animateScroll()
 }
 
 /**
@@ -48,14 +48,17 @@ export function scrollTo(to: number, duration?: number, callback?: () => void): 
  *    - 自动匹配设备刷新率：requestAnimationFrame for Smart Animating http://goo.gl/sx5sts
  */
 const requestAnimFrame: (callback: FrameRequestCallback) => number = (function () {
-    return window.requestAnimationFrame ||
-        (window as unknown as { webkitRequestAnimationFrame?: (cb: FrameRequestCallback) => number }).webkitRequestAnimationFrame ||
-        (window as unknown as { mozRequestAnimationFrame?: (cb: FrameRequestCallback) => number }).mozRequestAnimationFrame ||
-        function (callback: FrameRequestCallback) {
-            return window.setTimeout(callback, 1000 / 60)
-        }
+  return (
+    window.requestAnimationFrame ||
+    (window as unknown as { webkitRequestAnimationFrame?: (cb: FrameRequestCallback) => number })
+      .webkitRequestAnimationFrame ||
+    (window as unknown as { mozRequestAnimationFrame?: (cb: FrameRequestCallback) => number })
+      .mozRequestAnimationFrame ||
+    function (callback: FrameRequestCallback) {
+      return window.setTimeout(callback, 1000 / 60)
+    }
+  )
 })()
-
 
 /**
  * 设置页面滚动位置（兼容多浏览器写法）
@@ -64,10 +67,10 @@ const requestAnimFrame: (callback: FrameRequestCallback) => number = (function (
  * @param amount 目标滚动距离（px）
  */
 function move(amount: number): void {
-    document.documentElement.scrollTop = amount
-    const parent = document.body.parentNode as HTMLElement | null
-    if (parent) parent.scrollTop = amount
-    document.body.scrollTop = amount
+  document.documentElement.scrollTop = amount
+  const parent = document.body.parentNode as HTMLElement | null
+  if (parent) parent.scrollTop = amount
+  document.body.scrollTop = amount
 }
 
 /**
@@ -77,8 +80,8 @@ function move(amount: number): void {
  * @returns 当前滚动位置（px）
  */
 function position(): number {
-    const parent = document.body.parentNode as HTMLElement | null
-    return document.documentElement.scrollTop || (parent ? parent.scrollTop : 0) || document.body.scrollTop
+  const parent = document.body.parentNode as HTMLElement | null
+  return document.documentElement.scrollTop || (parent ? parent.scrollTop : 0) || document.body.scrollTop
 }
 
 /**
@@ -94,10 +97,10 @@ function position(): number {
  * @returns 当前时刻对应的插值结果
  */
 Math.easeInOutQuad = function (t: number, b: number, c: number, d: number): number {
-    t /= d / 2
-    if (t < 1) {
-        return c / 2 * t * t + b
-    }
-    t--
-    return -c / 2 * (t * (t - 2) - 1) + b
+  t /= d / 2
+  if (t < 1) {
+    return (c / 2) * t * t + b
+  }
+  t--
+  return (-c / 2) * (t * (t - 2) - 1) + b
 }

@@ -15,7 +15,7 @@ import { useFullscreen } from '@vueuse/core'
 const { isFullscreen, toggle } = useFullscreen()
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .screenfull-svg {
   display: inline-block;
   cursor: pointer;

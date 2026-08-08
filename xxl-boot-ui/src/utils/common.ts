@@ -56,44 +56,47 @@
  *   parseTime(1705315200000)                   // '2024-01-15 12:00:00'
  */
 export function parseTime(time: Date | number | string, pattern?: string): string | null {
-    if (arguments.length === 0 || !time) {
-        return null
+  if (arguments.length === 0 || !time) {
+    return null
+  }
+  const format = pattern || '{y}-{m}-{d} {h}:{i}:{s}'
+  let date: Date
+  if (typeof time === 'object') {
+    date = time
+  } else {
+    if (typeof time === 'string' && /^[0-9]+$/.test(time)) {
+      time = parseInt(time)
+    } else if (typeof time === 'string') {
+      time = time
+        .replace(new RegExp(/-/gm), '/')
+        .replace('T', ' ')
+        .replace(new RegExp(/\.[\d]{3}/gm), '')
     }
-    const format = pattern || '{y}-{m}-{d} {h}:{i}:{s}'
-    let date: Date
-    if (typeof time === 'object') {
-        date = time
-    } else {
-        if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
-            time = parseInt(time)
-        } else if (typeof time === 'string') {
-            time = time.replace(new RegExp(/-/gm), '/').replace('T', ' ').replace(new RegExp(/\.[\d]{3}/gm), '')
-        }
-        if ((typeof time === 'number') && (time.toString().length === 10)) {
-            time = time * 1000
-        }
-        date = new Date(time)
+    if (typeof time === 'number' && time.toString().length === 10) {
+      time = time * 1000
     }
-    const formatObj: Record<string, number> = {
-        y: date.getFullYear(),
-        m: date.getMonth() + 1,
-        d: date.getDate(),
-        h: date.getHours(),
-        i: date.getMinutes(),
-        s: date.getSeconds(),
-        a: date.getDay()
+    date = new Date(time)
+  }
+  const formatObj: Record<string, number> = {
+    y: date.getFullYear(),
+    m: date.getMonth() + 1,
+    d: date.getDate(),
+    h: date.getHours(),
+    i: date.getMinutes(),
+    s: date.getSeconds(),
+    a: date.getDay()
+  }
+  const timeStr = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result: string, key: string): string => {
+    let value: number | string = formatObj[key]
+    if (key === 'a') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
     }
-    const timeStr = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result: string, key: string): string => {
-        let value: number | string = formatObj[key]
-        if (key === 'a') {
-            return ['日', '一', '二', '三', '四', '五', '六'][value]
-        }
-        if (result.length > 0 && value < 10) {
-            value = '0' + value
-        }
-        return String(value || '0')
-    })
-    return timeStr
+    if (result.length > 0 && value < 10) {
+      value = '0' + value
+    }
+    return String(value || '0')
+  })
+  return timeStr
 }
 
 /**
@@ -108,8 +111,8 @@ export function parseTime(time: Date | number | string, pattern?: string): strin
  *   formatDate('2024-01-15T12:00:00')  // '2024-01-15 12:00:00'
  */
 export function formatDate(cellValue: number | string | null | undefined): string {
-    if (cellValue == null || cellValue === "") return ""
-    return parseTime(cellValue) || ""
+  if (cellValue == null || cellValue === '') return ''
+  return parseTime(cellValue) || ''
 }
 
 /**
@@ -124,24 +127,24 @@ export function formatDate(cellValue: number | string | null | undefined): strin
  *   formatTime(1700000000)             // 超过 2 天时 → '11月15日3时33分'
  */
 export function formatTime(time: number | string, option?: string): string {
-    let t: number = typeof time === 'string' && time.length === 10 ? parseInt(time) * 1000 : Number(time)
-    const d = new Date(t)
-    const now = Date.now()
-    const diff = (now - d.getTime()) / 1000
-    if (diff < 30) {
-        return '刚刚'
-    } else if (diff < 3600) {
-        return Math.ceil(diff / 60) + '分钟前'
-    } else if (diff < 3600 * 24) {
-        return Math.ceil(diff / 3600) + '小时前'
-    } else if (diff < 3600 * 24 * 2) {
-        return '1天前'
-    }
-    if (option) {
-        return parseTime(t, option) || ''
-    } else {
-        return d.getMonth() + 1 + '月' + d.getDate() + '日' + d.getHours() + '时' + d.getMinutes() + '分'
-    }
+  const t: number = typeof time === 'string' && time.length === 10 ? parseInt(time) * 1000 : Number(time)
+  const d = new Date(t)
+  const now = Date.now()
+  const diff = (now - d.getTime()) / 1000
+  if (diff < 30) {
+    return '刚刚'
+  } else if (diff < 3600) {
+    return Math.ceil(diff / 60) + '分钟前'
+  } else if (diff < 3600 * 24) {
+    return Math.ceil(diff / 3600) + '小时前'
+  } else if (diff < 3600 * 24 * 2) {
+    return '1天前'
+  }
+  if (option) {
+    return parseTime(t, option) || ''
+  } else {
+    return d.getMonth() + 1 + '月' + d.getDate() + '日' + d.getHours() + '时' + d.getMinutes() + '分'
+  }
 }
 
 /**
@@ -155,11 +158,11 @@ export function formatTime(time: number | string, option?: string): string {
  *   getTime()           // 今日 00:00:00 Date 对象
  */
 export function getTime(type?: string): number | Date {
-    if (type === 'start') {
-        return new Date().getTime() - 3600 * 1000 * 24 * 90
-    } else {
-        return new Date(new Date().toDateString())
-    }
+  if (type === 'start') {
+    return new Date().getTime() - 3600 * 1000 * 24 * 90
+  } else {
+    return new Date(new Date().toDateString())
+  }
 }
 
 // ==================== 字符串 ====================
@@ -175,10 +178,10 @@ export function getTime(type?: string): number | Date {
  *   parseStrEmpty('hello')     // 'hello'
  */
 export function parseStrEmpty(str: unknown): string {
-    if (!str || str === "undefined" || str === "null") {
-        return ""
-    }
-    return String(str)
+  if (!str || str === 'undefined' || str === 'null') {
+    return ''
+  }
+  return String(str)
 }
 
 /**
@@ -192,14 +195,14 @@ export function parseStrEmpty(str: unknown): string {
  *   byteLength('你好')       // 6
  */
 export function byteLength(str: string): number {
-    let s = str.length
-    for (let i = str.length - 1; i >= 0; i--) {
-        const code = str.charCodeAt(i)
-        if (code > 0x7f && code <= 0x7ff) s++
-        else if (code > 0x7ff && code <= 0xffff) s += 2
-        if (code >= 0xDC00 && code <= 0xDFFF) i--
-    }
-    return s
+  let s = str.length
+  for (let i = str.length - 1; i >= 0; i--) {
+    const code = str.charCodeAt(i)
+    if (code > 0x7f && code <= 0x7ff) s++
+    else if (code > 0x7ff && code <= 0xffff) s += 2
+    if (code >= 0xdc00 && code <= 0xdfff) i--
+  }
+  return s
 }
 
 /**
@@ -212,9 +215,9 @@ export function byteLength(str: string): number {
  *   html2Text('<p>hello</p>')  // 'hello'
  */
 export function html2Text(val: string): string {
-    const div = document.createElement('div')
-    div.innerHTML = val
-    return div.textContent || div.innerText
+  const div = document.createElement('div')
+  div.innerHTML = val
+  return div.textContent || div.innerText
 }
 
 /**
@@ -227,7 +230,7 @@ export function html2Text(val: string): string {
  *   titleCase('hello world')  // 'Hello World'
  */
 export function titleCase(str: string): string {
-    return str.replace(/( |^)[a-z]/g, L => L.toUpperCase())
+  return str.replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
 }
 
 /**
@@ -240,7 +243,7 @@ export function titleCase(str: string): string {
  *   camelCase('some_field')  // 'someField'
  */
 export function camelCase(str: string): string {
-    return str.replace(/_[a-z]/g, str1 => str1.substr(-1).toUpperCase())
+  return str.replace(/_[a-z]/g, (str1) => str1.substr(-1).toUpperCase())
 }
 
 /**
@@ -255,7 +258,7 @@ export function camelCase(str: string): string {
  *   isNumberStr('abc')    // false
  */
 export function isNumberStr(str: string): boolean {
-    return /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g.test(str)
+  return /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g.test(str)
 }
 
 // ==================== 数组 ====================
@@ -270,13 +273,13 @@ export function isNumberStr(str: string): boolean {
  *   cleanArray([0, 1, '', null, 2])  // [1, 2]
  */
 export function cleanArray(actual: unknown[]): unknown[] {
-    const newArray: unknown[] = []
-    for (let i = 0; i < actual.length; i++) {
-        if (actual[i]) {
-            newArray.push(actual[i])
-        }
+  const newArray: unknown[] = []
+  for (let i = 0; i < actual.length; i++) {
+    if (actual[i]) {
+      newArray.push(actual[i])
     }
-    return newArray
+  }
+  return newArray
 }
 
 /**
@@ -289,7 +292,7 @@ export function cleanArray(actual: unknown[]): unknown[] {
  *   uniqueArr([1,2,1,3])  // [1,2,3]
  */
 export function uniqueArr<T>(arr: T[]): T[] {
-    return Array.from(new Set(arr))
+  return Array.from(new Set(arr))
 }
 
 /**
@@ -298,9 +301,9 @@ export function uniqueArr<T>(arr: T[]): T[] {
  * @returns 唯一字符串
  */
 export function createUniqueString(): string {
-    const timestamp = +new Date() + ''
-    const randomNum = Math.floor((1 + Math.random()) * 65536) + ''
-    return (+(randomNum + timestamp)).toString(32)
+  const timestamp = +new Date() + ''
+  const randomNum = Math.floor((1 + Math.random()) * 65536) + ''
+  return (+(randomNum + timestamp)).toString(32)
 }
 
 // ==================== 对象 ====================
@@ -317,18 +320,18 @@ export function createUniqueString(): string {
  * @returns 合并后的对象
  */
 export function mergeRecursive(source: Record<string, any>, target: Record<string, any>): Record<string, any> {
-    for (const p in target) {
-        try {
-            if (target[p].constructor == Object) {
-                source[p] = mergeRecursive(source[p], target[p])
-            } else {
-                source[p] = target[p]
-            }
-        } catch (e) {
-            source[p] = target[p]
-        }
+  for (const p in target) {
+    try {
+      if (target[p].constructor == Object) {
+        source[p] = mergeRecursive(source[p], target[p])
+      } else {
+        source[p] = target[p]
+      }
+    } catch (e) {
+      source[p] = target[p]
     }
-    return source
+  }
+  return source
 }
 
 /**
@@ -342,21 +345,21 @@ export function mergeRecursive(source: Record<string, any>, target: Record<strin
  * @returns 合并后的对象
  */
 export function objectMerge(target: Record<string, any>, source: any): Record<string, any> {
-    if (typeof target !== 'object') {
-        target = {}
+  if (typeof target !== 'object') {
+    target = {}
+  }
+  if (Array.isArray(source)) {
+    return source.slice()
+  }
+  Object.keys(source).forEach((property) => {
+    const sourceProperty = source[property]
+    if (typeof sourceProperty === 'object') {
+      target[property] = objectMerge(target[property], sourceProperty)
+    } else {
+      target[property] = sourceProperty
     }
-    if (Array.isArray(source)) {
-        return source.slice()
-    }
-    Object.keys(source).forEach(property => {
-        const sourceProperty = source[property]
-        if (typeof sourceProperty === 'object') {
-            target[property] = objectMerge(target[property], sourceProperty)
-        } else {
-            target[property] = sourceProperty
-        }
-    })
-    return target
+  })
+  return target
 }
 
 /**
@@ -369,18 +372,18 @@ export function objectMerge(target: Record<string, any>, source: any): Record<st
  *   const b = deepClone(a)  // b !== a，完全独立
  */
 export function deepClone<T>(source: T): T {
-    if (!source || typeof source !== 'object') {
-        throw new Error('error arguments: deepClone')
+  if (!source || typeof source !== 'object') {
+    throw new Error('error arguments: deepClone')
+  }
+  const targetObj: any = (source as any).constructor === Array ? [] : {}
+  Object.keys(source as any).forEach((keys) => {
+    if ((source as any)[keys] && typeof (source as any)[keys] === 'object') {
+      targetObj[keys] = deepClone((source as any)[keys])
+    } else {
+      targetObj[keys] = (source as any)[keys]
     }
-    const targetObj: any = (source as any).constructor === Array ? [] : {}
-    Object.keys(source as any).forEach(keys => {
-        if ((source as any)[keys] && typeof (source as any)[keys] === 'object') {
-            targetObj[keys] = deepClone((source as any)[keys])
-        } else {
-            targetObj[keys] = (source as any)[keys]
-        }
-    })
-    return targetObj as T
+  })
+  return targetObj as T
 }
 
 // ==================== DOM ====================
@@ -392,17 +395,17 @@ export function deepClone<T>(source: T): T {
  * @param className - CSS 类名
  */
 export function toggleClass(element: HTMLElement, className: string): void {
-    if (!element || !className) {
-        return
-    }
-    let classString = element.className
-    const nameIndex = classString.indexOf(className)
-    if (nameIndex === -1) {
-        classString += '' + className
-    } else {
-        classString = classString.substr(0, nameIndex) + classString.substr(nameIndex + className.length)
-    }
-    element.className = classString
+  if (!element || !className) {
+    return
+  }
+  let classString = element.className
+  const nameIndex = classString.indexOf(className)
+  if (nameIndex === -1) {
+    classString += '' + className
+  } else {
+    classString = classString.substr(0, nameIndex) + classString.substr(nameIndex + className.length)
+  }
+  element.className = classString
 }
 
 /**
@@ -413,7 +416,7 @@ export function toggleClass(element: HTMLElement, className: string): void {
  * @returns 是否包含
  */
 export function hasClass(ele: HTMLElement, cls: string): boolean {
-    return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
+  return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
 }
 
 /**
@@ -423,7 +426,7 @@ export function hasClass(ele: HTMLElement, cls: string): boolean {
  * @param cls - CSS 类名
  */
 export function addClass(ele: HTMLElement, cls: string): void {
-    if (!hasClass(ele, cls)) ele.className += ' ' + cls
+  if (!hasClass(ele, cls)) ele.className += ' ' + cls
 }
 
 /**
@@ -433,10 +436,10 @@ export function addClass(ele: HTMLElement, cls: string): void {
  * @param cls - CSS 类名
  */
 export function removeClass(ele: HTMLElement, cls: string): void {
-    if (hasClass(ele, cls)) {
-        const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
-        ele.className = ele.className.replace(reg, ' ')
-    }
+  if (hasClass(ele, cls)) {
+    const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
+    ele.className = ele.className.replace(reg, ' ')
+  }
 }
 
 // ==================== 函数工具 ====================
@@ -457,43 +460,43 @@ export function removeClass(ele: HTMLElement, cls: string): void {
  *   input.addEventListener('input', debounced)
  */
 export function debounce<T extends (...args: any[]) => any>(
-    func: T,
-    wait: number,
-    immediate?: boolean
+  func: T,
+  wait: number,
+  immediate?: boolean
 ): (...args: Parameters<T>) => ReturnType<T> | undefined {
-    let timeout: ReturnType<typeof setTimeout> | null = null
-    let context: any = null
-    let args: Parameters<T> | null = null
-    let timestamp = 0
-    let result: ReturnType<T> | undefined
-    const later = function () {
-        const last = +new Date() - timestamp
-        if (last < wait && last > 0) {
-            timeout = setTimeout(later, wait - last)
-        } else {
-            timeout = null
-            if (!immediate && args) {
-                result = func.apply(context, args)
-                if (!timeout) {
-                    context = null
-                    args = null
-                }
-            }
+  let timeout: ReturnType<typeof setTimeout> | null = null
+  let context: any = null
+  let args: Parameters<T> | null = null
+  let timestamp = 0
+  let result: ReturnType<T> | undefined
+  const later = function () {
+    const last = +new Date() - timestamp
+    if (last < wait && last > 0) {
+      timeout = setTimeout(later, wait - last)
+    } else {
+      timeout = null
+      if (!immediate && args) {
+        result = func.apply(context, args)
+        if (!timeout) {
+          context = null
+          args = null
         }
+      }
     }
-    return function (this: unknown, ...innerArgs: Parameters<T>) {
-        context = this
-        args = innerArgs
-        timestamp = +new Date()
-        const callNow = immediate && !timeout
-        if (!timeout) timeout = setTimeout(later, wait)
-        if (callNow) {
-            result = func.apply(context, args)
-            context = null
-            args = null
-        }
-        return result
+  }
+  return function (this: unknown, ...innerArgs: Parameters<T>) {
+    context = this
+    args = innerArgs
+    timestamp = +new Date()
+    const callNow = immediate && !timeout
+    if (!timeout) timeout = setTimeout(later, wait)
+    if (callNow) {
+      result = func.apply(context, args)
+      context = null
+      args = null
     }
+    return result
+  }
 }
 
 // ==================== URL / 参数 ====================
@@ -508,18 +511,18 @@ export function debounce<T extends (...args: any[]) => any>(
  *   getQueryObject('http://a.com?name=1&age=2')  // { name: '1', age: '2' }
  */
 export function getQueryObject(url?: string): Record<string, string> {
-    url = url == null ? window.location.href : url
-    const search = url.substring(url.lastIndexOf('?') + 1)
-    const obj: Record<string, string> = {}
-    const reg = /([^?&=]+)=([^?&=]*)/g
-    search.replace(reg, (rs, $1, $2) => {
-        const name = decodeURIComponent($1)
-        let val = decodeURIComponent($2)
-        val = String(val)
-        obj[name] = val
-        return rs
-    })
-    return obj
+  url = url == null ? window.location.href : url
+  const search = url.substring(url.lastIndexOf('?') + 1)
+  const obj: Record<string, string> = {}
+  const reg = /([^?&=]+)=([^?&=]*)/g
+  search.replace(reg, (rs, $1, $2) => {
+    const name = decodeURIComponent($1)
+    let val = decodeURIComponent($2)
+    val = String(val)
+    obj[name] = val
+    return rs
+  })
+  return obj
 }
 
 /**
@@ -532,13 +535,13 @@ export function getQueryObject(url?: string): Record<string, string> {
  *   param({ name: 'a', age: 1 })  // 'name=a&age=1'
  */
 export function param(json?: Record<string, any> | null): string {
-    if (!json) return ''
-    return cleanArray(
-        Object.keys(json).map(key => {
-            if (json[key] === undefined) return ''
-            return encodeURIComponent(key) + '=' + encodeURIComponent(json[key])
-        })
-    ).join('&')
+  if (!json) return ''
+  return cleanArray(
+    Object.keys(json).map((key) => {
+      if (json[key] === undefined) return ''
+      return encodeURIComponent(key) + '=' + encodeURIComponent(json[key])
+    })
+  ).join('&')
 }
 
 /**
@@ -551,19 +554,19 @@ export function param(json?: Record<string, any> | null): string {
  *   param2Obj('http://a.com?name=1&age=2')  // { name: '1', age: '2' }
  */
 export function param2Obj(url: string): Record<string, string> {
-    const search = decodeURIComponent(url.split('?')[1]).replace(/\+/g, ' ')
-    if (!search) {
-        return {}
+  const search = decodeURIComponent(url.split('?')[1]).replace(/\+/g, ' ')
+  if (!search) {
+    return {}
+  }
+  const obj: Record<string, string> = {}
+  const searchArr = search.split('&')
+  searchArr.forEach((v) => {
+    const index = v.indexOf('=')
+    if (index !== -1) {
+      obj[v.substring(0, index)] = v.substring(index + 1)
     }
-    const obj: Record<string, string> = {}
-    const searchArr = search.split('&')
-    searchArr.forEach(v => {
-        const index = v.indexOf('=')
-        if (index !== -1) {
-            obj[v.substring(0, index)] = v.substring(index + 1)
-        }
-    })
-    return obj
+  })
+  return obj
 }
 
 /**
@@ -579,25 +582,25 @@ export function param2Obj(url: string): Record<string, string> {
  *   tansParams({ a: 1, b: { c: 2 } })  // 'a=1&b[c]=2&'
  */
 export function tansParams(params: Record<string, any>): string {
-    let result = ''
-    for (const propName of Object.keys(params)) {
-        const value = params[propName]
-        const part = encodeURIComponent(propName) + "="
-        if (value !== null && value !== "" && typeof (value) !== "undefined") {
-            if (typeof value === 'object') {
-                for (const key of Object.keys(value)) {
-                    if (value[key] !== null && value[key] !== "" && typeof (value[key]) !== 'undefined') {
-                        const p = propName + '[' + key + ']'
-                        const subPart = encodeURIComponent(p) + "="
-                        result += subPart + encodeURIComponent(value[key]) + "&"
-                    }
-                }
-            } else {
-                result += part + encodeURIComponent(value) + "&"
-            }
+  let result = ''
+  for (const propName of Object.keys(params)) {
+    const value = params[propName]
+    const part = encodeURIComponent(propName) + '='
+    if (value !== null && value !== '' && typeof value !== 'undefined') {
+      if (typeof value === 'object') {
+        for (const key of Object.keys(value)) {
+          if (value[key] !== null && value[key] !== '' && typeof value[key] !== 'undefined') {
+            const p = propName + '[' + key + ']'
+            const subPart = encodeURIComponent(p) + '='
+            result += subPart + encodeURIComponent(value[key]) + '&'
+          }
         }
+      } else {
+        result += part + encodeURIComponent(value) + '&'
+      }
     }
-    return result
+  }
+  return result
 }
 
 /**
@@ -610,14 +613,14 @@ export function tansParams(params: Record<string, any>): string {
  *   getNormalPath('//a//b/')  // '/a/b'
  */
 export function getNormalPath(p: string): string {
-    if (p.length === 0 || !p || p === 'undefined') {
-        return p
-    }
-    let res = p.replace('//', '/')
-    if (res[res.length - 1] === '/') {
-        return res.slice(0, res.length - 1)
-    }
-    return res
+  if (p.length === 0 || !p || p === 'undefined') {
+    return p
+  }
+  const res = p.replace('//', '/')
+  if (res[res.length - 1] === '/') {
+    return res.slice(0, res.length - 1)
+  }
+  return res
 }
 
 // ==================== 表单 ====================
@@ -630,9 +633,9 @@ export function getNormalPath(p: string): string {
  * 用法：resetForm.call(this, 'formRef')
  */
 export function resetForm(this: { $refs: Record<string, any> }, refName: string): void {
-    if (this.$refs[refName]) {
-        this.$refs[refName].resetFields()
-    }
+  if (this.$refs[refName]) {
+    this.$refs[refName].resetFields()
+  }
 }
 
 /**
@@ -646,21 +649,22 @@ export function resetForm(this: { $refs: Record<string, any> }, refName: string)
  * @returns 查询参数对象
  */
 export function addDateRange(
-    params: Record<string, any>,
-    dateRange?: Array<string | number | Date> | null,
-    propName?: string
+  params: Record<string, any>,
+  dateRange?: Array<string | number | Date> | null,
+  propName?: string
 ): Record<string, any> {
-    const search = params
-    search.params = typeof (search.params) === 'object' && search.params !== null && !Array.isArray(search.params) ? search.params : {}
-    const range = Array.isArray(dateRange) ? dateRange : []
-    if (typeof (propName) === 'undefined') {
-        search.params['beginTime'] = range[0]
-        search.params['endTime'] = range[1]
-    } else {
-        search.params['begin' + propName] = range[0]
-        search.params['end' + propName] = range[1]
-    }
-    return search
+  const search = params
+  search.params =
+    typeof search.params === 'object' && search.params !== null && !Array.isArray(search.params) ? search.params : {}
+  const range = Array.isArray(dateRange) ? dateRange : []
+  if (typeof propName === 'undefined') {
+    search.params['beginTime'] = range[0]
+    search.params['endTime'] = range[1]
+  } else {
+    search.params['begin' + propName] = range[0]
+    search.params['end' + propName] = range[1]
+  }
+  return search
 }
 
 // ==================== 字典 ====================
@@ -676,20 +680,20 @@ export function addDateRange(
  *  selectDictLabel([{ value: '1', label: '启用' }, { value: '0', label: '禁用' }], '1')  // '启用'
  */
 export function selectDictLabel(datas: Record<string, any>, value: any): string {
-    if (value === undefined) {
-        return ""
+  if (value === undefined) {
+    return ''
+  }
+  const actions: any[] = []
+  Object.keys(datas).some((key) => {
+    if (datas[key].value === '' + value) {
+      actions.push(datas[key].label)
+      return true
     }
-    const actions: any[] = []
-    Object.keys(datas).some((key) => {
-        if (datas[key].value === ('' + value)) {
-            actions.push(datas[key].label)
-            return true
-        }
-    })
-    if (actions.length === 0) {
-        actions.push(value)
-    }
-    return actions.join('')
+  })
+  if (actions.length === 0) {
+    actions.push(value)
+  }
+  return actions.join('')
 }
 
 /**
@@ -704,33 +708,33 @@ export function selectDictLabel(datas: Record<string, any>, value: any): string 
  *  selectDictLabels([{ value: '1', label: '启用' }, { value: '0', label: '禁用' }], '1,0')  // '启用,禁用'
  */
 export function selectDictLabels(
-    datas: Record<string, any>,
-    value: string | any[] | undefined,
-    separator?: string
+  datas: Record<string, any>,
+  value: string | any[] | undefined,
+  separator?: string
 ): string {
-    if (value === undefined || value.length === 0) {
-        return ""
-    }
-    if (Array.isArray(value)) {
-        value = value.join(",")
-    }
-    const actions: any[] = []
-    const currentSeparator = undefined === separator ? "," : separator
-    const temp = value.split(currentSeparator)
-    temp.some((item, index) => {
-        let match = false
-        Object.keys(datas).some((key) => {
-            if (datas[key].value === ('' + item)) {
-                actions.push(datas[key].label + currentSeparator)
-                match = true
-            }
-        })
-        if (!match) {
-            actions.push(item + currentSeparator)
-        }
-        return false
+  if (value === undefined || value.length === 0) {
+    return ''
+  }
+  if (Array.isArray(value)) {
+    value = value.join(',')
+  }
+  const actions: any[] = []
+  const currentSeparator = undefined === separator ? ',' : separator
+  const temp = value.split(currentSeparator)
+  temp.some((item, index) => {
+    let match = false
+    Object.keys(datas).some((key) => {
+      if (datas[key].value === '' + item) {
+        actions.push(datas[key].label + currentSeparator)
+        match = true
+      }
     })
-    return actions.join('').substring(0, actions.join('').length - 1)
+    if (!match) {
+      actions.push(item + currentSeparator)
+    }
+    return false
+  })
+  return actions.join('').substring(0, actions.join('').length - 1)
 }
 
 // ==================== 树形 ====================
@@ -751,33 +755,33 @@ export function selectDictLabels(
  *   // → [{id:1, children:[{id:2}]}]
  */
 export function handleTree<T extends Record<string, any>>(
-    data: T[],
-    id?: string,
-    parentId?: string,
-    children?: string
+  data: T[],
+  id?: string,
+  parentId?: string,
+  children?: string
 ): T[] {
-    const config = {
-        id: id || 'id',
-        parentId: parentId || 'parentId',
-        childrenList: children || 'children'
+  const config = {
+    id: id || 'id',
+    parentId: parentId || 'parentId',
+    childrenList: children || 'children'
+  }
+  const childrenListMap: Record<string, T> = {}
+  const tree: T[] = []
+  for (const d of data) {
+    childrenListMap[d[config.id]] = d
+    if (!d[config.childrenList]) {
+      ;(d as Record<string, any>)[config.childrenList] = []
     }
-    const childrenListMap: Record<string, T> = {}
-    const tree: T[] = []
-    for (const d of data) {
-        childrenListMap[d[config.id]] = d
-        if (!d[config.childrenList]) {
-            (d as Record<string, any>)[config.childrenList] = []
-        }
+  }
+  for (const d of data) {
+    const parent = childrenListMap[d[config.parentId]]
+    if (!parent) {
+      tree.push(d)
+    } else {
+      ;(parent as Record<string, any>)[config.childrenList].push(d)
     }
-    for (const d of data) {
-        const parent = childrenListMap[d[config.parentId]]
-        if (!parent) {
-            tree.push(d)
-        } else {
-            (parent as Record<string, any>)[config.childrenList].push(d)
-        }
-    }
-    return tree
+  }
+  return tree
 }
 
 // ==================== 文件 / Blob ====================
@@ -789,5 +793,5 @@ export function handleTree<T extends Record<string, any>>(
  * @returns true 为文件数据，false 为 JSON 错误
  */
 export function blobValidate(data: Blob): boolean {
-    return data.type !== 'application/json'
+  return data.type !== 'application/json'
 }

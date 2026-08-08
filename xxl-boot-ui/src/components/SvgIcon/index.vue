@@ -13,12 +13,12 @@
 
 <script lang="ts">
 /*
-* defineComponent：标准组件导出
-*   - props：定义组件接收的外部参数
-*   - setup：入口函数
-*     - 它接收 props 作为第一个参数。
-*     - 此函数中定义的返回值（暴露给模板的数据和方法），可以在 <template> 中直接使用。
-*/
+ * defineComponent：标准组件导出
+ *   - props：定义组件接收的外部参数
+ *   - setup：入口函数
+ *     - 它接收 props 作为第一个参数。
+ *     - 此函数中定义的返回值（暴露给模板的数据和方法），可以在 <template> 中直接使用。
+ */
 export default defineComponent({
   props: {
     // 图标名称：对应 svg-sprite 的 id，会拼为 #icon-xxx
@@ -35,7 +35,7 @@ export default defineComponent({
     color: {
       type: String,
       default: ''
-    },
+    }
   },
   setup(props) {
     return {

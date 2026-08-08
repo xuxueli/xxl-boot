@@ -4,7 +4,6 @@
 -->
 <template>
   <footer v-if="visible" class="copyright">
-
     <!-- Powered by <b>XXL-BOOT</b> v{{version}}
     ｜-->
     <span>{{ footerContent }}</span>
@@ -14,7 +13,6 @@
   </footer>
 </template>
 
-
 <script setup lang="ts">
 import { useSettingsStore } from '@/store'
 
@@ -23,7 +21,6 @@ const visible = computed(() => settingsStore.footerVisible)
 const footerContent = computed(() => settingsStore.footerContent)
 /*const version = computed(() => settingsStore.version)*/
 </script>
-
 
 <style scoped>
 .copyright {

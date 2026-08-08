@@ -6,11 +6,22 @@
 -->
 <template>
   <el-dialog :title="title" v-model="visible" :width="width" append-to-body @close="handleClose">
-    <el-upload ref="uploadRef" :limit="1" accept=".xlsx, .xls" :headers="headers" :action="uploadUrl"
-               :disabled="isUploading" :on-progress="handleProgress" :on-change="handleFileChange"
-               :on-remove="handleFileRemove" :on-success="handleSuccess" :auto-upload="false" drag>
+    <el-upload
+      ref="uploadRef"
+      :limit="1"
+      accept=".xlsx, .xls"
+      :headers="headers"
+      :action="uploadUrl"
+      :disabled="isUploading"
+      :on-progress="handleProgress"
+      :on-change="handleFileChange"
+      :on-remove="handleFileRemove"
+      :on-success="handleSuccess"
+      :auto-upload="false"
+      drag
+    >
       <el-icon class="el-icon--upload">
-        <UploadFilled/>
+        <UploadFilled />
       </el-icon>
       <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
       <template #tip>
@@ -19,8 +30,13 @@
             <el-checkbox v-model="updateSupport"> {{ updateSupportLabel }}</el-checkbox>
           </div>
           <span>仅允许导入xls、xlsx格式文件。</span>
-          <el-link v-if="templateUrl" type="primary" underline="never" style="font-size: 12px; vertical-align: baseline"
-                   @click="handleDownloadTemplate">下载模板
+          <el-link
+            v-if="templateUrl"
+            type="primary"
+            underline="never"
+            style="font-size: 12px; vertical-align: baseline"
+            @click="handleDownloadTemplate"
+            >下载模板
           </el-link>
         </div>
       </template>
@@ -35,11 +51,11 @@
 </template>
 
 <script setup lang="ts">
-import {getAuthHeaders} from '@/utils/auth'
-import {download} from '@/utils/request'
+import { getAuthHeaders } from '@/utils/auth'
+import { download } from '@/utils/request'
 import modal from '@/utils/modal'
-import {ElMessageBox} from 'element-plus'
-import type {UploadFile, UploadFiles} from 'element-plus'
+import { ElMessageBox } from 'element-plus'
+import type { UploadFile, UploadFiles } from 'element-plus'
 
 /**
  * defineProps：父传子
@@ -82,21 +98,19 @@ const props = defineProps({
  *
  * defineExpose：父传子
  */
-defineExpose({open})
+defineExpose({ open })
 
 /**
  * defineEmits：子传父
  */
 const emit = defineEmits(['success'])
 
-
-const uploadRef = ref<any>(null)             // el-upload 组件引用
-const visible = ref(false)              // 弹窗显示/隐藏
-const selectedFile = ref<any>(null)          // 当前选中的文件
-const isUploading = ref(false)          // 是否正在上传中
-const updateSupport = ref(false)        // 是否覆盖更新已有数据
-const headers = getAuthHeaders()   // 上传请求头（el-upload 不走 axios 拦截器，需手动注入）
-
+const uploadRef = ref<any>(null) // el-upload 组件引用
+const visible = ref(false) // 弹窗显示/隐藏
+const selectedFile = ref<any>(null) // 当前选中的文件
+const isUploading = ref(false) // 是否正在上传中
+const updateSupport = ref(false) // 是否覆盖更新已有数据
+const headers = getAuthHeaders() // 上传请求头（el-upload 不走 axios 拦截器，需手动注入）
 
 // 上传地址（拼接 updateSupport 参数）
 const uploadUrl = computed(() => {
@@ -150,18 +164,25 @@ function handleSuccess(response: any) {
   isUploading.value = false
   selectedFile.value = null
   uploadRef.value?.clearFiles()
-  ElMessageBox.alert("<div style='overflow:auto;overflow-x:hidden;max-height:70vh;padding:10px 20px 0;'>" + response.msg + '</div>', '导入结果', {dangerouslyUseHTMLString: true})
+  ElMessageBox.alert(
+    "<div style='overflow:auto;overflow-x:hidden;max-height:70vh;padding:10px 20px 0;'>" + response.msg + '</div>',
+    '导入结果',
+    { dangerouslyUseHTMLString: true }
+  )
   emit('success')
 }
 
 // 提交上传：校验文件格式后执行上传
 function handleSubmit() {
   const file = selectedFile.value
-  if (!file || file.length === 0 || !file.name.toLowerCase().endsWith('.xls') && !file.name.toLowerCase().endsWith('.xlsx')) {
-    modal.msgError("请选择后缀为 “xls”或“xlsx”的文件。")
+  if (
+    !file ||
+    file.length === 0 ||
+    (!file.name.toLowerCase().endsWith('.xls') && !file.name.toLowerCase().endsWith('.xlsx'))
+  ) {
+    modal.msgError('请选择后缀为 “xls”或“xlsx”的文件。')
     return
   }
   uploadRef.value.submit()
 }
-
 </script>

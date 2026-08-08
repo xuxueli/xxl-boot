@@ -6,15 +6,9 @@
 -->
 <template>
   <div class="icon-body">
-
     <!-- icon输入 -->
-    <el-input
-        v-model="iconName"
-        class="icon-search"
-        clearable
-        placeholder="请输入图标名称"
-    >
-      <template #suffix><i class="el-icon-search el-input__icon"/></template>
+    <el-input v-model="iconName" class="icon-search" clearable placeholder="请输入图标名称">
+      <template #suffix><i class="el-icon-search el-input__icon" /></template>
     </el-input>
 
     <!-- icon列表 -->
@@ -23,19 +17,17 @@
         <div v-for="item in filteredIcons" class="icon-item-wrapper" :key="item" @click="selectedIcon(item)">
           <div :class="['icon-item', { active: activeIcon === item }]">
             <!-- icon -->
-            <SvgIcon :icon-class="item" class-name="icon" style="height: 25px;width: 16px;"/>
+            <SvgIcon :icon-class="item" class-name="icon" style="height: 25px; width: 16px" />
             <!-- icon 名称 -->
             <span>{{ item }}</span>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
-
 /**
  * Svg Icon全量导入：
  *
@@ -52,9 +44,7 @@
  *  // }
  */
 const modules = import.meta.glob('./../../assets/icons/svg/*.svg')
-const icons = Object.keys(modules).map(path =>
-  path.split('assets/icons/svg/')[1].split('.svg')[0]
-)
+const icons = Object.keys(modules).map((path) => path.split('assets/icons/svg/')[1].split('.svg')[0])
 
 /**
  * 传入默认选中 icon
@@ -80,7 +70,7 @@ const iconName = ref('')
 // 关键词，匹配的icon
 const filteredIcons = computed(() => {
   if (!iconName.value) return icons
-  return icons.filter(item => item.includes(iconName.value))
+  return icons.filter((item) => item.includes(iconName.value))
 })
 
 // 选中图标：派发事件并关闭弹窗
@@ -102,7 +92,7 @@ defineExpose({
 })
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .icon-body {
   width: 100%;
   padding: 10px;

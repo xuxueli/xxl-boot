@@ -4,7 +4,14 @@
 -->
 <template>
   <!-- 弹框组件 -->
-  <el-dialog v-model="dialog.visible" :title="`「${dialog.title}」已读用户`" width="680px" top="6vh" append-to-body @close="handleClose">
+  <el-dialog
+    v-model="dialog.visible"
+    :title="`「${dialog.title}」已读用户`"
+    width="680px"
+    top="6vh"
+    append-to-body
+    @close="handleClose"
+  >
     <!-- 已读用户 table -->
     <el-table v-loading="table.loading" :data="table.list" size="small" stripe height="340px">
       <el-table-column type="index" label="序号" width="70" align="center" />
@@ -23,7 +30,7 @@
       v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize"
       @pagination="getList"
-      style="padding: 6px 0px;"
+      style="padding: 6px 0px"
     />
   </el-dialog>
 </template>
@@ -93,12 +100,14 @@ function getList() {
     offset: (pageNum - 1) * pageSize,
     pagesize: pageSize
   }
-  listMessageReadUsers(params).then(res => {
-    table.value.list = res.data.data
-    table.value.total = res.data.total
-  }).finally(() => {
-    table.value.loading = false
-  })
+  listMessageReadUsers(params)
+    .then((res) => {
+      table.value.list = res.data.data
+      table.value.total = res.data.total
+    })
+    .finally(() => {
+      table.value.loading = false
+    })
 }
 
 /** 关闭弹窗：清空列表与计数 */

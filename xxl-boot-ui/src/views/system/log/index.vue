@@ -19,8 +19,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="日志标题" prop="title">
-        <el-input v-model="queryParams.title" placeholder="请输入日志标题" clearable style="width: 200px"
-          @keyup.enter="handleQuery" />
+        <el-input
+          v-model="queryParams.title"
+          placeholder="请输入日志标题"
+          clearable
+          style="width: 200px"
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -31,7 +36,15 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button
+          type="danger"
+          plain
+          icon="Delete"
+          :disabled="table.multiple"
+          @click="handleDelete"
+          v-hasRole="['admin']"
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport" v-hasRole="['admin']">导出</el-button>
@@ -75,8 +88,13 @@
     </el-table>
 
     <!-- 分页 -->
-    <Pagination v-show="table.total > 0" :total="table.total" v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize" @pagination="getList" />
+    <Pagination
+      v-show="table.total > 0"
+      :total="table.total"
+      v-model:page="queryParams.pageNum"
+      v-model:limit="queryParams.pageSize"
+      @pagination="getList"
+    />
 
     <!-- 详情弹窗 -->
     <LogDetail v-model:visible="detail.visible" :row="detail.row" :module-map="moduleDict.map" />
@@ -97,7 +115,6 @@ import type { EnumOption, TableState } from '@/types'
 
 const resetForm = useFormReset()
 
-
 /** 详情弹窗状态 */
 interface DetailState {
   visible: boolean
@@ -109,7 +126,6 @@ interface DictState {
   options: EnumOption[]
   map: Record<number | string, string | undefined>
 }
-
 
 // --------------------------------- ref data ---------------------------------
 
@@ -134,8 +150,8 @@ const table = ref<TableState<Log>>({
 
 // 详情弹框：UI数据
 const detail = ref<DetailState>({
-  visible: false,  /* 详情弹窗：可见状态 */
-  row: {}          /* 详情弹窗：当前查看的日志行 */
+  visible: false /* 详情弹窗：可见状态 */,
+  row: {} /* 详情弹窗：当前查看的日志行 */
 })
 
 // 枚举数据（下拉选项 + 编码→名称映射）
@@ -148,7 +164,6 @@ const moduleDict = ref<DictState>({
   map: {}       /* 系统模块编码 → 名称映射 */
 })
 
-
 // --------------------------------- fun ---------------------------------
 
 /** 查询日志列表 */
@@ -156,7 +171,7 @@ function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
   const params = usePageParams(queryParams)()
-  pageList(params).then(response => {
+  pageList(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -165,7 +180,7 @@ function getList() {
 
 /** 日志类型编码 → 文案 */
 function typeText(type: number) {
-  const item = typeDict.value.options.find(i => i.code === type)
+  const item = typeDict.value.options.find((i) => i.code === type)
   return item ? item.title : type
 }
 
@@ -177,14 +192,14 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm("queryRef")
+  resetForm('queryRef')
   queryParams.value.pageNum = 1
   getList()
 }
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection: Log[]) {
-  table.value.ids = selection.map(item => item.id as number)
+  table.value.ids = selection.map((item) => item.id as number)
   table.value.multiple = !selection.length
 }
 
@@ -197,9 +212,13 @@ function handleDetail(row: Log) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  download("system/log/export", {
-    ...usePageParams(queryParams)()
-  }, `log_${new Date().getTime()}.xlsx`)
+  download(
+    'system/log/export',
+    {
+      ...usePageParams(queryParams)()
+    },
+    `log_${new Date().getTime()}.xlsx`
+  )
 }
 
 /** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
@@ -208,27 +227,34 @@ function handleDelete(row: any) {
   if (logIds == null || (Array.isArray(logIds) && logIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除日志编号为"' + logIds + '"的数据项?').then(function() {
-    return delOperlog(logIds)
-  }).then(() => {
-    getList()
-    modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  modal
+    .confirm('是否确认删除日志编号为"' + logIds + '"的数据项?')
+    .then(function () {
+      return delOperlog(logIds)
+    })
+    .then(() => {
+      getList()
+      modal.msgSuccess('删除成功')
+    })
+    .catch(() => {})
 }
-
 
 // --------------------------------- init page ---------------------------------
 
 // 加载日志类型、系统模块枚举（下拉选项）
-loadEnumItem('LogTypeEnum').then(res => {
+loadEnumItem('LogTypeEnum').then((res) => {
   typeDict.value.options = res.data
   typeDict.value.map = {}
-  typeDict.value.options.forEach(item => { typeDict.value.map[item.code] = item.title })
+  typeDict.value.options.forEach((item) => {
+    typeDict.value.map[item.code] = item.title
+  })
 })
-loadEnumItem('LogModuleEnum').then(res => {
+loadEnumItem('LogModuleEnum').then((res) => {
   moduleDict.value.options = res.data
   moduleDict.value.map = {}
-  moduleDict.value.options.forEach(item => { moduleDict.value.map[item.code] = item.title })
+  moduleDict.value.options.forEach((item) => {
+    moduleDict.value.map[item.code] = item.title
+  })
 })
 
 // 页面初始化加载日志列表

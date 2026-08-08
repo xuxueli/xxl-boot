@@ -36,13 +36,37 @@
         <el-button type="primary" plain icon="Plus" @click="openCreateDialog" v-hasRole="['admin']">创建</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleEditTable" v-hasRole="['admin']">修改</el-button>
+        <el-button
+          type="success"
+          plain
+          icon="Edit"
+          :disabled="table.single"
+          @click="handleEditTable"
+          v-hasRole="['admin']"
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button
+          type="danger"
+          plain
+          icon="Delete"
+          :disabled="table.multiple"
+          @click="handleDelete"
+          v-hasRole="['admin']"
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Download" :disabled="table.multiple" @click="handleGenTable" v-hasRole="['admin']">生成</el-button>
+        <el-button
+          type="primary"
+          plain
+          icon="Download"
+          :disabled="table.multiple"
+          @click="handleGenTable"
+          v-hasRole="['admin']"
+          >生成</el-button
+        >
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -55,23 +79,31 @@
           <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="表名称" align="center" prop="tableName" :show-overflow-tooltip="true"/>
-      <el-table-column label="表描述" align="center" prop="tableComment" :show-overflow-tooltip="true"/>
-      <el-table-column label="创建时间" align="center" prop="addTime" width="160"/>
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="160"/>
+      <el-table-column label="表名称" align="center" prop="tableName" :show-overflow-tooltip="true" />
+      <el-table-column label="表描述" align="center" prop="tableComment" :show-overflow-tooltip="true" />
+      <el-table-column label="创建时间" align="center" prop="addTime" width="160" />
+      <el-table-column label="更新时间" align="center" prop="updateTime" width="160" />
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-tooltip content="编辑" placement="top">
-            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)" v-hasRole="['admin']">编辑</el-button>
+            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)" v-hasRole="['admin']"
+              >编辑</el-button
+            >
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']"
+              >删除</el-button
+            >
           </el-tooltip>
           <el-tooltip content="预览" placement="top">
-            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasRole="['admin']">预览</el-button>
+            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasRole="['admin']"
+              >预览</el-button
+            >
           </el-tooltip>
           <el-tooltip content="生成代码" placement="top">
-            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasRole="['admin']">生成代码</el-button>
+            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasRole="['admin']"
+              >生成代码</el-button
+            >
           </el-tooltip>
         </template>
       </el-table-column>
@@ -79,7 +111,7 @@
 
     <!-- 分页 -->
     <Pagination
-      v-show="table.total>0"
+      v-show="table.total > 0"
       :total="table.total"
       v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize"
@@ -91,12 +123,17 @@
       <el-tabs v-model="preview.activeName">
         <el-tab-pane
           v-for="(value, key) in preview.data"
-          :label="key.substring(key.lastIndexOf('/')+1,key.indexOf('.ftl'))"
-          :name="key.substring(key.lastIndexOf('/')+1,key.indexOf('.ftl'))"
+          :label="key.substring(key.lastIndexOf('/') + 1, key.indexOf('.ftl'))"
+          :name="key.substring(key.lastIndexOf('/') + 1, key.indexOf('.ftl'))"
           :key="value"
         >
-          <el-link underline="never" icon="DocumentCopy" v-copyText="value" v-copyText:callback="copyTextSuccess"
-                   style="float:right">&nbsp;复制
+          <el-link
+            underline="never"
+            icon="DocumentCopy"
+            v-copyText="value"
+            v-copyText:callback="copyTextSuccess"
+            style="float: right"
+            >&nbsp;复制
           </el-link>
           <pre>{{ value }}</pre>
         </el-tab-pane>
@@ -114,7 +151,7 @@
     </el-dialog>
 
     <!-- 编辑代码生成信息 -->
-    <EditTable ref="editRef" @ok="handleQuery"/>
+    <EditTable ref="editRef" @ok="handleQuery" />
   </div>
 </template>
 
@@ -131,17 +168,17 @@ const resetForm = useFormReset()
 /* --------------------------------- ref data --------------------------------- */
 
 // 路由参数
-const route = useRoute()             /* 当前路由 */
-const uniqueId = ref("")             /* 页面路由唯一标识 */
+const route = useRoute() /* 当前路由 */
+const uniqueId = ref('') /* 页面路由唯一标识 */
 
 // 组件实例引用
-const editRef = ref<InstanceType<typeof EditTable> | null>(null)            /* 编辑弹窗 ref */
+const editRef = ref<InstanceType<typeof EditTable> | null>(null) /* 编辑弹窗 ref */
 
 // 搜索栏：查询参数
 const queryParams = ref({
-  pageNum: 1,        /* 当前页码 */
-  pageSize: 10,      /* 每页条数 */
-  tableName: undefined,  /* 表名称 */
+  pageNum: 1,             /* 当前页码 */
+  pageSize: 10,           /* 每页条数 */
+  tableName: undefined,   /* 表名称 */
   tableComment: undefined /* 表描述 */
 })
 
@@ -170,7 +207,6 @@ const createDialog = ref({
   content: ""      /* 建表 SQL 语句 */
 })
 
-
 /* --------------------------------- fun --------------------------------- */
 
 /** 页面激活时：若路由携带时间戳且与上次不同，则刷新列表 */
@@ -179,7 +215,7 @@ onActivated(() => {
   if (time != null && time !== uniqueId.value) {
     uniqueId.value = time as string
     queryParams.value.pageNum = Number(route.query.pageNum)
-    resetForm("queryForm")
+    resetForm('queryForm')
     getList()
   }
 })
@@ -187,7 +223,7 @@ onActivated(() => {
 /** 查询表集合 */
 function getList() {
   table.value.loading = true
-  listTable(queryParams.value).then(response => {
+  listTable(queryParams.value).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -202,14 +238,14 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm("queryRef")
+  resetForm('queryRef')
   queryParams.value.pageNum = 1
   getList()
 }
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection: CodegenTable[]) {
-  table.value.ids = selection.map(item => item.id as number)
+  table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length != 1
   table.value.multiple = !selection.length
 }
@@ -218,17 +254,16 @@ function handleSelectionChange(selection: CodegenTable[]) {
 function handleGenTable(row: any) {
   const idList = row && row.id != null ? [row.id] : table.value.ids
   if (!idList || idList.length === 0) {
-    modal.msgError("请选择要生成的数据")
+    modal.msgError('请选择要生成的数据')
     return
   }
-  const zipName = "xxl-boot-codegen.zip"
-  const query = idList.map(id => "ids=" + id).join("&")
-  downloadPlugin.zip("/tool/codegen/batchGenCode?" + query, zipName)
+  const zipName = 'xxl-boot-codegen.zip'
+  const query = idList.map((id) => 'ids=' + id).join('&')
+  downloadPlugin.zip('/tool/codegen/batchGenCode?' + query, zipName)
 }
 
 /** 打开创建表弹窗 */
 function openCreateDialog() {
-
   let demo_sql = `CREATE TABLE \`test01\` (
       \`id\`            INT             NOT NULL AUTO_INCREMENT      COMMENT '主键ID',
       \`name\`          VARCHAR(50)     NOT NULL                     COMMENT '名称',
@@ -245,12 +280,12 @@ function openCreateDialog() {
 
 /** 创建表 */
 function handleCreateTable() {
-  if (createDialog.value.content === "") {
-    modal.msgError("请输入建表语句")
+  if (createDialog.value.content === '') {
+    modal.msgError('请输入建表语句')
     return
   }
   createTable({ tableSql: createDialog.value.content }).then(() => {
-    modal.msgSuccess("创建成功")
+    modal.msgSuccess('创建成功')
     createDialog.value.visible = false
     handleQuery()
   })
@@ -258,17 +293,18 @@ function handleCreateTable() {
 
 /** 预览按钮 */
 function handlePreview(row: any) {
-  previewTable(row.id).then(response => {
+  previewTable(row.id).then((response) => {
     preview.value.data = response.data
     preview.value.open = true
     const keys = Object.keys(response.data)
-    preview.value.activeName = keys.length > 0 ? keys[0].substring(keys[0].lastIndexOf('/') + 1, keys[0].indexOf('.ftl')) : "entity.java"
+    preview.value.activeName =
+      keys.length > 0 ? keys[0].substring(keys[0].lastIndexOf('/') + 1, keys[0].indexOf('.ftl')) : 'entity.java'
   })
 }
 
 /** 复制代码成功 */
 function copyTextSuccess() {
-  modal.msgSuccess("复制成功")
+  modal.msgSuccess('复制成功')
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -287,15 +323,18 @@ function handleDelete(row: any) {
   if (tableIds == null || (Array.isArray(tableIds) && tableIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除表编号为"' + tableIds + '"的数据项？').then(function() {
-    return delTable(tableIds)
-  }).then(() => {
-    getList()
-    modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  modal
+    .confirm('是否确认删除表编号为"' + tableIds + '"的数据项？')
+    .then(function () {
+      return delTable(tableIds)
+    })
+    .then(() => {
+      getList()
+      modal.msgSuccess('删除成功')
+    })
+    .catch(() => {})
 }
 
 /* --------------------------------- page init --------------------------------- */
 getList()
-
 </script>

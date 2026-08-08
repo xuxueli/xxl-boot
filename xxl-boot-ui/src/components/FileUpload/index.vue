@@ -5,23 +5,22 @@
 -->
 <template>
   <div class="upload-file">
-
     <!-- 文件上传组件 -->
     <el-upload
-        multiple
-        :action="uploadFileUrl"
-        :before-upload="handleBeforeUpload"
-        :file-list="fileList"
-        :data="data"
-        :limit="limit"
-        :on-error="handleUploadError"
-        :on-exceed="handleExceed"
-        :on-success="handleUploadSuccess"
-        :show-file-list="false"
-        :headers="headers"
-        class="upload-file-uploader"
-        ref="fileUpload"
-        v-if="!disabled"
+      multiple
+      :action="uploadFileUrl"
+      :before-upload="handleBeforeUpload"
+      :file-list="fileList"
+      :data="data"
+      :limit="limit"
+      :on-error="handleUploadError"
+      :on-exceed="handleExceed"
+      :on-success="handleUploadSuccess"
+      :show-file-list="false"
+      :headers="headers"
+      class="upload-file-uploader"
+      ref="fileUpload"
+      v-if="!disabled"
     >
       <!-- 上传按钮 -->
       <el-button type="primary">选取文件</el-button>
@@ -30,14 +29,22 @@
     <!-- 上传提示 -->
     <div class="el-upload__tip" v-if="showTip && !disabled">
       请上传
-      <template v-if="fileSize"> 大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b></template>
-      <template v-if="fileType"> 格式为 <b style="color: #f56c6c">{{ fileType.join("/") }}</b></template>
+      <template v-if="fileSize">
+        大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b></template
+      >
+      <template v-if="fileType">
+        格式为 <b style="color: #f56c6c">{{ fileType.join('/') }}</b></template
+      >
       的文件
     </div>
 
     <!-- 文件列表 -->
-    <transition-group ref="uploadFileList" class="upload-file-list el-upload-list el-upload-list--text"
-                      name="el-fade-in-linear" tag="ul">
+    <transition-group
+      ref="uploadFileList"
+      class="upload-file-list el-upload-list el-upload-list--text"
+      name="el-fade-in-linear"
+      tag="ul"
+    >
       <li :key="file.uid" class="el-upload-list__item ele-upload-list__item-content" v-for="(file, index) in fileList">
         <el-link :href="`${baseUrl}${file.url}`" underline="never" target="_blank">
           <span class="el-icon-document"> {{ getFileName(file.name) }} </span>
@@ -47,12 +54,11 @@
         </div>
       </li>
     </transition-group>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import {getAuthHeaders} from '@/utils/auth'
+import { getAuthHeaders } from '@/utils/auth'
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
 
@@ -70,7 +76,7 @@ const props = defineProps({
   // 上传接口地址（相对于 base API）
   action: {
     type: String,
-    default: "/file/upload"
+    default: '/file/upload'
   },
   // 上传时携带的额外参数
   data: {
@@ -89,7 +95,7 @@ const props = defineProps({
   // 允许的文件后缀列表，例：['png', 'jpg', 'pdf']
   fileType: {
     type: Array,
-    default: () => ["doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "pdf"]
+    default: () => ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf']
   },
   // 是否显示文件格式/大小提示
   isShowTip: {
@@ -111,39 +117,44 @@ const props = defineProps({
 // defineEmits：子传父（modelValue 通过 update:modelValue 回传）
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
-const fileUpload = ref<any>(null)                  // el-upload 组件引用
-const uploadFileList = ref<any>(null)              // 文件列表 DOM 引用（用于 sortablejs 拖拽）
-const number = ref(0)                         // 正在上传的文件计数
-const uploadList = ref<Array<{name: string, url: string}>>([])   // 本次上传成功的文件列表
-const baseUrl = import.meta.env.VITE_APP_BASE_API                                   // API 基础地址
-const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)         // 上传接口完整地址
-const headers = ref(getAuthHeaders())                                          // 上传请求头（携带 token）
-const fileList = ref<any[]>([])                      // 已上传文件列表 [{name, url}]
-const showTip = computed(                     // 是否显示文件格式/大小提示
-    () => props.isShowTip && (props.fileType || props.fileSize)
+const fileUpload = ref<any>(null)         // el-upload 组件引用
+const uploadFileList = ref<any>(null)     // 文件列表 DOM 引用（用于 sortablejs 拖拽）
+const number = ref(0)                     // 正在上传的文件计数
+const uploadList = ref<Array<{ name: string; url: string }>>([])    // 本次上传成功的文件列表
+const baseUrl = import.meta.env.VITE_APP_BASE_API                   // API 基础地址
+const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)   // 上传接口完整地址
+const headers = ref(getAuthHeaders())                               // 上传请求头（携带 token）
+const fileList = ref<any[]>([])                                     // 已上传文件列表 [{name, url}]
+const showTip = computed(
+  // 是否显示文件格式/大小提示
+  () => props.isShowTip && (props.fileType || props.fileSize)
 )
 
 // 监听外部 modelValue 变化，同步到文件列表
-watch(() => props.modelValue, (val: any) => {
-  if (val) {
-    // 统一转为数组：字符串按逗号分割，数组直接使用
-    const list = Array.isArray(val) ? val : String(val).split(',')
-    let temp = 1
-    // 转为内部格式 [{name, url, uid}]，纯字符串补齐为对象
-    fileList.value = list.map(item => {
-      if (typeof item === "string") {
-        item = {name: item, url: item}
-      }
-      // 为每个文件生成唯一 uid（el-upload 依赖 key）
-      item.uid = item.uid || new Date().getTime() + temp++
-      return item
-    })
-  } else {
-    // 无值时清空列表
-    fileList.value = []
-    return []
-  }
-}, {deep: true, immediate: true})
+watch(
+  () => props.modelValue,
+  (val: any) => {
+    if (val) {
+      // 统一转为数组：字符串按逗号分割，数组直接使用
+      const list = Array.isArray(val) ? val : String(val).split(',')
+      let temp = 1
+      // 转为内部格式 [{name, url, uid}]，纯字符串补齐为对象
+      fileList.value = list.map((item) => {
+        if (typeof item === 'string') {
+          item = { name: item, url: item }
+        }
+        // 为每个文件生成唯一 uid（el-upload 依赖 key）
+        item.uid = item.uid || new Date().getTime() + temp++
+        return item
+      })
+    } else {
+      // 无值时清空列表
+      fileList.value = []
+      return []
+    }
+  },
+  { deep: true, immediate: true }
+)
 
 // 上传前置校验：文件类型、文件名、文件大小，全部通过后显示 loading
 function handleBeforeUpload(file: any) {
@@ -153,7 +164,7 @@ function handleBeforeUpload(file: any) {
     const fileExt = fileName[fileName.length - 1]
     const isTypeOk = props.fileType.indexOf(fileExt) >= 0
     if (!isTypeOk) {
-      modal.msgError(`文件格式不正确，请上传${props.fileType.join("/")}格式文件!`)
+      modal.msgError(`文件格式不正确，请上传${props.fileType.join('/')}格式文件!`)
       return false
     }
   }
@@ -170,7 +181,7 @@ function handleBeforeUpload(file: any) {
       return false
     }
   }
-  modal.loading("正在上传文件，请稍候...")
+  modal.loading('正在上传文件，请稍候...')
   number.value++
   return true
 }
@@ -182,7 +193,7 @@ function handleExceed() {
 
 // 上传失败处理
 function handleUploadError(err: any) {
-  modal.msgError("上传文件失败")
+  modal.msgError('上传文件失败')
   modal.closeLoading()
 }
 
@@ -190,7 +201,7 @@ function handleUploadError(err: any) {
 function handleUploadSuccess(res: any, file: any) {
   if (res.code === 200) {
     // 上传成功，添加到本次成功列表
-    uploadList.value.push({name: res.fileName, url: res.fileName})
+    uploadList.value.push({ name: res.fileName, url: res.fileName })
     uploadedSuccessfully()
   } else {
     // 上传失败（后端业务异常），减少计数、关闭 loading、移除该文件
@@ -205,7 +216,7 @@ function handleUploadSuccess(res: any, file: any) {
 // 删除文件列表中的指定项
 function handleDelete(index: number) {
   fileList.value.splice(index, 1)
-  emit("update:modelValue", listToString(fileList.value))
+  emit('update:modelValue', listToString(fileList.value))
 }
 
 // 全部上传完毕时：合并新旧文件列表，输出到 v-model
@@ -213,11 +224,11 @@ function handleDelete(index: number) {
 function uploadedSuccessfully() {
   if (number.value > 0 && uploadList.value.length === number.value) {
     // 合并已有文件（过滤掉没有 url 的占位项）和本次上传成功的文件
-    fileList.value = fileList.value.filter(f => f.url !== undefined).concat(uploadList.value)
+    fileList.value = fileList.value.filter((f) => f.url !== undefined).concat(uploadList.value)
     uploadList.value = []
     number.value = 0
     // 回写 v-model
-    emit("update:modelValue", listToString(fileList.value))
+    emit('update:modelValue', listToString(fileList.value))
     modal.closeLoading()
   }
 }
@@ -225,8 +236,8 @@ function uploadedSuccessfully() {
 // 从 URL 或文件名中提取纯文件名（去掉路径前缀）
 function getFileName(name: string) {
   // 含路径时取最后一段，如 "/path/to/file.pdf" → "file.pdf"
-  if (name.lastIndexOf("/") > -1) {
-    return name.slice(name.lastIndexOf("/") + 1)
+  if (name.lastIndexOf('/') > -1) {
+    return name.slice(name.lastIndexOf('/') + 1)
   } else {
     return name
   }
@@ -234,8 +245,8 @@ function getFileName(name: string) {
 
 // 文件列表转逗号分隔的 URL 字符串（v-model 输出格式）
 function listToString(list: any[], separator?: string) {
-  let strs = ""
-  separator = separator || ","
+  let strs = ''
+  separator = separator || ','
   for (let i in list) {
     if (list[i].url) {
       strs += list[i].url + separator
@@ -247,7 +258,6 @@ function listToString(list: any[], separator?: string) {
 
 // 初始化拖拽排序（sortablejs）
 onMounted(() => {
-
   if (props.drag && !props.disabled) {
     nextTick(() => {
       // 获取文件列表容器，支持 transition-group 的 $el
@@ -263,11 +273,8 @@ onMounted(() => {
       })
     })
   }
-
 })
-
 </script>
-
 
 <style scoped lang="scss">
 .file-upload-darg {

@@ -16,18 +16,18 @@ $menuHover: #263445;
 $menuLightBg: #ffffff;
 $menuLightHover: #f0f1f5;
 $menuLightText: #303133;
-$menuLightActiveText: #409EFF;
+$menuLightActiveText: #409eff;
 
 // 基础变量
 $base-sidebar-width: 200px;
 $sideBarWidth: 200px;
 
 // 菜单暗色变量
-$base-menu-color: rgba(255,255,255,.65);
+$base-menu-color: rgba(255, 255, 255, 0.65);
 $base-menu-color-active: #ffffff;
 $base-menu-background: #1a1f2e;
 $base-sub-menu-background: #141824;
-$base-sub-menu-hover: rgba(255,255,255,.06);
+$base-sub-menu-hover: rgba(255, 255, 255, 0.06);
 
 :export {
   menuText: $menuText;
@@ -42,13 +42,12 @@ $base-sub-menu-hover: rgba(255,255,255,.06);
   --sidebar-bg: #{$menuBg};
   --sidebar-text: #{$menuText};
   --menu-hover: #{$menuHover};
-  
+
   --navbar-bg: #ffffff;
   --navbar-text: #303133;
-  
+
   /* splitpanes default-theme 变量 */
   --splitpanes-default-bg: #ffffff;
-
 }
 
 // 暗黑模式变量
@@ -62,7 +61,7 @@ html.dark {
   --el-border-color-light: #434343;
   --el-menu-text-color: #d0d0d0;
   --sidebar-logo-text: #d0d0d0;
-  
+
   /* primary */
   --primary-bg: #18212b;
 
@@ -99,7 +98,7 @@ html.dark {
   --blockquote-bg: #1d1e1f;
   --blockquote-border: #303030;
   --blockquote-text: #d0d0d0;
-  
+
   /* Cron 时间表达式 模式变量 */
   --cron-border: #303030;
 
@@ -108,7 +107,8 @@ html.dark {
 
   /* 侧边栏菜单覆盖 */
   .sidebar-container {
-    .el-menu-item:not(.is-active), .menu-title {
+    .el-menu-item:not(.is-active),
+    .menu-title {
       color: var(--el-text-color-regular);
     }
     & .el-menu .theme-dark .nest-menu .el-sub-menu > .el-sub-menu__title,
@@ -132,9 +132,9 @@ html.dark {
       .el-sub-menu__title:hover {
         background-color: var(--menu-hover) !important;
       }
-      .el-menu .nest-menu .el-sub-menu>.el-sub-menu__title,
+      .el-menu .nest-menu .el-sub-menu > .el-sub-menu__title,
       .el-menu .el-sub-menu .el-menu-item,
-      .nest-menu .el-sub-menu>.el-sub-menu__title,
+      .nest-menu .el-sub-menu > .el-sub-menu__title,
       .el-sub-menu .el-menu-item {
         background-color: var(--el-bg-color) !important;
         &:hover {
@@ -151,13 +151,14 @@ html.dark {
     }
   }
 
-  .topbar-menu.el-menu--horizontal > .el-sub-menu .el-sub-menu__title{
+  .topbar-menu.el-menu--horizontal > .el-sub-menu .el-sub-menu__title {
     color: var(--el-text-color-regular) !important;
   }
 
   /* 顶部栏栏菜单覆盖 */
   .el-menu--horizontal {
-    .el-menu-item, .el-sub-menu {
+    .el-menu-item,
+    .el-sub-menu {
       &:not(.is-disabled) {
         &:hover,
         &:focus {
@@ -276,7 +277,8 @@ html.dark {
     --el-table-border-color: var(--el-border-color-light) !important;
     --el-table-row-hover-bg-color: var(--el-bg-color-overlay) !important;
 
-    .el-table__header-wrapper, .el-table__fixed-header-wrapper {
+    .el-table__header-wrapper,
+    .el-table__fixed-header-wrapper {
       th {
         background-color: var(--el-bg-color-overlay, #f8f8f9) !important;
         color: var(--el-text-color-regular, #515a6e);
@@ -295,9 +297,10 @@ html.dark {
       background-color: var(--el-bg-color-overlay);
     }
   }
-  
+
   /* 下拉菜单样式覆盖 */
-  .el-dropdown-menu__item:not(.is-disabled):focus, .el-dropdown-menu__item:not(.is-disabled):hover{
+  .el-dropdown-menu__item:not(.is-disabled):focus,
+  .el-dropdown-menu__item:not(.is-disabled):hover {
     background-color: var(--navbar-hover) !important;
   }
 
@@ -307,7 +310,7 @@ html.dark {
     border-left-color: var(--blockquote-border) !important;
     color: var(--blockquote-text) !important;
   }
-  
+
   /* 时间表达式标题样式覆盖 */
   .popup-result .title {
     background: var(--cron-border);
@@ -320,4 +323,3 @@ html.dark {
     border-top: 1px solid var(--el-bg-color) !important;
   }
 }
-

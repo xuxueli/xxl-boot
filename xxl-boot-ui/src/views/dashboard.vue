@@ -4,14 +4,13 @@
 -->
 <template>
   <div class="app-container dashboard">
-
     <!-- 第一排：指标卡片 -->
     <el-row :gutter="20">
       <el-col :xs="12" :sm="6" v-for="item in stats" :key="item.label">
         <el-card shadow="never" class="stat-card">
           <div class="stat-body">
             <div class="stat-icon-wrap" :style="{ background: item.bg }">
-              <SvgIcon :icon-class="item.icon" class="stat-icon" :style="{ color: item.color }"/>
+              <SvgIcon :icon-class="item.icon" class="stat-icon" :style="{ color: item.color }" />
             </div>
             <div class="stat-info">
               <span class="stat-value">{{ item.value }}</span>
@@ -24,14 +23,13 @@
 
     <!-- 第二排：折线图 + 消息列表 -->
     <el-row :gutter="20" class="row-chart">
-
       <!-- 折线图 -->
       <el-col :xs="24" :lg="17">
         <el-card shadow="hover" class="chart-card">
           <template v-slot:header>
             <div class="card-header">
               <div class="card-header-left">
-                <SvgIcon icon-class="chart"/>
+                <SvgIcon icon-class="chart" />
                 <span>审计日志</span>
               </div>
               <el-radio-group v-model="chartDays" size="small" @change="loadChart">
@@ -51,7 +49,7 @@
           <template v-slot:header>
             <div class="card-header">
               <div class="card-header-left">
-                <SvgIcon icon-class="list"/>
+                <SvgIcon icon-class="list" />
                 <span>站内消息</span>
               </div>
             </div>
@@ -70,20 +68,17 @@
           </div>
         </el-card>
       </el-col>
-
     </el-row>
 
     <!-- 消息详情 -->
     <MessageDetailView ref="messageDetailRef" />
-
   </div>
 </template>
 
 <script setup name="Index" lang="ts">
-
-import {getStats, getLogTrend} from '@/api/dashboard'
-import {listMessageTop, markMessageRead} from '@/api/system/message'
-import {parseTime} from '@/utils/common'
+import { getStats, getLogTrend } from '@/api/dashboard'
+import { listMessageTop, markMessageRead } from '@/api/system/message'
+import { parseTime } from '@/utils/common'
 import * as echarts from 'echarts'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
 import type { ECharts } from 'echarts'
@@ -100,10 +95,10 @@ interface StatItem {
 
 // 指标卡片
 const stats = ref<StatItem[]>([
-  {label: '用户数量', value: 0, icon: 'user', color: '#5b6abf', bg: '#eef0fb'},
-  {label: '角色数量', value: 0, icon: 'peoples', color: '#319c8a', bg: '#e8f6f3'},
-  {label: '日志数量', value: 0, icon: 'log', color: '#d4943c', bg: '#fcf4e8'},
-  {label: '消息数量', value: 0, icon: 'message', color: '#c5566a', bg: '#fbeef1'}
+  { label: '用户数量', value: 0, icon: 'user', color: '#5b6abf', bg: '#eef0fb' },
+  { label: '角色数量', value: 0, icon: 'peoples', color: '#319c8a', bg: '#e8f6f3' },
+  { label: '日志数量', value: 0, icon: 'log', color: '#d4943c', bg: '#fcf4e8' },
+  { label: '消息数量', value: 0, icon: 'message', color: '#c5566a', bg: '#fbeef1' }
 ])
 
 const messages = ref<Message[]>([])
@@ -132,7 +127,7 @@ onUnmounted(() => {
  * 指标卡片 - 数据加载
  */
 function loadStats() {
-  getStats().then(res => {
+  getStats().then((res) => {
     const data = res.data
     stats.value[0].value = data.userCount
     stats.value[1].value = data.roleCount
@@ -145,7 +140,7 @@ function loadStats() {
  * 消息列表 - 数据加载
  */
 function loadMessages() {
-  listMessageTop().then(res => {
+  listMessageTop().then((res) => {
     messages.value = res.data || []
   })
 }
@@ -169,13 +164,13 @@ function handleMsgClick(item: Message) {
  */
 function loadChart() {
   const days = chartDays.value
-  getLogTrend(days).then(res => {
+  getLogTrend(days).then((res) => {
     // 后端返回 [{date: '2026-07-11', count: 3}, ...]
     const list = res.data || []
 
     // 1、转为 Map：date → count，方便按日期查找
     const dateMap: Record<string, number> = {}
-    list.forEach(i => {
+    list.forEach((i) => {
       dateMap[i.date] = i.count
     })
 
@@ -191,7 +186,7 @@ function loadChart() {
 
       // write day date
       dates.push(key || '')
-      counts.push(dateMap[key || ''] || 0)      // 无数据日期补 0
+      counts.push(dateMap[key || ''] || 0) // 无数据日期补 0
     }
 
     // 3、渲染折线图（渐变面积 + 平滑曲线）
@@ -200,45 +195,49 @@ function loadChart() {
     }
     chartInstance = echarts.init(chartRef.value as HTMLElement)
     chartInstance.setOption({
-      tooltip: {trigger: 'axis'},                              // 悬浮提示：轴触发
-      grid: {left: 40, right: 20, bottom: 30, top: 20},        // 图表边距
+      tooltip: { trigger: 'axis' },                       // 悬浮提示：轴触发
+      grid: { left: 40, right: 20, bottom: 30, top: 20 }, // 图表边距
       // X轴：日期
       xAxis: {
         type: 'category',
         data: dates,
-        axisLabel: {fontSize: 11, color: '#909399'}             // X 轴标签样式
+        axisLabel: { fontSize: 11, color: '#909399' }     // X 轴标签样式
       },
       yAxis: {
         type: 'value',
-        minInterval: 1,                                          // Y 轴最小间隔为 1
-        axisLabel: {fontSize: 11, color: '#909399'}
+        minInterval: 1,                                   // Y 轴最小间隔为 1
+        axisLabel: { fontSize: 11, color: '#909399' }
       },
       // X轴：数据
-      series: [{
-        data: counts,
-        type: 'line',
-        smooth: true,                                            // 平滑曲线
-        lineStyle: {width: 2, color: '#409EFF'},                 // 折线样式
-        areaStyle: {                                              // 渐变面积填充
-          color: {
-            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
-            colorStops: [
-              {offset: 0, color: 'rgba(64,158,255,0.3)'},        // 顶部：30% 透明度
-              {offset: 1, color: 'rgba(64,158,255,0.02)'}        // 底部：2% 透明度
-            ]
-          }
-        },
-        itemStyle: {color: '#409EFF'}                             // 数据点颜色
-      }]
+      series: [
+        {
+          data: counts,
+          type: 'line',
+          smooth: true, // 平滑曲线
+          lineStyle: { width: 2, color: '#409EFF' },    // 折线样式
+          areaStyle: {
+            // 渐变面积填充
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(64,158,255,0.3)' }, // 顶部：30% 透明度
+                { offset: 1, color: 'rgba(64,158,255,0.02)' } // 底部：2% 透明度
+              ]
+            }
+          },
+          itemStyle: { color: '#409EFF' }                     // 数据点颜色
+        }
+      ]
     })
   })
 }
-
-
 </script>
 
 <style scoped lang="scss">
-
 .stat-card {
   margin-bottom: 16px;
   border-radius: 8px;
@@ -297,7 +296,8 @@ function loadChart() {
   margin-top: 4px;
 }
 
-.chart-card, .msg-card {
+.chart-card,
+.msg-card {
   margin-bottom: 20px;
   border-radius: 8px;
 }

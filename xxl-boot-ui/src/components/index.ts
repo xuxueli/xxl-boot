@@ -19,7 +19,6 @@ import IFrame from '@/components/IFrame/index.vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 export default function registerComponents(app: App): void {
-
   // 全局注册：Element Plus 图标
   for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
@@ -39,4 +38,3 @@ export default function registerComponents(app: App): void {
   app.component('ImageUpload', ImageUpload)                 // 图片上传
   app.component('IFrame', IFrame)                           // iframe 内嵌页面容器
 }
-

@@ -1,7 +1,6 @@
-
 // ==================== 组件引入 ====================
 // 核心依赖库
-import {createApp} from 'vue'
+import { createApp } from 'vue'
 
 // UI 组件库
 import ElementPlus from 'element-plus'

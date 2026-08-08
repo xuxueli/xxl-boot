@@ -4,8 +4,11 @@
   用法：<TreePanel title="组织机构" :tree-data="deptOptions" @node-click="handleNodeClick" />
 -->
 <template>
-  <div class="tree-sidebar" :class="{ collapsed: collapsed, resizing: isResizing, 'no-initial-transition': isLoadingFromStorage}" :style="{ width: sidebarWidth + 'px' }">
-
+  <div
+    class="tree-sidebar"
+    :class="{ collapsed: collapsed, resizing: isResizing, 'no-initial-transition': isLoadingFromStorage }"
+    :style="{ width: sidebarWidth + 'px' }"
+  >
     <!-- 树形面板：头部 -->
     <div class="tree-header">
       <span class="tree-title" v-show="!collapsed">
@@ -36,10 +39,10 @@
 
     <!-- 树形面板：内容区域 -->
     <div class="tree-wrap" v-show="!collapsed">
-      <el-tree 
-        ref="treeRef" 
-        :data="treeData" 
-        :props="treeProps" 
+      <el-tree
+        ref="treeRef"
+        :data="treeData"
+        :props="treeProps"
         :expand-on-click-node="expandOnClickNode"
         :filter-node-method="filterNodeMethod"
         :default-expand-all="defaultExpandAll"
@@ -67,7 +70,13 @@
     </div>
 
     <!-- 右侧：拖动条 -->
-    <div v-if="!collapsed" class="resize-handle" @mousedown="startResize" @touchstart="startResize" :class="{ active: isResizing }" />
+    <div
+      v-if="!collapsed"
+      class="resize-handle"
+      @mousedown="startResize"
+      @touchstart="startResize"
+      :class="{ active: isResizing }"
+    />
 
     <!-- 右侧：侧边栏展开/收起按钮 -->
     <div class="collapse-button-container">
@@ -78,7 +87,6 @@
         </el-icon>
       </el-tooltip>
     </div>
-
   </div>
 </template>
 
@@ -86,92 +94,95 @@
 /**
  * defineProps 父传子
  */
-const props = withDefaults(defineProps<{
-  // 树形数据
-  treeData?: any[]
-  // 标题
-  title?: string
-  // 标题图标
-  titleIcon?: any
-  // 是否显示搜索框
-  showSearch?: boolean
-  // 搜索框占位符
-  searchPlaceholder?: string
-  // 是否默认收起侧边栏
-  defaultCollapsed?: boolean
-  // 树配置项
-  treeProps?: Record<string, string>
-  // 节点唯一标识字段
-  nodeKey?: string
-  // 是否在点击节点时展开或收起
-  expandOnClickNode?: boolean
-  // 是否显示复选框
-  showCheckbox?: boolean
-  // 是否严格的遵循父子不互相关联
-  checkStrictly?: boolean
-  // 是否默认展开所有节点
-  defaultExpandAll?: boolean
-  // 默认展开的节点的key数组
-  defaultExpandedKeys?: Array<string | number>
-  // 默认宽度
-  defaultWidth?: number
-  // 收起时的宽度
-  collapsedWidth?: number
-  // 最小宽度
-  minWidth?: number
-  // 最大宽度
-  maxWidth?: number
-  // 本地存储的宽度key
-  storageKey?: string
-  // 是否启用本地存储宽度
-  enableStorage?: boolean
-  // 自定义过滤方法
-  filterMethod?: ((value: string, data: any) => boolean) | null
-}>(), {
-  // 树形数据默认空数组
-  treeData: () => [],
-  // 标题默认
-  title: '树形结构',
-  // 标题图标默认
-  titleIcon: 'OfficeBuilding',
-  // 默认显示搜索框
-  showSearch: true,
-  // 搜索框占位符默认
-  searchPlaceholder: '请输入名称',
-  // 默认不收起侧边栏
-  defaultCollapsed: false,
-  // 树配置项默认：children/label 字段
-  treeProps: () => ({
-    children: "children",   // 子节点
-    label: "label"          // 节点名称
-  }),
-  // 节点唯一标识字段默认 id
-  nodeKey: 'id',
-  // 默认点击节点不展开
-  expandOnClickNode: false,
-  // 默认不显示复选框
-  showCheckbox: false,
-  // 默认父子不关联关闭
-  checkStrictly: false,
-  // 默认不展开所有节点
-  defaultExpandAll: false,
-  // 默认展开节点 key 数组为空
-  defaultExpandedKeys: () => [],
-  // 默认宽度
-  defaultWidth: 220,
-  // 收起时的宽度
-  collapsedWidth: 20,
-  // 最小宽度
-  minWidth: 180,
-  // 最大宽度
-  maxWidth: 400,
-  // 本地存储的宽度key
-  storageKey: 'tree-sidebar-width',
-  // 默认启用本地存储宽度
-  enableStorage: true,
-  // 自定义过滤方法默认无
-  filterMethod: null,
-})
+const props = withDefaults(
+  defineProps<{
+    // 树形数据
+    treeData?: any[]
+    // 标题
+    title?: string
+    // 标题图标
+    titleIcon?: any
+    // 是否显示搜索框
+    showSearch?: boolean
+    // 搜索框占位符
+    searchPlaceholder?: string
+    // 是否默认收起侧边栏
+    defaultCollapsed?: boolean
+    // 树配置项
+    treeProps?: Record<string, string>
+    // 节点唯一标识字段
+    nodeKey?: string
+    // 是否在点击节点时展开或收起
+    expandOnClickNode?: boolean
+    // 是否显示复选框
+    showCheckbox?: boolean
+    // 是否严格的遵循父子不互相关联
+    checkStrictly?: boolean
+    // 是否默认展开所有节点
+    defaultExpandAll?: boolean
+    // 默认展开的节点的key数组
+    defaultExpandedKeys?: Array<string | number>
+    // 默认宽度
+    defaultWidth?: number
+    // 收起时的宽度
+    collapsedWidth?: number
+    // 最小宽度
+    minWidth?: number
+    // 最大宽度
+    maxWidth?: number
+    // 本地存储的宽度key
+    storageKey?: string
+    // 是否启用本地存储宽度
+    enableStorage?: boolean
+    // 自定义过滤方法
+    filterMethod?: ((value: string, data: any) => boolean) | null
+  }>(),
+  {
+    // 树形数据默认空数组
+    treeData: () => [],
+    // 标题默认
+    title: '树形结构',
+    // 标题图标默认
+    titleIcon: 'OfficeBuilding',
+    // 默认显示搜索框
+    showSearch: true,
+    // 搜索框占位符默认
+    searchPlaceholder: '请输入名称',
+    // 默认不收起侧边栏
+    defaultCollapsed: false,
+    // 树配置项默认：children/label 字段
+    treeProps: () => ({
+      children: 'children', // 子节点
+      label: 'label' // 节点名称
+    }),
+    // 节点唯一标识字段默认 id
+    nodeKey: 'id',
+    // 默认点击节点不展开
+    expandOnClickNode: false,
+    // 默认不显示复选框
+    showCheckbox: false,
+    // 默认父子不关联关闭
+    checkStrictly: false,
+    // 默认不展开所有节点
+    defaultExpandAll: false,
+    // 默认展开节点 key 数组为空
+    defaultExpandedKeys: () => [],
+    // 默认宽度
+    defaultWidth: 220,
+    // 收起时的宽度
+    collapsedWidth: 20,
+    // 最小宽度
+    minWidth: 180,
+    // 最大宽度
+    maxWidth: 400,
+    // 本地存储的宽度key
+    storageKey: 'tree-sidebar-width',
+    // 默认启用本地存储宽度
+    enableStorage: true,
+    // 自定义过滤方法默认无
+    filterMethod: null
+  }
+)
 
 /**
  * defineEmits：子传父
@@ -190,16 +201,16 @@ const emit = defineEmits([
 const treeRef = ref<any>(null)
 
 // 响应式数据
-const searchKeyword = ref('')                           // 搜索关键词
-const collapsed = ref(props.defaultCollapsed)            // 侧边栏收起状态
-const sidebarWidth = ref(props.defaultCollapsed ? props.collapsedWidth : props.defaultWidth)  // 侧边栏当前宽度
-const isResizing = ref(false)                            // 是否正在拖拽调整宽度
-const startX = ref(0)                                    // 拖拽起始鼠标 X 坐标
-const startWidth = ref(0)                                // 拖拽起始宽度
-const saveWidthTimer = ref<number | null>(null)          // 宽度持久化防抖定时器
-const rafId = ref<number | null>(null)                   // requestAnimationFrame ID
-const isLoadingFromStorage = ref(false)                   // 是否正在从本地存储加载宽度
-const expandedAll = ref(props.defaultExpandAll)           // 是否全部展开
+const searchKeyword = ref('') // 搜索关键词
+const collapsed = ref(props.defaultCollapsed) // 侧边栏收起状态
+const sidebarWidth = ref(props.defaultCollapsed ? props.collapsedWidth : props.defaultWidth) // 侧边栏当前宽度
+const isResizing = ref(false) // 是否正在拖拽调整宽度
+const startX = ref(0) // 拖拽起始鼠标 X 坐标
+const startWidth = ref(0) // 拖拽起始宽度
+const saveWidthTimer = ref<number | null>(null) // 宽度持久化防抖定时器
+const rafId = ref<number | null>(null) // requestAnimationFrame ID
+const isLoadingFromStorage = ref(false) // 是否正在从本地存储加载宽度
+const expandedAll = ref(props.defaultExpandAll) // 是否全部展开
 
 // 计算属性
 const isExpandedAll = computed({
@@ -312,7 +323,7 @@ const toggleExpandAll = () => {
 const expandAllNodes = () => {
   if (!treeRef.value) return
   const allNodes = getAllNodes(treeRef.value.root)
-  allNodes.forEach(node => {
+  allNodes.forEach((node) => {
     if (node.expanded !== undefined && !node.expanded) {
       node.expanded = true
     }
@@ -337,7 +348,7 @@ const getAllNodes = (rootNode: any) => {
 const collapseAllNodes = () => {
   if (!treeRef.value) return
   const allNodes = getAllNodes(treeRef.value.root)
-  allNodes.forEach(node => {
+  allNodes.forEach((node) => {
     if (node.expanded !== undefined && node.expanded) {
       node.expanded = false
     }
@@ -417,9 +428,9 @@ const getCheckedNodes = () => {
 
 // 清空搜索
 const clearSearch = () => {
-  searchKeyword.value = ""
+  searchKeyword.value = ''
   if (treeRef.value) {
-    treeRef.value.filter("")
+    treeRef.value.filter('')
   }
 }
 
@@ -435,7 +446,7 @@ const startResize = (e: any) => {
   isResizing.value = true
   startX.value = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX
   startWidth.value = sidebarWidth.value
-  
+
   if (e.type === 'mousedown') {
     document.addEventListener('mousemove', handleResizeMove)
     document.addEventListener('mouseup', stopResize)
@@ -581,20 +592,20 @@ onBeforeUnmount(() => {
   overflow: hidden;
   position: relative;
   transition: width 0.25s ease;
-  
+
   &.collapsed {
     width: 42px;
   }
-  
+
   &.resizing {
     transition: none;
     will-change: width;
-    
+
     * {
       pointer-events: none !important;
     }
   }
-  
+
   &.no-initial-transition {
     transition: none;
   }
@@ -610,11 +621,11 @@ onBeforeUnmount(() => {
   z-index: 20;
   background: transparent;
   transition: background 0.2s;
-  
+
   &:hover {
     background: rgba(64, 158, 255, 0.3);
   }
-  
+
   &.active {
     background: rgba(64, 158, 255, 0.5);
   }
@@ -635,13 +646,13 @@ onBeforeUnmount(() => {
   border-radius: 0 4px 4px 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
-  
+
   .tree-sidebar.collapsed & {
     right: 0;
     background: #f7f8fa;
     border-radius: 0 4px 4px 0;
   }
-  
+
   .tree-sidebar.resizing & {
     pointer-events: none;
   }
@@ -654,7 +665,7 @@ onBeforeUnmount(() => {
   padding: 4px;
   border-radius: 4px;
   transition: all 0.2s;
-  
+
   &:hover {
     color: #409eff;
     background: #ecf5ff;
@@ -718,7 +729,7 @@ onBeforeUnmount(() => {
   flex: 1;
   overflow-y: auto;
   padding: 6px 6px 12px;
-  
+
   .tree-sidebar.resizing & {
     overflow: hidden;
   }
@@ -730,7 +741,7 @@ onBeforeUnmount(() => {
   &::-webkit-scrollbar-thumb {
     background: #dcdfe6;
     border-radius: 4px;
-    
+
     &:hover {
       background: #c0c4cc;
     }

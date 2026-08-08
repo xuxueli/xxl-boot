@@ -10,15 +10,15 @@
  * @param theme 主题色的十六进制值（如：#409EFF）
  */
 export function handleThemeStyle(theme: string): void {
-    const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
-    const primary = isDark ? softenPrimaryForDark(theme) : theme
-    document.documentElement.style.setProperty('--el-color-primary', primary)
-    for (let i = 1; i <= 9; i++) {
-        document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, `${getLightColor(primary, i / 10)}`)
-    }
-    for (let i = 1; i <= 9; i++) {
-        document.documentElement.style.setProperty(`--el-color-primary-dark-${i}`, `${getDarkColor(primary, i / 10)}`)
-    }
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  const primary = isDark ? softenPrimaryForDark(theme) : theme
+  document.documentElement.style.setProperty('--el-color-primary', primary)
+  for (let i = 1; i <= 9; i++) {
+    document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, `${getLightColor(primary, i / 10)}`)
+  }
+  for (let i = 1; i <= 9; i++) {
+    document.documentElement.style.setProperty(`--el-color-primary-dark-${i}`, `${getDarkColor(primary, i / 10)}`)
+  }
 }
 
 /**
@@ -29,7 +29,7 @@ export function handleThemeStyle(theme: string): void {
  * @returns 柔化后的主题色十六进制值
  */
 function softenPrimaryForDark(theme: string): string {
-    return mixHexColors(theme, '#2d3036', 0.34)
+  return mixHexColors(theme, '#2d3036', 0.34)
 }
 
 /**
@@ -42,10 +42,10 @@ function softenPrimaryForDark(theme: string): string {
  * @returns 混合后的十六进制颜色值
  */
 function mixHexColors(fg: string, bg: string, t: number): string {
-    const a = hexToRgb(String(fg).replace('#', ''))
-    const b = hexToRgb(String(bg).replace('#', ''))
-    const out = [0, 1, 2].map((i) => Math.round(a[i] * (1 - t) + b[i] * t))
-    return rgbToHex(out[0], out[1], out[2])
+  const a = hexToRgb(String(fg).replace('#', ''))
+  const b = hexToRgb(String(bg).replace('#', ''))
+  const out = [0, 1, 2].map((i) => Math.round(a[i] * (1 - t) + b[i] * t))
+  return rgbToHex(out[0], out[1], out[2])
 }
 
 /**
@@ -55,9 +55,9 @@ function mixHexColors(fg: string, bg: string, t: number): string {
  * @returns RGB 数组 [r, g, b]，每个值范围 0-255
  */
 function hexToRgb(str: string): number[] {
-    str = str.replace('#', '')
-    const matched = (str.match(/../g) || []).slice(0, 3)
-    return matched.map(h => parseInt(h || '0', 16))
+  str = str.replace('#', '')
+  const matched = (str.match(/../g) || []).slice(0, 3)
+  return matched.map((h) => parseInt(h || '0', 16))
 }
 
 /**
@@ -69,13 +69,13 @@ function hexToRgb(str: string): number[] {
  * @returns 十六进制颜色值（格式：#RRGGBB）
  */
 function rgbToHex(r: number, g: number, b: number): string {
-    let hexs = [r.toString(16), g.toString(16), b.toString(16)]
-    for (let i = 0; i < 3; i++) {
-        if (hexs[i].length === 1) {
-            hexs[i] = `0${hexs[i]}`
-        }
+  const hexs = [r.toString(16), g.toString(16), b.toString(16)]
+  for (let i = 0; i < 3; i++) {
+    if (hexs[i].length === 1) {
+      hexs[i] = `0${hexs[i]}`
     }
-    return `#${hexs.join('')}`
+  }
+  return `#${hexs.join('')}`
 }
 
 /**
@@ -87,11 +87,11 @@ function rgbToHex(r: number, g: number, b: number): string {
  * @returns 提亮后的十六进制颜色值
  */
 function getLightColor(color: string, level: number): string {
-    const rgb = hexToRgb(color)
-    for (let i = 0; i < 3; i++) {
-        rgb[i] = Math.floor((255 - rgb[i]) * level + rgb[i])
-    }
-    return rgbToHex(rgb[0], rgb[1], rgb[2])
+  const rgb = hexToRgb(color)
+  for (let i = 0; i < 3; i++) {
+    rgb[i] = Math.floor((255 - rgb[i]) * level + rgb[i])
+  }
+  return rgbToHex(rgb[0], rgb[1], rgb[2])
 }
 
 /**
@@ -103,9 +103,9 @@ function getLightColor(color: string, level: number): string {
  * @returns 加深后的十六进制颜色值
  */
 function getDarkColor(color: string, level: number): string {
-    const rgb = hexToRgb(color)
-    for (let i = 0; i < 3; i++) {
-        rgb[i] = Math.floor(rgb[i] * (1 - level))
-    }
-    return rgbToHex(rgb[0], rgb[1], rgb[2])
+  const rgb = hexToRgb(color)
+  for (let i = 0; i < 3; i++) {
+    rgb[i] = Math.floor(rgb[i] * (1 - level))
+  }
+  return rgbToHex(rgb[0], rgb[1], rgb[2])
 }

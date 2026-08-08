@@ -7,26 +7,26 @@
   <div class="component-upload-image">
     <!-- 上传组件 -->
     <el-upload
-        multiple
-        :disabled="disabled"
-        :action="uploadImgUrl"
-        list-type="picture-card"
-        :on-success="handleUploadSuccess"
-        :before-upload="handleBeforeUpload"
-        :data="data"
-        :limit="limit"
-        :on-error="handleUploadError"
-        :on-exceed="handleExceed"
-        ref="imageUpload"
-        :before-remove="handleDelete"
-        :show-file-list="true"
-        :headers="headers"
-        :file-list="fileList"
-        :on-preview="handlePictureCardPreview"
-        :class="{ hide: fileList.length >= limit }"
+      multiple
+      :disabled="disabled"
+      :action="uploadImgUrl"
+      list-type="picture-card"
+      :on-success="handleUploadSuccess"
+      :before-upload="handleBeforeUpload"
+      :data="data"
+      :limit="limit"
+      :on-error="handleUploadError"
+      :on-exceed="handleExceed"
+      ref="imageUpload"
+      :before-remove="handleDelete"
+      :show-file-list="true"
+      :headers="headers"
+      :file-list="fileList"
+      :on-preview="handlePictureCardPreview"
+      :class="{ hide: fileList.length >= limit }"
     >
       <el-icon class="avatar-uploader-icon">
-        <plus/>
+        <plus />
       </el-icon>
     </el-upload>
 
@@ -37,29 +37,21 @@
         大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b>
       </template>
       <template v-if="fileType">
-        格式为 <b style="color: #f56c6c">{{ fileType.join("/") }}</b>
+        格式为 <b style="color: #f56c6c">{{ fileType.join('/') }}</b>
       </template>
       的文件
     </div>
 
     <!-- 预览弹窗 -->
-    <el-dialog
-        v-model="dialogVisible"
-        title="预览"
-        width="800px"
-        append-to-body
-    >
-      <img
-          :src="dialogImageUrl"
-          style="display: block; max-width: 100%; margin: 0 auto"
-      />
+    <el-dialog v-model="dialogVisible" title="预览" width="800px" append-to-body>
+      <img :src="dialogImageUrl" style="display: block; max-width: 100%; margin: 0 auto" />
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import {getAuthHeaders} from '@/utils/auth'
-import {isExternal} from '@/utils/validate'
+import { getAuthHeaders } from '@/utils/auth'
+import { isExternal } from '@/utils/validate'
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
 
@@ -77,7 +69,7 @@ const props = defineProps({
   // 上传接口地址（相对于 base API）
   action: {
     type: String,
-    default: "/file/upload"
+    default: '/file/upload'
   },
   // 上传时携带的额外参数
   data: {
@@ -96,7 +88,7 @@ const props = defineProps({
   // 允许的图片后缀，例：['png', 'jpg', 'jpeg']
   fileType: {
     type: Array,
-    default: () => ["png", "jpg", "jpeg"]
+    default: () => ['png', 'jpg', 'jpeg']
   },
   // 是否显示格式/大小提示
   isShowTip: {
@@ -118,49 +110,54 @@ const props = defineProps({
 // defineEmits：子传父（modelValue 通过 update:modelValue 回传）
 const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
-const imageUpload = ref<any>(null)                  // el-upload 组件引用
-const number = ref(0)                          // 正在上传的图片计数
-const uploadList = ref<Array<{name: string, url: string}>>([])   // 本次上传成功的图片列表
-const dialogImageUrl = ref("")                 // 预览大图的 URL
-const dialogVisible = ref(false)               // 预览弹窗显示/隐藏
-const baseUrl = import.meta.env.VITE_APP_BASE_API                                   // API 基础地址
-const uploadImgUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action)          // 上传接口完整地址
-const headers = ref(getAuthHeaders())                                          // 上传请求头（携带 token）
-const fileList = ref<any[]>([])                       // 已上传图片列表 [{name, url}]
-const showTip = computed(                      // 是否显示格式/大小提示
-    () => props.isShowTip && (props.fileType || props.fileSize)
+const imageUpload = ref<any>(null)        // el-upload 组件引用
+const number = ref(0)                     // 正在上传的图片计数
+const uploadList = ref<Array<{ name: string; url: string }>>([])  // 本次上传成功的图片列表
+const dialogImageUrl = ref('')            // 预览大图的 URL
+const dialogVisible = ref(false)          // 预览弹窗显示/隐藏
+const baseUrl = import.meta.env.VITE_APP_BASE_API                 // API 基础地址
+const uploadImgUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action) // 上传接口完整地址
+const headers = ref(getAuthHeaders())     // 上传请求头（携带 token）
+const fileList = ref<any[]>([])           // 已上传图片列表 [{name, url}]
+const showTip = computed(
+  // 是否显示格式/大小提示
+  () => props.isShowTip && (props.fileType || props.fileSize)
 )
 
 // 监听外部 modelValue 变化，同步到文件列表，自动补齐 baseUrl
-watch(() => props.modelValue, (val: any) => {
-  if (val) {
-    // 统一转为数组：字符串按逗号分割，数组直接使用
-    const list = Array.isArray(val) ? val : String(val).split(",")
-    fileList.value = list.map(item => {
-      if (typeof item === "string") {
-        // 缺少 baseUrl 且非外链时补齐，如 "2024/01/abc.jpg" → "/dev-api/2024/01/abc.jpg"
-        if (item.indexOf(baseUrl as string) === -1 && !isExternal(item)) {
-          item = {name: baseUrl + item, url: baseUrl + item}
-        } else {
-          item = {name: item, url: item}
+watch(
+  () => props.modelValue,
+  (val: any) => {
+    if (val) {
+      // 统一转为数组：字符串按逗号分割，数组直接使用
+      const list = Array.isArray(val) ? val : String(val).split(',')
+      fileList.value = list.map((item) => {
+        if (typeof item === 'string') {
+          // 缺少 baseUrl 且非外链时补齐，如 "2024/01/abc.jpg" → "/dev-api/2024/01/abc.jpg"
+          if (item.indexOf(baseUrl as string) === -1 && !isExternal(item)) {
+            item = { name: baseUrl + item, url: baseUrl + item }
+          } else {
+            item = { name: item, url: item }
+          }
         }
-      }
-      return item
-    })
-  } else {
-    // 无值时清空列表
-    fileList.value = []
-  }
-}, {deep: true, immediate: true})
+        return item
+      })
+    } else {
+      // 无值时清空列表
+      fileList.value = []
+    }
+  },
+  { deep: true, immediate: true }
+)
 
 // 上传前校验：图片格式、文件名、文件大小，通过后显示 loading
 function handleBeforeUpload(file: any) {
   let isImg = false
   if (props.fileType.length) {
     // 从 file.type（MIME）和文件扩展名双重校验
-    let fileExtension = ""
-    if (file.name.lastIndexOf(".") > -1) {
-      fileExtension = file.name.slice(file.name.lastIndexOf(".") + 1)
+    let fileExtension = ''
+    if (file.name.lastIndexOf('.') > -1) {
+      fileExtension = file.name.slice(file.name.lastIndexOf('.') + 1)
     }
     isImg = props.fileType.some((type: any) => {
       if (file.type.indexOf(type) > -1) return true
@@ -169,10 +166,10 @@ function handleBeforeUpload(file: any) {
     })
   } else {
     // 未指定 fileType 时，按 MIME 类型判断是否为图片
-    isImg = file.type.indexOf("image") > -1
+    isImg = file.type.indexOf('image') > -1
   }
   if (!isImg) {
-    modal.msgError(`文件格式不正确，请上传${props.fileType.join("/")}图片格式文件!`)
+    modal.msgError(`文件格式不正确，请上传${props.fileType.join('/')}图片格式文件!`)
     return false
   }
   // 文件名不能含逗号（v-model 以逗号分隔）
@@ -188,7 +185,7 @@ function handleBeforeUpload(file: any) {
       return false
     }
   }
-  modal.loading("正在上传图片，请稍候...")
+  modal.loading('正在上传图片，请稍候...')
   number.value++
 }
 
@@ -201,7 +198,7 @@ function handleExceed() {
 function handleUploadSuccess(res: any, file: any) {
   if (res.code === 200) {
     // 上传成功，添加到本次成功列表
-    uploadList.value.push({name: res.fileName, url: res.fileName})
+    uploadList.value.push({ name: res.fileName, url: res.fileName })
     uploadedSuccessfully()
   } else {
     // 上传失败（后端业务异常），减少计数、关闭 loading、移除该文件
@@ -216,11 +213,11 @@ function handleUploadSuccess(res: any, file: any) {
 // 处理删除图片：仅在上传全部完成后允许删除，删除后同步 v-model
 function handleDelete(file: any): any {
   // 找到当前文件在 fileList 中的索引（按 name 匹配）
-  const findex = fileList.value.map(f => f.name).indexOf(file.name)
+  const findex = fileList.value.map((f) => f.name).indexOf(file.name)
   // 仅在所有文件上传完毕时允许删除（uploadList.length === number.value 表示无进行中的上传）
   if (findex > -1 && uploadList.value.length === number.value) {
     fileList.value.splice(findex, 1)
-    emit("update:modelValue", listToString(fileList.value))
+    emit('update:modelValue', listToString(fileList.value))
     return false
   }
 }
@@ -230,18 +227,18 @@ function handleDelete(file: any): any {
 function uploadedSuccessfully() {
   if (number.value > 0 && uploadList.value.length === number.value) {
     // 合并已有文件（过滤掉没有 url 的占位项）和本次上传成功的文件
-    fileList.value = fileList.value.filter(f => f.url !== undefined).concat(uploadList.value)
+    fileList.value = fileList.value.filter((f) => f.url !== undefined).concat(uploadList.value)
     uploadList.value = []
     number.value = 0
     // 回写 v-model
-    emit("update:modelValue", listToString(fileList.value))
+    emit('update:modelValue', listToString(fileList.value))
     modal.closeLoading()
   }
 }
 
 // 上传失败处理：关闭 loading 并提示
 function handleUploadError() {
-  modal.msgError("上传图片失败")
+  modal.msgError('上传图片失败')
   modal.closeLoading()
 }
 
@@ -253,21 +250,20 @@ function handlePictureCardPreview(file: any) {
 
 // 图片列表转逗号分隔的相对路径字符串（去掉 baseUrl 和 blob 临时路径）
 function listToString(list: any[], separator?: string) {
-  let strs = ""
-  separator = separator || ","
+  let strs = ''
+  separator = separator || ','
   for (let i in list) {
     // 跳过 blob 临时路径（未上传完成的本地预览图）
-    if (undefined !== list[i].url && list[i].url.indexOf("blob:") !== 0) {
+    if (undefined !== list[i].url && list[i].url.indexOf('blob:') !== 0) {
       // 去掉 baseUrl 前缀，仅保存相对路径
-      strs += list[i].url.replace(baseUrl, "") + separator
+      strs += list[i].url.replace(baseUrl, '') + separator
     }
   }
-  return strs !== "" ? strs.substr(0, strs.length - 1) : ""
+  return strs !== '' ? strs.substr(0, strs.length - 1) : ''
 }
 
 // 初始化拖拽排序（sortablejs）
 onMounted(() => {
-
   if (props.drag && !props.disabled) {
     nextTick(() => {
       // 获取 el-upload 内部的图片列表容器
@@ -282,7 +278,6 @@ onMounted(() => {
       })
     })
   }
-
 })
 </script>
 

@@ -15,10 +15,20 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']"
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button
+          type="danger"
+          plain
+          icon="Delete"
+          :disabled="table.multiple"
+          @click="handleDelete"
+          v-hasRole="['admin']"
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Close" @click="handleClose">关闭</el-button>
@@ -43,8 +53,12 @@
       <el-table-column label="新增时间" align="center" prop="addTime" width="170" />
       <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']"
+            >修改</el-button
+          >
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -65,7 +79,11 @@
           <el-input v-model="formState.form.name" placeholder="请输入字典项名称" />
         </el-form-item>
         <el-form-item label="字典项Code" prop="code">
-          <el-input v-model="formState.form.code" placeholder="请输入字典项Code" :disabled="formState.form.id != undefined" />
+          <el-input
+            v-model="formState.form.code"
+            placeholder="请输入字典项Code"
+            :disabled="formState.form.id != undefined"
+          />
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="formState.form.status">
@@ -103,19 +121,17 @@ import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
-
-
 /* --------------------------------- ref data --------------------------------- */
 
 // 路由参数
 const route = useRoute()
-const dictId = ref<number | undefined>(Number(route.query.dictId) || undefined)  /* 当前字典ID（来自路由） */
+const dictId = ref<number | undefined>(Number(route.query.dictId) || undefined) /* 当前字典ID（来自路由） */
 
 // 表单引用
-const formRef = ref<FormInstance>()   /* 编辑表单实例引用 */
+const formRef = ref<FormInstance>() /* 编辑表单实例引用 */
 
 // 页面标题：字典名称
-const dictName = ref<string | undefined>("")    /* 字典名称 */
+const dictName = ref<string | undefined>('') /* 字典名称 */
 
 // 搜索栏：查询参数
 const queryParams = ref<DataQuery>({
@@ -129,25 +145,26 @@ const formState = ref<FormState<DictItem>>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */
-  rules: {         /* 校验规则 */
+  rules: {
+    /* 校验规则 */
     name: [{ required: true, message: "字典项名称不能为空", trigger: "blur" }],
     code: [
-      { required: true, message: "字典项Code不能为空", trigger: "blur" },
-      { pattern: /^[0-9]+$/, message: "只允许输入数字", trigger: "blur" },
+      { required: true, message: '字典项Code不能为空', trigger: 'blur' },
+      { pattern: /^[0-9]+$/, message: '只允许输入数字', trigger: 'blur' },
       {
         validator: (rule, value, callback) => {
           const n = Number(value)
           if (value == null || value === '' || (n >= 1 && n <= 10000000)) {
             callback()
           } else {
-            callback(new Error("需在1-10000000之间"))
+            callback(new Error('需在1-10000000之间'))
           }
         },
-        trigger: "blur"
+        trigger: 'blur'
       }
     ],
-    order: [{ required: true, message: "顺序不能为空", trigger: "blur" }]
-  },
+    order: [{ required: true, message: '顺序不能为空', trigger: 'blur' }]
+  }
 })
 
 // 表格：UI数据
@@ -167,14 +184,13 @@ const { DictStatusEnum: statusOptions } = useEnumOption('DictStatusEnum')
 
 /** 从后端枚举接口加载状态选项 */
 
-
 /** 查询当前字典名称 */
 function getDictName() {
   if (dictId.value == null) {
     return
   }
-  getType(dictId.value).then(response => {
-    dictName.value = response.data ? response.data.name : ""
+  getType(dictId.value).then((response) => {
+    dictName.value = response.data ? response.data.name : ''
   })
 }
 
@@ -187,7 +203,7 @@ function getList() {
   if (dictId.value != null) {
     params.dictId = dictId.value
   }
-  listData(params).then(response => {
+  listData(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -196,7 +212,7 @@ function getList() {
 
 /** 状态编码 → 文案 */
 function statusText(status: number) {
-  const item = statusOptions.value.find(i => i.code === status)
+  const item = statusOptions.value.find((i) => i.code === status)
   return item ? item.title : status
 }
 
@@ -217,12 +233,12 @@ function reset() {
     order: 0,
     remark: undefined
   }
-  resetForm("formRef")
+  resetForm('formRef')
 }
 
 /** 返回按钮操作 */
 function handleClose() {
-  const obj = { path: "/system/dict" }
+  const obj = { path: '/system/dict' }
   tab.closeOpenPage(obj)
 }
 
@@ -230,12 +246,12 @@ function handleClose() {
 function handleAdd() {
   reset()
   formState.value.visible = true
-  formState.value.title = "新增字典项"
+  formState.value.title = '新增字典项'
 }
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection: DictItem[]) {
-  table.value.ids = selection.map(item => item.id as number)
+  table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
@@ -248,27 +264,27 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  getData(id).then(response => {
+  getData(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = "修改字典项"
+    formState.value.title = '修改字典项'
   })
 }
 
 /** 提交按钮 */
 function submitForm() {
-  formRef.value!.validate(valid => {
+  formRef.value!.validate((valid) => {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
-        updateData(formState.value.form).then(response => {
-          modal.msgSuccess("修改成功")
+        updateData(formState.value.form).then((response) => {
+          modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
-        addData(formState.value.form).then(response => {
-          modal.msgSuccess("新增成功")
+        addData(formState.value.form).then((response) => {
+          modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
         })
@@ -283,17 +299,20 @@ function handleDelete(row: any) {
   if (itemIds == null || (Array.isArray(itemIds) && itemIds.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除字典项编号为"' + itemIds + '"的数据项？').then(function() {
-    return delData(itemIds)
-  }).then(() => {
-    getList()
-    modal.msgSuccess("删除成功")
-  }).catch(() => {})
+  modal
+    .confirm('是否确认删除字典项编号为"' + itemIds + '"的数据项？')
+    .then(function () {
+      return delData(itemIds)
+    })
+    .then(() => {
+      getList()
+      modal.msgSuccess('删除成功')
+    })
+    .catch(() => {})
 }
 
 /* --------------------------------- page init --------------------------------- */
 // 页面初始化：加载字典名称、状态选项 + 字典项列表
 getDictName()
 getList()
-
 </script>
