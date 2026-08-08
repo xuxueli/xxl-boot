@@ -18,7 +18,7 @@ import cache from '@/utils/cache'
 import modal from '@/utils/modal'
 import { saveAs } from 'file-saver'
 import { useUserStore } from '@/store'
-import settings from '@/settings'
+import defaultSettings from "@/default-settings"
 import type { Response } from '@/types'
 
 /**
@@ -204,7 +204,7 @@ service.interceptors.response.use(res => {
                 modal.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录').then(() => {
                     isRelogin.show = false
                     useUserStore().logout().then(() => {
-                        location.href = settings.homePath
+                        location.href = defaultSettings.homePath
                     })
                 }).catch(() => {
                     isRelogin.show = false

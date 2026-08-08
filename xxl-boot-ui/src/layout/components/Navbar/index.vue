@@ -101,7 +101,7 @@ import SizeSelect from './SizeSelect.vue'
 import HeaderSearch from './HeaderSearch.vue'
 import HeaderMessage from './HeaderMessage.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
-import settings from '@/settings'
+import defaultSettings from "@/default-settings"
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -133,7 +133,7 @@ function logout() {
     cancelButtonText: '取消',
     type: 'warning'
   }).then(() => {
-    userStore.logout().then(() => { location.href = settings.homePath })
+    userStore.logout().then(() => { location.href = defaultSettings.homePath })
   }).catch(() => {})
 }
 

@@ -17,7 +17,7 @@ import { getToken } from '@/utils/auth'
 import { isHttp } from '@/utils/validate'
 import { isRelogin } from '@/utils/request'
 import { useUserStore, useRoutesStore, useSettingsStore } from '@/store'
-import settings from '@/settings'
+import defaultSettings from "@/default-settings"
 
 // ==================== 静态路由注册 ====================
 
@@ -35,7 +35,7 @@ export const constantRoutes = [
     // 首页：默认跳转 “/index”
     {
         path: '',
-        redirect: settings.homePath
+        redirect: defaultSettings.homePath
     },
     // 个人中心：hidden 控制侧栏不显示
     {

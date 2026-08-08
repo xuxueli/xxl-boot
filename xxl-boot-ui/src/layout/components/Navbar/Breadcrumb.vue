@@ -20,8 +20,8 @@
 
 
 <script setup lang="ts">
-import settings from '@/settings'
-import type { RouteRecordNormalized } from 'vue-router'
+import type {RouteRecordNormalized} from 'vue-router'
+import defaultSettings from "@/default-settings"
 
 const route = useRoute()
 const router = useRouter()
@@ -37,7 +37,7 @@ function getBreadcrumb() {
 
   /* 首节点不是"首页"时自动补 home 项 */
   /*if (!isDashboard(matched[0])) {
-    matched = [{ path: settings.homePath, meta: { title: "首页" } }].concat(matched)
+    matched = [{ path: defaultSettings.homePath, meta: { title: "首页" } }].concat(matched)
   }*/
 
   levelList.value = matched

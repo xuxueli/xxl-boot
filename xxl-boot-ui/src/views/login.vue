@@ -82,7 +82,7 @@
 // 导入依赖
 import { getCodeImg } from "@/api/login"
 import { useUserStore } from '@/store'
-import defaultSettings from '@/settings'
+import defaultSettings from '@/default-settings'
 import type { LoginParams } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 

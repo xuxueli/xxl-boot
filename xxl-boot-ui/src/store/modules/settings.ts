@@ -7,7 +7,7 @@
  */
 import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
-import defaultSettings from '@/settings'
+import defaultSettings from '@/default-settings'
 import { useDark, useToggle } from '@vueuse/core'
 import { handleThemeStyle } from '@/utils/theme'
 

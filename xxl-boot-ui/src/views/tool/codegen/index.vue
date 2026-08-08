@@ -151,7 +151,7 @@ const table = ref({
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
   showSearch: true,  /* 是否显示搜索栏 */
-  ids: [] as any[],  /* 选中行 ID 数组 */
+  ids: [] as number[],  /* 选中行 ID 数组 */
   single: true,      /* 是否单选 */
   multiple: true     /* 是否多选 */
 })
@@ -208,8 +208,8 @@ function resetQuery() {
 }
 
 /** 多选框选中数据 */
-function handleSelectionChange(selection: any[]) {
-  table.value.ids = selection.map(item => item.id)
+function handleSelectionChange(selection: CodegenTable[]) {
+  table.value.ids = selection.map(item => item.id as number)
   table.value.single = selection.length != 1
   table.value.multiple = !selection.length
 }

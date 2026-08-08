@@ -1,5 +1,7 @@
 /**
- * Description: 系统设置
+ * 系统默认设置（default-settings.ts）
+ *    - 提供系统标题、导航模式、主题、标签页等全局默认配置；
+ *    - 由 store/modules/settings.ts 读取并支持从 localStorage 覆盖。
  */
 export default {
 

@@ -6,7 +6,6 @@
  *   2. formatDate         - 表格列日期格式化（YYY-MM-DD HH:mm:ss 固定格式）
  *   3. formatTime         - 相对时间描述（刚刚/N分钟前/小时前/天前）
  *   4. getTime            - 获取时间范围边界（90天前/今日起始）
- *   5. sprintf            - printf 风格字符串格式化（%s 占位符）
  *   6. parseStrEmpty      - 无效值转空字符串
  *   7. byteLength         - 计算 UTF-8 字符串字节长度
  *   8. html2Text          - HTML 转纯文本
@@ -164,29 +163,6 @@ export function getTime(type?: string): number | Date {
 }
 
 // ==================== 字符串 ====================
-
-/**
- * printf 风格字符串格式化（%s 占位符）
- *
- * @param str  - 含 %s 的模板
- * @param args - 替换值
- * @returns 参数不足时返回 ''
- *
- * 示例：
- *   sprintf('hello %s', 'world')   // 'hello world'
- */
-export function sprintf(str: string, ...args: unknown[]): string {
-    let flag = true, i = 0
-    str = str.replace(/%s/g, function () {
-        const arg = args[i++]
-        if (typeof arg === 'undefined') {
-            flag = false
-            return ''
-        }
-        return String(arg)
-    })
-    return flag ? str : ''
-}
 
 /**
  * 将无效值转为空字符串

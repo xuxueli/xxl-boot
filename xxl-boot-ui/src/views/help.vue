@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 // 引入
-import defaultSettings from '@/settings'
+import defaultSettings from '@/default-settings'
 
 const title = defaultSettings.title
 const version = defaultSettings.version
