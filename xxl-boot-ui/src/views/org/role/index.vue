@@ -141,29 +141,12 @@ import { usePageParams } from '@/composables/usePageParams'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import type { Role, Resource, RoleQuery } from '@/types/api'
-import type { EnumOption } from '@/types'
+import type { EnumOption, TableState, FormState } from '@/types'
 import type { CheckboxValueType, FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
-/** 表格状态 */
-interface TableState {
-  list: Role[]
-  total: number
-  loading: boolean
-  showSearch: boolean
-  ids: number[]
-  single: boolean
-  multiple: boolean
-}
 
-/** 编辑弹窗状态 */
-interface FormState {
-  visible: boolean
-  title: string
-  form: Role
-  rules: FormRules
-}
 
 // --------------------------------- ref data ---------------------------------
 
@@ -189,7 +172,7 @@ const queryParams = ref<RoleQuery>({
 })
 
 // 表格：UI数据
-const table = ref<TableState>({
+const table = ref<TableState<Role>>({
   list: [],          /* 角色列表 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
@@ -200,7 +183,7 @@ const table = ref<TableState>({
 })
 
 // 编辑表单：数据状态
-const formState = ref<FormState>({
+const formState = ref<FormState<Role>>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */

@@ -1,3 +1,7 @@
+/**
+ * 画布实时渲染组件（generator/render）
+ * 通过 render 函数将画布上的组件配置（conf）渲染为真实 Element Plus 组件。
+ */
 import { defineComponent, h } from 'vue'
 import { makeMap } from '@/utils/generator/config'
 
@@ -30,6 +34,11 @@ function useVModel(props: any, emit: any) {
 /** 子组件渲染函数：h 渲染函数，conf 组件配置，key 键名 */
 type ChildRenderFn = (h: any, conf: any, key: string) => any
 
+/**
+ * 子节点渲染器表（componentChild）
+ * 按组件标签（tag）维护各子节点的渲染函数（如 el-select 的 options、el-radio-group 的 radio 项）
+ * 运行时根据 conf 的组件标签取对应渲染器生成子节点 VNode。
+ */
 const componentChild: Record<string, Record<string, ChildRenderFn>> = {
   'el-button': {
     default(h, conf, key) {
@@ -84,6 +93,10 @@ const componentChild: Record<string, Record<string, ChildRenderFn>> = {
 
   }
 }
+/**
+ * 插槽渲染器表（componentSlot）
+ * 按组件标签维护插槽内容渲染函数（如 el-upload 的 tip 提示插槽）。
+ */
 const componentSlot: Record<string, Record<string, ChildRenderFn>> = {
   'el-upload': {
     'tip': (h, conf, key) => {

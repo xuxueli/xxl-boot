@@ -126,29 +126,12 @@ import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import type { Dict, DictQuery } from '@/types/api'
-import type { EnumOption } from '@/types'
+import type { EnumOption, TableState, FormState } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
-/** 表格状态 */
-interface TableState {
-  list: Dict[]
-  total: number
-  loading: boolean
-  showSearch: boolean
-  ids: number[]
-  single: boolean
-  multiple: boolean
-}
 
-/** 编辑弹窗状态 */
-interface FormState {
-  visible: boolean
-  title: string
-  form: Dict
-  rules: FormRules
-}
 
 /** 字典项抽屉状态 */
 interface DrawerState {
@@ -171,7 +154,7 @@ const queryParams = ref<DictQuery>({
 })
 
 // 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
-const formState = ref<FormState>({
+const formState = ref<FormState<Dict>>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */
@@ -186,7 +169,7 @@ const formState = ref<FormState>({
 })
 
 // 表格：UI数据
-const table = ref<TableState>({
+const table = ref<TableState<Dict>>({
   list: [],          /* 字典类型列表 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */

@@ -154,29 +154,12 @@ import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import type { Message, MessageQuery } from '@/types/api'
-import type { EnumOption } from '@/types'
+import type { EnumOption, TableState, FormState } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
-/** 表格状态 */
-interface TableState {
-  list: Message[]
-  total: number
-  loading: boolean
-  showSearch: boolean
-  ids: number[]
-  single: boolean
-  multiple: boolean
-}
 
-/** 编辑弹窗状态 */
-interface FormState {
-  visible: boolean
-  title: string
-  form: Message
-  rules: FormRules
-}
 
 
 // --------------------------------- ref data ---------------------------------
@@ -199,7 +182,7 @@ const queryParams = ref<MessageQuery>({
 })
 
 // 表格：UI数据
-const table = ref<TableState>({
+const table = ref<TableState<Message>>({
   list: [],          /* 消息列表 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
@@ -210,7 +193,7 @@ const table = ref<TableState>({
 })
 
 // 编辑表单：数据状态
-const formState = ref<FormState>({
+const formState = ref<FormState<Message>>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */

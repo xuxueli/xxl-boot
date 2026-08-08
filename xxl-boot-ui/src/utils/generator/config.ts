@@ -1,4 +1,8 @@
 /**
+ * 组件元数据与常量中心（generator/config）
+ * 提供表单全局配置、可拖拽组件注册表、校验触发方式映射与 js-beautify 格式化配置。
+ */
+/**
  * 正则校验项
  */
 export interface RegItemConf {

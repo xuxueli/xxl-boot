@@ -173,21 +173,11 @@ import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import { ElMessageBox } from 'element-plus'
 import type { User, Org, Role, UserQuery } from '@/types/api'
-import type { EnumOption } from '@/types'
+import type { EnumOption, TableState, FormState } from '@/types'
 import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
 
 const resetForm = useFormReset()
 
-/** 表格状态 */
-interface TableState {
-  list: User[]
-  total: number
-  loading: boolean
-  showSearch: boolean
-  ids: number[]
-  single: boolean
-  multiple: boolean
-}
 
 /** 编辑表单数据（User 基础上补充表单用到的附加字段） */
 interface UserFormData extends User {
@@ -196,13 +186,6 @@ interface UserFormData extends User {
   roleIds?: number[]
 }
 
-/** 编辑弹窗状态 */
-interface FormState {
-  visible: boolean
-  title: string
-  form: UserFormData
-  rules: FormRules
-}
 
 // --------------------------------- ref data ---------------------------------
 
@@ -231,7 +214,7 @@ const queryParams = ref<UserQuery>({
 })
 
 // 表格：UI数据
-const table = ref<TableState>({
+const table = ref<TableState<User>>({
   list: [],          /* 用户列表 */
   total: 0,          /* 总条数 */
   loading: true,     /* 加载状态 */
@@ -242,7 +225,7 @@ const table = ref<TableState>({
 })
 
 // 编辑表单：数据状态
-const formState = ref<FormState>({
+const formState = ref<FormState<UserFormData>>({
   visible: false,  /* 对话框显隐 */
   title: "",       /* 对话框标题 */
   form: {},        /* 表单数据 */

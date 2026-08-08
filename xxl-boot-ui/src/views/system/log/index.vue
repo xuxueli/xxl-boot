@@ -93,19 +93,10 @@ import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { download } from '@/utils/request'
 import type { Log, LogQuery } from '@/types/api'
-import type { EnumOption } from '@/types'
+import type { EnumOption, TableState } from '@/types'
 
 const resetForm = useFormReset()
 
-/** 表格状态 */
-interface TableState {
-  list: Log[]
-  total: number
-  loading: boolean
-  showSearch: boolean
-  ids: number[]
-  multiple: boolean
-}
 
 /** 详情弹窗状态 */
 interface DetailState {
@@ -132,7 +123,7 @@ const queryParams = ref<LogQuery>({
 })
 
 // 表格：UI数据
-const table = ref<TableState>({
+const table = ref<TableState<Log>>({
   list: [],          /* 表格：列表数据 */
   total: 0,          /* 表格：总条数 */
   loading: true,     /* 表格：加载状态 */

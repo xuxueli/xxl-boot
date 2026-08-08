@@ -1,3 +1,7 @@
+/**
+ * HTML/模板代码生成（generator/html）
+ * 根据表单配置生成 <el-form> 相关 Vue 模板字符串。
+ */
 /* eslint-disable max-len */
 import { trigger } from './config'
 import type { FormConf, FormItemConf } from './config'

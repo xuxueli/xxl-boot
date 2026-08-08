@@ -1,3 +1,7 @@
+/**
+ * script 代码生成（generator/js）
+ * 生成 <script setup> 代码字符串：表单数据、校验规则、选项、上传逻辑与弹窗方法。
+ */
 import { titleCase } from '@/utils/common'
 import { trigger } from './config'
 import type { FormConf, FormItemConf } from './config'

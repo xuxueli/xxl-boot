@@ -13,7 +13,7 @@ import ExcelImportDialog from '@/components/ExcelImportDialog/index.vue'
 import FileUpload from '@/components/FileUpload/index.vue'
 import ImagePreview from '@/components/ImagePreview/index.vue'
 import ImageUpload from '@/components/ImageUpload/index.vue'
-import IFrame from '@/components/iFrame/index.vue'
+import IFrame from '@/components/IFrame/index.vue'
 
 // Element Plus 图标（全局注册）
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'

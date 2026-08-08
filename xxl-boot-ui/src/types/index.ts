@@ -1,8 +1,9 @@
 /**
  * 通用基础结构（types/index.ts）
- * 覆盖项目通用类型：后端统一返回、分页、枚举数据、字典数据、登录认证、动态路由等
+ * 覆盖项目通用类型：后端统一返回、分页、枚举数据、字典数据、登录认证、动态路由、页面 UI 状态等
  * 对应后端 com.xxl.tool.response.Response、com.xxl.sso.core.model.LoginInfo 等
  */
+import type { FormRules } from 'element-plus'
 
 
 // --------------------------------- 通用返回结构 ---------------------------------
@@ -143,4 +144,43 @@ export interface MenuRoute {
   }
   children?: MenuRoute[]
   [key: string]: unknown
+}
+
+
+// --------------------------------- 页面 UI 状态（列表页通用） ---------------------------------
+
+/**
+ * 表格 UI 状态（列表页通用）
+ * 覆盖列表/分页/加载/搜索栏/多选等常见表格状态
+ */
+export interface TableState<T = unknown> {
+  /** 数据列表 */
+  list: T[]
+  /** 总条数（分页接口） */
+  total: number
+  /** 加载状态 */
+  loading: boolean
+  /** 是否显示搜索栏 */
+  showSearch?: boolean
+  /** 选中行 ID 数组 */
+  ids: number[]
+  /** 是否单选（多选数量不为 1 时禁用"修改"） */
+  single?: boolean
+  /** 是否多选（无选中时禁用"删除"） */
+  multiple?: boolean
+}
+
+/**
+ * 表单弹窗 UI 状态（列表页通用）
+ * 覆盖弹窗显隐、标题、表单数据与校验规则
+ */
+export interface FormState<T = unknown> {
+  /** 弹窗显隐 */
+  visible: boolean
+  /** 弹窗标题 */
+  title: string
+  /** 表单数据 */
+  form: T
+  /** 校验规则 */
+  rules: FormRules
 }
