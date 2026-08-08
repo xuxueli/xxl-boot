@@ -1,8 +1,8 @@
 {
-  "name": "boot",
-  "version": "4.0.0",
-  "description": "Boot管理系统",
-  "author": "Jason",
+  "name": "XXL-BOOT",
+  "version": "2.1.0-SNAPSHOT",
+  "description": "XXL-BOOT | 快速开发平台",
+  "author": "xuxueli",
   "license": "GPL",
   "type": "module",
   "scripts": {
@@ -19,7 +19,7 @@
     "axios": "1.19.0",
     "clipboard": "2.0.11",
     "echarts": "6.1.0",
-    "element-plus": "2.14.3",
+    "element-plus": "2.14.4",
     "file-saver": "2.0.5",
     "fuse.js": "7.5.0",
     "js-beautify": "2.0.3",
@@ -33,22 +33,22 @@
     "vuedraggable": "4.1.0"
   },
   "devDependencies": {
-    "@types/file-saver": "^2.0.7",
-    "@types/js-beautify": "^1.14.3",
-    "@types/js-cookie": "^3.0.6",
-    "@types/node": "^26.2.0",
-    "@types/nprogress": "^0.2.3",
-    "@types/sortablejs": "^1.15.9",
+    "@types/file-saver": "2.0.7",
+    "@types/js-beautify": "1.14.3",
+    "@types/js-cookie": "3.0.6",
+    "@types/node": "26.2.0",
+    "@types/nprogress": "0.2.3",
+    "@types/sortablejs": "1.15.9",
     "@vitejs/plugin-vue": "6.0.8",
     "fast-glob": "3.3.3",
     "sass-embedded": "1.100.0",
-    "typescript": "^5.9.3",
+    "typescript": "5.9.3",
     "unplugin-auto-import": "21.1.0",
     "unplugin-vue-setup-extend-plus": "1.0.1",
     "vite": "8.2.1",
     "vite-plugin-compression": "0.5.1",
     "vite-plugin-svg-icons": "2.0.1",
-    "vue-tsc": "^3.3.9"
+    "vue-tsc": "3.3.9"
   },
   "overrides": {
     "quill": "2.0.3"
