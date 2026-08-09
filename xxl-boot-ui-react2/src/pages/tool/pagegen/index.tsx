@@ -10,6 +10,7 @@ import {
   HolderOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-components';
 import {
   closestCenter,
   DndContext,
@@ -39,7 +40,6 @@ import {
   Tabs,
   Tag,
 } from 'antd';
-import { PageContainer } from '@ant-design/pro-components';
 import { createStyles } from 'antd-style';
 import React, { useMemo, useRef, useState } from 'react';
 
@@ -430,210 +430,218 @@ const PageGen: React.FC = () => {
     <PageContainer ghost title={false}>
       <div className={styles.container}>
         {/* 左：组件面板 */}
-      <div className={`${styles.panel} ${styles.palette}`}>
-        {paletteGroups.map((group) => (
-          <div key={group.title} className={styles.paletteGroup}>
-            <div className={styles.paletteGroupTitle}>{group.title}</div>
-            {group.types.map((type) => (
-              <div
-                key={type}
-                className={styles.paletteItem}
-                onClick={() => addWidget(type)}
-              >
-                <PlusOutlined />
-                {widgetTitles[type]}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-
-      {/* 中：画布 */}
-      <div className={`${styles.panel} ${styles.canvas}`}>
-        <div className={styles.toolbar}>
-          <span style={{ fontWeight: 600 }}>表单设计</span>
-          <div>
-            <Button
-              icon={<CopyOutlined />}
-              size="small"
-              style={{ marginRight: 8 }}
-              onClick={handleCopy}
-            >
-              复制代码
-            </Button>
-            <Button
-              icon={<DownloadOutlined />}
-              size="small"
-              style={{ marginRight: 8 }}
-              onClick={handleExport}
-            >
-              导出
-            </Button>
-            <Button
-              danger
-              size="small"
-              onClick={() => {
-                setWidgets([]);
-                setSelectedId(undefined);
-              }}
-            >
-              清空
-            </Button>
-          </div>
-        </div>
-        <div className={styles.canvasBody}>
-          {widgets.length === 0 ? (
-            <div className={styles.empty}>点击左侧组件添加，或拖拽排序</div>
-          ) : (
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={widgets.map((w) => w.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <Form
-                  layout={config.layout}
-                  labelCol={
-                    config.layout === 'horizontal' ? { span: 6 } : undefined
-                  }
+        <div className={`${styles.panel} ${styles.palette}`}>
+          {paletteGroups.map((group) => (
+            <div key={group.title} className={styles.paletteGroup}>
+              <div className={styles.paletteGroupTitle}>{group.title}</div>
+              {group.types.map((type) => (
+                <div
+                  key={type}
+                  className={styles.paletteItem}
+                  onClick={() => addWidget(type)}
                 >
-                  {widgets.map((w) => (
-                    <SortableWidget
-                      key={w.id}
-                      widget={w}
-                      selected={w.id === selectedId}
-                      onClick={() => setSelectedId(w.id)}
-                      onDelete={() => {
-                        setWidgets((prev) => prev.filter((i) => i.id !== w.id));
-                        if (selectedId === w.id) setSelectedId(undefined);
-                      }}
-                    />
-                  ))}
-                </Form>
-              </SortableContext>
-            </DndContext>
-          )}
+                  <PlusOutlined />
+                  {widgetTitles[type]}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
-      </div>
 
-      {/* 右：属性面板 */}
-      <div className={`${styles.panel} ${styles.properties}`}>
-        <Tabs
-          items={[
-            {
-              key: 'widget',
-              label: '组件属性',
-              children: selectedWidget ? (
-                <div>
-                  <Form layout="vertical" style={{ marginTop: 8 }}>
-                    <Form.Item label="组件类型">
-                      <Tag color="blue">
-                        {widgetTitles[selectedWidget.type]}
-                      </Tag>
-                    </Form.Item>
-                    <Form.Item label="字段名">
-                      <Input
-                        value={selectedWidget.vModel}
-                        onChange={(e) =>
-                          updateWidget({ vModel: e.target.value })
-                        }
+        {/* 中：画布 */}
+        <div className={`${styles.panel} ${styles.canvas}`}>
+          <div className={styles.toolbar}>
+            <span style={{ fontWeight: 600 }}>表单设计</span>
+            <div>
+              <Button
+                icon={<CopyOutlined />}
+                size="small"
+                style={{ marginRight: 8 }}
+                onClick={handleCopy}
+              >
+                复制代码
+              </Button>
+              <Button
+                icon={<DownloadOutlined />}
+                size="small"
+                style={{ marginRight: 8 }}
+                onClick={handleExport}
+              >
+                导出
+              </Button>
+              <Button
+                danger
+                size="small"
+                onClick={() => {
+                  setWidgets([]);
+                  setSelectedId(undefined);
+                }}
+              >
+                清空
+              </Button>
+            </div>
+          </div>
+          <div className={styles.canvasBody}>
+            {widgets.length === 0 ? (
+              <div className={styles.empty}>点击左侧组件添加，或拖拽排序</div>
+            ) : (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={widgets.map((w) => w.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <Form
+                    layout={config.layout}
+                    labelCol={
+                      config.layout === 'horizontal' ? { span: 6 } : undefined
+                    }
+                  >
+                    {widgets.map((w) => (
+                      <SortableWidget
+                        key={w.id}
+                        widget={w}
+                        selected={w.id === selectedId}
+                        onClick={() => setSelectedId(w.id)}
+                        onDelete={() => {
+                          setWidgets((prev) =>
+                            prev.filter((i) => i.id !== w.id),
+                          );
+                          if (selectedId === w.id) setSelectedId(undefined);
+                        }}
                       />
-                    </Form.Item>
-                    <Form.Item label="标签">
-                      <Input
-                        value={selectedWidget.label}
-                        onChange={(e) =>
-                          updateWidget({ label: e.target.value })
-                        }
-                      />
-                    </Form.Item>
-                    <Form.Item label="占位提示">
-                      <Input
-                        value={selectedWidget.placeholder}
-                        onChange={(e) =>
-                          updateWidget({ placeholder: e.target.value })
-                        }
-                      />
-                    </Form.Item>
-                    <Form.Item label="必填">
-                      <Switch
-                        checked={selectedWidget.required}
-                        onChange={(checked) =>
-                          updateWidget({ required: checked })
-                        }
-                      />
-                    </Form.Item>
-                    {['select', 'radio', 'checkbox'].includes(
-                      selectedWidget.type,
-                    ) && (
-                      <Form.Item label="选项">
-                        <Select
-                          mode="tags"
-                          value={selectedWidget.options}
-                          onChange={(options) => updateWidget({ options })}
-                          placeholder="输入后回车添加选项"
+                    ))}
+                  </Form>
+                </SortableContext>
+              </DndContext>
+            )}
+          </div>
+        </div>
+
+        {/* 右：属性面板 */}
+        <div className={`${styles.panel} ${styles.properties}`}>
+          <Tabs
+            items={[
+              {
+                key: 'widget',
+                label: '组件属性',
+                children: selectedWidget ? (
+                  <div>
+                    <Form layout="vertical" style={{ marginTop: 8 }}>
+                      <Form.Item label="组件类型">
+                        <Tag color="blue">
+                          {widgetTitles[selectedWidget.type]}
+                        </Tag>
+                      </Form.Item>
+                      <Form.Item label="字段名">
+                        <Input
+                          value={selectedWidget.vModel}
+                          onChange={(e) =>
+                            updateWidget({ vModel: e.target.value })
+                          }
                         />
                       </Form.Item>
-                    )}
+                      <Form.Item label="标签">
+                        <Input
+                          value={selectedWidget.label}
+                          onChange={(e) =>
+                            updateWidget({ label: e.target.value })
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item label="占位提示">
+                        <Input
+                          value={selectedWidget.placeholder}
+                          onChange={(e) =>
+                            updateWidget({ placeholder: e.target.value })
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item label="必填">
+                        <Switch
+                          checked={selectedWidget.required}
+                          onChange={(checked) =>
+                            updateWidget({ required: checked })
+                          }
+                        />
+                      </Form.Item>
+                      {['select', 'radio', 'checkbox'].includes(
+                        selectedWidget.type,
+                      ) && (
+                        <Form.Item label="选项">
+                          <Select
+                            mode="tags"
+                            value={selectedWidget.options}
+                            onChange={(options) => updateWidget({ options })}
+                            placeholder="输入后回车添加选项"
+                          />
+                        </Form.Item>
+                      )}
+                    </Form>
+                  </div>
+                ) : (
+                  <div className={styles.empty}>请选择画布中的组件</div>
+                ),
+              },
+              {
+                key: 'form',
+                label: '表单属性',
+                children: (
+                  <Form layout="vertical" style={{ marginTop: 8 }}>
+                    <Form.Item label="标签宽度">
+                      <InputNumber
+                        style={{ width: '100%' }}
+                        value={config.labelWidth}
+                        min={0}
+                        onChange={(v) =>
+                          setConfig((prev) => ({
+                            ...prev,
+                            labelWidth: v ?? 120,
+                          }))
+                        }
+                      />
+                    </Form.Item>
+                    <Form.Item label="布局">
+                      <Radio.Group
+                        value={config.layout}
+                        onChange={(e) =>
+                          setConfig((prev) => ({
+                            ...prev,
+                            layout: e.target.value,
+                          }))
+                        }
+                        options={[
+                          { value: 'horizontal', label: '水平' },
+                          { value: 'vertical', label: '垂直' },
+                          { value: 'inline', label: '行内' },
+                        ]}
+                      />
+                    </Form.Item>
+                    <Form.Item label="尺寸">
+                      <Radio.Group
+                        value={config.size}
+                        onChange={(e) =>
+                          setConfig((prev) => ({
+                            ...prev,
+                            size: e.target.value,
+                          }))
+                        }
+                        options={[
+                          { value: 'small', label: '小' },
+                          { value: 'middle', label: '中' },
+                          { value: 'large', label: '大' },
+                        ]}
+                      />
+                    </Form.Item>
                   </Form>
-                </div>
-              ) : (
-                <div className={styles.empty}>请选择画布中的组件</div>
-              ),
-            },
-            {
-              key: 'form',
-              label: '表单属性',
-              children: (
-                <Form layout="vertical" style={{ marginTop: 8 }}>
-                  <Form.Item label="标签宽度">
-                    <InputNumber
-                      style={{ width: '100%' }}
-                      value={config.labelWidth}
-                      min={0}
-                      onChange={(v) =>
-                        setConfig((prev) => ({ ...prev, labelWidth: v ?? 120 }))
-                      }
-                    />
-                  </Form.Item>
-                  <Form.Item label="布局">
-                    <Radio.Group
-                      value={config.layout}
-                      onChange={(e) =>
-                        setConfig((prev) => ({
-                          ...prev,
-                          layout: e.target.value,
-                        }))
-                      }
-                      options={[
-                        { value: 'horizontal', label: '水平' },
-                        { value: 'vertical', label: '垂直' },
-                        { value: 'inline', label: '行内' },
-                      ]}
-                    />
-                  </Form.Item>
-                  <Form.Item label="尺寸">
-                    <Radio.Group
-                      value={config.size}
-                      onChange={(e) =>
-                        setConfig((prev) => ({ ...prev, size: e.target.value }))
-                      }
-                      options={[
-                        { value: 'small', label: '小' },
-                        { value: 'middle', label: '中' },
-                        { value: 'large', label: '大' },
-                      ]}
-                    />
-                  </Form.Item>
-                </Form>
-              ),
-            },
-          ]}
-        />
-      </div>
+                ),
+              },
+            ]}
+          />
+        </div>
       </div>
     </PageContainer>
   );

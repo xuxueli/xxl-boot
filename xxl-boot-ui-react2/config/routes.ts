@@ -14,12 +14,6 @@ export default [
         component: './user/login',
       },
       {
-        path: '/user/profile',
-        name: 'profile',
-        component: './user/profile',
-        hideInMenu: true,
-      },
-      {
         path: '/user',
         redirect: '/user/login',
       },
@@ -29,6 +23,12 @@ export default [
         path: '/user/*',
       },
     ],
+  },
+  {
+    path: '/user/profile',
+    name: 'profile',
+    component: './user/profile',
+    hideInMenu: true,
   },
   {
     path: '/dashboard',
