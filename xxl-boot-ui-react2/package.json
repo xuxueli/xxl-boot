@@ -1,12 +1,15 @@
 {
-  "name": "xxl-boot-ui-react2",
-  "version": "2.1.0",
+  "name": "XXL-BOOT",
+  "version": "2.1.0-SNAPSHOT",
   "private": true,
-  "description": "XXL-Boot 快速开发平台 - React 前端（Vite + React Router + Zustand + TanStack Query）",
+  "description": "XXL-BOOT | 快速开发平台",
   "repository": "git@github.com:xuxueli/xxl-boot.git",
+  "author": "xuxueli",
+  "license": "GPL",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:staging": "vite build --mode staging",
     "preview": "vite preview",
     "lint": "npm run biome:lint && npm run tsc",
     "biome:lint": "biome lint",

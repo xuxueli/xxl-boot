@@ -2,6 +2,7 @@
   "name": "XXL-BOOT",
   "version": "2.1.0-SNAPSHOT",
   "description": "XXL-BOOT | 快速开发平台",
+  "repository": "git@github.com:xuxueli/xxl-boot.git",
   "author": "xuxueli",
   "license": "GPL",
   "type": "module",

@@ -52,7 +52,7 @@ const serializeParams = (params: Record<string, unknown>): string => {
 };
 
 const service = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_APP_BASE_API || '/api',
   timeout: 10000,
   paramsSerializer: (params) =>
     serializeParams(params as Record<string, unknown>),
