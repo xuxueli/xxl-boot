@@ -9,3 +9,17 @@
 4、react 版本，后端接口和数据定义不要修改，统一对接 xxl-boot-api。
 
 现在 react 目录下输出个技术方案，我review 后执行。
+
+---
+
+技术栈升级：
+
+1、核心框架：
+  - React 19
+  - TypeScript 7
+  - Vite 8
+  - Ant Design 6
+2、UI 组件库：
+  - Ant Design 6
+  - @ant-design/pro-components
+  - Tailwind CSS 
