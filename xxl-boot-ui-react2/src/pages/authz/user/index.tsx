@@ -244,6 +244,7 @@ const Dashboard: React.FC = () => {
         <TreePanel
           treeData={deptOptions}
           title="组织机构"
+          defaultExpandAll
           onNodeClick={handleNodeClick}
           onRefresh={loadOptions}
           storageKey="boot-user-org-sidebar-width"

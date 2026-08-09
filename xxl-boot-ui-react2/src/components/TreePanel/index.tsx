@@ -191,6 +191,15 @@ const TreePanel: React.FC<TreePanelProps> = ({
 
   const expanded = expandedKeys.length > 0;
 
+  // 默认展开全部：数据加载后首次赋值为全部节点 key（用户手动折叠后不再干预）
+  const expandInitialized = useRef(false);
+  useEffect(() => {
+    if (defaultExpandAll && !expandInitialized.current && allKeys.length > 0) {
+      expandInitialized.current = true;
+      setExpandedKeys(allKeys);
+    }
+  }, [allKeys, defaultExpandAll]);
+
   // 加载持久化宽度
   useEffect(() => {
     try {
