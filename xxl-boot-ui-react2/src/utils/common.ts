@@ -160,6 +160,17 @@ export function tansParams(params: Record<string, any>): string {
 // ==================== 文件 / Blob ====================
 
 /**
+ * 关闭当前页面：有历史记录返回上一页，否则跳转首页
+ */
+export function closePage(): void {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = '/dashboard';
+  }
+}
+
+/**
  * 验证 blob 是否为合法文件数据（非 JSON 错误报文）
  * @param data - Blob 数据
  * @returns true 为文件数据，false 为 JSON 错误

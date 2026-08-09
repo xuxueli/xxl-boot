@@ -7,6 +7,7 @@ import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { updateUserProfile } from '@/services/xxl-boot/authz/user';
+import { closePage } from '@/utils/common';
 
 /** 基本资料表单数据 */
 interface UserInfoForm {
@@ -63,6 +64,9 @@ const UserInfo: React.FC<{ user?: API.User; onSuccess?: () => void }> = ({
             onClick={() => form.resetFields()}
           >
             重置
+          </Button>,
+          <Button key="close" onClick={closePage}>
+            关闭
           </Button>,
         ],
       }}
