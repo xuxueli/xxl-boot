@@ -6,6 +6,7 @@ import { BookOutlined, GithubOutlined } from '@ant-design/icons';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { Button, Divider, Typography } from 'antd';
 import React from 'react';
+import defaultSettings from '../../../config/defaultSettings';
 
 const HelpCenter: React.FC = () => {
   return (
@@ -48,8 +49,8 @@ const HelpCenter: React.FC = () => {
           </a>
         </div>
         <Divider />
-        <Typography.Paragraph type="secondary" style={{ textAlign: 'center' }}>
-          版本：2.1.0
+        <Typography.Paragraph type="secondary" style={{ textAlign: 'left' }}>
+          Powered by <strong>{defaultSettings.title}</strong> v{defaultSettings.version}
         </Typography.Paragraph>
       </ProCard>
     </PageContainer>

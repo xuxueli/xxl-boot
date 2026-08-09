@@ -5,6 +5,7 @@ import type { ProLayoutProps } from '@ant-design/pro-components';
  */
 const Settings: ProLayoutProps & {
   logo?: string;
+  version?: string;
 } = {
   navTheme: 'light',
   colorPrimary: '#1677ff',
@@ -14,6 +15,7 @@ const Settings: ProLayoutProps & {
   fixSiderbar: true,
   colorWeak: false,
   title: 'XXL-BOOT',
+  version: '2.1.0-SNAPSHOT',
   logo: '/logo.png',
   iconfontUrl: '',
   token: {
