@@ -12,7 +12,7 @@ import {
   delResource,
   listResource,
   updateResourceSort,
-} from '@/services/xxl-boot/authz/resource';
+} from '@/services/authz/resource';
 import { getIconComponent } from '@/utils/icon';
 import { usePermission } from '@/utils/permission';
 import ResourceFormModal from './ResourceFormModal';

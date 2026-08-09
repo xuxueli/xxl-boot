@@ -10,7 +10,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import { listMessageReadUsers } from '@/services/xxl-boot/system/message';
+import { listMessageReadUsers } from '@/services/system/message';
 
 export type ReadUsersDialogRef = {
   open: (row: API.Message) => void;

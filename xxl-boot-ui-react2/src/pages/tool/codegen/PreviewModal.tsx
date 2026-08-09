@@ -9,7 +9,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import { previewTable } from '@/services/xxl-boot/tool/codegen';
+import { previewTable } from '@/services/tool/codegen';
 
 export type PreviewModalRef = {
   open: (id: number) => void;

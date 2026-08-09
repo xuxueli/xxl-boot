@@ -10,7 +10,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React from 'react';
-import { addType, updateType } from '@/services/xxl-boot/system/dict';
+import { addType, updateType } from '@/services/system/dict';
 
 const DictFormModal: React.FC<{
   open: boolean;

@@ -17,11 +17,11 @@ import * as echarts from 'echarts';
 import React, { useEffect, useRef, useState } from 'react';
 import { MessageDetail } from '@/components';
 import type { MessageDetailRef } from '@/components/MessageDetail';
-import { getLogTrend, getStats } from '@/services/xxl-boot/dashboard';
+import { getLogTrend, getStats } from '@/services/dashboard';
 import {
   listMessageTop,
   markMessageRead,
-} from '@/services/xxl-boot/system/message';
+} from '@/services/system/message';
 
 const useStyles = createStyles(({ token, css }) => ({
   statCard: css`

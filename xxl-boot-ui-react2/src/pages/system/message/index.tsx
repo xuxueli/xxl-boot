@@ -11,7 +11,7 @@ import { MessageDetail, ReadUsersDialog } from '@/components';
 import type { MessageDetailRef } from '@/components/MessageDetail';
 import type { ReadUsersDialogRef } from '@/components/ReadUsersDialog';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { delMessage, listMessage } from '@/services/xxl-boot/system/message';
+import { delMessage, listMessage } from '@/services/system/message';
 import { usePermission } from '@/utils/permission';
 import MessageFormModal from './MessageFormModal';
 

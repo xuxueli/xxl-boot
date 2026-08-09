@@ -8,7 +8,7 @@ import {
   getRouters,
   login as loginApi,
   logout as logoutApi,
-} from '@/services/xxl-boot/login';
+} from '@/services/login';
 import { removeToken, setTokenWithAge } from '@/utils/auth';
 
 interface UserState {

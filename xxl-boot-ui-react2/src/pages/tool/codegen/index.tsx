@@ -7,7 +7,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Input, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
-import { delTable, listTable } from '@/services/xxl-boot/tool/codegen';
+import { delTable, listTable } from '@/services/tool/codegen';
 import { downloadGet } from '@/utils/download';
 import { usePermission } from '@/utils/permission';
 import EditTableModal from './EditTableModal';
@@ -69,7 +69,7 @@ const CodegenList: React.FC = () => {
     }
     setCreating(true);
     try {
-      const { createTable } = await import('@/services/xxl-boot/tool/codegen');
+      const { createTable } = await import('@/services/tool/codegen');
       await createTable(tableSql);
       message.success('创建成功');
       setCreateOpen(false);

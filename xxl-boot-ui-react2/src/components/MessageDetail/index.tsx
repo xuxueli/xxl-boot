@@ -11,7 +11,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import { getMessage } from '@/services/xxl-boot/system/message';
+import { getMessage } from '@/services/system/message';
 
 export type MessageDetailRef = {
   open: (payload: number | API.Message) => void;

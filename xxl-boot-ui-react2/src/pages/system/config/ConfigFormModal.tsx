@@ -10,7 +10,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React from 'react';
-import { addConfig, updateConfig } from '@/services/xxl-boot/system/config';
+import { addConfig, updateConfig } from '@/services/system/config';
 
 const ConfigFormModal: React.FC<{
   open: boolean;

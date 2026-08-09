@@ -11,7 +11,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React from 'react';
-import { addData, updateData } from '@/services/xxl-boot/system/dict';
+import { addData, updateData } from '@/services/system/dict';
 
 const DictDataFormModal: React.FC<{
   open: boolean;

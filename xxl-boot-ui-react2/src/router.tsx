@@ -24,7 +24,7 @@ const lazyLoad = (factory: () => Promise<{ default: React.ComponentType }>) => {
 export const router = createBrowserRouter([
   {
     path: '/user/login',
-    element: lazyLoad(() => import('@/pages/user/login')),
+    element: lazyLoad(() => import('@/pages/account/login')),
   },
   {
     path: '/user/*',
@@ -41,7 +41,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/dashboard" replace /> },
       {
         path: 'user/profile',
-        element: lazyLoad(() => import('@/pages/user/profile')),
+        element: lazyLoad(() => import('@/pages/account/profile')),
       },
       { path: 'dashboard', element: lazyLoad(() => import('@/pages/dashboard')) },
       {

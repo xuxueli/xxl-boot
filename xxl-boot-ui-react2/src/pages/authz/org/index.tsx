@@ -8,7 +8,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, InputNumber, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { delOrg, listOrg, updateOrgSort } from '@/services/xxl-boot/authz/org';
+import { delOrg, listOrg, updateOrgSort } from '@/services/authz/org';
 import { usePermission } from '@/utils/permission';
 import OrgFormModal from './OrgFormModal';
 

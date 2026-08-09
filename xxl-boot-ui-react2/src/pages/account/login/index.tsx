@@ -9,7 +9,7 @@ import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Footer } from '@/components';
-import { getCodeImg } from '@/services/xxl-boot/login';
+import { getCodeImg } from '@/services/login';
 import { useUserStore } from '@/stores/userStore';
 
 /**

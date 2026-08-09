@@ -18,7 +18,7 @@ import {
   addResource,
   listResource,
   updateResource,
-} from '@/services/xxl-boot/authz/resource';
+} from '@/services/authz/resource';
 import { handleTree } from '@/utils/common';
 
 /** 资源树转 TreeSelect 数据 */

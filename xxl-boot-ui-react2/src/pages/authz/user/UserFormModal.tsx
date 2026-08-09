@@ -11,7 +11,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React, { useEffect, useMemo } from 'react';
-import { addUser, updateUser } from '@/services/xxl-boot/authz/user';
+import { addUser, updateUser } from '@/services/authz/user';
 
 /** 组织树转 TreeSelect 数据 */
 const toTreeSelectData = (orgs: API.Org[]): any[] =>

@@ -12,7 +12,7 @@ import {
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { App, Card, Descriptions, Spin, Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { getUserProfile } from '@/services/xxl-boot/authz/user';
+import { getUserProfile } from '@/services/authz/user';
 import ResetPwd from './ResetPwd';
 import UserInfo from './UserInfo';
 

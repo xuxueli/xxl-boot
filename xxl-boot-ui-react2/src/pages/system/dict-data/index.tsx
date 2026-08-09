@@ -9,7 +9,7 @@ import { App, Button, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { delData, listData } from '@/services/xxl-boot/system/dict';
+import { delData, listData } from '@/services/system/dict';
 import { usePermission } from '@/utils/permission';
 import DictDataFormModal from './DictDataFormModal';
 

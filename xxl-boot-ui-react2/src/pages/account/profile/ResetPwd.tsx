@@ -6,7 +6,7 @@
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import React from 'react';
-import { updateUserPwd } from '@/services/xxl-boot/authz/user';
+import { updateUserPwd } from '@/services/authz/user';
 
 /** 密码表单数据 */
 interface PwdForm {

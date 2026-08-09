@@ -9,7 +9,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import { listData } from '@/services/xxl-boot/system/dict';
+import { listData } from '@/services/system/dict';
 
 export type DictDataDrawerRef = {
   open: (row: API.Dict) => void;

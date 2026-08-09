@@ -6,7 +6,7 @@
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { updateUserProfile } from '@/services/xxl-boot/authz/user';
+import { updateUserProfile } from '@/services/authz/user';
 import { closePage } from '@/utils/common';
 
 /** 基本资料表单数据 */

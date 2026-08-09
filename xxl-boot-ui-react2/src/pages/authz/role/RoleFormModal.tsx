@@ -11,13 +11,13 @@ import {
 import { App, Checkbox, Divider, Space, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { listResource } from '@/services/xxl-boot/authz/resource';
+import { listResource } from '@/services/authz/resource';
 import {
   addRole,
   roleMenuTreeselect,
   updateRole,
   updateRoleRes,
-} from '@/services/xxl-boot/authz/role';
+} from '@/services/authz/role';
 import { handleTree } from '@/utils/common';
 
 /** 资源平铺数组转 antd Tree 数据 */

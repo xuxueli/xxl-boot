@@ -21,8 +21,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { App, Checkbox, Form, Input, Modal, Select, Table, Tabs } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useState } from 'react';
-import { queryDictList } from '@/services/xxl-boot/system/dict';
-import { getGenTable, updateGenTable } from '@/services/xxl-boot/tool/codegen';
+import { queryDictList } from '@/services/system/dict';
+import { getGenTable, updateGenTable } from '@/services/tool/codegen';
 
 const javaTypeOptions = [
   'Long',

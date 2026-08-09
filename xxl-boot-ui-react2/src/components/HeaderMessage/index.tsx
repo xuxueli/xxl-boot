@@ -15,7 +15,7 @@ import {
   listMessageTop,
   markMessageRead,
   markMessageReadAll,
-} from '@/services/xxl-boot/system/message';
+} from '@/services/system/message';
 import MessageDetail, { type MessageDetailRef } from '@/components/MessageDetail';
 
 const useStyles = createStyles(({ token, css }) => ({

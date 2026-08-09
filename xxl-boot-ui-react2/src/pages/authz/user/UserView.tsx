@@ -9,7 +9,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import { listRole } from '@/services/xxl-boot/authz/role';
+import { listRole } from '@/services/authz/role';
 
 export type UserViewRef = {
   open: (row: API.User) => void;

@@ -11,7 +11,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
-import { addOrg, listOrg, updateOrg } from '@/services/xxl-boot/authz/org';
+import { addOrg, listOrg, updateOrg } from '@/services/authz/org';
 import { handleTree } from '@/utils/common';
 
 /** 组织树转 TreeSelect 数据（含根节点） */
