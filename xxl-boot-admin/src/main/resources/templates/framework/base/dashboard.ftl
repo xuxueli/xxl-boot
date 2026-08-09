@@ -53,7 +53,7 @@
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
-                        <strong><i class="fa fa-users margin-r-5"></i>组织管理</strong>
+                        <strong><i class="fa fa-users margin-r-5"></i>权限管理</strong>
                         <p class="text-muted" style="border-bottom: 1px solid #e4e4e4;padding-bottom: 20px;" >
                             针对组织、用户、角色及资源等进行管理，支持灵活的人员角色、菜单权限、人员授权等操作管理。
                         </p>

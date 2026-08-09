@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.service.impl;
 
-import com.xxl.boot.api.framework.mapper.org.OrgMapper;
+import com.xxl.boot.api.framework.mapper.authz.OrgMapper;
 import com.xxl.boot.api.framework.model.entity.Org;
 import com.xxl.boot.api.framework.service.OrgService;
 import com.xxl.tool.core.CollectionTool;

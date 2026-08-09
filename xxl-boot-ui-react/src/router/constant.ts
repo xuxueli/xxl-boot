@@ -54,7 +54,7 @@ export const constantRoutes: AppRouteObject[] = [
       {
         name: 'Profile',
         path: '/user/profile/:activeTab?',
-        component: lazy(() => import('@/views/org/user/profile/index')),
+        component: lazy(() => import('@/views/authz/user/profile/index')),
         meta: { title: '个人中心', icon: 'user' }
       }
     ]

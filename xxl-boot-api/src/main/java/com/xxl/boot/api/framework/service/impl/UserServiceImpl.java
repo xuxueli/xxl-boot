@@ -1,9 +1,9 @@
 package com.xxl.boot.api.framework.service.impl;
 
-import com.xxl.boot.api.framework.mapper.org.OrgMapper;
-import com.xxl.boot.api.framework.mapper.org.RoleMapper;
-import com.xxl.boot.api.framework.mapper.org.UserMapper;
-import com.xxl.boot.api.framework.mapper.org.UserRoleMapper;
+import com.xxl.boot.api.framework.mapper.authz.OrgMapper;
+import com.xxl.boot.api.framework.mapper.authz.RoleMapper;
+import com.xxl.boot.api.framework.mapper.authz.UserMapper;
+import com.xxl.boot.api.framework.mapper.authz.UserRoleMapper;
 import com.xxl.boot.api.framework.model.adaptor.UserAdaptor;
 import com.xxl.boot.api.framework.model.dto.UserDTO;
 import com.xxl.boot.api.framework.model.entity.Org;

@@ -5,7 +5,7 @@
  * 无权限时不渲染 children（等价 Vue 中移除 DOM 元素）。
  *
  * 用法：
- *   <Auth perms={['org:user']}>
+ *   <Auth perms={['authz:user']}>
  *     <Button>新增</Button>
  *   </Auth>
  *   <Auth roles={['admin']}>
