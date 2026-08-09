@@ -39,6 +39,7 @@ import {
   Tabs,
   Tag,
 } from 'antd';
+import { PageContainer } from '@ant-design/pro-components';
 import { createStyles } from 'antd-style';
 import React, { useMemo, useRef, useState } from 'react';
 
@@ -426,8 +427,9 @@ const PageGen: React.FC = () => {
   };
 
   return (
-    <div className={styles.container}>
-      {/* 左：组件面板 */}
+    <PageContainer ghost title={false}>
+      <div className={styles.container}>
+        {/* 左：组件面板 */}
       <div className={`${styles.panel} ${styles.palette}`}>
         {paletteGroups.map((group) => (
           <div key={group.title} className={styles.paletteGroup}>
@@ -632,7 +634,8 @@ const PageGen: React.FC = () => {
           ]}
         />
       </div>
-    </div>
+      </div>
+    </PageContainer>
   );
 };
 

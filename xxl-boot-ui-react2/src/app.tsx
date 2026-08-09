@@ -120,6 +120,12 @@ export const layout: RunTimeLayoutConfig = ({
   setInitialState,
 }) => {
   return {
+    // 单层级页面（如首页、帮助中心）也展示面包屑
+    breadcrumbProps: { minLength: 1 },
+    // 面包屑只读展示，不支持点击跳转
+    itemRender: (route) => (
+      <span>{route.breadcrumbName || route.title}</span>
+    ),
     menuItemRender: (item, dom) => {
       if (item.path) {
         return (
