@@ -1,0 +1,46 @@
+{
+  "ignore": {
+    "files": [
+      "config/**",
+      "mock/**",
+      "public/**",
+      "scripts/**",
+      "types/**",
+      ".worktrees/**",
+      "cloudflare-worker/**",
+      "src/.umi*/**",
+      "src/services/**",
+      "src/service-worker.js",
+      "**/_mock.ts",
+      "**/*.md",
+      "**/*.less",
+      "**/*.css"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "src/global.tsx",
+          "src/global.style.ts",
+          "src/loading.tsx",
+          "src/locales/**",
+          "src/pages/**",
+          "tests/__mocks__/**"
+        ],
+        "rules": ["deslop/unused-file"]
+      },
+      {
+        "files": ["package.json"],
+        "rules": ["deslop/unused-dev-dependency"]
+      },
+      {
+        "files": [
+          "src/pages/form/advanced-form/index.tsx",
+          "src/pages/table-list/index.tsx"
+        ],
+        "rules": ["react-doctor/no-giant-component"]
+      }
+    ]
+  },
+  "blocking": "error",
+  "adoptExistingLintConfig": true
+}
