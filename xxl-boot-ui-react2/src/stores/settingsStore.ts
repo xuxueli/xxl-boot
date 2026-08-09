@@ -21,6 +21,10 @@ export const useSettingsStore = create<SettingsState>()((set) => ({
   settings: defaultSettings as ProLayoutProps,
   settingDrawerOpen: false,
 
-  setSettings: (settings) => set({ settings }),
+  /** 与默认配置合并，避免外部传入的设置缺失 title/logo 时被整体覆盖 */
+  setSettings: (settings) =>
+    set({
+      settings: { ...defaultSettings, ...settings },
+    }),
   setSettingDrawerOpen: (settingDrawerOpen) => set({ settingDrawerOpen }),
 }));
