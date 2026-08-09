@@ -103,7 +103,7 @@ const DictList: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <ProTable<API.Dict>
         headerTitle="字典类型列表"
         actionRef={actionRef}

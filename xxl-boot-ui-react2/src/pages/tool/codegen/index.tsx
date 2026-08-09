@@ -123,7 +123,7 @@ const CodegenList: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <ProTable<API.Codegen>
         headerTitle="代码生成列表"
         actionRef={actionRef}

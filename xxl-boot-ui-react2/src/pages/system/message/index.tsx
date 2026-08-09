@@ -118,7 +118,7 @@ const MessageList: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <ProTable<API.Message>
         headerTitle="消息列表"
         actionRef={actionRef}

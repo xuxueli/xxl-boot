@@ -9,8 +9,8 @@ import React from 'react';
 
 const HelpCenter: React.FC = () => {
   return (
-    <PageContainer ghost>
-      <ProCard style={{ maxWidth: 720, margin: '0 auto' }} title="帮助中心">
+    <PageContainer ghost title={false}>
+      <ProCard>
         <Typography.Title level={4}>XXL-Boot 快速开发平台</Typography.Title>
         <Typography.Paragraph type="secondary">
           一个快速开发平台，易学易用、扩展丰富、开箱即用。内置安全登录、权限管控、
@@ -19,13 +19,12 @@ const HelpCenter: React.FC = () => {
           致力为中小企业、个人开发者打造开箱即用的中后台解决方案。
         </Typography.Paragraph>
         <Divider />
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Button
             type="primary"
             icon={<GithubOutlined />}
             href="https://github.com/xuxueli/xxl-boot"
             target="_blank"
-            style={{ marginRight: 12 }}
           >
             GitHub 仓库
           </Button>
@@ -36,6 +35,17 @@ const HelpCenter: React.FC = () => {
           >
             官方文档
           </Button>
+          ｜
+          <a
+            href="https://github.com/xuxueli/xxl-boot"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              alt="GitHub stars"
+              src="https://img.shields.io/github/stars/xuxueli/xxl-boot"
+            />
+          </a>
         </div>
         <Divider />
         <Typography.Paragraph type="secondary" style={{ textAlign: 'center' }}>

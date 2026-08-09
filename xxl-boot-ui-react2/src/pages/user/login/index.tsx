@@ -4,7 +4,7 @@ import {
   ProFormCheckbox,
   ProFormText,
 } from '@ant-design/pro-components';
-import { Helmet, useIntl, useModel } from '@umijs/max';
+import { Helmet, history, useIntl, useModel } from '@umijs/max';
 import { App } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { startTransition, useEffect, useState } from 'react';
@@ -103,7 +103,9 @@ const Login: React.FC = () => {
       await fetchUserInfo();
       const urlParams = new URL(window.location.href).searchParams;
       const redirectUrl = getSafeRedirectUrl(urlParams.get('redirect'));
-      window.location.href = redirectUrl;
+      // 提示停留片刻后再跳转，避免成功提示被页面刷新吞掉
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      history.push(redirectUrl);
     } catch {
       // 登录失败：刷新验证码
       if (captchaEnabled) {

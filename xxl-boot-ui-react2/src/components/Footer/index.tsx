@@ -17,8 +17,17 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
   link: css`
     color: ${token.colorTextDescription};
-    text-decoration: none;
     margin-left: 8px;
+    text-decoration: underline;
+
+    &:hover {
+      color: ${token.colorText};
+    }
+  `,
+  nameLink: css`
+    color: ${token.colorTextDescription};
+    margin-left: 5px;
+    text-decoration: underline;
 
     &:hover {
       color: ${token.colorText};
@@ -32,7 +41,17 @@ const Footer: React.FC = () => {
 
   return (
     <div className={styles.footer}>
-      <span>Copyright © 2015-{year} xuxueli</span>
+      <span>
+        Copyright © 2015-{year}
+        <a
+          className={styles.nameLink}
+          href="https://www.xuxueli.com/xxl-boot/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          xuxueli
+        </a>
+      </span>
       <a
         className={styles.link}
         href="https://github.com/xuxueli/xxl-boot"

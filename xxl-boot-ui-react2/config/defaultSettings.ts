@@ -13,7 +13,7 @@ const Settings: ProLayoutProps & {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: 'XXL-Boot',
+  title: 'XXL-BOOT',
   logo: '/logo.png',
   iconfontUrl: '',
   token: {

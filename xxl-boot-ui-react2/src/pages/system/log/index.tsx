@@ -114,7 +114,7 @@ const LogList: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <ProTable<API.Log>
         headerTitle="日志列表"
         actionRef={actionRef}

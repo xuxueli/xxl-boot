@@ -109,9 +109,10 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'XXL-Boot',
+  title: 'XXL-BOOT',
   layout: {
-    locale: true,
+    // 菜单标题已由后端返回中文，关闭布局菜单国际化，避免 i18n 查找告警
+    locale: false,
     ...defaultSettings,
   },
   /**

@@ -7,9 +7,9 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { history, useLocation } from '@umijs/max';
 import { App, Button, Tag } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { delData, getType, listData } from '@/services/xxl-boot/system/dict';
+import { delData, listData } from '@/services/xxl-boot/system/dict';
 import { usePermission } from '@/utils/permission';
 import DictDataFormModal from './DictDataFormModal';
 
@@ -22,25 +22,12 @@ const DictData: React.FC = () => {
   // 从 URL 读取 dictId
   const rawDictId = Number(new URLSearchParams(location.search).get('dictId'));
   const dictId = Number.isNaN(rawDictId) ? undefined : rawDictId;
-  const [dictName, setDictName] = useState('');
-
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.DictItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const dictStatusOptions = useEnumOption('DictStatusEnum');
   const statusValueEnum = toValueEnum(dictStatusOptions);
-
-  /** 加载字典类型名称 */
-  useEffect(() => {
-    if (dictId) {
-      getType(dictId)
-        .then((res) => {
-          setDictName(res.data?.name || '');
-        })
-        .catch(() => {});
-    }
-  }, [dictId]);
 
   /** 删除字典项 */
   const handleDelete = (row?: API.DictItem) => {
@@ -98,7 +85,7 @@ const DictData: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost header={{ title: dictName || '字典数据' }}>
+    <PageContainer ghost title={false}>
       <ProTable<API.DictItem>
         headerTitle="字典项列表"
         actionRef={actionRef}

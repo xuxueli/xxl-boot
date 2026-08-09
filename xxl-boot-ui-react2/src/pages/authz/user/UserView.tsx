@@ -61,7 +61,7 @@ const UserView = forwardRef<UserViewRef>((_, ref) => {
   return (
     <Drawer
       title="用户详情"
-      width={680}
+      size={680}
       open={visible}
       onClose={() => setVisible(false)}
       destroyOnClose

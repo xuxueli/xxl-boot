@@ -176,7 +176,7 @@ const OrgList: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <ProTable<API.Org>
         headerTitle="组织列表"
         actionRef={actionRef}

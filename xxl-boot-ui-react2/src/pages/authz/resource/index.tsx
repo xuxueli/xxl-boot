@@ -227,7 +227,7 @@ const ResourceList: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <ProTable<API.Resource>
         headerTitle="资源列表"
         actionRef={actionRef}

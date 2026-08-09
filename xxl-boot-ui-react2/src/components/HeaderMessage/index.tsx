@@ -7,9 +7,10 @@ import {
   LoadingOutlined,
   NotificationOutlined,
 } from '@ant-design/icons';
-import { Badge, Popover, Tag } from 'antd';
+import { Badge, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import HeaderDropdown from '../HeaderDropdown';
 import {
   listMessageTop,
   markMessageRead,
@@ -23,8 +24,9 @@ const useStyles = createStyles(({ token, css }) => ({
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
+    width: 40px;
     height: 48px;
+    margin-right: -8px;
     cursor: pointer;
     font-size: 18px;
     color: ${token.colorText};
@@ -36,6 +38,10 @@ const useStyles = createStyles(({ token, css }) => ({
   panel: css`
     width: 320px;
     padding: 0;
+    background: ${token.colorBgElevated};
+    border-radius: ${token.borderRadiusLG}px;
+    box-shadow: ${token.boxShadowSecondary};
+    overflow: hidden;
   `,
   header: css`
     display: flex;
@@ -112,8 +118,6 @@ const HeaderMessage: React.FC = () => {
   const [messageList, setMessageList] = useState<API.Message[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [popoverOpen, setPopoverOpen] = useState(false);
-  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
    * 加载顶部公告列表，统计未读数
@@ -133,13 +137,6 @@ const HeaderMessage: React.FC = () => {
   useEffect(() => {
     loadMessageTop();
   }, [loadMessageTop]);
-
-  /** 鼠标移出铃铛：延迟关闭，给移入 popover 留出时间 */
-  const handleLeave = () => {
-    leaveTimer.current = setTimeout(() => {
-      setPopoverOpen(false);
-    }, 1000);
-  };
 
   /** 点击公告：未读则标记已读，预览详情 */
   const previewMessage = (item: API.Message) => {
@@ -164,12 +161,11 @@ const HeaderMessage: React.FC = () => {
 
   return (
     <>
-      <Popover
-        open={popoverOpen}
+      <HeaderDropdown
         placement="bottomRight"
         arrow
-        trigger="click"
-        content={
+        trigger={['hover']}
+        dropdownRender={() => (
           <div className={styles.panel}>
             <div className={styles.header}>
               <span>站内消息</span>
@@ -208,25 +204,14 @@ const HeaderMessage: React.FC = () => {
               </div>
             )}
           </div>
-        }
+        )}
       >
-        <div
-          className={styles.trigger}
-          onMouseEnter={() => {
-            if (leaveTimer.current) clearTimeout(leaveTimer.current);
-            setPopoverOpen(true);
-          }}
-          onMouseLeave={handleLeave}
-          onClick={() => {
-            if (leaveTimer.current) clearTimeout(leaveTimer.current);
-            setPopoverOpen((open) => !open);
-          }}
-        >
+        <div className={styles.trigger}>
           <Badge count={unreadCount} size="small" overflowCount={99}>
             <BellOutlined />
           </Badge>
         </div>
-      </Popover>
+      </HeaderDropdown>
       <MessageDetail ref={messageViewRef} />
     </>
   );

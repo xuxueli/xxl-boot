@@ -88,7 +88,7 @@ const ConfigList: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <ProTable<API.Config>
         headerTitle="配置列表"
         actionRef={actionRef}

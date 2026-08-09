@@ -93,7 +93,7 @@ const RoleList: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <ProTable<API.Role>
         headerTitle="角色列表"
         actionRef={actionRef}

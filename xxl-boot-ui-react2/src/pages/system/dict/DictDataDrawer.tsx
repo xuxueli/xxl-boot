@@ -43,7 +43,7 @@ const DictDataDrawer = forwardRef<DictDataDrawerRef>((_, ref) => {
   return (
     <Drawer
       title={`字典数据（${dict?.name} - ${dict?.type}）`}
-      width={700}
+      size={700}
       open={visible}
       onClose={() => setVisible(false)}
       destroyOnClose

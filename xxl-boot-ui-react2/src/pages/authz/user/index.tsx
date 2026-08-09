@@ -239,7 +239,7 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <div style={{ display: 'flex', gap: 16 }}>
         <TreePanel
           treeData={deptOptions}

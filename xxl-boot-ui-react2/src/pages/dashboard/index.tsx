@@ -59,18 +59,6 @@ const useStyles = createStyles(({ token, css }) => ({
     color: ${token.colorTextTertiary};
     margin-top: 4px;
   `,
-  cardHeader: css`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 14px;
-    font-weight: 600;
-    color: ${token.colorText};
-  `,
-  msgList: css`
-    max-height: 320px;
-    overflow-y: auto;
-  `,
   msgItem: css`
     padding: 12px 0;
     border-bottom: 1px solid ${token.colorBorderSecondary};
@@ -205,7 +193,7 @@ const Dashboard: React.FC = () => {
   );
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       {/* 第一排：指标卡片 */}
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         {statConfig.map((item) => (
@@ -237,22 +225,20 @@ const Dashboard: React.FC = () => {
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         <ProCard
           style={{ flex: 1, minWidth: 480, marginBottom: 20 }}
-          title={
-            <div className={styles.cardHeader}>
-              <span>审计日志</span>
-              <Radio.Group
-                size="small"
-                value={chartDays}
-                onChange={(e) => {
-                  setChartDays(e.target.value);
-                  loadChart(e.target.value);
-                }}
-              >
-                <Radio.Button value={7}>7天</Radio.Button>
-                <Radio.Button value={14}>14天</Radio.Button>
-                <Radio.Button value={30}>30天</Radio.Button>
-              </Radio.Group>
-            </div>
+          title="审计日志"
+          extra={
+            <Radio.Group
+              size="small"
+              value={chartDays}
+              onChange={(e) => {
+                setChartDays(e.target.value);
+                loadChart(e.target.value);
+              }}
+            >
+              <Radio.Button value={7}>7天</Radio.Button>
+              <Radio.Button value={14}>14天</Radio.Button>
+              <Radio.Button value={30}>30天</Radio.Button>
+            </Radio.Group>
           }
         >
           <Line
@@ -271,7 +257,13 @@ const Dashboard: React.FC = () => {
               style: { stroke: '#1677ff', lineWidth: 2 },
             }}
             xAxis={{
-              label: { fontSize: 11, fill: '#909399' },
+              label: {
+                // 标签保持横向，过密时隐藏部分刻度，避免日期竖排
+                align: 'horizontal',
+                overlap: [{ type: 'hide' }],
+                style: { fontSize: 11, fill: '#909399' },
+              },
+              tickLine: { length: 4 },
             }}
             yAxis={{
               minInterval: 1,
@@ -288,7 +280,7 @@ const Dashboard: React.FC = () => {
           {messages.length === 0 ? (
             <Empty description="暂无消息" />
           ) : (
-            <div className={styles.msgList}>
+            <div>
               {messages.map((item) => (
                 <div
                   key={item.id}

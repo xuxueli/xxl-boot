@@ -43,7 +43,7 @@ const Profile: React.FC = () => {
   }, []);
 
   return (
-    <PageContainer ghost>
+    <PageContainer ghost title={false}>
       <Spin spinning={loading}>
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           {/* 个人信息 */}

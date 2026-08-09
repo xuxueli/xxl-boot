@@ -67,7 +67,7 @@ const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
   return (
     <Drawer
       title="消息详情"
-      width="50%"
+      size="50%"
       open={visible}
       onClose={handleClose}
       destroyOnClose

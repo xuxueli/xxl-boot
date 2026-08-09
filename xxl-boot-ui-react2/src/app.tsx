@@ -25,6 +25,20 @@ const buildMenuData = (routes: API.RouterVo[]): MenuDataItem[] => {
   return routes
     .filter((r) => !r.hidden)
     .map((r) => {
+      // 根级菜单：后端 getRouters 会包裹一层 meta=null 的父节点，
+      // 仅含一个子节点时，直接以子节点作为菜单项展示
+      if (!r.meta && r.children?.length === 1) {
+        const child = r.children[0];
+        const promoted: MenuDataItem = {
+          path: child.path || r.path,
+          name: child.meta?.title,
+        };
+        const Icon = getIconComponent(child.meta?.icon);
+        if (Icon) {
+          promoted.icon = <Icon />;
+        }
+        return promoted;
+      }
       const item: MenuDataItem = {
         path: r.path,
         name: r.meta?.title,
