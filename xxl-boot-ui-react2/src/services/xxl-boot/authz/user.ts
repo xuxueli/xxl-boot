@@ -2,7 +2,7 @@
  * 名称：用户管理 API
  * 能力：提供用户列表、增删改、状态与个人中心相关接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 分页查询用户列表。

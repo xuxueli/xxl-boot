@@ -2,7 +2,7 @@
  * 名称：字典管理 API
  * 能力：提供字典类型、字典项、枚举加载相关接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 // ==================== 字典类型 ====================
 

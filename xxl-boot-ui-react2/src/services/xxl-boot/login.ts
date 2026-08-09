@@ -2,7 +2,7 @@
  * 名称：登录认证 & 路由 API
  * 能力：提供登录、退出、验证码、当前用户信息、获取动态路由等认证相关接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 用户登录。
@@ -35,11 +35,10 @@ export async function login(
  * 获取当前登录用户信息。
  * @returns 用户详情（含角色、权限集合）
  */
-export async function getInfo(options?: { [key: string]: any }) {
+export async function getInfo() {
   return request<API.Response<API.LoginInfo>>('/auth/loginCheck', {
     method: 'GET',
-    skipErrorHandler: true,
-    ...(options || {}),
+    headers: { skipErrorHandler: true },
   });
 }
 

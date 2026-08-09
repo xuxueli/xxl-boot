@@ -2,7 +2,7 @@
  * 名称：角色管理 API
  * 能力：提供角色分页、增删改、角色-资源授权相关接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 分页查询角色列表。

@@ -2,7 +2,7 @@
  * 名称：资源管理 API
  * 能力：提供资源树、增删改、排序相关接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 查询资源树列表。

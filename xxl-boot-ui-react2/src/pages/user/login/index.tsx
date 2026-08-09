@@ -4,13 +4,13 @@ import {
   ProFormCheckbox,
   ProFormText,
 } from '@ant-design/pro-components';
-import { Helmet, history, useIntl, useModel } from '@umijs/max';
 import { App } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { startTransition, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Footer } from '@/components';
-import useUser from '@/models/user';
 import { getCodeImg } from '@/services/xxl-boot/login';
+import { useUserStore } from '@/stores/userStore';
 
 /**
  * 校验 redirect URL，防止开放重定向攻击
@@ -51,9 +51,11 @@ const useStyles = createStyles(({ token }) => {
 const Login: React.FC = () => {
   const { styles } = useStyles();
   const { message } = App.useApp();
-  const intl = useIntl();
-  const { initialState, setInitialState } = useModel('@@initialState');
-  const { login } = useUser();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const login = useUserStore((s) => s.login);
+  const fetchUserInfo = useUserStore((s) => s.fetchUserInfo);
+  const fetchMenuData = useUserStore((s) => s.fetchMenuData);
 
   // 验证码相关状态
   const [captchaEnabled, setCaptchaEnabled] = useState(false);
@@ -72,21 +74,6 @@ const Login: React.FC = () => {
     }
   };
 
-  /** 登录后刷新用户信息与菜单 */
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    const menuData = await initialState?.fetchMenuData?.();
-    if (userInfo) {
-      startTransition(() => {
-        setInitialState((s) => ({
-          ...s,
-          currentUser: userInfo,
-          menuData,
-        }));
-      });
-    }
-  };
-
   /** 提交登录 */
   const handleSubmit = async (values: API.LoginParams) => {
     try {
@@ -94,18 +81,12 @@ const Login: React.FC = () => {
         ...values,
         captchaUuid,
       });
-      message.success(
-        intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: '登录成功！',
-        }),
-      );
-      await fetchUserInfo();
-      const urlParams = new URL(window.location.href).searchParams;
-      const redirectUrl = getSafeRedirectUrl(urlParams.get('redirect'));
+      message.success('登录成功！');
+      await Promise.all([fetchUserInfo(), fetchMenuData()]);
+      const redirectUrl = getSafeRedirectUrl(searchParams.get('redirect'));
       // 提示停留片刻后再跳转，避免成功提示被页面刷新吞掉
       await new Promise((resolve) => setTimeout(resolve, 800));
-      history.push(redirectUrl);
+      navigate(redirectUrl);
     } catch {
       // 登录失败：刷新验证码
       if (captchaEnabled) {
@@ -117,19 +98,11 @@ const Login: React.FC = () => {
   // 初始化：获取验证码
   useEffect(() => {
     getCode();
+    document.title = '登录页 - XXL-BOOT';
   }, []);
 
   return (
     <div className={styles.container}>
-      <Helmet>
-        <title>
-          {intl.formatMessage({
-            id: 'menu.login',
-            defaultMessage: '登录页',
-          })}
-          {' - XXL-Boot'}
-        </title>
-      </Helmet>
       <div
         style={{
           flex: '1',

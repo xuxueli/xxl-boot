@@ -1,17 +1,20 @@
-import { Link } from '@umijs/max';
 import { Button, Card, Result } from 'antd';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-export default () => (
+const Exception500: React.FC = () => (
   <Card variant="borderless">
     <Result
       status="500"
       title="500"
-      subTitle="Sorry, something went wrong."
+      subTitle="抱歉，服务器出错了。"
       extra={
-        <Link to="/" prefetch>
-          <Button type="primary">Back Home</Button>
+        <Link to="/">
+          <Button type="primary">返回首页</Button>
         </Link>
       }
     />
   </Card>
 );
+
+export default Exception500;

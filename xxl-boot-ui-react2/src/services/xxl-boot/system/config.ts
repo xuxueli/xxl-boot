@@ -2,7 +2,7 @@
  * 名称：配置管理 API
  * 能力：提供配置分页、增删改、按 key 加载接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 分页查询配置列表。

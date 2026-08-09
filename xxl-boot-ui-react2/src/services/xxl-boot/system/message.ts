@@ -2,7 +2,7 @@
  * 名称：站内消息 API
  * 能力：提供消息分页、增删改、已读、已读用户相关接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 分页查询消息列表。

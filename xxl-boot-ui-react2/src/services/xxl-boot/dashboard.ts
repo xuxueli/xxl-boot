@@ -2,7 +2,7 @@
  * 名称：首页 Dashboard API
  * 能力：提供首页指标卡片、审计日志趋势接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 首页：指标卡片。

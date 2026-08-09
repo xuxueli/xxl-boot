@@ -5,9 +5,9 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { history } from '@umijs/max';
 import { App, Button, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { delType, listType } from '@/services/xxl-boot/system/dict';
 import { usePermission } from '@/utils/permission';
@@ -18,6 +18,7 @@ const DictList: React.FC = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const drawerRef = useRef<DictDataDrawerRef>(null);
+  const navigate = useNavigate();
   const { hasRole } = usePermission();
 
   const [formOpen, setFormOpen] = useState(false);
@@ -90,7 +91,7 @@ const DictList: React.FC = () => {
         <a
           key="list"
           onClick={() => {
-            history.push(`/system/dict/data?dictId=${record.id}`);
+            navigate(`/system/dict/data?dictId=${record.id}`);
           }}
         >
           列表

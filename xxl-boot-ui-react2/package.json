@@ -2,21 +2,15 @@
   "name": "xxl-boot-ui-react2",
   "version": "2.1.0",
   "private": true,
-  "description": "XXL-Boot 快速开发平台 - React 前端（基于 Ant Design Pro）",
+  "description": "XXL-Boot 快速开发平台 - React 前端（Vite + React Router + Zustand + TanStack Query）",
   "repository": "git@github.com:xuxueli/xxl-boot.git",
   "scripts": {
-    "analyze": "cross-env ANALYZE=1 max build",
-    "build": "max build",
-    "dev": "cross-env UMI_ENV=dev MOCK=none max dev",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "lint": "npm run biome:lint && npm run tsc",
     "biome:lint": "biome lint",
     "biome": "biome check --write",
-    "preview": "max preview --port 8000",
-    "preview:build": "max build && max preview --port 8000",
-    "start": "cross-env UMI_ENV=dev max dev",
-    "start:no-mock": "cross-env MOCK=none max dev",
-    "start:pre": "cross-env UMI_ENV=pre MOCK=none max dev",
-    "start:test": "cross-env UMI_ENV=test MOCK=none max dev",
     "tsc": "tsc --noEmit"
   },
   "browserslist": [
@@ -28,15 +22,19 @@
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/sortable": "10.0.0",
     "@dnd-kit/utilities": "3.2.2",
+    "@tanstack/react-query": "5.101.4",
     "antd": "6.5.4",
     "antd-style": "4.1.0",
+    "axios": "1.19.0",
     "clsx": "2.1.1",
     "dayjs": "1.11.21",
     "echarts": "6.1.0",
     "js-cookie": "3.0.8",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-quill": "2.0.0"
+    "react-quill": "2.0.0",
+    "react-router-dom": "7.18.2",
+    "zustand": "5.0.14"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.7",
@@ -44,45 +42,11 @@
     "@types/node": "26.2.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "@umijs/max": "4.7.2",
-    "cross-env": "10.1.0",
-    "typescript": "7.0.2"
-  },
-  "overrides": {
-    "@umijs/plugins": {
-      "@ant-design/pro-components": "$@ant-design/pro-components"
-    }
+    "@vitejs/plugin-react": "6.0.5",
+    "typescript": "7.0.2",
+    "vite": "8.2.1"
   },
   "engines": {
-    "node": ">=22.0.0"
-  },
-  "create-umi": {
-    "ignoreScript": [
-      "docker*",
-      "functions*",
-      "site",
-      "generateMock"
-    ],
-    "ignoreDependencies": [
-      "netlify*",
-      "serverless"
-    ],
-    "ignore": [
-      ".dockerignore",
-      ".git",
-      ".github",
-      ".gitpod.yml",
-      "CODE_OF_CONDUCT.md",
-      "Dockerfile",
-      "Dockerfile.*",
-      "lambda",
-      "LICENSE",
-      "netlify.toml",
-      "README.*.md",
-      "azure-pipelines.yml",
-      "docker",
-      "CNAME",
-      "create-umi"
-    ]
+    "node": ">=22.12.0"
   }
 }

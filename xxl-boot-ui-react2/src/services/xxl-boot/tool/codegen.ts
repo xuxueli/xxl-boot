@@ -2,7 +2,7 @@
  * 名称：代码生成 API
  * 能力：提供代码生成表分页、详情、更新、删除、建表、预览、生成接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 分页查询代码生成表列表。

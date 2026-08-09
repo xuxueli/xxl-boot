@@ -2,7 +2,7 @@
  * 名称：组织管理 API
  * 能力：提供组织树、增删改、排序相关接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 查询组织树列表。

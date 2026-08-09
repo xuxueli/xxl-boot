@@ -1,8 +1,8 @@
 /**
- * useEnumOption - 后端枚举项加载 Hook
- * 能力：从 /system/dict/loadEnumItem 加载枚举项，带模块级缓存，避免重复请求。
+ * useEnumOption - 后端枚举项加载 Hook（基于 TanStack Query 缓存）
+ * 能力：从 /system/dict/loadEnumItem 加载枚举项，QueryClient 自动缓存去重。
  */
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { loadEnumItem } from '@/services/xxl-boot/system/dict';
 
 export interface EnumOption {
@@ -10,41 +10,26 @@ export interface EnumOption {
   title?: string;
 }
 
-/** 模块级缓存：枚举名 → Promise<选项> */
-const enumCache = new Map<string, Promise<EnumOption[]>>();
-
 /**
- * 加载后端枚举项
+ * 加载后端枚举项（非 Hook 形式，供普通逻辑调用）
  * @param enumName 枚举类名，如 UserStatuEnum
- * @returns 枚举选项列表（code/title）
  */
 export function loadEnum(enumName: string): Promise<EnumOption[]> {
-  const cached = enumCache.get(enumName);
-  if (cached) {
-    return cached;
-  }
-  const promise = loadEnumItem(enumName).then((res) => res.data || []);
-  enumCache.set(enumName, promise);
-  return promise;
+  return loadEnumItem(enumName).then((res) => res.data || []);
 }
 
 /**
- * 获取枚举选项（Hook 形式）
+ * 获取枚举选项（Hook 形式，TanStack Query 缓存）
  * @param enumName 枚举类名
  * @returns 枚举选项列表
  */
 export function useEnumOption(enumName: string): EnumOption[] {
-  const [options, setOptions] = useState<EnumOption[]>([]);
-  useEffect(() => {
-    let mounted = true;
-    loadEnum(enumName).then((data) => {
-      if (mounted) setOptions(data);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, [enumName]);
-  return options;
+  const { data } = useQuery({
+    queryKey: ['enum', enumName],
+    queryFn: () => loadEnum(enumName),
+    staleTime: Infinity,
+  });
+  return data || [];
 }
 
 /**

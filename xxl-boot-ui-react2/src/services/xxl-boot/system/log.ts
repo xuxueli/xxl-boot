@@ -2,7 +2,7 @@
  * 名称：审计日志 API
  * 能力：提供日志分页、删除、导出相关接口。
  */
-import { request } from '@umijs/max';
+import { request } from '@/utils/request';
 
 /**
  * 分页查询日志列表。

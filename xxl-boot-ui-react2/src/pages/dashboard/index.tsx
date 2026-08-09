@@ -10,7 +10,8 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
-import { App, Card, Empty, Radio, Tag } from 'antd';
+import { useQuery } from '@tanstack/react-query';
+import { Card, Empty, Radio, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import * as echarts from 'echarts';
 import React, { useEffect, useRef, useState } from 'react';
@@ -121,61 +122,43 @@ const statConfig = [
 
 const Dashboard: React.FC = () => {
   const { styles } = useStyles();
-  const { message: messageApi } = App.useApp();
   const messageDetailRef = useRef<MessageDetailRef>(null);
 
-  const [stats, setStats] = useState<API.DashboardStats>({});
-  const [messages, setMessages] = useState<API.Message[]>([]);
   const [chartDays, setChartDays] = useState(30);
-  const [trendData, setTrendData] = useState<API.LogTrendItem[]>([]);
 
-  /** 指标卡片 - 数据加载 */
-  const loadStats = () => {
-    getStats()
-      .then((res) => {
-        setStats(res.data || {});
-      })
-      .catch(() => {
-        messageApi.error('统计数据加载失败');
+  /** 指标卡片 - 数据加载（TanStack Query） */
+  const { data: stats = {} } = useQuery({
+    queryKey: ['dashboard', 'stats'],
+    queryFn: () => getStats().then((res) => res.data || {}),
+  });
+
+  /** 消息列表 - 数据加载（TanStack Query） */
+  const { data: messages = [] } = useQuery({
+    queryKey: ['dashboard', 'messageTop'],
+    queryFn: () => listMessageTop().then((res) => res.data || []),
+  });
+
+  /** 日志趋势折线图：补全连续日期，无数据补 0（TanStack Query） */
+  const { data: trendData = [] } = useQuery({
+    queryKey: ['dashboard', 'logTrend', chartDays],
+    queryFn: async () => {
+      const res = await getLogTrend(chartDays);
+      const list = res.data || [];
+      const dateMap: Record<string, number> = {};
+      list.forEach((i) => {
+        if (i.date) dateMap[i.date] = i.count || 0;
       });
-  };
-
-  /** 消息列表 - 数据加载 */
-  const loadMessages = () => {
-    listMessageTop()
-      .then((res) => {
-        setMessages(res.data || []);
-      })
-      .catch(() => {});
-  };
-
-  /** 加载日志趋势折线图：补全连续日期，无数据补 0 */
-  const loadChart = (days: number) => {
-    getLogTrend(days)
-      .then((res) => {
-        const list = res.data || [];
-        const dateMap: Record<string, number> = {};
-        list.forEach((i) => {
-          if (i.date) dateMap[i.date] = i.count || 0;
-        });
-        const data: API.LogTrendItem[] = [];
-        const now = new Date();
-        for (let i = days - 1; i >= 0; i--) {
-          const d = new Date(now);
-          d.setDate(d.getDate() - i);
-          const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-          data.push({ date: key, count: dateMap[key] || 0 });
-        }
-        setTrendData(data);
-      })
-      .catch(() => {});
-  };
-
-  useEffect(() => {
-    loadStats();
-    loadMessages();
-    loadChart(30);
-  }, []);
+      const data: API.LogTrendItem[] = [];
+      const now = new Date();
+      for (let i = chartDays - 1; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        data.push({ date: key, count: dateMap[key] || 0 });
+      }
+      return data;
+    },
+  });
 
   /** 消息列表 - 点击查看详情，标记已读 */
   const handleMsgClick = (item: API.Message) => {
@@ -262,10 +245,7 @@ const Dashboard: React.FC = () => {
             <Radio.Group
               size="small"
               value={chartDays}
-              onChange={(e) => {
-                setChartDays(e.target.value);
-                loadChart(e.target.value);
-              }}
+              onChange={(e) => setChartDays(e.target.value)}
             >
               <Radio.Button value={7}>7天</Radio.Button>
               <Radio.Button value={14}>14天</Radio.Button>

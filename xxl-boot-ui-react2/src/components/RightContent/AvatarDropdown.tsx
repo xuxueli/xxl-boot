@@ -1,10 +1,11 @@
 import { IdcardOutlined, LogoutOutlined, SkinOutlined } from '@ant-design/icons';
-import { history, useModel } from '@umijs/max';
 import type { MenuProps } from 'antd';
 import { Modal, Spin } from 'antd';
-import React, { startTransition } from 'react';
-import useUser from '@/models/user';
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import HeaderDropdown from '@/components/HeaderDropdown';
+import { useSettingsStore } from '@/stores/settingsStore';
+import { useUserStore } from '@/stores/userStore';
 
 type GlobalHeaderRightProps = {
   children?: React.ReactNode;
@@ -34,25 +35,11 @@ const menuItems: MenuProps['items'] = [
 export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
   children,
 }) => {
-  const { initialState, setInitialState } = useModel('@@initialState');
-  const { logout } = useUser();
-  const currentUser = initialState?.currentUser;
-
-  const loginOut = async () => {
-    await logout();
-    const { search, pathname } = window.location;
-    const urlParams = new URL(window.location.href).searchParams;
-    const searchParams = new URLSearchParams({
-      redirect: pathname + search,
-    });
-    const redirect = urlParams.get('redirect');
-    if (window.location.pathname !== '/user/login' && !redirect) {
-      history.replace({
-        pathname: '/user/login',
-        search: searchParams.toString(),
-      });
-    }
-  };
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentUser = useUserStore((s) => s.currentUser);
+  const logout = useUserStore((s) => s.logout);
+  const setSettingDrawerOpen = useSettingsStore((s) => s.setSettingDrawerOpen);
 
   const onMenuClick: MenuProps['onClick'] = (event) => {
     const { key } = event;
@@ -63,24 +50,25 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
         content: '确定注销并退出系统吗？',
         okText: '确定',
         cancelText: '取消',
-        onOk: () => {
-          startTransition(() => {
-            setInitialState((s) => ({ ...s, currentUser: undefined }));
+        onOk: async () => {
+          await logout();
+          navigate('/user/login', {
+            replace: true,
+            state: { from: location.pathname },
           });
-          loginOut();
         },
       });
       return;
     }
     if (key === 'theme') {
       // 打开主题设置面板（SettingDrawer）
-      setInitialState((s) => ({ ...s, settingDrawerOpen: true }));
+      setSettingDrawerOpen(true);
       return;
     }
-    history.push(`/user/${key}`);
+    navigate(`/user/${key}`);
   };
 
-  if (!initialState || !currentUser) {
+  if (!currentUser) {
     return <Spin size="small" />;
   }
 

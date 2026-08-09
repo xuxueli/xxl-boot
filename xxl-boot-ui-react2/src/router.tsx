@@ -1,0 +1,151 @@
+/**
+ * 路由配置（React Router，替代原 Umi 静态路由）
+ * 说明：
+ *   - /user/login 无布局；其余业务路由在 BasicLayout 布局内
+ *   - RequireAuth 登录守卫；RequirePermission 页面级权限守卫
+ */
+import { lazy, Suspense } from 'react';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import RequireAuth from '@/components/RequireAuth';
+import RequirePermission from '@/components/RequirePermission';
+import Loading from '@/loading';
+import BasicLayout from '@/layouts/BasicLayout';
+
+/** 懒加载页面组件（带 Loading 兜底） */
+const lazyLoad = (factory: () => Promise<{ default: React.ComponentType }>) => {
+  const Component = lazy(factory);
+  return (
+    <Suspense fallback={<Loading />}>
+      <Component />
+    </Suspense>
+  );
+};
+
+export const router = createBrowserRouter([
+  {
+    path: '/user/login',
+    element: lazyLoad(() => import('@/pages/user/login')),
+  },
+  {
+    path: '/user/*',
+    element: lazyLoad(() => import('@/pages/exception/404')),
+  },
+  {
+    path: '/',
+    element: (
+      <RequireAuth>
+        <BasicLayout />
+      </RequireAuth>
+    ),
+    children: [
+      { index: true, element: <Navigate to="/dashboard" replace /> },
+      {
+        path: 'user/profile',
+        element: lazyLoad(() => import('@/pages/user/profile')),
+      },
+      { path: 'dashboard', element: lazyLoad(() => import('@/pages/dashboard')) },
+      {
+        path: 'authz/user',
+        element: (
+          <RequirePermission permission="authz:user">
+            {lazyLoad(() => import('@/pages/authz/user'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'authz/role',
+        element: (
+          <RequirePermission permission="authz:role">
+            {lazyLoad(() => import('@/pages/authz/role'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'authz/resource',
+        element: (
+          <RequirePermission permission="authz:resource">
+            {lazyLoad(() => import('@/pages/authz/resource'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'authz/org',
+        element: (
+          <RequirePermission permission="authz:org">
+            {lazyLoad(() => import('@/pages/authz/org'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'system/dict',
+        element: (
+          <RequirePermission permission="system:dict">
+            {lazyLoad(() => import('@/pages/system/dict'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'system/dict/data',
+        element: (
+          <RequirePermission permission="system:dict">
+            {lazyLoad(() => import('@/pages/system/dict-data'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'system/config',
+        element: (
+          <RequirePermission permission="system:config">
+            {lazyLoad(() => import('@/pages/system/config'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'system/message',
+        element: (
+          <RequirePermission permission="system:message">
+            {lazyLoad(() => import('@/pages/system/message'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'system/log',
+        element: (
+          <RequirePermission permission="system:log">
+            {lazyLoad(() => import('@/pages/system/log'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'tool/codegen',
+        element: (
+          <RequirePermission permission="tool:codegen">
+            {lazyLoad(() => import('@/pages/tool/codegen'))}
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'tool/pagegen',
+        element: (
+          <RequirePermission permission="tool:pagegen">
+            {lazyLoad(() => import('@/pages/tool/pagegen'))}
+          </RequirePermission>
+        ),
+      },
+      { path: 'help', element: lazyLoad(() => import('@/pages/help')) },
+      {
+        path: 'exception/403',
+        element: lazyLoad(() => import('@/pages/exception/403')),
+      },
+      {
+        path: 'exception/404',
+        element: lazyLoad(() => import('@/pages/exception/404')),
+      },
+      {
+        path: 'exception/500',
+        element: lazyLoad(() => import('@/pages/exception/500')),
+      },
+      { path: '*', element: lazyLoad(() => import('@/pages/exception/404')) },
+    ],
+  },
+]);

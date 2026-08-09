@@ -1,4 +1,7 @@
-import { getIntl } from '@umijs/max';
+/**
+ * 组件：OfflineBanner（离线提示条）
+ * 功能：网络离线时在顶部展示提示
+ */
 import { Alert } from 'antd';
 import { useSyncExternalStore } from 'react';
 
@@ -36,11 +39,7 @@ const OfflineBanner: React.FC = () => {
         zIndex: 10,
         maxWidth: 480,
       }}
-      title={getIntl().formatMessage({
-        id: 'app.network.offline',
-        defaultMessage:
-          'You are currently offline. Some features may be unavailable.',
-      })}
+      title="当前网络已断开，部分功能可能不可用。"
     />
   );
 };

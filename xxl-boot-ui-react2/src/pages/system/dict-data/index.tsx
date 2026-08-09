@@ -5,9 +5,9 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { history, useLocation } from '@umijs/max';
 import { App, Button, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { delData, listData } from '@/services/xxl-boot/system/dict';
 import { usePermission } from '@/utils/permission';
@@ -16,6 +16,7 @@ import DictDataFormModal from './DictDataFormModal';
 const DictData: React.FC = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
+  const navigate = useNavigate();
   const { hasRole } = usePermission();
   const location = useLocation();
 
@@ -117,7 +118,7 @@ const DictData: React.FC = () => {
           <Button
             key="close"
             onClick={() => {
-              history.push('/system/dict');
+              navigate('/system/dict');
             }}
           >
             关闭
