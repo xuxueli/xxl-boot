@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const baseApi = env.VITE_APP_BASE_API || '/api';
   const apiUrl = env.VITE_API_URL || 'http://localhost:8081';
-  const port = Number(env.VITE_APP_PORT) || 8000;
+  const port = Number(env.VITE_APP_PORT) || 4000;
 
   return {
     plugins: [react()],

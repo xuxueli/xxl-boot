@@ -11,8 +11,8 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import { addMessage, updateMessage } from '@/services/system/message';
 
 const MessageFormModal: React.FC<{
