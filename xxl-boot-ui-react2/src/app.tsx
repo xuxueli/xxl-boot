@@ -15,7 +15,7 @@ import {
 } from '@/components';
 import { getInfo, getRouters } from '@/services/xxl-boot/login';
 import { getIconComponent } from '@/utils/icon';
-import defaultSettings from '../config/defaultSettings';
+import defaultSettings from '@root/config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
 
 const loginPath = '/user/login';

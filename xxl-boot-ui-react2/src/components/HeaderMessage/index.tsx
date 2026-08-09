@@ -10,13 +10,13 @@ import {
 import { Badge, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import HeaderDropdown from '../HeaderDropdown';
+import HeaderDropdown from '@/components/HeaderDropdown';
 import {
   listMessageTop,
   markMessageRead,
   markMessageReadAll,
 } from '@/services/xxl-boot/system/message';
-import MessageDetail, { type MessageDetailRef } from '../MessageDetail';
+import MessageDetail, { type MessageDetailRef } from '@/components/MessageDetail';
 
 const useStyles = createStyles(({ token, css }) => ({
   trigger: css`

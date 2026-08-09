@@ -4,7 +4,7 @@ import type { MenuProps } from 'antd';
 import { Modal, Spin } from 'antd';
 import React, { startTransition } from 'react';
 import useUser from '@/models/user';
-import HeaderDropdown from '../HeaderDropdown';
+import HeaderDropdown from '@/components/HeaderDropdown';
 
 type GlobalHeaderRightProps = {
   children?: React.ReactNode;
