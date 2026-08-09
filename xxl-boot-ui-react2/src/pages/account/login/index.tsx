@@ -11,6 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Footer } from '@/components';
 import { getCodeImg } from '@/services/login';
 import { useUserStore } from '@/stores/userStore';
+import defaultSettings from '@/utils/defaultSettings';
 
 /**
  * 校验 redirect URL，防止开放重定向攻击
@@ -114,8 +115,8 @@ const Login: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.png" />}
-          title="XXL-BOOT"
+          logo={<img alt="logo" src={defaultSettings.logo} />}
+          title={defaultSettings.title}
           subTitle="快速开发平台"
           initialValues={{
             rememberMe: false,
