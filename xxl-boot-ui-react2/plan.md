@@ -12,14 +12,22 @@
 
 ---
 
-技术栈升级：
+React 主流技术栈：
 
 1、核心框架：
-  - React 19
-  - TypeScript 7
-  - Vite 8
-  - Ant Design 6
-2、UI 组件库：
-  - Ant Design 6
+  - React 
+  - TypeScript
+  - Vite
+2、状态、路由与请求：
+  - React Router（路由））
+  - Zustand (状态管理)
+  - TanStack Query（请求库）
+3、样式与组件库：
+  - Tailwind CSS（样式）
+  - Ant Design 6（组件库）
   - @ant-design/pro-components
-  - Tailwind CSS 
+4、其他：
+  - ESLint + Prettier（规范）
+
+
+专项：整体"去 Umi化"，替换掉 ant-design-pro 中的 Umi 相关依赖和配置，改为 Vite + React Router + Zustand + TanStack Query 的组合。

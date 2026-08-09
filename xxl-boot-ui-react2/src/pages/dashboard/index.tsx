@@ -9,11 +9,11 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Line } from '@ant-design/plots';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { App, Card, Empty, Radio, Tag } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import * as echarts from 'echarts';
+import React, { useEffect, useRef, useState } from 'react';
 import { MessageDetail } from '@/components';
 import type { MessageDetailRef } from '@/components/MessageDetail';
 import { getLogTrend, getStats } from '@/services/xxl-boot/dashboard';
@@ -183,14 +183,46 @@ const Dashboard: React.FC = () => {
     markMessageRead(item.id as number).catch(() => {});
   };
 
-  const chartData = useMemo(
-    () =>
-      trendData.map((i) => ({
-        date: i.date,
-        count: i.count,
-      })),
-    [trendData],
-  );
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  /** 渲染 ECharts 折线图（日志趋势） */
+  useEffect(() => {
+    if (!chartRef.current) return;
+    const chart = echarts.init(chartRef.current);
+    chart.setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: 40, right: 20, bottom: 30, top: 20 },
+      // X轴：日期，标签横向展示，过密时自动隐藏部分刻度
+      xAxis: {
+        type: 'category',
+        data: trendData.map((i) => i.date),
+        axisLabel: { fontSize: 11, color: '#909399', rotate: 0, hideOverlap: true },
+      },
+      yAxis: {
+        type: 'value',
+        minInterval: 1,
+        axisLabel: { fontSize: 11, color: '#909399' },
+      },
+      series: [
+        {
+          data: trendData.map((i) => i.count),
+          type: 'line',
+          smooth: true,
+          lineStyle: { width: 2, color: '#1677ff' },
+          itemStyle: { color: '#1677ff' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(64,158,255,0.3)' },
+              { offset: 1, color: 'rgba(64,158,255,0.02)' },
+            ]),
+          },
+        },
+      ],
+    });
+    return () => {
+      chart.dispose();
+    };
+  }, [trendData]);
 
   return (
     <PageContainer ghost title={false}>
@@ -241,36 +273,7 @@ const Dashboard: React.FC = () => {
             </Radio.Group>
           }
         >
-          <Line
-            data={chartData}
-            xField="date"
-            yField="count"
-            height={320}
-            smooth
-            area={{
-              style: {
-                fill: 'l(270) 0:#ffffff 0.5:#7ec2f3 1:#1677ff',
-                opacity: 0.3,
-              },
-            }}
-            line={{
-              style: { stroke: '#1677ff', lineWidth: 2 },
-            }}
-            xAxis={{
-              label: {
-                // 标签保持横向，过密时隐藏部分刻度，避免日期竖排
-                align: 'horizontal',
-                overlap: [{ type: 'hide' }],
-                style: { fontSize: 11, fill: '#909399' },
-              },
-              tickLine: { length: 4 },
-            }}
-            yAxis={{
-              minInterval: 1,
-              label: { fontSize: 11, fill: '#909399' },
-            }}
-            tooltip={{ title: 'date', items: [{ channel: 'y' }] }}
-          />
+          <div ref={chartRef} style={{ height: 320, width: '100%' }} />
         </ProCard>
 
         <ProCard

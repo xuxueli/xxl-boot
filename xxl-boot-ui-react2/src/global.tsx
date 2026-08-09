@@ -1,1 +1,4 @@
-import '../tailwind.css';
+/**
+ * 全局入口：目前无全局副作用配置
+ */
+export {};
