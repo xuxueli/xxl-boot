@@ -2,13 +2,13 @@
  * 路由配置（React Router，替代原 Umi 静态路由）
  * 说明：
  *   - 静态路由（/login、/301、404 兜底）路径与 Vue 项目对齐，无布局；
- *   - 其余业务路由在 BasicLayout 布局内
+ *   - 其余业务路由在 AppLayout 布局内
  *   - RequireAuth 登录守卫；RequirePermission 页面级权限守卫
  */
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Loading from '@/components/Loading';
-import BasicLayout from '@/layouts/BasicLayout';
+import AppLayout from '@/layouts/AppLayout';
 import RequireAuth from './guards/RequireAuth';
 import RequirePermission from './guards/RequirePermission';
 
@@ -39,7 +39,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: (
       <RequireAuth>
-        <BasicLayout />
+        <AppLayout />
       </RequireAuth>
     ),
     children: [

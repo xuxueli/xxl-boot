@@ -12,6 +12,11 @@ import { ErrorBoundary, OfflineBanner } from '@/components';
 import { router } from './router';
 import './assets/styles/global.css';
 
+/**
+ * TanStack Query 配置
+ * 1. 默认不重试请求，避免请求失败后无限重试导致页面卡死
+ * 2. 默认不在窗口聚焦时重新请求，避免切换窗口时重复请求
+ */
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -21,6 +26,15 @@ const queryClient = new QueryClient({
   },
 });
 
+/**
+ * React 挂载入口
+ * 1. ConfigProvider：antd 国际化、主题配置
+ * 2. AntdApp：antd 全局配置
+ * 3. OfflineBanner：离线提示组件
+ * 4. QueryClientProvider：TanStack Query 配置
+ * 5. ErrorBoundary：错误边界组件，捕获子组件渲染错误，避免整个应用崩溃
+ * 6. RouterProvider：React Router 配置
+ */
 const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(

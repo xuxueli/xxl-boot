@@ -1,5 +1,5 @@
 /**
- * 布局：BasicLayout（ProLayout 主布局）
+ * 布局：AppLayout（ProLayout 主布局）
  * 功能：接入后端菜单、头像下拉、消息铃铛、页脚、主题设置面板
  */
 import type { MenuDataItem } from '@ant-design/pro-components';
@@ -86,9 +86,9 @@ const buildMenuData = (routes: API.RouterVo[]): MenuDataItem[] => {
 };
 
 /**
- * BasicLayout 组件
+ * AppLayout 组件
  */
-const BasicLayout = () => {
+const AppLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentUser = useUserStore((s) => s.currentUser);
@@ -147,4 +147,4 @@ const BasicLayout = () => {
   );
 };
 
-export default BasicLayout;
+export default AppLayout;
