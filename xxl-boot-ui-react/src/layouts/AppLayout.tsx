@@ -150,7 +150,11 @@ const AppLayout = () => {
       ]}
       // 顶部区域：用户信息
       avatarProps={{
-        title: currentUser?.realName || currentUser?.userName,
+        title: (
+          <span style={{ fontWeight: "bold", marginLeft: -5 }}>
+            {currentUser?.realName || currentUser?.userName}
+          </span>
+        ),
         render: (_, avatarChildren) => (
           <HeaderAvatar>{avatarChildren}</HeaderAvatar>
         ),

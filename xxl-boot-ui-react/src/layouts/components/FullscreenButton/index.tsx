@@ -18,7 +18,7 @@ const useStyles = createStyles(({ token, css }) => ({
     width: 40px;
     height: 48px;
     cursor: pointer;
-    font-size: 22px;
+    font-size: 20px;
     color: ${token.colorText};
 
     &:hover {

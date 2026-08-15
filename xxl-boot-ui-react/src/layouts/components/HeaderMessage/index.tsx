@@ -28,9 +28,9 @@ const useStyles = createStyles(({ token, css }) => ({
     justify-content: center;
     width: 40px;
     height: 48px;
-    margin-right: -8px;
+    margin-right: -4px;
     cursor: pointer;
-    font-size: 22px;
+    /*font-size: 20px;*/
     color: ${token.colorText};
 
     &:hover {
@@ -248,7 +248,7 @@ const HeaderMessage = () => {
         {/* 铃铛触发器：未读数角标 */}
         <div className={styles.trigger}>
           <Badge count={unreadCount} size="small" overflowCount={99}>
-            <BellOutlined />
+            <BellOutlined style={{ fontSize: 18 }} />
           </Badge>
         </div>
       </Dropdown>
