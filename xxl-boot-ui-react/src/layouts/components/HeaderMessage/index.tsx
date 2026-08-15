@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { Badge, Tag } from 'antd';
 import { createStyles } from 'antd-style';
+import { clsx } from 'clsx';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Dropdown from '@/components/Dropdown';
 import {
@@ -98,8 +99,17 @@ const useStyles = createStyles(({ token, css }) => ({
     opacity: 0.45;
     filter: grayscale(1);
   `,
+  /** 标题 + 时间容器：flex 布局，min-width 0 保证子项可压缩截断 */
+  itemMain: css`
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  `,
   itemTitle: css`
     flex: 1;
+    min-width: 0;
     font-size: 12px;
     color: ${token.colorText};
     overflow: hidden;
@@ -110,6 +120,10 @@ const useStyles = createStyles(({ token, css }) => ({
     flex-shrink: 0;
     font-size: 11px;
     color: ${token.colorTextQuaternary};
+    /* 等宽数字：AlibabaSans 不支持 tabular-nums，改用系统字体保证时间列对齐 */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      'Helvetica Neue', Arial, sans-serif;
+    font-variant-numeric: tabular-nums;
   `,
 }));
 
@@ -215,7 +229,12 @@ const HeaderMessage = () => {
                     <Tag color={item.category === 1 ? 'warning' : 'success'}>
                       {item.category === 1 ? '通知' : '公告'}
                     </Tag>
-                    <span className={item.isRead ? styles.itemRead : undefined}>
+                    <span
+                      className={clsx(
+                        styles.itemMain,
+                        item.isRead && styles.itemRead,
+                      )}
+                    >
                       <span className={styles.itemTitle}>{item.title}</span>
                       <span className={styles.itemDate}>{item.addTime}</span>
                     </span>
