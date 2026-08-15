@@ -79,21 +79,29 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
       settings: { ...defaultSettings, ...settings },
     }),
 
-  /** 开关设置面板 */
+  /**
+   * 开关设置面板
+   */
   setSettingDrawerOpen: (settingDrawerOpen) => set({ settingDrawerOpen }),
 
-  /** 保存设置：将当前设置序列化写入 localStorage */
+  /**
+   * 保存设置：将当前设置序列化写入 localStorage
+   */
   saveSettings: () => {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(get().settings));
   },
 
-  /** 重置设置：清除 localStorage 缓存并恢复默认配置 */
+  /**
+   * 重置设置：清除 localStorage 缓存并恢复默认配置
+   */
   resetSettings: () => {
     localStorage.removeItem(SETTINGS_KEY);
     set({ settings: { ...defaultSettings } });
   },
 
-  /** 更新折叠状态：即时持久化，无需点击"保存设置" */
+  /**
+   * 更新折叠状态：即时持久化，无需点击"保存设置"
+   */
   setCollapsed: (collapsed) => {
     localStorage.setItem(COLLAPSED_KEY, String(collapsed));
     set({ collapsed });
