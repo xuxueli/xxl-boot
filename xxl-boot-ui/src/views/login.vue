@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="login">
-    <h2 class="login-title">XXL-BOOT</h2>
+    <h2 class="login-title">{{ brandName }}</h2>
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">{{ title }}</h3>
 
@@ -57,6 +57,12 @@
         </el-button>
       </el-form-item>
     </el-form>
+    <!--  底部版权  -->
+    <div class="el-login-footer">
+      {{ footerContent }}
+      <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px; text-decoration: underline">xuxueli</a>
+      <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px; text-decoration: underline">github</a>
+    </div>
   </div>
 </template>
 
@@ -69,6 +75,8 @@ import type { LoginParams } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const title = defaultSettings.title // 系统标题
+const brandName = defaultSettings.brandName // 品牌名称
+const footerContent = defaultSettings.footerContent // 页脚版权信息
 const userStore = useUserStore()
 const route = useRoute() // 路由
 const router = useRouter() // 路由
@@ -211,6 +219,18 @@ getCode()
 .login-code-img {
   height: 40px;
   padding-left: 12px;
+}
+.el-login-footer {
+  height: 40px;
+  line-height: 40px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  color: #666;
+  font-family: Arial;
+  font-size: 12px;
+  letter-spacing: 1px;
 }
 
 /* 暗黑模式 */

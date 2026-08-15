@@ -5,6 +5,11 @@
  */
 export default {
   /**
+   * 品牌/产品名称
+   */
+  brandName: 'XXL-BOOT',
+
+  /**
    * 网页标题
    */
   title: '快速开发平台',

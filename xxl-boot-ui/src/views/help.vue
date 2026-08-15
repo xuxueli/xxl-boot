@@ -5,7 +5,7 @@
 <template>
   <div class="app-container help">
     <el-card>
-      <h2>XXL-BOOT｜{{ title }}</h2>
+      <h2>{{ brandName }}｜{{ title }}</h2>
       <p>
         XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即用。整合前后端流行技术，致力为 中小企业、个人开发者
         打造开箱即用的中后台解决方案。
@@ -33,7 +33,7 @@
 
       <el-divider class="divider" />
       <p>
-        Powered by <b>XXL-BOOT</b> v{{ version }}
+        Powered by <b>{{ brandName }}</b> v{{ version }}
 
         <span style="float: right">
           {{ footerContent }}
@@ -50,6 +50,7 @@
 import defaultSettings from '@/default-settings'
 
 const title = defaultSettings.title
+const brandName = defaultSettings.brandName
 const version = defaultSettings.version
 const footerContent = defaultSettings.footerContent
 
