@@ -17,7 +17,9 @@ import {
 } from '@/services/login';
 import { removeToken, setTokenWithAge } from '@/utils/auth';
 
-/** 用户会话状态 */
+/**
+ * 用户会话状态
+ */
 interface UserState {
   /** 当前登录用户信息（含角色、权限集合） */
   currentUser?: API.LoginInfo;
@@ -36,8 +38,18 @@ interface UserState {
   /** 校验单个角色（admin 视为超管） */
   hasRole: (role: string) => boolean;
 }
-
+/**
+ * 用户会话 Store（Zustand）
+ *
+ * 用法：
+ *   - 渲染依赖（响应式订阅）：const currentUser = useUserStore((s) => s.currentUser)
+ *   - 事件回调（零订阅）：useUserStore.getState().login(params)
+ *
+ * @param set 更新状态（partial 或函数）
+ * @param get 读取当前最新状态
+ */
 export const useUserStore = create<UserState>()((set, get) => ({
+  // 初始状态：未登录
   currentUser: undefined,
   menuData: [],
 
@@ -57,6 +69,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
   /** 获取当前登录用户信息，失败时抛出异常（由 RequireAuth 统一处理） */
   fetchUserInfo: async () => {
     const res = await getInfo();
+    // 写入当前用户信息（含角色、权限集合）
     set({ currentUser: res.data });
     return res.data;
   },
@@ -64,6 +77,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
   /** 获取当前用户动态菜单，失败时抛出异常（由 RequireAuth 统一处理） */
   fetchMenuData: async () => {
     const res = await getRouters();
+    // 写入动态菜单树
     set({ menuData: res.data || [] });
     return res.data || [];
   },
