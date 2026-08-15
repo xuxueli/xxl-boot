@@ -231,8 +231,11 @@ function handleNavType(type: number) {
 
   // 菜单导航-级联变更：type: 1 = 左侧, 2 = 混合, 3 = 顶部
   if (type === 1 || type === 2) {
+    // 侧边/混合：取消隐藏并展开侧边栏
+    appStore.hideSideBar(false)
     appStore.openSideBar({ withoutAnimation: true })
   } else if (type === 3) {
+    // 顶部：隐藏侧边栏（仅顶部菜单）
     appStore.hideSideBar(true)
   }
 

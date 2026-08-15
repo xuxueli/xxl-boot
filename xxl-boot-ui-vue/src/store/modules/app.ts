@@ -71,11 +71,6 @@ const useAppStore = defineStore('app', {
      * @param withoutAnimation  设置是否无动画
      */
     closeSideBar({ withoutAnimation }: { withoutAnimation: boolean }) {
-      // 取消隐藏
-      if (this.sidebar.hide) {
-        this.hideSideBar(false)
-      }
-
       // 修改状态
       localStorage.setItem(SIDEBAR_STATUS_KEY, '0')
       this.sidebar.opened = false
@@ -86,11 +81,6 @@ const useAppStore = defineStore('app', {
      * @param withoutAnimation  设置是否无动画
      */
     openSideBar({ withoutAnimation }: { withoutAnimation: boolean }) {
-      // 取消隐藏
-      if (this.sidebar.hide) {
-        this.hideSideBar(false)
-      }
-
       // 修改状态
       localStorage.setItem(SIDEBAR_STATUS_KEY, '1')
       this.sidebar.opened = true
