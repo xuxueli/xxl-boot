@@ -7,6 +7,31 @@
 import { request } from '@/utils/request';
 
 /**
+ * 类型定义：登录认证相关
+ * 对应登录、验证码接口的数据结构。
+ * 注：login.ts 为模块文件，需用 declare global 将类型声明到全局作用域。
+ */
+declare global {
+  namespace API {
+    /** 登录参数 */
+    type LoginParams = {
+      username?: string;
+      password?: string;
+      captchaUuid?: string;
+      captchaResult?: string;
+      rememberMe?: boolean;
+    };
+
+    /** 验证码数据 */
+    type CaptchaData = {
+      enable: boolean;
+      image: string;
+      uuid: string;
+    };
+  }
+}
+
+/**
  * 用户登录。
  * @param params 登录参数（用户名、密码、验证码标识、验证码）
  * @returns 登录成功返回 token（response.data）

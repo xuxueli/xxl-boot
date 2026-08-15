@@ -4,6 +4,9 @@
  * 以全局命名空间 API 声明，各模块文件同名 namespace 自动合并。
  */
 declare namespace API {
+
+  // --------------------------------- 公共数据结构 ----------------------
+
   /** 后端统一返回结构 */
   type Response<T = unknown> = {
     code: number;
@@ -19,22 +22,7 @@ declare namespace API {
     pagesize?: number;
   };
 
-  /** 登录参数 */
-  type LoginParams = {
-    username?: string;
-    password?: string;
-    captchaUuid?: string;
-    captchaResult?: string;
-    rememberMe?: boolean;
-  };
-
-  /** 验证码数据 */
-  type CaptchaData = {
-    enable: boolean;
-    image: string;
-    uuid: string;
-  };
-
+  // --------------------------------- 登录用户信息 ----------------------
   /** 登录用户信息（loginCheck 返回） */
   type LoginInfo = {
     userId?: string;
@@ -46,6 +34,7 @@ declare namespace API {
     expireTime?: number;
   };
 
+  // --------------------------------- 菜单路由节点 ----------------------
   /** 菜单路由节点（getRouters 返回） */
   type MetaVo = {
     title?: string;
@@ -61,10 +50,12 @@ declare namespace API {
     children?: RouterVo[];
   };
 
+  // --------------------------------- 枚举项 ----------------------
   /** 枚举项（loadEnumItem 返回） */
   type EnumItem = {
     code: number;
     title?: string;
     desc?: string;
   };
+
 }
