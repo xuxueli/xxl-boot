@@ -21,7 +21,7 @@
             <#-- 用户数量 -->
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-blue"><i class="fa fa-user"></i></span>
+                    <span class="info-box-icon bg-blue"><i class="ion ion-ios-people-outline"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">用户数量</span>
                         <span class="info-box-number">${userTotal}</span>
@@ -32,7 +32,7 @@
             <#-- 角色数量 -->
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-teal"><i class="fa fa-users"></i></span>
+                    <span class="info-box-icon bg-teal"><i class="ion ion-ios-contact-outline"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">角色数量</span>
                         <span class="info-box-number">${roleTotal}</span>
@@ -43,7 +43,7 @@
             <#-- 日志数量 -->
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-orange"><i class="fa fa-list-alt"></i></span>
+                    <span class="info-box-icon bg-orange"><i class="ion ion-ios-paper-outline"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">日志数量</span>
                         <span class="info-box-number">${logTotal}</span>
@@ -54,7 +54,7 @@
             <#-- 消息数量 -->
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-red"><i class="fa fa-envelope-o"></i></span>
+                    <span class="info-box-icon bg-red"><i class="ion ion-ios-chatboxes-outline"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">消息数量</span>
                         <span class="info-box-number">${messageTotal}</span>
