@@ -93,7 +93,9 @@ const AppLayout = () => {
   const navigate = useNavigate();
   const currentUser = useUserStore((s) => s.currentUser);
   const menuData = useUserStore((s) => s.menuData);
+  /* 布局设置：消费 settingsStore，控制标题/Logo/主题色/布局模式等 */
   const settings = useSettingsStore((s) => s.settings);
+  /* 设置面板开关：控制 SettingDrawer 显隐 */
   const settingDrawerOpen = useSettingsStore((s) => s.settingDrawerOpen);
 
   return (
@@ -104,15 +106,16 @@ const AppLayout = () => {
       location={location}
       // 左侧菜单：菜单以后端资源配置为准（getRouters 返回的树）
       menuDataRender={() => buildMenuData(menuData)}
+      // 左侧菜单：点击菜单项跳转路由
+      menuItemRender={(item, dom) =>
+          item.path ? <Link to={item.path}>{dom}</Link> : dom
+      }
       // 顶部面包屑：单层级页面（如首页、帮助中心）也展示面包屑
       breadcrumbProps={{ minLength: 1 }}
       // 顶部面包屑：只读展示，不支持点击跳转
       itemRender={(route) => (
-        <span>{route.breadcrumbName || route.title}</span>
+        <span>{route.title}</span>
       )}
-      menuItemRender={(item, dom) =>
-        item.path ? <Link to={item.path}>{dom}</Link> : dom
-      }
       // 顶部区域：头部消息
       actionsRender={() => [<HeaderMessage key="header-message" />]}
       // 顶部区域：用户信息
@@ -126,11 +129,12 @@ const AppLayout = () => {
       footerRender={() => <Footer />}
       // 左侧菜单头部：点击事件
       onMenuHeaderClick={() => navigate('/')}
+      // 将布局设置透传给 ProLayout，实时驱动标题/Logo/主题/布局等
       {...settings}
     >
       {/* 页面内容区域 */}
       <Outlet />
-      {/* 主题设置面板 */}
+      {/* 主题设置面板：设置变更实时写入 settingsStore，不写 URL 参数 */}
       <SettingDrawer
         disableUrlParams
         enableDarkTheme
