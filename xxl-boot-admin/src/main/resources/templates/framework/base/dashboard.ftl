@@ -21,7 +21,7 @@
             <#-- 用户数量 -->
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-blue"><i class="ion ion-ios-people-outline"></i></span>
+                    <span class="info-box-icon icon-user"><i class="ion ion-ios-people-outline"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">用户数量</span>
                         <span class="info-box-number">${userTotal}</span>
@@ -32,7 +32,7 @@
             <#-- 角色数量 -->
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-teal"><i class="ion ion-ios-contact-outline"></i></span>
+                    <span class="info-box-icon icon-role"><i class="ion ion-ios-contact-outline"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">角色数量</span>
                         <span class="info-box-number">${roleTotal}</span>
@@ -43,7 +43,7 @@
             <#-- 日志数量 -->
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-orange"><i class="ion ion-ios-paper-outline"></i></span>
+                    <span class="info-box-icon icon-log"><i class="ion ion-ios-paper-outline"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">日志数量</span>
                         <span class="info-box-number">${logTotal}</span>
@@ -54,7 +54,7 @@
             <#-- 消息数量 -->
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-red"><i class="ion ion-ios-chatboxes-outline"></i></span>
+                    <span class="info-box-icon icon-message"><i class="ion ion-ios-chatboxes-outline"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">消息数量</span>
                         <span class="info-box-number">${messageTotal}</span>
@@ -64,6 +64,18 @@
 
         </div>
 
+        <#-- 指标卡片图标样式：浅色底 + 彩色图标，参考 UI dashboard -->
+        <style>
+            .info-box-icon.icon-user { background-color: #36a3f7; }
+            .info-box-icon.icon-role { background-color: #6ab8a8; }
+            .info-box-icon.icon-log { background-color: #e0b06b; }
+            .info-box-icon.icon-message { background-color: #d38a9a; }
+            .icon-user i { color: #fff; }
+            .icon-role i { color: #fff; }
+            .icon-log i { color: #fff; }
+            .icon-message i { color: #fff; }
+        </style>
+
         <!-- 第二排：折线图 + 消息列表 -->
         <div class="row">
 
@@ -71,13 +83,13 @@
             <div class="col-md-8">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">审计日志趋势</h3>
+                        <h3 class="box-title">审计日志</h3>
                         <!-- 天数切换 -->
                         <div class="pull-right box-tools">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm chart-days active" data-days="7">7天</button>
+                                <button type="button" class="btn btn-default btn-sm chart-days" data-days="7">7天</button>
                                 <button type="button" class="btn btn-default btn-sm chart-days" data-days="14">14天</button>
-                                <button type="button" class="btn btn-default btn-sm chart-days" data-days="30">30天</button>
+                                <button type="button" class="btn btn-default btn-sm chart-days active" data-days="30">30天</button>
                             </div>
                         </div>
                     </div>
@@ -285,8 +297,8 @@ $(function () {
         return y + '-' + m + '-' + d;
     }
 
-    // 初始化：默认加载 7 天数据
-    loadChart(7);
+    // 初始化：默认加载 30 天数据
+    loadChart(30);
 
     // 天数切换：重新加载图表
     $('.chart-days').on('click', function () {
