@@ -109,7 +109,7 @@ const Login = () => {
   // 初始化：获取验证码、设置页面标题
   useEffect(() => {
     getCode();
-    document.title = defaultSettings.title;
+    document.title = defaultSettings.title as string;
   }, []);
 
   return (
