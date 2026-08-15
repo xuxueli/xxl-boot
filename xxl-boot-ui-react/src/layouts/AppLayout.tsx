@@ -12,7 +12,7 @@ import { ProLayout, SettingDrawer } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import React from 'react';
-import { HeaderAvatar, Footer, HeaderMessage, FullscreenButton } from './components';
+import { HeaderAvatar, Footer, HeaderMessage, FullscreenButton, ThemeColorPicker } from './components';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 import { getIconComponent } from '@/utils/icon';
@@ -245,6 +245,8 @@ const AppLayout = () => {
           ),
         }}
       />
+      {/* 主题色区域右侧的颜色选择器（支持自定义取色） */}
+      <ThemeColorPicker />
     </ProLayout>
   );
 };
