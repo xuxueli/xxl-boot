@@ -15,8 +15,7 @@ import { Card, Empty, Radio, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import * as echarts from 'echarts';
 import React, { useEffect, useRef, useState } from 'react';
-import { MessageDetail } from '@/components';
-import type { MessageDetailRef } from '@/components/MessageDetail';
+import MessageDetail, { type MessageDetailRef } from '@/pages/system/message/MessageDetail';
 import { getLogTrend, getStats } from '@/services/dashboard';
 import {
   listMessageTop,

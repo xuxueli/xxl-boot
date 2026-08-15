@@ -16,7 +16,7 @@ import {
   markMessageRead,
   markMessageReadAll,
 } from '@/services/system/message';
-import MessageDetail, { type MessageDetailRef } from '@/components/MessageDetail';
+import MessageDetail, { type MessageDetailRef } from '@/pages/system/message/MessageDetail';
 
 const useStyles = createStyles(({ token, css }) => ({
   trigger: css`

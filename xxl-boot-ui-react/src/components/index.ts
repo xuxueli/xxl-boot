@@ -6,7 +6,4 @@
 export { default as Dropdown } from './Dropdown';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as IconSelect } from './IconSelect';
-export { default as MessageDetail } from './MessageDetail';
-export { default as OfflineBanner } from './OfflineBanner';
-export { default as ReadUsersDialog } from './ReadUsersDialog';
 export { default as TreePanel } from './TreePanel';

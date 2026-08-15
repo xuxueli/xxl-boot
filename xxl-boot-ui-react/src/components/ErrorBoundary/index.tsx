@@ -5,6 +5,11 @@
 import { Button, Card, Result } from 'antd';
 import React from 'react';
 
+/**
+ * 判断是否动态导入（chunk）加载失败
+ * @param error 捕获到的异常
+ * @returns 是否为 chunk 加载失败
+ */
 function isChunkLoadError(error: Error): boolean {
   return (
     error.name === 'ChunkLoadError' ||
@@ -13,21 +18,23 @@ function isChunkLoadError(error: Error): boolean {
   );
 }
 
+/**
+ * 渲染错误兜底界面
+ * @param error      捕获到的异常
+ * @param onRetry    重新渲染（针对 chunk 加载失败，重新尝试）
+ * @param onReload   刷新整个页面
+ */
 function renderErrorFallback(
   error: Error,
-  isOnline: boolean,
   onRetry: () => void,
   onReload: () => void,
 ) {
-  const isOffline = !isOnline;
   const isChunkError = isChunkLoadError(error);
 
   const title = isChunkError ? '页面加载失败' : '页面出错了';
-  const subTitle = isChunkError && isOffline
-    ? '网络连接已断开，请检查网络后刷新重试。'
-    : isChunkError
-      ? '页面资源加载失败，请刷新重试。'
-      : '抱歉，页面发生异常，请刷新或返回首页。';
+  const subTitle = isChunkError
+    ? '页面资源加载失败，请刷新重试。'
+    : '抱歉，页面发生异常，请刷新或返回首页。';
 
   return (
     <Card variant="borderless" style={{ margin: 24 }}>
@@ -60,7 +67,6 @@ function renderErrorFallback(
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
-  isOnline: boolean;
   retryCount: number;
 }
 
@@ -71,7 +77,6 @@ export default class ErrorBoundary extends React.Component<
   state: ErrorBoundaryState = {
     hasError: false,
     error: null,
-    isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
     retryCount: 0,
   };
 
@@ -79,35 +84,11 @@ export default class ErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidMount() {
-    window.addEventListener('online', this.handleOnline);
-    window.addEventListener('offline', this.handleOffline);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('online', this.handleOnline);
-    window.removeEventListener('offline', this.handleOffline);
-  }
-
-  handleOnline = () => {
-    this.setState({ isOnline: true });
-    if (
-      this.state.hasError &&
-      this.state.error &&
-      isChunkLoadError(this.state.error)
-    ) {
-      window.location.reload();
-    }
-  };
-
-  handleOffline = () => {
-    this.setState({ isOnline: false });
-  };
-
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     console.error('[ErrorBoundary]', error, info.componentStack);
   }
 
+  /** 重试：清空错误状态并重新渲染子树 */
   handleRetry = () => {
     this.setState((prev) => ({
       hasError: false,
@@ -116,6 +97,7 @@ export default class ErrorBoundary extends React.Component<
     }));
   };
 
+  /** 刷新整个页面 */
   handleReload = () => {
     window.location.reload();
   };
@@ -130,7 +112,6 @@ export default class ErrorBoundary extends React.Component<
     }
     return renderErrorFallback(
       this.state.error,
-      this.state.isOnline,
       this.handleRetry,
       this.handleReload,
     );
