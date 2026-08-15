@@ -6,7 +6,7 @@ import { Button, Card, Result } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Exception500: React.FC = () => (
+const Exception500 = () => (
   <Card variant="borderless">
     <Result
       status="500"

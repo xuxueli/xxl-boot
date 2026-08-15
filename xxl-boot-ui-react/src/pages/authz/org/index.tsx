@@ -12,7 +12,7 @@ import { delOrg, listOrg, updateOrgSort } from '@/services/authz/org';
 import { usePermission } from '@/hooks/usePermission';
 import OrgFormModal from './OrgFormModal';
 
-const OrgList: React.FC = () => {
+const OrgList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();

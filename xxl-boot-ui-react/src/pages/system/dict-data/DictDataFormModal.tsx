@@ -13,13 +13,19 @@ import { App } from 'antd';
 import React from 'react';
 import { addData, updateData } from '@/services/system/dict';
 
-const DictDataFormModal: React.FC<{
+const DictDataFormModal = ({
+  open,
+  onOpenChange,
+  current,
+  dictId,
+  onSuccess,
+}: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   current?: API.DictItem | null;
   dictId?: number;
   onSuccess?: () => void;
-}> = ({ open, onOpenChange, current, dictId, onSuccess }) => {
+}) => {
   const { message } = App.useApp();
 
   const handleFinish = async (values: API.DictItem) => {

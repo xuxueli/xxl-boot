@@ -2,24 +2,32 @@
  * 组件：RequireAuth（登录守卫）
  * 功能：未登录重定向到登录页；已登录但会话未加载时拉取用户信息与菜单
  */
-import { Spin } from 'antd';
+import { message, Spin } from 'antd';
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { getToken } from '@/utils/auth';
 
-const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const token = getToken();
   const currentUser = useUserStore((s) => s.currentUser);
-  const fetchUserInfo = useUserStore((s) => s.fetchUserInfo);
-  const fetchMenuData = useUserStore((s) => s.fetchMenuData);
 
   useEffect(() => {
     if (token && !currentUser) {
-      Promise.all([fetchUserInfo(), fetchMenuData()]).catch(() => {});
+      // 事件回调中直接调用 store action，避免为单次调用挂载 store 订阅
+      Promise.all([
+        useUserStore.getState().fetchUserInfo(),
+        useUserStore.getState().fetchMenuData(),
+      ]).catch(() => {
+        // 会话信息拉取失败（如会话过期/无权限）：清理本地凭证并跳转登录页
+        useUserStore.getState().logout().catch(() => {});
+        message.error('登录状态已失效，请重新登录');
+        const redirect = encodeURIComponent(location.pathname + location.search);
+        window.location.href = `/login?redirect=${redirect}`;
+      });
     }
-  }, [token, currentUser, fetchUserInfo, fetchMenuData]);
+  }, [token, currentUser, location.pathname, location.search]);
 
   if (!token) {
     const redirect = encodeURIComponent(location.pathname + location.search);

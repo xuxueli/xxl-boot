@@ -58,11 +58,11 @@ export type IconSelectProps = {
   placeholder?: string;
 };
 
-const IconSelect: React.FC<IconSelectProps> = ({
+const IconSelect = ({
   value,
   onChange,
   placeholder = '请选择图标',
-}) => {
+}: IconSelectProps) => {
   const { styles } = useStyles();
   const [keyword, setKeyword] = useState('');
   const [open, setOpen] = useState(false);

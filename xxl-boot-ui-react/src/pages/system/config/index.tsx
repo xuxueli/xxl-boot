@@ -12,7 +12,7 @@ import { delConfig, listConfig } from '@/services/system/config';
 import { usePermission } from '@/hooks/usePermission';
 import ConfigFormModal from './ConfigFormModal';
 
-const ConfigList: React.FC = () => {
+const ConfigList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasRole } = usePermission();

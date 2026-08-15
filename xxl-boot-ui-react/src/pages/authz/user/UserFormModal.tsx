@@ -21,20 +21,20 @@ const toTreeSelectData = (orgs: API.Org[]): any[] =>
     children: org.children?.length ? toTreeSelectData(org.children) : undefined,
   }));
 
-const UserFormModal: React.FC<{
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  current?: API.User | null;
-  roleOptions?: API.Role[];
-  orgOptions?: API.Org[];
-  onSuccess?: () => void;
-}> = ({
+const UserFormModal = ({
   open,
   onOpenChange,
   current,
   roleOptions = [],
   orgOptions = [],
   onSuccess,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  current?: API.User | null;
+  roleOptions?: API.Role[];
+  orgOptions?: API.Org[];
+  onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();
 

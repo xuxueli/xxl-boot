@@ -189,12 +189,17 @@ const useStyles = createStyles(({ token, css }) => ({
 }));
 
 /** 可排序画布条目 */
-const SortableWidget: React.FC<{
+const SortableWidget = ({
+  widget,
+  selected,
+  onClick,
+  onDelete,
+}: {
   widget: FormWidget;
   selected: boolean;
   onClick: () => void;
   onDelete: () => void;
-}> = ({ widget, selected, onClick, onDelete }) => {
+}) => {
   const { styles } = useStyles();
   const {
     attributes,
@@ -326,7 +331,7 @@ const generateTsx = (widgets: FormWidget[], _config: FormConfig): string => {
 
   return `${imports}
 
-const DemoForm: React.FC = () => {
+const DemoForm = () => {
   const formRef = React.useRef<ProFormInstance>();
 
   return (
@@ -346,7 +351,7 @@ export default DemoForm;
 `;
 };
 
-const PageGen: React.FC = () => {
+const PageGen = () => {
   const { styles } = useStyles();
   const { message } = App.useApp();
   const idRef = useRef(100);

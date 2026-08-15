@@ -13,7 +13,7 @@ import { download } from '@/utils/download';
 import { usePermission } from '@/hooks/usePermission';
 import LogDetail, { type LogDetailRef } from './LogDetail';
 
-const LogList: React.FC = () => {
+const LogList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const detailRef = useRef<LogDetailRef>(null);

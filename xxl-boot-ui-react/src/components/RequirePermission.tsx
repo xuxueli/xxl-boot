@@ -6,12 +6,15 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 
-const RequirePermission: React.FC<{
+const RequirePermission = ({
+  permission,
+  children,
+}: {
   permission?: string;
   children: React.ReactNode;
-}> = ({ permission, children }) => {
-  const hasPermi = useUserStore((s) => s.hasPermi);
-  if (permission && !hasPermi(permission)) {
+}) => {
+  // 登录后角色权限即固定，直接经 getState 校验，无需挂载 store 订阅
+  if (permission && !useUserStore.getState().hasPermi(permission)) {
     return <Navigate to="/301" replace />;
   }
   return <>{children}</>;

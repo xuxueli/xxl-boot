@@ -15,12 +15,17 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { addMessage, updateMessage } from '@/services/system/message';
 
-const MessageFormModal: React.FC<{
+const MessageFormModal = ({
+  open,
+  onOpenChange,
+  current,
+  onSuccess,
+}: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   current?: API.Message | null;
   onSuccess?: () => void;
-}> = ({ open, onOpenChange, current, onSuccess }) => {
+}) => {
   const { message } = App.useApp();
 
   const handleFinish = async (values: API.Message) => {

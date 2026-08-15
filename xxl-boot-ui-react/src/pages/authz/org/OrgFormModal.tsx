@@ -34,12 +34,17 @@ const isDescendant = (node: API.Org, targetId: number | undefined): boolean => {
   return (node.children || []).some((c) => isDescendant(c, targetId));
 };
 
-const OrgFormModal: React.FC<{
+const OrgFormModal = ({
+  open,
+  onOpenChange,
+  current,
+  onSuccess,
+}: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   current?: API.Org | null;
   onSuccess?: () => void;
-}> = ({ open, onOpenChange, current, onSuccess }) => {
+}) => {
   const { message } = App.useApp();
   const [orgOptions, setOrgOptions] = useState<API.Org[]>([]);
 

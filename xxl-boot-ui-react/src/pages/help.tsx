@@ -8,7 +8,7 @@ import { Button, Divider, Typography } from 'antd';
 import React from 'react';
 import defaultSettings from '@/defaultSettings';
 
-const HelpCenter: React.FC = () => {
+const HelpCenter = () => {
   return (
     <PageContainer ghost title={false}>
       <ProCard>

@@ -120,7 +120,7 @@ const statConfig = [
   },
 ] as const;
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const { styles } = useStyles();
   const messageDetailRef = useRef<MessageDetailRef>(null);
 

@@ -33,10 +33,10 @@ export type HeaderDropdownProps = {
     | 'bottomCenter';
 } & Omit<DropDownProps, 'overlay'>;
 
-const HeaderDropdown: React.FC<HeaderDropdownProps> = ({
+const HeaderDropdown = ({
   overlayClassName: cls,
   ...restProps
-}) => {
+}: HeaderDropdownProps) => {
   const { styles } = useStyles();
   return (
     <Dropdown

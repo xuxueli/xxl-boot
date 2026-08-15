@@ -14,7 +14,7 @@ import { usePermission } from '@/hooks/usePermission';
 import DictDataDrawer, { type DictDataDrawerRef } from './DictDataDrawer';
 import DictFormModal from './DictFormModal';
 
-const DictList: React.FC = () => {
+const DictList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const drawerRef = useRef<DictDataDrawerRef>(null);

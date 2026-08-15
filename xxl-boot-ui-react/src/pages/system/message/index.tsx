@@ -20,7 +20,7 @@ const categoryMap: Record<number, { text: string; color: string }> = {
   1: { text: '公告', color: 'warning' },
 };
 
-const MessageList: React.FC = () => {
+const MessageList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const messageViewRef = useRef<MessageDetailRef>(null);

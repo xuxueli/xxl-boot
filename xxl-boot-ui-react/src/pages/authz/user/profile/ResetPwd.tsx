@@ -16,7 +16,7 @@ interface PwdForm {
   confirmPassword?: string;
 }
 
-const ResetPwd: React.FC = () => {
+const ResetPwd = () => {
   const { message } = App.useApp();
   const [form] = ProForm.useForm();
   const { infoPwdValidator } = usePasswordRule();

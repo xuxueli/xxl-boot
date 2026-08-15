@@ -16,7 +16,7 @@ import { getUserProfile } from '@/services/authz/user';
 import ResetPwd from './ResetPwd';
 import UserInfo from './UserInfo';
 
-const Profile: React.FC = () => {
+const Profile = () => {
   const { message } = App.useApp();
   const [user, setUser] = useState<API.User>({});
   const [roleNames, setRoleNames] = useState('');

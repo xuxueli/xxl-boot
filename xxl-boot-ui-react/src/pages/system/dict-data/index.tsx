@@ -13,7 +13,7 @@ import { delData, listData } from '@/services/system/dict';
 import { usePermission } from '@/hooks/usePermission';
 import DictDataFormModal from './DictDataFormModal';
 
-const DictData: React.FC = () => {
+const DictData = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const navigate = useNavigate();

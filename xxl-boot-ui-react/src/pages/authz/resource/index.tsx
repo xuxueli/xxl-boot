@@ -28,7 +28,7 @@ const visibleMap: Record<number, { text: string; color: string }> = {
   1: { text: '隐藏', color: 'default' },
 };
 
-const ResourceList: React.FC = () => {
+const ResourceList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();

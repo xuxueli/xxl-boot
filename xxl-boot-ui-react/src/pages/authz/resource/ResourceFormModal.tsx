@@ -34,12 +34,17 @@ const toTreeSelectData = (resources: API.Resource[]): any[] => [
   { title: '根节点', value: 0, children: mapToSelect(resources) },
 ];
 
-const ResourceFormModal: React.FC<{
+const ResourceFormModal = ({
+  open,
+  onOpenChange,
+  current,
+  onSuccess,
+}: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   current?: API.Resource | null;
   onSuccess?: () => void;
-}> = ({ open, onOpenChange, current, onSuccess }) => {
+}) => {
   const { message } = App.useApp();
   const [parentOptions, setParentOptions] = useState<API.Resource[]>([]);
 

@@ -45,13 +45,13 @@ const buildMenuData = (routes: API.RouterVo[]): MenuDataItem[] => {
     });
 };
 
-const BasicLayout: React.FC = () => {
+const BasicLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentUser = useUserStore((s) => s.currentUser);
   const menuData = useUserStore((s) => s.menuData);
-  const { settings, setSettings, settingDrawerOpen, setSettingDrawerOpen } =
-    useSettingsStore();
+  const settings = useSettingsStore((s) => s.settings);
+  const settingDrawerOpen = useSettingsStore((s) => s.settingDrawerOpen);
 
   return (
     <ProLayout
@@ -85,9 +85,13 @@ const BasicLayout: React.FC = () => {
         disableUrlParams
         enableDarkTheme
         collapse={settingDrawerOpen}
-        onCollapseChange={setSettingDrawerOpen}
+        onCollapseChange={(open) =>
+          useSettingsStore.getState().setSettingDrawerOpen(open)
+        }
         settings={settings as any}
-        onSettingChange={(s) => setSettings(s as any)}
+        onSettingChange={(s) =>
+          useSettingsStore.getState().setSettings(s as any)
+        }
       />
     </ProLayout>
   );

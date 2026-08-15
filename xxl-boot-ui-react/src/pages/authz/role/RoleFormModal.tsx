@@ -41,12 +41,17 @@ const collectAllKeys = (nodes: DataNode[]): React.Key[] => {
   return keys;
 };
 
-const RoleFormModal: React.FC<{
+const RoleFormModal = ({
+  open,
+  onOpenChange,
+  current,
+  onSuccess,
+}: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   current?: API.Role | null;
   onSuccess?: () => void;
-}> = ({ open, onOpenChange, current, onSuccess }) => {
+}) => {
   const { message } = App.useApp();
   const treeRef = useRef<any>(null);
 

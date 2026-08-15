@@ -6,7 +6,7 @@ import { Button, Card, Result } from 'antd';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Exception301: React.FC = () => {
+const Exception301 = () => {
   const navigate = useNavigate();
 
   /** 返回上一页或首页 */

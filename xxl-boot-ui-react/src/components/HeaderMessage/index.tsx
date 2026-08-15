@@ -112,7 +112,7 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 
-const HeaderMessage: React.FC = () => {
+const HeaderMessage = () => {
   const { styles } = useStyles();
   const messageViewRef = useRef<MessageDetailRef>(null);
   const [messageList, setMessageList] = useState<API.Message[]>([]);

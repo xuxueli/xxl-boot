@@ -32,14 +32,10 @@ const menuItems: MenuProps['items'] = [
   },
 ];
 
-export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
-  children,
-}) => {
+export const AvatarDropdown = ({ children }: GlobalHeaderRightProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentUser = useUserStore((s) => s.currentUser);
-  const logout = useUserStore((s) => s.logout);
-  const setSettingDrawerOpen = useSettingsStore((s) => s.setSettingDrawerOpen);
 
   const onMenuClick: MenuProps['onClick'] = (event) => {
     const { key } = event;
@@ -51,7 +47,8 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
-          await logout();
+          // 事件回调中直接调用 store action，避免为单次调用挂载 store 订阅
+          await useUserStore.getState().logout();
           navigate('/login', {
             replace: true,
             state: { from: location.pathname },
@@ -62,7 +59,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
     }
     if (key === 'theme') {
       // 打开主题设置面板（SettingDrawer）
-      setSettingDrawerOpen(true);
+      useSettingsStore.getState().setSettingDrawerOpen(true);
       return;
     }
     navigate(`/user/${key}`);

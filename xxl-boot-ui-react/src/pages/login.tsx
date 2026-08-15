@@ -1,3 +1,7 @@
+/**
+ * 页面：Login（登录）
+ * 功能：账号密码登录（支持记住密码、验证码），登录成功后拉取用户信息与菜单并跳转目标页
+ */
 import { LockOutlined, SafetyOutlined, UserOutlined } from '@ant-design/icons';
 import {
   LoginForm,
@@ -31,6 +35,9 @@ const getSafeRedirectUrl = (redirect: string | null): string => {
   }
 };
 
+/**
+ * 页面样式
+ */
 const useStyles = createStyles(({ token }) => {
   return {
     container: {
@@ -49,41 +56,44 @@ const useStyles = createStyles(({ token }) => {
   };
 });
 
-const Login: React.FC = () => {
+/**
+ * 登录页组件
+ */
+const Login = () => {
   const { styles } = useStyles();
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const login = useUserStore((s) => s.login);
-  const fetchUserInfo = useUserStore((s) => s.fetchUserInfo);
-  const fetchMenuData = useUserStore((s) => s.fetchMenuData);
 
-  // 验证码相关状态
+  // 验证码相关状态：开关、图片地址、唯一标识（提交登录时回传）
   const [captchaEnabled, setCaptchaEnabled] = useState(false);
   const [codeUrl, setCodeUrl] = useState('');
   const [captchaUuid, setCaptchaUuid] = useState('');
 
-  /** 获取验证码图片，根据开关控制显示 */
+  /** 获取验证码图片，根据后端开关控制显示 */
   const getCode = async () => {
     try {
       const res = await getCodeImg();
       setCaptchaEnabled(res.data?.enable ?? false);
       setCodeUrl(res.data?.image || '');
       setCaptchaUuid(res.data?.uuid || '');
-    } catch {
+    } catch (error) {
       // 验证码获取失败不阻塞登录
+      console.error('getCodeImg failed', error);
     }
   };
 
-  /** 提交登录 */
+  /** 提交登录：校验通过后拉取用户信息与菜单，再跳转目标页 */
   const handleSubmit = async (values: API.LoginParams) => {
+    // 事件回调中直接调用 store action，避免为单次调用挂载 store 订阅
+    const userStore = useUserStore.getState();
     try {
-      await login({
+      await userStore.login({
         ...values,
         captchaUuid,
       });
       message.success('登录成功！');
-      await Promise.all([fetchUserInfo(), fetchMenuData()]);
+      await Promise.all([userStore.fetchUserInfo(), userStore.fetchMenuData()]);
       const redirectUrl = getSafeRedirectUrl(searchParams.get('redirect'));
       // 提示停留片刻后再跳转，避免成功提示被页面刷新吞掉
       await new Promise((resolve) => setTimeout(resolve, 800));
@@ -96,7 +106,7 @@ const Login: React.FC = () => {
     }
   };
 
-  // 初始化：获取验证码
+  // 初始化：获取验证码、设置页面标题
   useEffect(() => {
     getCode();
     document.title = '登录页 - XXL-BOOT';
@@ -118,7 +128,7 @@ const Login: React.FC = () => {
             maxWidth: '75vw',
           }}
           // 覆盖容器默认的 flex:1 / height:100%，使其按内容高度参与外层居中；
-          // 居中后整体上移一屏高度的 4%，实现「居中稍微靠上」
+          // 居中后整体上移一屏高度的 15%，实现「居中稍微靠上」
           containerStyle={{
             flex: 'none',
             height: 'auto',
@@ -129,9 +139,7 @@ const Login: React.FC = () => {
           initialValues={{
             rememberMe: false,
           }}
-          onFinish={async (values) => {
-            await handleSubmit(values as API.LoginParams);
-          }}
+          onFinish={handleSubmit}
         >
           <ProFormText
             name="username"

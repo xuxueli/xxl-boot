@@ -17,7 +17,7 @@ import { usePermission } from '@/hooks/usePermission';
 import UserFormModal from './UserFormModal';
 import UserView, { type UserViewRef } from './UserView';
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const viewRef = useRef<UserViewRef>(null);

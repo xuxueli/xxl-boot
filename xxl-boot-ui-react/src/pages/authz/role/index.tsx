@@ -12,7 +12,7 @@ import { delRole, listRole } from '@/services/authz/role';
 import { usePermission } from '@/hooks/usePermission';
 import RoleFormModal from './RoleFormModal';
 
-const RoleList: React.FC = () => {
+const RoleList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();

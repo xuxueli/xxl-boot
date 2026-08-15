@@ -16,10 +16,7 @@ interface UserInfoForm {
   email?: string;
 }
 
-const UserInfo: React.FC<{ user?: API.User; onSuccess?: () => void }> = ({
-  user,
-  onSuccess,
-}) => {
+const UserInfo = ({ user, onSuccess }: { user?: API.User; onSuccess?: () => void }) => {
   const { message } = App.useApp();
   const [form] = ProForm.useForm();
   const [formState, setFormState] = useState<UserInfoForm>({});

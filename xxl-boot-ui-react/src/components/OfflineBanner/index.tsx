@@ -17,7 +17,7 @@ const subscribeOnlineStatus = (callback: () => void) => {
 const getOnlineStatus = () =>
   typeof navigator === 'undefined' ? true : navigator.onLine;
 
-const OfflineBanner: React.FC = () => {
+const OfflineBanner = () => {
   const isOnline = useSyncExternalStore(
     subscribeOnlineStatus,
     getOnlineStatus,

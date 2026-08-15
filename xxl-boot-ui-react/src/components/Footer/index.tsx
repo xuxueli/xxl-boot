@@ -35,7 +35,7 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 
-const Footer: React.FC = () => {
+const Footer = () => {
   const { styles } = useStyles();
   const year = new Date().getFullYear();
 

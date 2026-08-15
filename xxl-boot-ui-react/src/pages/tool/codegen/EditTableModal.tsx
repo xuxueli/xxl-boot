@@ -82,12 +82,16 @@ const SortableRow = (props: any) => {
 };
 
 /** 字段单元格渲染组件 */
-const FieldInput: React.FC<{
+const FieldInput = ({
+  value,
+  onChange,
+  disabled,
+}: {
   value?: string;
   onChange?: (value: string) => void;
   type?: 'input';
   disabled?: boolean;
-}> = ({ value, onChange, disabled }) => (
+}) => (
   <Input
     size="small"
     value={value}
@@ -96,11 +100,15 @@ const FieldInput: React.FC<{
   />
 );
 
-const FieldCheckbox: React.FC<{
+const FieldCheckbox = ({
+  value,
+  onChange,
+  disabled,
+}: {
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
-}> = ({ value, onChange, disabled }) => (
+}) => (
   <Checkbox
     checked={value === '1'}
     disabled={disabled}
@@ -108,12 +116,17 @@ const FieldCheckbox: React.FC<{
   />
 );
 
-const EditTableModal: React.FC<{
+const EditTableModal = ({
+  open,
+  onOpenChange,
+  id,
+  onSuccess,
+}: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   id?: number;
   onSuccess?: () => void;
-}> = ({ open, onOpenChange, id, onSuccess }) => {
+}) => {
   const { message } = App.useApp();
   const [form] = Form.useForm();
   const [activeTab, setActiveTab] = useState('info');

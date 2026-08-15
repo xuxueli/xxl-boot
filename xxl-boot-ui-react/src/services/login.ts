@@ -1,33 +1,26 @@
 /**
  * 名称：登录认证 & 路由 API
  * 能力：提供登录、退出、验证码、当前用户信息、获取动态路由等认证相关接口。
+ *
+ * @author xuxueli 2026-08-15
  */
 import { request } from '@/utils/request';
 
 /**
  * 用户登录。
- * @param username      用户名
- * @param password      密码
- * @param captchaUuid   验证码标识
- * @param captchaResult 验证码
+ * @param params 登录参数（用户名、密码、验证码标识、验证码）
  * @returns 登录成功返回 token（response.data）
  */
-export async function login(
-  username: string,
-  password: string,
-  captchaUuid?: string,
-  captchaResult?: string,
-) {
-  const data = {
-    username,
-    password,
-    captchaUuid,
-    captchaResult,
-  };
+export async function login(params: API.LoginParams) {
   return request<API.Response<string>>('/auth/login', {
     headers: { isToken: false, repeatSubmit: false },
     method: 'POST',
-    data,
+    data: {
+      username: params.username ?? '',
+      password: params.password ?? '',
+      captchaUuid: params.captchaUuid,
+      captchaResult: params.captchaResult,
+    },
   });
 }
 

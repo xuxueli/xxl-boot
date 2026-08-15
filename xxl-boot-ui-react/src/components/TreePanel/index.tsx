@@ -148,7 +148,7 @@ const filterTree = (data: API.Org[], keyword: string): API.Org[] => {
   return result;
 };
 
-const TreePanel: React.FC<TreePanelProps> = ({
+const TreePanel = ({
   treeData = [],
   title = '树形结构',
   showSearch = true,
@@ -160,7 +160,7 @@ const TreePanel: React.FC<TreePanelProps> = ({
   minWidth = 180,
   maxWidth = 400,
   storageKey = 'tree-sidebar-width',
-}) => {
+}: TreePanelProps) => {
   const { styles } = useStyles();
   const [keyword, setKeyword] = useState('');
   const [collapsed, setCollapsed] = useState(false);

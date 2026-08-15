@@ -22,7 +22,7 @@ const demoTableSql = `CREATE TABLE \`product01\` (
   PRIMARY KEY (\`id\`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品信息表';`;
 
-const CodegenList: React.FC = () => {
+const CodegenList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const previewRef = useRef<PreviewModalRef>(null);

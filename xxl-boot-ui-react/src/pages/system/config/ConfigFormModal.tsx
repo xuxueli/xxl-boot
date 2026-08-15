@@ -12,12 +12,17 @@ import { App } from 'antd';
 import React from 'react';
 import { addConfig, updateConfig } from '@/services/system/config';
 
-const ConfigFormModal: React.FC<{
+const ConfigFormModal = ({
+  open,
+  onOpenChange,
+  current,
+  onSuccess,
+}: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   current?: API.Config | null;
   onSuccess?: () => void;
-}> = ({ open, onOpenChange, current, onSuccess }) => {
+}) => {
   const { message } = App.useApp();
 
   const handleFinish = async (values: API.Config) => {
