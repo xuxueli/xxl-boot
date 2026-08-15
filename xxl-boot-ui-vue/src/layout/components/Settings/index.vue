@@ -12,12 +12,11 @@
       <el-tooltip content="左侧菜单" placement="bottom">
         <div class="item left" @click="handleNavType(1)" :class="{ activeItem: navType === 1 }"><b></b><b></b></div>
       </el-tooltip>
-
-      <el-tooltip content="混合菜单" placement="bottom">
-        <div class="item mix" @click="handleNavType(2)" :class="{ activeItem: navType === 2 }"><b></b><b></b></div>
-      </el-tooltip>
       <el-tooltip content="顶部菜单" placement="bottom">
         <div class="item top" @click="handleNavType(3)" :class="{ activeItem: navType === 3 }"><b></b><b></b></div>
+      </el-tooltip>
+      <el-tooltip content="混合菜单" placement="bottom">
+        <div class="item mix" @click="handleNavType(2)" :class="{ activeItem: navType === 2 }"><b></b><b></b></div>
       </el-tooltip>
     </div>
 
