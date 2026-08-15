@@ -1,30 +1,53 @@
 /**
  * settingsStore - 全局设置状态（Zustand）
- * 功能：管理布局设置与设置面板开关（SettingDrawer）
- * 说明：布局设置默认取自 default-settings.ts；通过 SettingDrawer 修改后持久化到本 store，
- *       AppLayout 消费后实时生效。
+ * 功能：管理布局设置与设置面板开关（SettingDrawer），并支持设置持久化（localStorage）
+ *    - 布局设置默认取自 default-settings.ts；通过 SettingDrawer 修改后实时生效，
+ *    - 点击"保存设置"写入 localStorage，刷新后自动恢复；"重置设置"恢复默认并清除缓存。
  */
 import { create } from 'zustand';
 import type { ProLayoutProps } from '@ant-design/pro-components';
 import defaultSettings from '@/default-settings';
 
+/** 设置持久化：localStorage 键名 */
+const SETTINGS_KEY = 'boot-layout-setting';
+
+/**
+ * 读取持久化设置
+ * @returns 优先返回 localStorage 中保存的设置（与默认配置浅合并）；无缓存或解析失败时返回默认配置
+ */
+const loadSettings = (): ProLayoutProps => {
+  try {
+    const cached = localStorage.getItem(SETTINGS_KEY);
+    if (cached) {
+      return { ...defaultSettings, ...JSON.parse(cached) };
+    }
+  } catch {
+    /* 缓存解析失败：忽略并回退默认配置 */
+  }
+  return defaultSettings as ProLayoutProps;
+};
+
 /**
  * 设置状态结构
  */
 interface SettingsState {
-  /** 布局设置：默认来自 defaultSettings */
+  /** 布局设置：默认来自 defaultSettings，可能被 localStorage 覆盖 */
   settings: ProLayoutProps;
-  /** 布局设置更新：与默认配置浅合并后覆盖 */
-  setSettings: (settings: ProLayoutProps) => void;
-  /** 面板开关：true 为展开 */
+  /** 设置面板开关：true 为展开 */
   settingDrawerOpen: boolean;
-  /** 面板开关设置 */
+  /** 更新布局设置：与默认配置浅合并后覆盖 */
+  setSettings: (settings: ProLayoutProps) => void;
+  /** 开关设置面板 */
   setSettingDrawerOpen: (open: boolean) => void;
+  /** 保存设置：将当前设置持久化到 localStorage */
+  saveSettings: () => void;
+  /** 重置设置：恢复默认配置并清除 localStorage 缓存 */
+  resetSettings: () => void;
 }
 
-export const useSettingsStore = create<SettingsState>()((set) => ({
-  /* 初始布局设置：默认配置 */
-  settings: defaultSettings as ProLayoutProps,
+export const useSettingsStore = create<SettingsState>()((set, get) => ({
+  /* 初始布局设置：优先取 localStorage 缓存，否则用默认配置 */
+  settings: loadSettings(),
   /* 初始设置面板：关闭 */
   settingDrawerOpen: false,
 
@@ -39,4 +62,15 @@ export const useSettingsStore = create<SettingsState>()((set) => ({
 
   /** 开关设置面板 */
   setSettingDrawerOpen: (settingDrawerOpen) => set({ settingDrawerOpen }),
+
+  /** 保存设置：将当前设置序列化写入 localStorage */
+  saveSettings: () => {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(get().settings));
+  },
+
+  /** 重置设置：清除 localStorage 缓存并恢复默认配置 */
+  resetSettings: () => {
+    localStorage.removeItem(SETTINGS_KEY);
+    set({ settings: { ...defaultSettings } });
+  },
 }));

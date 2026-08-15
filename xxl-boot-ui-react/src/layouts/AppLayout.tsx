@@ -1,9 +1,10 @@
 /**
  * 布局：AppLayout（ProLayout 主布局）
- * 功能：接入后端菜单、头像下拉、消息铃铛、页脚、主题设置面板
+ * 功能：菜单（from后端）、消息铃铛、头像下拉、页脚、主题设置面板
  */
 import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, SettingDrawer } from '@ant-design/pro-components';
+import { App, Button } from 'antd';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import React from 'react';
 import { HeaderAvatar, Footer, HeaderMessage } from './components';
@@ -89,6 +90,7 @@ const buildMenuData = (routes: API.RouterVo[]): MenuDataItem[] => {
  * AppLayout 组件
  */
 const AppLayout = () => {
+  const { message } = App.useApp();
   const location = useLocation();
   const navigate = useNavigate();
   const currentUser = useUserStore((s) => s.currentUser);
@@ -97,6 +99,22 @@ const AppLayout = () => {
   const settings = useSettingsStore((s) => s.settings);
   /* 设置面板开关：控制 SettingDrawer 显隐 */
   const settingDrawerOpen = useSettingsStore((s) => s.settingDrawerOpen);
+
+  /**
+   * 保存设置：将当前设置持久化，刷新后保持
+   */
+  const handleSaveSettings = () => {
+    useSettingsStore.getState().saveSettings();
+    message.success('设置已保存');
+  };
+
+  /**
+   * 重置设置：清除持久化设置，并恢复默认配置
+   */
+  const handleResetSettings = () => {
+    useSettingsStore.getState().resetSettings();
+    message.success('设置已重置');
+  };
 
   return (
     // ProLayout：Ant Design Pro 提供的布局组件，支持菜单、面包屑、页脚、主题设置等功能
@@ -146,6 +164,23 @@ const AppLayout = () => {
         onSettingChange={(s) =>
           useSettingsStore.getState().setSettings(s as any)
         }
+        // 隐藏内置"复制设置"按钮与"生产环境提示"，由底部自定义保存/重置按钮接管
+        hideCopyButton
+        hideHintAlert
+        // 自定义底部操作区：保存设置 / 重置设置
+        drawerProps={{
+          // 抽屉底部操作区：保存设置/ 重置设置（恢复默认）
+          footer: (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <Button type="primary" block onClick={handleSaveSettings}>
+                保存设置
+              </Button>
+              <Button block onClick={handleResetSettings}>
+                重置设置
+              </Button>
+            </div>
+          ),
+        }}
       />
     </ProLayout>
   );
