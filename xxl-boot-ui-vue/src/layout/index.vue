@@ -252,6 +252,7 @@ function setLayout() {
       white-space: nowrap !important;
       height: 44px !important;
       line-height: 44px !important;
+      font-weight: 600 !important;
     }
 
     .el-menu-item .el-menu-tooltip__trigger {
