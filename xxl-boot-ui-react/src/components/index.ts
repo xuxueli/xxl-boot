@@ -1,16 +1,7 @@
 /**
- * 这个文件作为组件的目录
- * 目的是统一管理对外输出的组件，方便分类
- */
-/**
- * 布局组件
- */
-import Footer from './Footer';
-import HeaderMessage from './HeaderMessage';
-import { AvatarDropdown } from './RightContent/AvatarDropdown';
-
-/**
- * 业务组件
+ * 组件统一出口
+ * 说明：仅导出应用级与业务级组件；布局组件（Footer/HeaderMessage/HeaderDropdown/AvatarDropdown）
+ *       已归入 src/layouts，请直接引用。
  */
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as IconSelect } from './IconSelect';
@@ -18,5 +9,3 @@ export { default as MessageDetail } from './MessageDetail';
 export { default as OfflineBanner } from './OfflineBanner';
 export { default as ReadUsersDialog } from './ReadUsersDialog';
 export { default as TreePanel } from './TreePanel';
-
-export { AvatarDropdown, Footer, HeaderMessage };

@@ -13,7 +13,7 @@ import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import loginBg from '@/assets/images/login-bg.png';
-import { Footer } from '@/components';
+import Footer from '@/layouts/Footer';
 import { getCodeImg } from '@/services/login';
 import { useUserStore } from '@/stores/userStore';
 import defaultSettings from '@/default-settings';

@@ -1,5 +1,5 @@
 /**
- * 组件：HeaderMessage（站内消息）
+ * 布局组件：HeaderMessage（站内消息）
  * 功能：顶部导航栏铃铛图标，hover 弹出未读消息列表，支持标记已读、全部已读、预览详情
  */
 import {
@@ -10,7 +10,7 @@ import {
 import { Badge, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import HeaderDropdown from '@/components/HeaderDropdown';
+import HeaderDropdown from '@/layouts/HeaderDropdown';
 import {
   listMessageTop,
   markMessageRead,

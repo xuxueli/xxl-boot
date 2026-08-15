@@ -1,5 +1,5 @@
 /**
- * 组件：Footer（页脚）
+ * 布局组件：Footer（页脚）
  * 功能：展示版权与 GitHub 链接
  */
 import { GithubOutlined } from '@ant-design/icons';

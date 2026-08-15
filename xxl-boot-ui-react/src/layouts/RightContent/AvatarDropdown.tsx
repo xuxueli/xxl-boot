@@ -3,10 +3,14 @@ import type { MenuProps } from 'antd';
 import { Modal, Spin } from 'antd';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import HeaderDropdown from '@/components/HeaderDropdown';
+import HeaderDropdown from '@/layouts/HeaderDropdown';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 
+/**
+ * 布局组件：AvatarDropdown（头像下拉）
+ * 功能：顶部导航栏右侧头像，下拉提供个人中心、主题设置、退出登录
+ */
 type GlobalHeaderRightProps = {
   children?: React.ReactNode;
 };

@@ -1,3 +1,7 @@
+/**
+ * 布局组件：HeaderDropdown（下拉容器）
+ * 功能：封装 antd Dropdown，统一顶部导航栏下拉菜单的样式与交互
+ */
 import { Dropdown } from 'antd';
 import type { DropDownProps } from 'antd/es/dropdown';
 import { createStyles } from 'antd-style';
