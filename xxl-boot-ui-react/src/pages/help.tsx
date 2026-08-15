@@ -50,7 +50,7 @@ const HelpCenter = () => {
         </div>
         <Divider />
         <Typography.Paragraph type="secondary" style={{ textAlign: 'left' }}>
-          Powered by <strong>{defaultSettings.title}</strong> v{defaultSettings.version}
+          Powered by <strong>{defaultSettings.brandName}</strong> v{defaultSettings.version}
         </Typography.Paragraph>
       </ProCard>
     </PageContainer>

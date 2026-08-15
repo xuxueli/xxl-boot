@@ -1,44 +1,49 @@
+/**
+ * 全局基础样式：字体、布局、通用组件样式覆盖等
+ */
+
+/* 阿里巴巴普惠字体：Light 字重 */
 @font-face {
   font-family: "AlibabaSans";
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*1GSgSYDD_aIAAAAAQsAAAAgAegCCAQ/AlibabaSans-Light.woff2")
-    format("woff2");
+  src: url("./fonts/AlibabaSans-Light.woff2") format("woff2");
 }
+/* 阿里巴巴普惠字体：Regular 字重 */
 @font-face {
   font-family: "AlibabaSans";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*2zEUQqnPNesAAAAAQtAAAAgAegCCAQ/AlibabaSans-Regular.woff2")
-    format("woff2");
+  src: url("./fonts/AlibabaSans-Regular.woff2") format("woff2");
 }
+/* 阿里巴巴普惠字体：Medium 字重 */
 @font-face {
   font-family: "AlibabaSans";
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Medium.woff2")
-    format("woff2");
+  src: url("./fonts/AlibabaSans-Medium.woff2") format("woff2");
 }
+/* 阿里巴巴普惠字体：Bold 字重 */
 @font-face {
   font-family: "AlibabaSans";
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Bold.woff2")
-    format("woff2");
+  src: url("./fonts/AlibabaSans-Bold.woff2") format("woff2");
 }
+/* 阿里巴巴普惠字体：Heavy 字重 */
 @font-face {
   font-family: "AlibabaSans";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Heavy.woff2")
-    format("woff2");
+  src: url("./fonts/AlibabaSans-Heavy.woff2") format("woff2");
 }
 
+/* 页面根节点：铺满全屏、清除默认外边距内边距、统一字体族 */
 html,
 body,
 #root {
@@ -50,30 +55,38 @@ body,
     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+/* 色弱模式：反色滤镜，便于低视力用户区分配色 */
 .colorWeak {
   filter: invert(80%);
 }
 
+/* 布局：保证侧边栏 + 内容区铺满视口高度 */
 .ant-layout {
   min-height: 100vh;
 }
+
+/* 固定侧边栏：解除默认定位偏移，保持左侧吸附 */
 .ant-pro-sider.ant-layout-sider.ant-pro-sider-fixed {
   left: unset;
 }
 
+/* 侧边栏折叠态：隐藏菜单文字，仅保留图标 */
 .ant-pro-sider-collapsed .ant-pro-sider-link span:not([role='img']) {
   display: none;
 }
 
+/* 画布元素：块级化，避免底部留白 */
 canvas {
   display: block;
 }
 
+/* 清除列表默认符号 */
 ul,
 ol {
   list-style: none;
 }
 
+/* 移动端适配：表格横向滚动，单元格内容不换行 */
 @media (max-width: 768px) {
   .ant-table {
     width: 100%;
