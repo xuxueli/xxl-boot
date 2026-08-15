@@ -10,7 +10,7 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { ErrorBoundary, OfflineBanner } from '@/components';
 import { router } from './router';
-import './global.css';
+import './assets/styles/global.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {

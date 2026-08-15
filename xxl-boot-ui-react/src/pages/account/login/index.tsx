@@ -8,6 +8,7 @@ import { App } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import loginBg from '@/assets/images/login-bg.png';
 import { Footer } from '@/components';
 import { getCodeImg } from '@/services/login';
 import { useUserStore } from '@/stores/userStore';
@@ -37,8 +38,7 @@ const useStyles = createStyles(({ token }) => {
       flexDirection: 'column',
       height: '100vh',
       overflow: 'auto',
-      backgroundImage:
-        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
+      backgroundImage: `url(${loginBg})`,
       backgroundSize: '100% 100%',
     },
     captcha: {
@@ -107,7 +107,9 @@ const Login: React.FC = () => {
       <div
         style={{
           flex: '1',
-          padding: '32px 0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <LoginForm
@@ -115,7 +117,13 @@ const Login: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src={defaultSettings.logo} />}
+          // 覆盖容器默认的 flex:1 / height:100%，使其按内容高度参与外层居中；
+          // 居中后整体上移一屏高度的 4%，实现「居中稍微靠上」
+          containerStyle={{
+            flex: 'none',
+            height: 'auto',
+            transform: 'translateY(-4%)',
+          }}
           title={defaultSettings.title}
           subTitle="快速开发平台"
           initialValues={{
