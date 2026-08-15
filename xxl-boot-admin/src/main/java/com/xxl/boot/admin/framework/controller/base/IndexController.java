@@ -1,19 +1,10 @@
 package com.xxl.boot.admin.framework.controller.base;
 
-import com.xxl.boot.admin.framework.constant.enums.MessageStatusEnum;
-import com.xxl.boot.admin.framework.model.dto.LogDTO;
-import com.xxl.boot.admin.framework.model.dto.MessageDTO;
 import com.xxl.boot.admin.framework.model.dto.ResourceDTO;
-import com.xxl.boot.admin.framework.model.dto.UserDTO;
-import com.xxl.boot.admin.framework.service.LogService;
-import com.xxl.boot.admin.framework.service.MessageService;
 import com.xxl.boot.admin.framework.service.ResourceService;
-import com.xxl.boot.admin.framework.service.UserService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.sso.core.helper.XxlSsoHelper;
 import com.xxl.sso.core.model.LoginInfo;
-import com.xxl.tool.core.CollectionTool;
-import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,12 +31,6 @@ public class IndexController {
 
 	@Resource
 	private ResourceService resourceService;
-	@Resource
-	private MessageService messageService;
-	@Resource
-	private UserService userService;
-	@Resource
-	private LogService logService;
 
 
     // ---------------------- index ----------------------
@@ -61,32 +46,6 @@ public class IndexController {
 
 		return "/framework/base/index";
 		/*return "redirect:/index";*/
-	}
-
-
-    // ---------------------- dashboard ----------------------
-
-	@RequestMapping("/dashboard")
-	@XxlSso
-	public String dashboard(HttpServletRequest request, Model model) {
-
-        // message
-		PageModel<MessageDTO>  pageModel = messageService.pageList(MessageStatusEnum.NORMAL.getCode(), null, 0, 10);
-		if (pageModel!=null && CollectionTool.isNotEmpty(pageModel.getData())) {
-			List<MessageDTO> messageList = pageModel.getData();
-			model.addAttribute("messageList", messageList);
-		}
-		// user total
-		PageModel<UserDTO> userPageModel = userService.pageList(0, 1, null, -1, -1);
-		int userTotal = userPageModel.getTotal();
-		model.addAttribute("userTotal", userTotal);
-		// log total
-		PageModel<LogDTO> logPageModel = logService.pageList(-1, 0, null, 0, 1);
-		int logTotal = logPageModel.getTotal();
-		model.addAttribute("logTotal", logTotal);
-
-
-		return "/framework/base/dashboard";
 	}
 
 

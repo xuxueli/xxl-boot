@@ -11,6 +11,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 日志 Service 实现，提供日志的增删改查业务逻辑
@@ -82,5 +83,13 @@ public class LogServiceImpl implements LogService {
         pageModel.setData(pageListDTO);
         pageModel.setTotal(totalCount);
         return pageModel;
+    }
+
+    /**
+     * 按日期统计日志趋势
+     */
+    @Override
+    public List<Map<String, Object>> trendList(int days) {
+        return logMapper.trendList(days);
     }
 }

@@ -1,6 +1,7 @@
 package com.xxl.boot.admin.framework.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.xxl.boot.admin.framework.model.dto.LogDTO;
 import com.xxl.boot.admin.framework.model.entity.Log;
@@ -38,4 +39,9 @@ public interface LogService {
      * 分页查询日志列表
      */
     PageModel<LogDTO> pageList(int type, int module, String title, int offset, int pagesize);
+
+    /**
+     * 按日期统计日志趋势
+     */
+    List<Map<String, Object>> trendList(int days);
 }
