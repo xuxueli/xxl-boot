@@ -6,6 +6,7 @@ import { GithubOutlined } from '@ant-design/icons';
 import { createStyles } from 'antd-style';
 import React from 'react';
 
+/** 页脚与链接样式 */
 const useStyles = createStyles(({ token, css }) => ({
   footer: css`
     padding: 16px 24px;
@@ -35,14 +36,18 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 
+/**
+ * 页脚组件：版权信息 + 项目 GitHub 链接
+ */
 const Footer = () => {
   const { styles } = useStyles();
-  const year = new Date().getFullYear();
+  const year = new Date().getFullYear(); /* 动态获取当前年份，版权区间自动截止到本年 */
 
   return (
     <div className={styles.footer}>
       <span>
         Copyright © 2015-{year}
+        {/* 项目官网链接 */}
         <a
           className={styles.nameLink}
           href="https://www.xuxueli.com/xxl-boot/"
@@ -52,6 +57,7 @@ const Footer = () => {
           xuxueli
         </a>
       </span>
+      {/* GitHub 仓库链接 */}
       <a
         className={styles.link}
         href="https://github.com/xuxueli/xxl-boot"

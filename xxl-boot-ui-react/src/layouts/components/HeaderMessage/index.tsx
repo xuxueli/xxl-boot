@@ -18,6 +18,7 @@ import {
 } from '@/services/system/message';
 import MessageDetail, { type MessageDetailRef } from '@/pages/system/message/MessageDetail';
 
+/** 消息面板及铃铛触发区样式 */
 const useStyles = createStyles(({ token, css }) => ({
   trigger: css`
     position: relative;
@@ -112,34 +113,42 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 
+/**
+ * 站内消息组件：铃铛展示未读数，下拉面板展示顶部公告列表
+ */
 const HeaderMessage = () => {
   const { styles } = useStyles();
-  const messageViewRef = useRef<MessageDetailRef>(null);
-  const [messageList, setMessageList] = useState<API.Message[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const messageViewRef = useRef<MessageDetailRef>(null); /* 详情抽屉引用 */
+  const [messageList, setMessageList] = useState<API.Message[]>([]); /* 顶部公告列表 */
+  const [unreadCount, setUnreadCount] = useState(0); /* 未读数量 */
+  const [loading, setLoading] = useState(false); /* 列表加载状态 */
 
   /**
-   * 加载顶部公告列表，统计未读数
+   * 加载顶部公告列表，并统计未读数量
    */
   const loadMessageTop = useCallback(() => {
     setLoading(true);
     listMessageTop()
       .then((res) => {
         setMessageList(res.data || []);
+        /* 未读数 = 列表中 isRead 为 false 的条数 */
         setUnreadCount((res.data || []).filter((n) => !n.isRead).length);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, []);                 // 稳定函数（ useCallback 依赖数组是 [] ）：没有依赖，初始化后保持不变，首次挂载时创建一次；
 
+  /* 组件挂载后：加载一次公告列表 */
   useEffect(() => {
     loadMessageTop();
-  }, [loadMessageTop]);
+  }, [loadMessageTop]);   // 组件挂载后执行一次，依赖 loadMessageTop（稳定函数），不会重复执行。
 
-  /** 点击公告：未读则标记已读，预览详情 */
+  /**
+   * 点击公告：未读先标记已读并同步本地状态，随后打开详情抽屉
+   */
   const previewMessage = (item: API.Message) => {
+    /* 未读消息：调用接口标记已读，并更新本地列表与未读数 */
     if (!item.isRead) {
       markMessageRead(item.id as number).catch(() => {});
       setMessageList((list) =>
@@ -147,25 +156,33 @@ const HeaderMessage = () => {
       );
       setUnreadCount((count) => Math.max(0, count - 1));
     }
+    /* 打开详情抽屉（按消息 ID 拉取完整内容） */
     messageViewRef.current?.open(item.id as number);
   };
 
-  /** 全部已读：批量标记并更新本地状态 */
+  /**
+   * 全部已读：批量标记后同步更新本地列表与未读数
+   */
   const markAllRead = () => {
     const ids = messageList.map((n) => n.id).join(',');
+    /* 无消息时无需处理 */
     if (!ids) return;
     markMessageReadAll(ids).catch(() => {});
     setMessageList((list) => list.map((n) => ({ ...n, isRead: true })));
     setUnreadCount(0);
   };
 
+  /*
+  * 渲染：顶部铃铛 + 下拉面板 + 详情抽屉
+  *   - return ( <> ... </> )：用于返回多个并列的元素
+  */
   return (
     <>
       <Dropdown
         placement="bottomRight"
         arrow
         trigger={['hover']}
-        dropdownRender={() => (
+        popupRender={() => (
           <div className={styles.panel}>
             <div className={styles.header}>
               <span>站内消息</span>
@@ -173,11 +190,12 @@ const HeaderMessage = () => {
                 全部已读
               </span>
             </div>
+            {/* 加载中：展示 loading 文案 */}
             {loading ? (
               <div className={styles.loading}>
                 <LoadingOutlined spin /> 加载中...
               </div>
-            ) : messageList.length === 0 ? (
+            ) : /* 无公告：展示空态 */ messageList.length === 0 ? (
               <div className={styles.empty}>
                 <NotificationOutlined
                   style={{ fontSize: 24, display: 'block', marginBottom: 6 }}
@@ -185,6 +203,7 @@ const HeaderMessage = () => {
                 暂无公告
               </div>
             ) : (
+              /* 有公告：渲染消息列表 */
               <div>
                 {messageList.map((item) => (
                   <div
@@ -192,6 +211,7 @@ const HeaderMessage = () => {
                     className={styles.item}
                     onClick={() => previewMessage(item)}
                   >
+                    {/* 分类标签：1-通知，其他-公告 */}
                     <Tag color={item.category === 1 ? 'warning' : 'success'}>
                       {item.category === 1 ? '通知' : '公告'}
                     </Tag>
@@ -206,12 +226,14 @@ const HeaderMessage = () => {
           </div>
         )}
       >
+        {/* 铃铛触发器：未读数角标 */}
         <div className={styles.trigger}>
           <Badge count={unreadCount} size="small" overflowCount={99}>
             <BellOutlined />
           </Badge>
         </div>
       </Dropdown>
+      {/* 消息详情抽屉 */}
       <MessageDetail ref={messageViewRef} />
     </>
   );

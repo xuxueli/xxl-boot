@@ -5,7 +5,7 @@
  * 说明：
  *   - 组件名与 antd 的 Dropdown 同名，内部以 AntdDropdown 别名引入 antd 组件，JSX 中 <AntdDropdown> 指向 antd 组件；
  *   - 通过 classNames.root 注入统一下拉样式，外部可传 overlayClassName 追加自定义类名；
- *   - 移除了 antd 已废弃的 overlay 属性（对应新版 dropdownRender / menu），避免误用。
+ *   - 移除了 antd 已废弃的 overlay 属性（对应新版 popupRender / menu），避免误用。
  *
  * @author xuxueli 2026-08-15
  */
@@ -72,7 +72,7 @@ const Dropdown = ({
       classNames={{
         root: clsx(styles.dropdown, cls),
       }}
-      // 透传其余属性（menu / dropdownRender / trigger / placement 等）
+      // 透传其余属性（menu / popupRender / trigger / placement 等）
       {...restProps}
     />
   );
