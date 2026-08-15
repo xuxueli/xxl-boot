@@ -92,6 +92,40 @@ const buildMenuData = (routes: API.RouterVo[]): MenuDataItem[] => {
 };
 
 /**
+ * 构建「目录路径 → 第一个叶子路径」映射表
+ * 说明：splitMenus（自动分割菜单）下目录会被渲染成扁平菜单项且 children 被剥离，
+ *       点击时需跳转到第一个叶子子项（真实页面），避免跳到目录路径导致 404
+ */
+const buildDirRedirectMap = (routes: API.RouterVo[]): Record<string, string> => {
+  const map: Record<string, string> = {};
+
+  const findFirstLeaf = (nodes: API.RouterVo[]): string | undefined => {
+    for (const node of nodes) {
+      /* 叶子节点：直接使用其路径 */
+      if (!node.children?.length) return node.path;
+      /* 目录节点：递归向下查找 */
+      const leafPath = findFirstLeaf(node.children);
+      if (leafPath) return leafPath;
+    }
+    return undefined;
+  };
+
+  const walk = (nodes: API.RouterVo[]) => {
+    for (const node of nodes) {
+      /* 目录节点（有子项且自身有路径）：记录映射，点击时跳转第一个叶子子项 */
+      if (node.children?.length && node.path) {
+        const firstLeaf = findFirstLeaf(node.children);
+        if (firstLeaf) map[node.path] = firstLeaf;
+      }
+      if (node.children?.length) walk(node.children);
+    }
+  };
+
+  walk(routes);
+  return map;
+};
+
+/**
  * AppLayout 组件
  */
 const AppLayout = () => {
@@ -106,6 +140,11 @@ const AppLayout = () => {
   const settingDrawerOpen = useSettingsStore((s) => s.settingDrawerOpen);
   /* 侧边栏折叠状态：受控于 settingsStore，点击开关即时持久化 */
   const collapsed = useSettingsStore((s) => s.collapsed);
+  /* 目录路径 → 第一个叶子路径 映射，供菜单点击跳转（避免目录 404） */
+  const dirRedirectMap = React.useMemo(
+    () => buildDirRedirectMap(menuData),
+    [menuData],
+  );
 
   /**
    * 保存设置：将当前设置持久化，刷新后保持
@@ -133,10 +172,11 @@ const AppLayout = () => {
       location={location}
       // 左侧菜单：菜单以后端资源配置为准（getRouters 返回的树）
       menuDataRender={() => buildMenuData(menuData)}
-      // 左侧菜单：点击菜单项跳转路由
-      menuItemRender={(item, dom) =>
-          item.path ? <Link to={item.path}>{dom}</Link> : dom
-      }
+      // 左侧菜单：点击菜单项跳转路由（目录项跳转其第一个叶子子项，避免 404；其他正常跳转；）
+      menuItemRender={(item, dom) => {
+        const targetPath = dirRedirectMap[item.path as string] || item.path;
+        return targetPath ? <Link to={targetPath}>{dom}</Link> : dom;
+      }}
       // 顶部面包屑：单层级页面（如首页、帮助中心）也展示面包屑
       breadcrumbProps={{ minLength: 1 }}
       // 顶部面包屑：只读展示，不支持点击跳转
