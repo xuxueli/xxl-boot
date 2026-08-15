@@ -1,5 +1,5 @@
 --
--- XXL-Boot React 版（xxl-boot-ui-react2）菜单图标更新SQL
+-- XXL-Boot React 版（xxl-boot-ui-react）菜单图标更新SQL
 -- 说明：将存量菜单数据的图标更新为 antd 图标名称（@ant-design/icons），
 --       后续新增菜单在资源管理中直接选择 antd 图标即可。
 -- 使用：执行本脚本后刷新登录，菜单将展示 antd 图标。

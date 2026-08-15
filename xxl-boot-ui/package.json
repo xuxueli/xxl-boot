@@ -29,7 +29,7 @@
     "js-beautify": "2.0.3",
     "js-cookie": "3.0.8",
     "nprogress": "0.2.0",
-    "pinia": "4.0.2",
+    "pinia": "4.0.3",
     "vue": "3.5.41",
     "vue-router": "5.2.0",
     "vuedraggable": "4.1.0"
@@ -47,17 +47,17 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-vue": "10.10.0",
     "fast-glob": "3.3.3",
-    "globals": "17.9.0",
+    "globals": "17.11.0",
     "prettier": "3.9.6",
-    "sass-embedded": "1.100.0",
+    "sass-embedded": "1.102.0",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.66.0",
+    "typescript-eslint": "8.67.0",
     "unplugin-auto-import": "21.1.0",
     "unplugin-vue-setup-extend-plus": "1.0.1",
     "vite": "8.2.1",
     "vite-plugin-compression": "0.5.1",
     "vite-plugin-svg-icons": "2.0.1",
-    "vue-tsc": "3.3.9"
+    "vue-tsc": "3.3.10"
   },
   "overrides": {
     "quill": "2.0.3"
