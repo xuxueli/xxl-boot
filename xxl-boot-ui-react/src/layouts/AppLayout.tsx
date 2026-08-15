@@ -104,6 +104,8 @@ const AppLayout = () => {
   const settings = useSettingsStore((s) => s.settings);
   /* 设置面板开关：控制 SettingDrawer 显隐 */
   const settingDrawerOpen = useSettingsStore((s) => s.settingDrawerOpen);
+  /* 侧边栏折叠状态：受控于 settingsStore，点击开关即时持久化 */
+  const collapsed = useSettingsStore((s) => s.collapsed);
 
   /**
    * 保存设置：将当前设置持久化，刷新后保持
@@ -153,6 +155,13 @@ const AppLayout = () => {
       // 底部区域：页脚（设置面板关闭页脚时返回 false 隐藏，否则渲染 Footer）
       footerRender={
         settings.footerRender === false ? false : () => <Footer />
+      }
+      // 禁用断点：避免 antd Sider 挂载时按视口触发 onCollapse(false)，覆盖持久化的折叠状态
+      breakpoint={false}
+      // 侧边栏折叠：受控展开/收起，切换时持久化到 localStorage
+      collapsed={collapsed}
+      onCollapse={(isCollapsed) =>
+        useSettingsStore.getState().setCollapsed(isCollapsed)
       }
       // 左侧菜单头部：点击事件
       onMenuHeaderClick={() => navigate('/')}
