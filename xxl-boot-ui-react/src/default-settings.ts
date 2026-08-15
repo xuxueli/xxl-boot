@@ -34,7 +34,7 @@ const Settings: ProLayoutProps & {
   homePath: '/dashboard',
 
   /**
-   * 导航主题：light 亮色 / dark 暗色
+   * 整体风格：light 亮色 / dark 暗色
    */
   navTheme: 'light',
 
@@ -44,9 +44,14 @@ const Settings: ProLayoutProps & {
   colorPrimary: '#1677ff',
 
   /**
-   * 布局模式：side 侧边 / top 顶部 / mix 混合
+   * 导航模式：side 侧边 / top 顶部 / mix 混合
    */
   layout: 'mix',
+
+  /**
+   * 侧边菜单类型：sub 菜单 / group 分组
+   */
+  siderMenuType: 'sub',
 
   /**
    * 内容区宽度：Fluid 流式 / Fixed 固定
@@ -54,12 +59,12 @@ const Settings: ProLayoutProps & {
   contentWidth: 'Fluid',
 
   /**
-   * 是否固定头部
+   * 固定 Header
    */
   fixedHeader: false,
 
   /**
-   * 是否固定侧边栏
+   * 固定侧边菜单
    */
   fixSiderbar: true,
 
