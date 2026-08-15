@@ -1,5 +1,5 @@
 --
--- 前后端分离项目初始化SQL脚本（xxl-boot-api/ui 版本）
+-- 前后端分离项目初始化SQL脚本（xxl-boot-ui 版本）
 
 UPDATE `xxl_boot_resource`
 SET `icon` = CASE `id`

@@ -1,0 +1,100 @@
+# docker-compose version
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: xxl-boot-mysql
+    environment:
+      # 1、数据库密码设置，需要与系统中配置一致：
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      # 2、数据库实例名称，需要与系统中配置一致；
+      MYSQL_DATABASE: xxl_boot
+    ports:
+      - "3306:3306"
+    volumes:
+      # 说明：仅数据库首次初始化时执行；
+      - ../../doc/db/tables_xxl_boot.sql:/docker-entrypoint-initdb.d/tables_xxl_boot.sql:ro
+      - ../../doc/db/tables_xxl_boot_vue.sql:/docker-entrypoint-initdb.d/tables_xxl_boot_vue.sql:ro
+      # 3、数据库持久化目录位置，建议自定义：
+      - ${MYSQL_PATH}/conf:/etc/mysql/conf.d
+      - ${MYSQL_PATH}/logs:/var/log/mysql
+      - ${MYSQL_PATH}/data:/var/lib/mysql
+    command: >-
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - xxl-boot-network
+
+  redis:
+    # 4、Redis缓存服务
+    image: redis:7.4
+    container_name: xxl-boot-redis
+    environment:
+      # 4.1、Redis访问密码，需要与上文 xxl-boot-api 中配置保持一致（默认空密码，如设置请同步配置 REDIS_PASSWORD）；
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
+    ports:
+      - "6379:6379"
+    volumes:
+      # 5、Redis持久化目录位置，建议自定义：
+      - ${REDIS_PATH}/data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "if [ -z \"$$REDIS_PASSWORD\" ]; then redis-cli ping; else redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping; fi"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - xxl-boot-network
+
+  xxl-boot-api:
+    # 6、本地Build设置
+    image: xuxueli/xxl-boot-api:local
+    build:
+      context: ../../xxl-boot-api
+      dockerfile: Dockerfile
+    container_name: xxl-boot-api
+    environment:
+      # 7、数据库密码设置，需要与上文Mysql中保持一致：
+      PARAMS: >-
+        --server.port=${XXL_BOOT_API_PORT}
+        --server.servlet.context-path=${XXL_BOOT_API_CONTEXT_PATH}
+        --spring.datasource.url=jdbc:mysql://mysql:3306/xxl_boot?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+        --spring.datasource.username=root 
+        --spring.datasource.password=${MYSQL_ROOT_PASSWORD}
+        --spring.data.redis.host=redis
+        --spring.data.redis.port=6379
+        --spring.data.redis.password=${REDIS_PASSWORD}
+    ports:
+      - "${XXL_BOOT_API_PORT}:${XXL_BOOT_API_PORT}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - xxl-boot-network
+
+  xxl-boot-ui-react:
+    # 8、本地Build设置
+    image: xuxueli/xxl-boot-ui-react:local
+    build:
+      context: ../../xxl-boot-ui-react
+      dockerfile: Dockerfile
+      # 附加构建上下文：用于 COPY docker/modular-react 下的 nginx 配置
+      additional_contexts:
+        nginx: ../../docker/modular-react
+    container_name: xxl-boot-ui-react
+    ports:
+      - "${XXL_BOOT_UI_PORT}:80"
+    depends_on:
+      - xxl-boot-api
+    networks:
+      - xxl-boot-network
+
+networks:
+  xxl-boot-network:
+    driver: bridge

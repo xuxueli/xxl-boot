@@ -78,12 +78,15 @@ XXL-BOOT 定位为 快速开发平台，整合流行前后端技术能力，致�
 
 ```
 /xxl-boot/doc/db/
-    - tables_xxl_boot.sql                   ：系统初始化SQL脚本【必须】
-    - tables_xxl_boot_monolith.sql          ：单体项目初始化SQL脚本【可选，部署单体项目时使用】
-    - tables_xxl_boot_modular.sql           ：前后端分离项目初始化SQL脚本【可选，部署前后端分离项目时使用】
+    - tables_xxl_boot.sql                   ：公共初始化SQL脚本【必须】
+    - tables_xxl_boot_monolith.sql          ：单体项目初始化SQL脚本【可选】
+    - tables_xxl_boot_vue.sql               ：前后端分离项目（Vue版本）初始化SQL脚本【可选】
+    - tables_xxl_boot_react.sql             ：前后端分离项目（React版本）初始化SQL脚本【可选】
 ```
 
-补充说明：如需部署单体项目，只需要执行 `tables_xxl_boot.sql` 即可；如需切换部署 “前后端分离项目”或“单体项目”，则需要执行 `tables_xxl_boot_modular.sql` 或 `tables_xxl_boot_monolith.sql`。
+补充说明：
+- 首先初始化 “公共初始化SQL脚本”；
+- 然后选择部署 “单体项目” 或 “前后端分离项目”，执行相应的初始化SQL脚本即可。
 
 ### 2.2 编译源码    
 项目为 Monorepo仓库，单体项目 与 前后端分离项目 维护在同一个代码仓库中，通过不同目录模块隔离维护。
@@ -93,10 +96,14 @@ XXL-BOOT 定位为 快速开发平台，整合流行前后端技术能力，致�
 - xxl-boot/
     - xxl-boot-admin        : 【单体项目】单体项目服务
     - xxx-boot-api          : 【前后端分离项目】后端API服务
-    - xxl-boot-ui           : 【前后端分离项目】前端UI服务
+    - xxl-boot-ui           : 【前后端分离项目】前端UI服务（Vue版本）
+    - xxl-boot-ui-react     : 【前后端分离项目】前端UI服务（React版本）
 ```
 
-补充说明：如需部署“单体项目”，只需要部署 `xxl-boot-admin` 模块即可；如需部署 “前后端分离项目”，需要部署 `xxl-boot-api` + `xxl-boot-ui`。
+补充说明：
+- 如需部署“单体项目”，只需要部署 `xxl-boot-admin` 模块即可；
+- 如需部署 “前后端分离项目（Vue版本）”，需要部署 `xxl-boot-api` + `xxl-boot-ui` 
+- 如需部署 “前后端分离项目（React版本）”，需要部署 `xxl-boot-api` + `xxl-boot-ui-react`。
 
 ### 2.3 配置部署（单体项目）
 
@@ -293,7 +300,7 @@ mvn clean package -Dmaven.test.skip=true
 >注意：支持自定义 .env 配置，如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
 
 ```
-cd ./docker/modular/
+cd ./docker/modular-vue/
 cat .env
 ```
 
@@ -576,8 +583,8 @@ public @interface Permission {
     cd ./xxl-boot
     // 第二步：项目构建
     mvn clean package -Dmaven.test.skip=true
-    // 第三步：项目配置（注意：前往docker/modular目录并自定义 .env 配置；如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；）
-    cd ./docker/modular/
+    // 第三步：项目配置（注意：前往docker/modular-vue目录并自定义 .env 配置；如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；）
+    cd ./docker/modular-vue/
     cat .env
     // 启动、停止项目
     docker compose up -d
