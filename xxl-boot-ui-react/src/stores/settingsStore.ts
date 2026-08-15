@@ -19,6 +19,7 @@ const loadSettings = (): ProLayoutProps => {
   try {
     const cached = localStorage.getItem(SETTINGS_KEY);
     if (cached) {
+      // 与默认配置浅合并，避免外部传入的设置缺 title/logo 时被整体覆盖
       return { ...defaultSettings, ...JSON.parse(cached) };
     }
   } catch {
