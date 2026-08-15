@@ -16,7 +16,7 @@ import loginBg from '@/assets/images/login-bg.png';
 import { Footer } from '@/components';
 import { getCodeImg } from '@/services/login';
 import { useUserStore } from '@/stores/userStore';
-import defaultSettings from '@/defaultSettings';
+import defaultSettings from '@/default-settings';
 
 /**
  * 校验 redirect URL，防止开放重定向攻击
@@ -109,7 +109,7 @@ const Login = () => {
   // 初始化：获取验证码、设置页面标题
   useEffect(() => {
     getCode();
-    document.title = '登录页 - XXL-BOOT';
+    document.title = defaultSettings.title;
   }, []);
 
   return (
@@ -134,8 +134,8 @@ const Login = () => {
             height: 'auto',
             transform: 'translateY(-15%)',
           }}
-          title={defaultSettings.title}
-          subTitle="快速开发平台"
+          title={defaultSettings.brandName}
+          subTitle={defaultSettings.title}
           initialValues={{
             rememberMe: false,
           }}

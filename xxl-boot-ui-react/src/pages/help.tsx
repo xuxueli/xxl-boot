@@ -6,7 +6,7 @@ import { BookOutlined, GithubOutlined } from '@ant-design/icons';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { Button, Divider, Typography } from 'antd';
 import React from 'react';
-import defaultSettings from '@/defaultSettings';
+import defaultSettings from '@/default-settings';
 
 const HelpCenter = () => {
   return (
