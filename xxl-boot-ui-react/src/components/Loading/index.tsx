@@ -1,3 +1,7 @@
+/**
+ * 组件：Loading（页面加载占位）
+ * 功能：路由懒加载 / 页面初始加载时展示骨架屏兜底
+ */
 import { Skeleton } from 'antd';
 
 const Loading = () => (
