@@ -124,6 +124,8 @@ const AppLayout = () => {
   return (
     // ProLayout：Ant Design Pro 提供的布局组件，支持菜单、面包屑、页脚、主题设置等功能
     <ProLayout
+      // 将布局设置透传给 ProLayout，实时驱动标题/Logo/主题/布局等
+      {...settings}
       title={settings.title}
       logo={settings.logo}
       location={location}
@@ -148,12 +150,12 @@ const AppLayout = () => {
           <HeaderAvatar>{avatarChildren}</HeaderAvatar>
         ),
       }}
-      // 底部区域：页脚
-      footerRender={() => <Footer />}
+      // 底部区域：页脚（设置面板关闭页脚时返回 false 隐藏，否则渲染 Footer）
+      footerRender={
+        settings.footerRender === false ? false : () => <Footer />
+      }
       // 左侧菜单头部：点击事件
       onMenuHeaderClick={() => navigate('/')}
-      // 将布局设置透传给 ProLayout，实时驱动标题/Logo/主题/布局等
-      {...settings}
     >
       {/* 页面内容区域 */}
       <Outlet />

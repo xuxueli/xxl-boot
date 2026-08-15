@@ -79,12 +79,7 @@ const Settings: ProLayoutProps & {
   logo: '/logo.png',
 
   /**
-   * 图标字体库地址
-   */
-  iconfontUrl: '',
-
-  /**
-   * 布局 token（参见 ProLayout 文档，通过 token 修改样式）
+   * 布局 token：用于自定义主题样式，详细配置参考：https://procomponents.ant.design/components/layout#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8
    */
   token: {},
 };
