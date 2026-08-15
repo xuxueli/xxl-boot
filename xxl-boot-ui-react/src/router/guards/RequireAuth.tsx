@@ -1,5 +1,5 @@
 /**
- * 组件：RequireAuth（登录守卫）
+ * 路由守卫：RequireAuth（登录守卫）
  * 功能：未登录重定向到登录页；已登录但会话未加载时拉取用户信息与菜单
  */
 import { message, Spin } from 'antd';

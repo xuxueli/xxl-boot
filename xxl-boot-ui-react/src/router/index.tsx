@@ -7,10 +7,10 @@
  */
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import RequireAuth from '@/components/RequireAuth';
-import RequirePermission from '@/components/RequirePermission';
 import Loading from '@/components/Loading';
 import BasicLayout from '@/layouts/BasicLayout';
+import RequireAuth from './guards/RequireAuth';
+import RequirePermission from './guards/RequirePermission';
 
 /** 懒加载页面组件（带 Loading 兜底） */
 const lazyLoad = (factory: () => Promise<{ default: React.ComponentType }>) => {

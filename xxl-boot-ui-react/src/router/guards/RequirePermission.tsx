@@ -1,6 +1,6 @@
 /**
- * 组件：RequirePermission（页面权限守卫）
- * 功能：无对应权限时重定向到 403
+ * 路由守卫：RequirePermission（页面权限守卫）
+ * 功能：无对应权限时重定向到 301 无权限页
  */
 import React from 'react';
 import { Navigate } from 'react-router-dom';
