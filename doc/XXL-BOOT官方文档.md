@@ -96,13 +96,13 @@ XXL-BOOT 定位为 快速开发平台，整合流行前后端技术能力，致�
 - xxl-boot/
     - xxl-boot-admin        : 【单体项目】单体项目服务
     - xxx-boot-api          : 【前后端分离项目】后端API服务
-    - xxl-boot-ui           : 【前后端分离项目】前端UI服务（Vue版本）
+    - xxl-boot-ui-vue       : 【前后端分离项目】前端UI服务（Vue版本）
     - xxl-boot-ui-react     : 【前后端分离项目】前端UI服务（React版本）
 ```
 
 补充说明：
 - 如需部署“单体项目”，只需要部署 `xxl-boot-admin` 模块即可；
-- 如需部署 “前后端分离项目（Vue版本）”，需要部署 `xxl-boot-api` + `xxl-boot-ui` 
+- 如需部署 “前后端分离项目（Vue版本）”，需要部署 `xxl-boot-api` + `xxl-boot-ui-vue` 
 - 如需部署 “前后端分离项目（React版本）”，需要部署 `xxl-boot-api` + `xxl-boot-ui-react`。
 
 ### 2.3 配置部署（单体项目）
@@ -141,7 +141,7 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 ### 2.4 配置部署（前后端分离项目）
 
-- 部署项目：xxl-boot-api + xxl-boot-ui
+- 部署项目：xxl-boot-api + xxl-boot-ui-vue （以Vue版本举例，React版本类似）
 - 项目说明：前后端分离模式，后端API与前端UI独立部署、独立运行。后端选型 "SpringBoot/Mybatis/XXL-SSO"，前端选型 "Vue3/Vite/ElementPlus"。
 
 #### 步骤一：后端配置文件
@@ -178,9 +178,9 @@ spring.data.redis.password=
 配置文件地址（按环境区分）：
 
 ```
-/xxl-boot/xxl-boot-ui/.env.development        # 开发环境
-/xxl-boot/xxl-boot-ui/.env.staging            # 预发布环境
-/xxl-boot/xxl-boot-ui/.env.production         # 生产环境
+/.env.development        # 开发环境
+/.env.staging            # 预发布环境
+/.env.production         # 生产环境
 ```
 
 配置内容说明：
@@ -200,10 +200,10 @@ VITE_APP_BASE_API='/api'
 - `VITE_APP_BASE_API`：后端路由前缀，默认 `/api`，前端请求会统一添加此前缀，代理或反向代理时需将其移除并转发至后端服务。
 
 #### 步骤四：部署前端项目（本地）
-开发模式下，进入 `xxl-boot-ui` 目录，安装依赖并启动即可：
+开发模式下，进入 `xxl-boot-ui-vue` 目录，安装依赖并启动即可：
 
 ```
-cd /xxl-boot/xxl-boot-ui
+cd /xxl-boot/xxl-boot-ui-vue
 npm install
 npm run dev
 ```
@@ -214,7 +214,6 @@ npm run dev
 
 生产模式下，构建产物后部署至 Web 服务器（如 Nginx），并配置反向代理转发 API 请求：
 ```
-cd /xxl-boot/xxl-boot-ui
 npm run build:prod          # 构建产物输出至 dist 目录
 ```
 
@@ -225,7 +224,7 @@ server {
     server_name  localhost;
 
     # 前端静态资源
-    root  /data/xxl-boot-ui/dist;
+    root  /usr/share/nginx/html;
     index index.html;
 
     # 单页应用路由支持（前端 History 模式）
@@ -296,7 +295,7 @@ cd ./xxl-boot
 mvn clean package -Dmaven.test.skip=true
 ```
 
-第三步：项目配置
+第三步：项目配置 （以Vue本本为例，React版本类似）
 >注意：支持自定义 .env 配置，如修改 MYSQL_PATH 配置设置Mysql数据持久化目录；
 
 ```
@@ -358,7 +357,7 @@ docker compose down
 项目采用 Monorepo 仓库模式，将 单体项目 与 前后端分离项目 维护在同一个代码仓库中，通过不同目录模块隔离维护，统一版本管理与依赖管理，便于协同开发与一键构建。
 
 - 后端统一通过 Maven 父工程管理，根目录 `pom.xml` 集中维护模块依赖版本（如 SpringBoot、Mybatis、MySQL、XXL-SSO 等），子模块 `xxl-boot-admin`、`xxl-boot-api` 继承使用；
-- 前端模块 `xxl-boot-ui` 独立通过 npm 管理依赖（Vue3、Vite、ElementPlus 等），与后端 Maven 工程解耦。
+- 前端模块 `xxl-boot-ui-vue`、`xxl-boot-ui-react` 独立通过 npm 管理依赖（Vue3/Vite/ElementPlus 或者 React/Vite/AntDesign），与后端 Maven 工程解耦。
 
 仓库目录结构如下：
 ```
@@ -406,7 +405,7 @@ xxl-boot/
 │           │   └── tool/codegen/              # 代码生成 模板文件
 │           └── i18n/                          # 国际化资源文件
 │
-└── xxl-boot-ui/                               # 【前后端分离项目】前端UI服务模块
+└── xxl-boot-ui-vue/                           # 【前后端分离项目】前端UI服务模块（Vue版本）
     ├── package.json                           # 前端依赖配置
     ├── vite.config.js                         # Vite构建配置
     └── src/
@@ -423,11 +422,25 @@ xxl-boot/
         ├── directive/                         # 自定义指令
         ├── assets/                            # 静态资源
         └── settings.js                        # 全局配置
+└── xxl-boot-ui-react/                         # 【前后端分离项目】前端UI服务模块（React版本）
+    ├── package.json                           # 前端依赖配置
+    └── src/
+        ├── index.js                           # 入口文件
+        ├── App.jsx                            # 根组件
+        ├── router/                            # 路由配置
+        ├── store/                             # 状态管理
+        ├── services/                          # 接口封装
+        ├── pages/                             # 页面组件
+        ├── components/                        # 通用组件
+        ├── layouts/                           # 布局组件
+        ├── hooks/                             # 自定义hooks
+        ├── utils/                             # 工具类
+        └── assets/                            # 静态资源
 ```
 
 补充说明：
-- 构建：后端模块在仓库根目录执行 `mvn clean package` 即可一键编译全部 Maven 模块；前端模块进入 `xxl-boot-ui` 目录执行 `npm install`、`npm run build:prod` 构建；
-- 部署：单体项目部署 `xxl-boot-admin` 模块；前后端分离项目部署 `xxl-boot-api` + `xxl-boot-ui` 两个模块，参考 “2.3 配置部署（单体项目）” 与 “2.4 配置部署（前后端分离项目）”；
+- 构建：后端模块在仓库根目录执行 `mvn clean package` 即可一键编译全部 Maven 模块；前端模块进入 `xxl-boot-ui-vue` 或 `xxl-boot-ui-react` 目录执行 `npm install`、`npm run build:prod` 构建；
+- 部署：单体项目部署 `xxl-boot-admin` 模块；前后端分离项目部署 `xxl-boot-api` + 前端Vue或React模块，参考 “2.3 配置部署（单体项目）” 与 “2.4 配置部署（前后端分离项目）”；
 - 扩展：新增业务模块时，可在各模块 `business` 扩展包中开发，并配套放置 MyBatis 映射文件、模板文件及配置文件，参考 “五、业务扩展”。
 
 ### 4.2、RBAC权限体系
@@ -570,7 +583,7 @@ public @interface Permission {
 ### 版本 v2.0.0 Release Notes[2026-08-08]
 - 1、【新增】XXL-BOOT 前后端分离版本 发布：支持 单体项目、前后端分析项目 多模式；
   - 前后端分离模式：
-    - 前端UI模块：xxl-boot-ui，支持独立部署，提供前端UI服务；
+    - 前端UI模块：xxl-boot-ui-vue 或 xxl-boot-ui-react，支持独立部署，提供前端UI服务；
     - 后端API模块：xxl-boot-api，支持独立部署，提供后端API服务；
   - 单体模式：xxl-boot-admin，提供前后端一体化服务；
 - 2、【新增】Docker Compose部署：新增 Docker Compose 配置，支持一键配置部署启动；
@@ -600,7 +613,7 @@ public @interface Permission {
 - 8、【升级】升级多项依赖至较新版本；
 
 ### 版本 v2.1.0 Release Notes[ING]
-- 1、【新增】前端UI模块（xxl-boot-ui）升级至 TypeScript;
+- 1、【新增】前端UI模块 升级至 TypeScript;
 - 2、【新增】前端UI模块 ESLint + Prettier 增强，提升代码规范性和可维护性；
 - 3、【新增】代码生成工具升级，兼容支持 TypeScript；支持 type 文件；
 - 4、【TODO】升级TypeScript 7；新建React版本；

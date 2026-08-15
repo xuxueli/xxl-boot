@@ -84,9 +84,9 @@ services:
     build:
       context: ../../xxl-boot-ui-react
       dockerfile: Dockerfile
-      # 附加构建上下文：用于 COPY docker/modular-react 下的 nginx 配置
+      # 附加构建上下文：用于 COPY 目录下的 nginx 配置
       additional_contexts:
-        nginx: ../../docker/modular-react
+        nginx: ./
     container_name: xxl-boot-ui-react
     ports:
       - "${XXL_BOOT_UI_PORT}:80"

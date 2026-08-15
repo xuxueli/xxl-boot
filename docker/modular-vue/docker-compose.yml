@@ -78,16 +78,16 @@ services:
     networks:
       - xxl-boot-network
 
-  xxl-boot-ui:
+  xxl-boot-ui-vue:
     # 8、本地Build设置
-    image: xuxueli/xxl-boot-ui:local
+    image: xuxueli/xxl-boot-ui-vue:local
     build:
-      context: ../../xxl-boot-ui
+      context: ../../xxl-boot-ui-vue
       dockerfile: Dockerfile
-      # 附加构建上下文：用于 COPY docker/modular 下的 nginx 配置
+      # 附加构建上下文：用于 COPY 目录下的 nginx 配置
       additional_contexts:
-        nginx: ../../docker/modular
-    container_name: xxl-boot-ui
+        nginx: ./
+    container_name: xxl-boot-ui-vue
     ports:
       - "${XXL_BOOT_UI_PORT}:80"
     depends_on:
