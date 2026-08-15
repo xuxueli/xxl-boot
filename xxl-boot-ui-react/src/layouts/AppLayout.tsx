@@ -12,7 +12,7 @@ import { ProLayout, SettingDrawer } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import React from 'react';
-import { HeaderAvatar, Footer, HeaderMessage } from './components';
+import { HeaderAvatar, Footer, HeaderMessage, FullscreenButton } from './components';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 import { getIconComponent } from '@/utils/icon';
@@ -143,8 +143,11 @@ const AppLayout = () => {
       itemRender={(route) => (
         <span>{route.title}</span>
       )}
-      // 顶部区域：头部消息
-      actionsRender={() => [<HeaderMessage key="header-message" />]}
+      // 顶部区域：全屏切换 + 站内消息
+      actionsRender={() => [
+        <FullscreenButton key="fullscreen" />,
+        <HeaderMessage key="header-message" />,
+      ]}
       // 顶部区域：用户信息
       avatarProps={{
         title: currentUser?.realName || currentUser?.userName,

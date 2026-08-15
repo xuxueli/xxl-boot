@@ -30,7 +30,7 @@ const useStyles = createStyles(({ token, css }) => ({
     height: 48px;
     margin-right: -8px;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 22px;
     color: ${token.colorText};
 
     &:hover {

@@ -7,3 +7,4 @@
 export { default as Footer } from './Footer';
 export { default as HeaderMessage } from './HeaderMessage';
 export { default as HeaderAvatar } from './HeaderAvatar';
+export { default as FullscreenButton } from './FullscreenButton';
