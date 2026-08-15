@@ -1,6 +1,5 @@
 <!--
   Role（角色管理）
-  Created by xxl-boot on '2024-07-28'.
 -->
 <template>
   <div class="app-container">

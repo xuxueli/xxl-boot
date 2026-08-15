@@ -1,6 +1,5 @@
 <!--
   Message（站内消息管理）
-  Created by xxl-boot on '2025-08-02'.
 -->
 <template>
   <div class="app-container">

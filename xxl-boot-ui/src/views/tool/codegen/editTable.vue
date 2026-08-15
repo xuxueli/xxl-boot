@@ -52,7 +52,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="生成功能作者" prop="functionAuthor">
-                <el-input v-model="info.functionAuthor" placeholder="xxl-boot" />
+                <el-input v-model="info.functionAuthor" placeholder="xuxueli" />
               </el-form-item>
             </el-col>
             <el-col :span="12">

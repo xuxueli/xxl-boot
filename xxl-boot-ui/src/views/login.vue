@@ -4,6 +4,7 @@
 -->
 <template>
   <div class="login">
+    <h2 class="login-title">XXL-BOOT</h2>
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">{{ title }}</h3>
 
@@ -46,7 +47,7 @@
       </el-form-item>
 
       <!-- 记住密码 -->
-      <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin: 0px 0px 25px 0px">记住密码</el-checkbox>
+        <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin: 0px 0px 8px 0px">记住密码</el-checkbox>
 
       <!-- login btn -->
       <el-form-item style="width: 100%">
@@ -56,12 +57,6 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <!--  底部  -->
-    <div class="el-login-footer">
-      {{ footerContent }}
-      <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px; text-decoration: underline">xuxueli</a>
-      <a href="https://github.com/xuxueli/xxl-boot" target="_blank" style="margin-left: 5px; text-decoration: underline">github</a>
-    </div>
   </div>
 </template>
 
@@ -74,7 +69,6 @@ import type { LoginParams } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 
 const title = defaultSettings.title // 系统标题
-const footerContent = defaultSettings.footerContent // 页脚版权信息
 const userStore = useUserStore()
 const route = useRoute() // 路由
 const router = useRouter() // 路由
@@ -160,14 +154,23 @@ getCode()
 <style lang="scss" scoped>
 .login {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 20px;
   height: 100%;
+  padding-bottom: 80px;
   background-color: #d2d6de;
   background-size: cover;
 }
 .title {
   margin: 0px auto 30px auto;
+  text-align: center;
+  color: #444;
+}
+.login-title {
+  margin: 0;
+  font-size: 32px;
   text-align: center;
   color: #444;
 }
@@ -205,18 +208,6 @@ getCode()
     vertical-align: middle;
   }
 }
-.el-login-footer {
-  height: 40px;
-  line-height: 40px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  color: #666;
-  font-family: Arial;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
 .login-code-img {
   height: 40px;
   padding-left: 12px;
@@ -230,7 +221,8 @@ html.dark .login {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
   }
 }
-html.dark .title {
+html.dark .title,
+html.dark .login-title {
   color: #c5c5c5;
 }
 </style>
