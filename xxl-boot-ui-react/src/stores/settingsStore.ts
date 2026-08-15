@@ -4,7 +4,7 @@
  */
 import { create } from 'zustand';
 import type { ProLayoutProps } from '@ant-design/pro-components';
-import defaultSettings from '@/utils/defaultSettings';
+import defaultSettings from '@/defaultSettings';
 
 interface SettingsState {
   /** 布局设置（默认来自 defaultSettings） */

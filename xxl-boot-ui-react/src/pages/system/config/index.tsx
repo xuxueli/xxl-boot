@@ -9,7 +9,7 @@ import { App, Button, Tag, Tooltip } from 'antd';
 import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { delConfig, listConfig } from '@/services/system/config';
-import { usePermission } from '@/utils/permission';
+import { usePermission } from '@/hooks/usePermission';
 import ConfigFormModal from './ConfigFormModal';
 
 const ConfigList: React.FC = () => {

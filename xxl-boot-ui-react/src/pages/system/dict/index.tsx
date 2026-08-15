@@ -10,7 +10,7 @@ import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { delType, listType } from '@/services/system/dict';
-import { usePermission } from '@/utils/permission';
+import { usePermission } from '@/hooks/usePermission';
 import DictDataDrawer, { type DictDataDrawerRef } from './DictDataDrawer';
 import DictFormModal from './DictFormModal';
 

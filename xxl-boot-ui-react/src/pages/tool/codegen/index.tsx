@@ -9,7 +9,7 @@ import { App, Button, Input, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import { delTable, listTable } from '@/services/tool/codegen';
 import { downloadGet } from '@/utils/download';
-import { usePermission } from '@/utils/permission';
+import { usePermission } from '@/hooks/usePermission';
 import EditTableModal from './EditTableModal';
 import PreviewModal, { type PreviewModalRef } from './PreviewModal';
 

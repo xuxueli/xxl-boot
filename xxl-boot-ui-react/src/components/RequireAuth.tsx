@@ -23,7 +23,7 @@ const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   if (!token) {
     const redirect = encodeURIComponent(location.pathname + location.search);
-    return <Navigate to={`/user/login?redirect=${redirect}`} replace />;
+    return <Navigate to={`/login?redirect=${redirect}`} replace />;
   }
 
   if (!currentUser) {

@@ -9,7 +9,7 @@ import { App, Button, InputNumber, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { delOrg, listOrg, updateOrgSort } from '@/services/authz/org';
-import { usePermission } from '@/utils/permission';
+import { usePermission } from '@/hooks/usePermission';
 import OrgFormModal from './OrgFormModal';
 
 const OrgList: React.FC = () => {

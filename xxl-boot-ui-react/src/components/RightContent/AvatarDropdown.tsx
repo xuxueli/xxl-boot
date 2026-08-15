@@ -52,7 +52,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
         cancelText: '取消',
         onOk: async () => {
           await logout();
-          navigate('/user/login', {
+          navigate('/login', {
             replace: true,
             state: { from: location.pathname },
           });

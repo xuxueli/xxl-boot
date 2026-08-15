@@ -167,7 +167,7 @@ getCode()
   align-items: center;
   gap: 20px;
   height: 100%;
-  padding-bottom: 80px;
+  padding-bottom: 120px;
   background-color: #d2d6de;
   background-size: cover;
 }

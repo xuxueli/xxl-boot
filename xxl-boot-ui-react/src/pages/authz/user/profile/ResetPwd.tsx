@@ -6,6 +6,7 @@
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import React from 'react';
+import { usePasswordRule } from '@/hooks/usePasswordRule';
 import { updateUserPwd } from '@/services/authz/user';
 
 /** 密码表单数据 */
@@ -18,6 +19,7 @@ interface PwdForm {
 const ResetPwd: React.FC = () => {
   const { message } = App.useApp();
   const [form] = ProForm.useForm();
+  const { infoPwdValidator } = usePasswordRule();
 
   /** 提交保存 */
   const handleSubmit = async (values: PwdForm) => {
@@ -59,20 +61,7 @@ const ResetPwd: React.FC = () => {
         name="newPassword"
         label="新密码"
         placeholder="请输入新密码"
-        rules={[
-          { required: true, message: '新密码不能为空' },
-          {
-            validator: (_, value) => {
-              if (!value) return Promise.resolve();
-              if (value.length < 4 || value.length > 20) {
-                return Promise.reject(
-                  new Error('密码长度必须在 4-20 个字符之间'),
-                );
-              }
-              return Promise.resolve();
-            },
-          },
-        ]}
+        rules={infoPwdValidator}
       />
       <ProFormText.Password
         name="confirmPassword"

@@ -1,13 +1,17 @@
+/**
+ * 页面：404（未找到）
+ * 功能：提示用户页面不存在，提供返回首页入口
+ */
 import { Button, Card, Result } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Exception500: React.FC = () => (
+const Exception404: React.FC = () => (
   <Card variant="borderless">
     <Result
-      status="500"
-      title="500"
-      subTitle="抱歉，服务器出错了。"
+      status="404"
+      title="404"
+      subTitle="抱歉，您访问的页面不存在。"
       extra={
         <Link to="/">
           <Button type="primary">返回首页</Button>
@@ -17,4 +21,4 @@ const Exception500: React.FC = () => (
   </Card>
 );
 
-export default Exception500;
+export default Exception404;

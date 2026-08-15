@@ -10,7 +10,7 @@ import React, { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { delData, listData } from '@/services/system/dict';
-import { usePermission } from '@/utils/permission';
+import { usePermission } from '@/hooks/usePermission';
 import DictDataFormModal from './DictDataFormModal';
 
 const DictData: React.FC = () => {

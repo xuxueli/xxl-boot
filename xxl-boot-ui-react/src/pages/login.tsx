@@ -12,7 +12,7 @@ import loginBg from '@/assets/images/login-bg.png';
 import { Footer } from '@/components';
 import { getCodeImg } from '@/services/login';
 import { useUserStore } from '@/stores/userStore';
-import defaultSettings from '@/utils/defaultSettings';
+import defaultSettings from '@/defaultSettings';
 
 /**
  * 校验 redirect URL，防止开放重定向攻击
@@ -122,7 +122,7 @@ const Login: React.FC = () => {
           containerStyle={{
             flex: 'none',
             height: 'auto',
-            transform: 'translateY(-4%)',
+            transform: 'translateY(-15%)',
           }}
           title={defaultSettings.title}
           subTitle="快速开发平台"

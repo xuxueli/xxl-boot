@@ -9,7 +9,7 @@ import { App, Button, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { delRole, listRole } from '@/services/authz/role';
-import { usePermission } from '@/utils/permission';
+import { usePermission } from '@/hooks/usePermission';
 import RoleFormModal from './RoleFormModal';
 
 const RoleList: React.FC = () => {

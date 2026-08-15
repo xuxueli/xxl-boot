@@ -12,7 +12,7 @@ import type { MessageDetailRef } from '@/components/MessageDetail';
 import type { ReadUsersDialogRef } from '@/components/ReadUsersDialog';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { delMessage, listMessage } from '@/services/system/message';
-import { usePermission } from '@/utils/permission';
+import { usePermission } from '@/hooks/usePermission';
 import MessageFormModal from './MessageFormModal';
 
 const categoryMap: Record<number, { text: string; color: string }> = {

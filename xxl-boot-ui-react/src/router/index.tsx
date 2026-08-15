@@ -1,7 +1,8 @@
 /**
  * 路由配置（React Router，替代原 Umi 静态路由）
  * 说明：
- *   - /user/login 无布局；其余业务路由在 BasicLayout 布局内
+ *   - 静态路由（/login、/301、404 兜底）路径与 Vue 项目对齐，无布局；
+ *   - 其余业务路由在 BasicLayout 布局内
  *   - RequireAuth 登录守卫；RequirePermission 页面级权限守卫
  */
 import { lazy, Suspense } from 'react';
@@ -23,12 +24,16 @@ const lazyLoad = (factory: () => Promise<{ default: React.ComponentType }>) => {
 
 export const router = createBrowserRouter([
   {
-    path: '/user/login',
-    element: lazyLoad(() => import('@/pages/account/login')),
+    path: '/login',
+    element: lazyLoad(() => import('@/pages/login')),
   },
   {
-    path: '/user/*',
-    element: lazyLoad(() => import('@/pages/exception/404')),
+    path: '/301',
+    element: lazyLoad(() => import('@/pages/common/301')),
+  },
+  {
+    path: '*',
+    element: lazyLoad(() => import('@/pages/common/404')),
   },
   {
     path: '/',
@@ -41,7 +46,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/dashboard" replace /> },
       {
         path: 'user/profile',
-        element: lazyLoad(() => import('@/pages/account/profile')),
+        element: lazyLoad(() => import('@/pages/authz/user/profile')),
       },
       { path: 'dashboard', element: lazyLoad(() => import('@/pages/dashboard')) },
       {
@@ -133,19 +138,6 @@ export const router = createBrowserRouter([
         ),
       },
       { path: 'help', element: lazyLoad(() => import('@/pages/help')) },
-      {
-        path: 'exception/403',
-        element: lazyLoad(() => import('@/pages/exception/403')),
-      },
-      {
-        path: 'exception/404',
-        element: lazyLoad(() => import('@/pages/exception/404')),
-      },
-      {
-        path: 'exception/500',
-        element: lazyLoad(() => import('@/pages/exception/500')),
-      },
-      { path: '*', element: lazyLoad(() => import('@/pages/exception/404')) },
     ],
   },
 ]);

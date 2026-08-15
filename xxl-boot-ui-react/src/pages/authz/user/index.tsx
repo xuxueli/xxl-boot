@@ -13,7 +13,7 @@ import { listOrg } from '@/services/authz/org';
 import { listRole } from '@/services/authz/role';
 import { delUser, listUser, updateUser } from '@/services/authz/user';
 import { deepClone, handleTree } from '@/utils/common';
-import { usePermission } from '@/utils/permission';
+import { usePermission } from '@/hooks/usePermission';
 import UserFormModal from './UserFormModal';
 import UserView, { type UserViewRef } from './UserView';
 

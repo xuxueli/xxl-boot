@@ -12,7 +12,7 @@ const RequirePermission: React.FC<{
 }> = ({ permission, children }) => {
   const hasPermi = useUserStore((s) => s.hasPermi);
   if (permission && !hasPermi(permission)) {
-    return <Navigate to="/exception/403" replace />;
+    return <Navigate to="/301" replace />;
   }
   return <>{children}</>;
 };

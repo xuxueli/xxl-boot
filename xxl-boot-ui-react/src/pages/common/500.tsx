@@ -1,13 +1,17 @@
+/**
+ * 页面：500（服务器错误）
+ * 功能：提示用户服务器异常，提供返回首页入口
+ */
 import { Button, Card, Result } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Exception403: React.FC = () => (
+const Exception500: React.FC = () => (
   <Card variant="borderless">
     <Result
-      status="403"
-      title="403"
-      subTitle="抱歉，您无权访问该页面。"
+      status="500"
+      title="500"
+      subTitle="抱歉，服务器出错了。"
       extra={
         <Link to="/">
           <Button type="primary">返回首页</Button>
@@ -17,4 +21,4 @@ const Exception403: React.FC = () => (
   </Card>
 );
 
-export default Exception403;
+export default Exception500;

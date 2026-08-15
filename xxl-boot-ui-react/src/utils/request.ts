@@ -143,7 +143,7 @@ service.interceptors.response.use(
           onOk: () => {
             isRelogin.show = false;
             removeToken();
-            window.location.href = `/user/login?redirect=${window.location.pathname}`;
+            window.location.href = `/login?redirect=${window.location.pathname}`;
           },
           onCancel: () => {
             isRelogin.show = false;
