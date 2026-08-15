@@ -10,7 +10,7 @@ import {
 import { Badge, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import HeaderDropdown from '@/layouts/HeaderDropdown';
+import Dropdown from '@/components/Dropdown';
 import {
   listMessageTop,
   markMessageRead,
@@ -161,7 +161,7 @@ const HeaderMessage = () => {
 
   return (
     <>
-      <HeaderDropdown
+      <Dropdown
         placement="bottomRight"
         arrow
         trigger={['hover']}
@@ -211,7 +211,7 @@ const HeaderMessage = () => {
             <BellOutlined />
           </Badge>
         </div>
-      </HeaderDropdown>
+      </Dropdown>
       <MessageDetail ref={messageViewRef} />
     </>
   );

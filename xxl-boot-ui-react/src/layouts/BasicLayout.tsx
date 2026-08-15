@@ -6,9 +6,7 @@ import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, SettingDrawer } from '@ant-design/pro-components';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import React from 'react';
-import Footer from './Footer';
-import HeaderMessage from './HeaderMessage';
-import { AvatarDropdown } from './RightContent/AvatarDropdown';
+import { HeaderAvatar, Footer, HeaderMessage } from './components';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 import { getIconComponent } from '@/utils/icon';
@@ -121,7 +119,7 @@ const BasicLayout = () => {
       avatarProps={{
         title: currentUser?.realName || currentUser?.userName,
         render: (_, avatarChildren) => (
-          <AvatarDropdown>{avatarChildren}</AvatarDropdown>
+          <HeaderAvatar>{avatarChildren}</HeaderAvatar>
         ),
       }}
       // 底部区域：页脚
@@ -130,9 +128,9 @@ const BasicLayout = () => {
       onMenuHeaderClick={() => navigate('/')}
       {...settings}
     >
-      // 页面内容区域
+      {/* 页面内容区域 */}
       <Outlet />
-      // 主题设置面板
+      {/* 主题设置面板 */}
       <SettingDrawer
         disableUrlParams
         enableDarkTheme

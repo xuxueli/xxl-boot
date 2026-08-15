@@ -3,12 +3,12 @@ import type { MenuProps } from 'antd';
 import { Modal, Spin } from 'antd';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import HeaderDropdown from '@/layouts/HeaderDropdown';
+import Dropdown from '@/components/Dropdown';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 
 /**
- * 布局组件：AvatarDropdown（头像下拉）
+ * 布局组件：HeaderAvatar（头像下拉）
  * 功能：顶部导航栏右侧头像，下拉提供个人中心、主题设置、退出登录
  */
 type GlobalHeaderRightProps = {
@@ -36,7 +36,7 @@ const menuItems: MenuProps['items'] = [
   },
 ];
 
-export const AvatarDropdown = ({ children }: GlobalHeaderRightProps) => {
+const HeaderAvatar = ({ children }: GlobalHeaderRightProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentUser = useUserStore((s) => s.currentUser);
@@ -74,7 +74,7 @@ export const AvatarDropdown = ({ children }: GlobalHeaderRightProps) => {
   }
 
   return (
-    <HeaderDropdown
+    <Dropdown
       placement="bottomRight"
       menu={{
         selectedKeys: [],
@@ -84,6 +84,8 @@ export const AvatarDropdown = ({ children }: GlobalHeaderRightProps) => {
       arrow
     >
       {children}
-    </HeaderDropdown>
+    </Dropdown>
   );
 };
+
+export default HeaderAvatar;
