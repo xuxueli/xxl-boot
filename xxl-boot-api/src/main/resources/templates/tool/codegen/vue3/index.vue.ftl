@@ -193,13 +193,13 @@ import modal from '@/utils/modal'
 import type { FormState, TableState } from '@/types'
 import { ref } from 'vue'
 <#if hasImageUpload>
-import ImageUpload from '@/components/ImageUpload/index.vue'
+import { ImageUpload } from '@/components'
 </#if>
 <#if hasFileUpload>
-import FileUpload from '@/components/FileUpload/index.vue'
+import { FileUpload } from '@/components'
 </#if>
 <#if hasEditor>
-import Editor from '@/components/Editor/index.vue'
+import { Editor } from '@/components'
 </#if>
 
 const resetForm = useFormReset()

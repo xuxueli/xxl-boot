@@ -1,7 +1,8 @@
 /**
  * 组件统一出口（Barrel）
- *  - 各使用方按需显式引入，避免全局注册导致的隐式依赖；
- *  - 组件内部相互引用请直接引入源文件（如 '@/components/SvgIcon/index.vue'），避免与 barrel 形成循环依赖。
+ *      - 各使用方按需显式引入，避免全局注册导致的隐式依赖。
+ *      - 组件内部交叉引用（如 IconSelect → SvgIcon）也统一走 barrel，形成「barrel ↔ 组件」的良性循环依赖。
+ *      （依赖其仅在渲染期使用、非模块顶层初始化期访问。勿在模块顶层使用 barrel导出。）
  */
 export { default as SvgIcon } from './SvgIcon/index.vue'
 export { default as RightToolbar } from './RightToolbar/index.vue'
