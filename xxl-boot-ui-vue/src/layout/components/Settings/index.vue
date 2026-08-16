@@ -10,13 +10,13 @@
     </div>
     <div class="nav-wrap">
       <el-tooltip content="左侧菜单" placement="bottom">
-        <div class="item left" @click="handleNavType(1)" :class="{ activeItem: navType === 1 }"><b></b><b></b></div>
+        <div class="item left" @click="handleNavType('side')" :class="{ activeItem: navType === 'side' }"><b></b><b></b></div>
       </el-tooltip>
       <el-tooltip content="顶部菜单" placement="bottom">
-        <div class="item top" @click="handleNavType(3)" :class="{ activeItem: navType === 3 }"><b></b><b></b></div>
+        <div class="item top" @click="handleNavType('top')" :class="{ activeItem: navType === 'top' }"><b></b><b></b></div>
       </el-tooltip>
       <el-tooltip content="混合菜单" placement="bottom">
-        <div class="item mix" @click="handleNavType(2)" :class="{ activeItem: navType === 2 }"><b></b><b></b></div>
+        <div class="item mix" @click="handleNavType('mix')" :class="{ activeItem: navType === 'mix' }"><b></b><b></b></div>
       </el-tooltip>
     </div>
 
@@ -157,7 +157,7 @@ const routesStore = useRoutesStore()
 const showSettingsRef = ref(false)
 
 /*
- * 导航模式：1=左侧，2=混合，3=顶部
+ * 导航模式：side=左侧，mix=混合，top=顶部
  */
 const navType = computed({
   get: () => settingsStore.navType,
@@ -226,21 +226,21 @@ function handleTheme(val: string) {
 /**
  * 菜单导航-切换监听：刷新
  */
-function handleNavType(type: number) {
+function handleNavType(type: string) {
   settingsStore.setNavType(type)
 
-  // 菜单导航-级联变更：type: 1 = 左侧, 2 = 混合, 3 = 顶部
-  if (type === 1 || type === 2) {
+  // 菜单导航-级联变更：type = 左侧/混合
+  if (type === 'side' || type === 'mix') {
     // 侧边/混合：取消隐藏并展开侧边栏
     appStore.hideSideBar(false)
     appStore.openSideBar({ withoutAnimation: true })
-  } else if (type === 3) {
+  } else if (type === 'top') {
     // 顶部：隐藏侧边栏（仅顶部菜单）
     appStore.hideSideBar(true)
   }
 
   // 只有左侧/顶部需要设置侧边栏路由
-  if ([1, 3].includes(type)) {
+  if (type === 'side' || type === 'top') {
     routesStore.setScope('')
   }
 }
@@ -249,7 +249,7 @@ function handleNavType(type: number) {
  * 页面初始化：顶部导航时，隐藏侧边栏（若其它模块直接修改 settingsStore.navType，建议改为 watch）
  * */
 onMounted(() => {
-  if (settingsStore.navType === 3) {
+  if (settingsStore.navType === 'top') {
     appStore.hideSideBar(true)
   }
 })

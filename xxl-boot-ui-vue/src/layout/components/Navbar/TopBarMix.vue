@@ -1,6 +1,6 @@
 <!--
-  组件：TopBarMix.vue（混合模式顶部导航 - 导航模式 2）
-  功能：navType=2 时在顶部渲染一级菜单，选中后左侧侧边栏联动显示对应子菜单
+  组件：TopBarMix.vue（混合模式顶部导航 - 导航模式 mix）
+  功能：navType='mix' 时在顶部渲染一级菜单，选中后左侧侧边栏联动显示对应子菜单
 -->
 <template>
   <el-menu :default-active="activeMenu" mode="horizontal" @select="handleSelect" :ellipsis="false">

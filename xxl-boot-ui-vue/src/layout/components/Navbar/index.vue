@@ -4,24 +4,24 @@
         右侧渲染搜索、全屏、主题切换、布局尺寸、通知、用户菜单等操作项
 -->
 <template>
-  <div class="navbar" :class="'nav' + settingsStore.navType">
+  <div class="navbar" :class="'nav-' + settingsStore.navType">
     <!-- 侧边栏折叠按钮 -->
     <Hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <!-- 面包屑导航：导航模式：
-        1=左侧菜单（显示面包屑）
-        2=混合模式（显示 TopBarMix）
-        3=顶部菜单模式（显示 SidebarLogo + TopBar）
+        side=左侧菜单（显示面包屑）
+        mix=混合模式（显示 TopBarMix）
+        top=顶部菜单模式（显示 SidebarLogo + TopBar）
     -->
 
-    <!-- 面包屑导航（左侧菜单模式-1） -->
-    <Breadcrumb v-if="settingsStore.navType === 1" id="breadcrumb-container" class="breadcrumb-container" />
+    <!-- 面包屑导航（左侧菜单模式） -->
+    <Breadcrumb v-if="settingsStore.navType === 'side'" id="breadcrumb-container" class="breadcrumb-container" />
 
-    <!-- 顶部导航（混合模式-2） -->
-    <TopBarMix v-if="settingsStore.navType === 2" id="topmenu-container" class="topmenu-container" />
+    <!-- 顶部导航（混合模式） -->
+    <TopBarMix v-if="settingsStore.navType === 'mix'" id="topmenu-container" class="topmenu-container" />
 
-    <!-- 顶部导航+Logo（顶部菜单模式-3） -->
-    <template v-if="settingsStore.navType === 3">
+    <!-- 顶部导航+Logo（顶部菜单模式） -->
+    <template v-if="settingsStore.navType === 'top'">
       <!-- 侧边栏 Logo -->
       <SidebarLogo v-show="settingsStore.sidebarLogo" :collapse="false"></SidebarLogo>
       <!-- 顶部菜单栏（顶部菜单模式-3） -->
@@ -204,7 +204,7 @@ async function toggleTheme() {
 </script>
 
 <style lang="scss" scoped>
-.navbar.nav3 {
+.navbar.nav-top {
   .hamburger-container {
     display: none !important;
   }

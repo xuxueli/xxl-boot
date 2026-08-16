@@ -29,7 +29,7 @@ interface SettingsState {
   isDark: boolean
   version: string
   showSettings: boolean
-  navType: number
+  navType: string
   sideTheme: string
   theme: string
   tagsView: boolean
@@ -195,9 +195,9 @@ const useSettingsStore = defineStore('settings', {
     /**
      * 设置：导航栏类型
      *
-     * @param val - 导航栏类型
+     * @param val - 导航栏类型（side / mix / top）
      */
-    setNavType(val: number) {
+    setNavType(val: string) {
       this.navType = val
     }
   }

@@ -62,7 +62,7 @@ const getLogoBackground = computed(() => {
     return 'var(--sidebar-bg)'
   }
   // 顶部导航模式下，侧边栏背景色固定为浅色
-  if (settingsStore.navType === 3) {
+  if (settingsStore.navType === 'top') {
     return variables.menuLightBg
   }
   return sideTheme.value === 'theme-dark' ? variables.menuBg : variables.menuLightBg
@@ -76,7 +76,7 @@ const getLogoTextColor = computed(() => {
     return 'var(--sidebar-logo-text)'
   }
   // 顶部导航模式下，侧边栏文字色固定为浅色
-  if (settingsStore.navType === 3) {
+  if (settingsStore.navType === 'top') {
     return variables.menuLightText
   }
   return sideTheme.value === 'theme-dark' ? '#fff' : variables.menuLightText
