@@ -106,5 +106,6 @@ ol {
 
 /* 隐藏 SettingDrawer 浮动的主题设置快捷按钮（从用户下拉菜单统一进入） */
 .ant-pro-setting-drawer-handle {
+  /* biome-ignore lint/complexity/noImportantStyles: 覆盖 antd-pro CSS-in-JS 注入的浮动手柄样式，运行时注入顺序与优先级无法控制，需 !important 确保隐藏 */
   display: none !important;
 }
