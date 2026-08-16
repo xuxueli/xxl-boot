@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import SidebarItem from '../Sidebar/SidebarItem.vue'
+import { filterMenuRoutes, useVisibleMenuCount } from '@/utils/menu'
 import { useRoutesStore, useSettingsStore } from '@/store'
 
 const route = useRoute()
@@ -28,7 +29,8 @@ const settingsStore = useSettingsStore()
 const routesStore = useRoutesStore()
 const theme = computed(() => settingsStore.theme)
 
-const visibleNumber = ref(5) /* 可见菜单数量阈值，动态计算 */
+/* 可见菜单数量阈值，动态计算 */
+const { visibleNumber } = useVisibleMenuCount()
 
 /*
  * 当前激活菜单：优先取 meta.activeMenu（路由配置的激活项），否则取 route.path
@@ -45,31 +47,14 @@ const activeMenu = computed(() => {
  * 顶部一级菜单：取前 N 条可见路由（N 由容器宽度动态计算）
  */
 const topMenus = computed(() => {
-  return routesStore.fullRoutes.filter((f) => !f.hidden).slice(0, visibleNumber.value) as { path: string }[]
+  return filterMenuRoutes(routesStore.fullRoutes).slice(0, visibleNumber.value) as { path: string }[]
 })
 
 /*
  * 超出折叠的更多菜单：取 visibleNumber 之后的路由
  */
 const moreRoutes = computed(() => {
-  return routesStore.fullRoutes.filter((f) => !f.hidden).slice(visibleNumber.value) as { path: string }[]
-})
-
-/*
- * 根据容器宽度计算可显示的菜单数量
- */
-function setVisibleNumber() {
-  // 可视区域1/3计算可显示菜单
-  const width = document.body.getBoundingClientRect().width / 3
-  visibleNumber.value = Math.max(1, parseInt(String(width / 85)))
-}
-
-onMounted(() => {
-  setVisibleNumber()
-  window.addEventListener('resize', setVisibleNumber)
-})
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', setVisibleNumber)
+  return filterMenuRoutes(routesStore.fullRoutes).slice(visibleNumber.value) as { path: string }[]
 })
 </script>
 

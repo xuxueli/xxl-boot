@@ -89,7 +89,7 @@
 
 <script setup lang="ts">
 import ScrollPane from './ScrollPane.vue'
-import { getNormalPath } from '@/utils/common'
+import { resolveMenuPath } from '@/utils/menu'
 import { useTagsViewStore, useRoutesStore, useSettingsStore } from '@/store'
 import type { TagView } from '@/store/modules/tagsView'
 import type { RouteData } from '@/store/modules/routes'
@@ -230,7 +230,7 @@ function filterAffixTags(routes: RouteData[], basePath = '') {
   let tags: TagView[] = []
   routes.forEach((route) => {
     if (route.meta && route.meta.affix) {
-      const tagPath = route.path!.startsWith('/') ? getNormalPath(route.path!) : getNormalPath(basePath + '/' + route.path!)
+      const tagPath = resolveMenuPath(route.path, basePath) as string
       tags.push({
         fullPath: tagPath,
         path: tagPath,

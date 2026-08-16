@@ -7,17 +7,17 @@
     <!--
       只有一个可见子路由：直接展开为 el-menu-item（不包裹 el-sub-menu），减少一级菜单深度。无子路由时用父级自身的 title/icon 作为叶子结点。
     -->
-    <template v-if="hasOneShowingChild(item.children, item) && !onlyOneChild.children">
-      <!-- 菜单链接组件 -->
-      <SidebarLink v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
-        <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
+    <template v-if="singleLeafChild">
+      <!-- 菜单链接：内部路由渲染 router-link，外部链接渲染 a（新窗口打开） -->
+      <component v-if="singleLeafChild.meta" :is="linkType" v-bind="linkAttrs">
+        <el-menu-item :index="resolvePath(singleLeafChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
           <!-- 图标：优先取子菜单自身的 icon，没有则继承父级 -->
-          <SvgIcon :icon-class="onlyOneChild.meta.icon || (item.meta && item.meta.icon)" />
+          <SvgIcon :icon-class="singleLeafChild.meta.icon || (item.meta && item.meta.icon)" />
           <template #title
-            ><span class="menu-title" :title="hasTitle(onlyOneChild.meta.title)">{{ onlyOneChild.meta.title }}</span></template
+            ><span class="menu-title" :title="hasTitle(singleLeafChild.meta.title)">{{ singleLeafChild.meta.title }}</span></template
           >
         </el-menu-item>
-      </SidebarLink>
+      </component>
     </template>
 
     <!--
@@ -44,8 +44,7 @@
 
 <script setup lang="ts">
 import { isExternal } from '@/utils/validate'
-import SidebarLink from './SidebarLink.vue'
-import { getNormalPath } from '@/utils/common'
+import { resolveMenuPath } from '@/utils/menu'
 import type { RouteData } from '@/store/modules/routes'
 
 /*
@@ -72,51 +71,27 @@ const props = withDefaults(defineProps<MenuItemProps>(), {
 })
 
 /*
- * hasOneShowingChild 的判断结果暂存区。
- * 满足"只有一个可见子路由"时存储该子路由对象，模板据此决定渲染 el-menu-item 还是 el-sub-menu。
+ * 可见子菜单列表（过滤 hidden 标记的隐藏路由）
  */
-const onlyOneChild = ref<Record<string, any>>({})
+const visibleChildren = computed<RouteData[]>(() => {
+  return (props.item.children || []).filter((item) => !item.hidden)
+})
 
 /*
- * 判断当前菜单是否只有一个可见子菜单：
- *   1）1 个可见子路由 → 直接展开为该子路由（不包 el-sub-menu），减少菜单层级。
- *   2）0 个可见子路由 → 父级自身作为叶子菜单展示（用父级的 title/icon 填充）。
- *   3）≥ 2 个可见子路由 → 渲染 el-sub-menu，继续递归。
- * 每次调用会将筛选结果写入 onlyOneChild，供模板访问。
+ * 渲染为叶子菜单的节点（满足时用 el-menu-item 展示，否则走 el-sub-menu）：
+ *   1）恰好 1 个可见子菜单且其本身无下级 → 直接展开为该子菜单（不包 el-sub-menu），减少菜单层级；
+ *   2）0 个可见子菜单 → 父级自身作为叶子菜单展示（用父级的 title/icon 填充，path='' 避免跳转无效路由）；
+ *   3）其余情况（≥2 个子菜单，或唯一子菜单仍有下级）→ 返回 null，需渲染 el-sub-menu。
  */
-function hasOneShowingChild(children: RouteData[] = [], parent: RouteData) {
-  if (!children) {
-    children = []
+const singleLeafChild = computed<RouteData | null>(() => {
+  if (visibleChildren.value.length === 1 && !visibleChildren.value[0].children) {
+    return visibleChildren.value[0]
   }
-  const showingChildren = children.filter((item) => {
-    /* hidden 标记为 true 的路由不展示，不计入可见子菜单 */
-    if (item.hidden) {
-      return false
-    }
-    /* 记录最后一个可见子路由，后续判断长度用 */
-    onlyOneChild.value = item
-    return true
-  })
-  /* 刚好一个可见子菜单：跳过父级 el-sub-menu，直接渲染叶子 el-menu-item */
-  if (showingChildren.length === 1) {
-    return true
+  if (visibleChildren.value.length === 0) {
+    return { ...props.item, path: '' }
   }
-  /*
-   * 无可见子菜单：把父级自身当叶子结点展示。
-   * 设 path='' 避免跳转到无效路由
-   *
-   *
-   * 对象展开运算符（Spread Operator）‌：
-   *   - 作用：创建一个新对象，该对象包含了 oldObject 对象的所有可枚举属性，并将 filed01 属性设置为新值；
-   *   - 格式：{ ...oldObject, filed01: '' }
-   */
-  if (showingChildren.length === 0) {
-    onlyOneChild.value = { ...parent, path: '' }
-    return true
-  }
-  /* 多个可见子菜单：需要 el-sub-menu 包裹展开 */
-  return false
-}
+  return null
+})
 
 /*
  * 解析路由路径，返回值类型可能是 string 或 { path, query }。
@@ -126,35 +101,41 @@ function hasOneShowingChild(children: RouteData[] = [], parent: RouteData) {
  *   - routeQuery 存在时一并返回，用于携带路由参数。
  */
 function resolvePath(routePath?: string): string
-function resolvePath(routePath: string | undefined, routeQuery?: string): string | { path: string; query: any }
-function resolvePath(routePath: string | undefined, routeQuery?: string): string | { path: string; query: any } {
-  /* 子路由本身是外部链接：直接返回，不走内部路由拼接 */
-  if (isExternal(routePath || '')) {
-    return routePath as string
-  }
-
-  /* 父级基准路径是外部链接：子路由也无法拼接，直接返回父级路径 */
-  if (isExternal(props.basePath)) {
-    return props.basePath
-  }
-
-  /* 以 / 开头的是绝对路径，无需拼接 basePath */
-  if (routePath && routePath.startsWith('/')) {
-    /* routeQuery 是 JSON 字符串，解析为对象后和 path 一起返回 */
-    if (routeQuery) {
-      let query = JSON.parse(routeQuery)
-      return { path: getNormalPath(routePath), query: query }
-    }
-    return getNormalPath(routePath)
-  }
-
-  /* 相对路径：拼接 basePath / routePath；有 query 时一并携带 */
-  if (routeQuery) {
-    let query = JSON.parse(routeQuery)
-    return { path: getNormalPath(props.basePath + '/' + routePath), query: query }
-  }
-  return getNormalPath(props.basePath + '/' + (routePath || ''))
+function resolvePath(routePath: string | undefined, routeQuery?: unknown): string | { path: string; query: Record<string, unknown> }
+function resolvePath(routePath: string | undefined, routeQuery?: unknown): string | { path: string; query: Record<string, unknown> } {
+  return resolveMenuPath(routePath, props.basePath, routeQuery as string | undefined)
 }
+
+/*
+ * 叶子菜单链接目标：解析后的路径，或 { path, query } 对象
+ */
+const linkTo = computed<string | { path: string; query: Record<string, unknown> }>(() => {
+  const leaf = singleLeafChild.value
+  if (!leaf) return ''
+  return resolvePath(leaf.path, leaf.query)
+})
+
+/*
+ * 是否为外部链接：命中时渲染 a 标签新窗口打开，否则渲染 router-link 内部跳转
+ */
+const isExternalLink = computed(() => {
+  return typeof linkTo.value === 'string' && isExternal(linkTo.value)
+})
+
+/*
+ * 动态链接标签类型：'a'（外部链接）或 'router-link'（内部路由）
+ */
+const linkType = computed(() => (isExternalLink.value ? 'a' : 'router-link'))
+
+/*
+ * 链接标签绑定属性：外部链接走 href/target/rel，内部路由走 to
+ */
+const linkAttrs = computed<Record<string, unknown>>(() => {
+  if (isExternalLink.value) {
+    return { href: linkTo.value, target: '_blank', rel: 'noopener' }
+  }
+  return { to: linkTo.value }
+})
 
 /*
  * 标题超长时显示 tooltip

@@ -41,7 +41,7 @@ const store = useRoutesStore()
 
 /*
  * 侧边栏路由列表。
- *   - 混合模式（navType='mix'）且存在顶级作用域 _scope 时，只显示该顶级菜单下的子路由；
+ *   - 混合模式（navType='mix'）且存在顶级作用域 mixScope 时，只显示该顶级菜单下的子路由；
  *   - 否则全量展示。
  *
  * computed：
@@ -50,11 +50,11 @@ const store = useRoutesStore()
 const sidebarRouters = computed<RouteData[]>(() => {
   const routes: RouteData[] = store.fullRoutes
   /*
-   * _scope 由 TopBarMix 的 setScope 设置，标识当前激活的顶级菜单 path。
+   * mixScope 由 TopBarMix 联动写入，标识当前激活的顶级菜单 path。
    * 默认scope为 ''/假值，不会过滤。
    */
-  if (settingsStore.navType === 'mix' && store._scope) {
-    const menu = routes.find((r) => r.path === store._scope)
+  if (settingsStore.navType === 'mix' && appStore.mixScope) {
+    const menu = routes.find((r) => r.path === appStore.mixScope)
     if (menu?.children) return menu.children
   }
   return routes

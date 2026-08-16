@@ -84,31 +84,20 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
 import { Search } from '@element-plus/icons-vue'
-import { getNormalPath } from '@/utils/common'
 import { isHttp } from '@/utils/validate'
+import { resolveMenuSearchItems, type MenuSearchItem } from '@/utils/menu'
 import { useSettingsStore, useRoutesStore } from '@/store'
 import type { InputInstance } from 'element-plus'
-import type { RouteData } from '@/store/modules/routes'
-
-/*
- * 搜索项：可搜索菜单节点
- */
-interface SearchItem {
-  path: string
-  title: string[]
-  icon: string
-  query?: string
-}
 
 const settingsStore = useSettingsStore()
 const routesStore = useRoutesStore()
 
 const search = ref('') /* 搜索关键词 */
-const options = ref<SearchItem[]>([]) /* 当前搜索结果列表 */
-const searchPool = ref<SearchItem[]>([]) /* 所有可搜索菜单的完整索引 */
+const options = ref<MenuSearchItem[]>([]) /* 当前搜索结果列表 */
+const searchPool = ref<MenuSearchItem[]>([]) /* 所有可搜索菜单的完整索引 */
 const activeIndex = ref(-1) /* 键盘选中项索引 */
 const show = ref(false) /* 弹窗显隐 */
-const fuse = ref<Fuse<SearchItem> | undefined>(undefined) /* Fuse 模糊搜索实例 */
+const fuse = ref<Fuse<MenuSearchItem> | undefined>(undefined) /* Fuse 模糊搜索实例 */
 const headerSearchSelectRef = ref<InputInstance | null>(null) /* 输入框 DOM 引用 */
 const router = useRouter()
 const theme = computed(() => settingsStore.theme)
@@ -148,7 +137,7 @@ function close() {
 /*
  * 选中搜索结果：外部链接新窗口打开，内部路由 router.push 跳转
  */
-function change(val: SearchItem) {
+function change(val: MenuSearchItem) {
   const p = val.path
   /*const query = val.query*/
   if (isHttp(p)) {
@@ -175,7 +164,7 @@ function change(val: SearchItem) {
 /*
  * 初始化 Fuse 模糊搜索实例
  */
-function initFuse(list: SearchItem[]) {
+function initFuse(list: MenuSearchItem[]) {
   fuse.value = new Fuse(list, {
     shouldSort: true,
     threshold: 0.2,
@@ -192,54 +181,6 @@ function initFuse(list: SearchItem[]) {
       }
     ]
   })
-}
-
-/*
- * 递归遍历路由树，生成可搜索列表
- *   - 每项含 path / title（路径层级串联）/ icon / query
- *   - 叶节点（无 children 或 children 为空）才加入结果，非叶节点作为前缀聚合
- */
-function generateRoutes(routes: RouteData[], basePath = '', prefixTitle: string[] = []): SearchItem[] {
-  let res: SearchItem[] = []
-  for (const r of routes) {
-    /* 跳过隐藏路由 */
-    if (r.hidden) {
-      continue
-    }
-
-    /* 节点初始化：无 path 的纯目录节点以空串占位，仅作子路由前缀 */
-    const p = r.path ? (r.path.length > 0 && r.path[0] === '/' ? r.path : '/' + r.path) : ''
-    const data: SearchItem = {
-      path: !isHttp(r.path as string) ? getNormalPath(p) : (r.path as string),
-      title: [...prefixTitle],
-      icon: ''
-    }
-
-    /* 有 meta.title 时追加到标题链中 */
-    if (r.meta && r.meta.title) {
-      data.title = [...data.title, r.meta.title]
-      data.icon = r.meta.icon as string
-
-      /* 叶节点：加入搜索结果 */
-      if (!r.children || r.children.length === 0) {
-        res.push(data)
-      }
-    }
-
-    /* 携带 query 参数 */
-    if (r.query) {
-      data.query = r.query as string
-    }
-
-    /* 递归子路由 */
-    if (r.children) {
-      const tempRoutes = generateRoutes(r.children, data.path, data.title)
-      if (tempRoutes.length >= 1) {
-        res = [...res, ...tempRoutes]
-      }
-    }
-  }
-  return res
 }
 
 /*
@@ -322,7 +263,7 @@ function escapeRegExp(str: string) {
 }
 
 onMounted(() => {
-  searchPool.value = generateRoutes(routes.value)
+  searchPool.value = resolveMenuSearchItems(routes.value)
 })
 
 watch(searchPool, (list) => {

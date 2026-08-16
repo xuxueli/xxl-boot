@@ -46,20 +46,12 @@ interface RoutesState {
    * dynamicRoutes 拍平处理后版本：供路由初始化 router.addRoute 取用
    */
   flattenRoutes: RouteData[]
-  /**
-   * 混合布局模式下当前激活的顶级菜单路径，
-   *  - 用于 Sidebar 联动过滤：只显示该菜单下的子路由。
-   *  - 空字符串表示不过滤，显示全部动态路由。
-   *  - 由 TopBarMix 选中菜单时写入，Settings 切换布局时清除。
-   */
-  _scope: string
 }
 
 const useRoutesStore = defineStore('routes', {
   state: (): RoutesState => ({
     dynamicRoutes: [],
-    flattenRoutes: [],
-    _scope: ''
+    flattenRoutes: []
   }),
   getters: {
     /**
@@ -90,12 +82,6 @@ const useRoutesStore = defineStore('routes', {
      */
     getFlattenRoutes() {
       return this.flattenRoutes
-    },
-    /**
-     * 设置混合模式下侧边栏联动过滤的顶级菜单路径：支持 混合菜单 模式；
-     */
-    setScope(path: string) {
-      this._scope = path
     }
   }
 })

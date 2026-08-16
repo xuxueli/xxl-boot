@@ -146,13 +146,12 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore, useRoutesStore, useSettingsStore, useTagsViewStore } from '@/store'
+import { useAppStore, useSettingsStore, useTagsViewStore } from '@/store'
 import modal from '@/utils/modal'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
 const tagsViewStore = useTagsViewStore()
-const routesStore = useRoutesStore()
 
 const showSettingsRef = ref(false)
 
@@ -239,9 +238,9 @@ function handleNavType(type: string) {
     appStore.hideSideBar(true)
   }
 
-  // 只有左侧/顶部需要设置侧边栏路由
+  // 只有左侧/顶部需要清除 mix 作用域
   if (type === 'side' || type === 'top') {
-    routesStore.setScope('')
+    appStore.clearMixScope()
   }
 }
 
