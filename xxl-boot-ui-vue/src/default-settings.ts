@@ -1,9 +1,12 @@
 /**
  * 系统默认设置（default-settings.ts）
- *    - 提供系统标题、导航模式、主题、标签页等全局默认配置；
- *    - 由 store/modules/settings.ts 读取并支持从 localStorage 覆盖。
+ *    - 全局唯一默认值来源，分两类：
+ *      1、静态常量：brandName、title、version、homePath、footerContent，系统级不可配置，使用方直接读取；
+ *      2、可配置默认值：由 store/modules/settings.ts 读取，支持从 localStorage 覆盖与重置。
  */
 export default {
+  // ==================== 静态常量（系统级，不可配置） ====================
+
   /**
    * 品牌/产品名称
    */
@@ -23,6 +26,13 @@ export default {
    * 首页路径
    */
   homePath: '/dashboard',
+
+  /**
+   * 底部版权文本内容
+   */
+  footerContent: `Copyright © 2015-${new Date().getFullYear()}`,
+
+  // ==================== 可配置默认值（支持 localStorage 覆盖与重置） ====================
 
   /**
    * 布局配置：启用开关
@@ -92,10 +102,5 @@ export default {
   /**
    * 是否显示底部版权
    */
-  footerVisible: false,
-
-  /**
-   * 底部版权文本内容
-   */
-  footerContent: `Copyright © 2015-${new Date().getFullYear()}`
+  footerVisible: false
 }

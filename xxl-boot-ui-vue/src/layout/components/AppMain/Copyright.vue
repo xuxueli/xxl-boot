@@ -1,6 +1,6 @@
 <!--
   组件：Copyright（底部版权）
-  功能：系统布局底部版权信息，通过 settingsStore 控制显隐与文案
+  功能：系统布局底部版权信息，显隐通过 settingsStore 控制，文案取 default-settings 静态常量
 -->
 <template>
   <footer v-if="visible" class="copyright">
@@ -14,11 +14,11 @@
 
 <script setup lang="ts">
 import { useSettingsStore } from '@/store'
+import defaultSettings from '@/default-settings'
 
 const settingsStore = useSettingsStore()
 const visible = computed(() => settingsStore.footerVisible)
-const footerContent = computed(() => settingsStore.footerContent)
-/*const version = computed(() => settingsStore.version)*/
+const footerContent = computed(() => defaultSettings.footerContent)
 </script>
 
 <style scoped>

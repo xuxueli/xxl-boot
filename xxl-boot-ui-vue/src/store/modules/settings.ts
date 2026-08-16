@@ -1,8 +1,8 @@
 /**
  * 名称：系统设置状态Store
  * 描述：系统全局设置状态管理，包括 菜单导航、标签页、主题色 ... 等
- *      - 管理系统的全局配置项，包括主题、布局、标签页等设置
- *      - 支持从本地存储恢复用户偏好设置
+ *      - 可配置项（可持久化、可重置）统一收敛在本 Store，初始化/持久化/重置共用字段清单
+ *      - 静态常量（品牌/标题/版本/首页路径/版权文案）直接取 default-settings，不在 Store 中重复存储
  *      - 提供暗黑模式切换和动态标题更新功能
  */
 import { defineStore } from 'pinia'
@@ -18,8 +18,6 @@ const toggleDark = useToggle(isDark)
 
 // 持久化存储Key：localStorage key constant （部署设置）
 const LAYOUT_SETTING_KEY = 'boot-layout-setting'
-// 持久化存储数据：从 localStorage 读取已有配置（如果有）
-const storageSetting = JSON.parse(localStorage.getItem(LAYOUT_SETTING_KEY) || '{}') || {}
 
 /** 系统设置状态 */
 interface SettingsState {
@@ -27,49 +25,75 @@ interface SettingsState {
   menuTitle: string
   /** 暗黑模式-是否 */
   isDark: boolean
-  version: string
+  /** 布局配置：启用开关 */
   showSettings: boolean
+  /** 菜单导航模式：side=左侧、mix=混合、top=顶部 */
   navType: string
+  /** 侧边栏主题：theme-dark / theme-light */
   sideTheme: string
+  /** 主题颜色 */
   theme: string
+  /** 页签/tagsView：是否启用 */
   tagsView: boolean
+  /** 持久化标签页：启用开关 */
   tagsViewPersist: boolean
+  /** 页签图标 */
   tagsIcon: boolean
+  /** 标签页样式：card / chrome */
   tagsViewStyle: string
+  /** 是否固定头部 */
   fixedHeader: boolean
+  /** 是否显示logo */
   sidebarLogo: boolean
+  /** 是否显示动态标题 */
   dynamicTitle: boolean
+  /** 是否显示底部版权 */
   footerVisible: boolean
-  footerContent: string
 }
+
+/**
+ * 可配置项字段清单：状态初始化、持久化、重置 三处共用
+ */
+const CONFIGURABLE_KEYS = [
+  'showSettings',
+  'navType',
+  'sideTheme',
+  'theme',
+  'tagsView',
+  'tagsViewPersist',
+  'tagsIcon',
+  'tagsViewStyle',
+  'fixedHeader',
+  'sidebarLogo',
+  'dynamicTitle',
+  'footerVisible'
+] as const
+
+type ConfigurableKey = (typeof CONFIGURABLE_KEYS)[number]
+type ConfigurableState = Pick<SettingsState, ConfigurableKey>
+
+/**
+ * 从数据源中提取可配置项
+ */
+function pickConfigurable(source: object): ConfigurableState {
+  const raw = source as Record<string, unknown>
+  return Object.fromEntries(CONFIGURABLE_KEYS.map((key) => [key, raw[key]])) as ConfigurableState
+}
+
+// 持久化存储数据：从 localStorage 读取已有配置（如果有）
+const storageSetting = (JSON.parse(localStorage.getItem(LAYOUT_SETTING_KEY) || '{}') || {}) as Record<string, unknown>
 
 const useSettingsStore = defineStore('settings', {
   /**
-   * 状态定义
-   *
-   * 包含所有可配置的系统设置项，优先从 localStorage 读取用户自定义配置，
-   * 如果不存在则使用默认配置
+   * 状态定义：用户已保存配置优先，否则使用默认配置
    */
   state: (): SettingsState => ({
     // 菜单标题
     menuTitle: '',
     // 暗黑模式-是否
     isDark: isDark.value,
-    // 系统配置：
-    version: defaultSettings.version,
-    showSettings: defaultSettings.showSettings,
-    navType: storageSetting.navType === undefined ? defaultSettings.navType : storageSetting.navType,
-    sideTheme: storageSetting.sideTheme || defaultSettings.sideTheme,
-    theme: storageSetting.theme || defaultSettings.theme,
-    tagsView: storageSetting.tagsView === undefined ? defaultSettings.tagsView : storageSetting.tagsView,
-    tagsViewPersist: storageSetting.tagsViewPersist === undefined ? defaultSettings.tagsViewPersist : storageSetting.tagsViewPersist,
-    tagsIcon: storageSetting.tagsIcon === undefined ? defaultSettings.tagsIcon : storageSetting.tagsIcon,
-    tagsViewStyle: storageSetting.tagsViewStyle === undefined ? defaultSettings.tagsViewStyle : storageSetting.tagsViewStyle,
-    fixedHeader: storageSetting.fixedHeader === undefined ? defaultSettings.fixedHeader : storageSetting.fixedHeader,
-    sidebarLogo: storageSetting.sidebarLogo === undefined ? defaultSettings.sidebarLogo : storageSetting.sidebarLogo,
-    dynamicTitle: storageSetting.dynamicTitle === undefined ? defaultSettings.dynamicTitle : storageSetting.dynamicTitle,
-    footerVisible: storageSetting.footerVisible === undefined ? defaultSettings.footerVisible : storageSetting.footerVisible,
-    footerContent: defaultSettings.footerContent
+    // 系统配置：用户已保存配置优先，否则使用默认配置
+    ...pickConfigurable({ ...defaultSettings, ...storageSetting })
   }),
   /**
    * 动作方法定义
@@ -78,58 +102,27 @@ const useSettingsStore = defineStore('settings', {
    */
   actions: {
     /**
-     * 初始化：样式全局设置
+     * 初始化：应用主题样式
      */
     initSetting() {
-      // 异步变更：等待 DOM 更新
       nextTick(() => {
-        // 主题样式设置
         handleThemeStyle(this.theme)
       })
     },
     /**
-     * 持久化：将当前设置持久化到 localStorage
+     * 持久化：将当前可配置项持久化到 localStorage
      */
     saveSetting() {
-      const layoutSetting = {
-        version: this.version,
-        showSettings: this.showSettings,
-        navType: this.navType,
-        sideTheme: this.sideTheme,
-        theme: this.theme,
-        tagsView: this.tagsView,
-        tagsViewPersist: this.tagsViewPersist,
-        tagsIcon: this.tagsIcon,
-        tagsViewStyle: this.tagsViewStyle,
-        fixedHeader: this.fixedHeader,
-        sidebarLogo: this.sidebarLogo,
-        dynamicTitle: this.dynamicTitle,
-        footerVisible: this.footerVisible,
-        footerContent: this.footerContent
-      }
-      localStorage.setItem(LAYOUT_SETTING_KEY, JSON.stringify(layoutSetting))
+      localStorage.setItem(LAYOUT_SETTING_KEY, JSON.stringify(pickConfigurable(this)))
     },
     /**
-     * 重置：恢复默认设置，并清除 localStorage 中数据
+     * 重置：恢复默认配置，并清除 localStorage 中数据
      */
     resetSetting() {
       localStorage.removeItem(LAYOUT_SETTING_KEY)
 
-      // 恢复到默认配置
-      this.version = defaultSettings.version
-      this.showSettings = defaultSettings.showSettings
-      this.navType = defaultSettings.navType
-      this.sideTheme = defaultSettings.sideTheme
-      this.theme = defaultSettings.theme
-      this.tagsView = defaultSettings.tagsView
-      this.tagsViewPersist = defaultSettings.tagsViewPersist
-      this.tagsIcon = defaultSettings.tagsIcon
-      this.tagsViewStyle = defaultSettings.tagsViewStyle
-      this.fixedHeader = defaultSettings.fixedHeader
-      this.sidebarLogo = defaultSettings.sidebarLogo
-      this.dynamicTitle = defaultSettings.dynamicTitle
-      this.footerVisible = defaultSettings.footerVisible
-      this.footerContent = defaultSettings.footerContent
+      // 恢复到默认配置（$patch：合并状态变更）
+      this.$patch(pickConfigurable(defaultSettings))
     },
     /**
      * 切换：暗黑/明亮模式，重新应用主题样式以确保视觉效果正确更新
@@ -139,7 +132,7 @@ const useSettingsStore = defineStore('settings', {
       this.isDark = !this.isDark
       // 执行切换动作：包含修改DOM class操作
       toggleDark()
-      // 异步变更：等待 DOM 更新
+      // 异步变更：等待 DOM 更新，重新应用主题样式
       nextTick(() => {
         // 主题样式设置
         handleThemeStyle(this.theme)
