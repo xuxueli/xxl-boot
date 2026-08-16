@@ -31,6 +31,7 @@
 <script setup lang="ts">
 /** 弹窗：显示状态 */
 import type { FormInstance } from 'element-plus'
+import { ref } from 'vue'
 
 const open = defineModel<boolean>()
 

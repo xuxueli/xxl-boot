@@ -23,6 +23,8 @@
 <script setup lang="ts">
 import type { RouteRecordNormalized } from 'vue-router'
 import defaultSettings from '@/default-settings'
+import { ref, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()

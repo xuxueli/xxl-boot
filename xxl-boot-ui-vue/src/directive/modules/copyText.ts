@@ -9,6 +9,7 @@
  * 复制后自动恢复用户原选区和焦点，兼容 iOS 选区行为。
  */
 import type { Directive, DirectiveBinding } from 'vue'
+import { readonly } from 'vue'
 
 export default {
   beforeMount(el: HTMLElement, binding: DirectiveBinding) {

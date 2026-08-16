@@ -115,6 +115,8 @@ import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import downloadPlugin from '@/utils/download'
 import EditTable from './editTable.vue'
+import { onActivated, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const resetForm = useFormReset()
 

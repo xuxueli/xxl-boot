@@ -54,6 +54,7 @@
 
 <script setup lang="ts">
 import cache from '@/utils/cache'
+import { computed, nextTick, ref } from 'vue'
 
 // 表格列配置项类型定义
 interface ColumnItem {

@@ -26,6 +26,7 @@
 
 <script setup lang="ts">
 import { isExternal } from '@/utils/validate'
+import { computed } from 'vue'
 
 const props = defineProps({
   // 图片 URL，多张用逗号分隔（第一张为主图，全部进入预览列表）

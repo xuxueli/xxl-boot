@@ -148,6 +148,7 @@
 <script setup lang="ts">
 import { useAppStore, useSettingsStore, useTagsViewStore } from '@/store'
 import modal from '@/utils/modal'
+import { computed, onMounted, ref } from 'vue'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()

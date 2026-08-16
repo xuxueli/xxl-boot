@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 const props = defineProps({
   // 要嵌入的页面 URL（必传）
   src: {

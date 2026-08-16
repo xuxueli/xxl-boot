@@ -6,7 +6,6 @@ import path from 'path'
 
 // Vite plugins (inlined from ./vite/plugins)
 import vue from '@vitejs/plugin-vue'
-import autoImport from 'unplugin-auto-import/vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 /**
@@ -49,18 +48,6 @@ export default defineConfig(({ mode, command }) => {
        *    文档：https://cn.vitejs.dev/guide/using-vue.html
        */
       vue(),
-      /**
-       * 自动导入插件：自动导入 Vue 组件、Vue 函数、第三方库等，减少重复代码；
-       *    文档：https://github.com/antfu/unplugin-auto-import
-       */
-      autoImport({
-        imports: [
-          'vue',                                      // 引入 Vue 官方组件
-          'vue-router',                               // 引入 Vue 路由
-          'pinia',                                    // 引入 Pinia 官方状态管理
-        ],
-        dts: './auto-imports.d.ts'
-      }),
       /**
        * SVG 图标插件：自动导入 SVG 图标，并生成 SVG 图标组件
        *     文档：https://github.com/sxzz/vite-plugin-svg-icons

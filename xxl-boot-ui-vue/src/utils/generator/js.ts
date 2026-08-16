@@ -254,6 +254,8 @@ function buildexport(
 ): string {
   let str = `
     import modal from '@/utils/modal'
+import { reactive, ref, toRefs } from 'vue'
+import type { Ref } from 'vue'
     const ${conf.formRef} = ref()
     const data = reactive({
       ${conf.formModel}: {

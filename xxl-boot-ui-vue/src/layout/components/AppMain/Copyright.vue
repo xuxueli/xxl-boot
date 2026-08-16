@@ -15,6 +15,7 @@
 <script setup lang="ts">
 import { useSettingsStore } from '@/store'
 import defaultSettings from '@/default-settings'
+import { computed } from 'vue'
 
 const settingsStore = useSettingsStore()
 const visible = computed(() => settingsStore.footerVisible)

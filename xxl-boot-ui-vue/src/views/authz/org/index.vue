@@ -140,6 +140,7 @@ import modal from '@/utils/modal'
 import type { Org, OrgQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
+import { nextTick, ref } from 'vue'
 
 const resetForm = useFormReset()
 

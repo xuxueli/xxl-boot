@@ -23,6 +23,8 @@
 import SidebarItem from '../Sidebar/SidebarItem.vue'
 import { filterMenuRoutes, useVisibleMenuCount } from '@/utils/menu'
 import { useRoutesStore, useSettingsStore } from '@/store'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const settingsStore = useSettingsStore()

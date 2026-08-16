@@ -31,6 +31,7 @@
 <script setup lang="ts">
 // 引入
 import defaultSettings from '@/default-settings'
+import { computed } from 'vue'
 
 // 提示文字
 let message = computed(() => {

@@ -52,6 +52,7 @@
 <script setup lang="ts">
 /** 树节点添加弹窗 - 逻辑 */
 import type { FormInstance } from 'element-plus'
+import { ref } from 'vue'
 
 const open = defineModel<boolean>()
 

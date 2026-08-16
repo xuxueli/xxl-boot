@@ -8,6 +8,7 @@
 <script setup>
 // 系统设置Store模块
 import { useSettingsStore } from '@/store'
+import { nextTick, onMounted } from 'vue'
 
 const settingsStore = useSettingsStore()
 

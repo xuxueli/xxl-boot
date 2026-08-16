@@ -56,6 +56,8 @@
 import type { FormConf, FormItemConf } from '@/utils/generator/config'
 import draggable from 'vuedraggable'
 import render from '@/utils/generator/render'
+import { ref, watch } from 'vue'
+import type { PropType } from 'vue'
 
 /* 组件属性 */
 const props = defineProps({

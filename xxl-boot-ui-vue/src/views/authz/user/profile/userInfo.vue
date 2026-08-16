@@ -28,6 +28,7 @@ import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import type { User } from '@/types/api'
 import type { FormInstance, FormRules } from 'element-plus'
+import { ref, watch } from 'vue'
 
 /** 基本资料表单数据 */
 interface UserInfoForm {

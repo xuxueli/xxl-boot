@@ -20,7 +20,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],           /* 引入标准库类型（语言 + 浏览器 DOM） */
     "noEmit": true                                      /* 仅做类型检查，不产出编译文件（由 Vite/esbuild 负责构建） */
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "auto-imports.d.ts"],    /* 检查范围：应用源码 + 自动导入声明 */
+  "include": ["src/**/*.ts", "src/**/*.vue"],    /* 检查范围：应用源码 */
   "exclude": ["node_modules", "dist"],
   "references": [{ "path": "./tsconfig.node.json" }]                  /* 关联 Node 侧配置，供 vite.config.ts 使用 */
 }

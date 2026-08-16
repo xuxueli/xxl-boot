@@ -32,6 +32,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 // 字典选项类型定义
 interface DictOption {
   // 字典值

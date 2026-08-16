@@ -100,6 +100,7 @@ import HeaderSearch from './HeaderSearch.vue'
 import HeaderMessage from './HeaderMessage.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 import defaultSettings from '@/default-settings'
+import { nextTick } from 'vue'
 
 const appStore = useAppStore()
 const userStore = useUserStore()

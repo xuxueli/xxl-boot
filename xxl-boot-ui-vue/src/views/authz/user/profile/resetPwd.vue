@@ -28,6 +28,7 @@ import { updateUserPwd } from '@/api/authz/user'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
+import { reactive, ref } from 'vue'
 
 /** 密码表单数据 */
 interface PwdForm {

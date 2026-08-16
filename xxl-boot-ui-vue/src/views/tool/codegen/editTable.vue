@@ -209,6 +209,7 @@ import { queryDictList } from '@/api/system/dict/type'
 import type { FormInstance } from 'element-plus'
 import modal from '@/utils/modal'
 import Sortable from 'sortablejs'
+import { nextTick, ref, watch } from 'vue'
 
 /* 组件回调 */
 const emit = defineEmits(['ok']) /* 提交成功后通知父组件刷新列表 */

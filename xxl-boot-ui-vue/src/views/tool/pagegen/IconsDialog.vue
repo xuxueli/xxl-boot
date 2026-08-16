@@ -28,6 +28,7 @@
 <script setup lang="ts">
 /** 图标选择弹窗 - 逻辑 */
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { ref, watch } from 'vue'
 
 const iconList = ref<string[]>([]) /* 当前展示的图标列表 */
 const originList: string[] = [] /* 全量图标列表 */

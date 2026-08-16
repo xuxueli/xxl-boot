@@ -42,6 +42,7 @@
 import { useWindowSize } from '@vueuse/core'
 import { AppMain, Navbar, Settings, TagsView, Sidebar } from './components'
 import { useAppStore, useSettingsStore } from '@/store'
+import { computed, ref, watch } from 'vue'
 
 const settingsStore = useSettingsStore()
 const appStore = useAppStore()

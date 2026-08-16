@@ -22,6 +22,7 @@ import logo from '@/assets/images/logo.png'
 import { useSettingsStore } from '@/store'
 import variables from '@/assets/styles/variables.module.scss'
 import defaultSettings from '@/default-settings'
+import { computed } from 'vue'
 
 /*
  * collapse：侧边栏是否折叠，折叠时只显示 Logo 图片，标题隐藏

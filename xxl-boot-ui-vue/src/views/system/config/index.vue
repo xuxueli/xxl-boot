@@ -112,6 +112,7 @@ import modal from '@/utils/modal'
 import type { Config, ConfigQuery } from '@/types/api'
 import type { EnumOption, TableState, FormState } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
+import { ref } from 'vue'
 
 const resetForm = useFormReset()
 

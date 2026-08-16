@@ -75,6 +75,7 @@
 
 <script setup lang="ts">
 import { getMessage } from '@/api/system/message'
+import { computed, ref } from 'vue'
 
 /*
  * 消息详情：覆盖 Message 常用字段，status 支持字符串/数字两种形态，并支持预设模式（messageId / messageContent）入参

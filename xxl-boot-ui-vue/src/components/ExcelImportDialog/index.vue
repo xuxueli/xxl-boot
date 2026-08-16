@@ -56,6 +56,7 @@ import { download } from '@/utils/request'
 import modal from '@/utils/modal'
 import { ElMessageBox } from 'element-plus'
 import type { UploadFile, UploadFiles } from 'element-plus'
+import { computed, nextTick, ref } from 'vue'
 
 /**
  * defineProps：父传子

@@ -54,6 +54,7 @@ import { getAuthHeaders } from '@/utils/auth'
 import { isExternal } from '@/utils/validate'
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 
 /**
  * defineProps

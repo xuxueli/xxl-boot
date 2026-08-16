@@ -13,7 +13,7 @@ export default tseslint.config(
   // 忽略构建产物与自动生成文件
   {
     name: 'ignores',
-    ignores: ['dist', 'node_modules', 'auto-imports.d.ts']
+    ignores: ['dist', 'node_modules']
   },
 
   // JS 基础规则
@@ -41,7 +41,7 @@ export default tseslint.config(
     },
     rules: {
       // --- 全局/TS 规则调整 ---
-      'no-undef': 'off', // 由 TS 类型检查覆盖 (确保 tsconfig 包含 auto-imports.d.ts)
+      'no-undef': 'off', // 由 TS 类型检查覆盖
 
       // 允许显式 any（动态场景/代码生成器需要）
       '@typescript-eslint/no-explicit-any': 'off',

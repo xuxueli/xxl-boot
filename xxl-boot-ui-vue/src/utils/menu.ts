@@ -9,6 +9,7 @@
 import { isExternal, isHttp } from '@/utils/validate'
 import { getNormalPath } from '@/utils/common'
 import type { RouteData } from '@/store/modules/routes'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 /**
  * 判断顶级菜单是否为"菜单"（自身即页面，无真实下级菜单可展开）

@@ -33,6 +33,8 @@ import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
 import { filterMenuRoutes, promoteSingleChildRoutes, findMenuByPath, findActiveTopMenu, useVisibleMenuCount } from '@/utils/menu'
 import defaultSettings from '@/default-settings'
 import type { RouteData } from '@/store/modules/routes'
+import { computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()

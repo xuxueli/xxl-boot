@@ -172,6 +172,7 @@ import DraggableItem from './DraggableItem.vue'
 import RightPanel from './RightPanel.vue'
 import CodeTypeDialog from './CodeTypeDialog.vue'
 import { onMounted, watch } from 'vue'
+import { nextTick, onUnmounted, provide, ref } from 'vue'
 
 // --------------------------------- ref data ---------------------------------
 

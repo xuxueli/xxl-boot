@@ -41,6 +41,7 @@ import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { getAuthHeaders } from '@/utils/auth'
 import modal from '@/utils/modal'
+import { computed, onBeforeUnmount, ref, toRaw, watch } from 'vue'
 
 const quillEditorRef = ref<any>() // Quill 编辑器实例
 const uploadRef = ref<any>(null) // 图片上传 input 引用

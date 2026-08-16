@@ -141,6 +141,7 @@ import modal from '@/utils/modal'
 import type { Role, Resource, RoleQuery } from '@/types/api'
 import type { EnumOption, TableState, FormState } from '@/types'
 import type { CheckboxValueType, FormInstance, FormRules } from 'element-plus'
+import { nextTick, ref } from 'vue'
 
 const resetForm = useFormReset()
 

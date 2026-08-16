@@ -75,6 +75,7 @@ import HeaderMessageDetail from './HeaderMessageDetail.vue'
 import { listMessageTop, markMessageRead, markMessageReadAll } from '@/api/system/message'
 import type { Message } from '@/types/api'
 import type { PopoverInstance } from 'element-plus'
+import { onMounted, ref } from 'vue'
 
 /*
  * 站内消息项：Message + 本地已读标记

@@ -12,6 +12,7 @@
 </template>
 
 <script lang="ts">
+import { computed, defineComponent } from 'vue'
 /*
  * defineComponent：标准组件导出
  *   - props：定义组件接收的外部参数

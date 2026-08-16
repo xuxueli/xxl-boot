@@ -40,6 +40,7 @@
  *   parseTime(new Date(), '{y}-{m}-{d}')  // 日期格式化
  *   handleTree(list)                        // 扁平数组转树形
  */
+import { h } from 'vue'
 
 // ==================== 日期 / 时间 ====================
 

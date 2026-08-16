@@ -3,6 +3,7 @@
  * 提供画布初始示例组件与清理方法（模块级可变数组，与画布状态共享引用）。
  */
 import type { FormItemConf } from './config'
+import { readonly } from 'vue'
 
 export const drawingDefaultValue: FormItemConf[] = []
 

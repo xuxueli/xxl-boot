@@ -88,6 +88,8 @@ import { isHttp } from '@/utils/validate'
 import { resolveMenuSearchItems, type MenuSearchItem } from '@/utils/menu'
 import { useSettingsStore, useRoutesStore } from '@/store'
 import type { InputInstance } from 'element-plus'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const settingsStore = useSettingsStore()
 const routesStore = useRoutesStore()

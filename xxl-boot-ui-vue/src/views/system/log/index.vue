@@ -99,6 +99,7 @@ import modal from '@/utils/modal'
 import { download } from '@/utils/request'
 import type { Log, LogQuery } from '@/types/api'
 import type { EnumOption, TableState } from '@/types'
+import { ref } from 'vue'
 
 const resetForm = useFormReset()
 

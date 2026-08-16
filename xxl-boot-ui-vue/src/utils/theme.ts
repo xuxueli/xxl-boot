@@ -9,6 +9,7 @@
  *
  * @param theme 主题色的十六进制值（如：#409EFF）
  */
+import { h } from 'vue'
 export function handleThemeStyle(theme: string): void {
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
   const primary = isDark ? softenPrimaryForDark(theme) : theme

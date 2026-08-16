@@ -25,6 +25,7 @@
 <script setup lang="ts">
 import { useAppStore } from '@/store'
 import modal from '@/utils/modal'
+import { computed, ref } from 'vue'
 
 const appStore = useAppStore()
 const size = computed(() => appStore.size)

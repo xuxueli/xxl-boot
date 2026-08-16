@@ -31,6 +31,8 @@
 <script setup lang="ts">
 // 引入
 import errImage from '@/assets/images/301.gif'
+import { ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute() // 路由数据
 const router = useRouter() // 路由操作

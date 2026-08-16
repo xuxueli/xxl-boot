@@ -95,6 +95,8 @@ import type { TagView } from '@/store/modules/tagsView'
 import type { RouteData } from '@/store/modules/routes'
 import tab from '@/utils/tab'
 import defaultSettings from '@/default-settings'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const tagsViewStore = useTagsViewStore()
 const routesStore = useRoutesStore()

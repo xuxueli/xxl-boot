@@ -33,6 +33,8 @@ import SidebarItem from './SidebarItem.vue'
 import variables from '@/assets/styles/variables.module.scss'
 import { useAppStore, useRoutesStore, useSettingsStore } from '@/store'
 import type { RouteData } from '@/store/modules/routes'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const appStore = useAppStore()

@@ -56,7 +56,6 @@
     "sass-embedded": "1.102.0",
     "typescript": "6.0.3",
     "typescript-eslint": "8.67.0",
-    "unplugin-auto-import": "21.1.0",
     "vite": "8.2.1",
     "vite-plugin-svg-icons": "2.0.1",
     "vue-tsc": "3.3.10"

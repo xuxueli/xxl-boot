@@ -22,6 +22,7 @@
 import { useTagsViewStore } from '@/store'
 import type { TagView } from '@/store/modules/tagsView'
 import type { ScrollbarInstance } from 'element-plus'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const tagsViewStore = useTagsViewStore()
 const visitedViews = computed(() => tagsViewStore.visitedViews)

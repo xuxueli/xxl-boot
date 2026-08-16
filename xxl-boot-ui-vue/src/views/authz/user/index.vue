@@ -215,6 +215,7 @@ import { ElMessageBox } from 'element-plus'
 import type { User, Org, Role, UserQuery } from '@/types/api'
 import type { EnumOption, TableState, FormState } from '@/types'
 import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
+import { ref } from 'vue'
 
 const resetForm = useFormReset()
 
