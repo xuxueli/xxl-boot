@@ -7,9 +7,9 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Input, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
+import { usePermission } from '@/hooks/usePermission';
 import { delTable, listTable } from '@/services/tool/codegen';
 import { downloadGet } from '@/utils/download';
-import { usePermission } from '@/hooks/usePermission';
 import EditTableModal from './EditTableModal';
 import PreviewModal, { type PreviewModalRef } from './PreviewModal';
 

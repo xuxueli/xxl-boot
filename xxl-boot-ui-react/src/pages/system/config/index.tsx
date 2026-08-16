@@ -8,8 +8,8 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag, Tooltip } from 'antd';
 import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { delConfig, listConfig } from '@/services/system/config';
 import { usePermission } from '@/hooks/usePermission';
+import { delConfig, listConfig } from '@/services/system/config';
 import ConfigFormModal from './ConfigFormModal';
 
 const ConfigList = () => {

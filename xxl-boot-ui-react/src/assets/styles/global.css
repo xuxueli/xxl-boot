@@ -51,8 +51,8 @@ body,
   margin: 0;
   padding: 0;
   font-family:
-    AlibabaSans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    AlibabaSans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 /* 色弱模式：反色滤镜，便于低视力用户区分配色 */
@@ -71,7 +71,7 @@ body,
 }
 
 /* 侧边栏折叠态：隐藏菜单文字，仅保留图标 */
-.ant-pro-sider-collapsed .ant-pro-sider-link span:not([role='img']) {
+.ant-pro-sider-collapsed .ant-pro-sider-link span:not([role="img"]) {
   display: none;
 }
 

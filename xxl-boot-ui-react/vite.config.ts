@@ -7,7 +7,6 @@ import { defineConfig, loadEnv } from 'vite';
  * 环境变量：.rawEnv.development / .rawEnv.production / .rawEnv.staging
  */
 export default defineConfig(({ mode }) => {
-
   /**
    * 获取环境变量：
    */
@@ -21,8 +20,8 @@ export default defineConfig(({ mode }) => {
    */
   return {
     /*
-    * 插件系统 (Plugins)
-    */
+     * 插件系统 (Plugins)
+     */
     plugins: [react()],
     /**
      * 路径配置：
@@ -31,8 +30,8 @@ export default defineConfig(({ mode }) => {
      */
     resolve: {
       alias: {
-        '~': fileURLToPath(new URL('./', import.meta.url)),   // ~ 映射到根目录
-        '@': fileURLToPath(new URL('./src', import.meta.url)) // @ 映射到 src 目录
+        '~': fileURLToPath(new URL('./', import.meta.url)), // ~ 映射到根目录
+        '@': fileURLToPath(new URL('./src', import.meta.url)), // @ 映射到 src 目录
       },
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'], // 配置文件扩展名，允许在导入时省略扩展名
     },
@@ -61,6 +60,5 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-
   };
 });

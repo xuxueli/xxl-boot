@@ -8,9 +8,9 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
 import { loadEnum, toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
+import { usePermission } from '@/hooks/usePermission';
 import { delOperlog, pageList } from '@/services/system/log';
 import { download } from '@/utils/download';
-import { usePermission } from '@/hooks/usePermission';
 import LogDetail, { type LogDetailRef } from './LogDetail';
 
 const LogList = () => {

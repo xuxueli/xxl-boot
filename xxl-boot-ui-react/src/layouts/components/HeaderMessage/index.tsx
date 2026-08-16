@@ -12,12 +12,14 @@ import { createStyles } from 'antd-style';
 import { clsx } from 'clsx';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Dropdown from '@/components/Dropdown';
+import MessageDetail, {
+  type MessageDetailRef,
+} from '@/pages/system/message/MessageDetail';
 import {
   listMessageTop,
   markMessageRead,
   markMessageReadAll,
 } from '@/services/system/message';
-import MessageDetail, { type MessageDetailRef } from '@/pages/system/message/MessageDetail';
 
 /** 消息面板及铃铛触发区样式 */
 const useStyles = createStyles(({ token, css }) => ({
@@ -133,7 +135,9 @@ const useStyles = createStyles(({ token, css }) => ({
 const HeaderMessage = () => {
   const { styles } = useStyles();
   const messageViewRef = useRef<MessageDetailRef>(null); /* 详情抽屉引用 */
-  const [messageList, setMessageList] = useState<API.Message[]>([]); /* 顶部公告列表 */
+  const [messageList, setMessageList] = useState<API.Message[]>(
+    [],
+  ); /* 顶部公告列表 */
   const [unreadCount, setUnreadCount] = useState(0); /* 未读数量 */
   const [loading, setLoading] = useState(false); /* 列表加载状态 */
 
@@ -151,12 +155,12 @@ const HeaderMessage = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);                 // 稳定函数（ useCallback 依赖数组是 [] ）：没有依赖，初始化后保持不变，首次挂载时创建一次；
+  }, []); // 稳定函数（ useCallback 依赖数组是 [] ）：没有依赖，初始化后保持不变，首次挂载时创建一次；
 
   /* 组件挂载后：加载一次公告列表 */
   useEffect(() => {
     loadMessageTop();
-  }, [loadMessageTop]);   // 组件挂载后执行一次，依赖 loadMessageTop（稳定函数），不会重复执行。
+  }, [loadMessageTop]); // 组件挂载后执行一次，依赖 loadMessageTop（稳定函数），不会重复执行。
 
   /**
    * 点击公告：未读先标记已读并同步本地状态，随后打开详情抽屉
@@ -187,9 +191,9 @@ const HeaderMessage = () => {
   };
 
   /*
-  * 渲染：顶部铃铛 + 下拉面板 + 详情抽屉
-  *   - return ( <> ... </> )：用于返回多个并列的元素
-  */
+   * 渲染：顶部铃铛 + 下拉面板 + 详情抽屉
+   *   - return ( <> ... </> )：用于返回多个并列的元素
+   */
   return (
     <>
       <Dropdown

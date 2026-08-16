@@ -119,7 +119,12 @@
           </el-table-column>
           <el-table-column label="插入" min-width="5%">
             <template #default="scope">
-              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isInsert" :disabled="scope.row.javaField === 'id'"></el-checkbox>
+              <el-checkbox
+                true-value="1"
+                false-value="0"
+                v-model="scope.row.isInsert"
+                :disabled="scope.row.javaField === 'id'"
+              ></el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label="编辑" min-width="5%">
@@ -134,7 +139,12 @@
           </el-table-column>
           <el-table-column label="查询" min-width="5%">
             <template #default="scope">
-              <el-checkbox true-value="1" false-value="0" v-model="scope.row.isQuery" :disabled="scope.row.javaField === 'id'"></el-checkbox>
+              <el-checkbox
+                true-value="1"
+                false-value="0"
+                v-model="scope.row.isQuery"
+                :disabled="scope.row.javaField === 'id'"
+              ></el-checkbox>
             </template>
           </el-table-column>
           <el-table-column label="查询方式" min-width="10%">

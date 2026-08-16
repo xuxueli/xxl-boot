@@ -15,12 +15,11 @@ import { Card, Empty, Radio, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import * as echarts from 'echarts';
 import React, { useEffect, useRef, useState } from 'react';
-import MessageDetail, { type MessageDetailRef } from '@/pages/system/message/MessageDetail';
+import MessageDetail, {
+  type MessageDetailRef,
+} from '@/pages/system/message/MessageDetail';
 import { getLogTrend, getStats } from '@/services/dashboard';
-import {
-  listMessageTop,
-  markMessageRead,
-} from '@/services/system/message';
+import { listMessageTop, markMessageRead } from '@/services/system/message';
 
 const useStyles = createStyles(({ token, css }) => ({
   statCard: css`
@@ -178,7 +177,12 @@ const Dashboard = () => {
       xAxis: {
         type: 'category',
         data: trendData.map((i) => i.date),
-        axisLabel: { fontSize: 11, color: '#909399', rotate: 0, hideOverlap: true },
+        axisLabel: {
+          fontSize: 11,
+          color: '#909399',
+          rotate: 0,
+          hideOverlap: true,
+        },
       },
       yAxis: {
         type: 'value',

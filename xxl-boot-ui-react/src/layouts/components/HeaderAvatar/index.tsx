@@ -2,7 +2,11 @@
  * 布局组件：HeaderAvatar（头像下拉菜单）
  * 功能：顶部导航栏右侧头像，下拉提供个人中心、主题设置、退出登录
  */
-import { IdcardOutlined, LogoutOutlined, SkinOutlined } from '@ant-design/icons';
+import {
+  IdcardOutlined,
+  LogoutOutlined,
+  SkinOutlined,
+} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Modal, Spin } from 'antd';
 import React from 'react';

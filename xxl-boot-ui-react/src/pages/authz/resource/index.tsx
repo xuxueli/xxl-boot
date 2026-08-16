@@ -8,13 +8,13 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, InputNumber, Tag, Tooltip } from 'antd';
 import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
+import { usePermission } from '@/hooks/usePermission';
 import {
   delResource,
   listResource,
   updateResourceSort,
 } from '@/services/authz/resource';
 import { getIconComponent } from '@/utils/icon';
-import { usePermission } from '@/hooks/usePermission';
 import ResourceFormModal from './ResourceFormModal';
 
 const typeMap: Record<number, { text: string; color: string }> = {

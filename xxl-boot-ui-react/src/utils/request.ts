@@ -6,8 +6,8 @@
  *   - 响应拦截：301 重新登录弹窗 / 业务码统一处理 / HTTP 异常中文提示
  */
 import { Modal, message } from 'antd';
-import axios from 'axios';
 import type { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import { getToken, getTokenKeyHeader, removeToken } from './auth';
 
 /** 与后端约定的响应数据格式（xxl-boot Response 结构） */
@@ -42,7 +42,9 @@ const serializeParams = (params: Record<string, unknown>): string => {
         build(`${key}[${k}]`, (value as Record<string, unknown>)[k]);
       });
     } else {
-      parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
+      parts.push(
+        `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+      );
     }
   };
   Object.keys(params || {}).forEach((k) => {
@@ -112,7 +114,10 @@ service.interceptors.request.use((config) => {
       message.warning('数据正在处理，请勿重复提交');
       return Promise.reject(new Error('数据正在处理，请勿重复提交'));
     }
-    sessionStorage.setItem(REPEAT_SUBMIT_STORAGE_KEY, JSON.stringify(requestObj));
+    sessionStorage.setItem(
+      REPEAT_SUBMIT_STORAGE_KEY,
+      JSON.stringify(requestObj),
+    );
   }
 
   return config;
@@ -124,14 +129,17 @@ service.interceptors.response.use(
   (response): any => {
     const res = response.data as ResponseStructure;
     const code = res?.code ?? 200;
-    const metadata = (response.config as { metadata?: { skipErrorHandler: boolean } })
-      .metadata;
+    const metadata = (
+      response.config as { metadata?: { skipErrorHandler: boolean } }
+    ).metadata;
     const skipErrorHandler = metadata?.skipErrorHandler === true;
 
     // 301：会话过期，弹出重新登录确认框（防重复弹窗）
     if (code === 301) {
       if (skipErrorHandler) {
-        return Promise.reject(new Error('无效的会话，或者会话已过期，请重新登录。'));
+        return Promise.reject(
+          new Error('无效的会话，或者会话已过期，请重新登录。'),
+        );
       }
       if (!isRelogin.show) {
         isRelogin.show = true;
@@ -150,7 +158,9 @@ service.interceptors.response.use(
           },
         });
       }
-      return Promise.reject(new Error('无效的会话，或者会话已过期，请重新登录。'));
+      return Promise.reject(
+        new Error('无效的会话，或者会话已过期，请重新登录。'),
+      );
     }
 
     // 其他非成功码（非200）

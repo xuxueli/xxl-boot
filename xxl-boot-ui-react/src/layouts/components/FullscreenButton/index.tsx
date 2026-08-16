@@ -2,10 +2,7 @@
  * 布局组件：FullscreenButton（全屏切换）
  * 功能：顶部导航栏右侧全屏/退出全屏切换按钮，浏览器不支持时自动隐藏
  */
-import {
-  FullscreenExitOutlined,
-  FullscreenOutlined,
-} from '@ant-design/icons';
+import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 

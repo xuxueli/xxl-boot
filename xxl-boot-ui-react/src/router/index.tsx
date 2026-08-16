@@ -48,7 +48,10 @@ export const router = createBrowserRouter([
         path: 'user/profile',
         element: lazyLoad(() => import('@/pages/authz/user/profile')),
       },
-      { path: 'dashboard', element: lazyLoad(() => import('@/pages/dashboard')) },
+      {
+        path: 'dashboard',
+        element: lazyLoad(() => import('@/pages/dashboard')),
+      },
       {
         path: 'authz/user',
         element: (

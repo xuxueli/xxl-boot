@@ -61,10 +61,7 @@ export type DropdownProps = {
  * @param props 组件入参（含 overlayClassName 与透传的 antd Dropdown 属性）
  * @returns antd Dropdown 实例（注入统一样式）
  */
-const Dropdown = ({
-  overlayClassName: cls,
-  ...restProps
-}: DropdownProps) => {
+const Dropdown = ({ overlayClassName: cls, ...restProps }: DropdownProps) => {
   const { styles } = useStyles();
   return (
     <AntdDropdown

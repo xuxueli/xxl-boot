@@ -102,7 +102,8 @@ const normalizeHex = (text: string): string | null => {
 const ThemeColorPicker = () => {
   const { styles } = useStyles();
   const settingDrawerOpen = useSettingsStore((s) => s.settingDrawerOpen);
-  const colorPrimary = useSettingsStore((s) => s.settings.colorPrimary) ?? '#1677ff';
+  const colorPrimary =
+    useSettingsStore((s) => s.settings.colorPrimary) ?? '#1677ff';
   /* 主题色区块元素：触发器注入点 */
   const [sectionEl, setSectionEl] = useState<HTMLElement | null>(null);
   /* 选择器实例版本：确认后自增，通过重挂载关闭弹框 */
@@ -201,10 +202,7 @@ const ThemeColorPicker = () => {
                     value={hexText}
                     onChange={(e) => handleHexChange(e.target.value)}
                   />
-                  <Button
-                    size="small"
-                    onClick={handleConfirm}
-                  >
+                  <Button size="small" onClick={handleConfirm}>
                     确认
                   </Button>
                 </div>

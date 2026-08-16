@@ -21,9 +21,14 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
         useUserStore.getState().fetchMenuData(),
       ]).catch(() => {
         // 会话信息拉取失败（如会话过期/无权限）：清理本地凭证并跳转登录页
-        useUserStore.getState().logout().catch(() => {});
+        useUserStore
+          .getState()
+          .logout()
+          .catch(() => {});
         message.error('登录状态已失效，请重新登录');
-        const redirect = encodeURIComponent(location.pathname + location.search);
+        const redirect = encodeURIComponent(
+          location.pathname + location.search,
+        );
         window.location.href = `/login?redirect=${redirect}`;
       });
     }

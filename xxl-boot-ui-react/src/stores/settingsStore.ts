@@ -5,8 +5,9 @@
  *    - 点击"保存设置"写入 localStorage，刷新后自动恢复；"重置设置"恢复默认并清除缓存；
  *    - 侧边栏折叠状态：点击折叠开关即时持久化，刷新后保持。
  */
-import { create } from 'zustand';
+
 import type { ProLayoutProps } from '@ant-design/pro-components';
+import { create } from 'zustand';
 import defaultSettings from '@/default-settings';
 
 /** 主题设置持久化：localStorage 键名 */
@@ -62,7 +63,6 @@ interface SettingsState {
 }
 
 export const useSettingsStore = create<SettingsState>()((set, get) => ({
-
   /* 初始布局设置：优先取 localStorage 缓存，否则用默认配置 */
   settings: loadSettings(),
   /* 初始设置面板：关闭 */
@@ -105,6 +105,5 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   setCollapsed: (collapsed) => {
     localStorage.setItem(COLLAPSED_KEY, String(collapsed));
     set({ collapsed });
-  }
-
+  },
 }));

@@ -80,7 +80,13 @@
       <el-table-column label="操作" align="center" width="210" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['authz:resource']">修改</el-button>
-          <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-if="scope.row.type !== 2" v-hasPermi="['authz:resource']"
+          <el-button
+            link
+            type="primary"
+            icon="Plus"
+            @click="handleAdd(scope.row)"
+            v-if="scope.row.type !== 2"
+            v-hasPermi="['authz:resource']"
             >新增</el-button
           >
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['authz:resource']">删除</el-button>

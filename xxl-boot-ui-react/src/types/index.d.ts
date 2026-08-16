@@ -4,7 +4,6 @@
  * 以全局命名空间 API 声明，各模块文件同名 namespace 自动合并。
  */
 declare namespace API {
-
   // --------------------------------- 公共数据结构 ----------------------
 
   /** 后端统一返回结构 */
@@ -57,5 +56,4 @@ declare namespace API {
     title?: string;
     desc?: string;
   };
-
 }

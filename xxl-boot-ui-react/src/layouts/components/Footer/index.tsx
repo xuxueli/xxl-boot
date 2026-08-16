@@ -41,7 +41,8 @@ const useStyles = createStyles(({ token, css }) => ({
  */
 const Footer = () => {
   const { styles } = useStyles();
-  const year = new Date().getFullYear(); /* 动态获取当前年份，版权区间自动截止到本年 */
+  /* 动态获取当前年份，版权区间自动截止到本年 */
+  const year = new Date().getFullYear();
 
   return (
     <div className={styles.footer}>

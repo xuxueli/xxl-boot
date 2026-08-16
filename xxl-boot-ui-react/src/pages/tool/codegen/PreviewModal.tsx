@@ -68,34 +68,34 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
         <Tabs
           activeKey={activeKey}
           items={fileNames.map((name) => ({
-          key: name,
-          label: fileNameToLabel(name),
-          children: (
-            <div>
-              <div style={{ textAlign: 'right', marginBottom: 8 }}>
-                <Button
-                  size="small"
-                  onClick={() => copyText(codeMap[name] || '')}
+            key: name,
+            label: fileNameToLabel(name),
+            children: (
+              <div>
+                <div style={{ textAlign: 'right', marginBottom: 8 }}>
+                  <Button
+                    size="small"
+                    onClick={() => copyText(codeMap[name] || '')}
+                  >
+                    复制
+                  </Button>
+                </div>
+                <pre
+                  style={{
+                    background: 'rgba(0,0,0,0.03)',
+                    padding: 12,
+                    borderRadius: 6,
+                    maxHeight: 480,
+                    overflow: 'auto',
+                    fontSize: 12,
+                    margin: 0,
+                  }}
                 >
-                  复制
-                </Button>
+                  {codeMap[name]}
+                </pre>
               </div>
-              <pre
-                style={{
-                  background: 'rgba(0,0,0,0.03)',
-                  padding: 12,
-                  borderRadius: 6,
-                  maxHeight: 480,
-                  overflow: 'auto',
-                  fontSize: 12,
-                  margin: 0,
-                }}
-              >
-                {codeMap[name]}
-              </pre>
-            </div>
-          ),
-        }))}
+            ),
+          }))}
         />
       </Spin>
     </Modal>

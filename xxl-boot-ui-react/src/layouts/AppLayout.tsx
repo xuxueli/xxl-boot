@@ -10,12 +10,18 @@
 import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, SettingDrawer } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import React from 'react';
-import { HeaderAvatar, Footer, HeaderMessage, FullscreenButton, ThemeColorPicker } from './components';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 import { getIconComponent } from '@/utils/icon';
+import {
+  Footer,
+  FullscreenButton,
+  HeaderAvatar,
+  HeaderMessage,
+  ThemeColorPicker,
+} from './components';
 
 /**
  * 将后端菜单树转换为 ProLayout 菜单数据
@@ -96,7 +102,9 @@ const buildMenuData = (routes: API.RouterVo[]): MenuDataItem[] => {
  * 说明：splitMenus（自动分割菜单）下目录会被渲染成扁平菜单项且 children 被剥离，
  *       点击时需跳转到第一个叶子子项（真实页面），避免跳到目录路径导致 404
  */
-const buildDirRedirectMap = (routes: API.RouterVo[]): Record<string, string> => {
+const buildDirRedirectMap = (
+  routes: API.RouterVo[],
+): Record<string, string> => {
   const map: Record<string, string> = {};
 
   const findFirstLeaf = (nodes: API.RouterVo[]): string | undefined => {
@@ -180,9 +188,7 @@ const AppLayout = () => {
       // 顶部面包屑：单层级页面（如首页、帮助中心）也展示面包屑
       breadcrumbProps={{ minLength: 1 }}
       // 顶部面包屑：只读展示，不支持点击跳转
-      itemRender={(route) => (
-        <span>{route.title}</span>
-      )}
+      itemRender={(route) => <span>{route.title}</span>}
       // 顶部区域：全屏切换 + 站内消息
       actionsRender={() => [
         <FullscreenButton key="fullscreen" />,
@@ -191,7 +197,7 @@ const AppLayout = () => {
       // 顶部区域：用户信息
       avatarProps={{
         title: (
-          <span style={{ fontWeight: "bold", marginLeft: -5 }}>
+          <span style={{ fontWeight: 'bold', marginLeft: -5 }}>
             {currentUser?.realName || currentUser?.userName}
           </span>
         ),
@@ -200,9 +206,7 @@ const AppLayout = () => {
         ),
       }}
       // 底部区域：页脚（设置面板关闭页脚时返回 false 隐藏，否则渲染 Footer）
-      footerRender={
-        settings.footerRender === false ? false : () => <Footer />
-      }
+      footerRender={settings.footerRender === false ? false : () => <Footer />}
       // 禁用断点：避免 antd Sider 挂载时按视口触发 onCollapse(false)，覆盖持久化的折叠状态
       breakpoint={false}
       // 侧边栏折叠：受控展开/收起，切换时持久化到 localStorage

@@ -7,12 +7,12 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
-import ReadUsersDialog, { type ReadUsersDialogRef } from './ReadUsersDialog';
-import MessageDetail, { type MessageDetailRef } from './MessageDetail';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { delMessage, listMessage } from '@/services/system/message';
 import { usePermission } from '@/hooks/usePermission';
+import { delMessage, listMessage } from '@/services/system/message';
+import MessageDetail, { type MessageDetailRef } from './MessageDetail';
 import MessageFormModal from './MessageFormModal';
+import ReadUsersDialog, { type ReadUsersDialogRef } from './ReadUsersDialog';
 
 const categoryMap: Record<number, { text: string; color: string }> = {
   0: { text: '通知', color: 'success' },

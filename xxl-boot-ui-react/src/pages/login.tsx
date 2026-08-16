@@ -13,10 +13,10 @@ import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import loginBg from '@/assets/images/login-bg.png';
+import defaultSettings from '@/default-settings';
 import { Footer } from '@/layouts/components';
 import { getCodeImg } from '@/services/login';
 import { useUserStore } from '@/stores/userStore';
-import defaultSettings from '@/default-settings';
 
 /**
  * 校验 redirect URL，防止开放重定向攻击

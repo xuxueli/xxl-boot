@@ -9,8 +9,8 @@ import { App, Button, Tag } from 'antd';
 import React, { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { delData, listData } from '@/services/system/dict';
 import { usePermission } from '@/hooks/usePermission';
+import { delData, listData } from '@/services/system/dict';
 import DictDataFormModal from './DictDataFormModal';
 
 const DictData = () => {

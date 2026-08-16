@@ -9,11 +9,11 @@ import { App, Button, Dropdown, Input, Modal, Switch } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { TreePanel } from '@/components';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
+import { usePermission } from '@/hooks/usePermission';
 import { listOrg } from '@/services/authz/org';
 import { listRole } from '@/services/authz/role';
 import { delUser, listUser, updateUser } from '@/services/authz/user';
 import { deepClone, handleTree } from '@/utils/common';
-import { usePermission } from '@/hooks/usePermission';
 import UserFormModal from './UserFormModal';
 import UserView, { type UserViewRef } from './UserView';
 
@@ -259,7 +259,9 @@ const Dashboard = () => {
               labelWidth: 80,
               defaultCollapsed: false,
               optionRender: (_searchConfig, formProps, dom) => [
-                ...dom.filter((item) => (item as React.ReactElement)?.key !== 'rest'),
+                ...dom.filter(
+                  (item) => (item as React.ReactElement)?.key !== 'rest',
+                ),
                 <Button
                   key="reset-org"
                   onClick={() => {
