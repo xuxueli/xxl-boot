@@ -10,11 +10,11 @@
     "dev": "vite",
     "build:prod": "vue-tsc --noEmit --skipLibCheck && vite build",
     "build:stage": "vue-tsc --noEmit --skipLibCheck && vite build --mode staging",
+    "preview": "vite preview",
     "type-check": "vue-tsc --noEmit --skipLibCheck",
     "lint": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{ts,vue,scss}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,vue,scss}\"",
-    "preview": "vite preview"
+    "format:check": "prettier --check \"src/**/*.{ts,vue,scss}\""
   },
   "dependencies": {
     "@element-plus/icons-vue": "2.3.2",

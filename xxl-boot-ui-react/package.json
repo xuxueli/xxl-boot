@@ -9,7 +9,7 @@
   "license": "GPL",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build:prod": "vite build",
     "build:staging": "vite build --mode staging",
     "preview": "vite preview",
     "lint": "npm run biome:lint && npm run tsc",
