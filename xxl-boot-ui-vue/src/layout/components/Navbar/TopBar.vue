@@ -1,6 +1,6 @@
 <!--
   组件：TopBar（顶部菜单栏 - 导航模式 top）
-  功能：navType='top' 时在顶部渲染一级菜单，超出数量折叠到"更多菜单"。
+  功能：navType='top' 时在顶部渲染一级菜单，超出数量折叠到"更多"。
         点击切换左侧联动侧边栏子菜单。
 -->
 <template>
@@ -9,10 +9,10 @@
     <!-- 可见的一级菜单项：前 N 条 -->
     <SidebarItem :key="route.path + index" v-for="(route, index) in topMenus" :item="route" :base-path="route.path" />
 
-    <!-- 超出的菜单：折叠到"更多菜单"下拉中 -->
+    <!-- 超出的菜单：折叠到"更多"下拉中 -->
     <el-sub-menu index="more" class="el-sub-menu__hide-arrow" v-if="moreRoutes.length > 0">
       <template #title>
-        <span>更多菜单</span>
+        <span>更多</span>
       </template>
       <SidebarItem :key="route.path + index" v-for="(route, index) in moreRoutes" :item="route" :base-path="route.path" />
     </el-sub-menu>

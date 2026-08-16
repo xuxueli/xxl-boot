@@ -12,9 +12,9 @@
       </el-menu-item>
     </template>
 
-    <!-- 超出的菜单：折叠到"更多菜单" -->
+    <!-- 超出的菜单：折叠到"更多" -->
     <el-sub-menu :style="{ '--theme': theme }" index="more" v-if="topMenus.length > visibleNumber">
-      <template #title>更多菜单</template>
+      <template #title>更多</template>
       <template v-for="(item, index) in topMenus">
         <el-menu-item :index="item.path || ''" :key="index" v-if="index >= visibleNumber">
           <!-- icon -->
