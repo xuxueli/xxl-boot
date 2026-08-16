@@ -103,8 +103,14 @@ const activeMenu = computed(() => {
     /* 多级路径：查找匹配的顶级菜单，找到则联动显示，未找到也显示侧边栏（容错） */
     const matchedTopMenu = findActiveTopMenu(path)
     if (matchedTopMenu) {
-      activePath = matchedTopMenu
-      appStore.hideSideBar(false)
+      activePath = matchedTopMenu.path ?? path
+      if (isLeafMenu(matchedTopMenu)) {
+        /* 顶级菜单自身即菜单：折叠左侧下级菜单 */
+        appStore.hideSideBar(true)
+      } else {
+        /* 顶级菜单为目录：展开左侧菜单展示下级菜单 */
+        appStore.hideSideBar(false)
+      }
     } else {
       appStore.hideSideBar(false)
     }
@@ -121,6 +127,7 @@ const activeMenu = computed(() => {
 /*
  * 在顶级菜单树中递归查找包含当前路由的顶级菜单
  *   - 遍历 routers，对每个菜单调用 descendantMatches 判断当前路径是否在其子孙中
+ *   - 命中时返回顶级菜单对象本身，供判断是"菜单"还是"目录"
  */
 function findActiveTopMenu(currentPath: string) {
   if (!routers.value) return null
@@ -128,10 +135,19 @@ function findActiveTopMenu(currentPath: string) {
     if (menu.hidden) continue
     if (menu.path === '/') continue
     if (descendantMatches(menu, currentPath)) {
-      return menu.path
+      return menu
     }
   }
   return null
+}
+
+/*
+ * 判断顶级菜单是否为"菜单"（自身即页面，无真实下级菜单可展开）
+ *   - 根节点"菜单"由后端构建为 meta=null 的包装节点，包裹单个模拟子路由，属叶节点；
+ *   - 根节点"目录" meta 存在，需展开左侧菜单展示下级子菜单。
+ */
+function isLeafMenu(menu: RouteData) {
+  return !menu.meta
 }
 
 /*
@@ -168,18 +184,18 @@ function setVisibleNumber() {
 /*
  * 顶部菜单选中：
  *   - 外部链接新窗口
- *   - 无子路由直接跳转并隐藏侧栏
- *   - 有子路由联动左侧菜单
+ *   - 菜单分支（如一级为菜单）：直接 router.push 跳转，携带 query，并折叠左侧下级菜单
+ *   - 菜单为目录（如一级为目录）：展开左侧菜单，供点击具体下级菜单
  */
 function handleSelect(key: string, keyPath: string[]) {
   currentIndex.value = key
-  const route = routers.value.find((item) => item.path === key)
+  const topMenu = topMenus.value.find((item) => item.path === key)
 
   if (isHttp(key)) {
     /* 外部链接分支：新窗口打开 */
     window.open(key, '_blank')
-  } else if (!route || !route.children) {
-    /* 无子路由分支：直接 router.push 跳转，携带 query，隐藏侧边栏 */
+  } else if (!topMenu || !topMenu.children) {
+    /* 菜单分支：直接 router.push 跳转，携带 query，并折叠左侧下级菜单 */
     const routeMenu = childrenMenus.value.find((item) => item.path === key)
     if (routeMenu && routeMenu.query) {
       let query = JSON.parse(routeMenu.query as string)
@@ -189,7 +205,7 @@ function handleSelect(key: string, keyPath: string[]) {
     }
     appStore.hideSideBar(true)
   } else {
-    /* 有子路由分支：联动显示侧边栏子菜单 */
+    /* 目录分支：联动展开左侧菜单展示下级子菜单 */
     activeRoutes(key)
     appStore.hideSideBar(false)
   }
