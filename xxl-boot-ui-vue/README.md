@@ -29,7 +29,7 @@ xxl-boot 前端管理后台，基于 **Vue 3 (Composition API + `<script setup l
 ```bash
 npm run dev          # 开发模式
 npm run type-check   # TypeScript 类型检查（vue-tsc --noEmit）
-npm run build:prod   # 类型检查 + 生产构建
+npm run build        # 类型检查 + 生产构建
 npm run build:stage  # 类型检查 + 预发布构建
 ```
 

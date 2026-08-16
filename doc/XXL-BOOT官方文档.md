@@ -214,7 +214,7 @@ npm run dev
 
 生产模式下，构建产物后部署至 Web 服务器（如 Nginx），并配置反向代理转发 API 请求：
 ```
-npm run build:prod          # 构建产物输出至 dist 目录
+npm run build             # 构建产物输出至 dist 目录
 ```
 
 Nginx 反向代理配置示例：
@@ -439,7 +439,7 @@ xxl-boot/
 ```
 
 补充说明：
-- 构建：后端模块在仓库根目录执行 `mvn clean package` 即可一键编译全部 Maven 模块；前端模块进入 `xxl-boot-ui-vue` 或 `xxl-boot-ui-react` 目录执行 `npm install`、`npm run build:prod` 构建；
+- 构建：后端模块在仓库根目录执行 `mvn clean package` 即可一键编译全部 Maven 模块；前端模块进入 `xxl-boot-ui-vue` 或 `xxl-boot-ui-react` 目录执行 `npm install`、`npm run build` 构建；
 - 部署：单体项目部署 `xxl-boot-admin` 模块；前后端分离项目部署 `xxl-boot-api` + 前端Vue或React模块，参考 “2.3 配置部署（单体项目）” 与 “2.4 配置部署（前后端分离项目）”；
 - 扩展：新增业务模块时，可在各模块 `business` 扩展包中开发，并配套放置 MyBatis 映射文件、模板文件及配置文件，参考 “五、业务扩展”。
 

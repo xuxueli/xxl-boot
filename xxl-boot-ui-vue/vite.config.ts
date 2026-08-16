@@ -119,7 +119,7 @@ export default defineConfig(({ mode, command }) => {
      *    文档：https://cn.vitejs.dev/config/#build-options
      */
     build: {
-      sourcemap: isBuild ? false : 'inline',        // 生产环境打包时‌不生成Source Map；减小打包体积，提高加载速度；防止源代码泄露；
+      sourcemap: isBuild ? false : 'inline',                    // 生产环境打包时‌不生成Source Map；减小打包体积，提高加载速度；防止源代码泄露；
       outDir: 'dist',                                           // 构建输出目录
       assetsDir: 'assets',                                      // 静态资源目录
       chunkSizeWarningLimit: 2000,                              // 构建时超过指定大小会警告

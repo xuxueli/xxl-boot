@@ -1,5 +1,5 @@
 /**
- * request - HTTP 请求工具（axios 封装，替代原 Umi request 插件）
+ * request - HTTP 请求工具（axios 封装）
  *
  * 能力：
  *   - 请求拦截：token 注入 / 参数序列化（数组 key[]=、嵌套对象展开）/ POST/PUT 防重复提交

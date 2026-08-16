@@ -1,5 +1,5 @@
 /**
- * 路由配置（React Router，替代原 Umi 静态路由）
+ * 路由配置（React Router）
  * 说明：
  *   - 静态路由（/login、/301、404 兜底）路径与 Vue 项目对齐，无布局；
  *   - 其余业务路由在 AppLayout 布局内

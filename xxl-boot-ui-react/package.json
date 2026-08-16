@@ -9,13 +9,14 @@
   "license": "GPL",
   "scripts": {
     "dev": "vite",
-    "build:prod": "vite build",
-    "build:staging": "vite build --mode staging",
+    "prebuild": "npm run type-check",
+    "build": "vite build",
+    "prebuild:stage": "npm run type-check",
+    "build:stage": "vite build --mode staging",
     "preview": "vite preview",
-    "lint": "npm run biome:lint && npm run tsc",
-    "biome:lint": "biome lint",
-    "biome": "biome check --write",
-    "tsc": "tsc --noEmit"
+    "lint": "biome lint && npm run type-check",
+    "format": "biome check --write",
+    "type-check": "tsc --noEmit"
   },
   "browserslist": [
     "defaults"
