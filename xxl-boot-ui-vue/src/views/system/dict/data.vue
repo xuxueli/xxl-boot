@@ -103,6 +103,7 @@ import type { EnumOption, TableState, FormState } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { Pagination } from '@/components'
 
 const resetForm = useFormReset()
 

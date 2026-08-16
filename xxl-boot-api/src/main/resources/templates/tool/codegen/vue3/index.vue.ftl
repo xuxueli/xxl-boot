@@ -12,6 +12,16 @@
 <#if field.javaField == "id"><#assign hasIdField = true></#if>
 </#list>
 </#if>
+<#assign hasImageUpload = false>
+<#assign hasFileUpload = false>
+<#assign hasEditor = false>
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if field.htmlType == "imageUpload"><#assign hasImageUpload = true></#if>
+<#if field.htmlType == "fileUpload"><#assign hasFileUpload = true></#if>
+<#if field.htmlType == "editor"><#assign hasEditor = true></#if>
+</#list>
+</#if>
 <!--
   ${codegen.functionName}（列表页）
   Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
@@ -182,6 +192,15 @@ import { download } from '@/utils/request'
 import modal from '@/utils/modal'
 import type { FormState, TableState } from '@/types'
 import { ref } from 'vue'
+<#if hasImageUpload>
+import ImageUpload from '@/components/ImageUpload/index.vue'
+</#if>
+<#if hasFileUpload>
+import FileUpload from '@/components/FileUpload/index.vue'
+</#if>
+<#if hasEditor>
+import Editor from '@/components/Editor/index.vue'
+</#if>
 
 const resetForm = useFormReset()
 

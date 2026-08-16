@@ -22,10 +22,10 @@ import { computed, defineComponent } from 'vue'
  */
 export default defineComponent({
   props: {
-    // 图标名称：对应 svg-sprite 的 id，会拼为 #icon-xxx
+    // 图标名称：对应 svg-sprite 的 id，会拼为 #icon-xxx；菜单等场景图标可能为空，默认空串
     iconClass: {
       type: String,
-      required: true
+      default: ''
     },
     // 附加 CSS 类名
     className: {

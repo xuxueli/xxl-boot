@@ -90,6 +90,7 @@ import { useSettingsStore, useRoutesStore } from '@/store'
 import type { InputInstance } from 'element-plus'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { SvgIcon } from '@/components'
 
 const settingsStore = useSettingsStore()
 const routesStore = useRoutesStore()

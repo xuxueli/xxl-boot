@@ -75,6 +75,7 @@ import type { LoginParams } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { SvgIcon } from '@/components'
 
 const title = defaultSettings.title // 系统标题
 const brandName = defaultSettings.brandName // 品牌名称

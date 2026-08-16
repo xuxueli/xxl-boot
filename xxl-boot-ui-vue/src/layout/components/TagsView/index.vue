@@ -27,7 +27,7 @@
         <!-- icon -->
         <SvgIcon
           v-if="tagsIcon && tag.meta && tag.meta.icon && tag.meta.icon !== '#'"
-          :icon-class="tag.meta.icon"
+          :icon-class="(tag.meta.icon as string)"
           style="margin-right: 3px"
         />
         <!-- title -->
@@ -97,6 +97,7 @@ import tab from '@/utils/tab'
 import defaultSettings from '@/default-settings'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { SvgIcon } from '@/components'
 
 const tagsViewStore = useTagsViewStore()
 const routesStore = useRoutesStore()

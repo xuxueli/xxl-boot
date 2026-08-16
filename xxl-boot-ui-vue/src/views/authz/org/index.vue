@@ -141,6 +141,7 @@ import type { Org, OrgQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 import { nextTick, ref } from 'vue'
+import { RightToolbar } from '@/components'
 
 const resetForm = useFormReset()
 

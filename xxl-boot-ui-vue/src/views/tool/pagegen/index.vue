@@ -173,6 +173,7 @@ import RightPanel from './RightPanel.vue'
 import CodeTypeDialog from './CodeTypeDialog.vue'
 import { onMounted, watch } from 'vue'
 import { nextTick, onUnmounted, provide, ref } from 'vue'
+import { SvgIcon } from '@/components'
 
 // --------------------------------- ref data ---------------------------------
 

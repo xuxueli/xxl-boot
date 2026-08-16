@@ -210,6 +210,7 @@ import type { Resource, ResourceQuery } from '@/types/api'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 import { nextTick, ref } from 'vue'
+import { SvgIcon, RightToolbar, IconSelect } from '@/components'
 
 const resetForm = useFormReset()
 

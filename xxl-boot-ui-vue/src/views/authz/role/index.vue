@@ -142,6 +142,7 @@ import type { Role, Resource, RoleQuery } from '@/types/api'
 import type { EnumOption, TableState, FormState } from '@/types'
 import type { CheckboxValueType, FormInstance, FormRules } from 'element-plus'
 import { nextTick, ref } from 'vue'
+import { RightToolbar, Pagination } from '@/components'
 
 const resetForm = useFormReset()
 

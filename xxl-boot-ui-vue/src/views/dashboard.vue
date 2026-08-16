@@ -85,6 +85,7 @@ import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vu
 import type { ECharts } from 'echarts'
 import type { Message } from '@/types/api'
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { SvgIcon } from '@/components'
 
 /** 指标卡片项 */
 interface StatItem {

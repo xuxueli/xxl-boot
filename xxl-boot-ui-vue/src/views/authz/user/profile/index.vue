@@ -86,6 +86,7 @@ import { getUserProfile } from '@/api/authz/user'
 import type { User } from '@/types/api'
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { SvgIcon } from '@/components'
 
 const route = useRoute() // 路由
 const selectedTab = ref('userinfo') // 当前选中的 tab

@@ -26,6 +26,7 @@
 import { useAppStore } from '@/store'
 import modal from '@/utils/modal'
 import { computed, ref } from 'vue'
+import { SvgIcon } from '@/components'
 
 const appStore = useAppStore()
 const size = computed(() => appStore.size)

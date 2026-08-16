@@ -101,6 +101,7 @@ import HeaderMessage from './HeaderMessage.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 import defaultSettings from '@/default-settings'
 import { nextTick } from 'vue'
+import { SvgIcon } from '@/components'
 
 const appStore = useAppStore()
 const userStore = useUserStore()

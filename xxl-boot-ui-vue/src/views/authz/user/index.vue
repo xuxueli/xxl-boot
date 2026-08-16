@@ -216,6 +216,7 @@ import type { User, Org, Role, UserQuery } from '@/types/api'
 import type { EnumOption, TableState, FormState } from '@/types'
 import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
 import { ref } from 'vue'
+import { RightToolbar, Pagination, TreePanel } from '@/components'
 
 const resetForm = useFormReset()
 
@@ -310,9 +311,9 @@ function getDeptTree() {
 }
 
 /** 组织树节点过滤方法（字段为 name，非 TreePanel 默认的 label） */
-function filterOrg(value: string, data: Org) {
+function filterOrg(value: string, data: Org): boolean {
   if (!value) return true
-  return data.name && data.name.indexOf(value) !== -1
+  return data.name ? data.name.indexOf(value) !== -1 : false
 }
 
 /** 递归收集节点及其全部子节点 ID */

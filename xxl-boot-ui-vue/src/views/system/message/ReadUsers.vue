@@ -35,6 +35,7 @@ import { parseTime } from '@/utils/common'
 import { usePageParams } from '@/composables/usePageParams'
 import type { Message, User } from '@/types/api'
 import { ref } from 'vue'
+import { Pagination } from '@/components'
 
 /** 弹窗状态 */
 interface DialogState {

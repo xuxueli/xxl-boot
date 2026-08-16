@@ -35,6 +35,7 @@ import defaultSettings from '@/default-settings'
 import type { RouteData } from '@/store/modules/routes'
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { SvgIcon } from '@/components'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()

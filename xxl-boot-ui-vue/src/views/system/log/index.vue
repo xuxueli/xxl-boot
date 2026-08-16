@@ -100,6 +100,7 @@ import { download } from '@/utils/request'
 import type { Log, LogQuery } from '@/types/api'
 import type { EnumOption, TableState } from '@/types'
 import { ref } from 'vue'
+import { RightToolbar, Pagination } from '@/components'
 
 const resetForm = useFormReset()
 

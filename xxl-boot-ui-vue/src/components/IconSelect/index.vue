@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { SvgIcon } from '@/components'
 /**
  * Svg Icon全量导入：
  *

@@ -47,6 +47,7 @@ import { isExternal } from '@/utils/validate'
 import { resolveMenuPath } from '@/utils/menu'
 import type { RouteData } from '@/store/modules/routes'
 import { computed } from 'vue'
+import { SvgIcon } from '@/components'
 
 /*
  * 组件属性
