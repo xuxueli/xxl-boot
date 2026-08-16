@@ -199,7 +199,8 @@
   </div>
 </template>
 
-<script setup name="Resource" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Resource' })
 import { listResource, getResource, addResource, updateResource, delResource, updateResourceSort } from '@/api/authz/resource'
 import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'

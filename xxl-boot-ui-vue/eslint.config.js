@@ -64,6 +64,7 @@ export default tseslint.config(
 
       // --- Vue 特定规则 ---
       'vue/multi-word-component-names': 'off', // 允许单字组件名
+      'vue/no-reserved-component-names': 'off', // 允许与 HTML 元素同名的组件（如 Data）
       'vue/no-mutating-props': 'off', // ⚠️ 业务特定：pagegen 设计器直接修改 prop
       'vue/valid-v-bind': 'off', // ⚠️ 业务特定：兼容 pagegen 生成的 v-bind 修饰符
       'vue/no-unused-vars': 'off', // 交由 TS 约束

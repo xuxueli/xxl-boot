@@ -77,7 +77,8 @@
   </div>
 </template>
 
-<script setup name="Profile" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Profile' })
 // 引入
 import userInfo from './userInfo.vue'
 import resetPwd from './resetPwd.vue'

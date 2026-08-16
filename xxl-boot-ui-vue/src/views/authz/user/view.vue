@@ -103,7 +103,8 @@
   </el-drawer>
 </template>
 
-<script setup name="UserView" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'UserView' })
 import { listRole } from '@/api/authz/role'
 import { loadEnumItem } from '@/api/system/dict/data'
 import { parseTime } from '@/utils/common'

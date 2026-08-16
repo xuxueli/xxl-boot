@@ -129,7 +129,8 @@
   </div>
 </template>
 
-<script setup name="Message" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Message' })
 import ReadUsersDialog from './ReadUsers.vue'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
 import { listMessage, getMessage, delMessage, addMessage, updateMessage } from '@/api/system/message'

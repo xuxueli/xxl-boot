@@ -28,7 +28,8 @@
   </el-dialog>
 </template>
 
-<script setup name="ReadUsers" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'ReadUsers' })
 import { listMessageReadUsers } from '@/api/system/message'
 import { parseTime } from '@/utils/common'
 import { usePageParams } from '@/composables/usePageParams'

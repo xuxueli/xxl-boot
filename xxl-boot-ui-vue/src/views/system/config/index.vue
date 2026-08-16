@@ -102,7 +102,8 @@
   </div>
 </template>
 
-<script setup name="Config" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Config' })
 import { listConfig, getConfig, delConfig, addConfig, updateConfig } from '@/api/system/config'
 import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'

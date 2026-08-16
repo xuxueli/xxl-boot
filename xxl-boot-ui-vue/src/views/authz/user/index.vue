@@ -201,7 +201,8 @@
   </div>
 </template>
 
-<script setup name="User" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'User' })
 import UserViewDrawer from './view.vue'
 import { listUser, addUser, updateUser, delUser } from '@/api/authz/user'
 import { listRole } from '@/api/authz/role'

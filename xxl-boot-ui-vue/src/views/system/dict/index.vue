@@ -105,7 +105,8 @@
   </div>
 </template>
 
-<script setup name="Dict" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Dict' })
 import DictDataDrawer from './detail.vue'
 import { listType, getType, delType, addType, updateType } from '@/api/system/dict/type'
 import { useEnumOption } from '@/composables/useEnumOption'

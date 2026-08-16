@@ -8,8 +8,6 @@ import path from 'path'
 import vue from '@vitejs/plugin-vue'
 import autoImport from 'unplugin-auto-import/vite'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
-import compression from 'vite-plugin-compression'
-import setupExtend from 'unplugin-vue-setup-extend-plus/vite'
 
 /**
  * Vite 配置文件：
@@ -64,11 +62,6 @@ export default defineConfig(({ mode, command }) => {
         dts: './auto-imports.d.ts'
       }),
       /**
-       * 组件名称自动补充插件：自动补充组件名称，如：<setup-extend /> => <SetupExtend />
-       *     文档：https://github.com/sxzz/vite-plugin-setup-extend
-        */
-      setupExtend({}),
-      /**
        * SVG 图标插件：自动导入 SVG 图标，并生成 SVG 图标组件
        *     文档：https://github.com/sxzz/vite-plugin-svg-icons
        */
@@ -76,30 +69,7 @@ export default defineConfig(({ mode, command }) => {
         iconDirs: [path.resolve(process.cwd(), 'src/assets/icons/svg')],
         symbolId: 'icon-[dir]-[name]',
         svgoOptions: isBuild
-      }),
-      /**
-       * 压缩插件：压缩构建后的文件，如：gzip、brotli
-       *     文档：https://github.com/vbenjs/vite-plugin-compression
-       */
-      ...(() => {
-        const compressionList = []
-        if (isBuild) {
-          compressionList.push(
-              compression({
-                ext: '.gz',
-                deleteOriginFile: false
-              })
-          )
-          compressionList.push(
-              compression({
-                ext: '.br',
-                algorithm: 'brotliCompress',
-                deleteOriginFile: false
-              })
-          )
-        }
-        return compressionList
-      })()
+      })
     ],
     /**
      * 路径配置：

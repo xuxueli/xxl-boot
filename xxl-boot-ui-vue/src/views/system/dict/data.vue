@@ -89,7 +89,8 @@
   </div>
 </template>
 
-<script setup name="Data" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Data' })
 import { getType } from '@/api/system/dict/type'
 import { listData, getData, delData, addData, updateData } from '@/api/system/dict/data'
 import { useEnumOption } from '@/composables/useEnumOption'

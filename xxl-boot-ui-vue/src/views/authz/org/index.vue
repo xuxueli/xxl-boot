@@ -130,7 +130,8 @@
   </div>
 </template>
 
-<script setup name="Org" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Org' })
 import { listOrg, getOrg, delOrg, addOrg, updateOrg, updateOrgSort } from '@/api/authz/org'
 import { useEnumOption } from '@/composables/useEnumOption'
 import { handleTree, parseTime } from '@/utils/common'

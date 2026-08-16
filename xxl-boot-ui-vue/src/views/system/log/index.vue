@@ -87,7 +87,8 @@
   </div>
 </template>
 
-<script setup name="Log" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Log' })
 import LogDetail from './detail.vue'
 import { pageList, delOperlog } from '@/api/system/log'
 import { loadEnumItem } from '@/api/system/dict/data'

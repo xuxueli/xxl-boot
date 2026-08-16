@@ -75,7 +75,8 @@
   </div>
 </template>
 
-<script setup name="Index" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Index' })
 import { getStats, getLogTrend } from '@/api/dashboard'
 import { listMessageTop, markMessageRead } from '@/api/system/message'
 import { parseTime } from '@/utils/common'

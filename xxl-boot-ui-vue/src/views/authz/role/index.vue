@@ -129,7 +129,8 @@
   </div>
 </template>
 
-<script setup name="Role" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: 'Role' })
 import { listRole, getRole, addRole, updateRole, delRole, roleMenuTreeselect, updateRoleRes } from '@/api/authz/role'
 import { listResource as menuTreeselect } from '@/api/authz/resource'
 import { useEnumOption } from '@/composables/useEnumOption'
