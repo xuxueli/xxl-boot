@@ -22,8 +22,16 @@ export default defineConfig(({ mode, command }) => {
    * Vite 配置项：
    */
   return {
+    /**
+     * 基础公共路径 (Base Public Path)
+     *    作用：指定打包后资源（JS, CSS, 图片等）在 HTML 中的引用前缀。通常生产环境如果部署在子目录（如 /app/），需修改为对应路径。
+     *    文档：https://cn.vitejs.dev/config/#base
+     */
+    base: '/',
     /*
      * 插件系统 (Plugins)
+     *    作用：注册 Vite 插件。
+     *    文档：https://cn.vitejs.dev/guide/api-plugin.html
      */
     plugins: [react()],
     /**
