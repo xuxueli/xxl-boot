@@ -51,7 +51,8 @@
     </span>
   </el-col>
 </template>
-<script setup lang="ts" name="DraggableItem">
+<script setup lang="ts">
+defineOptions({ name: 'DraggableItem' })
 /** 可拖拽表单项 - 逻辑 */
 import type { FormConf, FormItemConf } from '@/utils/generator/config'
 import draggable from 'vuedraggable'

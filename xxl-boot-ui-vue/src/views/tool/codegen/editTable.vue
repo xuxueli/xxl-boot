@@ -203,7 +203,8 @@
   </el-dialog>
 </template>
 
-<script setup lang="ts" name="GenEdit">
+<script setup lang="ts">
+defineOptions({ name: 'GenEdit' })
 import { getGenTable, updateGenTable } from '@/api/tool/codegen'
 import { queryDictList } from '@/api/system/dict/type'
 import type { FormInstance } from 'element-plus'

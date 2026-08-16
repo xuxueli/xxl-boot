@@ -137,7 +137,8 @@
   </div>
 </template>
 
-<script setup name="${codegen.businessName}Tree" lang="ts">
+<script setup lang="ts">
+defineOptions({ name: '${codegen.businessName}Tree' })
 import type { FormInstance, FormRules } from 'element-plus'
 import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName} } from '@/api/${codegen.moduleName}/${codegen.businessName?lower_case}'
 import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}Query } from '@/types/${codegen.moduleName}/${codegen.businessName?lower_case}'
@@ -145,6 +146,7 @@ import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import type { FormState, TableState } from '@/types'
+import { ref } from 'vue'
 
 const resetForm = useFormReset()
 

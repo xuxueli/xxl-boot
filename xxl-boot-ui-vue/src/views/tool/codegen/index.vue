@@ -108,7 +108,8 @@
   </div>
 </template>
 
-<script setup lang="ts" name="Gen">
+<script setup lang="ts">
+defineOptions({ name: 'Gen' })
 import { listTable, previewTable, delTable, createTable } from '@/api/tool/codegen'
 import type { CodegenTable } from '@/api/tool/codegen'
 import { useFormReset } from '@/composables/useFormReset'
