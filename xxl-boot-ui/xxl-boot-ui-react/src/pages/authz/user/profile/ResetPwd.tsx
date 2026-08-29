@@ -4,9 +4,9 @@
  */
 
 import { ProForm, ProFormText } from '@ant-design/pro-components';
+import type { Rule } from 'antd/es/form';
 import { App, Button } from 'antd';
 import React from 'react';
-import { usePasswordRule } from '@/hooks/usePasswordRule';
 import { updateUserPwd } from '@/services/authz/user';
 
 /** 密码表单数据 */
@@ -16,10 +16,20 @@ interface PwdForm {
   confirmPassword?: string;
 }
 
+/**
+ * 新密码校验规则：必填 + 长度 6-20 + 任意字符（禁止 < > " ' \ |）
+ * 说明：原设计按后端 chrtype（0-4）动态切换密码策略，但全项目无任何写入方，
+ *       实际恒为默认策略 0（任意字符），故直接固定为一条规则。
+ */
+const INFO_PWD_RULES: Rule[] = [
+  { required: true, message: '新密码不能为空' },
+  { min: 6, max: 20, message: '新密码长度必须介于 6 和 20 之间' },
+  { pattern: /^[^<>"'|\\]+$/, message: '密码不能包含非法字符：< > " \' \\ |' },
+];
+
 const ResetPwd = () => {
   const { message } = App.useApp();
   const [form] = ProForm.useForm();
-  const { infoPwdValidator } = usePasswordRule();
 
   /** 提交保存 */
   const handleSubmit = async (values: PwdForm) => {
@@ -34,6 +44,7 @@ const ResetPwd = () => {
   return (
     <ProForm<PwdForm>
       form={form}
+      layout="horizontal"
       labelCol={{ span: 4 }}
       onFinish={handleSubmit}
       submitter={{
@@ -61,7 +72,7 @@ const ResetPwd = () => {
         name="newPassword"
         label="新密码"
         placeholder="请输入新密码"
-        rules={infoPwdValidator}
+        rules={INFO_PWD_RULES}
       />
       <ProFormText.Password
         name="confirmPassword"

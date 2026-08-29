@@ -8,7 +8,7 @@
     <el-form-item label="旧密码" prop="oldPassword">
       <el-input v-model="user.oldPassword" placeholder="请输入旧密码" type="password" show-password />
     </el-form-item>
-    <el-form-item label="新密码" prop="newPassword" :rules="infoPwdValidator">
+    <el-form-item label="新密码" prop="newPassword">
       <el-input v-model="user.newPassword" placeholder="请输入新密码" type="password" show-password />
     </el-form-item>
     <el-form-item label="确认密码" prop="confirmPassword">
@@ -23,7 +23,6 @@
 
 <script setup lang="ts">
 // 引入
-import { usePasswordRule } from '@/composables/usePasswordRule'
 import { updateUserPwd } from '@/api/authz/user'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
@@ -37,9 +36,19 @@ interface PwdForm {
   confirmPassword?: string
 }
 
+/**
+ * 新密码校验规则：必填 + 长度 6-20 + 任意字符（禁止 < > " ' \ |）
+ * 说明：原设计按后端 chrtype（0-4）动态切换密码策略，但全项目无任何写入方，
+ *       实际恒为默认策略 0（任意字符），故直接固定为一条规则。
+ */
+const newPasswordRules: FormItemRule[] = [
+  { required: true, message: '新密码不能为空', trigger: 'blur' },
+  { min: 6, max: 20, message: '新密码长度必须介于 6 和 20 之间', trigger: 'blur' },
+  { pattern: /^[^<>"'|\\]+$/, message: '密码不能包含非法字符：< > " \' \\ |', trigger: 'blur' }
+]
+
 // 表单 ref
 const pwdRef = ref<FormInstance>()
-const { infoPwdValidator } = usePasswordRule()
 
 // 密码表单数据
 const user = reactive<PwdForm>({
@@ -60,6 +69,7 @@ const equalToPassword: FormItemRule['validator'] = (rule, value, callback) => {
 // 表单校验规则
 const rules = ref<FormRules>({
   oldPassword: [{ required: true, message: '旧密码不能为空', trigger: 'blur' }],
+  newPassword: newPasswordRules,
   confirmPassword: [
     { required: true, message: '确认密码不能为空', trigger: 'blur' },
     {
