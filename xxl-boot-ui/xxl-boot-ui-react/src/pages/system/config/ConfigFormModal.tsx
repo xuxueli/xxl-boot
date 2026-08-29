@@ -1,6 +1,6 @@
 /**
  * 组件：ConfigFormModal（配置新增/编辑弹窗）
- * 功能：配置名称、key、值、状态、备注
+ * 功能：配置名称、Key、Value、状态、备注
  */
 import {
   ModalForm,
@@ -59,12 +59,12 @@ const ConfigFormModal = ({
       />
       <ProFormText
         name="key"
-        label="配置键名"
-        placeholder="请输入配置键名"
+        label="配置Key"
+        placeholder="请输入配置Key"
         disabled={!!current?.id}
         rules={[
-          { required: true, message: '配置键名不能为空' },
-          { min: 4, max: 100, message: '配置键名长度必须在 4 到 100 个字符' },
+          { required: true, message: '配置Key不能为空' },
+          { min: 4, max: 100, message: '配置Key长度必须在 4 到 100 个字符' },
           {
             pattern: /^[a-z][a-z0-9.]*$/,
             message: '小写字母开头，仅允许小写字母、数字和点',
@@ -73,9 +73,9 @@ const ConfigFormModal = ({
       />
       <ProFormTextArea
         name="value"
-        label="配置值"
-        placeholder="请输入配置值"
-        rules={[{ required: true, message: '配置值不能为空' }]}
+        label="配置Value"
+        placeholder="请输入配置Value"
+        rules={[{ required: true, message: '配置Value不能为空' }]}
         fieldProps={{ rows: 3 }}
       />
       <ProFormRadio.Group

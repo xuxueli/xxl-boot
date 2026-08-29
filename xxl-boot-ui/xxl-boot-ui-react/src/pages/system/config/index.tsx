@@ -66,10 +66,25 @@ const ConfigList = () => {
 
   const columns: ProColumns<API.Config>[] = [
     { title: '序号', dataIndex: 'id', search: false, width: 80 },
-    { title: '配置名称', dataIndex: 'name' },
-    { title: '配置键名', dataIndex: 'key', search: false },
     {
-      title: '配置值',
+      title: '配置名称',
+      dataIndex: 'name',
+      ellipsis: true,
+      render: (_, record) => (
+        <Tooltip title={record.name}>{record.name}</Tooltip>
+      ),
+    },
+    {
+      title: '配置Key',
+      dataIndex: 'key',
+      search: false,
+      ellipsis: true,
+      render: (_, record) => (
+        <Tooltip title={record.key}>{record.key}</Tooltip>
+      ),
+    },
+    {
+      title: '配置Value',
       dataIndex: 'value',
       search: false,
       ellipsis: true,
@@ -88,7 +103,15 @@ const ConfigList = () => {
         </Tag>
       ),
     },
-    { title: '备注', dataIndex: 'remark', search: false },
+    {
+      title: '备注',
+      dataIndex: 'remark',
+      search: false,
+      ellipsis: true,
+      render: (_, record) => (
+        <Tooltip title={record.remark}>{record.remark}</Tooltip>
+      ),
+    },
     { title: '创建时间', dataIndex: 'addTime', search: false, width: 160 },
     {
       title: '操作',
