@@ -26,14 +26,19 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [codeMap, setCodeMap] = useState<Record<string, string>>({});
+  const [activeKey, setActiveKey] = useState('');
 
   const open = useCallback((id: number) => {
     setVisible(true);
     setLoading(true);
+    setActiveKey('');
     setCodeMap({});
     previewTable(id)
       .then((res) => {
-        setCodeMap(res.data || {});
+        const data = res.data || {};
+        setCodeMap(data);
+        /* 默认选中第一个模板文件 */
+        setActiveKey(Object.keys(data)[0] || '');
       })
       .finally(() => {
         setLoading(false);
@@ -53,7 +58,6 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
   };
 
   const fileNames = Object.keys(codeMap);
-  const activeKey = fileNames[0] || '';
 
   return (
     <Modal
@@ -67,6 +71,7 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
       <Spin spinning={loading}>
         <Tabs
           activeKey={activeKey}
+          onChange={setActiveKey}
           items={fileNames.map((name) => ({
             key: name,
             label: fileNameToLabel(name),

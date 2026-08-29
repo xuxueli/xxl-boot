@@ -21,13 +21,13 @@ import EditTableModal from './EditTableModal';
 import PreviewModal, { type PreviewModalRef } from './PreviewModal';
 
 const demoTableSql = `CREATE TABLE \`product01\` (
-  \`id\` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  \`product_name\` varchar(50) DEFAULT NULL COMMENT '商品名称',
-  \`product_code\` varchar(50) DEFAULT NULL COMMENT '商品编码',
-  \`product_status\` tinyint(1) DEFAULT '0' COMMENT '商品状态（0正常 1停用）',
-  \`product_price\` decimal(10,2) DEFAULT NULL COMMENT '商品价格',
+  \`id\`            INT             NOT NULL AUTO_INCREMENT      COMMENT '主键ID',
+  \`name\`          VARCHAR(50)     NOT NULL                     COMMENT '产品名称',
+  \`num\`           INT             NOT NULL                     COMMENT '产品数量',
+  \`add_time\`      DATETIME        NOT NULL                     COMMENT '新增时间',
+  \`update_time\`   DATETIME        NOT NULL                     COMMENT '更新时间',
   PRIMARY KEY (\`id\`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商品信息表';`;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT='产品信息表';`;
 
 /**
  * 代码生成表格样式
@@ -192,6 +192,7 @@ const CodegenList = () => {
             hasRole('admin') && (
               <Button
                 key="create"
+                type="primary"
                 icon={<PlusOutlined />}
                 onClick={() => {
                   setTableSql(demoTableSql);

@@ -99,7 +99,7 @@ const SortableRow = (props: any) => {
   );
   return (
     <RowContext.Provider value={rowContext}>
-      <tr ref={setNodeRef} style={style} {...props} />
+      <tr ref={setNodeRef} {...props} style={style} />
     </RowContext.Provider>
   );
 };
@@ -263,7 +263,7 @@ const EditTableModal = ({
     {
       title: '字段注释',
       dataIndex: 'columnComment',
-      width: 120,
+      width: 100,
       render: (_, record) => (
         <FieldInput
           value={record.columnComment}
@@ -274,7 +274,7 @@ const EditTableModal = ({
     {
       title: 'Java类型',
       dataIndex: 'javaType',
-      width: 110,
+      width: 95,
       render: (_, record) => (
         <Select
           size="small"
@@ -288,7 +288,7 @@ const EditTableModal = ({
     {
       title: 'Java属性',
       dataIndex: 'javaField',
-      width: 120,
+      width: 100,
       render: (_, record) => (
         <FieldInput
           value={record.javaField}
@@ -351,7 +351,7 @@ const EditTableModal = ({
     {
       title: '查询方式',
       dataIndex: 'queryType',
-      width: 110,
+      width: 95,
       render: (_, record) => (
         <Select
           size="small"
@@ -377,7 +377,7 @@ const EditTableModal = ({
     {
       title: '显示类型',
       dataIndex: 'htmlType',
-      width: 120,
+      width: 105,
       render: (_, record) => (
         <Select
           size="small"
@@ -391,7 +391,7 @@ const EditTableModal = ({
     {
       title: '字典类型',
       dataIndex: 'dictType',
-      width: 120,
+      width: 110,
       render: (_, record) => (
         <Select
           size="small"
