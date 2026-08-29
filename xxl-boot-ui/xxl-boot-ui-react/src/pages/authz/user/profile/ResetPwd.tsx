@@ -71,6 +71,7 @@ const ResetPwd = () => {
         rules={[
           { required: true, message: '确认密码不能为空' },
           ({ getFieldValue }) => ({
+            /* 自定义规则：返回 Promise，处理异步操作； */
             validator: (_, value) => {
               if (!value || getFieldValue('newPassword') === value) {
                 return Promise.resolve();
