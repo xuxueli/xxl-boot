@@ -16,7 +16,6 @@ import Loading from '@/components/Loading';
 import AppLayout from '@/layouts/AppLayout';
 import defaultSettings from '@/default-settings';
 import {businessRoutes} from './business';
-import RequireAuth from './guards/RequireAuth';
 
 
 // ==================== 组件加载方法 ====================
@@ -34,7 +33,7 @@ export const lazyLoad = (factory: () => Promise<{ default: React.ComponentType }
 
 // ==================== 静态路由注册 ====================
 
-/** 静态路由 —— 无权限门槛，启动即注册（登录、301 未授权、404 兜底、个人中心） */
+/** 静态路由 —— 无权限门槛，启动即注册（登录、301、404、主布局、个人中心等）；参考 Vue constantRoutes 全部平铺 */
 export const constantRoutes: RouteObject[] = [
     // 登录
     {
@@ -46,28 +45,27 @@ export const constantRoutes: RouteObject[] = [
         path: '/301',
         element: lazyLoad(() => import('@/pages/common/301')),
     },
-    // 404：访问资源不存在。兜底 catch-all，使用时（buildAppRoutes）置于路由数组末段
+    // 404：访问资源不存在。兜底 catch-all，编排（buildAppRoutes）时置于数组末段
     {
         path: '*',
         element: lazyLoad(() => import('@/pages/common/404')),
     },
-    // 主布局：登录守卫 + 静态/业务/动态子路由
+    // 主布局：首页默认跳转工作台；业务路由由编排（buildAppRoutes）注入 children
     {
         path: '/',
-        element: (
-            <RequireAuth>
-                <AppLayout/>
-            </RequireAuth>
-        ),
+        element: <AppLayout/>,
         children: [
-            // 默认子路由：首页默认跳转工作台
+            // 首页默认跳转工作台（路径读取 default-settings 配置，与 Vue redirect: defaultSettings.homePath 对齐）
+            {index: true, element: <Navigate to={defaultSettings.homePath ?? '/dashboard'} replace/>},
+        ],
+    },
+    // 个人中心：hidden 控制侧栏不显示
+    {
+        path: '/user',
+        element: <AppLayout/>,
+        children: [
             {
-                index: true,
-                element: <Navigate to={defaultSettings.homePath ?? '/dashboard'} replace/>
-            },
-            // 个人中心：hidden 控制侧栏不显示
-            {
-                path: 'user/profile',
+                path: 'profile',
                 element: lazyLoad(() => import('@/pages/authz/user/profile')),
             },
         ],
@@ -187,32 +185,33 @@ export const buildBusinessRoutes = (
 // ==================== 整合构建路由配置 ====================
 
 /**
- * 构建应用路由配置（注入业务路由与动态业务路由）
+ * 构建应用路由配置（编排 constantRoutes + 注入业务路由）
  * 说明：返回的数组由 AppRouter 经 useRoutes 渲染，动态业务路由变化（登录/刷新拉取菜单）时
  *       useRoutes 实时重新匹配，等价 Vue router.addRoute 动态注入；
- *       静态路由、404 兜底等数据统一维护于 constantRoutes（经解构组装），
- *       404 catch-all 置于路由数组末段，业务路由与动态业务路由注入到主布局 children。
+ *       业务路由与动态业务路由注入到主布局 children，404 catch-all 置于数组末段。
  *
  * @param dynamicRoutes 后端菜单生成、经 buildBusinessRoutes 拍平的动态业务路由
  * @returns 应用路由配置列表
  */
 export const buildAppRoutes = (dynamicRoutes: RouteObject[] = []): RouteObject[] => {
-    // 静态路由：登录、301、404、主布局；constantRoutes 数据统一维护，此处仅组装注入
-    const [loginRoute, errorRoute, notFoundRoute, mainLayout] = constantRoutes;
+    // 静态路由：登录、301、404、主布局、个人中心；constantRoutes 数据统一维护，此处仅编排注入
+    const [loginRoute, errorRoute, notFoundRoute, homeRoute, userRoute] = constantRoutes;
     return [
-        // 静态路由：登录、301
+        // 登录、301
         loginRoute,
         errorRoute,
         // 主布局：静态子路由 + 业务路由 + 动态业务路由
         {
-            ...mainLayout,
+            ...homeRoute,
             children: [
-                ...(mainLayout.children ?? []),
+                ...(homeRoute.children ?? []),
                 ...businessRoutes,
                 ...dynamicRoutes,
             ],
         } as RouteObject,
-        // 静态路由：404 兜底：置于数组末段，避免抢占其他路由
+        // 个人中心
+        userRoute,
+        // 404 兜底：置于数组末段，避免抢占其他路由
         notFoundRoute,
     ];
 };

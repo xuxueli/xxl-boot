@@ -1,26 +1,40 @@
 /**
- * 路由守卫：RequireAuth（登录守卫）
- * 功能：未登录重定向到登录页；已登录但会话未加载时拉取用户信息与菜单
+ * 路由守卫：RequireAuth（全局登录守卫，对齐 Vue router.beforeEach）
+ * 功能：
+ *   - 未登录访问登录页（白名单）：放行；
+ *   - 未登录访问其他路径：重定向登录页并回传原路径供登录后重定向；
+ *   - 已登录但会话未加载：拉取用户信息与菜单，加载完成后再渲染（避免路由未注册时先命中 404）。
  */
 import {message, Spin} from 'antd';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Navigate, useLocation} from 'react-router-dom';
 import {useUserStore} from '@/stores/userStore';
 import {getToken} from '@/utils/auth';
+
+/** 登录白名单：不鉴权直接放行的路径 */
+const whiteList = ['/login'];
 
 const RequireAuth = ({children}: { children: React.ReactNode }) => {
     const location = useLocation();
     const token = getToken();
     const currentUser = useUserStore((s) => s.currentUser);
+    // 会话是否加载完成（用户信息 + 菜单拉取完毕后置为 true，再渲染路由）
+    const [ready, setReady] = useState<boolean>(!!token && !!currentUser);
 
     useEffect(() => {
-        // 已登录但会话未加载
-        if (token && !currentUser) {
-            // 拉取用户信息与菜单：事件回调中直接调用 store action，避免为单次调用挂载 store 订阅
-            Promise.all([
-                useUserStore.getState().fetchUserInfo(),
-                useUserStore.getState().fetchMenuData(),
-            ]).catch(() => {
+        // 未登录：无需加载会话
+        if (!token) return;
+
+        // 会话已存在（刷新/已加载过）：直接放行
+        if (currentUser) return;
+
+        // 已登录但会话未加载：拉取用户信息与菜单
+        Promise.all([
+            useUserStore.getState().fetchUserInfo(),
+            useUserStore.getState().fetchMenuData(),
+        ])
+            .then(() => setReady(true))
+            .catch(() => {
                 // 会话信息拉取失败（如会话过期/无权限）：清理本地凭证并跳转登录页
                 useUserStore
                     .getState()
@@ -33,18 +47,17 @@ const RequireAuth = ({children}: { children: React.ReactNode }) => {
                 );
                 window.location.href = `/login?redirect=${redirect}`;
             });
-        }
     }, [token, currentUser, location.pathname, location.search]);
 
-    // 未登录，重定向到登录页
+    // 未登录：白名单（登录页）放行，其余重定向登录页
     if (!token) {
+        if (whiteList.includes(location.pathname)) return <>{children}</>;
         const redirect = encodeURIComponent(location.pathname + location.search);
         return <Navigate to={`/login?redirect=${redirect}`} replace/>;
     }
 
-    // 已登录但会话未加载，显示加载中
-    if (!currentUser) {
-        // 会话加载中
+    // 已登录但会话加载中，显示加载中
+    if (!ready) {
         return (
             <div
                 style={{

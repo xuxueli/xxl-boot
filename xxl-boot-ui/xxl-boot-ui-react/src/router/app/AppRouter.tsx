@@ -8,13 +8,14 @@ import React, {useMemo} from 'react';
 import {useRoutes} from 'react-router-dom';
 import {buildBusinessRoutes, buildAppRoutes} from '../index';
 import {useUserStore} from '@/stores/userStore';
+import RequireAuth from '../guards/RequireAuth';
 
 
 const AppRouter: React.FC = () => {
     const menuData = useUserStore((s) => s.menuData);
 
     /**
-     * 后端菜单 → 业务路由（拍平叶子路由）
+     * 后端菜单 → 业务路由（拍平叶子路由），菜单变化（登录/刷新）时重建
      *
      *
      * useMemo：
@@ -45,7 +46,12 @@ const AppRouter: React.FC = () => {
         [businessRoutes],
     );
 
-    return useRoutes(routeObjects);
+    // 全局登录守卫：登录校验 + 会话/菜单加载完成后渲染路由
+    return (
+        <RequireAuth>
+            {useRoutes(routeObjects)}
+        </RequireAuth>
+    );
 };
 
 export default AppRouter;
