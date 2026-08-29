@@ -4,9 +4,8 @@
  * 职责：
  *   1. 组件加载方法 lazyLoad：所有页面统一懒加载入口；
  *   2. 声明静态路由（constantRoutes）——登录、错误页、个人中心等，启动即注册；
- *   3. 处理业务路由（businessRoutes）——通常为业务子页面、隐藏状态，加载 business 文件；
- *   4. 动态业务路由：后端菜单（/getRouters）→ 前端路由，拍平注入（对齐 Vue addRoute）；
- *   5. 构建应用路由配置 buildAppRoutes，供 AppRouter（useRoutes）渲染，为唯一数据源。
+ *   3. 动态业务路由：后端菜单（/getRouters）→ 前端路由，拍平注入（对齐 Vue addRoute）；
+ *   4. 构建应用路由配置 buildAppRoutes，供 AppRouter（useRoutes）渲染，为唯一数据源。
  */
 import {lazy, Suspense} from 'react';
 import type {ReactNode} from 'react';
@@ -15,7 +14,6 @@ import type {RouteObject} from 'react-router-dom';
 import Loading from '@/components/Loading';
 import AppLayout from '@/layouts/AppLayout';
 import defaultSettings from '@/default-settings';
-import {businessRoutes} from './business';
 
 
 // ==================== 组件加载方法 ====================
@@ -71,12 +69,6 @@ export const constantRoutes: RouteObject[] = [
         ],
     },
 ];
-
-
-// ==================== 业务路由注册 ====================
-
-// 业务路由（独立维护于 business.tsx），隐藏业务子路由、非菜单项，供内部跳转使用；
-// 与静态路由、动态业务路由一并注入 AppLayout children。
 
 
 // ==================== 动态路由转换 ====================
@@ -200,12 +192,11 @@ export const buildAppRoutes = (dynamicRoutes: RouteObject[] = []): RouteObject[]
         // 登录、301
         loginRoute,
         errorRoute,
-        // 主布局：静态子路由 + 业务路由 + 动态业务路由
+        // 主布局：静态子路由 + 动态业务路由
         {
             ...homeRoute,
             children: [
                 ...(homeRoute.children ?? []),
-                ...businessRoutes,
                 ...dynamicRoutes,
             ],
         } as RouteObject,

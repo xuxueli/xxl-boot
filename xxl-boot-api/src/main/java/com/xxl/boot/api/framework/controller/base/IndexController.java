@@ -61,7 +61,7 @@ public class IndexController {
 
 		// query user resource
 		int userId = Integer.parseInt(loginCheckResult.getData().getUserId());
-		List<com.xxl.boot.api.framework.model.entity.Resource> resourceList = resourceService.queryResourceByUserid(userId, 0);
+		List<com.xxl.boot.api.framework.model.entity.Resource> resourceList = resourceService.queryResourceByUserid(userId, -1);
 
 		// 直接从 flat list 构建 RouterVo 树（Resource 实体无 children 字段）
 		List<RouterVo> routerList = buildRoutersFromFlatList(resourceList);
