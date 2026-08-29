@@ -251,7 +251,7 @@ VALUES (1, 0, '首页', 1, 'dashboard', '/dashboard', 'fa-home', 100, 0, 0, now(
        (6, 2, '组织管理', 1, 'authz:org', '/authz/org', '', 904, 0, 0, now(), now()),
        (7, 0, '系统管理', 0, 'system', '/system', 'fa-cogs', 910, 0, 0, now(), now()),
        (8, 7, '字典管理', 1, 'system:dict', '/system/dict', '', 911, 0, 0, now(), now()),
-       (9, 7, '字典项管理', 1, 'system:dict', '/system/dict/data', '', 911, 0, 0, now(), now()),
+       (9, 7, '字典项管理', 1, 'system:dict', '/system/dict/data', '', 911, 0, 1, now(), now()),
        (10, 7, '配置管理', 1, 'system:config', '/system/config', '', 912, 0, 0, now(), now()),
        (11, 7, '站内消息', 1, 'system:message', '/system/message', '', 913, 0, 0, now(), now()),
        (12, 7, '审计日志', 1, 'system:log', '/system/log', '', 914, 0, 0, now(), now()),
