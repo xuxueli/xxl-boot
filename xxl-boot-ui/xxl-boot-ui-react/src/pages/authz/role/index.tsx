@@ -2,7 +2,7 @@
  * 页面：角色管理
  * 功能：角色分页表格 + 新增/修改（含菜单权限树）/删除
  */
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
@@ -107,10 +107,10 @@ const RoleList = () => {
             setFormOpen(true);
           }}
         >
-          修改
+          <EditOutlined /> 修改
         </a>,
         <a key="delete" onClick={() => handleDelete(record)}>
-          删除
+          <DeleteOutlined /> 删除
         </a>,
       ],
     },

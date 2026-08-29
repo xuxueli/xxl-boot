@@ -2,7 +2,7 @@
  * 页面：配置管理
  * 功能：配置分页表格 + 新增/修改/删除
  */
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag, Tooltip } from 'antd';
@@ -134,10 +134,10 @@ const ConfigList = () => {
             setFormOpen(true);
           }}
         >
-          修改
+          <EditOutlined /> 修改
         </a>,
         <a key="delete" onClick={() => handleDelete(record)}>
-          删除
+          <DeleteOutlined /> 删除
         </a>,
       ],
     },

@@ -2,7 +2,7 @@
  * 页面：字典数据
  * 功能：某字典类型下的字典项分页管理（隐藏路由，从字典管理进入）
  */
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
@@ -100,10 +100,10 @@ const DictData = () => {
             setFormOpen(true);
           }}
         >
-          修改
+          <EditOutlined /> 修改
         </a>,
         <a key="delete" onClick={() => handleDelete(record)}>
-          删除
+          <DeleteOutlined /> 删除
         </a>,
       ],
     },

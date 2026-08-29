@@ -18,9 +18,10 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { HolderOutlined } from '@ant-design/icons';
 import { App, Checkbox, Form, Input, Modal, Select, Table, Tabs } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { queryDictList } from '@/services/system/dict';
 import { getGenTable, updateGenTable } from '@/services/tool/codegen';
 
@@ -55,12 +56,34 @@ const htmlTypeOptions = [
   { value: 'editor', label: '富文本控件' },
 ];
 
+/** 拖拽行上下文：向行内单元格的拖拽手柄传递激活节点与事件 */
+const RowContext = React.createContext<{
+  setActivatorNodeRef: (ref: HTMLElement | null) => void;
+  attributes: any;
+  listeners: any;
+} | null>(null);
+
+/** 拖拽手柄：用于拖拽调整字段行顺序 */
+const DragHandle = () => {
+  const ctx = useContext(RowContext);
+  if (!ctx) return null;
+  return (
+    <HolderOutlined
+      ref={ctx.setActivatorNodeRef}
+      style={{ cursor: 'move' }}
+      {...ctx.attributes}
+      {...ctx.listeners}
+    />
+  );
+};
+
 /** 可拖拽表格行 */
 const SortableRow = (props: any) => {
   const {
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -70,14 +93,14 @@ const SortableRow = (props: any) => {
     transition,
     ...(isDragging ? { position: 'relative', zIndex: 999 } : {}),
   };
+  const rowContext = useMemo(
+    () => ({ setActivatorNodeRef, attributes, listeners }),
+    [setActivatorNodeRef, attributes, listeners],
+  );
   return (
-    <tr
-      ref={setNodeRef}
-      style={style}
-      {...props}
-      {...attributes}
-      {...listeners}
-    />
+    <RowContext.Provider value={rowContext}>
+      <tr ref={setNodeRef} style={style} {...props} />
+    </RowContext.Provider>
   );
 };
 
@@ -222,9 +245,14 @@ const EditTableModal = ({
   const columns: ColumnsType<API.CodegenField> = [
     {
       title: '排序',
-      width: 48,
+      width: 72,
       align: 'center',
-      render: (_, _r, index) => index + 1,
+      render: (_, _r, index) => (
+        <span>
+          <DragHandle />
+          <span style={{ marginLeft: 4 }}>{index + 1}</span>
+        </span>
+      ),
     },
     {
       title: '字段名',
@@ -250,6 +278,7 @@ const EditTableModal = ({
       render: (_, record) => (
         <Select
           size="small"
+          style={{ width: '100%' }}
           value={record.javaType}
           options={javaTypeOptions.map((v) => ({ value: v, label: v }))}
           onChange={(v) => updateField(record.id, { javaType: v })}
@@ -322,7 +351,7 @@ const EditTableModal = ({
     {
       title: '查询方式',
       dataIndex: 'queryType',
-      width: 130,
+      width: 110,
       render: (_, record) => (
         <Select
           size="small"
@@ -348,7 +377,7 @@ const EditTableModal = ({
     {
       title: '显示类型',
       dataIndex: 'htmlType',
-      width: 150,
+      width: 120,
       render: (_, record) => (
         <Select
           size="small"
@@ -362,7 +391,7 @@ const EditTableModal = ({
     {
       title: '字典类型',
       dataIndex: 'dictType',
-      width: 160,
+      width: 120,
       render: (_, record) => (
         <Select
           size="small"

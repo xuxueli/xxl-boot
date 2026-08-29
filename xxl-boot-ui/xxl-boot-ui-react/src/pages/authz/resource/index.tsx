@@ -3,6 +3,8 @@
  * 功能：资源树表格 + 新增/修改（含图标选择）/删除 + 内联排序 + 展开/折叠
  */
 import {
+  DeleteOutlined,
+  EditOutlined,
   NodeExpandOutlined,
   PlusOutlined,
   SaveOutlined,
@@ -158,6 +160,8 @@ const ResourceList = () => {
     {
       title: '资源名称',
       dataIndex: 'name',
+      width: 220,
+      ellipsis: true,
       render: (_, record) => {
         const Icon = getIconComponent(record.icon);
         return (
@@ -207,6 +211,8 @@ const ResourceList = () => {
       title: '菜单地址',
       dataIndex: 'url',
       search: false,
+      width: 220,
+      ellipsis: true,
       render: (_, record) => <span>{record.url || '-'}</span>,
     },
     {
@@ -233,7 +239,7 @@ const ResourceList = () => {
     {
       title: '操作',
       valueType: 'option',
-      width: 160,
+      width: 240,
       render: (_, record) => [
         <a
           key="edit"
@@ -242,7 +248,7 @@ const ResourceList = () => {
             setFormOpen(true);
           }}
         >
-          修改
+          <EditOutlined /> 修改
         </a>,
         record.type !== 2 && (
           <a
@@ -252,11 +258,11 @@ const ResourceList = () => {
               setFormOpen(true);
             }}
           >
-            新增
+            <PlusOutlined /> 新增
           </a>
         ),
         <a key="delete" onClick={() => handleDelete(record)}>
-          删除
+          <DeleteOutlined /> 删除
         </a>,
       ],
     },

@@ -2,7 +2,13 @@
  * 页面：用户管理
  * 功能：左侧组织树 + 用户分页表格，支持新增/修改/删除/重置密码/状态切换/详情
  */
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  KeyOutlined,
+  MoreOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Dropdown, Input, Modal, Switch } from 'antd';
@@ -241,22 +247,33 @@ const Dashboard = () => {
             setFormOpen(true);
           }}
         >
-          修改
+          <EditOutlined /> 修改
         </a>,
         <a key="delete" onClick={() => handleDelete(record)}>
-          删除
+          <DeleteOutlined /> 删除
         </a>,
         <Dropdown
           key="more"
           menu={{
-            items: [{ key: 'resetPwd', label: '重置密码' }],
+            items: [
+              {
+                key: 'resetPwd',
+                label: (
+                  <>
+                    <KeyOutlined /> 重置密码
+                  </>
+                ),
+              },
+            ],
             onClick: () => {
               setResetRow(record);
               setResetPassword('');
             },
           }}
         >
-          <a onClick={(e) => e.preventDefault()}>更多</a>
+          <a onClick={(e) => e.preventDefault()}>
+            <MoreOutlined /> 更多
+          </a>
         </Dropdown>,
       ],
     },

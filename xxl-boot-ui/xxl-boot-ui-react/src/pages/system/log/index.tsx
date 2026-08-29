@@ -2,7 +2,7 @@
  * 页面：审计日志
  * 功能：日志分页表格 + 筛选/导出/详情/删除
  */
-import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
@@ -139,7 +139,7 @@ const LogList = () => {
             detailRef.current?.open(record, moduleMap);
           }}
         >
-          详细
+          <EyeOutlined /> 详细
         </a>,
       ],
     },

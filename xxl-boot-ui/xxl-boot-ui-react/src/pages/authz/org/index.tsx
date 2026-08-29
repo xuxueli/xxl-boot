@@ -3,6 +3,8 @@
  * 功能：组织树表格 + 新增/修改/删除 + 内联排序 + 展开/折叠
  */
 import {
+  DeleteOutlined,
+  EditOutlined,
   NodeExpandOutlined,
   PlusOutlined,
   SaveOutlined,
@@ -141,6 +143,8 @@ const OrgList = () => {
     {
       title: '组织名称',
       dataIndex: 'name',
+      width: 220,
+      ellipsis: true,
       render: (_, record) => <span>{record.name}</span>,
     },
     {
@@ -182,7 +186,7 @@ const OrgList = () => {
     {
       title: '操作',
       valueType: 'option',
-      width: 160,
+      width: 240,
       render: (_, record) => [
         <a
           key="edit"
@@ -191,7 +195,7 @@ const OrgList = () => {
             setFormOpen(true);
           }}
         >
-          修改
+          <EditOutlined /> 修改
         </a>,
         <a
           key="add"
@@ -200,11 +204,11 @@ const OrgList = () => {
             setFormOpen(true);
           }}
         >
-          新增
+          <PlusOutlined /> 新增
         </a>,
         record.parentId !== 0 && (
           <a key="delete" onClick={() => handleDelete(record)}>
-            删除
+            <DeleteOutlined /> 删除
           </a>
         ),
       ],

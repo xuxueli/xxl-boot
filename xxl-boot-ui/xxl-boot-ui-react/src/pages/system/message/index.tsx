@@ -2,7 +2,12 @@
  * 页面：站内消息
  * 功能：消息分页表格 + 新增/修改（富文本）/删除 + 详情抽屉 + 已读用户弹窗
  */
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
@@ -136,7 +141,7 @@ const MessageList = () => {
             readUsersRef.current?.open(record);
           }}
         >
-          阅读用户
+          <TeamOutlined /> 阅读用户
         </a>,
         <a
           key="edit"
@@ -145,10 +150,10 @@ const MessageList = () => {
             setFormOpen(true);
           }}
         >
-          修改
+          <EditOutlined /> 修改
         </a>,
         <a key="delete" onClick={() => handleDelete(record)}>
-          删除
+          <DeleteOutlined /> 删除
         </a>,
       ],
     },
