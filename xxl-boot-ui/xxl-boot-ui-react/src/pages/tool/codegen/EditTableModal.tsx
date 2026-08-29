@@ -376,7 +376,7 @@ const EditTableModal = ({
       onCancel={() => onOpenChange(false)}
       onOk={handleSubmit}
       confirmLoading={saving}
-      destroyOnClose
+      destroyOnHidden
       okText="保存"
       cancelText="取消"
     >

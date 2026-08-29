@@ -91,7 +91,7 @@ const OrgFormModal = ({
       width={600}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       layout="horizontal"
       grid
       labelCol={{ flex: '85px' }}

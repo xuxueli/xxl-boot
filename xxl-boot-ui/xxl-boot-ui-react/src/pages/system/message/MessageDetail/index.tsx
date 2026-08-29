@@ -70,7 +70,7 @@ const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
       size="50%"
       open={visible}
       onClose={handleClose}
-      destroyOnClose
+      destroyOnHidden
     >
       {loading ? (
         <Spin style={{ width: '100%', marginTop: 48 }} />

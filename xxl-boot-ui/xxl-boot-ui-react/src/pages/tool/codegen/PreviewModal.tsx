@@ -62,7 +62,7 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
       open={visible}
       onCancel={() => setVisible(false)}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
     >
       <Spin spinning={loading}>
         <Tabs

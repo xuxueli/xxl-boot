@@ -78,7 +78,7 @@ const ReadUsersDialog = forwardRef<ReadUsersDialogRef>((_, ref) => {
       open={visible}
       onCancel={handleClose}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
     >
       <Table<API.MessageRead>
         rowKey="id"

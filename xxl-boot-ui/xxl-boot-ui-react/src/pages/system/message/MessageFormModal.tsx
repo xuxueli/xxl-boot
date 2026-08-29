@@ -48,7 +48,7 @@ const MessageFormModal = ({
       width={780}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       onFinish={handleFinish}
       initialValues={{ category: 0, status: 0, ...current }}
     >

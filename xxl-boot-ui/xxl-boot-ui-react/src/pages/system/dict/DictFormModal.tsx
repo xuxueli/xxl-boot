@@ -45,7 +45,7 @@ const DictFormModal = ({
       width={500}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       onFinish={handleFinish}
       initialValues={{ status: 0, ...current }}
     >

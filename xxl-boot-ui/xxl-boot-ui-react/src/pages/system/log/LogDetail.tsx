@@ -52,7 +52,7 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
       open={visible}
       onCancel={() => setVisible(false)}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
     >
       {row && (
         <>

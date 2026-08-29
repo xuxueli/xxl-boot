@@ -46,7 +46,7 @@ const DictDataDrawer = forwardRef<DictDataDrawerRef>((_, ref) => {
       size={700}
       open={visible}
       onClose={() => setVisible(false)}
-      destroyOnClose
+      destroyOnHidden
     >
       <Spin spinning={loading}>
         <div
