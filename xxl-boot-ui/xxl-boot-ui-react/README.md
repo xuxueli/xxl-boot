@@ -34,20 +34,29 @@
     - /layouts（menu/header/foot/set）  done      
     - default-settings.ts               done
     - main.tsx                          done
-    - /router                           --222：动态加载组件 + 组件API；
+    - /hooks                            done
+    - /types                            done
+    - /router                           --111：动态加载组件 + 组件API；
+    - /utils                            --222
+    - /services                         --333
     - /components                       --
-    - /hooks                            --
-    - /utils                            --333
-    - /types                            --
-    - /services                         --
     - /pages                            /
         - 首页                          done
-        - 权限管理：                    --
-        - 系统管理：                    --
         - 帮助中心                      done
-        - 其他：
-            - profile                   done
-            - login                     done
+        - 其他：profile/login           done
+        - 权限管理：                    --
+            - 用户：
+            - 角色
+            - 资源：
+            - 组织：
+        - 系统管理：                    --
+            - 字典：
+            - 配置：
+            - 消息：
+            - 日志：
+        - 工具：
+            - 代码生成
+            - 表单编辑器
 
 改造：
     - 模块化改造：types/service/pages 合并到 modules
