@@ -20,10 +20,14 @@ public interface DictItemMapper {
     public DictItem load(@Param("id") int id);
 
     public List<DictItem> pageList(@Param("dictId") long dictId,
-                                          @Param("offset") int offset,
-                                          @Param("pagesize") int pagesize);
+                                      @Param("name") String name,
+                                      @Param("status") int status,
+                                      @Param("offset") int offset,
+                                      @Param("pagesize") int pagesize);
 
     public int pageListCount(@Param("dictId") long dictId,
+                             @Param("name") String name,
+                             @Param("status") int status,
                              @Param("offset") int offset,
                              @Param("pagesize") int pagesize);
 

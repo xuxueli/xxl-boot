@@ -108,9 +108,9 @@ public class DictServiceImpl implements DictService {
     }
 
     @Override
-    public PageModel<DictItemDTO> itemPageList(long dictId, int offset, int pagesize) {
-        List<DictItem> pageList = dictItemMapper.pageList(dictId, offset, pagesize);
-        int totalCount = dictItemMapper.pageListCount(dictId, offset, pagesize);
+    public PageModel<DictItemDTO> itemPageList(long dictId, String name, int status, int offset, int pagesize) {
+        List<DictItem> pageList = dictItemMapper.pageList(dictId, name, status, offset, pagesize);
+        int totalCount = dictItemMapper.pageListCount(dictId, name, status, offset, pagesize);
 
         List<DictItemDTO> dtoList = DictItemAdaptor.adaptor(pageList);
 

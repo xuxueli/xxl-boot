@@ -38,10 +38,10 @@ public class DictController {
     @ResponseBody
     @XxlSso
     public Response<PageModel<DictDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                        @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                        @RequestParam(required = false, defaultValue = "-1") int status,
-                                                        String name,
-                                                        String type) {
+                                                 @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                 @RequestParam(required = false, defaultValue = "-1") int status,
+                                                 String name,
+                                                 String type) {
         PageModel<DictDTO> pageModel = dictService.pageList(name, type, status, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
@@ -79,8 +79,10 @@ public class DictController {
     @XxlSso
     public Response<PageModel<DictItemDTO>> itemPageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                                 @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                                long dictId) {
-        PageModel<DictItemDTO> pageModel = dictService.itemPageList(dictId, offset, pagesize);
+                                                                @RequestParam(required = false, defaultValue = "-1") int status,
+                                                                long dictId,
+                                                                String name) {
+        PageModel<DictItemDTO> pageModel = dictService.itemPageList(dictId, name, status, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
 

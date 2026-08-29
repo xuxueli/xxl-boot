@@ -29,6 +29,6 @@ public interface DictService {
 
     public Response<DictItem> loadItem(int id);
 
-    public PageModel<DictItemDTO> itemPageList(long dictId, int offset, int pagesize);
+    public PageModel<DictItemDTO> itemPageList(long dictId, String name, int status, int offset, int pagesize);
 
 }

@@ -86,7 +86,15 @@
     <select id="pageList" parameterType="java.util.Map" resultMap="DictItem">
         SELECT <include refid="Base_Column_List" />
         FROM xxl_boot_dict_item AS t
-        WHERE t.`dict_id` = #{dictId}
+        <where>
+            t.`dict_id` = #{dictId}
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+            <if test="status gt -1">
+                AND t.`status` = #{status}
+            </if>
+        </where>
         ORDER BY t.`order` ASC, t.`id` DESC
         LIMIT #{offset}, #{pagesize}
     </select>
@@ -94,7 +102,15 @@
     <select id="pageListCount" parameterType="java.util.Map" resultType="int">
         SELECT count(1)
         FROM xxl_boot_dict_item AS t
-        WHERE t.`dict_id` = #{dictId}
+        <where>
+            t.`dict_id` = #{dictId}
+            <if test="name != null and name != ''">
+                AND t.`name` like CONCAT(CONCAT('%', #{name}), '%')
+            </if>
+            <if test="status gt -1">
+                AND t.`status` = #{status}
+            </if>
+        </where>
     </select>
 
     <select id="findByDictId" parameterType="java.util.Map" resultMap="DictItem">
