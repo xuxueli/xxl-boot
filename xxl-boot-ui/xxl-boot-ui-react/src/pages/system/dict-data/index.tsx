@@ -2,10 +2,11 @@
  * 页面：字典数据
  * 功能：某字典类型下的字典项分页管理（隐藏路由，从字典管理进入）
  */
-import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
+import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
@@ -13,11 +14,34 @@ import { usePermission } from '@/hooks/usePermission';
 import { delData, listData } from '@/services/system/dict';
 import DictDataFormModal from './DictDataFormModal';
 
+/**
+ * 字典项表格样式
+ * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
+ */
+const useStyles = createStyles(({ css }) => ({
+  dictDataTable: css`
+    .ant-pro-table-list-toolbar-container {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container
+      .ant-pro-table-list-toolbar-right
+      .ant-pro-table-list-toolbar-setting-items {
+      margin-left: auto;
+    }
+  `,
+}));
+
 const DictData = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const navigate = useNavigate();
   const { hasRole } = usePermission();
+  const { styles } = useStyles();
   const location = useLocation();
 
   // 从 URL 读取 dictId
@@ -49,7 +73,7 @@ const DictData = () => {
   const columns: ProColumns<API.DictItem>[] = [
     { title: '序号', dataIndex: 'id', search: false, width: 80 },
     { title: '字典项名称', dataIndex: 'name' },
-    { title: '字典项编码', dataIndex: 'code', search: false },
+    { title: '字典项Code', dataIndex: 'code', search: false },
     {
       title: '状态',
       dataIndex: 'status',
@@ -87,54 +111,68 @@ const DictData = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <ProTable<API.DictItem>
-        headerTitle="字典项列表"
-        actionRef={actionRef}
-        rowKey="id"
-        columns={columns}
-        params={{ dictId }}
-        request={async (params) => {
-          const res = await listData(params);
-          return {
-            data: res.data?.data || [],
-            total: res.data?.total || 0,
-            success: true,
-          };
-        }}
-        toolBarRender={() => [
-          hasRole('admin') && (
+      <div className={styles.dictDataTable}>
+        <ProTable<API.DictItem>
+          actionRef={actionRef}
+          rowKey="id"
+          columns={columns}
+          search={{
+            labelWidth: 80,
+            optionRender: (_searchConfig, _formProps, dom) => [
+              ...dom.reverse(),
+            ],
+          }}
+          params={{ dictId }}
+          request={async (params) => {
+            const res = await listData(params);
+            return {
+              data: res.data?.data || [],
+              total: res.data?.total || 0,
+              success: true,
+            };
+          }}
+          toolBarRender={() => [
+            hasRole('admin') && (
+              <Button
+                key="add"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setFormCurrent(null);
+                  setFormOpen(true);
+                }}
+              >
+                新增
+              </Button>
+            ),
+            hasRole('admin') && (
+              <Button
+                key="delete"
+                danger
+                icon={<DeleteOutlined />}
+                disabled={!selectedIds.length}
+                onClick={() => handleDelete()}
+              >
+                删除
+              </Button>
+            ),
             <Button
-              key="add"
-              type="primary"
-              icon={<PlusOutlined />}
+              key="close"
               onClick={() => {
-                setFormCurrent(null);
-                setFormOpen(true);
+                navigate('/system/dict');
               }}
             >
-              新增
-            </Button>
-          ),
-          <Button
-            key="close"
-            onClick={() => {
-              navigate('/system/dict');
-            }}
-          >
-            关闭
-          </Button>,
-        ]}
-        rowSelection={{
-          onChange: (_keys, rows) => {
-            setSelectedIds(rows.map((r) => r.id as number));
-          },
-        }}
-        tableAlertOptionRender={() => [
-          <a key="delete" onClick={() => handleDelete()}>
-            批量删除
-          </a>,
-        ]}
-      />
+              关闭
+            </Button>,
+          ]}
+          rowSelection={{
+            onChange: (_keys, rows) => {
+              setSelectedIds(rows.map((r) => r.id as number));
+            },
+          }}
+          tableAlertRender={false}
+        />
+      </div>
       <DictDataFormModal
         open={formOpen}
         onOpenChange={setFormOpen}

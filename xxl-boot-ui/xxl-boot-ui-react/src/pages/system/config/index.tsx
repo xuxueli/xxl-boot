@@ -2,20 +2,44 @@
  * 页面：配置管理
  * 功能：配置分页表格 + 新增/修改/删除
  */
-import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag, Tooltip } from 'antd';
+import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delConfig, listConfig } from '@/services/system/config';
 import ConfigFormModal from './ConfigFormModal';
 
+/**
+ * 配置表格样式
+ * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
+ */
+const useStyles = createStyles(({ css }) => ({
+  configTable: css`
+    .ant-pro-table-list-toolbar-container {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container
+      .ant-pro-table-list-toolbar-right
+      .ant-pro-table-list-toolbar-setting-items {
+      margin-left: auto;
+    }
+  `,
+}));
+
 const ConfigList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasRole } = usePermission();
+  const { styles } = useStyles();
 
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.Config | null>(null);
@@ -89,45 +113,59 @@ const ConfigList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <ProTable<API.Config>
-        headerTitle="配置列表"
-        actionRef={actionRef}
-        rowKey="id"
-        columns={columns}
-        request={async (params) => {
-          const res = await listConfig(params);
-          return {
-            data: res.data?.data || [],
-            total: res.data?.total || 0,
-            success: true,
-          };
-        }}
-        toolBarRender={() => [
-          hasRole('admin') && (
-            <Button
-              key="add"
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setFormCurrent(null);
-                setFormOpen(true);
-              }}
-            >
-              新增
-            </Button>
-          ),
-        ]}
-        rowSelection={{
-          onChange: (_keys, rows) => {
-            setSelectedIds(rows.map((r) => r.id as number));
-          },
-        }}
-        tableAlertOptionRender={() => [
-          <a key="delete" onClick={() => handleDelete()}>
-            批量删除
-          </a>,
-        ]}
-      />
+      <div className={styles.configTable}>
+        <ProTable<API.Config>
+          actionRef={actionRef}
+          rowKey="id"
+          columns={columns}
+          search={{
+            labelWidth: 80,
+            optionRender: (_searchConfig, _formProps, dom) => [
+              ...dom.reverse(),
+            ],
+          }}
+          request={async (params) => {
+            const res = await listConfig(params);
+            return {
+              data: res.data?.data || [],
+              total: res.data?.total || 0,
+              success: true,
+            };
+          }}
+          toolBarRender={() => [
+            hasRole('admin') && (
+              <Button
+                key="add"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setFormCurrent(null);
+                  setFormOpen(true);
+                }}
+              >
+                新增
+              </Button>
+            ),
+            hasRole('admin') && (
+              <Button
+                key="delete"
+                danger
+                icon={<DeleteOutlined />}
+                disabled={!selectedIds.length}
+                onClick={() => handleDelete()}
+              >
+                删除
+              </Button>
+            ),
+          ]}
+          rowSelection={{
+            onChange: (_keys, rows) => {
+              setSelectedIds(rows.map((r) => r.id as number));
+            },
+          }}
+          tableAlertRender={false}
+        />
+      </div>
       <ConfigFormModal
         open={formOpen}
         onOpenChange={setFormOpen}

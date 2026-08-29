@@ -46,6 +46,8 @@ const ConfigFormModal = ({
       open={open}
       onOpenChange={onOpenChange}
       modalProps={{ destroyOnHidden: true }}
+      layout="horizontal"
+      labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
       initialValues={{ status: 0, ...current }}
     >

@@ -49,6 +49,8 @@ const DictDataFormModal = ({
       open={open}
       onOpenChange={onOpenChange}
       modalProps={{ destroyOnHidden: true }}
+      layout="horizontal"
+      labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
       initialValues={{ status: 0, order: 1, ...current }}
     >
@@ -60,11 +62,11 @@ const DictDataFormModal = ({
       />
       <ProFormText
         name="code"
-        label="字典项编码"
-        placeholder="请输入字典项编码"
+        label="字典项Code"
+        placeholder="请输入字典项Code"
         disabled={!!current?.id}
         rules={[
-          { required: true, message: '字典项编码不能为空' },
+          { required: true, message: '字典项Code不能为空' },
           { pattern: /^[0-9]+$/, message: '编码必须为数字' },
         ]}
       />

@@ -41,11 +41,13 @@ const DictFormModal = ({
 
   return (
     <ModalForm<API.Dict>
-      title={current?.id ? '修改字典类型' : '新增字典类型'}
+      title={current?.id ? '修改字典Type' : '新增字典Type'}
       width={500}
       open={open}
       onOpenChange={onOpenChange}
       modalProps={{ destroyOnHidden: true }}
+      layout="horizontal"
+      labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
       initialValues={{ status: 0, ...current }}
     >
@@ -57,12 +59,12 @@ const DictFormModal = ({
       />
       <ProFormText
         name="type"
-        label="字典类型"
-        placeholder="请输入字典类型"
+        label="字典Type"
+        placeholder="请输入字典Type"
         disabled={!!current?.id}
         rules={[
-          { required: true, message: '字典类型不能为空' },
-          { min: 2, max: 100, message: '字典类型长度必须在 2 到 100 个字符' },
+          { required: true, message: '字典Type不能为空' },
+          { min: 2, max: 100, message: '字典Type长度必须在 2 到 100 个字符' },
           {
             pattern: /^[a-z][a-zA-Z0-9]*$/,
             message: '小写字母开头，仅允许字母和数字',

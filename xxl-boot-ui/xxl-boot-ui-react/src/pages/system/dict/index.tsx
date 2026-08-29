@@ -2,10 +2,11 @@
  * 页面：字典管理
  * 功能：字典类型分页表格 + 新增/修改/删除 + 字典数据抽屉
  */
-import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
+import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
@@ -14,12 +15,35 @@ import { delType, listType } from '@/services/system/dict';
 import DictDataDrawer, { type DictDataDrawerRef } from './DictDataDrawer';
 import DictFormModal from './DictFormModal';
 
+/**
+ * 字典表格样式
+ * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
+ */
+const useStyles = createStyles(({ css }) => ({
+  dictTable: css`
+    .ant-pro-table-list-toolbar-container {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container
+      .ant-pro-table-list-toolbar-right
+      .ant-pro-table-list-toolbar-setting-items {
+      margin-left: auto;
+    }
+  `,
+}));
+
 const DictList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const drawerRef = useRef<DictDataDrawerRef>(null);
   const navigate = useNavigate();
   const { hasRole } = usePermission();
+  const { styles } = useStyles();
 
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.Dict | null>(null);
@@ -48,7 +72,7 @@ const DictList = () => {
     { title: '序号', dataIndex: 'id', search: false, width: 80 },
     { title: '字典名称', dataIndex: 'name' },
     {
-      title: '字典类型',
+      title: '字典Type',
       dataIndex: 'type',
       search: false,
       render: (_, record) => (
@@ -105,45 +129,59 @@ const DictList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <ProTable<API.Dict>
-        headerTitle="字典类型列表"
-        actionRef={actionRef}
-        rowKey="id"
-        columns={columns}
-        request={async (params) => {
-          const res = await listType(params);
-          return {
-            data: res.data?.data || [],
-            total: res.data?.total || 0,
-            success: true,
-          };
-        }}
-        toolBarRender={() => [
-          hasRole('admin') && (
-            <Button
-              key="add"
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setFormCurrent(null);
-                setFormOpen(true);
-              }}
-            >
-              新增
-            </Button>
-          ),
-        ]}
-        rowSelection={{
-          onChange: (_keys, rows) => {
-            setSelectedIds(rows.map((r) => r.id as number));
-          },
-        }}
-        tableAlertOptionRender={() => [
-          <a key="delete" onClick={() => handleDelete()}>
-            批量删除
-          </a>,
-        ]}
-      />
+      <div className={styles.dictTable}>
+        <ProTable<API.Dict>
+          actionRef={actionRef}
+          rowKey="id"
+          columns={columns}
+          search={{
+            labelWidth: 80,
+            optionRender: (_searchConfig, _formProps, dom) => [
+              ...dom.reverse(),
+            ],
+          }}
+          request={async (params) => {
+            const res = await listType(params);
+            return {
+              data: res.data?.data || [],
+              total: res.data?.total || 0,
+              success: true,
+            };
+          }}
+          toolBarRender={() => [
+            hasRole('admin') && (
+              <Button
+                key="add"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setFormCurrent(null);
+                  setFormOpen(true);
+                }}
+              >
+                新增
+              </Button>
+            ),
+            hasRole('admin') && (
+              <Button
+                key="delete"
+                danger
+                icon={<DeleteOutlined />}
+                disabled={!selectedIds.length}
+                onClick={() => handleDelete()}
+              >
+                删除
+              </Button>
+            ),
+          ]}
+          rowSelection={{
+            onChange: (_keys, rows) => {
+              setSelectedIds(rows.map((r) => r.id as number));
+            },
+          }}
+          tableAlertRender={false}
+        />
+      </div>
       <DictFormModal
         open={formOpen}
         onOpenChange={setFormOpen}

@@ -2,10 +2,11 @@
  * 页面：审计日志
  * 功能：日志分页表格 + 筛选/导出/详情/删除
  */
-import { DownloadOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
+import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
 import { loadEnum, toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
@@ -13,11 +14,34 @@ import { delOperlog, pageList } from '@/services/system/log';
 import { download } from '@/utils/download';
 import LogDetail, { type LogDetailRef } from './LogDetail';
 
+/**
+ * 日志表格样式
+ * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
+ */
+const useStyles = createStyles(({ css }) => ({
+  logTable: css`
+    .ant-pro-table-list-toolbar-container {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container
+      .ant-pro-table-list-toolbar-right
+      .ant-pro-table-list-toolbar-setting-items {
+      margin-left: auto;
+    }
+  `,
+}));
+
 const LogList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const detailRef = useRef<LogDetailRef>(null);
   const { hasRole } = usePermission();
+  const { styles } = useStyles();
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [moduleMap, setModuleMap] = useState<Record<number, string>>({});
@@ -115,42 +139,56 @@ const LogList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <ProTable<API.Log>
-        headerTitle="日志列表"
-        actionRef={actionRef}
-        rowKey="id"
-        columns={columns}
-        request={async (params) => {
-          searchParamsRef.current = params;
-          const res = await pageList(params);
-          return {
-            data: res.data?.data || [],
-            total: res.data?.total || 0,
-            success: true,
-          };
-        }}
-        toolBarRender={() => [
-          hasRole('admin') && (
-            <Button
-              key="export"
-              icon={<DownloadOutlined />}
-              onClick={handleExport}
-            >
-              导出
-            </Button>
-          ),
-        ]}
-        rowSelection={{
-          onChange: (_keys, rows) => {
-            setSelectedIds(rows.map((r) => r.id as number));
-          },
-        }}
-        tableAlertOptionRender={() => [
-          <a key="delete" onClick={() => handleDelete()}>
-            批量删除
-          </a>,
-        ]}
-      />
+      <div className={styles.logTable}>
+        <ProTable<API.Log>
+          actionRef={actionRef}
+          rowKey="id"
+          columns={columns}
+          search={{
+            labelWidth: 80,
+            optionRender: (_searchConfig, _formProps, dom) => [
+              ...dom.reverse(),
+            ],
+          }}
+          request={async (params) => {
+            searchParamsRef.current = params;
+            const res = await pageList(params);
+            return {
+              data: res.data?.data || [],
+              total: res.data?.total || 0,
+              success: true,
+            };
+          }}
+          toolBarRender={() => [
+            hasRole('admin') && (
+              <Button
+                key="delete"
+                danger
+                icon={<DeleteOutlined />}
+                disabled={!selectedIds.length}
+                onClick={() => handleDelete()}
+              >
+                删除
+              </Button>
+            ),
+            hasRole('admin') && (
+              <Button
+                key="export"
+                icon={<DownloadOutlined />}
+                onClick={handleExport}
+              >
+                导出
+              </Button>
+            ),
+          ]}
+          rowSelection={{
+            onChange: (_keys, rows) => {
+              setSelectedIds(rows.map((r) => r.id as number));
+            },
+          }}
+          tableAlertRender={false}
+        />
+      </div>
       <LogDetail ref={detailRef} />
     </PageContainer>
   );

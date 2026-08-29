@@ -85,12 +85,14 @@ export async function queryDictList() {
 
 /**
  * 分页查询字典项列表。
- * @param params 查询参数（current/pageSize/dictId）
+ * @param params 查询参数（current/pageSize/dictId/name/status）
  */
 export async function listData(params: {
   current?: number;
   pageSize?: number;
   dictId?: number;
+  name?: string;
+  status?: number;
 }) {
   const { current = 1, pageSize = 10, ...rest } = params || {};
   const query: Record<string, any> = {
@@ -99,6 +101,12 @@ export async function listData(params: {
   };
   if (rest.dictId != null) {
     query.dictId = rest.dictId;
+  }
+  if (rest.name != null && rest.name !== '') {
+    query.name = rest.name;
+  }
+  if (rest.status != null && rest.status !== -1) {
+    query.status = rest.status;
   }
   return request<API.Response<API.PageModel<API.DictItem>>>(
     '/system/dict/itemPageList',

@@ -95,7 +95,7 @@ const DictDataDrawer = forwardRef<DictDataDrawerRef>((_, ref) => {
                 <span>
                   {item.name}
                   <span style={{ marginLeft: 8, color: 'rgba(0,0,0,0.45)' }}>
-                    编码：{item.code}
+                    Code：{item.code}
                   </span>
                 </span>
                 <Tag color={item.status === 0 ? 'success' : 'error'}>
