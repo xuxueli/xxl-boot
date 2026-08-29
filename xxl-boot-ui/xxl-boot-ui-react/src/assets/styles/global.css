@@ -109,3 +109,14 @@ ol {
   /* biome-ignore lint/complexity/noImportantStyles: 覆盖 antd-pro CSS-in-JS 注入的浮动手柄样式，运行时注入顺序与优先级无法控制，需 !important 确保隐藏 */
   display: none !important;
 }
+
+/* 顶部用户信息区（头像下拉）：收窄左右内边距，与 vue 版 Navbar 头像区域（padding 0 8px）保持一致 */
+.ant-pro-global-header-header-actions-avatar {
+  /* biome-ignore lint/complexity/noImportantStyles: 覆盖 antd-pro CSS-in-JS 注入的默认内边距，运行时注入顺序与优先级无法控制，需 !important 确保生效 */
+  padding-inline: 0 !important;
+}
+
+.ant-pro-global-header-header-actions-avatar > div {
+  /* biome-ignore lint/complexity/noImportantStyles: 同上，覆盖 antd-pro CSS-in-JS 注入的内边距 */
+  padding-inline: 4px !important;
+}
