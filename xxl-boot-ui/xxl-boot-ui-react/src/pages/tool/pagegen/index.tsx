@@ -1,21 +1,40 @@
 /**
- * 页面：表单构建（PageGen）
- * 功能：拖拽式表单设计器，支持组件添加/排序/属性编辑/代码生成（TSX）
+ * 页面：表单设计器（PageGen）
+ * 功能：拖拽式表单设计，左侧三组组件库（输入/选择/布局），画布拖拽排序，
+ * 右侧组件属性/表单属性联动配置，代码生成（页面/弹窗，导出文件/复制代码）
  */
-
 import {
+  AlignLeftOutlined,
+  ApartmentOutlined,
+  BgColorsOutlined,
+  CalendarOutlined,
+  CheckCircleOutlined,
+  CheckSquareOutlined,
   CopyOutlined,
   DeleteOutlined,
   DownloadOutlined,
+  DownOutlined,
+  FieldTimeOutlined,
+  FontSizeOutlined,
   HolderOutlined,
-  PlusOutlined,
+  LockOutlined,
+  NumberOutlined,
+  StarOutlined,
+  SwapOutlined,
+  TableOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import {
   closestCenter,
   DndContext,
   type DragEndEvent,
+  DragOverlay,
+  type DragStartEvent,
+  defaultDropAnimation,
   PointerSensor,
+  useDraggable,
+  useDroppable,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -29,68 +48,58 @@ import { CSS } from '@dnd-kit/utilities';
 import {
   App,
   Button,
+  Cascader,
   Checkbox,
+  Col,
+  ColorPicker,
   DatePicker,
   Form,
   Input,
   InputNumber,
   Radio,
+  Rate,
+  Row,
   Select,
+  Slider,
   Switch,
-  Tabs,
-  Tag,
+  TimePicker,
+  Upload,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useMemo, useRef, useState } from 'react';
+import CodeTypeDialog from './CodeTypeDialog';
+import type { FormConfig, FormWidget, WidgetType } from './config';
+import {
+  createWidget,
+  defaultFormConfig,
+  paletteGroups,
+  widgetTitles,
+} from './config';
+import { generateTsx } from './generator';
+import RightPanel from './RightPanel';
 
-/** 组件类型定义 */
-type WidgetType =
-  | 'input'
-  | 'textarea'
-  | 'number'
-  | 'password'
-  | 'select'
-  | 'radio'
-  | 'checkbox'
-  | 'switch'
-  | 'date';
-
-interface FormWidget {
-  id: number;
-  type: WidgetType;
-  vModel: string;
-  label: string;
-  placeholder?: string;
-  required: boolean;
-  options: string[];
-}
-
-interface FormConfig {
-  labelWidth: number;
-  layout: 'horizontal' | 'vertical' | 'inline';
-  size: 'small' | 'middle' | 'large';
-}
-
-const widgetTitles: Record<WidgetType, string> = {
-  input: '单行文本',
-  textarea: '多行文本',
-  number: '数字输入',
-  password: '密码输入',
-  select: '下拉选择',
-  radio: '单选按钮',
-  checkbox: '多选按钮',
-  switch: '开关',
-  date: '日期选择',
+/** 组件图标映射 */
+const widgetIcons: Record<WidgetType, React.ReactNode> = {
+  input: <FontSizeOutlined />,
+  textarea: <AlignLeftOutlined />,
+  password: <LockOutlined />,
+  number: <NumberOutlined />,
+  select: <DownOutlined />,
+  cascader: <ApartmentOutlined />,
+  radio: <CheckCircleOutlined />,
+  checkbox: <CheckSquareOutlined />,
+  switch: <SwapOutlined />,
+  slider: <SwapOutlined />,
+  time: <FieldTimeOutlined />,
+  'time-range': <FieldTimeOutlined />,
+  date: <CalendarOutlined />,
+  'date-range': <CalendarOutlined />,
+  rate: <StarOutlined />,
+  color: <BgColorsOutlined />,
+  upload: <UploadOutlined />,
+  row: <TableOutlined />,
+  button: <CopyOutlined />,
 };
-
-/** 组件面板配置 */
-const paletteGroups: { title: string; types: WidgetType[] }[] = [
-  {
-    title: '输入型',
-    types: ['input', 'textarea', 'number', 'password', 'date'],
-  },
-  { title: '选择型', types: ['select', 'radio', 'checkbox', 'switch'] },
-];
 
 const useStyles = createStyles(({ token, css }) => ({
   container: css`
@@ -107,6 +116,7 @@ const useStyles = createStyles(({ token, css }) => ({
   palette: css`
     width: 220px;
     flex-shrink: 0;
+    overflow-y: auto;
   `,
   paletteGroup: css`
     margin-bottom: 12px;
@@ -118,16 +128,19 @@ const useStyles = createStyles(({ token, css }) => ({
     color: ${token.colorTextSecondary};
   `,
   paletteItem: css`
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 12px;
-    margin-bottom: 6px;
+    width: 48%;
+    margin: 1%;
+    padding: 8px 10px;
+    box-sizing: border-box;
     border: 1px dashed ${token.colorBorder};
     border-radius: 6px;
-    cursor: pointer;
+    cursor: move;
     font-size: 13px;
     transition: all 0.2s;
+    user-select: none;
 
     &:hover {
       border-color: ${token.colorPrimary};
@@ -167,15 +180,33 @@ const useStyles = createStyles(({ token, css }) => ({
   selected: css`
     border-color: ${token.colorPrimary} !important;
   `,
-  dragHandle: css`
-    position: absolute;
-    top: 8px;
-    right: 8px;
+  rowWidget: css`
+    border: 1px dashed ${token.colorBorder};
+    border-radius: 6px;
+    padding: 12px;
+    background: ${token.colorBgLayout};
+  `,
+  rowSelected: css`
+    border-color: ${token.colorPrimary} !important;
+  `,
+  rowTitle: css`
+    position: relative;
+    font-size: 13px;
+    font-weight: 600;
+    color: ${token.colorTextSecondary};
+    margin-bottom: 8px;
+  `,
+  rowBody: css`
+    min-height: 48px;
+    border: 1px dashed ${token.colorBorderSecondary};
+    background: ${token.colorBgContainer};
+    border-radius: 6px;
+    padding: 8px;
+  `,
+  rowEmpty: css`
+    text-align: center;
     color: ${token.colorTextQuaternary};
-    cursor: move;
-    &:hover {
-      color: ${token.colorPrimary};
-    }
+    padding: 12px 0;
   `,
   empty: css`
     text-align: center;
@@ -183,235 +214,497 @@ const useStyles = createStyles(({ token, css }) => ({
     padding: 60px 0;
   `,
   properties: css`
-    width: 280px;
+    width: 300px;
     flex-shrink: 0;
+    overflow-y: auto;
+  `,
+  overlay: css`
+    min-width: 320px;
+    padding: 8px;
+    background: ${token.colorBgContainer};
+    border: 1px dashed ${token.colorPrimary};
+    border-radius: 6px;
+    box-shadow: ${token.boxShadow};
   `,
 }));
 
-/** 可排序画布条目 */
+/** 递归查找组件所在列表 */
+const findWidgetList = (
+  list: FormWidget[],
+  id: number,
+): { list: FormWidget[]; index: number } | null => {
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].id === id) {
+      return { list, index: i };
+    }
+    const children = list[i].children;
+    if (children) {
+      const found = findWidgetList(children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+/** 递归查找组件节点 */
+const findWidgetById = (list: FormWidget[], id: number): FormWidget | null => {
+  for (const w of list) {
+    if (w.id === id) return w;
+    if (w.children) {
+      const found = findWidgetById(w.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+/** 递归更新组件属性 */
+const patchWidget = (
+  list: FormWidget[],
+  id: number,
+  patch: Partial<FormWidget>,
+): FormWidget[] =>
+  list.map((w) => {
+    if (w.id === id) return { ...w, ...patch };
+    if (w.children)
+      return { ...w, children: patchWidget(w.children, id, patch) };
+    return w;
+  });
+
+/** 递归删除组件 */
+const removeWidget = (list: FormWidget[], id: number): FormWidget[] => {
+  const result: FormWidget[] = [];
+  for (const w of list) {
+    if (w.id === id) continue;
+    if (w.children) {
+      result.push({ ...w, children: removeWidget(w.children, id) });
+    } else {
+      result.push(w);
+    }
+  }
+  return result;
+};
+
+/** 画布表单项实时渲染 */
+const renderPreview = (widget: FormWidget) => {
+  const common = {
+    placeholder: widget.placeholder,
+    style: { width: '100%' as const },
+  };
+  switch (widget.type) {
+    case 'textarea':
+      return <Input.TextArea {...common} rows={4} />;
+    case 'password':
+      return <Input.Password {...common} />;
+    case 'number':
+      return <InputNumber {...common} style={{ width: '50%' }} />;
+    case 'date':
+      return <DatePicker {...common} />;
+    case 'date-range':
+      return (
+        <DatePicker.RangePicker
+          placeholder={['开始日期', '结束日期']}
+          style={{ width: '100%' }}
+        />
+      );
+    case 'time':
+      return <TimePicker {...common} />;
+    case 'time-range':
+      return (
+        <TimePicker.RangePicker
+          placeholder={['开始时间', '结束时间']}
+          style={{ width: '100%' }}
+        />
+      );
+    case 'select':
+      return (
+        <Select
+          {...common}
+          placeholder={widget.placeholder || '请选择'}
+          options={(widget.options || []).map((o) => ({ value: o, label: o }))}
+        />
+      );
+    case 'cascader':
+      return (
+        <Cascader
+          {...common}
+          placeholder={widget.placeholder || '请选择'}
+          options={(widget.options || []).map((o) => ({ value: o, label: o }))}
+        />
+      );
+    case 'radio':
+      return (
+        <Radio.Group
+          options={(widget.options || []).map((o) => ({ value: o, label: o }))}
+        />
+      );
+    case 'checkbox':
+      return (
+        <Checkbox.Group
+          options={(widget.options || []).map((o) => ({ value: o, label: o }))}
+        />
+      );
+    case 'switch':
+      return <Switch />;
+    case 'slider':
+      return <Slider min={widget.min ?? 0} max={widget.max ?? 100} />;
+    case 'rate':
+      return <Rate count={widget.maxLength ?? 5} />;
+    case 'color':
+      return <ColorPicker defaultValue="#1677ff" />;
+    case 'upload':
+      return <Upload>{widget.uploadText || '点击上传'}</Upload>;
+    case 'button':
+      return <Button type="primary">{widget.label}</Button>;
+    default:
+      return <Input {...common} />;
+  }
+};
+
+/** 左侧组件库可拖拽条目 */
+const PaletteItem = ({
+  type,
+  onAdd,
+}: {
+  type: WidgetType;
+  onAdd: (type: WidgetType) => void;
+}) => {
+  const { styles } = useStyles();
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `palette-${type}`,
+    data: { fromPalette: true, type },
+  });
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className={styles.paletteItem}
+      style={isDragging ? { opacity: 0.4 } : undefined}
+      onClick={() => onAdd(type)}
+    >
+      {widgetIcons[type]}
+      {widgetTitles[type]}
+    </div>
+  );
+};
+
+/** 画布可排序列条目（普通表单项） */
 const SortableWidget = ({
   widget,
   selected,
-  onClick,
+  selectedId,
+  draggingFromPalette,
+  onSelect,
   onDelete,
 }: {
   widget: FormWidget;
   selected: boolean;
-  onClick: () => void;
-  onDelete: () => void;
+  selectedId?: number;
+  draggingFromPalette: boolean;
+  onSelect: (id: number) => void;
+  onDelete: (id: number) => void;
 }) => {
   const { styles } = useStyles();
   const {
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
   } = useSortable({ id: widget.id });
+  /* 拖拽左侧组件时画布不实时让位，仅拖拽画布内组件时给出排序位移 */
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: draggingFromPalette
+      ? undefined
+      : CSS.Transform.toString(transform),
     transition,
-    ...(isDragging ? { zIndex: 999, opacity: 0.8 } : {}),
+    ...(isDragging ? { zIndex: 999, opacity: 0.5 } : {}),
   };
 
-  const renderWidget = (w: FormWidget) => {
-    const common = {
-      placeholder: w.placeholder,
-      style: { width: '100%' as const },
-    };
-    switch (w.type) {
-      case 'textarea':
-        return <Input.TextArea {...common} />;
-      case 'number':
-        return <InputNumber {...common} />;
-      case 'password':
-        return <Input.Password {...common} />;
-      case 'date':
-        return <DatePicker {...common} />;
-      case 'select':
-        return (
-          <Select
-            {...common}
-            placeholder={w.placeholder || '请选择'}
-            options={w.options.map((o) => ({ value: o, label: o }))}
-          />
-        );
-      case 'radio':
-        return (
-          <Radio.Group
-            options={w.options.map((o) => ({ value: o, label: o }))}
-          />
-        );
-      case 'checkbox':
-        return (
-          <Checkbox.Group
-            options={w.options.map((o) => ({ value: o, label: o }))}
-          />
-        );
-      case 'switch':
-        return <Switch />;
-      default:
-        return <Input {...common} />;
-    }
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={
-        selected ? `${styles.widget} ${styles.selected}` : styles.widget
-      }
-      onClick={onClick}
-    >
-      <span {...attributes} {...listeners} className={styles.dragHandle}>
-        <HolderOutlined />
-      </span>
-      <Form.Item
-        label={widget.label}
-        required={widget.required}
-        style={{ marginBottom: 0 }}
-      >
-        {renderWidget(widget)}
-      </Form.Item>
-      <DeleteOutlined
-        style={{
-          position: 'absolute',
-          bottom: 8,
-          right: 8,
-          color: '#ff4d4f',
-          cursor: 'pointer',
-        }}
+  /* 行容器：内部嵌套可拖拽子组件 */
+  if (widget.type === 'row') {
+    return (
+      <Col
+        span={widget.span || 24}
         onClick={(e) => {
           e.stopPropagation();
-          onDelete();
+          onSelect(widget.id);
         }}
-      />
+        className={selected ? styles.rowSelected : undefined}
+      >
+        <div
+          ref={setNodeRef}
+          style={style}
+          className={
+            selected
+              ? `${styles.rowWidget} ${styles.rowSelected}`
+              : styles.rowWidget
+          }
+        >
+          <div
+            ref={setActivatorNodeRef}
+            {...attributes}
+            {...listeners}
+            className={styles.rowTitle}
+            style={{ cursor: 'move' }}
+          >
+            <HolderOutlined style={{ marginRight: 6 }} />
+            {widget.label}
+            <DeleteOutlined
+              style={{
+                position: 'absolute',
+                marginLeft: 8,
+                color: '#ff4d4f',
+                cursor: 'pointer',
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(widget.id);
+              }}
+            />
+          </div>
+          <RowBody
+            widget={widget}
+            selectedId={selectedId}
+            draggingFromPalette={draggingFromPalette}
+            onSelect={onSelect}
+            onDelete={onDelete}
+          />
+        </div>
+      </Col>
+    );
+  }
+
+  return (
+    <Col
+      ref={setNodeRef}
+      span={widget.span || 24}
+      style={style}
+      onClick={() => onSelect(widget.id)}
+    >
+      <div
+        className={
+          selected ? `${styles.widget} ${styles.selected}` : styles.widget
+        }
+        {...attributes}
+        {...listeners}
+      >
+        <Form.Item
+          label={widget.label}
+          required={widget.required}
+          style={{ marginBottom: 0 }}
+        >
+          {renderPreview(widget)}
+        </Form.Item>
+        <DeleteOutlined
+          style={{
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            color: '#ff4d4f',
+            cursor: 'pointer',
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(widget.id);
+          }}
+        />
+      </div>
+    </Col>
+  );
+};
+
+/** 行容器子组件区域（可放置、可排序） */
+const RowBody = ({
+  widget,
+  selectedId,
+  draggingFromPalette,
+  onSelect,
+  onDelete,
+}: {
+  widget: FormWidget;
+  selectedId?: number;
+  draggingFromPalette: boolean;
+  onSelect: (id: number) => void;
+  onDelete: (id: number) => void;
+}) => {
+  const { styles } = useStyles();
+  const { setNodeRef } = useDroppable({
+    id: `row-${widget.id}`,
+    data: { containerId: widget.id },
+  });
+  return (
+    <div ref={setNodeRef} className={styles.rowBody}>
+      {(widget.children || []).length === 0 ? (
+        <div className={styles.rowEmpty}>从左侧拖入或点击添加组件</div>
+      ) : (
+        <SortableContext
+          items={(widget.children || []).map((c) => c.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <Row gutter={widget.gutter || 0}>
+            {(widget.children || []).map((child) => (
+              <SortableWidget
+                key={child.id}
+                widget={child}
+                selected={child.id === selectedId}
+                selectedId={selectedId}
+                draggingFromPalette={draggingFromPalette}
+                onSelect={onSelect}
+                onDelete={onDelete}
+              />
+            ))}
+          </Row>
+        </SortableContext>
+      )}
     </div>
   );
 };
 
-/** 生成 TSX 代码 */
-const generateTsx = (widgets: FormWidget[], _config: FormConfig): string => {
-  const imports = [
-    "import { Button, DatePicker, Form, Input, InputNumber, Radio, Checkbox, Select, Switch } from 'antd';",
-    "import React from 'react';",
-    "import type { ProFormInstance } from '@ant-design/pro-components';",
-    "import { ProForm } from '@ant-design/pro-components';",
-  ].join('\n');
-
-  const fields = widgets
-    .map((w) => {
-      const rules = w.required
-        ? `rules={[{ required: true, message: '请输入${w.label}' }]}`
-        : '';
-      switch (w.type) {
-        case 'textarea':
-          return `  <ProForm.TextArea name="${w.vModel}" label="${w.label}" ${rules} />`;
-        case 'number':
-          return `  <ProFormDigit name="${w.vModel}" label="${w.label}" ${rules} />`;
-        case 'password':
-          return `  <ProFormText.Password name="${w.vModel}" label="${w.label}" ${rules} />`;
-        case 'date':
-          return `  <ProFormDatePicker name="${w.vModel}" label="${w.label}" ${rules} />`;
-        case 'select':
-          return `  <ProFormSelect name="${w.vModel}" label="${w.label}" ${rules} options={${JSON.stringify(w.options.map((o) => ({ value: o, label: o })))}} />`;
-        case 'radio':
-          return `  <ProFormRadio.Group name="${w.vModel}" label="${w.label}" ${rules} options={${JSON.stringify(w.options.map((o) => ({ value: o, label: o })))}} />`;
-        case 'checkbox':
-          return `  <ProFormCheckbox.Group name="${w.vModel}" label="${w.label}" ${rules} options={${JSON.stringify(w.options)}} />`;
-        case 'switch':
-          return `  <ProFormSwitch name="${w.vModel}" label="${w.label}" ${rules} />`;
-        default:
-          return `  <ProFormText name="${w.vModel}" label="${w.label}" placeholder="${w.placeholder || ''}" ${rules} />`;
-      }
-    })
-    .join('\n');
-
-  return `${imports}
-
-const DemoForm = () => {
-  const formRef = React.useRef<ProFormInstance>();
-
-  return (
-    <ProForm
-      formRef={formRef}
-      labelCol={{ span: 4 }}
-      onFinish={async (values) => {
-        console.log(values);
-      }}
-    >
-${fields}
-    </ProForm>
-  );
-};
-
-export default DemoForm;
-`;
-};
-
 const PageGen = () => {
   const { styles } = useStyles();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const idRef = useRef(100);
 
   const [widgets, setWidgets] = useState<FormWidget[]>([]);
   const [selectedId, setSelectedId] = useState<number>();
-  const [config, setConfig] = useState<FormConfig>({
-    labelWidth: 120,
-    layout: 'horizontal',
-    size: 'middle',
-  });
+  const [config, setConfig] = useState<FormConfig>(defaultFormConfig);
+  const [genOpen, setGenOpen] = useState(false);
+  const [genShowFileName, setGenShowFileName] = useState(false);
+  const [activeType, setActiveType] = useState<WidgetType>();
+  /* 是否正在拖拽左侧组件库组件（拖拽期间画布不实时让位） */
+  const [draggingFromPalette, setDraggingFromPalette] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
   );
 
-  const selectedWidget = useMemo(
-    () => widgets.find((w) => w.id === selectedId),
-    [widgets, selectedId],
-  );
+  const selectedWidget = useMemo(() => {
+    if (selectedId == null) return undefined;
+    return findWidgetById(widgets, selectedId) || undefined;
+  }, [widgets, selectedId]);
 
-  /** 从面板添加组件 */
+  /** 点击左侧组件添加（追加到画布末尾） */
   const addWidget = (type: WidgetType) => {
-    const id = ++idRef.current;
-    const widget: FormWidget = {
-      id,
-      type,
-      vModel: `field${id}`,
-      label: widgetTitles[type],
-      required: false,
-      options: ['选项一', '选项二'],
-      placeholder: type === 'select' ? '请选择' : '请输入',
-    };
+    const widget = createWidget(type, ++idRef.current);
     setWidgets((prev) => [...prev, widget]);
-    setSelectedId(id);
+    setSelectedId(widget.id);
   };
 
-  /** 画布排序 */
+  /** 解析拖拽目标位置：返回目标列表与插入下标 */
+  const resolveTarget = (
+    list: FormWidget[],
+    overId: number | string,
+  ): { list: FormWidget[]; index: number } | null => {
+    if (overId === 'canvas-body') {
+      return { list, index: list.length };
+    }
+    if (typeof overId === 'string' && overId.startsWith('row-')) {
+      const rowId = Number(overId.replace('row-', ''));
+      const row = findWidgetById(list, rowId);
+      if (row?.children) {
+        return { list: row.children, index: row.children.length };
+      }
+      return null;
+    }
+    const loc = findWidgetList(list, Number(overId));
+    if (loc) {
+      const target = loc.list[loc.index];
+      /* 拖到行容器上：进入行容器子列表 */
+      if (target.type === 'row' && target.children) {
+        return { list: target.children, index: target.children.length };
+      }
+      return loc;
+    }
+    return null;
+  };
+
+  /** 拖拽结束：新增组件或排序 */
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (active.id !== over?.id) {
-      setWidgets((prev) => {
-        const oldIndex = prev.findIndex((w) => w.id === active.id);
-        const newIndex = prev.findIndex((w) => w.id === over?.id);
-        return arrayMove(prev, oldIndex, newIndex);
-      });
+    if (!over) return;
+    const overId = over.id;
+    const fromPalette = active.data.current?.fromPalette;
+    /* 基于当前状态做一次深拷贝，避免诸多嵌套引用被直接修改 */
+    const next = JSON.parse(JSON.stringify(widgets)) as FormWidget[];
+    let newSelected: number | undefined;
+
+    /* 从左侧组件库拖入画布 */
+    if (fromPalette) {
+      const type = active.data.current?.type as WidgetType;
+      const newWidget = createWidget(type, ++idRef.current);
+      const target = resolveTarget(next, overId);
+      if (target) {
+        target.list.splice(target.index, 0, newWidget);
+      } else {
+        next.push(newWidget);
+      }
+      newSelected = newWidget.id;
+      setWidgets(next);
+    } else {
+      /* 画布内排序 / 跨容器移动 */
+      const activeLoc = findWidgetList(next, Number(active.id));
+      const target = resolveTarget(next, overId);
+      if (activeLoc && target) {
+        const movedWidget = activeLoc.list[activeLoc.index];
+        /* 行容器禁止拖入自身子列表 */
+        const canMove = !(
+          movedWidget.type === 'row' &&
+          movedWidget.children &&
+          target.list === movedWidget.children
+        );
+        if (!canMove) {
+          setActiveType(undefined);
+          setDraggingFromPalette(false);
+          return;
+        }
+
+        newSelected = Number(active.id);
+        if (activeLoc.list === target.list) {
+          /* 同列表：直接排序 */
+          const arr = arrayMove(activeLoc.list, activeLoc.index, target.index);
+          activeLoc.list.splice(0, activeLoc.list.length, ...arr);
+        } else {
+          /* 跨容器：先出后入 */
+          const [moved] = activeLoc.list.splice(activeLoc.index, 1);
+          target.list.splice(target.index, 0, moved);
+        }
+      }
+      setWidgets(next);
     }
+
+    if (newSelected !== undefined) setSelectedId(newSelected);
+    setActiveType(undefined);
+    setDraggingFromPalette(false);
   };
 
-  /** 更新选中组件 */
-  const updateWidget = (patch: Partial<FormWidget>) => {
-    if (selectedId == null) return;
-    setWidgets((prev) =>
-      prev.map((w) => (w.id === selectedId ? { ...w, ...patch } : w)),
-    );
+  /** 拖拽开始：记录拖拽组件类型（用于浮层展示） */
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveType(event.active.data.current?.type as WidgetType | undefined);
+    setDraggingFromPalette(!!event.active.data.current?.fromPalette);
   };
 
-  /** 复制代码 */
-  const handleCopy = async () => {
-    const code = generateTsx(widgets, config);
+  /** 构建 TSX 代码 */
+  const buildCode = (type: 'file' | 'dialog') =>
+    generateTsx(widgets, config, type);
+
+  /** 导出文件：弹框选择生成类型后下载 */
+  const handleExport = (data: { type: string; fileName?: string }) => {
+    const code = buildCode(data.type as 'file' | 'dialog');
+    const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = data.fileName || `${Date.now()}.tsx`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  /** 复制代码：弹框选择生成类型后复制 */
+  const handleCopy = async (data: { type: string; fileName?: string }) => {
+    const code = buildCode(data.type as 'file' | 'dialog');
     try {
       await navigator.clipboard.writeText(code);
       message.success('代码已复制');
@@ -420,81 +713,82 @@ const PageGen = () => {
     }
   };
 
-  /** 导出 TSX 文件 */
-  const handleExport = () => {
-    const code = generateTsx(widgets, config);
-    const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'demoForm.tsx';
-    a.click();
-    URL.revokeObjectURL(a.href);
+  /** 清空画布：二次确认 */
+  const handleClear = () => {
+    modal.confirm({
+      title: '系统提示',
+      content: '确定要清空所有组件吗？',
+      onOk: () => {
+        idRef.current = 100;
+        setWidgets([]);
+        setSelectedId(undefined);
+      },
+    });
   };
 
   return (
     <PageContainer ghost title={false}>
-      <div className={styles.container}>
-        {/* 左：组件面板 */}
-        <div className={`${styles.panel} ${styles.palette}`}>
-          {paletteGroups.map((group) => (
-            <div key={group.title} className={styles.paletteGroup}>
-              <div className={styles.paletteGroupTitle}>{group.title}</div>
-              {group.types.map((type) => (
-                <div
-                  key={type}
-                  className={styles.paletteItem}
-                  onClick={() => addWidget(type)}
-                >
-                  <PlusOutlined />
-                  {widgetTitles[type]}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-
-        {/* 中：画布 */}
-        <div className={`${styles.panel} ${styles.canvas}`}>
-          <div className={styles.toolbar}>
-            <span style={{ fontWeight: 600 }}>表单设计</span>
-            <div>
-              <Button
-                icon={<DownloadOutlined />}
-                size="small"
-                style={{ marginRight: 8 }}
-                onClick={handleExport}
-              >
-                导出文件
-              </Button>
-              <Button
-                icon={<CopyOutlined />}
-                size="small"
-                style={{ marginRight: 8 }}
-                onClick={handleCopy}
-              >
-                复制代码
-              </Button>
-              <Button
-                danger
-                size="small"
-                onClick={() => {
-                  setWidgets([]);
-                  setSelectedId(undefined);
-                }}
-              >
-                清空
-              </Button>
-            </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => {
+          setActiveType(undefined);
+          setDraggingFromPalette(false);
+        }}
+      >
+        <div className={styles.container}>
+          {/* 左：组件面板 */}
+          <div className={`${styles.panel} ${styles.palette}`}>
+            {paletteGroups.map((group) => (
+              <div key={group.title} className={styles.paletteGroup}>
+                <div className={styles.paletteGroupTitle}>{group.title}</div>
+                {group.types.map((type) => (
+                  <PaletteItem key={type} type={type} onAdd={addWidget} />
+                ))}
+              </div>
+            ))}
           </div>
-          <div className={styles.canvasBody}>
-            {widgets.length === 0 ? (
-              <div className={styles.empty}>点击左侧组件添加，或拖拽排序</div>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
+
+          {/* 中：画布 */}
+          <div className={`${styles.panel} ${styles.canvas}`}>
+            <div className={styles.toolbar}>
+              <span style={{ fontWeight: 600 }}>表单设计</span>
+              <div>
+                <Button
+                  icon={<DownloadOutlined />}
+                  size="small"
+                  style={{ marginRight: 8 }}
+                  onClick={() => {
+                    setGenShowFileName(true);
+                    setGenOpen(true);
+                  }}
+                >
+                  导出文件
+                </Button>
+                <Button
+                  icon={<CopyOutlined />}
+                  size="small"
+                  style={{ marginRight: 8 }}
+                  onClick={() => {
+                    setGenShowFileName(false);
+                    setGenOpen(true);
+                  }}
+                >
+                  复制代码
+                </Button>
+                <Button danger size="small" onClick={handleClear}>
+                  清空
+                </Button>
+              </div>
+            </div>
+            <CanvasBody>
+              {widgets.length === 0 ? (
+                <div className={styles.empty}>
+                  从左侧拖入或点选组件进行表单设计
+                </div>
+              ) : (
                 <SortableContext
                   items={widgets.map((w) => w.id)}
                   strategy={verticalListSortingStrategy}
@@ -502,153 +796,95 @@ const PageGen = () => {
                   <Form
                     layout={config.layout}
                     labelCol={
-                      config.layout === 'horizontal' ? { span: 6 } : undefined
+                      config.layout === 'horizontal'
+                        ? { flex: '80px' }
+                        : undefined
                     }
                   >
-                    {widgets.map((w) => (
-                      <SortableWidget
-                        key={w.id}
-                        widget={w}
-                        selected={w.id === selectedId}
-                        onClick={() => setSelectedId(w.id)}
-                        onDelete={() => {
-                          setWidgets((prev) =>
-                            prev.filter((i) => i.id !== w.id),
-                          );
-                          if (selectedId === w.id) setSelectedId(undefined);
-                        }}
-                      />
-                    ))}
+                    <Row gutter={config.gutter || 0}>
+                      {widgets.map((w) => (
+                        <SortableWidget
+                          key={w.id}
+                          widget={w}
+                          selected={w.id === selectedId}
+                          selectedId={selectedId}
+                          draggingFromPalette={draggingFromPalette}
+                          onSelect={setSelectedId}
+                          onDelete={(id) => {
+                            setWidgets((prev) => removeWidget(prev, id));
+                            if (selectedId === id) setSelectedId(undefined);
+                          }}
+                        />
+                      ))}
+                    </Row>
                   </Form>
                 </SortableContext>
-              </DndContext>
-            )}
+              )}
+            </CanvasBody>
+            <DragOverlay dropAnimation={defaultDropAnimation}>
+              {activeType ? (
+                <div className={styles.overlay}>
+                  {activeType === 'row' ? (
+                    <div className={styles.rowTitle}>
+                      <HolderOutlined style={{ marginRight: 6 }} />
+                      {widgetTitles.row}
+                    </div>
+                  ) : (
+                    <Form.Item
+                      label={widgetTitles[activeType]}
+                      style={{ marginBottom: 0, width: 320 }}
+                    >
+                      {renderPreview(createWidget(activeType, -1))}
+                    </Form.Item>
+                  )}
+                </div>
+              ) : null}
+            </DragOverlay>
+          </div>
+
+          {/* 右：属性面板 */}
+          <div className={`${styles.panel} ${styles.properties}`}>
+            <div style={{ marginLeft: 8, fontWeight: 600 }}>属性配置</div>
+            <RightPanel
+              activeData={selectedWidget}
+              formConfig={config}
+              onWidgetChange={(patch) => {
+                if (selectedId == null) return;
+                setWidgets((prev) => patchWidget(prev, selectedId, patch));
+              }}
+              onFormChange={(patch) =>
+                setConfig((prev) => ({ ...prev, ...patch }))
+              }
+            />
           </div>
         </div>
+      </DndContext>
 
-        {/* 右：属性面板 */}
-        <div className={`${styles.panel} ${styles.properties}`}>
-          <Tabs
-            items={[
-              {
-                key: 'widget',
-                label: '组件属性',
-                children: selectedWidget ? (
-                  <div>
-                    <Form layout="vertical" style={{ marginTop: 8 }}>
-                      <Form.Item label="组件类型">
-                        <Tag color="blue">
-                          {widgetTitles[selectedWidget.type]}
-                        </Tag>
-                      </Form.Item>
-                      <Form.Item label="字段名">
-                        <Input
-                          value={selectedWidget.vModel}
-                          onChange={(e) =>
-                            updateWidget({ vModel: e.target.value })
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item label="标签">
-                        <Input
-                          value={selectedWidget.label}
-                          onChange={(e) =>
-                            updateWidget({ label: e.target.value })
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item label="占位提示">
-                        <Input
-                          value={selectedWidget.placeholder}
-                          onChange={(e) =>
-                            updateWidget({ placeholder: e.target.value })
-                          }
-                        />
-                      </Form.Item>
-                      <Form.Item label="必填">
-                        <Switch
-                          checked={selectedWidget.required}
-                          onChange={(checked) =>
-                            updateWidget({ required: checked })
-                          }
-                        />
-                      </Form.Item>
-                      {['select', 'radio', 'checkbox'].includes(
-                        selectedWidget.type,
-                      ) && (
-                        <Form.Item label="选项">
-                          <Select
-                            mode="tags"
-                            value={selectedWidget.options}
-                            onChange={(options) => updateWidget({ options })}
-                            placeholder="输入后回车添加选项"
-                          />
-                        </Form.Item>
-                      )}
-                    </Form>
-                  </div>
-                ) : (
-                  <div className={styles.empty}>请选择画布中的组件</div>
-                ),
-              },
-              {
-                key: 'form',
-                label: '表单属性',
-                children: (
-                  <Form layout="vertical" style={{ marginTop: 8 }}>
-                    <Form.Item label="标签宽度">
-                      <InputNumber
-                        style={{ width: '100%' }}
-                        value={config.labelWidth}
-                        min={0}
-                        onChange={(v) =>
-                          setConfig((prev) => ({
-                            ...prev,
-                            labelWidth: v ?? 120,
-                          }))
-                        }
-                      />
-                    </Form.Item>
-                    <Form.Item label="布局">
-                      <Radio.Group
-                        value={config.layout}
-                        onChange={(e) =>
-                          setConfig((prev) => ({
-                            ...prev,
-                            layout: e.target.value,
-                          }))
-                        }
-                        options={[
-                          { value: 'horizontal', label: '水平' },
-                          { value: 'vertical', label: '垂直' },
-                          { value: 'inline', label: '行内' },
-                        ]}
-                      />
-                    </Form.Item>
-                    <Form.Item label="尺寸">
-                      <Radio.Group
-                        value={config.size}
-                        onChange={(e) =>
-                          setConfig((prev) => ({
-                            ...prev,
-                            size: e.target.value,
-                          }))
-                        }
-                        options={[
-                          { value: 'small', label: '小' },
-                          { value: 'middle', label: '中' },
-                          { value: 'large', label: '大' },
-                        ]}
-                      />
-                    </Form.Item>
-                  </Form>
-                ),
-              },
-            ]}
-          />
-        </div>
-      </div>
+      {/* 生成类型选择弹窗 */}
+      <CodeTypeDialog
+        open={genOpen}
+        onOpenChange={setGenOpen}
+        showFileName={genShowFileName}
+        onConfirm={(data) => {
+          if (genShowFileName) {
+            handleExport(data);
+          } else {
+            handleCopy(data);
+          }
+        }}
+      />
     </PageContainer>
+  );
+};
+
+/** 画布放置区域（支持接收左侧组件拖入） */
+const CanvasBody = ({ children }: { children: React.ReactNode }) => {
+  const { styles } = useStyles();
+  const { setNodeRef } = useDroppable({ id: 'canvas-body' });
+  return (
+    <div ref={setNodeRef} className={styles.canvasBody}>
+      {children}
+    </div>
   );
 };
 
