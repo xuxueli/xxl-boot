@@ -85,7 +85,7 @@ return (
       width={640}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       layout="horizontal"
       labelCol={{ flex: '90px' }}
       onFinish={handleFinish}

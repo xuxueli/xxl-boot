@@ -148,7 +148,7 @@ const isHttp = (component?: string) => {
  *     由后端包裹一层单独子节点，实际页面在子节点中，递归时自然命中。
  *
  * @param routerList 后端 /getRouters 返回的菜单树
- * @returns 拍平后的业务路由列表（隐藏节点、外链、无页面组件的节点被跳过）
+ * @returns 拍平后的业务路由列表（外链、无页面组件的节点被跳过；隐藏节点照常注册）
  */
 export const buildBusinessRoutes = (
     routerList: API.RouterVo[] = [],
@@ -158,9 +158,7 @@ export const buildBusinessRoutes = (
     const walk = (nodes: API.RouterVo[]) => {
         nodes.forEach((node) => {
 
-            // 隐藏路由：不注入
-            if (node.hidden) return;
-
+            // 隐藏路由（visible=1）：仍注册、可访问，仅侧栏渲染时过滤（AppLayout#buildMenuData），供 tab.openPage 等内部跳转
             // 目录节点（Layout / ParentView）：无页面组件，递归子节点
             if (node.component === 'Layout' || node.component === 'ParentView') {
                 if (node.children?.length) walk(node.children);
