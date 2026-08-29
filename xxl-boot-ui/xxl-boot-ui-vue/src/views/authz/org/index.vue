@@ -93,6 +93,7 @@
                 value-key="id"
                 placeholder="选择上级组织"
                 check-strictly
+                :default-expanded-keys="expandedKeys"
               />
             </el-form-item>
           </el-col>
@@ -196,6 +197,8 @@ const formState = ref<FormState>({
 
 // 上级组织树选项
 const orgOptions = ref<Org[]>([])
+// 上级组织树默认展开节点（默认全部展开）
+const expandedKeys = ref<number[]>([])
 
 // 排序：原始顺序快照（用于对比是否发生变更）
 const originalOrders = ref<Record<number, number | undefined>>({})
@@ -221,7 +224,23 @@ function getList() {
 function loadOrgOptions() {
   listOrg({}).then((response) => {
     orgOptions.value = handleTree(response.data, 'id')
+    // 默认展开全部节点
+    expandedKeys.value = collectNodeIds(orgOptions.value)
   })
+}
+
+/** 递归收集树节点所有 id，用于默认展开 */
+function collectNodeIds(nodes: Org[]): number[] {
+  let ids: number[] = []
+  nodes.forEach((node) => {
+    if (node.id !== undefined) {
+      ids.push(node.id)
+    }
+    if (node.children && node.children.length > 0) {
+      ids = ids.concat(collectNodeIds(node.children))
+    }
+  })
+  return ids
 }
 
 /** 状态编码 → 文案 */
