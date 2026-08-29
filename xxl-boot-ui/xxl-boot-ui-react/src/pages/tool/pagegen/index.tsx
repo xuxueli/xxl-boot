@@ -503,7 +503,10 @@ const SortableWidget = ({
       ref={setNodeRef}
       span={widget.span || 24}
       style={style}
-      onClick={() => onSelect(widget.id)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onSelect(widget.id);
+      }}
     >
       <div
         className={
