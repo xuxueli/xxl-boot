@@ -11,7 +11,7 @@ export default defineConfig(({ mode, command }) => {
    * 获取环境变量：
    */
   const rawEnv = loadEnv(mode, process.cwd(), '');
-  const API_URL = rawEnv.VITE_API_URL || 'http://localhost:8081';
+  const API_URL = rawEnv.VITE_API_URL || 'http://localhost:8090';
   const APP_BASE_API = rawEnv.VITE_APP_BASE_API || '/api';
   const APP_PORT = Number(rawEnv.VITE_APP_PORT) || 4000;
 

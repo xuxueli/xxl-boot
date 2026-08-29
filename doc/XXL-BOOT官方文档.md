@@ -168,11 +168,11 @@ spring.data.redis.password=
 ```
 
 补充说明：
-- 后端服务默认端口为 `8081`，可通过 `server.port` 调整；
+- 后端服务默认端口为 `8090`，可通过 `server.port` 调整；
 - 前后端分离项目依赖 Redis，部署前需确保 Redis 服务可用。
 
 #### 步骤二：部署后端项目
-项目打包部署后，后端API服务启动成功，可通过 `http://localhost:8081` 访问。
+项目打包部署后，后端API服务启动成功，可通过 `http://localhost:8090` 访问。
 
 #### 步骤三：前端环境配置
 配置文件地址（按环境区分）：
@@ -190,7 +190,7 @@ spring.data.redis.password=
 VITE_APP_PORT=3000
 
 # 后端API地址
-VITE_API_URL=http://localhost:8081
+VITE_API_URL=http://localhost:8090
 # 后端路由前缀
 VITE_APP_BASE_API='/api'
 ```
@@ -234,7 +234,7 @@ server {
 
     # 后端API反向代理
     location /api/ {
-        proxy_pass   http://127.0.0.1:8081/;
+        proxy_pass   http://127.0.0.1:8090/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
