@@ -32,11 +32,13 @@ const MessageFormModal = ({
   open,
   onOpenChange,
   current,
+  categoryOptions = [],
   onSuccess,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   current?: API.Message | null;
+  categoryOptions?: { value: number; label: string }[];
   onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();
@@ -82,10 +84,7 @@ const MessageFormModal = ({
             name="category"
             label="分类"
             placeholder="请选择分类"
-            options={[
-              { value: 0, label: '通知' },
-              { value: 1, label: '公告' },
-            ]}
+            options={categoryOptions}
             rules={[{ required: true, message: '请选择分类' }]}
           />
         </Col>

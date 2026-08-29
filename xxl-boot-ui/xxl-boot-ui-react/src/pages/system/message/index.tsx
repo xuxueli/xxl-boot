@@ -7,18 +7,17 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useRef, useState } from 'react';
-import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
+import React, { useMemo, useRef, useState } from 'react';
+import {
+  toSelectOptions,
+  toValueEnum,
+  useEnumOption,
+} from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delMessage, listMessage } from '@/services/system/message';
 import MessageDetail, { type MessageDetailRef } from './MessageDetail';
 import MessageFormModal from './MessageFormModal';
 import ReadUsersDialog, { type ReadUsersDialogRef } from './ReadUsersDialog';
-
-const categoryMap: Record<number, { text: string; color: string }> = {
-  0: { text: '通知', color: 'success' },
-  1: { text: '公告', color: 'warning' },
-};
 
 /**
  * 消息表格样式
@@ -54,8 +53,21 @@ const MessageList = () => {
   const [formCurrent, setFormCurrent] = useState<API.Message | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  const messageCategoryOptions = useEnumOption('MessageCategoryEnum');
   const messageStatusOptions = useEnumOption('MessageStatusEnum');
   const statusValueEnum = toValueEnum(messageStatusOptions);
+  // 分类映射：文字来自后端枚举，颜色按枚举顺序（首项高亮）区分
+  const categoryMap = useMemo(() => {
+    const map: Record<number, { text: string; color: string }> = {};
+    messageCategoryOptions.forEach((o, index) => {
+      map[o.code] = {
+        text: o.title || '',
+        color: index === 0 ? 'success' : 'warning',
+      };
+    });
+    return map;
+  }, [messageCategoryOptions]);
+  const categorySelectOptions = toSelectOptions(messageCategoryOptions);
 
   /** 删除消息 */
   const handleDelete = (row?: API.Message) => {
@@ -199,6 +211,7 @@ const MessageList = () => {
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}
+        categoryOptions={categorySelectOptions}
         onSuccess={() => actionRef.current?.reload()}
       />
       <MessageDetail ref={messageViewRef} />
