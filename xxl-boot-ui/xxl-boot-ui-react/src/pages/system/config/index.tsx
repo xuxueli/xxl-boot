@@ -107,9 +107,18 @@ const ConfigList = () => {
       title: '备注',
       dataIndex: 'remark',
       search: false,
-      ellipsis: true,
       render: (_, record) => (
-        <Tooltip title={record.remark}>{record.remark}</Tooltip>
+        <Tooltip title={record.remark}>
+          <div
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {record.remark}
+          </div>
+        </Tooltip>
       ),
     },
     { title: '创建时间', dataIndex: 'addTime', search: false, width: 160 },

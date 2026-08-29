@@ -229,9 +229,9 @@ const HeaderMessage = () => {
                     className={styles.item}
                     onClick={() => previewMessage(item)}
                   >
-                    {/* 分类标签：1-通知，其他-公告 */}
-                    <Tag color={item.category === 1 ? 'warning' : 'success'}>
-                      {item.category === 1 ? '通知' : '公告'}
+                    {/* 分类标签：0-通知，其他-公告 */}
+                    <Tag color={item.category === 0 ? 'success' : 'warning'}>
+                      {item.category === 0 ? '通知' : '公告'}
                     </Tag>
                     <span
                       className={clsx(

@@ -59,8 +59,8 @@
             <div v-for="item in messages" :key="item.id" class="msg-item" @click="handleMsgClick(item)">
               <div class="msg-title">{{ item.title }}</div>
               <div class="msg-meta">
-                <el-tag size="small" :type="item.category === 1 ? 'warning' : 'success'">
-                  {{ item.category === 1 ? '通知' : '公告' }}
+                <el-tag size="small" :type="item.category === 0 ? 'success' : 'warning'">
+                  {{ item.category === 0 ? '通知' : '公告' }}
                 </el-tag>
                 <span class="msg-time">{{ item.addTime }}</span>
               </div>

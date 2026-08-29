@@ -2,7 +2,7 @@
   组件：Editor（富文本编辑器）
   功能：基于 Quill 的富文本编辑器，支持工具栏、图片上传（url/base64）、粘贴图片、
         自定义高度/只读模式。
-  用法：<Editor v-model="form.content" :min-height="192" />
+  用法：<Editor v-model="form.content" :min-height="210" />
 -->
 <template>
   <!-- 隐藏的文件上传组件：点击工具栏图片按钮时触发 -->
@@ -106,11 +106,12 @@ const options = ref<any>({
   readOnly: props.readOnly
 })
 
-// 编辑器样式：最小高度 / 高度
+// 编辑器样式：最小高度 / 高度（最小高度通过 CSS 变量作用于编辑区 .ql-editor）
 const styles = computed(() => {
   let style: Record<string, any> = {}
   if (props.minHeight) {
-    style.minHeight = `${props.minHeight}px`
+    // 设置编辑区最小高度（CSS 变量），保证默认高度展示约 10 行
+    style['--editor-min-height'] = `${props.minHeight}px`
   }
   if (props.height) {
     style.height = `${props.height}px`
@@ -240,6 +241,11 @@ function insertImage(file: any) {
 .ql-toolbar {
   white-space: pre-wrap !important;
   line-height: normal !important;
+}
+
+/* 编辑区最小高度：由 min-height 属性驱动的 CSS 变量决定 */
+.editor .ql-editor {
+  min-height: var(--editor-min-height, auto);
 }
 
 .quill-img {

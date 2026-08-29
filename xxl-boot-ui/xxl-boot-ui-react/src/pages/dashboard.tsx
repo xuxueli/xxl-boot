@@ -276,10 +276,10 @@ const Dashboard = () => {
                   <div className={styles.msgTitle}>{item.title}</div>
                   <div className={styles.msgMeta}>
                     <Tag
-                      color={item.category === 1 ? 'warning' : 'success'}
+                      color={item.category === 0 ? 'success' : 'warning'}
                       style={{ marginRight: 0 }}
                     >
-                      {item.category === 1 ? '通知' : '公告'}
+                      {item.category === 0 ? '通知' : '公告'}
                     </Tag>
                     <span className={styles.msgTime}>{item.addTime}</span>
                   </div>

@@ -92,8 +92,8 @@
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="100px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="消息标题" prop="title">
-              <el-input v-model="formState.form.title" placeholder="请输入消息标题" />
+            <el-form-item label="标题" prop="title">
+              <el-input v-model="formState.form.title" placeholder="请输入标题" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -112,7 +112,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="内容">
-              <Editor v-model="formState.form.content" :min-height="192" />
+              <Editor v-model="formState.form.content" :min-height="210" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -183,7 +183,7 @@ const formState = ref<FormState<Message>>({
   form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
-    title: [{ required: true, message: '消息标题不能为空', trigger: 'blur' }],
+    title: [{ required: true, message: '标题不能为空', trigger: 'blur' }],
     category: [{ required: true, message: '分类不能为空', trigger: 'change' }]
   }
 })

@@ -33,34 +33,36 @@ const ReadUsersDialog = forwardRef<ReadUsersDialogRef>((_, ref) => {
   const [loading, setLoading] = useState(false);
   const [messageId, setMessageId] = useState<number>();
 
-  /** 加载已读用户列表 */
-  const loadData = useCallback(
-    (page: number, size: number) => {
-      if (messageId == null) return;
-      setLoading(true);
-      listMessageReadUsers({ messageId, current: page, pageSize: size })
-        .then((res) => {
-          const data = res.data;
-          setList(data?.data || []);
-          setTotal(data?.total || 0);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    },
-    [messageId],
-  );
-
-  /** 打开弹窗 */
-  const open = useCallback((row: API.Message) => {
-    setVisible(true);
-    setTitle(row.title || '');
-    setMessageId(row.id);
-    setCurrent(1);
-    setPageSize(10);
-    setList([]);
-    setTotal(0);
+  /** 加载已读用户列表（id 为必传，避免依赖 state 回调产生陈旧值） */
+  const loadData = useCallback((id: number, page: number, size: number) => {
+    setLoading(true);
+    listMessageReadUsers({ messageId: id, current: page, pageSize: size })
+      .then((res) => {
+        const data = res.data;
+        setList(data?.data || []);
+        setTotal(data?.total || 0);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
+
+  /** 打开弹窗：回显消息信息并加载已读用户列表 */
+  const open = useCallback(
+    (row: API.Message) => {
+      setVisible(true);
+      setTitle(row.title || '');
+      setMessageId(row.id);
+      setCurrent(1);
+      setPageSize(10);
+      setList([]);
+      setTotal(0);
+      if (row.id != null) {
+        loadData(row.id, 1, 10);
+      }
+    },
+    [loadData],
+  );
 
   useImperativeHandle(ref, () => ({ open }));
 
@@ -94,7 +96,9 @@ const ReadUsersDialog = forwardRef<ReadUsersDialogRef>((_, ref) => {
           onChange: (page, size) => {
             setCurrent(page);
             setPageSize(size);
-            loadData(page, size);
+            if (messageId != null) {
+              loadData(messageId, page, size);
+            }
           },
         }}
       />

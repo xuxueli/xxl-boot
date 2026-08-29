@@ -24,10 +24,10 @@
       <div v-else class="message-page">
         <!-- 类型标签：通知 / 公告 / 消息 -->
         <div class="message-type-wrap">
-          <span v-if="detail.category === 1" class="message-type-tag type-notify">
+          <span v-if="detail.category === 0" class="message-type-tag type-notify">
             <el-icon><Bell /></el-icon> 通知
           </span>
-          <span v-else-if="detail.category === 2" class="message-type-tag type-announce">
+          <span v-else-if="detail.category === 1" class="message-type-tag type-announce">
             <el-icon><Message /></el-icon> 公告
           </span>
           <span v-else class="message-type-tag type-notify">

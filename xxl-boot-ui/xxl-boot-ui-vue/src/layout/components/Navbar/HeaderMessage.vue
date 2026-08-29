@@ -53,8 +53,8 @@
           @click="previewMessage(item)"
         >
           <!-- 公告标签 -->
-          <el-tag size="small" :type="item.category === 1 ? 'warning' : 'success'" class="message-tag">
-            {{ item.category === 1 ? '通知' : '公告' }}
+          <el-tag size="small" :type="item.category === 0 ? 'success' : 'warning'" class="message-tag">
+            {{ item.category === 0 ? '通知' : '公告' }}
           </el-tag>
           <!-- 标题 / 时间 -->
           <span class="message-item-title">{{ item.title }}</span>
