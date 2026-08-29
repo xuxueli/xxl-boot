@@ -459,20 +459,20 @@ const PageGen = () => {
             <span style={{ fontWeight: 600 }}>表单设计</span>
             <div>
               <Button
+                icon={<DownloadOutlined />}
+                size="small"
+                style={{ marginRight: 8 }}
+                onClick={handleExport}
+              >
+                导出文件
+              </Button>
+              <Button
                 icon={<CopyOutlined />}
                 size="small"
                 style={{ marginRight: 8 }}
                 onClick={handleCopy}
               >
                 复制代码
-              </Button>
-              <Button
-                icon={<DownloadOutlined />}
-                size="small"
-                style={{ marginRight: 8 }}
-                onClick={handleExport}
-              >
-                导出
               </Button>
               <Button
                 danger

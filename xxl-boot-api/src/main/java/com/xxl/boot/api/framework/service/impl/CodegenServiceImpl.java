@@ -68,6 +68,12 @@ public class CodegenServiceImpl implements CodegenService {
 
     @Override
     public Response<String> update(CodegenDTO dto) {
+
+        // 生成模板（tplCategory）必填校验：仅支持单表（crud）与树表（tree）
+        if (dto == null || !List.of("crud", "tree").contains(dto.getTplCategory())) {
+            return Response.ofFail("生成模板不能为空");
+        }
+
         Codegen c = new Codegen();
         c.setId(dto.getId());
         c.setTableName(dto.getTableName());
@@ -156,6 +162,7 @@ public class CodegenServiceImpl implements CodegenService {
             c.setFunctionAuthor("xxl-boot");
             c.setFormColNum(1);
             c.setTplCategory("crud");
+            c.setTplWebType("");// todo，前端传递
 
             codegenMapper.insert(c);
 
@@ -264,13 +271,23 @@ public class CodegenServiceImpl implements CodegenService {
             // generate sql
             result.put("sql/sql.ftl", render("sql/sql.ftl", params));
 
-            // generate vue
-            result.put("vue3/types.ts.ftl", render("vue3/types.ts.ftl", params));
-            result.put("vue3/api.ts.ftl", render("vue3/api.ts.ftl", params));
-            if (codegen.getTplCategory().equals("tree")) {
-                result.put("vue3/index-tree.vue.ftl", render("vue3/index-tree.vue.ftl", params));
+            // generate web（根据 tplWebType 选择 vue3 或 react 模板）
+            if (isReactTpl(codegen.getTplWebType())) {
+                result.put("react/types.ts.ftl", render("react/types.ts.ftl", params));
+                result.put("react/api.ts.ftl", render("react/api.ts.ftl", params));
+                if ("tree".equals(codegen.getTplCategory())) {
+                    result.put("react/index-tree.tsx.ftl", render("react/index-tree.tsx.ftl", params));
+                } else {
+                    result.put("react/index.tsx.ftl", render("react/index.tsx.ftl", params));
+                }
             } else {
-                result.put("vue3/index.vue.ftl", render("vue3/index.vue.ftl", params));
+                result.put("vue3/types.ts.ftl", render("vue3/types.ts.ftl", params));
+                result.put("vue3/api.ts.ftl", render("vue3/api.ts.ftl", params));
+                if ("tree".equals(codegen.getTplCategory())) {
+                    result.put("vue3/index-tree.vue.ftl", render("vue3/index-tree.vue.ftl", params));
+                } else {
+                    result.put("vue3/index.vue.ftl", render("vue3/index.vue.ftl", params));
+                }
             }
 
             return Response.ofSuccess(result);
@@ -317,13 +334,23 @@ public class CodegenServiceImpl implements CodegenService {
                 // generate sql
                 addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "-init.sql", render("sql/sql.ftl", params));
 
-                // generate vue
-                addZipEntry(zos, "vue/types/" + module + "/" + cnLower + ".ts", render("vue3/types.ts.ftl", params));
-                addZipEntry(zos, "vue/api/" + module + "/" + cnLower + ".ts", render("vue3/api.ts.ftl", params));
-                if (codegen.getTplCategory().equals("tree")) {
-                    addZipEntry(zos, "vue/views/" + module + "/" + cnLower + "/index.vue", render("vue3/index-tree.vue.ftl", params));
+                // generate web（根据 tplWebType 选择 vue3 或 react 模板）
+                if (isReactTpl(codegen.getTplWebType())) {
+                    addZipEntry(zos, "react/types/" + module + "/" + cnLower + ".d.ts", render("react/types.ts.ftl", params));
+                    addZipEntry(zos, "react/services/" + module + "/" + cnLower + ".ts", render("react/api.ts.ftl", params));
+                    if ("tree".equals(codegen.getTplCategory())) {
+                        addZipEntry(zos, "react/pages/" + module + "/" + cnLower + "/index.tsx", render("react/index-tree.tsx.ftl", params));
+                    } else {
+                        addZipEntry(zos, "react/pages/" + module + "/" + cnLower + "/index.tsx", render("react/index.tsx.ftl", params));
+                    }
                 } else {
-                    addZipEntry(zos, "vue/views/" + module + "/" + cnLower + "/index.vue", render("vue3/index.vue.ftl", params));
+                    addZipEntry(zos, "vue/types/" + module + "/" + cnLower + ".ts", render("vue3/types.ts.ftl", params));
+                    addZipEntry(zos, "vue/api/" + module + "/" + cnLower + ".ts", render("vue3/api.ts.ftl", params));
+                    if ("tree".equals(codegen.getTplCategory())) {
+                        addZipEntry(zos, "vue/views/" + module + "/" + cnLower + "/index.vue", render("vue3/index-tree.vue.ftl", params));
+                    } else {
+                        addZipEntry(zos, "vue/views/" + module + "/" + cnLower + "/index.vue", render("vue3/index.vue.ftl", params));
+                    }
                 }
 
             }
@@ -332,6 +359,18 @@ public class CodegenServiceImpl implements CodegenService {
             return null;
         }
         return baos.toByteArray();
+    }
+
+    /**
+     * 判断是否使用 react 前端模板
+     *     - react：antd（Ant Design + TypeScript）
+     *     - vue3：element-plus-typescript
+     *
+     * @param tplWebType 前端模板类型
+     * @return 使用 react 模板返回 true
+     */
+    private boolean isReactTpl(String tplWebType) {
+        return "antd-typescript".equals(tplWebType);
     }
 
     /**

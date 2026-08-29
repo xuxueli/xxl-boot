@@ -34,6 +34,12 @@ const javaTypeOptions = [
   'Date',
   'Boolean',
 ];
+/* 前端模板可选值（第一个为默认选中） */
+const tplWebTypeOptions = [
+  { value: 'antd-typescript', label: 'Ant Design + TypeScript' },
+  { value: 'element-plus-typescript', label: 'Element Plus + TypeScript' },
+];
+const tplWebTypeValues = tplWebTypeOptions.map((item) => item.value);
 const queryTypeOptions = [
   { value: 'EQ', label: '=' },
   { value: 'NE', label: '!=' },
@@ -175,13 +181,13 @@ const EditTableModal = ({
           const { fieldList = [], ...rest } = data;
           const merge = {
             formColNum: 1,
-            tplWebType: 'element-plus-typescript',
+            tplWebType: tplWebTypeValues[0],
             ...rest,
           };
           /* 校验默认值：表单布局默认单列，前端模板默认第一个选项 */
           if (![1, 2, 3].includes(merge.formColNum)) merge.formColNum = 1;
-          if (merge.tplWebType !== 'element-plus-typescript') {
-            merge.tplWebType = 'element-plus-typescript';
+          if (!tplWebTypeValues.includes(merge.tplWebType)) {
+            merge.tplWebType = tplWebTypeValues[0];
           }
           setInfo(merge);
           setFields(fieldList.map((f) => ({ ...f })));
@@ -520,14 +526,7 @@ const EditTableModal = ({
                     />
                   </Form.Item>
                   <Form.Item name="tplWebType" label="前端模板">
-                    <Select
-                      options={[
-                        {
-                          value: 'element-plus-typescript',
-                          label: 'Element Plus + TypeScript',
-                        },
-                      ]}
-                    />
+                    <Select options={tplWebTypeOptions} />
                   </Form.Item>
                   <Form.Item
                     name="remark"

@@ -22,7 +22,7 @@ public class Codegen implements Serializable {
     private String functionAuthor;  /* 生成功能作者 */
     private int formColNum;         /* 表单布局（1单列 2双列 3三列） */
     private String tplCategory;     /* 使用的模板（crud单表操作 tree树表操作） */
-    private String tplWebType;      /* 前端模板类型（element-plus、element-plus-typescript） */
+    private String tplWebType;      /* 前端模板类型（antd-typescript、element-plus-typescript） */
     private Date addTime;           /* 创建时间 */
     private Date updateTime;        /* 更新时间 */
 
