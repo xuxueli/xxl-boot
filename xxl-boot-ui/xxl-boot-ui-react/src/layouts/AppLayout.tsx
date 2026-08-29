@@ -99,6 +99,27 @@ const buildMenuData = (routes: API.RouterVo[]): MenuDataItem[] => {
 };
 
 /**
+ * 菜单项标题渲染：为二级及以下菜单补充展示图标
+ * 说明：pro-layout 的 siderMenuType=sub 模式下，仅第一级菜单项渲染 icon，深层菜单项（子菜单/叶子项）默认不展示，
+ *       这里在自定义渲染逻辑中手动补充图标。
+ * @param item 菜单数据项
+ * @returns 菜单标题节点
+ */
+const renderMenuLabel = (item: MenuDataItem) => {
+  // 未设置图标：直接返回菜单名
+  if (!item.icon) {
+    return item.name;
+  }
+  // 设置图标：图标 + 菜单名 水平排列
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+      <span style={{ marginRight: 8, display: 'inline-flex' }}>{item.icon}</span>
+      {item.name}
+    </span>
+  );
+};
+
+/**
  * 构建「目录路径 → 第一个叶子路径」映射表
  * 说明：splitMenus（自动分割菜单）下目录会被渲染成扁平菜单项且 children 被剥离，
  *       点击时需跳转到第一个叶子子项（真实页面），避免跳到目录路径导致 404
@@ -184,7 +205,9 @@ const AppLayout = () => {
       // 左侧菜单：点击菜单项跳转路由（目录项跳转其第一个叶子子项，避免 404；其他正常跳转；）
       menuItemRender={(item, dom) => {
         const targetPath = dirRedirectMap[item.path as string] || item.path;
-        return targetPath ? <Link to={targetPath}>{dom}</Link> : dom;
+        // 叶子菜单项：pro-layout 仅第一级默认渲染 icon，这里统一手动渲染标题，保证二级及以下叶子项也展示 icon
+        const label = item.icon ? renderMenuLabel(item) : dom;
+        return targetPath ? <Link to={targetPath}>{label}</Link> : label;
       }}
       // 顶部面包屑：单层级页面（如首页、帮助中心）也展示面包屑
       breadcrumbProps={{ minLength: 1 }}
