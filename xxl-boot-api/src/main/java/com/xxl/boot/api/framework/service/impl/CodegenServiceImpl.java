@@ -142,7 +142,7 @@ public class CodegenServiceImpl implements CodegenService {
     }
 
     @Override
-    public Response<String> createTable(String tableSql) {
+    public Response<String> createTable(String tableSql, String tplWebType) {
         try {
             // parse class-info
             ClassInfo ci = TableParseUtil.processTableIntoClassInfo(tableSql);
@@ -162,7 +162,7 @@ public class CodegenServiceImpl implements CodegenService {
             c.setFunctionAuthor("xxl-boot");
             c.setFormColNum(1);
             c.setTplCategory("crud");
-            c.setTplWebType("");// todo，前端传递
+            c.setTplWebType(tplWebType); // 前端传递：新建时携带前端模板类型（vue=element-plus-typescript、react=antd-typescript），与前端选择匹配
 
             codegenMapper.insert(c);
 

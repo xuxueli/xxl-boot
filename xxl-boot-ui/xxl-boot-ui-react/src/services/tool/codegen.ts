@@ -54,11 +54,12 @@ export async function updateGenTable(data: API.Codegen) {
 /**
  * 创建数据表。
  * @param tableSql 建表 SQL
+ * @param tplWebType 前端模板类型（antd-typescript / element-plus-typescript）
  */
-export async function createTable(tableSql: string) {
+export async function createTable(tableSql: string, tplWebType: string) {
   return request<API.Response<unknown>>('/tool/codegen/createTable', {
     method: 'POST',
-    params: { tableSql },
+    params: { tableSql, tplWebType },
   });
 }
 

@@ -107,7 +107,8 @@ const CodegenList = () => {
     setCreating(true);
     try {
       const { createTable } = await import('@/services/tool/codegen');
-      await createTable(tableSql);
+      // 新建时携带前端模板类型（默认第一个选项 antd-typescript），与后端 createTable 入参匹配
+      await createTable(tableSql, 'antd-typescript');
       message.success('创建成功');
       setCreateOpen(false);
       actionRef.current?.reload();

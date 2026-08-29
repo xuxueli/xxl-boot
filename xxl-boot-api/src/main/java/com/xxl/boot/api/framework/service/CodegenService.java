@@ -37,7 +37,7 @@ public interface CodegenService {
     /**
      * 通过 SQL 建表
      */
-    Response<String> createTable(String tableSql);
+    Response<String> createTable(String tableSql, String tplWebType);
 
     /**
      * 预览生成代码

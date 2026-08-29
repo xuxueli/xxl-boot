@@ -81,8 +81,8 @@ public class CodeGenController {
     @PostMapping("/createTable")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "创建数据表")
-    public Response<String> createTable(String tableSql) {
-        return codegenService.createTable(tableSql);
+    public Response<String> createTable(String tableSql, String tplWebType) {
+        return codegenService.createTable(tableSql, tplWebType);
     }
 
     /**
