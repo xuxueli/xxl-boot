@@ -5,7 +5,7 @@
 
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { updateUserProfile } from '@/services/authz/user';
 import { closePage } from '@/utils/common';
 
@@ -25,23 +25,11 @@ const UserInfo = ({
 }) => {
   const { message } = App.useApp();
   const [form] = ProForm.useForm();
-  const [formState, setFormState] = useState<UserInfoForm>({});
 
-  // 回显当前登录用户信息
-  useEffect(() => {
-    if (user) {
-      setFormState({
-        realName: user.realName,
-        email: user.email,
-        phone: user.phone,
-      });
-      form.setFieldsValue({
-        realName: user.realName,
-        email: user.email,
-        phone: user.phone,
-      });
-    }
-  }, [user, form]);
+  // 用户信息未加载完成前不渲染表单，确保 initialValues 能正确回显
+  if (!user?.username) {
+    return null;
+  }
 
   /** 提交保存 */
   const handleSubmit = async (values: UserInfoForm) => {
@@ -54,7 +42,11 @@ const UserInfo = ({
     <ProForm<API.User>
       form={form}
       labelCol={{ span: 4 }}
-      initialValues={formState}
+      initialValues={{
+        realName: user.realName,
+        email: user.email,
+        phone: user.phone,
+      }}
       onFinish={handleSubmit}
       submitter={{
         render: ({ submit }) => [
@@ -85,7 +77,7 @@ const UserInfo = ({
         name="phone"
         label="手机号码"
         placeholder="请输入手机号码"
-        fieldProps={{ maxLength: 20 }}
+        fieldProps={{ maxLength: 11 }}
         rules={[
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,

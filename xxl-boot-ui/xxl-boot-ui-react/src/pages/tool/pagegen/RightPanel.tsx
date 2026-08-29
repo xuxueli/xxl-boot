@@ -15,7 +15,12 @@ import {
 } from 'antd';
 import React from 'react';
 import type { FormConfig, FormWidget, WidgetType } from './config';
-import { isChoiceType, widgetTitles } from './config';
+import {
+  isChoiceType,
+  supportsPlaceholder,
+  supportsRequired,
+  widgetTitles,
+} from './config';
 
 /**
  * 右侧属性面板
@@ -73,7 +78,7 @@ const RightPanel = ({
             />
           </Form.Item>
         )}
-        {type !== 'row' && type !== 'button' && !isChoiceType(type) && (
+        {supportsPlaceholder(type) && (
           <Form.Item label="占位提示">
             <Input
               value={activeData.placeholder}
@@ -118,7 +123,7 @@ const RightPanel = ({
             />
           </Form.Item>
         )}
-        {type !== 'row' && type !== 'button' && (
+        {supportsRequired(type) && (
           <Form.Item label="必填">
             <Switch
               checked={activeData.required}

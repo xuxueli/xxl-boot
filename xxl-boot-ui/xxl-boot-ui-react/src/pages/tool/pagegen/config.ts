@@ -228,3 +228,24 @@ export function createWidget(type: WidgetType, id: number): FormWidget {
 export function isChoiceType(type: WidgetType): boolean {
   return ['select', 'cascader', 'radio', 'checkbox'].includes(type);
 }
+
+/** 是否支持占位提示（antd 组件无 placeholder 的不显示该属性） */
+export function supportsPlaceholder(type: WidgetType): boolean {
+  return [
+    'input',
+    'textarea',
+    'password',
+    'number',
+    'select',
+    'cascader',
+    'time',
+    'time-range',
+    'date',
+    'date-range',
+  ].includes(type);
+}
+
+/** 是否支持必填设置（antd 组件无表单关联的不显示该属性） */
+export function supportsRequired(type: WidgetType): boolean {
+  return !['row', 'button'].includes(type);
+}

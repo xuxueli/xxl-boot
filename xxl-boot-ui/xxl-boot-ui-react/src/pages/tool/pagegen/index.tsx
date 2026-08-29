@@ -303,7 +303,10 @@ const renderPreview = (widget: FormWidget) => {
     case 'date-range':
       return (
         <DatePicker.RangePicker
-          placeholder={['开始日期', '结束日期']}
+          placeholder={[
+            widget.placeholder || '开始日期',
+            widget.placeholder || '结束日期',
+          ]}
           style={{ width: '100%' }}
         />
       );
@@ -312,7 +315,10 @@ const renderPreview = (widget: FormWidget) => {
     case 'time-range':
       return (
         <TimePicker.RangePicker
-          placeholder={['开始时间', '结束时间']}
+          placeholder={[
+            widget.placeholder || '开始时间',
+            widget.placeholder || '结束时间',
+          ]}
           style={{ width: '100%' }}
         />
       );
@@ -347,15 +353,29 @@ const renderPreview = (widget: FormWidget) => {
     case 'switch':
       return <Switch />;
     case 'slider':
-      return <Slider min={widget.min ?? 0} max={widget.max ?? 100} />;
+      return (
+        <Slider
+          min={widget.min ?? 0}
+          max={widget.max ?? 100}
+          step={widget.step ?? 1}
+        />
+      );
     case 'rate':
       return <Rate count={widget.maxLength ?? 5} />;
     case 'color':
       return <ColorPicker defaultValue="#1677ff" />;
     case 'upload':
-      return <Upload>{widget.uploadText || '点击上传'}</Upload>;
+      return (
+        <Upload beforeUpload={() => false}>
+          <Button icon={<UploadOutlined />}>
+            {widget.uploadText || '点击上传'}
+          </Button>
+        </Upload>
+      );
     case 'button':
-      return <Button type="primary">{widget.label}</Button>;
+      return (
+        <Button type={widget.buttonType || 'primary'}>{widget.label}</Button>
+      );
     default:
       return <Input {...common} />;
   }

@@ -9,7 +9,7 @@
       <el-input v-model="form.realName" maxlength="30" />
     </el-form-item>
     <el-form-item label="手机号码" prop="phone">
-      <el-input v-model="form.phone" maxlength="20" />
+      <el-input v-model="form.phone" maxlength="11" @input="(value: string) => (form.phone = value.slice(0, 11))" />
     </el-form-item>
     <el-form-item label="邮箱" prop="email">
       <el-input v-model="form.email" maxlength="100" />
@@ -47,7 +47,7 @@ const form = ref<UserInfoForm>({}) // 表单数据
 const rules = ref<FormRules>({
   // 表单校验规则
   realName: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
-  phone: [{ pattern: /^\d{5,20}$/, message: '手机号格式不正确', trigger: 'blur' }],
+  phone: [{ pattern: /^\d{5,11}$/, message: '手机号格式不正确', trigger: 'blur' }],
   email: [{ type: 'email', message: '邮箱格式不正确', trigger: 'blur' }]
 })
 

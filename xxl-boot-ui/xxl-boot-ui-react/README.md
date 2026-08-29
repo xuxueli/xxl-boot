@@ -46,7 +46,7 @@
         - 系统管理：                    --
         - 帮助中心                      done
         - 其他：
-            - profile：密码/个人        --11
+            - profile                   done
             - login                     done
 
 改造：
