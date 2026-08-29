@@ -27,11 +27,11 @@ const toTreeSelectData = (orgs: API.Org[]): any[] => [
   { title: '根组织', value: 0, children: mapToSelect(orgs) },
 ];
 
-/** 判断当前组织 id 是否为某组织的子孙节点（防环校验） */
-const isDescendant = (node: API.Org, targetId: number | undefined): boolean => {
+/** 判断某组织节点的树内是否包含目标 id（防环校验用） */
+const isInTree = (node: API.Org, targetId: number | undefined): boolean => {
   if (!targetId) return false;
   if (node.id === targetId) return true;
-  return (node.children || []).some((c) => isDescendant(c, targetId));
+  return (node.children || []).some((c) => isInTree(c, targetId));
 };
 
 const OrgFormModal = ({
@@ -70,9 +70,9 @@ const OrgFormModal = ({
     delete data.addTime;
     delete data.updateTime;
     if (current?.id) {
-      // 防环校验
-      const parentNode = orgOptions.find((o) => o.id === values.parentId);
-      if (parentNode && isDescendant(parentNode, current.id)) {
+      // 防环校验：选中的上级组织不能是自己或其子孙
+      const currentNode = orgOptions.find((o) => o.id === current.id);
+      if (currentNode && isInTree(currentNode, values.parentId)) {
         message.warning('不能选择自身或子孙组织作为上级组织');
         return false;
       }
