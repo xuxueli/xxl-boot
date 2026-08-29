@@ -241,7 +241,8 @@ function handleCreateTable() {
     modal.msgError('请输入建表语句')
     return
   }
-  createTable({ tableSql: createDialog.value.content }).then(() => {
+  // 新建时携带前端模板类型，与后端 createTable 入参匹配
+  createTable({ tableSql: createDialog.value.content, tplWebType: 'element-plus-typescript' }).then(() => {
     modal.msgSuccess('创建成功')
     createDialog.value.visible = false
     handleQuery()
