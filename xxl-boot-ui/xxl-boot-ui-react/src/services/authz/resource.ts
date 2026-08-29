@@ -55,7 +55,7 @@ export async function updateResource(data: API.Resource) {
 export async function delResource(ids: number[]) {
   return request<API.Response<unknown>>('/authz/resource/delete', {
     method: 'POST',
-    params: { 'ids[]': ids },
+    params: { ids },
   });
 }
 
@@ -67,6 +67,6 @@ export async function delResource(ids: number[]) {
 export async function updateResourceSort(ids: number[], orders: number[]) {
   return request<API.Response<unknown>>('/authz/resource/updateSort', {
     method: 'POST',
-    params: { 'ids[]': ids, 'orders[]': orders },
+    params: { ids, orders },
   });
 }

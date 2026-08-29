@@ -65,7 +65,7 @@ export async function updateRole(data: API.Role) {
 export async function delRole(ids: number[]) {
   return request<API.Response<unknown>>('/authz/role/delete', {
     method: 'POST',
-    params: { 'ids[]': ids },
+    params: { ids },
   });
 }
 
@@ -88,6 +88,6 @@ export async function roleMenuTreeselect(roleId: number) {
 export async function updateRoleRes(roleId: number, resourceIds: number[]) {
   return request<API.Response<unknown>>('/authz/role/updateRoleRes', {
     method: 'POST',
-    params: { roleId, 'resourceIds[]': resourceIds },
+    params: { roleId, resourceIds },
   });
 }

@@ -80,6 +80,6 @@ export async function updateConfig(data: API.Config) {
 export async function delConfig(ids: number[]) {
   return request<API.Response<unknown>>('/system/config/delete', {
     method: 'POST',
-    params: { 'ids[]': ids },
+    params: { ids },
   });
 }

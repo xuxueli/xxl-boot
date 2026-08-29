@@ -55,7 +55,7 @@ export async function updateOrg(data: API.Org) {
 export async function delOrg(ids: number[]) {
   return request<API.Response<unknown>>('/authz/org/delete', {
     method: 'POST',
-    params: { 'ids[]': ids },
+    params: { ids },
   });
 }
 
@@ -67,6 +67,6 @@ export async function delOrg(ids: number[]) {
 export async function updateOrgSort(ids: number[], orders: number[]) {
   return request<API.Response<unknown>>('/authz/org/updateSort', {
     method: 'POST',
-    params: { 'ids[]': ids, 'orders[]': orders },
+    params: { ids, orders },
   });
 }

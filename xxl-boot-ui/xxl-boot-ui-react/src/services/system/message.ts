@@ -69,7 +69,7 @@ export async function updateMessage(data: API.Message) {
 export async function delMessage(ids: number[]) {
   return request<API.Response<unknown>>('/system/message/delete', {
     method: 'POST',
-    params: { 'ids[]': ids },
+    params: { ids },
   });
 }
 

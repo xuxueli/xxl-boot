@@ -57,7 +57,7 @@ export async function updateUser(data: API.User) {
 export async function delUser(ids: number | number[]) {
   return request<API.Response<unknown>>('/authz/user/delete', {
     method: 'POST',
-    params: { 'ids[]': ids },
+    params: { ids },
   });
 }
 

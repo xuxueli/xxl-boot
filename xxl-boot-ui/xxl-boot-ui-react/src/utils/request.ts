@@ -25,9 +25,9 @@ const REPEAT_SUBMIT_STORAGE_KEY = 'sessionObj';
 
 /**
  * 参数序列化：
- *   - 数组输出 key[]=v1&key[]=v2（后端 List 参数兼容）
- *   - 嵌套对象展开为 key[sub]=v
- *   - 忽略 null/''/undefined
+ *   - 数组：输出 key[]=v1&key[]=v2（后端 List 参数兼容）
+ *   - 嵌套对象：展开为 key[sub]=v
+ *   - 忽略：null/''/undefined
  */
 const serializeParams = (params: Record<string, unknown>): string => {
   const parts: string[] = [];

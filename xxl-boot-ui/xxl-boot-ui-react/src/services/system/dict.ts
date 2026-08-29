@@ -68,7 +68,7 @@ export async function updateType(data: API.Dict) {
 export async function delType(ids: number[]) {
   return request<API.Response<unknown>>('/system/dict/delete', {
     method: 'POST',
-    params: { 'ids[]': ids },
+    params: { ids },
   });
 }
 
@@ -160,7 +160,7 @@ export async function updateData(data: API.DictItem) {
 export async function delData(ids: number[]) {
   return request<API.Response<unknown>>('/system/dict/itemDelete', {
     method: 'POST',
-    params: { 'ids[]': ids },
+    params: { ids },
   });
 }
 

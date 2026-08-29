@@ -44,6 +44,6 @@ export async function getLog(id: number) {
 export async function delOperlog(ids: number[]) {
   return request<API.Response<unknown>>('/system/log/delete', {
     method: 'POST',
-    params: { 'ids[]': ids },
+    params: { ids },
   });
 }
