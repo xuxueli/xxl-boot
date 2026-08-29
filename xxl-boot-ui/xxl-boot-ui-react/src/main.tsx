@@ -7,9 +7,9 @@ import { App as AntdApp, ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { RouterProvider } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from '@/components';
-import { router } from './router';
+import AppRouter from './router/app/AppRouter';
 import './assets/styles/global.css';
 
 /**
@@ -32,7 +32,8 @@ const queryClient = new QueryClient({
  * 2. AntdApp：antd 全局配置
  * 3. QueryClientProvider：TanStack Query 配置
  * 4. ErrorBoundary：错误边界组件，捕获子组件渲染错误，避免整个应用崩溃
- * 5. RouterProvider：React Router 配置
+ * 5. BrowserRouter：React Router 顶层路由（HTML5 history 模式）
+ * 6. AppRouter：菜单驱动动态路由
  */
 const rootElement = document.getElementById('root');
 if (rootElement) {
@@ -48,7 +49,9 @@ if (rootElement) {
       <AntdApp>
         <QueryClientProvider client={queryClient}>
           <ErrorBoundary>
-            <RouterProvider router={router} />
+            <BrowserRouter>
+              <AppRouter />
+            </BrowserRouter>
           </ErrorBoundary>
         </QueryClientProvider>
       </AntdApp>
