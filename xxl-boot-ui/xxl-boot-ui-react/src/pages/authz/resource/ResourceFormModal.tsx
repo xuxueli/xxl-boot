@@ -11,7 +11,7 @@ import {
   ProFormText,
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
-import { App } from 'antd';
+import { App, Col, Row } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { IconSelect } from '@/components';
 import {
@@ -86,81 +86,111 @@ const ResourceFormModal = ({
       open={open}
       onOpenChange={onOpenChange}
       modalProps={{ destroyOnClose: true }}
+      layout="horizontal"
+      labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
-      initialValues={{ type: 0, status: 0, visible: 0, order: 1, ...current }}
+      initialValues={{
+        type: 0,
+        status: 0,
+        visible: 0,
+        order: 0,
+        parentId: 0,
+        ...current,
+      }}
     >
-      <ProFormTreeSelect
-        name="parentId"
-        label="上级资源"
-        placeholder="请选择上级资源"
-        initialValue={current?.parentId ?? 0}
-        fieldProps={{
-          treeData: parentTreeSelectData,
-          treeDefaultExpandAll: true,
-        }}
-        rules={[{ required: true, message: '请选择上级资源' }]}
-      />
-      <ProFormRadio.Group
-        name="type"
-        label="资源类型"
-        options={[
-          { value: 0, label: '目录' },
-          { value: 1, label: '菜单' },
-          { value: 2, label: '按钮' },
-        ]}
-      />
-      <ProFormText
-        name="name"
-        label="资源名称"
-        placeholder="请输入资源名称"
-        rules={[{ required: true, message: '资源名称不能为空' }]}
-      />
-      <ProFormDigit
-        name="order"
-        label="显示排序"
-        placeholder="请输入显示排序"
-        min={0}
-        rules={[{ required: true, message: '显示排序不能为空' }]}
-        fieldProps={{ style: { width: '100%' } }}
-      />
-      <ProFormDependency name={['type']}>
-        {({ type }) =>
-          type !== 2 ? (
-            <>
-              <ProForm.Item name="icon" label="图标">
-                <IconSelect />
-              </ProForm.Item>
-              <ProFormText
-                name="url"
-                label="菜单地址"
-                placeholder="请输入菜单地址"
-              />
-            </>
-          ) : null
-        }
-      </ProFormDependency>
-      <ProFormText
-        name="permission"
-        label="权限标识"
-        placeholder="请输入权限标识"
-        fieldProps={{ maxLength: 100 }}
-      />
-      <ProFormRadio.Group
-        name="visible"
-        label="显示状态"
-        options={[
-          { value: 0, label: '显示' },
-          { value: 1, label: '隐藏' },
-        ]}
-      />
-      <ProFormRadio.Group
-        name="status"
-        label="资源状态"
-        options={[
-          { value: 0, label: '正常' },
-          { value: 1, label: '停用' },
-        ]}
-      />
+      <Row gutter={16}>
+        <Col span={24}>
+          <ProFormTreeSelect
+            name="parentId"
+            label="上级资源"
+            placeholder="请选择上级资源"
+            fieldProps={{
+              treeData: parentTreeSelectData,
+              treeDefaultExpandAll: true,
+            }}
+            rules={[{ required: true, message: '请选择上级资源' }]}
+          />
+        </Col>
+        <Col span={24}>
+          <ProFormRadio.Group
+            name="type"
+            label="资源类型"
+            options={[
+              { value: 0, label: '目录' },
+              { value: 1, label: '菜单' },
+              { value: 2, label: '按钮' },
+            ]}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormText
+            name="name"
+            label="资源名称"
+            placeholder="请输入资源名称"
+            rules={[{ required: true, message: '资源名称不能为空' }]}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormDigit
+            name="order"
+            label="显示排序"
+            placeholder="请输入显示排序"
+            min={0}
+            rules={[{ required: true, message: '显示排序不能为空' }]}
+            fieldProps={{ style: { width: '100%' } }}
+          />
+        </Col>
+        <Col span={24}>
+          <ProFormDependency name={['type']}>
+            {({ type }) =>
+              type !== 2 ? (
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <ProForm.Item name="icon" label="资源图标">
+                      <IconSelect />
+                    </ProForm.Item>
+                  </Col>
+                  <Col span={12}>
+                    <ProFormText
+                      name="url"
+                      label="菜单地址"
+                      placeholder="请输入菜单地址"
+                    />
+                  </Col>
+                </Row>
+              ) : null
+            }
+          </ProFormDependency>
+        </Col>
+        <Col span={24}>
+          <ProFormText
+            name="permission"
+            label="权限标识"
+            placeholder="请输入权限标识"
+            fieldProps={{ maxLength: 100 }}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormRadio.Group
+            name="visible"
+            label="显示状态"
+            options={[
+              { value: 0, label: '显示' },
+              { value: 1, label: '隐藏' },
+            ]}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormRadio.Group
+            name="status"
+            label="资源状态"
+            options={[
+              { value: 0, label: '正常' },
+              { value: 1, label: '停用' },
+            ]}
+          />
+        </Col>
+      </Row>
     </ModalForm>
   );
 };

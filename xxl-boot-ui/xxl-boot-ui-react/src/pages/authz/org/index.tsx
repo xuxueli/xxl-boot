@@ -196,7 +196,7 @@ const OrgList = () => {
         <a
           key="add"
           onClick={() => {
-            setFormCurrent({ ...record, id: undefined, parentId: record.id });
+            setFormCurrent({ parentId: record.id });
             setFormOpen(true);
           }}
         >

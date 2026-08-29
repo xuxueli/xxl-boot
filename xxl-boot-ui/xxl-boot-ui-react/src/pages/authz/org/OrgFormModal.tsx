@@ -98,7 +98,7 @@ const OrgFormModal = ({
       onFinish={handleFinish}
       initialValues={{
         status: 0,
-        order: 1,
+        order: 0,
         ...current,
         parentId: current?.parentId ?? 0,
       }}

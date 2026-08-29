@@ -1,11 +1,16 @@
 /**
  * 页面：资源管理
- * 功能：资源树表格 + 新增/修改（含图标选择）/删除 + 内联排序
+ * 功能：资源树表格 + 新增/修改（含图标选择）/删除 + 内联排序 + 展开/折叠
  */
-import { PlusOutlined } from '@ant-design/icons';
+import {
+  NodeExpandOutlined,
+  PlusOutlined,
+  SaveOutlined,
+} from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, InputNumber, Tag, Tooltip } from 'antd';
+import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
@@ -15,6 +20,7 @@ import {
   updateResourceSort,
 } from '@/services/authz/resource';
 import { getIconComponent } from '@/utils/icon';
+import { handleTree } from '@/utils/common';
 import ResourceFormModal from './ResourceFormModal';
 
 const typeMap: Record<number, { text: string; color: string }> = {
@@ -28,6 +34,28 @@ const visibleMap: Record<number, { text: string; color: string }> = {
   1: { text: '隐藏', color: 'default' },
 };
 
+/**
+ * 资源表格样式
+ * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
+ */
+const useStyles = createStyles(({ css }) => ({
+  resourceTable: css`
+    .ant-pro-table-list-toolbar-container {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container
+      .ant-pro-table-list-toolbar-right
+      .ant-pro-table-list-toolbar-setting-items {
+      margin-left: auto;
+    }
+  `,
+}));
+
 const ResourceList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
@@ -36,16 +64,18 @@ const ResourceList = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.Resource | null>(null);
   const [tableData, setTableData] = useState<API.Resource[]>([]);
+  /* 是否展开全部：默认折叠，切换时重建展开状态 */
+  const [isExpandAll, setIsExpandAll] = useState(false);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   // 排序快照与变更
   const [orderMap, setOrderMap] = useState<Record<number, number>>({});
   const [originalOrders, setOriginalOrders] = useState<Record<number, number>>(
     {},
   );
-  const [sortChanged, setSortChanged] = useState(false);
 
   const resourceStatusOptions = useEnumOption('ResourceStatuEnum');
   const statusValueEnum = toValueEnum(resourceStatusOptions);
+  const { styles } = useStyles();
 
   /** 收集所有节点 id（展开/收起全部） */
   const collectAllKeys = (list: API.Resource[]): React.Key[] => {
@@ -60,11 +90,11 @@ const ResourceList = () => {
     return keys;
   };
 
-  /** 加载数据：记录排序快照 */
+  /** 加载数据：转树形结构并记录排序快照 */
   const handleRequest = async (params: Record<string, any>) => {
     const res = await listResource(params);
-    const data = res.data || [];
-    setTableData(data);
+    const tree = handleTree(res.data || []);
+    setTableData(tree);
     const orders: Record<number, number> = {};
     const walk = (nodes: API.Resource[]) => {
       nodes.forEach((n) => {
@@ -72,17 +102,16 @@ const ResourceList = () => {
         if (n.children?.length) walk(n.children);
       });
     };
-    walk(data);
+    walk(tree);
     setOriginalOrders(orders);
     setOrderMap({});
-    setSortChanged(false);
-    return { data, total: data.length, success: true };
+    setExpandedKeys(isExpandAll ? collectAllKeys(tree) : []);
+    return { data: tree, total: tree.length, success: true };
   };
 
   /** 内联排序变更 */
   const handleOrderChange = (id: number, value: number | null) => {
     setOrderMap((prev) => ({ ...prev, [id]: value ?? 0 }));
-    setSortChanged(true);
   };
 
   /** 保存排序：差量提交 */
@@ -103,6 +132,13 @@ const ResourceList = () => {
     await updateResourceSort(ids, orders);
     message.success('保存排序成功');
     actionRef.current?.reload();
+  };
+
+  /** 展开/折叠切换 */
+  const handleToggleExpand = () => {
+    const next = !isExpandAll;
+    setIsExpandAll(next);
+    setExpandedKeys(next ? collectAllKeys(tableData) : []);
   };
 
   /** 删除资源 */
@@ -143,7 +179,7 @@ const ResourceList = () => {
       },
     },
     {
-      title: '显示排序',
+      title: '排序',
       dataIndex: 'order',
       search: false,
       width: 100,
@@ -212,7 +248,7 @@ const ResourceList = () => {
           <a
             key="add"
             onClick={() => {
-              setFormCurrent({ ...record, id: undefined, parentId: record.id });
+              setFormCurrent({ parentId: record.id });
               setFormOpen(true);
             }}
           >
@@ -228,48 +264,56 @@ const ResourceList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <ProTable<API.Resource>
-        headerTitle="资源列表"
-        actionRef={actionRef}
-        rowKey="id"
-        columns={columns}
-        search={{ labelWidth: 80 }}
-        expandable={{
-          expandedRowKeys: expandedKeys,
-          onExpandedRowsChange: (keys) => setExpandedKeys([...keys]),
-        }}
-        request={handleRequest}
-        toolBarRender={() => [
-          sortChanged && (
-            <Button key="saveSort" type="primary" onClick={handleSaveSort}>
-              保存排序
-            </Button>
-          ),
-          <Button
-            key="expand"
-            onClick={() => {
-              setExpandedKeys((prev) =>
-                prev.length > 0 ? [] : collectAllKeys(tableData),
-              );
-            }}
-          >
-            {expandedKeys.length > 0 ? '折叠' : '展开'}
-          </Button>,
-          hasPermi('authz:resource') && (
+      <div className={styles.resourceTable}>
+        <ProTable<API.Resource>
+          actionRef={actionRef}
+          rowKey="id"
+          columns={columns}
+          pagination={false}
+          search={{
+            labelWidth: 80,
+            optionRender: (_searchConfig, _formProps, dom) => [
+              ...dom.reverse(),
+            ],
+          }}
+          expandable={{
+            expandedRowKeys: expandedKeys,
+            onExpandedRowsChange: (keys) => setExpandedKeys([...keys]),
+          }}
+          request={handleRequest}
+          toolBarRender={() => [
+            hasPermi('authz:resource') && (
+              <Button
+                key="add"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setFormCurrent(null);
+                  setFormOpen(true);
+                }}
+              >
+                新增
+              </Button>
+            ),
+            hasPermi('authz:resource') && (
+              <Button
+                key="saveSort"
+                icon={<SaveOutlined />}
+                onClick={handleSaveSort}
+              >
+                保存排序
+              </Button>
+            ),
             <Button
-              key="add"
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setFormCurrent(null);
-                setFormOpen(true);
-              }}
+              key="expand"
+              icon={<NodeExpandOutlined />}
+              onClick={handleToggleExpand}
             >
-              新增
-            </Button>
-          ),
-        ]}
-      />
+              展开/折叠
+            </Button>,
+          ]}
+        />
+      </div>
       <ResourceFormModal
         open={formOpen}
         onOpenChange={setFormOpen}
