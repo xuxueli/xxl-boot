@@ -91,7 +91,7 @@ const LogList = () => {
   };
 
   const columns: ProColumns<API.Log>[] = [
-    { title: '日志编号', dataIndex: 'id', search: false, width: 90 },
+    { title: '日志编号', dataIndex: 'id', search: false, width: 80 },
     {
       title: '日志类型',
       dataIndex: 'type',
@@ -106,20 +106,28 @@ const LogList = () => {
     {
       title: '系统模块',
       dataIndex: 'module',
-      width: 120,
+      ellipsis: true,
       valueEnum: toValueEnum(logModuleOptions),
       render: (_, record) =>
         moduleMap[record.module as number] || record.module,
     },
-    { title: '操作名称', dataIndex: 'title' },
-    { title: '操作人', dataIndex: 'operator', search: false },
+    { title: '日志标题', dataIndex: 'title', ellipsis: true },
     {
-      title: 'IP',
+      title: '操作人',
+      dataIndex: 'operator',
+      search: false,
+      width: 110,
+      ellipsis: true,
+    },
+    {
+      title: '操作地址',
       dataIndex: 'ip',
       search: false,
-      render: (_, record) => record.ipAddress || record.ip || '-',
+      width: 160,
+      ellipsis: true,
+      render: (_, record) => record.ipAddress || record.ip,
     },
-    { title: '操作时间', dataIndex: 'addTime', search: false, width: 160 },
+    { title: '新增时间', dataIndex: 'addTime', search: false, width: 180 },
     {
       title: '操作',
       valueType: 'option',

@@ -4,6 +4,7 @@
  *       已归入 src/layouts/components，请直接引用。
  */
 export { default as Dropdown } from './Dropdown';
+export { default as Editor } from './Editor';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as IconSelect } from './IconSelect';
 export { default as TreePanel } from './TreePanel';

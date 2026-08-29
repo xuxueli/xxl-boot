@@ -10,23 +10,9 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { App, Col, Row } from 'antd';
-import { createStyles } from 'antd-style';
 import React from 'react';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
+import { Editor } from '@/components';
 import { addMessage, updateMessage } from '@/services/system/message';
-
-/**
- * 富文本编辑器样式
- * 功能：内容编辑区默认高度约 10 行，保证可输入区域足够大
- */
-const useStyles = createStyles(({ css }) => ({
-  messageEditor: css`
-    .ql-editor {
-      min-height: 210px;
-    }
-  `,
-}));
 
 const MessageFormModal = ({
   open,
@@ -42,7 +28,6 @@ const MessageFormModal = ({
   onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();
-  const { styles } = useStyles();
 
   const handleFinish = async (values: API.Message) => {
     const data = { ...values };
@@ -104,20 +89,7 @@ const MessageFormModal = ({
             label="内容"
             rules={[{ required: true, message: '内容不能为空' }]}
           >
-            <ReactQuill
-              theme="snow"
-              className={styles.messageEditor}
-              placeholder="请输入内容"
-              modules={{
-                toolbar: [
-                  [{ header: [1, 2, 3, false] }],
-                  ['bold', 'italic', 'underline', 'strike'],
-                  [{ list: 'ordered' }, { list: 'bullet' }],
-                  ['link', 'image'],
-                  ['clean'],
-                ],
-              }}
-            />
+            <Editor minHeight={210} />
           </ProForm.Item>
         </Col>
       </Row>
