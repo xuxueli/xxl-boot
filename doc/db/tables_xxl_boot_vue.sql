@@ -11,15 +11,16 @@ SET `icon` = CASE `id`
                  WHEN 6 THEN 'tree'
                  WHEN 7 THEN 'system'
                  WHEN 8 THEN 'dict'
-                 WHEN 9 THEN 'edit'
-                 WHEN 10 THEN 'message'
-                 WHEN 11 THEN 'log'
-                 WHEN 12 THEN 'tool'
-                 WHEN 13 THEN 'build'
-                 WHEN 14 THEN 'code'
-                 WHEN 15 THEN 'guide'
+                 WHEN 9 THEN 'dict'
+                 WHEN 10 THEN 'edit'
+                 WHEN 11 THEN 'message'
+                 WHEN 12 THEN 'log'
+                 WHEN 13 THEN 'tool'
+                 WHEN 14 THEN 'build'
+                 WHEN 15 THEN 'code'
+                 WHEN 16 THEN 'guide'
                  ELSE ''
     END,
     `update_time` = now()
-WHERE `id` IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+WHERE `id` BETWEEN 1 AND 16;
 

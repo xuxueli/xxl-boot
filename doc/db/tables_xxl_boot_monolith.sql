@@ -14,11 +14,12 @@ SET `icon` = CASE `id`
                  WHEN 9 THEN ''
                  WHEN 10 THEN ''
                  WHEN 11 THEN ''
-                 WHEN 12 THEN 'fa-wrench'
-                 WHEN 13 THEN ''
+                 WHEN 12 THEN ''
+                 WHEN 13 THEN 'fa-wrench'
                  WHEN 14 THEN ''
-                 WHEN 15 THEN 'fa-book'
+                 WHEN 15 THEN ''
+                 WHEN 16 THEN 'fa-book'
                  ELSE ''
     END,
     `update_time` = now()
-WHERE `id` IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+WHERE `id` BETWEEN 1 AND 16;

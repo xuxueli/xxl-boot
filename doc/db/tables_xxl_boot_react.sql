@@ -14,14 +14,15 @@ SET `icon` = CASE `id`
                  WHEN 6 THEN 'ApartmentOutlined'   -- 组织管理
                  WHEN 7 THEN 'SettingOutlined'     -- 系统管理
                  WHEN 8 THEN 'BookOutlined'        -- 字典管理
-                 WHEN 9 THEN 'ControlOutlined'     -- 配置管理
-                 WHEN 10 THEN 'MessageOutlined'    -- 站内消息
-                 WHEN 11 THEN 'FileSearchOutlined' -- 审计日志
-                 WHEN 12 THEN 'ToolOutlined'       -- 系统工具
-                 WHEN 13 THEN 'CodeOutlined'       -- 代码生成
-                 WHEN 14 THEN 'AppstoreOutlined'   -- 表单构建
-                 WHEN 15 THEN 'QuestionCircleOutlined' -- 帮助中心
+                 WHEN 9 THEN 'BookOutlined'        -- 字典项管理
+                 WHEN 10 THEN 'ControlOutlined'     -- 配置管理
+                 WHEN 11 THEN 'MessageOutlined'    -- 站内消息
+                 WHEN 12 THEN 'FileSearchOutlined' -- 审计日志
+                 WHEN 13 THEN 'ToolOutlined'       -- 系统工具
+                 WHEN 14 THEN 'CodeOutlined'       -- 代码生成
+                 WHEN 15 THEN 'AppstoreOutlined'   -- 表单构建
+                 WHEN 16 THEN 'QuestionCircleOutlined' -- 帮助中心
                  ELSE ''
     END,
     `update_time` = now()
-WHERE `id` IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+WHERE `id` BETWEEN 1 AND 16;
