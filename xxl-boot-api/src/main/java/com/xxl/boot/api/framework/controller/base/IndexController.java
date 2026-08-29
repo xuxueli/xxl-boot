@@ -112,8 +112,13 @@ public class IndexController {
 			List<com.xxl.boot.api.framework.model.entity.Resource> childrenRes = parentMap.get(resource.getId());
 
 			if (type == ResourceTypeEnum.CATALOG.getCode()) {
-				// 目录
-				router.setComponent(isRoot ? "Layout" : "ParentView");
+				if (isRoot) {
+					// 目录 - 根节点
+					router.setComponent("Layout");
+				} else {
+					// 目录 - 非根节点
+					router.setComponent("ParentView");
+				}
 
 				// 子节点
 				if (CollectionTool.isNotEmpty(childrenRes)) {
@@ -131,6 +136,7 @@ public class IndexController {
 					child.setPath(resource.getUrl());
 					child.setComponent(isHttp(resource.getUrl()) ? "InnerLink" : resource.getUrl());
 					child.setMeta(new MetaVo(resource.getName(), resource.getIcon()));
+
 					router.setChildren(List.of(child));
 				} else {
 					// 菜单 - 非根节点
