@@ -34,25 +34,25 @@ const javaTypeOptions = [
   'Boolean',
 ];
 const queryTypeOptions = [
-  'EQ',
-  'NE',
-  'GT',
-  'GTE',
-  'LT',
-  'LTE',
-  'LIKE',
-  'BETWEEN',
+  { value: 'EQ', label: '=' },
+  { value: 'NE', label: '!=' },
+  { value: 'GT', label: '>' },
+  { value: 'GTE', label: '>=' },
+  { value: 'LT', label: '<' },
+  { value: 'LTE', label: '<=' },
+  { value: 'LIKE', label: 'LIKE' },
+  { value: 'BETWEEN', label: 'BETWEEN' },
 ];
 const htmlTypeOptions = [
-  'input',
-  'textarea',
-  'select',
-  'radio',
-  'checkbox',
-  'datetime',
-  'imageUpload',
-  'fileUpload',
-  'editor',
+  { value: 'input', label: '文本框' },
+  { value: 'textarea', label: '文本域' },
+  { value: 'select', label: '下拉框' },
+  { value: 'radio', label: '单选框' },
+  { value: 'checkbox', label: '复选框' },
+  { value: 'datetime', label: '日期控件' },
+  { value: 'imageUpload', label: '图片上传' },
+  { value: 'fileUpload', label: '文件上传' },
+  { value: 'editor', label: '富文本控件' },
 ];
 
 /** 可拖拽表格行 */
@@ -150,9 +150,19 @@ const EditTableModal = ({
         .then((res) => {
           const data = res.data || {};
           const { fieldList = [], ...rest } = data;
-          setInfo(rest);
+          const merge = {
+            formColNum: 1,
+            tplWebType: 'element-plus-typescript',
+            ...rest,
+          };
+          /* 校验默认值：表单布局默认单列，前端模板默认第一个选项 */
+          if (![1, 2, 3].includes(merge.formColNum)) merge.formColNum = 1;
+          if (merge.tplWebType !== 'element-plus-typescript') {
+            merge.tplWebType = 'element-plus-typescript';
+          }
+          setInfo(merge);
           setFields(fieldList.map((f) => ({ ...f })));
-          form.setFieldsValue(rest);
+          form.setFieldsValue(merge);
         })
         .catch(() => {});
       queryDictList()
@@ -225,6 +235,7 @@ const EditTableModal = ({
     {
       title: '字段注释',
       dataIndex: 'columnComment',
+      width: 120,
       render: (_, record) => (
         <FieldInput
           value={record.columnComment}
@@ -311,12 +322,13 @@ const EditTableModal = ({
     {
       title: '查询方式',
       dataIndex: 'queryType',
-      width: 100,
+      width: 130,
       render: (_, record) => (
         <Select
           size="small"
+          style={{ width: '100%' }}
           value={record.queryType}
-          options={queryTypeOptions.map((v) => ({ value: v, label: v }))}
+          options={queryTypeOptions}
           onChange={(v) => updateField(record.id, { queryType: v })}
         />
       ),
@@ -336,12 +348,13 @@ const EditTableModal = ({
     {
       title: '显示类型',
       dataIndex: 'htmlType',
-      width: 120,
+      width: 150,
       render: (_, record) => (
         <Select
           size="small"
+          style={{ width: '100%' }}
           value={record.htmlType}
-          options={htmlTypeOptions.map((v) => ({ value: v, label: v }))}
+          options={htmlTypeOptions}
           onChange={(v) => updateField(record.id, { htmlType: v })}
         />
       ),
@@ -349,10 +362,11 @@ const EditTableModal = ({
     {
       title: '字典类型',
       dataIndex: 'dictType',
-      width: 130,
+      width: 160,
       render: (_, record) => (
         <Select
           size="small"
+          style={{ width: '100%' }}
           value={record.dictType}
           allowClear
           showSearch
@@ -362,6 +376,14 @@ const EditTableModal = ({
               .includes(input.toLowerCase())
           }
           options={dictOptions}
+          optionRender={(option) => (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>{option.label}</span>
+              <span style={{ color: '#8492a6', fontSize: 13 }}>
+                {option.value}
+              </span>
+            </div>
+          )}
           onChange={(v) => updateField(record.id, { dictType: v })}
         />
       ),
@@ -388,32 +410,42 @@ const EditTableModal = ({
             key: 'info',
             label: '配置信息',
             children: (
-              <Form form={form} layout="vertical" style={{ marginTop: 8 }}>
+              <Form
+                form={form}
+                labelCol={{ flex: '150px' }}
+                style={{ marginTop: 8 }}
+              >
                 <div style={{ fontWeight: 600, marginBottom: 8 }}>基本信息</div>
-                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                  }}
+                >
                   <Form.Item
                     name="tableName"
                     label="表名称"
                     rules={[{ required: true, message: '表名称不能为空' }]}
-                    style={{ width: 260 }}
                   >
                     <Input placeholder="请输入表名称" />
                   </Form.Item>
-                  <Form.Item
-                    name="tableComment"
-                    label="表描述"
-                    style={{ width: 260 }}
-                  >
+                  <Form.Item name="tableComment" label="表描述">
                     <Input placeholder="请输入表描述" />
                   </Form.Item>
                 </div>
-                <div style={{ fontWeight: 600, marginBottom: 8 }}>生成信息</div>
-                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                <div style={{ fontWeight: 600, margin: '16px 0 8px' }}>
+                  生成信息
+                </div>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                  }}
+                >
                   <Form.Item
                     name="packageName"
                     label="生成包路径"
                     rules={[{ required: true, message: '生成包路径不能为空' }]}
-                    style={{ width: 240 }}
                   >
                     <Input placeholder="如 com.xxl.boot" />
                   </Form.Item>
@@ -421,7 +453,6 @@ const EditTableModal = ({
                     name="moduleName"
                     label="生成模块名"
                     rules={[{ required: true, message: '生成模块名不能为空' }]}
-                    style={{ width: 180 }}
                   >
                     <Input placeholder="如 system" />
                   </Form.Item>
@@ -429,7 +460,6 @@ const EditTableModal = ({
                     name="businessName"
                     label="生成业务名"
                     rules={[{ required: true, message: '生成业务名不能为空' }]}
-                    style={{ width: 180 }}
                   >
                     <Input placeholder="如 user" />
                   </Form.Item>
@@ -437,35 +467,22 @@ const EditTableModal = ({
                     name="functionName"
                     label="生成功能名"
                     rules={[{ required: true, message: '生成功能名不能为空' }]}
-                    style={{ width: 180 }}
                   >
                     <Input placeholder="如 用户管理" />
                   </Form.Item>
-                  <Form.Item
-                    name="functionAuthor"
-                    label="生成作者"
-                    style={{ width: 180 }}
-                  >
+                  <Form.Item name="functionAuthor" label="生成功能作者">
                     <Input placeholder="如 xuxueli" />
                   </Form.Item>
-                  <Form.Item
-                    name="formColNum"
-                    label="表单布局"
-                    style={{ width: 180 }}
-                  >
+                  <Form.Item name="formColNum" label="表单布局">
                     <Select
                       options={[
-                        { value: 1, label: '1列' },
-                        { value: 2, label: '2列' },
-                        { value: 3, label: '3列' },
+                        { value: 1, label: '单列' },
+                        { value: 2, label: '双列' },
+                        { value: 3, label: '三列' },
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item
-                    name="tplCategory"
-                    label="生成模板"
-                    style={{ width: 180 }}
-                  >
+                  <Form.Item name="tplCategory" label="生成模板">
                     <Select
                       options={[
                         { value: 'crud', label: '单表（crud）' },
@@ -473,21 +490,21 @@ const EditTableModal = ({
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item
-                    name="tplWebType"
-                    label="前端模板"
-                    style={{ width: 200 }}
-                  >
+                  <Form.Item name="tplWebType" label="前端模板">
                     <Select
                       options={[
                         {
                           value: 'element-plus-typescript',
-                          label: 'element-plus-typescript',
+                          label: 'Element Plus + TypeScript',
                         },
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item name="remark" label="备注" style={{ width: 520 }}>
+                  <Form.Item
+                    name="remark"
+                    label="备注"
+                    style={{ gridColumn: '1 / -1' }}
+                  >
                     <Input.TextArea rows={2} placeholder="请输入备注" />
                   </Form.Item>
                 </div>

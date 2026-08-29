@@ -12,7 +12,6 @@ import { App } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import loginBg from '@/assets/images/login-bg.png';
 import defaultSettings from '@/default-settings';
 import { Footer } from '@/layouts/components';
 import { getCodeImg } from '@/services/login';
@@ -41,12 +40,32 @@ const getSafeRedirectUrl = (redirect: string | null): string => {
 const useStyles = createStyles(({ token }) => {
   return {
     container: {
+      position: 'relative',
+      overflow: 'auto',
       display: 'flex',
       flexDirection: 'column',
       height: '100vh',
-      overflow: 'auto',
-      backgroundImage: `url(${loginBg})`,
-      backgroundSize: '100% 100%',
+      // 浅色渐变底色：白 → 淡蓝灰 → 淡紫灰，斜向与光带走向呼应
+      background: 'linear-gradient(155deg, #ffffff 0%, #f2f4fb 55%, #e7ecf8 100%)',
+      // 光带：从顶部中间（50%,0）起沿斜向延伸，穿过右侧中间（100%,50%）
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        left: '50%',
+        top: 0,
+        width: 3200,
+        height: 150,
+        transformOrigin: '0 0',
+        // 16:9 视口下「顶中→右中」方向约 30°，其余比例略有偏差，被 overflow 裁切
+        transform: 'rotate(30deg)',
+        pointerEvents: 'none',
+        // 光带颜色由「淡蓝 → 青 → 蓝紫 → 淡紫」渐进，整体偏浅、柔和
+        background:
+          'linear-gradient(90deg, transparent 44%, rgba(101, 166, 246, 0.12) 50%, rgba(94, 179, 244, 0.22) 55%, rgba(128, 138, 244, 0.15) 60%, rgba(144, 116, 232, 0.06) 65%, transparent 70%)',
+      },
+    },
+    subTitle: {
+      fontSize: 16,
     },
     captcha: {
       height: 32,
@@ -135,7 +154,7 @@ const Login = () => {
             transform: 'translateY(-15%)',
           }}
           title={defaultSettings.brandName}
-          subTitle={defaultSettings.title}
+          subTitle={<div className={styles.subTitle}>{defaultSettings.title}</div>}
           initialValues={{
             rememberMe: false,
           }}
