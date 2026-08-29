@@ -88,12 +88,23 @@ const RightPanel = ({
           </Form.Item>
         )}
         {isChoiceType(type) && (
-          <Form.Item label="选项">
+          <Form.Item
+            label="选项"
+            extra={
+              type === 'cascader'
+                ? '用 / 分隔父子层级，如：省份/城市'
+                : undefined
+            }
+          >
             <Select
               mode="tags"
               value={activeData.options}
               onChange={(options) => onWidgetChange({ options })}
-              placeholder="输入后回车添加选项"
+              placeholder={
+                type === 'cascader'
+                  ? '输入层级路径，如：省份/城市'
+                  : '输入后回车添加选项'
+              }
             />
           </Form.Item>
         )}

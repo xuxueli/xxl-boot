@@ -73,6 +73,7 @@ import {
   createWidget,
   defaultFormConfig,
   paletteGroups,
+  toCascaderOptions,
   widgetTitles,
 } from './config';
 import { generateTsx } from './generator';
@@ -335,7 +336,7 @@ const renderPreview = (widget: FormWidget) => {
         <Cascader
           {...common}
           placeholder={widget.placeholder || '请选择'}
-          options={(widget.options || []).map((o) => ({ value: o, label: o }))}
+          options={toCascaderOptions(widget.options)}
         />
       );
     case 'radio':

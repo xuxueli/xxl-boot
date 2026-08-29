@@ -34,7 +34,7 @@
     - /layouts（menu/header/foot/set）  done      
     - default-settings.ts               done
     - main.tsx                          done
-    - /router                           --22
+    - /router                           --22：动态加载组件 + 组件API；
     - /components                       --
     - /hooks                            --
     - /utils                            --

@@ -172,7 +172,11 @@ export function createWidget(type: WidgetType, id: number): FormWidget {
       label: widgetTitles[type],
       placeholder: '请选择',
       required: true,
-      options: ['选项一', '选项二'],
+      /* 级联选择默认演示层级路径，其余选项组件用扁平选项 */
+      options:
+        type === 'cascader'
+          ? ['省份/城市', '省份/县城']
+          : ['选项一', '选项二'],
       span: 24,
     };
   }
@@ -227,6 +231,50 @@ export function createWidget(type: WidgetType, id: number): FormWidget {
 /** 是否选项型组件 */
 export function isChoiceType(type: WidgetType): boolean {
   return ['select', 'cascader', 'radio', 'checkbox'].includes(type);
+}
+
+/** 级联选择节点 */
+export interface CascaderNode {
+  value: string;
+  label: string;
+  children?: CascaderNode[];
+}
+
+/**
+ * 将扁平选项转换为级联树
+ * 选项路径用 / 分隔表达层级，如 "省份/城市" 会生成两级节点；
+ * 相同前缀自动合并，支持任意深度。
+ * @param options - 扁平选项列表
+ * @returns 层级树
+ */
+export function toCascaderOptions(
+  options: string[] = [],
+): CascaderNode[] {
+  const roots: CascaderNode[] = [];
+  for (const path of options) {
+    const parts = path
+      .split('/')
+      .map((p) => p.trim())
+      .filter(Boolean);
+    if (parts.length === 0) continue;
+    let level = roots;
+    for (const part of parts) {
+      let node = level.find((n) => n.label === part);
+      if (!node) {
+        node = { value: part, label: part, children: [] };
+        level.push(node);
+      }
+      level = node.children as CascaderNode[];
+    }
+  }
+  /* 移除无子级的空 children，避免生成多余层级 */
+  const clean = (nodes: CascaderNode[]): CascaderNode[] =>
+    nodes.map((n) =>
+      n.children && n.children.length > 0
+        ? { value: n.value, label: n.label, children: clean(n.children) }
+        : { value: n.value, label: n.label },
+    );
+  return clean(roots);
 }
 
 /** 是否支持占位提示（antd 组件无 placeholder 的不显示该属性） */

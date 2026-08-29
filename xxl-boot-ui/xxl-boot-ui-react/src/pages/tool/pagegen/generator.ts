@@ -3,6 +3,7 @@
  * 根据画布组件与全局配置生成可运行的 ProForm TSX 代码（页面/弹窗两种生成类型）。
  */
 import type { FormConfig, FormWidget } from './config';
+import { toCascaderOptions } from './config';
 
 /** 渲染单个表单项 TSX */
 function renderField(widget: FormWidget): string {
@@ -30,7 +31,7 @@ function renderField(widget: FormWidget): string {
       )}} />`;
     case 'cascader':
       return `<ProFormCascader name="${widget.vModel}" label="${widget.label}"${rules} options={${JSON.stringify(
-        (widget.options || []).map((o) => ({ value: o, label: o })),
+        toCascaderOptions(widget.options),
       )}} />`;
     case 'radio':
       return `<ProFormRadio.Group name="${widget.vModel}" label="${widget.label}"${rules} options={${JSON.stringify(
