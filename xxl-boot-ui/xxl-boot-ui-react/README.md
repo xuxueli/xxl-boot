@@ -36,10 +36,10 @@
     - main.tsx                          done
     - /hooks                            done
     - /types                            done
-    - /router                           --111：动态加载组件 + 组件API；
-    - /utils                            --222
-    - /services                         --333
-    - /components                       --
+    - /router                           done
+    - /utils                            --111
+    - /services                         --222
+    - /components                       --333
     - /pages                            /
         - 首页                          done
         - 帮助中心                      done
