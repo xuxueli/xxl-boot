@@ -1,16 +1,44 @@
 /**
  * 页面：组织管理
- * 功能：组织树表格 + 新增/修改/删除 + 内联排序
+ * 功能：组织树表格 + 新增/修改/删除 + 内联排序 + 展开/折叠
  */
-import { PlusOutlined } from '@ant-design/icons';
+import {
+  NodeExpandOutlined,
+  PlusOutlined,
+  SaveOutlined,
+} from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, InputNumber, Tag } from 'antd';
+import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delOrg, listOrg, updateOrgSort } from '@/services/authz/org';
+import { handleTree } from '@/utils/common';
 import OrgFormModal from './OrgFormModal';
+
+/**
+ * 组织表格样式
+ * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
+ */
+const useStyles = createStyles(({ css }) => ({
+  orgTable: css`
+    .ant-pro-table-list-toolbar-container {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container
+      .ant-pro-table-list-toolbar-right
+      .ant-pro-table-list-toolbar-setting-items {
+      margin-left: auto;
+    }
+  `,
+}));
 
 const OrgList = () => {
   const { message, modal } = App.useApp();
@@ -20,15 +48,17 @@ const OrgList = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.Org | null>(null);
   const [tableData, setTableData] = useState<API.Org[]>([]);
+  /* 是否展开全部：默认展开，切换时重建展开状态 */
+  const [isExpandAll, setIsExpandAll] = useState(true);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [orderMap, setOrderMap] = useState<Record<number, number>>({});
   const [originalOrders, setOriginalOrders] = useState<Record<number, number>>(
     {},
   );
-  const [sortChanged, setSortChanged] = useState(false);
 
   const orgStatusOptions = useEnumOption('OrgStatuEnum');
   const statusValueEnum = toValueEnum(orgStatusOptions);
+  const { styles } = useStyles();
 
   /** 收集所有节点 id */
   const collectAllKeys = (list: API.Org[]): React.Key[] => {
@@ -43,11 +73,11 @@ const OrgList = () => {
     return keys;
   };
 
-  /** 加载数据：记录排序快照 */
+  /** 加载数据：转树形结构并记录排序快照 */
   const handleRequest = async (params: Record<string, any>) => {
     const res = await listOrg(params);
-    const data = res.data || [];
-    setTableData(data);
+    const tree = handleTree(res.data || []);
+    setTableData(tree);
     const orders: Record<number, number> = {};
     const walk = (nodes: API.Org[]) => {
       nodes.forEach((n) => {
@@ -55,17 +85,16 @@ const OrgList = () => {
         if (n.children?.length) walk(n.children);
       });
     };
-    walk(data);
+    walk(tree);
     setOriginalOrders(orders);
     setOrderMap({});
-    setSortChanged(false);
-    return { data, total: data.length, success: true };
+    setExpandedKeys(isExpandAll ? collectAllKeys(tree) : []);
+    return { data: tree, total: tree.length, success: true };
   };
 
   /** 内联排序变更 */
   const handleOrderChange = (id: number, value: number | null) => {
     setOrderMap((prev) => ({ ...prev, [id]: value ?? 0 }));
-    setSortChanged(true);
   };
 
   /** 保存排序：差量提交 */
@@ -88,6 +117,13 @@ const OrgList = () => {
     actionRef.current?.reload();
   };
 
+  /** 展开/折叠切换 */
+  const handleToggleExpand = () => {
+    const next = !isExpandAll;
+    setIsExpandAll(next);
+    setExpandedKeys(next ? collectAllKeys(tableData) : []);
+  };
+
   /** 删除组织 */
   const handleDelete = (row: API.Org) => {
     modal.confirm({
@@ -108,7 +144,7 @@ const OrgList = () => {
       render: (_, record) => <span>{record.name}</span>,
     },
     {
-      title: '显示排序',
+      title: '顺序',
       dataIndex: 'order',
       search: false,
       width: 100,
@@ -138,7 +174,7 @@ const OrgList = () => {
       search: false,
     },
     {
-      title: '创建时间',
+      title: '新增时间',
       dataIndex: 'addTime',
       search: false,
       width: 160,
@@ -177,48 +213,54 @@ const OrgList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <ProTable<API.Org>
-        headerTitle="组织列表"
-        actionRef={actionRef}
-        rowKey="id"
-        columns={columns}
-        search={{ labelWidth: 80 }}
-        expandable={{
-          expandedRowKeys: expandedKeys,
-          onExpandedRowsChange: (keys) => setExpandedKeys([...keys]),
-        }}
-        request={handleRequest}
-        toolBarRender={() => [
-          sortChanged && (
-            <Button key="saveSort" type="primary" onClick={handleSaveSort}>
-              保存排序
-            </Button>
-          ),
-          <Button
-            key="expand"
-            onClick={() => {
-              setExpandedKeys((prev) =>
-                prev.length > 0 ? [] : collectAllKeys(tableData),
-              );
-            }}
-          >
-            {expandedKeys.length > 0 ? '折叠' : '展开'}
-          </Button>,
-          hasPermi('authz:org') && (
+      <div className={styles.orgTable}>
+        <ProTable<API.Org>
+          actionRef={actionRef}
+          rowKey="id"
+          columns={columns}
+          pagination={false}
+          search={{
+            labelWidth: 80,
+            optionRender: (_searchConfig, _formProps, dom) => [
+              ...dom.reverse(),
+            ],
+          }}
+          expandable={{
+            expandedRowKeys: expandedKeys,
+            onExpandedRowsChange: (keys) => setExpandedKeys([...keys]),
+          }}
+          request={handleRequest}
+          toolBarRender={() => [
+            hasPermi('authz:org') && (
+              <Button
+                key="add"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setFormCurrent(null);
+                  setFormOpen(true);
+                }}
+              >
+                新增
+              </Button>
+            ),
             <Button
-              key="add"
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setFormCurrent(null);
-                setFormOpen(true);
-              }}
+              key="saveSort"
+              icon={<SaveOutlined />}
+              onClick={handleSaveSort}
             >
-              新增
-            </Button>
-          ),
-        ]}
-      />
+              保存排序
+            </Button>,
+            <Button
+              key="expand"
+              icon={<NodeExpandOutlined />}
+              onClick={handleToggleExpand}
+            >
+              展开/折叠
+            </Button>,
+          ]}
+        />
+      </div>
       <OrgFormModal
         open={formOpen}
         onOpenChange={setFormOpen}

@@ -85,8 +85,6 @@ const OrgFormModal = ({
     return true;
   };
 
-  const isRoot = current?.parentId === 0;
-
   return (
     <ModalForm<API.Org>
       title={current?.id ? '修改组织' : '新增组织'}
@@ -94,6 +92,9 @@ const OrgFormModal = ({
       open={open}
       onOpenChange={onOpenChange}
       modalProps={{ destroyOnClose: true }}
+      layout="horizontal"
+      grid
+      labelCol={{ flex: '85px' }}
       onFinish={handleFinish}
       initialValues={{
         status: 0,
@@ -102,39 +103,42 @@ const OrgFormModal = ({
         parentId: current?.parentId ?? 0,
       }}
     >
-      {!isRoot && (
-        <ProFormTreeSelect
-          name="parentId"
-          label="上级组织"
-          placeholder="请选择上级组织"
-          fieldProps={{
-            treeData: treeSelectData,
-            treeDefaultExpandAll: true,
-          }}
-          rules={[{ required: true, message: '请选择上级组织' }]}
-        />
-      )}
+      <ProFormTreeSelect
+        colProps={{ span: 24 }}
+        name="parentId"
+        label="上级组织"
+        placeholder="请选择上级组织"
+        fieldProps={{
+          treeData: treeSelectData,
+          treeDefaultExpandAll: true,
+        }}
+        rules={[{ required: true, message: '请选择上级组织' }]}
+      />
       <ProFormText
+        colProps={{ span: 12 }}
         name="name"
         label="组织名称"
         placeholder="请输入组织名称"
         rules={[{ required: true, message: '组织名称不能为空' }]}
       />
       <ProFormDigit
+        colProps={{ span: 12 }}
         name="order"
-        label="显示排序"
-        placeholder="请输入显示排序"
+        label="顺序"
+        placeholder="请输入顺序"
         min={0}
-        rules={[{ required: true, message: '显示排序不能为空' }]}
+        rules={[{ required: true, message: '顺序不能为空' }]}
         fieldProps={{ style: { width: '100%' } }}
       />
       <ProFormText
+        colProps={{ span: 12 }}
         name="manager"
         label="负责人"
         placeholder="请输入负责人"
         fieldProps={{ maxLength: 50 }}
       />
       <ProFormRadio.Group
+        colProps={{ span: 12 }}
         name="status"
         label="状态"
         options={[
