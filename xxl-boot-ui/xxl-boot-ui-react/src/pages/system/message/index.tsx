@@ -90,6 +90,8 @@ const MessageList = () => {
     {
       title: '消息标题',
       dataIndex: 'title',
+      width: 260,
+      ellipsis: true,
       render: (_, record) => (
         <a
           onClick={() => {
@@ -103,8 +105,8 @@ const MessageList = () => {
     {
       title: '分类',
       dataIndex: 'category',
-      search: false,
       width: 90,
+      valueEnum: toValueEnum(messageCategoryOptions),
       render: (_, record) => {
         const c = categoryMap[record.category ?? -1];
         return c ? <Tag color={c.color}>{c.text}</Tag> : '-';
@@ -121,7 +123,7 @@ const MessageList = () => {
         </Tag>
       ),
     },
-    { title: '发送人', dataIndex: 'sender', search: false },
+    { title: '发送人', dataIndex: 'sender', search: false, width: 90 },
     { title: '发送时间', dataIndex: 'addTime', search: false, width: 160 },
     {
       title: '操作',
