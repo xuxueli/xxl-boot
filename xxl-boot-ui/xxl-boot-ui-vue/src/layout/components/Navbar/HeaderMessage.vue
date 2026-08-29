@@ -4,18 +4,16 @@
 -->
 <template>
   <div>
-    <!-- popover 面板：鼠标悬停触发 -->
+    <!-- popover 面板：鼠标悬停触发，悬停内容区域时保持不关闭 -->
     <el-popover
-      ref="messagePopover"
       placement="bottom-end"
       :width="320"
-      :trigger="'manual' as any"
-      v-model:visible="messageVisible"
+      trigger="hover"
       popper-class="message-popover"
     >
       <!-- popover 触发器 -->
       <template #reference>
-        <div class="right-menu-item hover-effect message-trigger" @mouseenter="onMessageEnter" @mouseleave="onMessageLeave">
+        <div class="right-menu-item hover-effect message-trigger">
           <!-- 图标：铃铛 -->
           <SvgIcon icon-class="bell" />
           <!-- 未读数量角标 -->
@@ -74,7 +72,6 @@
 import HeaderMessageDetail from './HeaderMessageDetail.vue'
 import { listMessageTop, markMessageRead, markMessageReadAll } from '@/api/system/message'
 import type { Message } from '@/types/api'
-import type { PopoverInstance } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { SvgIcon } from '@/components'
 
@@ -83,12 +80,9 @@ import { SvgIcon } from '@/components'
  */
 type MessageItem = Message & { isRead?: boolean }
 
-const messagePopover = ref<PopoverInstance | null>(null) /* popover 实例引用 */
 const messageList = ref<MessageItem[]>([]) /* 公告列表 */
 const unreadCount = ref(0) /* 未读数量 */
 const messageLoading = ref(false) /* 加载状态 */
-const messageVisible = ref(false) /* popover 显隐 */
-const messageLeaveTimer = ref<ReturnType<typeof setTimeout> | null>(null) /* 延时关闭定时器 */
 const messageViewRef = ref<InstanceType<typeof HeaderMessageDetail> | null>(null) /* 抽屉组件引用 */
 
 /*
@@ -107,38 +101,6 @@ function loadMessageTop() {
 }
 
 onMounted(() => loadMessageTop())
-
-/*
- * 鼠标移入铃铛：显示 popover，绑定 popover 内的 hover 事件实现延时关闭
- */
-function onMessageEnter() {
-  clearTimeout(messageLeaveTimer.value ?? undefined)
-  messageVisible.value = true
-
-  // DOM加载完成后触发
-  /*nextTick(() => {
-    // 鼠标移入 popover 时清除定时器，移出时重新设置定时器
-    const popper = messagePopover.value?.popperRef?.contentRef
-    if (popper && !popper._messageBound) {
-      popper._messageBound = true
-      popper.addEventListener('mouseenter', () => clearTimeout(messageLeaveTimer.value))
-      popper.addEventListener('mouseleave', () => {
-        messageLeaveTimer.value = setTimeout(() => {
-          messageVisible.value = false
-        }, 300)
-      })
-    }
-  })*/
-}
-
-/*
- * 鼠标移出铃铛：延迟关闭，给移入 popover 留出时间
- */
-function onMessageLeave() {
-  messageLeaveTimer.value = setTimeout(() => {
-    messageVisible.value = false
-  }, 1000)
-}
 
 /*
  * 点击公告：未读则标记已读，预览详情

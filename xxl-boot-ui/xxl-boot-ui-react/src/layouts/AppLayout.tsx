@@ -7,6 +7,7 @@
  *      - 页脚：ProLayout#footerRender
  *      - 主题设置面板：SettingDrawer
  */
+import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, SettingDrawer } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
@@ -197,9 +198,13 @@ const AppLayout = () => {
       // 顶部区域：用户信息
       avatarProps={{
         title: (
-          <span style={{ fontWeight: 'bold', marginLeft: -5 }}>
-            {currentUser?.realName || currentUser?.userName}
-          </span>
+            <>
+              <UserOutlined style={{ fontSize: 18 }} />
+              <span style={{ fontWeight: 'bold', paddingLeft: 2, paddingRight: 2 }}>
+                {currentUser?.realName || currentUser?.userName}
+              </span>
+              <DownOutlined style={{ fontSize: 14 }} />
+            </>
         ),
         render: (_, avatarChildren) => (
           <HeaderAvatar>{avatarChildren}</HeaderAvatar>

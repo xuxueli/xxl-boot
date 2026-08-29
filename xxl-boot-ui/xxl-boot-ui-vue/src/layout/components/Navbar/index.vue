@@ -62,7 +62,9 @@
       >
         <!-- 用户信息  -->
         <div class="avatar-wrapper">
+          <el-icon class="user-icon"><User /></el-icon>
           <span class="user-realName"> {{ userStore.realName }} </span>
+          <el-icon class="caret-icon"><ArrowDown /></el-icon>
         </div>
 
         <!-- 下拉框  -->
@@ -313,13 +315,18 @@ async function toggleTheme() {
         padding: 0 8px;
         cursor: pointer;
 
+        .user-icon {
+          font-size: 18px;
+          margin-right: 6px;
+        }
+
         .user-realName {
           font-size: 14px;
           font-weight: bold;
           white-space: nowrap;
         }
 
-        i {
+        .caret-icon {
           font-size: 12px;
           margin-left: 4px;
         }
