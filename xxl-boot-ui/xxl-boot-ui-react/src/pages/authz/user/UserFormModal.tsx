@@ -9,7 +9,7 @@ import {
   ProFormText,
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
-import { App } from 'antd';
+import { App, Col, Row } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 import { addUser, updateUser } from '@/services/authz/user';
 
@@ -79,13 +79,15 @@ const UserFormModal = ({
     }
   }, [open, current]);
 
-  return (
+return (
     <ModalForm<API.User>
       title={current?.id ? '修改用户' : '新增用户'}
       width={640}
       open={open}
       onOpenChange={onOpenChange}
       modalProps={{ destroyOnClose: true }}
+      layout="horizontal"
+      labelCol={{ flex: '90px' }}
       onFinish={handleFinish}
       initialValues={{
         status: 0,
@@ -94,82 +96,100 @@ const UserFormModal = ({
         roleIds: current?.roleIds || [],
       }}
     >
-      <ProFormText
-        name="username"
-        label="用户账号"
-        placeholder="请输入用户账号"
-        disabled={!!current?.id}
-        rules={[
-          { required: true, message: '用户账号不能为空' },
-          {
-            pattern: /^[a-z][a-z0-9]*$/,
-            message: '小写字母开头，仅允许小写字母和数字',
-          },
-        ]}
-      />
-      {!current?.id && (
-        <ProFormText.Password
-          name="password"
-          label="用户密码"
-          placeholder="请输入用户密码"
-          rules={[
-            { required: true, message: '用户密码不能为空' },
-            { min: 4, max: 20, message: '密码长度必须在 4 到 20 个字符' },
-          ]}
-        />
-      )}
-      <ProFormText
-        name="realName"
-        label="用户名称"
-        placeholder="请输入用户名称"
-        fieldProps={{ maxLength: 50 }}
-        rules={[{ required: true, message: '用户名称不能为空' }]}
-      />
-      <ProFormSelect
-        name="roleIds"
-        label="角色"
-        placeholder="请选择角色"
-        mode="multiple"
-        options={roleSelectOptions}
-        fieldProps={{ optionDisabledProp: 'disabled' }}
-      />
-      <ProFormTreeSelect
-        name="orgId"
-        label="归属组织"
-        placeholder="请选择组织"
-        fieldProps={{
-          treeData: orgTreeSelectData,
-          treeDefaultExpandAll: true,
-          allowClear: true,
-        }}
-      />
-      <ProFormText
-        name="email"
-        label="邮箱"
-        placeholder="请输入邮箱"
-        fieldProps={{ maxLength: 100 }}
-        rules={[{ type: 'email', message: '邮箱格式不正确' }]}
-      />
-      <ProFormText
-        name="phone"
-        label="手机号码"
-        placeholder="请输入手机号码"
-        fieldProps={{ maxLength: 20 }}
-        rules={[
-          {
-            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-            message: '手机号格式不正确',
-          },
-        ]}
-      />
-      <ProFormRadio.Group
-        name="status"
-        label="状态"
-        options={[
-          { value: 0, label: '正常' },
-          { value: 1, label: '停用' },
-        ]}
-      />
+      <Row gutter={16}>
+        <Col span={12}>
+          <ProFormText
+            name="username"
+            label="账号"
+            placeholder="请输入账号"
+            disabled={!!current?.id}
+            rules={[
+              { required: true, message: '账号不能为空' },
+              {
+                pattern: /^[a-z][a-z0-9]*$/,
+                message: '小写字母开头，仅允许小写字母和数字',
+              },
+            ]}
+          />
+        </Col>
+        {!current?.id && (
+          <Col span={12}>
+            <ProFormText.Password
+              name="password"
+              label="密码"
+              placeholder="请输入密码"
+              rules={[
+                { required: true, message: '密码不能为空' },
+                { min: 4, max: 20, message: '密码长度必须在 4 到 20 个字符' },
+              ]}
+            />
+          </Col>
+        )}
+        <Col span={12}>
+          <ProFormText
+            name="realName"
+            label="用户名称"
+            placeholder="请输入用户名称"
+            fieldProps={{ maxLength: 50 }}
+            rules={[{ required: true, message: '用户名称不能为空' }]}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormSelect
+            name="roleIds"
+            label="角色"
+            placeholder="请选择角色"
+            mode="multiple"
+            options={roleSelectOptions}
+            fieldProps={{ optionDisabledProp: 'disabled' }}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormTreeSelect
+            name="orgId"
+            label="归属组织"
+            placeholder="请选择组织"
+            fieldProps={{
+              treeData: orgTreeSelectData,
+              treeDefaultExpandAll: true,
+              allowClear: true,
+            }}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormText
+            name="email"
+            label="邮箱"
+            placeholder="请输入邮箱"
+            fieldProps={{ maxLength: 100 }}
+            rules={[{ type: 'email', message: '邮箱格式不正确' }]}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormText
+            name="phone"
+            label="手机号"
+            placeholder="请输入手机号"
+            fieldProps={{ maxLength: 11 }}
+            rules={[
+              {
+                pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+                message: '手机号格式不正确',
+              },
+            ]}
+          />
+        </Col>
+        <Col span={12}>
+          <ProFormRadio.Group
+            name="status"
+            label="状态"
+            options={[
+              { value: 0, label: '正常' },
+              { value: 1, label: '停用' },
+            ]}
+          />
+        </Col>
+      </Row>
     </ModalForm>
   );
 };

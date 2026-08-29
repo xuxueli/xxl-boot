@@ -2,10 +2,11 @@
  * 页面：用户管理
  * 功能：左侧组织树 + 用户分页表格，支持新增/修改/删除/重置密码/状态切换/详情
  */
-import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Dropdown, Input, Modal, Switch } from 'antd';
+import { createStyles } from 'antd-style';
 import React, { useEffect, useRef, useState } from 'react';
 import { TreePanel } from '@/components';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
@@ -17,11 +18,34 @@ import { deepClone, handleTree } from '@/utils/common';
 import UserFormModal from './UserFormModal';
 import UserView, { type UserViewRef } from './UserView';
 
+/**
+ * 用户表格样式
+ * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
+ */
+const useStyles = createStyles(({ css }) => ({
+  userTable: css`
+    .ant-pro-table-list-toolbar-container {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container
+      .ant-pro-table-list-toolbar-right
+      .ant-pro-table-list-toolbar-setting-items {
+      margin-left: auto;
+    }
+  `,
+}));
+
 const Dashboard = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const viewRef = useRef<UserViewRef>(null);
   const { hasPermi } = usePermission();
+  const { styles } = useStyles();
 
   // 组织树数据（左侧 + 表单）
   const [deptOptions, setDeptOptions] = useState<API.Org[]>([]);
@@ -219,6 +243,9 @@ const Dashboard = () => {
         >
           修改
         </a>,
+        <a key="delete" onClick={() => handleDelete(record)}>
+          删除
+        </a>,
         <Dropdown
           key="more"
           menu={{
@@ -231,9 +258,6 @@ const Dashboard = () => {
         >
           <a onClick={(e) => e.preventDefault()}>更多</a>
         </Dropdown>,
-        <a key="delete" onClick={() => handleDelete(record)}>
-          删除
-        </a>,
       ],
     },
   ];
@@ -250,70 +274,74 @@ const Dashboard = () => {
           storageKey="boot-user-org-sidebar-width"
         />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <ProTable<API.User>
-            headerTitle="用户列表"
-            actionRef={actionRef}
-            rowKey="id"
-            columns={columns}
-            search={{
-              labelWidth: 80,
-              defaultCollapsed: false,
-              optionRender: (_searchConfig, formProps, dom) => [
-                ...dom.filter(
-                  (item) => (item as React.ReactElement)?.key !== 'rest',
+          <div className={styles.userTable}>
+            <ProTable<API.User>
+              actionRef={actionRef}
+              rowKey="id"
+              columns={columns}
+              search={{
+                labelWidth: 80,
+                defaultCollapsed: false,
+                optionRender: (_searchConfig, formProps, dom) => [
+                  ...dom.filter(
+                    (item) => (item as React.ReactElement)?.key !== 'rest',
+                  ),
+                  <Button
+                    key="reset-org"
+                    onClick={() => {
+                      setQueryParams({});
+                      formProps.form?.resetFields();
+                      actionRef.current?.reload();
+                    }}
+                  >
+                    重置
+                  </Button>,
+                ],
+              }}
+              params={queryParams}
+              request={async (params) => {
+                const res = await listUser(params);
+                return {
+                  data: res.data?.data || [],
+                  total: res.data?.total || 0,
+                  success: true,
+                };
+              }}
+              toolBarRender={() => [
+                hasPermi('authz:user') && (
+                  <Button
+                    key="add"
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={() => {
+                      setFormCurrent(null);
+                      setFormOpen(true);
+                    }}
+                  >
+                    新增
+                  </Button>
                 ),
-                <Button
-                  key="reset-org"
-                  onClick={() => {
-                    setQueryParams({});
-                    formProps.form?.resetFields();
-                    actionRef.current?.reload();
-                  }}
-                >
-                  重置
-                </Button>,
-              ],
-            }}
-            params={queryParams}
-            request={async (params) => {
-              const res = await listUser(params);
-              return {
-                data: res.data?.data || [],
-                total: res.data?.total || 0,
-                success: true,
-              };
-            }}
-            toolBarRender={() => [
-              hasPermi('authz:user') && (
-                <Button
-                  key="add"
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => {
-                    setFormCurrent(null);
-                    setFormOpen(true);
-                  }}
-                >
-                  新增
-                </Button>
-              ),
-            ]}
-            rowSelection={{
-              onChange: (_keys, rows) => {
-                setSelectedIds(rows.map((r) => r.id as number));
-              },
-            }}
-            tableAlertOptionRender={() => [
-              <a
-                key="delete"
-                onClick={() => {
-                  handleDelete();
-                }}
-              >
-                批量删除
-              </a>,
-            ]}
-          />
+                hasPermi('authz:user') && (
+                  <Button
+                    key="delete"
+                    danger
+                    icon={<DeleteOutlined />}
+                    disabled={selectedIds.length === 0}
+                    onClick={() => handleDelete()}
+                  >
+                    删除
+                  </Button>
+                ),
+              ]}
+              rowSelection={{
+                onChange: (_keys, rows) => {
+                  setSelectedIds(rows.map((r) => r.id as number));
+                },
+              }}
+              tableAlertRender={false}
+              tableAlertOptionRender={false}
+            />
+          </div>
         </div>
       </div>
 

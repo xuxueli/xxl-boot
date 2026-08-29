@@ -8,9 +8,9 @@ import {
   ProFormRadio,
   ProFormText,
 } from '@ant-design/pro-components';
-import { App, Checkbox, Divider, Space, Tree } from 'antd';
+import { App, Checkbox, Col, Divider, Space, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { listResource } from '@/services/authz/resource';
 import {
   addRole,
@@ -53,27 +53,27 @@ const RoleFormModal = ({
   onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();
-  const treeRef = useRef<any>(null);
 
   const [treeData, setTreeData] = useState<DataNode[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [expandedAll, setExpandedAll] = useState(false);
   const [checkStrictly, setCheckStrictly] = useState(false);
+  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
+  const [halfCheckedKeys, setHalfCheckedKeys] = useState<React.Key[]>([]);
 
   /** 加载资源树与已授权集合 */
   const loadTree = (roleId?: number) => {
     listResource({}).then((res) => {
       const tree = toTreeData(handleTree(res.data || []));
       setTreeData(tree);
-      const allKeys = collectAllKeys(tree);
-      setExpandedKeys(allKeys);
+      // 菜单权限树默认折叠
+      setExpandedKeys([]);
+      setCheckedKeys([]);
+      setHalfCheckedKeys([]);
       if (roleId) {
         roleMenuTreeselect(roleId)
           .then((roleRes) => {
-            const checked = roleRes.data || [];
-            if (treeRef.current) {
-              treeRef.current.setCheckedKeys(checked);
-            }
+            setCheckedKeys(roleRes.data || []);
           })
           .catch(() => {});
       }
@@ -89,13 +89,15 @@ const RoleFormModal = ({
 
   const allKeys = useMemo(() => collectAllKeys(treeData), [treeData]);
 
+  /** 树勾选变化：受控记录勾选与半选节点 */
+  const handleCheck = (keys: React.Key[] | { checked: React.Key[]; halfChecked: React.Key[] }, info: any) => {
+    setCheckedKeys(Array.isArray(keys) ? keys : (keys?.checked ?? []));
+    setHalfCheckedKeys(info.halfCheckedKeys ?? []);
+  };
+
   /** 收集勾选 + 半勾选的资源 id */
   const getMenuAllCheckedKeys = (): number[] => {
-    if (!treeRef.current) return [];
-    const checked = (treeRef.current.getCheckedKeys() as React.Key[]) || [];
-    const halfChecked =
-      (treeRef.current.getHalfCheckedKeys() as React.Key[]) || [];
-    return [...checked, ...halfChecked]
+    return [...checkedKeys, ...halfCheckedKeys]
       .map((k) => Number(k))
       .filter((k) => !Number.isNaN(k));
   };
@@ -125,11 +127,15 @@ const RoleFormModal = ({
       width={680}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
+      layout="horizontal"
+      grid
+      labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
-      initialValues={{ status: 0, order: 1, ...current }}
+      initialValues={{ status: 0, order: 0, ...current }}
     >
       <ProFormText
+        colProps={{ span: 12 }}
         name="name"
         label="角色名称"
         placeholder="请输入角色名称"
@@ -137,6 +143,7 @@ const RoleFormModal = ({
         rules={[{ required: true, message: '角色名称不能为空' }]}
       />
       <ProFormText
+        colProps={{ span: 12 }}
         name="code"
         label="权限字符"
         placeholder="请输入权限字符"
@@ -144,6 +151,7 @@ const RoleFormModal = ({
         rules={[{ required: true, message: '权限字符不能为空' }]}
       />
       <ProFormDigit
+        colProps={{ span: 12 }}
         name="order"
         label="显示顺序"
         placeholder="请输入显示顺序"
@@ -151,6 +159,7 @@ const RoleFormModal = ({
         fieldProps={{ style: { width: '100%' } }}
       />
       <ProFormRadio.Group
+        colProps={{ span: 12 }}
         name="status"
         label="状态"
         options={[
@@ -158,72 +167,72 @@ const RoleFormModal = ({
           { value: 1, label: '停用' },
         ]}
       />
-      <Divider style={{ margin: '12px 0' }} />
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 8,
-        }}
-      >
-        <span style={{ fontWeight: 600 }}>菜单权限</span>
-        <Space size={16}>
-          <Checkbox
-            checked={expandedAll}
-            onChange={(e) => {
-              setExpandedAll(e.target.checked);
-              setExpandedKeys(e.target.checked ? allKeys : []);
-            }}
-          >
-            展开/折叠
-          </Checkbox>
-          <Checkbox
-            checked={checkStrictly}
-            onChange={(e) => setCheckStrictly(e.target.checked)}
-          >
-            父子联动
-          </Checkbox>
-          <a
-            onClick={() => {
-              if (treeRef.current) {
-                treeRef.current.setCheckedKeys(allKeys);
-              }
-            }}
-          >
-            全选
-          </a>
-          <a
-            onClick={() => {
-              if (treeRef.current) {
-                treeRef.current.setCheckedKeys([]);
-              }
-            }}
-          >
-            全不选
-          </a>
-        </Space>
-      </div>
-      <div
-        style={{
-          maxHeight: 320,
-          overflow: 'auto',
-          border: '1px solid #f0f0f0',
-          borderRadius: 6,
-          padding: 8,
-        }}
-      >
-        <Tree
-          ref={treeRef}
-          checkable
-          blockNode
-          defaultExpandAll
-          checkStrictly={checkStrictly}
-          expandedKeys={expandedKeys}
-          onExpand={setExpandedKeys}
-          treeData={treeData}
-        />
-      </div>
+      <Col span={24}>
+        <Divider style={{ margin: '12px 0' }} />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 8,
+          }}
+        >
+          <span style={{ fontWeight: 600 }}>菜单权限</span>
+          <Space size={16}>
+            <Checkbox
+              checked={expandedAll}
+              onChange={(e) => {
+                setExpandedAll(e.target.checked);
+                setExpandedKeys(e.target.checked ? allKeys : []);
+              }}
+            >
+              展开/折叠
+            </Checkbox>
+            <Checkbox
+              checked={checkStrictly}
+              onChange={(e) => setCheckStrictly(e.target.checked)}
+            >
+              父子联动
+            </Checkbox>
+            <a
+              onClick={() => {
+                setCheckedKeys(allKeys);
+                setHalfCheckedKeys([]);
+              }}
+            >
+              全选
+            </a>
+            <a
+              onClick={() => {
+                setCheckedKeys([]);
+                setHalfCheckedKeys([]);
+              }}
+            >
+              全不选
+            </a>
+          </Space>
+        </div>
+        <div
+          style={{
+            maxHeight: 320,
+            overflow: 'auto',
+            border: '1px solid #f0f0f0',
+            borderRadius: 6,
+            padding: 8,
+          }}
+        >
+          <Tree
+            checkable
+            blockNode
+            checkStrictly={checkStrictly}
+            checkedKeys={checkedKeys}
+            onCheck={handleCheck}
+            expandedKeys={expandedKeys}
+            onExpand={setExpandedKeys}
+            treeData={treeData}
+          />
+        </div>
+      </Col>
     </ModalForm>
   );
 };

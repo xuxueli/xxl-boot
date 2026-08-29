@@ -64,7 +64,7 @@ const UserView = forwardRef<UserViewRef>((_, ref) => {
       size={680}
       open={visible}
       onClose={() => setVisible(false)}
-      destroyOnClose
+      destroyOnHidden
     >
       {user && (
         <Descriptions column={1} size="middle" bordered>
