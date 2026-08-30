@@ -637,6 +637,8 @@ public @interface Permission {
     - 代码重构，多模块可扩展设计；
   - 生图Agent：生图流程设计，集成本地Vision模型；
 - 5、菜单API接口重构统一，适配逻辑上提到前端项目；
+- 6、快速开发 SKILL 设计提供；
+- 7、React 功能模块代码重构；
 
 
 ## 七、其他

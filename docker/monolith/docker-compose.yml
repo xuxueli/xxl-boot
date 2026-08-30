@@ -31,8 +31,7 @@ services:
       - xxl-boot-network
 
   xxl-boot-admin:
-    # 4、本地Build设置，如果期望使用推动DockerHub的镜像，可以注释当前启用的image、build配置，并启用如下设置版本的image配置；
-    #image: xuxueli/xxl-boot-admin:{version}
+    # 4、本地Build设置
     image: xuxueli/xxl-boot-admin:local
     build:
       context: ../../xxl-boot-admin

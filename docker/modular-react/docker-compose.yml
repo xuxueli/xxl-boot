@@ -15,7 +15,7 @@ services:
     volumes:
       # 说明：仅数据库首次初始化时执行；
       - ../../doc/db/tables_xxl_boot.sql:/docker-entrypoint-initdb.d/tables_xxl_boot.sql:ro
-      - ../../doc/db/tables_xxl_boot_vue.sql:/docker-entrypoint-initdb.d/tables_xxl_boot_vue.sql:ro
+      - ../../doc/db/tables_xxl_boot_modular_react.sql:/docker-entrypoint-initdb.d/tables_xxl_boot_modular_react.sql:ro
       # 3、数据库持久化目录位置，建议自定义：
       - ${MYSQL_PATH}/conf:/etc/mysql/conf.d
       - ${MYSQL_PATH}/logs:/var/log/mysql
@@ -31,11 +31,10 @@ services:
       - xxl-boot-network
 
   redis:
-    # 4、Redis缓存服务
     image: redis:7.4
     container_name: xxl-boot-redis
     environment:
-      # 4.1、Redis访问密码，需要与上文 xxl-boot-api 中配置保持一致（默认空密码，如设置请同步配置 REDIS_PASSWORD）；
+      # 4、Redis访问密码，需要与上文 xxl-boot-api 中配置保持一致（默认空密码，如设置请同步配置 REDIS_PASSWORD）；
       REDIS_PASSWORD: ${REDIS_PASSWORD}
     command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
     ports:
@@ -82,7 +81,7 @@ services:
     # 8、本地Build设置
     image: xuxueli/xxl-boot-ui-react:local
     build:
-      context: ../../xxl-boot-ui-react
+      context: ../../xxl-boot-ui/xxl-boot-ui-react
       dockerfile: Dockerfile
       # 附加构建上下文：用于 COPY 目录下的 nginx 配置
       additional_contexts:
