@@ -116,12 +116,7 @@ export default {
  * @param filename 保存到本地的文件名
  * @param config   额外的 axios 请求配置（可选）
  */
-export function download(
-  url: string,
-  params: object,
-  filename: string,
-  config?: RequestConfig
-): void {
+export function download(url: string, params: object, filename: string, config?: RequestConfig): void {
   modal.loading('正在下载数据，请稍候')
   service
     .post(url, params, {
@@ -141,8 +136,7 @@ export function download(
         // 服务端以 blob 格式返回了 JSON 错误报文
         const resText = await blobData.text()
         const rspObj = JSON.parse(resText) as { code?: number; msg?: string }
-        const errMsg =
-          errorCode[String(rspObj.code)] || rspObj.msg || errorCode.default
+        const errMsg = errorCode[String(rspObj.code)] || rspObj.msg || errorCode.default
         modal.msgError(errMsg)
       }
       modal.closeLoading()

@@ -21,8 +21,8 @@ import {
   listResource,
   updateResourceSort,
 } from '@/services/authz/resource';
-import { getIconComponent } from '@/utils/icon';
 import { handleTree } from '@/utils/common';
+import { getIconComponent } from '@/utils/icon';
 import ResourceFormModal from './ResourceFormModal';
 
 const typeMap: Record<number, { text: string; color: string }> = {

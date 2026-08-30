@@ -4,8 +4,8 @@
  */
 
 import { ProForm, ProFormText } from '@ant-design/pro-components';
-import type { Rule } from 'antd/es/form';
 import { App, Button } from 'antd';
+import type { Rule } from 'antd/es/form';
 import React from 'react';
 import { updateUserPwd } from '@/services/authz/user';
 

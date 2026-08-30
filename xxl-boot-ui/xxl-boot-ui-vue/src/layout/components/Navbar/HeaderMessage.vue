@@ -5,12 +5,7 @@
 <template>
   <div>
     <!-- popover 面板：鼠标悬停触发，悬停内容区域时保持不关闭 -->
-    <el-popover
-      placement="bottom-end"
-      :width="320"
-      trigger="hover"
-      popper-class="message-popover"
-    >
+    <el-popover placement="bottom-end" :width="320" trigger="hover" popper-class="message-popover">
       <!-- popover 触发器 -->
       <template #reference>
         <div class="right-menu-item hover-effect message-trigger">

@@ -27,7 +27,7 @@
         <!-- icon -->
         <SvgIcon
           v-if="tagsIcon && tag.meta && tag.meta.icon && tag.meta.icon !== '#'"
-          :icon-class="(tag.meta.icon as string)"
+          :icon-class="tag.meta.icon as string"
           style="margin-right: 3px"
         />
         <!-- title -->

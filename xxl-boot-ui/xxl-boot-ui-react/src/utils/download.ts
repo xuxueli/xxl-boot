@@ -94,7 +94,11 @@ export function download(
     })
     .then(async (res) => {
       // 响应拦截器对 blob 已透传为 Blob，断言后处理
-      await handleBlob(res as unknown as Blob, filename, '下载文件出现错误，请联系管理员！');
+      await handleBlob(
+        res as unknown as Blob,
+        filename,
+        '下载文件出现错误，请联系管理员！',
+      );
     })
     .catch(() => {
       message.error('下载文件出现错误，请联系管理员！');
@@ -120,7 +124,11 @@ export function downloadGet(
     })
     .then(async (res) => {
       // 响应拦截器对 blob 已透传为 Blob，断言后处理
-      await handleBlob(res as unknown as Blob, filename, '下载文件出现错误，请联系管理员！');
+      await handleBlob(
+        res as unknown as Blob,
+        filename,
+        '下载文件出现错误，请联系管理员！',
+      );
     })
     .catch(() => {
       message.error('下载文件出现错误，请联系管理员！');

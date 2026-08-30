@@ -47,7 +47,8 @@ const useStyles = createStyles(({ token }) => {
       flexDirection: 'column',
       height: '100vh',
       // 浅色渐变底色：白 → 淡蓝灰 → 淡紫灰，斜向与光带走向呼应
-      background: 'linear-gradient(155deg, #ffffff 0%, #f2f4fb 55%, #e7ecf8 100%)',
+      background:
+        'linear-gradient(155deg, #ffffff 0%, #f2f4fb 55%, #e7ecf8 100%)',
       // 光带：从顶部中间（50%,0）起沿斜向延伸，穿过右侧中间（100%,50%）
       '&::before': {
         content: '""',
@@ -108,7 +109,6 @@ const Login = () => {
     // 事件回调中直接调用 store action，避免为单次调用挂载 store 订阅
     const userStore = useUserStore.getState();
     try {
-
       // 登录请求
       await userStore.login({
         ...values,
@@ -168,7 +168,9 @@ const Login = () => {
             transform: 'translateY(-15%)',
           }}
           title={defaultSettings.brandName}
-          subTitle={<div className={styles.subTitle}>{defaultSettings.title}</div>}
+          subTitle={
+            <div className={styles.subTitle}>{defaultSettings.title}</div>
+          }
           initialValues={{
             rememberMe: false,
           }}

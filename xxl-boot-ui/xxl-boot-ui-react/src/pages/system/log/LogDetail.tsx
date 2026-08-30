@@ -196,17 +196,13 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
               <Col span={12}>
                 <div className={styles.detailItem}>
                   <span className={styles.detailLabel}>操作人</span>
-                  <span className={styles.detailValue}>
-                    {row.operator}
-                  </span>
+                  <span className={styles.detailValue}>{row.operator}</span>
                 </div>
               </Col>
               <Col span={12}>
                 <div className={styles.detailItem}>
                   <span className={styles.detailLabel}>操作时间</span>
-                  <span className={styles.detailValue}>
-                    {row.addTime}
-                  </span>
+                  <span className={styles.detailValue}>{row.addTime}</span>
                 </div>
               </Col>
             </Row>

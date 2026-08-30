@@ -174,9 +174,7 @@ export function createWidget(type: WidgetType, id: number): FormWidget {
       required: true,
       /* 级联选择默认演示层级路径，其余选项组件用扁平选项 */
       options:
-        type === 'cascader'
-          ? ['省份/城市', '省份/县城']
-          : ['选项一', '选项二'],
+        type === 'cascader' ? ['省份/城市', '省份/县城'] : ['选项一', '选项二'],
       span: 24,
     };
   }
@@ -247,9 +245,7 @@ export interface CascaderNode {
  * @param options - 扁平选项列表
  * @returns 层级树
  */
-export function toCascaderOptions(
-  options: string[] = [],
-): CascaderNode[] {
+export function toCascaderOptions(options: string[] = []): CascaderNode[] {
   const roots: CascaderNode[] = [];
   for (const path of options) {
     const parts = path

@@ -52,26 +52,27 @@ export default defineConfig(({ mode, command }) => {
      *    文档：https://cn.vitejs.dev/config/#build-options
      */
     build: {
-      sourcemap: isBuild ? false : 'inline',                   // 生产环境打包时不生成Source Map；减小打包体积，提高加载速度；防止源代码泄露；
-      outDir: 'dist',                                          // 构建输出目录
-      assetsDir: 'assets',                                     // 静态资源目录
-      chunkSizeWarningLimit: 2000,                             // 构建时超过指定大小会警告
-      rollupOptions: {                                         // rollup 配置
+      sourcemap: isBuild ? false : 'inline', // 生产环境打包时不生成Source Map；减小打包体积，提高加载速度；防止源代码泄露；
+      outDir: 'dist', // 构建输出目录
+      assetsDir: 'assets', // 静态资源目录
+      chunkSizeWarningLimit: 2000, // 构建时超过指定大小会警告
+      rollupOptions: {
+        // rollup 配置
         output: {
           chunkFileNames: 'static/js/[name]-[hash].js',
           entryFileNames: 'static/js/[name]-[hash].js',
-          assetFileNames: 'static/[ext]/[name]-[hash].[ext]'
-        }
-      }
+          assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+        },
+      },
     },
     /**
      * Vite 开发服务器（Dev Server）的代理配置‌：
      */
     server: {
       port: APP_PORT,
-      strictPort: true,     // 端口被占用时直接退出
-      host: true,           // 默认是localhost
-      open: true,           // 运行自动打开浏览器
+      strictPort: true, // 端口被占用时直接退出
+      host: true, // 默认是localhost
+      open: true, // 运行自动打开浏览器
       proxy: {
         // 请求前缀匹配
         [APP_BASE_API]: {

@@ -1,6 +1,6 @@
 {
   "name": "XXL-BOOT",
-  "version": "2.1.0-SNAPSHOT",
+  "version": "2.1.0",
   "private": true,
   "type": "module",
   "description": "XXL-BOOT | 快速开发平台",

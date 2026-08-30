@@ -3,6 +3,7 @@
  * 功能：Tab1 配置信息表单 + Tab2 字段信息可拖拽排序表格
  */
 
+import { HolderOutlined } from '@ant-design/icons';
 import {
   closestCenter,
   DndContext,
@@ -18,7 +19,6 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { HolderOutlined } from '@ant-design/icons';
 import { App, Checkbox, Form, Input, Modal, Select, Table, Tabs } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useContext, useEffect, useMemo, useState } from 'react';

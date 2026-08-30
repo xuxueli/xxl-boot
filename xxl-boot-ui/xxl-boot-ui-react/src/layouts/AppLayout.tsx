@@ -113,7 +113,9 @@ const renderMenuLabel = (item: MenuDataItem) => {
   // 设置图标：图标 + 菜单名 水平排列
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-      <span style={{ marginRight: 8, display: 'inline-flex' }}>{item.icon}</span>
+      <span style={{ marginRight: 8, display: 'inline-flex' }}>
+        {item.icon}
+      </span>
       {item.name}
     </span>
   );
@@ -221,13 +223,15 @@ const AppLayout = () => {
       // 顶部区域：用户信息
       avatarProps={{
         title: (
-            <>
-              <UserOutlined style={{ fontSize: 18 }} />
-              <span style={{ fontWeight: 'bold', paddingLeft: 2, paddingRight: 2 }}>
-                {currentUser?.realName || currentUser?.userName}
-              </span>
-              <DownOutlined style={{ fontSize: 14 }} />
-            </>
+          <>
+            <UserOutlined style={{ fontSize: 18 }} />
+            <span
+              style={{ fontWeight: 'bold', paddingLeft: 2, paddingRight: 2 }}
+            >
+              {currentUser?.realName || currentUser?.userName}
+            </span>
+            <DownOutlined style={{ fontSize: 14 }} />
+          </>
         ),
         render: (_, avatarChildren) => (
           <HeaderAvatar>{avatarChildren}</HeaderAvatar>

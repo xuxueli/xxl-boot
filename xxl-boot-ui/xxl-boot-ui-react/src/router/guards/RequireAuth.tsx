@@ -6,72 +6,68 @@
  *   - 已登录访问登录页：由登录页自身处理（跳转 redirect 或首页），避免与登录成功后跳转竞争；
  *   - 已登录但会话未加载：拉取用户信息与菜单，加载完成后再渲染（避免路由未注册时先命中 404）。
  */
-import {message, Spin} from 'antd';
-import React, {useEffect} from 'react';
-import {Navigate, useLocation} from 'react-router-dom';
-import {useUserStore} from '@/stores/userStore';
-import {getToken} from '@/utils/auth';
+import { message, Spin } from 'antd';
+import React, { useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useUserStore } from '@/stores/userStore';
+import { getToken } from '@/utils/auth';
 
 /** 登录白名单：不鉴权直接放行的路径 */
 const whiteList = ['/login'];
 
-const RequireAuth = ({children}: { children: React.ReactNode }) => {
-    const location = useLocation();
-    const token = getToken();
-    const currentUser = useUserStore((s) => s.currentUser);
+const RequireAuth = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+  const token = getToken();
+  const currentUser = useUserStore((s) => s.currentUser);
 
-    useEffect(() => {
+  useEffect(() => {
+    // 未登录：无需加载会话
+    if (!token) return;
 
-        // 未登录：无需加载会话
-        if (!token) return;
+    // 会话已存在（登录页已拉取 / 刷新后已加载）：无需重复拉取
+    if (currentUser) return;
 
-        // 会话已存在（登录页已拉取 / 刷新后已加载）：无需重复拉取
-        if (currentUser) return;
+    // 已登录但会话未加载：拉取用户信息与菜单
+    Promise.all([
+      useUserStore.getState().fetchUserInfo(),
+      useUserStore.getState().fetchMenuData(),
+    ]).catch(() => {
+      // 会话信息拉取失败（如会话过期/无权限）：清理本地凭证并跳转登录页
+      useUserStore
+        .getState()
+        .logout()
+        .catch(() => {});
+      message.error('登录状态已失效，请重新登录');
+      const redirect = encodeURIComponent(location.pathname + location.search);
+      window.location.href = `/login?redirect=${redirect}`;
+    });
+  }, [token, currentUser, location.pathname, location.search]);
 
-        // 已登录但会话未加载：拉取用户信息与菜单
-        Promise.all([
-            useUserStore.getState().fetchUserInfo(),
-            useUserStore.getState().fetchMenuData(),
-        ]).catch(() => {
-            // 会话信息拉取失败（如会话过期/无权限）：清理本地凭证并跳转登录页
-            useUserStore
-                .getState()
-                .logout()
-                .catch(() => {
-                });
-            message.error('登录状态已失效，请重新登录');
-            const redirect = encodeURIComponent(
-                location.pathname + location.search,
-            );
-            window.location.href = `/login?redirect=${redirect}`;
-        });
-    }, [token, currentUser, location.pathname, location.search]);
+  // 未登录：白名单（登录页）放行，其余重定向登录页
+  if (!token) {
+    if (whiteList.includes(location.pathname)) return <>{children}</>;
+    const redirect = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`/login?redirect=${redirect}`} replace />;
+  }
 
-    // 未登录：白名单（登录页）放行，其余重定向登录页
-    if (!token) {
-        if (whiteList.includes(location.pathname)) return <>{children}</>;
-        const redirect = encodeURIComponent(location.pathname + location.search);
-        return <Navigate to={`/login?redirect=${redirect}`} replace/>;
-    }
+  // 已登录但会话加载中，显示加载中
+  if (!currentUser) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+        }}
+      >
+        <Spin size="large" description="加载中..." />
+      </div>
+    );
+  }
 
-    // 已登录但会话加载中，显示加载中
-    if (!currentUser) {
-        return (
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100vh',
-                }}
-            >
-                <Spin size="large" description="加载中..."/>
-            </div>
-        );
-    }
-
-    // 已登录且会话已加载，渲染子路由
-    return <>{children}</>;
+  // 已登录且会话已加载，渲染子路由
+  return <>{children}</>;
 };
 
 export default RequireAuth;

@@ -105,11 +105,14 @@ const Editor = ({
     (e: ClipboardEvent) => {
       const clipboard =
         e.clipboardData ||
-        (window as typeof window & { clipboardData?: ClipboardEvent['clipboardData'] })
-          .clipboardData;
+        (
+          window as typeof window & {
+            clipboardData?: ClipboardEvent['clipboardData'];
+          }
+        ).clipboardData;
       if (!clipboard) return;
-      const imageItem = Array.from(clipboard.items || []).find((i) =>
-        i.type.indexOf('image') !== -1,
+      const imageItem = Array.from(clipboard.items || []).find(
+        (i) => i.type.indexOf('image') !== -1,
       );
       if (!imageItem) return;
       e.preventDefault();

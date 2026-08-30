@@ -79,9 +79,7 @@ const ConfigList = () => {
       dataIndex: 'key',
       search: false,
       ellipsis: true,
-      render: (_, record) => (
-        <Tooltip title={record.key}>{record.key}</Tooltip>
-      ),
+      render: (_, record) => <Tooltip title={record.key}>{record.key}</Tooltip>,
     },
     {
       title: '配置Value',
