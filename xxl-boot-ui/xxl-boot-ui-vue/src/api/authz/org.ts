@@ -68,7 +68,7 @@ export function updateOrgSort(data: { ids: number[]; orders: number[] }): Promis
   return request({
     url: '/authz/org/updateSort',
     method: 'post',
-    params: { 'ids[]': data.ids, 'orders[]': data.orders }
+    params: { ids: data.ids, orders: data.orders }
   })
 }
 
@@ -81,6 +81,6 @@ export function delOrg(ids: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/authz/org/delete',
     method: 'post',
-    params: { 'ids[]': ids }
+    params: { ids: Array.isArray(ids) ? ids : [ids] }
   })
 }

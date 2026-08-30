@@ -68,7 +68,7 @@ export function delType(id: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/system/dict/delete',
     method: 'post',
-    params: { 'ids[]': id }
+    params: { ids: Array.isArray(id) ? id : [id] }
   })
 }
 

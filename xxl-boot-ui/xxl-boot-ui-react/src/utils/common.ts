@@ -127,7 +127,8 @@ export function handleTree<T extends Record<string, any>>(
 
 /**
  * 参数序列化到 URL 查询字符串（支持嵌套对象与数组）
- * 嵌套对象展开为 key[subKey]=value 格式，忽略 null/''/undefined。
+ * 嵌套对象展开为 key[subKey]=value 格式，数组输出 key[]=v1&key[]=v2（后端 List 参数兼容），
+ * 忽略 null/''/undefined。
  * @param params - 参数对象
  * @returns 序列化结果（末尾带 &）
  */
@@ -137,7 +138,14 @@ export function tansParams(params: Record<string, any>): string {
     const value = params[propName];
     const part = `${encodeURIComponent(propName)}=`;
     if (value !== null && value !== '' && typeof value !== 'undefined') {
-      if (typeof value === 'object') {
+      if (Array.isArray(value)) {
+        // 数组：输出 key[]=v1&key[]=v2（后端 List 参数兼容）
+        value.forEach((item) => {
+          if (item !== null && item !== '' && typeof item !== 'undefined') {
+            result += `${encodeURIComponent(`${propName}[]`)}=${encodeURIComponent(String(item))}&`;
+          }
+        });
+      } else if (typeof value === 'object') {
         for (const key of Object.keys(value)) {
           if (
             value[key] !== null &&

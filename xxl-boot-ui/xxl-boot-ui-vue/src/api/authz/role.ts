@@ -68,7 +68,7 @@ export function delRole(ids: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/authz/role/delete',
     method: 'post',
-    params: { 'ids[]': ids }
+    params: { ids: Array.isArray(ids) ? ids : [ids] }
   })
 }
 
@@ -95,6 +95,6 @@ export function updateRoleRes(roleId: number, resourceIds: number[]): Promise<Re
   return request({
     url: '/authz/role/updateRoleRes',
     method: 'post',
-    params: { roleId, 'resourceIds[]': resourceIds }
+    params: { roleId, resourceIds }
   })
 }

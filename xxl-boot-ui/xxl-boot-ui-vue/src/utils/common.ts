@@ -571,16 +571,17 @@ export function param2Obj(url: string): Record<string, string> {
 }
 
 /**
- * 参数序列化到 URL 查询字符串（支持嵌套对象）
+ * 参数序列化到 URL 查询字符串（支持嵌套对象与数组）
  *
- * 嵌套对象展开为 key[subKey]=value 格式，忽略 null/''/undefined。
- * 末尾带 &，调用方需自行处理。
+ * 嵌套对象展开为 key[subKey]=value 格式，数组输出 key[]=v1&key[]=v2（后端 List 参数兼容），
+ * 忽略 null/''/undefined。末尾带 &，调用方需自行处理。
  *
  * @param params - 参数对象
  * @returns 序列化结果（末尾带 &）
  *
  * 示例：
  *   tansParams({ a: 1, b: { c: 2 } })  // 'a=1&b[c]=2&'
+ *   tansParams({ ids: [1, 2] })        // 'ids[]=1&ids[]=2&'
  */
 export function tansParams(params: Record<string, any>): string {
   let result = ''
@@ -588,7 +589,14 @@ export function tansParams(params: Record<string, any>): string {
     const value = params[propName]
     const part = encodeURIComponent(propName) + '='
     if (value !== null && value !== '' && typeof value !== 'undefined') {
-      if (typeof value === 'object') {
+      // 数组：输出 key[]=v1&key[]=v2（后端 List 参数兼容）
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          if (item !== null && item !== '' && typeof item !== 'undefined') {
+            result += part + '[]=' + encodeURIComponent(item) + '&'
+          }
+        })
+      } else if (typeof value === 'object') {
         for (const key of Object.keys(value)) {
           if (value[key] !== null && value[key] !== '' && typeof value[key] !== 'undefined') {
             const p = propName + '[' + key + ']'

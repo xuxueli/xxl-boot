@@ -69,7 +69,7 @@ export function updateResourceSort(ids: number[], orders: number[]): Promise<Res
   return request({
     url: '/authz/resource/updateSort',
     method: 'post',
-    params: { 'ids[]': ids, 'orders[]': orders }
+    params: { ids, orders }
   })
 }
 
@@ -82,6 +82,6 @@ export function delResource(ids: number | number[]): Promise<Response<unknown>> 
   return request({
     url: '/authz/resource/delete',
     method: 'post',
-    params: { 'ids[]': ids }
+    params: { ids: Array.isArray(ids) ? ids : [ids] }
   })
 }

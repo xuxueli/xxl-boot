@@ -122,9 +122,8 @@ const Login = () => {
       // 登录成功：跳转目标页，优先使用 redirect 参数，其次使用默认首页
       const redirectUrl = getSafeRedirectUrl(searchParams.get('redirect'));
       // 停留片刻后再跳转：避免成功提示被页面刷新吞掉
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 200));
       // 跳转目标页
-      console.log('redirectUrl', redirectUrl);
       navigate(redirectUrl);
     } catch {
       // 登录失败：刷新验证码

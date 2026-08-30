@@ -29,6 +29,6 @@ export function delOperlog(ids: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/system/log/delete',
     method: 'post',
-    params: { 'ids[]': ids }
+    params: { ids: Array.isArray(ids) ? ids : [ids] }
   })
 }

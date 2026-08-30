@@ -55,7 +55,7 @@ export function delUser(ids: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/authz/user/delete',
     method: 'post',
-    params: { 'ids[]': ids }
+    params: { ids: Array.isArray(ids) ? ids : [ids] }
   })
 }
 

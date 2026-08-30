@@ -37,7 +37,7 @@
     - /hooks                            done
     - /types                            done
     - /router                           done
-    - /utils                            --111
+    - /utils                            done
     - /services                         --222
     - /components                       --333
     - /pages                            /
