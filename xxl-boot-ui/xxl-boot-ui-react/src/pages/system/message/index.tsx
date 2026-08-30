@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { App, Button, Tag } from 'antd';
+import { App, Button, Tag, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useMemo, useRef, useState } from 'react';
 import {
@@ -95,16 +95,18 @@ const MessageList = () => {
     {
       title: '消息标题',
       dataIndex: 'title',
-      width: 260,
+      width: 200,
       ellipsis: true,
       render: (_, record) => (
-        <a
-          onClick={() => {
-            messageViewRef.current?.open(record.id as number);
-          }}
-        >
-          {record.title}
-        </a>
+        <Tooltip title={record.title}>
+          <a
+            onClick={() => {
+              messageViewRef.current?.open(record.id as number);
+            }}
+          >
+            {record.title}
+          </a>
+        </Tooltip>
       ),
     },
     {

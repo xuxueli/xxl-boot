@@ -256,8 +256,8 @@ VALUES (1, 0, '首页', 1, 'dashboard', '/dashboard', 'fa-home', 100, 0, 0, now(
        (11, 7, '站内消息', 1, 'system:message', '/system/message', '', 913, 0, 0, now(), now()),
        (12, 7, '审计日志', 1, 'system:log', '/system/log', '', 914, 0, 0, now(), now()),
        (13, 0, '系统工具', 0, 'tool', '/tool', 'fa-wrench', 920, 0, 0, now(), now()),
-       (14, 12, '代码生成', 1, 'tool:codegen', '/tool/codegen', '', 921, 0, 0, now(), now()),
-       (15, 12, '表单构建', 1, 'tool:pagegen', '/tool/pagegen', '', 922, 0, 0, now(), now()),
+       (14, 13, '代码生成', 1, 'tool:codegen', '/tool/codegen', '', 921, 0, 0, now(), now()),
+       (15, 13, '表单构建', 1, 'tool:pagegen', '/tool/pagegen', '', 922, 0, 0, now(), now()),
        (16, 0, '帮助中心', 1, 'help', '/help', 'fa-book', 930, 0, 0, now(), now());
 
 INSERT INTO `xxl_boot_role_res` (`role_id`, `res_id`, `add_time`, `update_time`)

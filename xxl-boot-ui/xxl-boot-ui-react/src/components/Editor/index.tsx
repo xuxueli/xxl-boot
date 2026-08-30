@@ -11,7 +11,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import { request } from '@/utils/request';
 
 /** 后端 API 前缀（上传返回的相对路径需拼接该前缀才能访问） */
-const BASE_URL = import.meta.env.VITE_APP_BASE_API || '/api';
+const BASE_URL = import.meta.env.VITE_APP_BASE_API;
 
 /**
  * 编辑器样式

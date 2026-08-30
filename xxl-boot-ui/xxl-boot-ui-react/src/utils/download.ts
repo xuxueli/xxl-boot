@@ -10,7 +10,7 @@ import { getToken } from './auth';
 import { blobValidate } from './common';
 
 /** 后端 API 前缀（与 request 保持一致） */
-const BASE_URL = import.meta.env.VITE_APP_BASE_API || '/api';
+const BASE_URL = import.meta.env.VITE_APP_BASE_API;
 
 /**
  * 构建查询字符串：数组输出重复 key（ids=1&ids=2），嵌套对象展开

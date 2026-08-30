@@ -211,9 +211,13 @@ const ResourceList = () => {
       title: '菜单地址',
       dataIndex: 'url',
       search: false,
-      width: 220,
+      width: 130,
       ellipsis: true,
-      render: (_, record) => <span>{record.url || '-'}</span>,
+      render: (_, record) => (
+        <Tooltip title={record.url || '-'}>
+          <span>{record.url || '-'}</span>
+        </Tooltip>
+      ),
     },
     {
       title: '显示状态',

@@ -16,6 +16,7 @@ import defaultSettings from '@/default-settings';
 import { Footer } from '@/layouts/components';
 import { getCodeImg } from '@/services/login';
 import { useUserStore } from '@/stores/userStore';
+import { getToken } from '@/utils/auth';
 
 /**
  * 校验 redirect URL，防止开放重定向攻击
@@ -107,15 +108,23 @@ const Login = () => {
     // 事件回调中直接调用 store action，避免为单次调用挂载 store 订阅
     const userStore = useUserStore.getState();
     try {
+
+      // 登录请求
       await userStore.login({
         ...values,
         captchaUuid,
       });
       message.success('登录成功！');
+
+      // 登录成功：拉取用户信息与菜单数据
       await Promise.all([userStore.fetchUserInfo(), userStore.fetchMenuData()]);
+
+      // 登录成功：跳转目标页，优先使用 redirect 参数，其次使用默认首页
       const redirectUrl = getSafeRedirectUrl(searchParams.get('redirect'));
-      // 提示停留片刻后再跳转，避免成功提示被页面刷新吞掉
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      // 停留片刻后再跳转：避免成功提示被页面刷新吞掉
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      // 跳转目标页
+      console.log('redirectUrl', redirectUrl);
       navigate(redirectUrl);
     } catch {
       // 登录失败：刷新验证码
@@ -125,10 +134,16 @@ const Login = () => {
     }
   };
 
-  // 初始化：获取验证码、设置页面标题
+  // 初始化：获取验证码、设置页面标题；已登录进入登录页时直接跳转（对齐 Vue 已登录访问登录页 → 首页/redirect）
   useEffect(() => {
     getCode();
     document.title = defaultSettings.title as string;
+    if (getToken() && useUserStore.getState().currentUser) {
+      navigate(
+        getSafeRedirectUrl(searchParams.get('redirect')) ||
+          (defaultSettings.homePath ?? '/dashboard'),
+      );
+    }
   }, []);
 
   return (
