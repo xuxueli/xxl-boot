@@ -194,6 +194,13 @@ const LogList = () => {
               setSelectedIds(rows.map((r) => r.id as number));
             },
           }}
+          /* 分页配置 */
+          pagination={{
+            defaultPageSize: 10,
+            pageSizeOptions: [10, 20, 50, 100],
+            showSizeChanger: true,
+          }}
+          /* 默认批量选择提示隐藏 */
           tableAlertRender={false}
         />
       </div>

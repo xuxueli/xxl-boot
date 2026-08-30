@@ -20,7 +20,9 @@ import {
 } from '@/services/authz/role';
 import {handleTree} from '@/utils/common';
 
-/** 资源平铺数组转 antd Tree 数据 */
+/**
+ * 资源平铺数组转 antd Tree 数据
+ */
 const toTreeData = (resources: API.Resource[]): DataNode[] =>
     resources.map((r) => ({
         key: r.id as number,
@@ -28,7 +30,10 @@ const toTreeData = (resources: API.Resource[]): DataNode[] =>
         children: r.children?.length ? toTreeData(r.children) : undefined,
     }));
 
-/** 收集所有节点 key */
+/**
+ * 收集所有节点 key
+ *  - 用于全选/全不选、展开/折叠
+ */
 const collectAllKeys = (nodes: DataNode[]): React.Key[] => {
     const keys: React.Key[] = [];
     const walk = (list: DataNode[]) => {
@@ -41,35 +46,57 @@ const collectAllKeys = (nodes: DataNode[]): React.Key[] => {
     return keys;
 };
 
+/*
+* 组件：RoleFormModal（角色新增/编辑弹窗）
+* 功能：角色基本信息 + 菜单权限树（支持展开/折叠、全选、父子联动）
+*/
 const RoleFormModal = ({
                            open,
                            onOpenChange,
                            current,
                            onSuccess,
                        }: {
+    /* 是否打开弹窗 */
     open: boolean;
+    /* 弹窗打开状态变化回调 */
     onOpenChange: (open: boolean) => void;
+    /* 当前编辑的角色数据，null 表示新增 */
     current?: API.Role | null;
+    /* 操作成功回调 */
     onSuccess?: () => void;
 }) => {
+    // antd 提示
     const {message} = App.useApp();
 
+    // 资源树：全部数据
     const [treeData, setTreeData] = useState<DataNode[]>([]);
+    // 资源树：已展开节点 key 集合
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-    const [expandedAll, setExpandedAll] = useState(false);
-    const [checkStrictly, setCheckStrictly] = useState(false);
+    // 资源树：已勾选节点 key 集合（受控）
     const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
+    // 资源树：半勾选节点 key 集合（受控）
     const [halfCheckedKeys, setHalfCheckedKeys] = useState<React.Key[]>([]);
+    // 资源树：是否展开所有节点
+    const [expandedAll, setExpandedAll] = useState(false);
+    // 资源树：是否父子联动勾选
+    const [checkStrictly, setCheckStrictly] = useState(false);
 
-    /** 加载资源树与已授权集合 */
+    /**
+     * 加载资源树与已授权集合
+     */
     const loadTree = (roleId?: number) => {
         listResource({}).then((res) => {
+            // 数据查询并处理：API查询资源树数据 -> antd Tree 数据
             const tree = toTreeData(handleTree(res.data || []));
+            // 设置资源树数据
             setTreeData(tree);
-            // 菜单权限树默认折叠
+
+            // 重置展开节点、勾选、半勾选状态
             setExpandedKeys([]);
             setCheckedKeys([]);
             setHalfCheckedKeys([]);
+
+            // 编辑场景：初始化已勾选节点（角色已授权的资源集合）
             if (roleId) {
                 roleMenuTreeselect(roleId)
                     .then((roleRes) => {
@@ -81,6 +108,7 @@ const RoleFormModal = ({
         });
     };
 
+    // 组件挂载或弹窗打开时加载资源树
     useEffect(() => {
         if (open) {
             loadTree(current?.id);
@@ -88,27 +116,37 @@ const RoleFormModal = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
+    // 计算所有节点 key 集合，用于全选/全不选、展开/折叠
     const allKeys = useMemo(() => collectAllKeys(treeData), [treeData]);
 
-    /** 树勾选变化：受控记录勾选与半选节点 */
+    /**
+     * 树勾选变化：受控记录勾选与半选节点
+     */
     const handleCheck = (keys: React.Key[] | { checked: React.Key[]; halfChecked: React.Key[] }, info: any) => {
         setCheckedKeys(Array.isArray(keys) ? keys : (keys?.checked ?? []));
         setHalfCheckedKeys(info.halfCheckedKeys ?? []);
     };
 
-    /** 收集勾选 + 半勾选的资源 id */
+    /**
+     * 收集勾选 + 半勾选的资源 id
+     */
     const getMenuAllCheckedKeys = (): number[] => {
         return [...checkedKeys, ...halfCheckedKeys]
             .map((k) => Number(k))
             .filter((k) => !Number.isNaN(k));
     };
 
-    /** 提交：保存角色 + 资源授权 */
+    /**
+     * 提交：保存角色 + 资源授权
+     */
     const handleFinish = async (values: API.Role) => {
+        // 过滤掉不需要的字段
         const data = {...values};
         delete data.addTime;
         delete data.updateTime;
         const resourceIds = getMenuAllCheckedKeys();
+
+        // 新增/编辑角色 + 授权资源
         if (current?.id) {
             await updateRole({...data, id: current.id});
             await updateRoleRes(current.id, resourceIds);
@@ -123,18 +161,20 @@ const RoleFormModal = ({
     };
 
     return (
+        /* 表单模态框 */
         <ModalForm<API.Role>
             title={current?.id ? '修改角色' : '新增角色'}
             width={680}
-            open={open}
-            onOpenChange={onOpenChange}
+            open={open}                             /* 是否打开弹窗 */
+            onOpenChange={onOpenChange}             /* 弹窗打开状态变化回调 */
             modalProps={{destroyOnHidden: true}}
             layout="horizontal"
             grid
             labelCol={{flex: '100px'}}
-            onFinish={handleFinish}
+            onFinish={handleFinish}               /* 提交表单回调 */
             initialValues={{status: 0, order: 0, ...current}}
         >
+            {/* 表单项 */}
             <ProFormText
                 colProps={{span: 12}}
                 name="name"
@@ -168,6 +208,7 @@ const RoleFormModal = ({
                     {value: 1, label: '停用'},
                 ]}
             />
+            {/* 复杂表单项：菜单权限tree */}
             <Col span={24}>
                 <Divider style={{margin: '12px 0'}}/>
                 <div
@@ -223,14 +264,14 @@ const RoleFormModal = ({
                     }}
                 >
                     <Tree
-                        checkable
-                        blockNode
-                        checkStrictly={checkStrictly}
-                        checkedKeys={checkedKeys}
-                        onCheck={handleCheck}
-                        expandedKeys={expandedKeys}
-                        onExpand={setExpandedKeys}
-                        treeData={treeData}
+                        checkable                       /* 是否可选择 */
+                        blockNode                       /* 占满整行 */
+                        checkStrictly={checkStrictly}   /* 是否父子联动勾选 */
+                        checkedKeys={checkedKeys}       /* 受控：已勾选节点 key 集合 */
+                        onCheck={handleCheck}           /* 勾选变化回调 */
+                        expandedKeys={expandedKeys}     /* 受控：已展开节点 key 集合 */
+                        onExpand={setExpandedKeys}      /* 展开变化回调 */
+                        treeData={treeData}             /* 树节点数据 */
                     />
                 </div>
             </Col>

@@ -223,6 +223,8 @@ const OrgList = () => {
           rowKey="id"
           columns={columns}
           pagination={false}
+          /* 默认批量选择提示隐藏 */
+          tableAlertRender={false}
           search={{
             labelWidth: 80,
             optionRender: (_searchConfig, _formProps, dom) => [
