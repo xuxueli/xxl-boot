@@ -22,6 +22,7 @@ import {handleTree} from '@/utils/common';
 
 /**
  * 资源平铺数组转 antd Tree 数据
+ *      - antd Tree 需要 {key, title, children} 结构
  */
 const toTreeData = (resources: API.Resource[]): DataNode[] =>
     resources.map((r) => ({
@@ -32,7 +33,7 @@ const toTreeData = (resources: API.Resource[]): DataNode[] =>
 
 /**
  * 收集所有节点 key
- *  - 用于全选/全不选、展开/折叠
+ *      - 用于全选/全不选、展开/折叠
  */
 const collectAllKeys = (nodes: DataNode[]): React.Key[] => {
     const keys: React.Key[] = [];
@@ -72,53 +73,46 @@ const RoleFormModal = ({
     const [treeData, setTreeData] = useState<DataNode[]>([]);
     // 资源树：已展开节点 key 集合
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-    // 资源树：已勾选节点 key 集合
-    const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
-    // 资源树：半勾选节点 key 集合
-    const [halfCheckedKeys, setHalfCheckedKeys] = useState<React.Key[]>([]);
+    // 资源树：已勾选节点（受控，联动模式为 {checked, halfChecked} 对象）
+    const [checkedKeys, setCheckedKeys] = useState<
+        React.Key[] | {checked: React.Key[]; halfChecked: React.Key[]}
+    >([]);
     // 资源树：是否展开所有节点
     const [expandedAll, setExpandedAll] = useState(false);
     // 资源树：是否父子联动勾选
     const [checkStrictly, setCheckStrictly] = useState(false);
 
     /**
-     * 回显授权树：拆分已授权资源集合为完全勾选与半勾选
-     *  - 联动模式：叶子级完全勾选；父级按「子树是否全部授权」区分全选/半选，避免父级误入 checkedKeys 导致整棵子树被联动全选
-     *  - 非联动模式：不存在半选，授权集合直接全部勾选
+     * 回显授权树：按受控结构还原勾选状态
+     *  - 联动模式：叶子进 checked、父级进 halfChecked（父级勾选态由 antd 依据子级自动推导）
+     *  - 非联动模式：授权集合直接全部勾选
      *  @param tree 资源树节点数据
      *  @param ids  角色已授权的资源 ID 集合（含半选父级）
      */
     const applyApprovedKeys = (tree: DataNode[], ids: number[]) => {
+        // 非联动模式：直接勾选授权集合
         if (checkStrictly) {
             setCheckedKeys(ids);
-            setHalfCheckedKeys([]);
             return;
         }
-        const approved = new Set(ids);
-        const checked: React.Key[] = [];
-        const halfChecked: React.Key[] = [];
-        /** 递归子树：返回该子树是否全部节点均被授权 */
-        const walk = (nodes: DataNode[]): boolean => {
-            let allIn = true;
+
+        // 联动模式
+        // 收集父级节点 key（有子节点即父级）
+        const parentKeys = new Set<React.Key>();
+        const treeWalk = (nodes: DataNode[]) => {
             nodes.forEach((n) => {
-                const inSet = approved.has(Number(n.key));
                 if (n.children?.length) {
-                    const childrenAllIn = walk(n.children);
-                    if (inSet) {
-                        if (childrenAllIn) checked.push(n.key);
-                        else halfChecked.push(n.key);
-                    }
-                    allIn = allIn && inSet && childrenAllIn;
-                } else {
-                    if (inSet) checked.push(n.key);
-                    allIn = allIn && inSet;
+                    parentKeys.add(n.key);
+                    treeWalk(n.children);
                 }
             });
-            return allIn;
         };
-        walk(tree);
-        setCheckedKeys(checked);
-        setHalfCheckedKeys(halfChecked);
+        treeWalk(tree);
+        // 叶子进 checked、父级进 halfChecked，完整保留授权集合
+        setCheckedKeys({
+            checked: ids.filter((id) => !parentKeys.has(id)),
+            halfChecked: ids.filter((id) => parentKeys.has(id)),
+        });
     };
 
     /**
@@ -131,12 +125,11 @@ const RoleFormModal = ({
             // 设置资源树数据
             setTreeData(tree);
 
-            // 重置展开节点、勾选、半勾选状态
+            // 重置 已展开、已勾选 数据
             setExpandedKeys([]);
             setCheckedKeys([]);
-            setHalfCheckedKeys([]);
 
-            // 编辑场景：初始化已授权节点（角色已授权的资源集合，含半选父级，需拆分回显）
+            // 表单编辑场景：回显表单数据，初始化已授权节点
             if (roleId) {
                 roleMenuTreeselect(roleId)
                     .then((roleRes) => {
@@ -160,18 +153,22 @@ const RoleFormModal = ({
     const allKeys = useMemo(() => collectAllKeys(treeData), [treeData]);
 
     /**
-     * 树勾选变化：受控记录勾选与半选节点
+     * 树勾选变化：受控记录勾选（onCheck 首参已含联动的 halfChecked，直接存储）
      */
-    const handleCheck = (keys: React.Key[] | { checked: React.Key[]; halfChecked: React.Key[] }, info: any) => {
-        setCheckedKeys(Array.isArray(keys) ? keys : (keys?.checked ?? []));
-        setHalfCheckedKeys(info.halfCheckedKeys ?? []);
+    const handleCheck = (
+        keys: React.Key[] | {checked: React.Key[]; halfChecked: React.Key[]},
+    ) => {
+        setCheckedKeys(keys);
     };
 
     /**
      * 收集勾选 + 半勾选的资源 id
      */
     const getMenuAllCheckedKeys = (): number[] => {
-        return [...checkedKeys, ...halfCheckedKeys]
+        const {checked, halfChecked} = Array.isArray(checkedKeys)
+            ? {checked: checkedKeys, halfChecked: [] as React.Key[]}
+            : checkedKeys;
+        return [...checked, ...halfChecked]
             .map((k) => Number(k))
             .filter((k) => !Number.isNaN(k));
     };
@@ -271,24 +268,18 @@ const RoleFormModal = ({
                             展开/折叠
                         </Checkbox>
                         <Checkbox
-                            checked={checkStrictly}
-                            onChange={(e) => setCheckStrictly(e.target.checked)}
+                            checked={!checkStrictly}
+                            onChange={(e) => setCheckStrictly(!e.target.checked)}
                         >
                             父子联动
                         </Checkbox>
                         <a
-                            onClick={() => {
-                                setCheckedKeys(allKeys);
-                                setHalfCheckedKeys([]);
-                            }}
+                            onClick={() => setCheckedKeys(allKeys)}
                         >
                             全选
                         </a>
                         <a
-                            onClick={() => {
-                                setCheckedKeys([]);
-                                setHalfCheckedKeys([]);
-                            }}
+                            onClick={() => setCheckedKeys([])}
                         >
                             全不选
                         </a>
