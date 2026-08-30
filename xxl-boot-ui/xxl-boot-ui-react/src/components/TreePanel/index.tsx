@@ -189,6 +189,7 @@ const TreePanel = ({
     return keys;
   }, [filteredData]);
 
+  // 是否有展开的节点
   const expanded = expandedKeys.length > 0;
 
   // 默认展开全部：数据加载后首次赋值为全部节点 key（用户手动折叠后不再干预）
@@ -231,12 +232,14 @@ const TreePanel = ({
     document.body.style.userSelect = 'none';
   };
 
+  // 拖拽调整宽度
   const handleResizeMove = (e: MouseEvent) => {
     if (!resizing.current) return;
     const newWidth = startWidth.current + (e.clientX - startX.current);
     setWidth(Math.max(minWidth, Math.min(maxWidth, newWidth)));
   };
 
+  // 停止拖拽调整宽度
   const stopResize = () => {
     if (!resizing.current) return;
     resizing.current = false;

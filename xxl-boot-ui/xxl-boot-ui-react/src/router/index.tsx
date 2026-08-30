@@ -11,18 +11,23 @@ import {lazy, Suspense} from 'react';
 import type {ReactNode} from 'react';
 import {Navigate} from 'react-router-dom';
 import type {RouteObject} from 'react-router-dom';
-import { Loading } from '@/components';
+import { Skeleton } from 'antd';
 import AppLayout from '@/layouts/AppLayout';
 import defaultSettings from '@/default-settings';
 
 
 // ==================== 组件加载方法 ====================
 
-/** 懒加载页面组件（带 Loading 兜底），所有页面统一经此加载 */
+/** 页面加载骨架屏：路由懒加载期间展示，避免白屏 */
+const pageSkeleton = (
+    <Skeleton style={{ padding: '24px 40px', height: '60vh' }} active />
+);
+
+/** 懒加载页面组件（带骨架屏兜底），所有页面统一经此加载 */
 export const lazyLoad = (factory: () => Promise<{ default: React.ComponentType }>): ReactNode => {
     const Component = lazy(factory);
     return (
-        <Suspense fallback={<Loading/>}>
+        <Suspense fallback={pageSkeleton}>
             <Component/>
         </Suspense>
     );

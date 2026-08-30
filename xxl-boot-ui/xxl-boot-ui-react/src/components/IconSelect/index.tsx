@@ -67,6 +67,7 @@ const IconSelect = ({
   const [keyword, setKeyword] = useState('');
   const [open, setOpen] = useState(false);
 
+  // 过滤图标列表，根据关键字搜索
   const filtered = useMemo(
     () =>
       iconList.filter((name) =>
@@ -75,6 +76,7 @@ const IconSelect = ({
     [keyword],
   );
 
+  // 获取当前选中图标的组件
   const Icon = getIconComponent(value);
 
   return (
