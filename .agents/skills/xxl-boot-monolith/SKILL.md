@@ -33,13 +33,14 @@ xxl-boot-admin/src
 
 ## 标准流程
 
-1. **建表**：`xxl_boot_*` 建表 SQL，遵守公共字段 `id(add_time/update_time)`、TINYINT 状态、`COMMENT` 注释、唯一索引 `i_` 前缀。
-2. **生成或手写后端代码**：
+1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签）；菜单+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口。
+2. **建表**：`xxl_boot_*` 建表 SQL，遵守公共字段 `id(add_time/update_time)`、TINYINT 状态、`COMMENT` 注释、唯一索引 `i_` 前缀。
+3. **生成或手写后端代码**：
    - 可直接按本 Skill「后端骨架」直生等价代码；
    - 也可用内置「代码生成」页面：`POST /tool/codegen/genCode`，入参 `tableSql/author/packagePath/businessName`，返回 `controller/service/service_impl/mapper/mapper_xml/entity/page` 7 段代码（模板在 `templates/framework/tool/codegen-module/*.ftl`）。
-3. **落位文件**：后端 Java 落 `business/{module}`；FTL 页面落 `templates/business/{module}/`；Mapper XML 落 `resources/mapper/business/{module}/`。
-4. **注册菜单**：`xxl_boot_resource` 插菜单（type=1）或目录（type=0）+ `xxl_boot_role_res` 授权（role_id=1）。
-5. **验证**：启动 `xxl-boot-admin`（8080），登录后菜单可见、CRUD 可用；接口自测。
+4. **落位文件**：后端 Java 落 `business/{module}`；FTL 页面落 `templates/business/{module}/`；Mapper XML 落 `resources/mapper/business/{module}/`。
+5. **注册菜单**：`xxl_boot_resource` 插菜单（type=1）或目录（type=0）+ `xxl_boot_role_res` 授权（role_id=1）。
+6. **验证**：启动 `xxl-boot-admin`（8080），登录后菜单可见、CRUD 可用；接口自测。
 
 ## 后端落位清单（6 件套）
 
