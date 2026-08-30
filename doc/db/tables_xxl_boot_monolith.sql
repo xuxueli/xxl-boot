@@ -1,5 +1,8 @@
 --
--- 单体项目初始化SQL脚本（xxl-boot-admin 版本）
+-- 单体项目初始化SQL脚本（单体版本）
+
+USE `xxl_boot`;
+SET NAMES utf8mb4;
 
 UPDATE `xxl_boot_resource`
 SET `icon` = CASE `id`

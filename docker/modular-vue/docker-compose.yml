@@ -10,12 +10,13 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       # 2、数据库实例名称，需要与系统中配置一致；
       MYSQL_DATABASE: xxl_boot
+      TZ: Asia/Shanghai
     ports:
       - "3306:3306"
     volumes:
       # 说明：仅数据库首次初始化时执行；
       - ../../doc/db/tables_xxl_boot.sql:/docker-entrypoint-initdb.d/tables_xxl_boot.sql:ro
-      - ../../doc/db/tables_xxl_boot_modular_vue.sql.sql:/docker-entrypoint-initdb.d/tables_xxl_boot_modular_vue.sql.sql:ro
+      - ../../doc/db/tables_xxl_boot_modular_vue.sql:/docker-entrypoint-initdb.d/tables_xxl_boot_modular_vue.sql:ro
       # 3、数据库持久化目录位置，建议自定义：
       - ${MYSQL_PATH}/conf:/etc/mysql/conf.d
       - ${MYSQL_PATH}/logs:/var/log/mysql

@@ -11,7 +11,7 @@ RUN npm ci
 
 # copy source & build
 COPY . .
-RUN npm run build:prod
+RUN npm run build
 
 # runtime stage：Nginx 静态服务
 FROM nginx:alpine
