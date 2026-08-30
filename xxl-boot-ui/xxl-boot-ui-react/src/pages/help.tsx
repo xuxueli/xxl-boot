@@ -14,7 +14,7 @@ const HelpCenter = () => {
       <ProCard>
         <Typography.Title level={4}>XXL-Boot 快速开发平台</Typography.Title>
         <Typography.Paragraph type="secondary">
-          一个快速开发平台，易学易用、扩展丰富、开箱即用。内置安全登录、权限管控、
+          一个快速开发平台，易学易用、AI驱动、开箱即用。内置安全登录、权限管控、
           端到端代码生成、响应式
           UI、国际化、分布式扩展等能力。整合前后端流行技术，
           致力为中小企业、个人开发者打造开箱即用的中后台解决方案。
