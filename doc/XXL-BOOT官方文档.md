@@ -1122,12 +1122,15 @@ public @interface Permission {
 <details>
     <summary>AI + SKILL 使用步骤：</summary>    
 
+    注意：AI + SKILL 驱动开发需要配合 AI 编程助手（如 opencode）使用，AI 编程助手需支持加载本地 SKILL 文件夹，并按 SKILL 指南执行。
+    （详细操作步骤，参考 “4.1 方式一：AI + SKILL 驱动开发”）
+
     ```
-    // 第一步：使用 AI 编程助手（如 opencode）打开 XXL-BOOT 仓库
-    // 第二步：明确运行模式（单体 / Vue / React 分离）与业务诉求（模块名 + 字段/SQL）
-    // 第三步：AI 自动加载对应 SKILL（xxl-boot-monolith / xxl-boot-vue / xxl-boot-react），
-    //         按“建表 → 后端 → 前端 → 菜单权限 → 验证”标准流程直生代码并落位
-    // 第四步：人工执行建表与菜单 SQL，启动服务联调验收；AI 按校验清单自检交付
+    // 1、进入仓库：使用 AI 编程助手（如 opencode）打开 XXL-BOOT 仓库，根据项目运行模式选择对应 SKILL（xxl-boot-monolith / xxl-boot-vue / xxl-boot-react）；
+    // 2、输入需求：明确业务诉求，将 诉求 输入给 AI（AI会主动进行需求澄清）
+    // 3、AI完成需求：AI 会自动加载对应 SKILL，按“需求落盘 → 需求澄清 → 建表 → 后端 → 前端 → 菜单权限 → 验证”标准流程直生代码并落位。
+    // 4、AI验收需求：AI 启动服务联调验收，并按校验清单完整自检交付。
+    // 5、人工复核：人工复核验收，确认无误后合并PR，即可上线交付。
     ```
 </details>
 
