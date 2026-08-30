@@ -39,14 +39,14 @@
     - /router                           done
     - /utils                            done
     - /services                         done
-    - /components                       --111
+    - /components                       done
     - /pages                            /
         - 首页                          done
         - 帮助中心                      done
         - 其他：profile/login           done
         - 权限管理：                    /
-            - 用户：                    --22
-            - 角色：                    --33
+            - 用户：                    --11
+            - 角色：                    --22
             - 资源：                    --
             - 组织：                    --
         - 系统管理：                    /

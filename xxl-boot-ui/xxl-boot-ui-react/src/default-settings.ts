@@ -41,7 +41,7 @@ const Settings: ProLayoutProps & {
   /**
    * 主题色
    */
-  colorPrimary: '#1677ff',
+  colorPrimary: '#3c8dbc',
 
   /**
    * 导航模式：side 侧边 / top 顶部 / mix 混合
