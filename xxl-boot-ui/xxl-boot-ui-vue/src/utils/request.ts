@@ -13,10 +13,9 @@
  */
 import axios, {AxiosRequestConfig, InternalAxiosRequestConfig} from 'axios'
 import {getToken, getTokenKeyHeader} from '@/utils/auth'
-import {tansParams, blobValidate} from '@/utils/common'
+import {tansParams} from '@/utils/common'
 import cache from '@/utils/cache'
 import modal from '@/utils/modal'
-import {saveAs} from 'file-saver'
 import {useUserStore} from '@/store'
 import defaultSettings from '@/default-settings'
 import type {Response} from '@/types'
@@ -34,8 +33,8 @@ interface CustomHeaders {
 }
 
 /** 请求配置：原生 axios 配置 + 自定义 header 属性 */
-type RequestConfig = AxiosRequestConfig & {
-    headers?: (AxiosRequestConfig['headers'] & CustomHeaders) | undefined
+export type RequestConfig = AxiosRequestConfig & {
+  headers?: (AxiosRequestConfig['headers'] & CustomHeaders) | undefined
 }
 
 /** 防重复提交快照 */
@@ -217,56 +216,6 @@ service.interceptors.response.use(
  */
 export function request<T = unknown>(config: RequestConfig): Promise<Response<T>> {
     return service.request(config) as unknown as Promise<Response<T>>
-}
-
-// ==================== 文件下载 ====================
-
-/**
- * 通用文件下载（POST）
- *
- * 以 POST + form-urlencoded 提交下载请求，响应为 blob 二进制流。
- *
- * @param url      下载接口地址
- * @param params   请求参数（会被序列化为 application/x-www-form-urlencoded）
- * @param filename 保存到本地的文件名
- * @param config   额外的 axios 请求配置（可选）
- */
-export function download(
-    url: string,
-    params: object,
-    filename: string,
-    config?: RequestConfig
-): void {
-    modal.loading('正在下载数据，请稍候')
-    service
-        .post(url, params, {
-            transformRequest: [(params) => tansParams(params)],
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            responseType: 'blob',
-            ...config,
-        })
-        .then(async (data) => {
-            // 响应拦截器已对 blob 响应透传为 Blob，此处断言类型
-            const blobData = data as unknown as Blob
-            if (blobValidate(blobData)) {
-                // 响应为正常文件内容，触发浏览器下载
-                const blob = new Blob([blobData])
-                saveAs(blob, filename)
-            } else {
-                // 服务端以 blob 格式返回了 JSON 错误报文
-                const resText = await blobData.text()
-                const rspObj = JSON.parse(resText)
-                const errMsg =
-                    errorCode[String(rspObj.code)] || rspObj.msg || errorCode.default
-                modal.msgError(errMsg)
-            }
-            modal.closeLoading()
-        })
-        .catch((r) => {
-            console.error(r)
-            modal.msgError('下载文件出现错误，请联系管理员！')
-            modal.closeLoading()
-        })
 }
 
 export default service

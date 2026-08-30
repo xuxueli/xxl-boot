@@ -1,34 +1,22 @@
 /**
- * 插件名称：download（文件下载插件）
+ * 插件名称：download（文件下载工具）
  *
  * 能力说明：
- * - 提供三种文件下载方式，统一处理鉴权 token、响应体校验和错误提示：
- *     · name(name, isDelete)：按文件名下载服务端文件，支持下载后自动删除源文件
- *     · resource(resource)：按资源路径下载服务端静态资源
- *     · zip(url, name)：下载 ZIP 压缩包，带全屏 Loading 遮罩和异常兜底处理
- * - 内置 saveAs 方法封装，统一调用 file-saver 库触发浏览器下载行为
- * - 内置 printErrMsg 方法，将响应体中的错误信息解析后展示给用户
+ * - 通用下载：download() 以 POST + form-urlencoded 提交业务导出请求
+ * - 插件对象默认导出：zip() 下载 ZIP 压缩包（带全屏 Loading 遮罩）
+ * - 内置 saveAs / printErrMsg 封装，统一触发下载、解析响应体错误
  *
  * 典型用法（组件内）：
- *   // 按文件名下载（下载后删除源文件）
- *   this.$download.name('test.xlsx')
- *
- *   // 按资源路径下载
- *   this.$download.resource('/profile/upload/2024/test.png')
- *
  *   // 下载 ZIP 压缩包
- *   this.$download.zip('/system/export', '用户数据.zip')
+ *   this.$download.zip('/tool/codegen/batchGenCode', 'boot.zip')
  */
-import axios from 'axios'
 import { ElLoading, ElMessage } from 'element-plus'
 import { saveAs } from 'file-saver'
 import type FileSaver from 'file-saver'
-import { getAuthHeaders } from '@/utils/auth'
-import { errorCode } from '@/utils/request'
-import { blobValidate } from '@/utils/common'
+import service, { errorCode, type RequestConfig } from '@/utils/request'
+import { tansParams, blobValidate } from '@/utils/common'
+import modal from '@/utils/modal'
 
-// 接口请求的基础 URL，从 Vite 环境变量中读取（对应 .env 文件中的 VITE_APP_BASE_API）
-const baseURL = import.meta.env.VITE_APP_BASE_API
 // 全局下载 Loading 实例，用于 zip 方法中显示/关闭全屏加载遮罩
 let downloadLoadingInstance: ReturnType<typeof ElLoading.service> | null = null
 
@@ -36,71 +24,6 @@ let downloadLoadingInstance: ReturnType<typeof ElLoading.service> | null = null
  * 对外导出的下载插件对象
  */
 export default {
-  /**
-   * 按文件名下载服务端文件
-   *
-   * 说明：
-   * - 请求路径：/common/download?fileName=xxx&delete=true/false
-   * - 下载成功后从响应头 download-filename 中获取解码后的文件名并保存
-   * - 若响应体校验失败（非合法 Blob），则解析错误信息并提示用户
-   *
-   * @param name     服务端文件名（会进行 URI 编码后拼接到请求参数中）
-   * @param isDelete 是否在下载完成后删除服务端源文件，默认 true
-   */
-  name(name: string, isDelete = true) {
-    // 拼接下载请求地址，对文件名进行 URI 编码防止特殊字符导致请求失败
-    const url = baseURL + '/common/download?fileName=' + encodeURIComponent(name) + '&delete=' + isDelete
-    axios({
-      method: 'get',
-      url: url,
-      responseType: 'blob', // 以二进制流方式接收响应，适用于文件下载
-      headers: getAuthHeaders() // 附加 Token 完成鉴权
-    }).then((res) => {
-      // 校验响应体是否为合法的 Blob 文件数据
-      const isBlob = blobValidate(res.data)
-      if (isBlob) {
-        // 构造 Blob 对象，从响应头中解码真实文件名并触发浏览器下载
-        const blob = new Blob([res.data])
-        this.saveAs(blob, decodeURIComponent(res.headers['download-filename']))
-      } else {
-        // 响应体为错误信息 JSON，解析后展示错误提示
-        this.printErrMsg(res.data)
-      }
-    })
-  },
-
-  /**
-   * 按资源路径下载服务端静态资源
-   *
-   * 说明：
-   * - 请求路径：/common/download/resource?resource=xxx
-   * - 适用于下载已上传到服务端的静态文件（如图片、文档等）
-   * - 下载成功后从响应头 download-filename 中获取文件名并保存
-   *
-   * @param resource 服务端资源路径（会进行 URI 编码后拼接到请求参数中）
-   */
-  resource(resource: string) {
-    // 拼接资源下载请求地址
-    const url = baseURL + '/common/download/resource?resource=' + encodeURIComponent(resource)
-    axios({
-      method: 'get',
-      url: url,
-      responseType: 'blob', // 以二进制流方式接收响应
-      headers: getAuthHeaders() // 附加 Token 完成鉴权
-    }).then((res) => {
-      // 校验响应体是否为合法的 Blob 文件数据
-      const isBlob = blobValidate(res.data)
-      if (isBlob) {
-        // 构造 Blob 对象，从响应头中解码真实文件名并触发浏览器下载
-        const blob = new Blob([res.data])
-        this.saveAs(blob, decodeURIComponent(res.headers['download-filename']))
-      } else {
-        // 响应体为错误信息 JSON，解析后展示错误提示
-        this.printErrMsg(res.data)
-      }
-    })
-  },
-
   /**
    * 下载 ZIP 压缩包
    *
@@ -113,26 +36,26 @@ export default {
    * @param name 保存到本地的文件名，例如 '导出数据.zip'
    */
   zip(url: string, name: string) {
-    // 拼接完整请求地址
-    const fullUrl = baseURL + url
     // 显示全屏下载 Loading 遮罩，提示用户正在下载
     downloadLoadingInstance = ElLoading.service({ text: '正在下载数据，请稍候', background: 'rgba(0, 0, 0, 0.7)' })
-    axios({
+    // 请求拦截器统一注入 token，响应拦截器对 blob 透传为 Blob
+    service({
       method: 'get',
-      url: fullUrl,
-      responseType: 'blob', // 以二进制流方式接收响应
-      headers: getAuthHeaders() // 附加 Token 完成鉴权
+      url: url,
+      responseType: 'blob'
     })
       .then((res) => {
+        // 响应拦截器已对 blob 透传为 Blob，res 即 Blob（非 AxiosResponse）
+        const blobData = res as unknown as Blob
         // 校验响应体是否为合法的 Blob 文件数据
-        const isBlob = blobValidate(res.data)
+        const isBlob = blobValidate(blobData)
         if (isBlob) {
           // 以 application/zip MIME 类型构造 Blob，触发浏览器下载并指定文件名
-          const blob = new Blob([res.data], { type: 'application/zip' })
+          const blob = new Blob([blobData], { type: 'application/zip' })
           this.saveAs(blob, name)
         } else {
           // 响应体为错误信息 JSON，解析后展示错误提示
-          this.printErrMsg(res.data)
+          this.printErrMsg(blobData)
         }
         // 无论成功与否，关闭下载 Loading 遮罩
         downloadLoadingInstance?.close()
@@ -180,4 +103,53 @@ export default {
     const errMsg = errorCode[String(rspObj.code)] || rspObj.msg || errorCode['default']
     ElMessage.error(errMsg)
   }
+}
+
+/**
+ * 通用文件下载（POST，form-urlencoded）
+ *
+ * 以 POST + form-urlencoded 提交下载请求，响应为 blob 二进制流，供业务导出等场景使用。
+ * 发送过程复用 request service（token 注入、blob 透传），展示全屏 Loading 遮罩。
+ *
+ * @param url      下载接口地址
+ * @param params   请求参数（会被序列化为 application/x-www-form-urlencoded）
+ * @param filename 保存到本地的文件名
+ * @param config   额外的 axios 请求配置（可选）
+ */
+export function download(
+  url: string,
+  params: object,
+  filename: string,
+  config?: RequestConfig
+): void {
+  modal.loading('正在下载数据，请稍候')
+  service
+    .post(url, params, {
+      transformRequest: [(params) => tansParams(params)],
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      responseType: 'blob',
+      ...config
+    })
+    .then(async (data) => {
+      // 响应拦截器已对 blob 响应透传为 Blob，此处断言类型
+      const blobData = data as unknown as Blob
+      if (blobValidate(blobData)) {
+        // 响应为正常文件内容，触发浏览器下载
+        const blob = new Blob([blobData])
+        saveAs(blob, filename)
+      } else {
+        // 服务端以 blob 格式返回了 JSON 错误报文
+        const resText = await blobData.text()
+        const rspObj = JSON.parse(resText) as { code?: number; msg?: string }
+        const errMsg =
+          errorCode[String(rspObj.code)] || rspObj.msg || errorCode.default
+        modal.msgError(errMsg)
+      }
+      modal.closeLoading()
+    })
+    .catch((r) => {
+      console.error(r)
+      modal.msgError('下载文件出现错误，请联系管理员！')
+      modal.closeLoading()
+    })
 }

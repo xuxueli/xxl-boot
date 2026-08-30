@@ -50,7 +50,7 @@ const REPEAT_SUBMIT_STORAGE_KEY = 'sessionObj';
 const REPEAT_SUBMIT_MAX_SIZE = 5 * 1024 * 1024;
 
 // 错误码映射表：后端业务码 → 前端展示文案
-const errorCode: Record<string, string> = {
+export const errorCode: Record<string, string> = {
     301: '认证失败，无法访问系统资源',
     403: '当前操作没有权限',
     404: '访问资源不存在',

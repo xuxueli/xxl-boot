@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { getAuthHeaders } from '@/utils/auth'
-import { download } from '@/utils/request'
+import { download } from '@/utils/download'
 import modal from '@/utils/modal'
 import { ElMessageBox } from 'element-plus'
 import type { UploadFile, UploadFiles } from 'element-plus'

@@ -214,7 +214,7 @@ function handleGenTable(row: any) {
     modal.msgError('请选择要生成的数据')
     return
   }
-  const zipName = 'codegen.zip'
+  const zipName = 'xxl-boot-codegen.zip'
   const query = idList.map((id) => 'ids=' + id).join('&')
   downloadPlugin.zip('/tool/codegen/batchGenCode?' + query, zipName)
 }
