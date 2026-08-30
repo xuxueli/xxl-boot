@@ -593,7 +593,7 @@ export function tansParams(params: Record<string, any>): string {
       if (Array.isArray(value)) {
         value.forEach((item) => {
           if (item !== null && item !== '' && typeof item !== 'undefined') {
-            result += part + '[]=' + encodeURIComponent(item) + '&'
+            result += encodeURIComponent(propName + '[]') + '=' + encodeURIComponent(item) + '&'
           }
         })
       } else if (typeof value === 'object') {
