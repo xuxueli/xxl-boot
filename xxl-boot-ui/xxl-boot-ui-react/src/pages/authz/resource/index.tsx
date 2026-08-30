@@ -200,7 +200,7 @@ const ResourceList = () => {
       title: '权限标识',
       dataIndex: 'permission',
       search: false,
-      width: 150,
+      ellipsis: true,
       render: (_, record) => (
         <Tooltip title={record.permission}>
           <span>{record.permission || '-'}</span>
@@ -211,7 +211,6 @@ const ResourceList = () => {
       title: '菜单地址',
       dataIndex: 'url',
       search: false,
-      width: 130,
       ellipsis: true,
       render: (_, record) => (
         <Tooltip title={record.url || '-'}>

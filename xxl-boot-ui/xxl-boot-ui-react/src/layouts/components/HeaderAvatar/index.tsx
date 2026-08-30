@@ -11,7 +11,7 @@ import type { MenuProps } from 'antd';
 import { Modal, Spin } from 'antd';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Dropdown from '@/components/Dropdown';
+import { Dropdown } from '@/components';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 

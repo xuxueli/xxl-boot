@@ -11,7 +11,7 @@ import { Badge, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import { clsx } from 'clsx';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Dropdown from '@/components/Dropdown';
+import { Dropdown } from '@/components';
 import MessageDetail, {
   type MessageDetailRef,
 } from '@/pages/system/message/MessageDetail';

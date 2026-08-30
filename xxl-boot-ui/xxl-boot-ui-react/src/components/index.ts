@@ -7,4 +7,5 @@ export { default as Dropdown } from './Dropdown';
 export { default as Editor } from './Editor';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as IconSelect } from './IconSelect';
+export { default as Loading } from './Loading';
 export { default as TreePanel } from './TreePanel';

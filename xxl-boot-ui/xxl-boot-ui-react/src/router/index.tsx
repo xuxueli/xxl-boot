@@ -11,7 +11,7 @@ import {lazy, Suspense} from 'react';
 import type {ReactNode} from 'react';
 import {Navigate} from 'react-router-dom';
 import type {RouteObject} from 'react-router-dom';
-import Loading from '@/components/Loading';
+import { Loading } from '@/components';
 import AppLayout from '@/layouts/AppLayout';
 import defaultSettings from '@/default-settings';
 

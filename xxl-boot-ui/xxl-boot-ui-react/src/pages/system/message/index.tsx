@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { App, Button, Tag, Tooltip } from 'antd';
+import { App, Button, Space, Tag, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useMemo, useRef, useState } from 'react';
 import {
@@ -91,7 +91,7 @@ const MessageList = () => {
   };
 
   const columns: ProColumns<API.Message>[] = [
-    { title: '序号', dataIndex: 'id', search: false, width: 80 },
+    { title: '序号', dataIndex: 'id', search: false, width: 60 },
     {
       title: '消息标题',
       dataIndex: 'title',
@@ -112,7 +112,7 @@ const MessageList = () => {
     {
       title: '分类',
       dataIndex: 'category',
-      width: 90,
+      width: 80,
       valueEnum: toValueEnum(messageCategoryOptions),
       render: (_, record) => {
         const c = categoryMap[record.category ?? -1];
@@ -122,7 +122,7 @@ const MessageList = () => {
     {
       title: '状态',
       dataIndex: 'status',
-      width: 90,
+      width: 80,
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
@@ -135,29 +135,31 @@ const MessageList = () => {
     {
       title: '操作',
       valueType: 'option',
-      width: 180,
-      render: (_, record) => [
-        <a
-          key="readUsers"
-          onClick={() => {
-            readUsersRef.current?.open(record);
-          }}
-        >
-          <TeamOutlined /> 阅读用户
-        </a>,
-        <a
-          key="edit"
-          onClick={() => {
-            setFormCurrent(record);
-            setFormOpen(true);
-          }}
-        >
-          <EditOutlined /> 修改
-        </a>,
-        <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> 删除
-        </a>,
-      ],
+      width: 240,
+      render: (_, record) => (
+        <Space size="middle">
+          <a
+            key="readUsers"
+            onClick={() => {
+              readUsersRef.current?.open(record);
+            }}
+          >
+            <TeamOutlined /> 阅读用户
+          </a>
+          <a
+            key="edit"
+            onClick={() => {
+              setFormCurrent(record);
+              setFormOpen(true);
+            }}
+          >
+            <EditOutlined /> 修改
+          </a>
+          <a key="delete" onClick={() => handleDelete(record)}>
+            <DeleteOutlined /> 删除
+          </a>
+        </Space>
+      ),
     },
   ];
 
