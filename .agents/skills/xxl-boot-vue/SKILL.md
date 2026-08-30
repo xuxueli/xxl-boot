@@ -33,22 +33,89 @@ xxl-boot-ui-vue/src
 ## 标准流程
 
 0. **需求落盘（先建立）**：先按「需求落盘（xxl-boot-spec）」一节在项目根 `xxl-boot-spec/{yyyyMMdd}-{business}/` 创建需求子目录，随后确认的需求结论、方案、SQL 全部落入该目录（见下文专属章节）。
-1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签，仅动后端时则不动前端）；菜单+按钮+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口（api 8090 / vue 3000）。确认结果即时回填到子目录 `方案.md`。
+1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签，仅动后端时则不动前端）；菜单+按钮+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口（api 8090 / vue 3000）。确认结果即时回填到子目录 `plan.md`。
 2. **建表**：`xxl_boot_*` SQL，公共字段 `id/add_time/update_time`，TINYINT 状态，`COMMENT` 注释；SQL 脚本写入该需求子目录（如 `{business}-table.sql`、`{business}-init.sql`）。
 3. **生成或手写代码**：本 Skill 缺省策略为 AI 直接按内置模板（`xxl-boot-api/src/main/resources/templates/tool/codegen/{java,vue3}/*.ftl`）渲染等价代码落位；同时提示用户可后台「工具-代码生成」走内置生成器（见第六节）。
 4. **落位**：后端 Java 落 `business/{module}`，Mapper XML 落 `resources/mapper/{module}/`；前端三个文件落 `views|api|types/{module}/{page}`，并在 `types/api.ts` barrel 补一行。
 5. **菜单/权限**：插 `xxl_boot_resource` 菜单(type=1)+按钮(type=2)+`xxl_boot_role_res` 授权；页面按钮用 `v-hasPermi`。
-6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-vue`(3000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效；验证结果回填 `方案.md`。
+6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-vue`(3000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效；验证结果回填 `plan.md`。
 
 ## 需求落盘（xxl-boot-spec）
 
 每个需求在项目根目录 `xxl-boot-spec/` 下生成一个需求子目录，把执行中产出的「方案 + SQL」沉淀其中，便于追溯与复用：
 
 1. **目录命名**：`xxl-boot-spec/{yyyyMMdd}-{business}/`（同日多个需求用业务名区分，如 `20260830-product`）。
-2. **方案**：`方案.md`，记录需求确认结论（`{module}/{business}` 命名、核心字段、状态/枚举下拉、页面形态、菜单/权限、出码方式、验证范围）、落位清单（后端 7 件套 + 前端三文件）与验证结果/变更记录。
+2. **方案**：`plan.md`，一份完整开发方案文档，须覆盖「需求相关 / 数据库设计 / 菜单·授权 / 后端改造 / 前端改造 / 验证结果」六大块，按下方「plan.md 模板」生成骨架后随实现同步回填；
 3. **SQL**：建表 SQL 与菜单/权限 SQL 一并落盘（如 `{business}-table.sql`、`{business}-init.sql`），作为本需求专属脚本；如需进总库初始化，再同步一份到 `doc/db/`。
 
 执行全程保持该目录与实现同步：先建目录落方案骨架 → 建表写 SQL → 落位实现 → 验证后回填结论。
+
+### plan.md 模板（Vue 分离模式）
+
+```markdown
+# {业务名}开发方案（{module}/{business}）
+
+> 需求目录：`xxl-boot-spec/{yyyyMMdd}-{business}/` | 日期：{yyyy-MM-dd}
+
+## 一、需求相关
+| 项 | 结论 |
+|---|---|
+| 运行模式 | Vue3 分离（xxl-boot-api 8090 + xxl-boot-ui-vue 3000） |
+| 模块/业务命名 | `{module}/{business}`，包 `com.xxl.boot.api.business.{module}` |
+| 核心字段与业务规则 | 字段清单 + 必填/唯一/模糊搜索规则 |
+| 状态/枚举下拉 | 无 / 枚举 `{XxxEnum}`（framework.constant.enums）/ 字典 `{dictType}` |
+| 特殊组件 | 无 / Editor 富文本 / ImageUpload 图片上传 |
+| 页面形态 | 标准 CRUD / 详情页 / 多页签 |
+| 出码方式 | AI 按模板直生 / 后台「工具-代码生成」 |
+| 验证范围 | 编译验证 or 起 api+vue 联调 |
+
+## 二、数据库设计
+表：`xxl_boot_{business}`
+| 字段 | 类型 | 说明 | 备注 |
+|---|---|---|---|
+| id | BIGINT | 主键自增 | 框架约定 |
+| {field} | {type} | {说明} | {必填/模糊/唯一/下拉} |
+| add_time | DATETIME | 新增时间 | NOW() |
+| update_time | DATETIME | 更新时间 | NOW() |
+
+索引/约束：`i_` 前缀唯一索引（如有）。
+状态枚举取值：`{code-title}`（存 `xxl_boot_*` 之外用框架枚举或字典）。
+SQL 脚本：`{business}-table.sql`
+
+## 三、菜单 / 授权
+- 菜单（type=1）：`{名称}` permission=`{module}:{business}` url=`/{module}/{business}`
+- 按钮（type=2）：新增 `:add` / 修改 `:edit` / 删除 `:remove`
+- 角色授权：`xxl_boot_role_res` role_id=1
+- SQL 脚本：`{business}-init.sql`
+
+## 四、后端改造
+| 文件 | 位置 | 要点 |
+|---|---|---|
+| `{Business}.java` | business/{module}/model/ | 实体驼峰；Date 字段 @JsonFormat |
+| `{Business}Mapper.java` | business/{module}/mapper/ | insert/delete/update/load/pageList/pageListCount |
+| `{Business}Mapper.xml` | resources/mapper/{module}/ | resultMap 显式映射；add/update_time 用 NOW()；查询 <if> 动态拼条件 |
+| `{Business}Service.java` | business/{module}/service/ | 方法顺序 pageList/load/insert/delete/update |
+| `{Business}ServiceImpl.java` | business/{module}/service/impl/ | StringTool 校验，失败 Response.ofFail |
+| `{Business}Controller.java` | business/{module}/controller/ | 全 @XxlSso；分页 offset/pagesize；删除 ids[] |
+
+接口：`/{module}/{business}/pageList|load|insert|delete|update`
+
+## 五、前端改造
+| 文件 | 位置 | 要点 |
+|---|---|---|
+| `types/{module}/{business}.ts` | src/types/ | 实体+Query(pageNum/pageSize)+ListQuery；types/api.ts barrel 补一行 |
+| `api/{module}/{business}.ts` | src/api/ | list/get/add/del/update，Promise<Response<PageModel<T>>> |
+| `views/{module}/{business}/index.vue` | src/views/ | 三段式；usePageParams 转 offset/pagesize；按钮 v-hasPermi |
+
+## 六、验证结果 / 变更记录
+- [ ] 需求结论确认并回填第一节
+- [ ] 建表 SQL 执行通过，字段与实体一致
+- [ ] 菜单/按钮/授权已插库且终端可见
+- [ ] 后端 `mvn -q compile` 通过
+- [ ] 前端 vue-tsc / eslint 通过
+- [ ] 联调：菜单可见、CRUD/搜索可用、无权限按钮隐藏、空参数友好提示
+- [ ] 变更记录（本次改动时间与说明）
+```
 
 ## 后端落位清单（7 件套）
 
@@ -175,7 +242,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 
 ## 校验清单
 
-- [ ] 需求子目录 `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`方案.md` + SQL 已落盘并同步。
+- [ ] 需求子目录 `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md`（六大块齐全）+ SQL 已落盘并同步。
 - [ ] `xxl-boot-api` 下 `mvn -q compile` 通过。
 - [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，分页 `offset/pagesize`，XML resultMap + `NOW()`，校验 `Response.ofFail`。
 - [ ] 前端：types 三件齐（实体/Query/ListQuery）并登记 barrel；api 封装 `Promise<Response<PageModel<T>>>`；列表页三段式 + `ref` 收敛 + `usePageParams`。
