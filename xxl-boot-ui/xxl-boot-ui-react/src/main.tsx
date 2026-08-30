@@ -9,6 +9,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from '@/components';
+import { useSettingsStore } from '@/stores/settingsStore';
 import AppRouter from './router/app/AppRouter';
 import './assets/styles/global.css';
 
@@ -27,8 +28,30 @@ const queryClient = new QueryClient({
 });
 
 /**
+ * 应用主题容器
+ * 功能：订阅全局设置（settingsStore）的 colorPrimary，动态注入 antd 主题 token；
+ *      全局生效（登录页、布局、弹窗等所有 antd 组件），设置面板改色实时跟随
+ */
+const AppTheme = ({ children }: { children: React.ReactNode }) => {
+  const colorPrimary = useSettingsStore((s) => s.settings.colorPrimary);
+  return (
+    <ConfigProvider
+      locale={zhCN}
+      theme={{
+        token: {
+          fontFamily: 'AlibabaSans, sans-serif',
+          colorPrimary,
+        },
+      }}
+    >
+      {children}
+    </ConfigProvider>
+  );
+};
+
+/**
  * React 挂载入口
- * 1. ConfigProvider：antd 国际化、主题配置
+ * 1. AppTheme（ConfigProvider）：antd 国际化、动态主题配置（主题色全局生效）
  * 2. AntdApp：antd 全局配置
  * 3. QueryClientProvider：TanStack Query 配置
  * 4. ErrorBoundary：错误边界组件，捕获子组件渲染错误，避免整个应用崩溃
@@ -38,14 +61,7 @@ const queryClient = new QueryClient({
 const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
-    <ConfigProvider
-      locale={zhCN}
-      theme={{
-        token: {
-          fontFamily: 'AlibabaSans, sans-serif',
-        },
-      }}
-    >
+    <AppTheme>
       <AntdApp>
         <QueryClientProvider client={queryClient}>
           <ErrorBoundary>
@@ -55,6 +71,6 @@ if (rootElement) {
           </ErrorBoundary>
         </QueryClientProvider>
       </AntdApp>
-    </ConfigProvider>,
+    </AppTheme>,
   );
 }

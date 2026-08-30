@@ -121,7 +121,7 @@ export const loadView = (
     if (fileModule) return fileModule;
 
     // 匹配目录格式：pages/authz/user/index.tsx
-    const indexModule = pageMap.get(key + '/index');
+    const indexModule = pageMap.get(`${key}/index`);
     if (indexModule) return indexModule;
 
     console.error(`loadView fail, route.component：[${component}]`);
