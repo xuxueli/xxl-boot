@@ -63,8 +63,8 @@ const Dashboard = () => {
     const {styles} = useStyles();
 
     // 组织树数据（左侧 + 表单）
-    const [deptOptions, setDeptOptions] = useState<API.Org[]>([]);
-    const [orgOptions, setOrgOptions] = useState<API.Org[]>([]);
+    const [leftOrgOptions, setLeftOrgOptions] = useState<API.Org[]>([]);
+    const [formOrgOptions, setFormOrgOptions] = useState<API.Org[]>([]);
     // 角色下拉
     const [roleOptions, setRoleOptions] = useState<API.Role[]>([]);
 
@@ -98,9 +98,9 @@ const Dashboard = () => {
             .then((res) => {
                 const list = res.data || [];
                 // 左侧组织树：深拷贝转树，避免互相污染
-                setDeptOptions(handleTree(deepClone(list)));
+                setLeftOrgOptions(handleTree(deepClone(list)));
                 // 表单组织树：带"未选择"根节点
-                setOrgOptions([
+                setFormOrgOptions([
                     {
                         id: 0,
                         parentId: -1,
@@ -323,7 +323,7 @@ const Dashboard = () => {
             <div style={{display: 'flex', gap: 16}}>
                 {/* 左侧：组织tree */}
                 <TreePanel
-                    treeData={deptOptions}
+                    treeData={leftOrgOptions}
                     title="组织机构"
                     defaultExpandAll
                     onNodeClick={handleNodeClick}
@@ -414,7 +414,7 @@ const Dashboard = () => {
                 onOpenChange={setFormOpen}
                 current={formCurrent}
                 roleOptions={roleOptions}
-                orgOptions={orgOptions}
+                orgOptions={formOrgOptions}
                 onSuccess={() => actionRef.current?.reload()}
             />
 
