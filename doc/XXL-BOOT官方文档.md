@@ -585,16 +585,51 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 
 每个 SKILL 内置：工程结构说明、后端/前端落位清单、代码骨架模板、菜单权限 SQL 模板、校验清单，以及参考样例文件，保证 AI 产物与平台规范严格一致。
 
-#### 操作步骤
+以 opencode + `xxl-boot-vue` 为例，完整开发一个「产品信息管理」业务模块（维护产品名称、介绍、生产时间等）的实操演示如下：
 
-1. 打开 AI 编程助手，将 XXL-BOOT 仓库作为工作目录打开（确保助手具备仓库读写能力）；
-2. 明确运行模式（单体 / Vue 分离 / React 分离）与业务诉求，向 AI 描述：模块名称、业务字段或建表 SQL；
-3. AI 自动加载匹配的 SKILL（如 `xxl-boot-vue`），并按标准流程作业：
-    - 生成建表 SQL（`xxl_boot_*` 规范），并直接落位到工程对应目录；
-    - 按落位清单生成后端（`business/{module}` 6/7 件套）与前端（`views|api|types/{module}/{page}` 3 文件）全部代码；
-    - 生成 菜单 + 按钮 + 授权 初始化 SQL；
-    - 按 SKILL「校验清单」逐项自检并交付说明；
-4. 人工执行建表 SQL 与菜单 SQL，启动服务，按 AI 交付说明做联调验收即可。
+#### 第一步：描述需求
+
+打开 AI 编程助手，将 XXL-BOOT 仓库作为工作目录打开，直接用 `/` 前缀调用对应 Skill，并描述业务诉求：
+
+<p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_1.png" width="900"/></p>
+
+> 需求示例：“`/xxl-boot-vue` 新增一个功能模块，管理产品信息，维护 产品名称、介绍、生产时间 等。”
+
+#### 第二步：需求澄清与确认
+
+Skill 强制 AI 动手前先完成需求澄清，就模块/业务命名、核心字段、页面形态、菜单/按钮权限、出码方式、验证范围等连续提问并确认细节：
+
+<p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_2.png" width="900"/></p>
+
+全部问题确认完毕后，AI 汇总需求细节，形成本需求的数据模型与开发方案：
+
+<p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_3.png" width="800"/></p>
+
+#### 第三步：开发编排与自动执行
+
+AI 按 SKILL 标准流程输出开发 TODO 列表，依次启动“代码现状分析 → 业务模型与菜单/授权 SQL 生成 → 后端 7 件套与状态枚举开发 → 前端 3 文件生成 + barrel 设置 → 前后端工程编辑 → 启动 api 与前端项目，使用脚本本地自动联调”：
+
+<p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_4.png" width="900"/></p>
+
+#### 第四步：交付与验证
+
+开发完成后，AI 交付 SQL、前端、后端全套产物与验证结果摘要，并补充特殊说明（如数据库中遗留 Skill 自动生成的测试数据等）：
+
+<p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_5.png" width="900"/></p>
+
+#### 第五步：联调验收
+
+AI 自动启动 api(8090) 与前端(3000) 完成本地联调后，人工在浏览器刷新登录，从菜单进入「产品管理」页面，即可开展数据查询与增删改操作（含搜索、分页、弹窗表单等）：
+
+<p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_6.png" width="900"/></p>
+
+<p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_7.png" width="900"/></p>
+
+#### 第六步：代码合并
+
+AI 生成的代码经 review 确认后，形成代码 PR 并提交到仓库：
+
+<p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_8.png" width="400"/></p>
 
 #### 与传统方式对比
 
