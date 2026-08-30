@@ -33,14 +33,25 @@ xxl-boot-admin/src
 
 ## 标准流程
 
-1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签）；菜单+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口。
-2. **建表**：`xxl_boot_*` 建表 SQL，遵守公共字段 `id(add_time/update_time)`、TINYINT 状态、`COMMENT` 注释、唯一索引 `i_` 前缀。
+0. **需求落盘（先建立）**：先按「需求落盘（xxl-boot-spec）」一节在项目根 `xxl-boot-spec/{yyyyMMdd}-{business}/` 创建需求子目录，随后确认的需求结论、方案、SQL 全部落入该目录（见下文专属章节）。
+1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签）；菜单+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口。确认结果即时回填到子目录 `方案.md`。
+2. **建表**：`xxl_boot_*` 建表 SQL，遵守公共字段 `id(add_time/update_time)`、TINYINT 状态、`COMMENT` 注释、唯一索引 `i_` 前缀；SQL 脚本写入该需求子目录（如 `{business}-table.sql`、`{business}-init.sql`）。
 3. **生成或手写后端代码**：
    - 可直接按本 Skill「后端骨架」直生等价代码；
    - 也可用内置「代码生成」页面：`POST /tool/codegen/genCode`，入参 `tableSql/author/packagePath/businessName`，返回 `controller/service/service_impl/mapper/mapper_xml/entity/page` 7 段代码（模板在 `templates/framework/tool/codegen-module/*.ftl`）。
 4. **落位文件**：后端 Java 落 `business/{module}`；FTL 页面落 `templates/business/{module}/`；Mapper XML 落 `resources/mapper/business/{module}/`。
 5. **注册菜单**：`xxl_boot_resource` 插菜单（type=1）或目录（type=0）+ `xxl_boot_role_res` 授权（role_id=1）。
-6. **验证**：启动 `xxl-boot-admin`（8080），登录后菜单可见、CRUD 可用；接口自测。
+6. **验证**：启动 `xxl-boot-admin`（8080），登录后菜单可见、CRUD 可用；接口自测；验证结果回填 `方案.md`。
+
+## 需求落盘（xxl-boot-spec）
+
+每个需求在项目根目录 `xxl-boot-spec/` 下生成一个需求子目录，把执行中产出的「方案 + SQL」沉淀其中，便于追溯与复用：
+
+1. **目录命名**：`xxl-boot-spec/{yyyyMMdd}-{business}/`（同日多个需求用业务名区分，如 `20260830-product`）。
+2. **方案**：`方案.md`，记录需求确认结论（`{module}/{business}` 命名、核心字段、状态/枚举下拉、页面形态、菜单/权限、出码方式、验证范围）、落位清单（后端 6 件套 + FTL 页面）与验证结果/变更记录。
+3. **SQL**：建表 SQL 与菜单/权限 SQL 一并落盘（如 `{business}-table.sql`、`{business}-init.sql`），作为本需求专属脚本；如需进总库初始化，再同步一份到 `doc/db/`。
+
+执行全程保持该目录与实现同步：先建目录落方案骨架 → 建表写 SQL → 落位实现 → 验证后回填结论。
 
 ## 后端落位清单（6 件套）
 
@@ -200,6 +211,7 @@ VALUES (1, @catId, now(), now()), (1, LAST_INSERT_ID(), now(), now());
 
 ## 校验清单
 
+- [ ] 需求子目录 `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`方案.md` + SQL 已落盘并同步。
 - [ ] 后端 `mvn -q compile` 通过（在 `xxl-boot-admin` 下）。
 - [ ] Controller 视图 + `@ResponseBody` 数据接口齐全，全部 `@XxlSso`；数据接口方法顺序 `pageList/load/insert/delete/update`。
 - [ ] Mapper XML 显式 resultMap；`add_time/update_time` `NOW()`；分页 `offset/pagesize`。

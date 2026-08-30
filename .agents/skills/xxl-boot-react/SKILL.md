@@ -32,12 +32,23 @@ xxl-boot-ui-react/src
 
 ## 标准流程
 
-1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签，仅动后端时则不动前端）；菜单+按钮+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口（api 8090 / react 4000）。
-2. **建表**：`xxl_boot_*` SQL，公共字段 `id/add_time/update_time`，TINYINT 状态，`COMMENT` 注释。
+0. **需求落盘（先建立）**：先按「需求落盘（xxl-boot-spec）」一节在项目根 `xxl-boot-spec/{yyyyMMdd}-{business}/` 创建需求子目录，随后确认的需求结论、方案、SQL 全部落入该目录（见下文专属章节）。
+1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签，仅动后端时则不动前端）；菜单+按钮+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口（api 8090 / react 4000）。确认结果即时回填到子目录 `方案.md`。
+2. **建表**：`xxl_boot_*` SQL，公共字段 `id/add_time/update_time`，TINYINT 状态，`COMMENT` 注释；SQL 脚本写入该需求子目录（如 `{business}-table.sql`、`{business}-init.sql`）。
 3. **生成或手写代码**：本 Skill 缺省策略为 AI 直接按内置模板（`xxl-boot-api/src/main/resources/templates/tool/codegen/{java,react}/*.ftl`）渲染等价代码落位；同时提示用户可后台「工具-代码生成」走内置生成器（见第六节）。
 4. **落位**：后端 Java 落 `business/{module}`，Mapper XML 落 `resources/mapper/{module}/`；前端三个文件落 `pages|services|types/{module}/{page}`。
 5. **菜单/权限**：插 `xxl_boot_resource` 菜单(type=1)+按钮(type=2)+`xxl_boot_role_res` 授权；按钮用 `hasPermi('{module}:{business}:add')`。
-6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-react`(4000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效。
+6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-react`(4000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效；验证结果回填 `方案.md`。
+
+## 需求落盘（xxl-boot-spec）
+
+每个需求在项目根目录 `xxl-boot-spec/` 下生成一个需求子目录，把执行中产出的「方案 + SQL」沉淀其中，便于追溯与复用：
+
+1. **目录命名**：`xxl-boot-spec/{yyyyMMdd}-{business}/`（同日多个需求用业务名区分，如 `20260830-product`）。
+2. **方案**：`方案.md`，记录需求确认结论（`{module}/{business}` 命名、核心字段、状态/枚举下拉、页面形态、菜单/权限、出码方式、验证范围）、落位清单（后端 7 件套 + 前端三文件）与验证结果/变更记录。
+3. **SQL**：建表 SQL 与菜单/权限 SQL 一并落盘（如 `{business}-table.sql`、`{business}-init.sql`），作为本需求专属脚本；如需进总库初始化，再同步一份到 `doc/db/`。
+
+执行全程保持该目录与实现同步：先建目录落方案骨架 → 建表写 SQL → 落位实现 → 验证后回填结论。
 
 ## 后端落位清单（7 件套）
 
@@ -204,6 +215,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 
 ## 校验清单
 
+- [ ] 需求子目录 `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`方案.md` + SQL 已落盘并同步。
 - [ ] `xxl-boot-api` 下 `mvn -q compile` 通过；`xxl-boot-ui-react` 下 `npm run build`（或 eslint）通过。
 - [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，分页 `offset/pagesize`，XML resultMap + `NOW()`，校验 `Response.ofFail`。
 - [ ] 前端：types 用 `declare namespace API`；services 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`；页面 ProTable `request` 取 `res.data?.data/total`。
