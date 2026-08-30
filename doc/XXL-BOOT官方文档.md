@@ -1075,11 +1075,11 @@ public @interface Permission {
 - 8、【升级】升级多项依赖至较新版本；
 
 ### 版本 v2.1.0 Release Notes[2026-08-30]
-- 1、【新增】前端模块 TypeScript 升级：Vue3 与 React 前端模块全面升级 TypeScript，类型约束更严谨、IDE 提示更完善；
-- 2、【新增】前端规范增强：Vue 模块引入 ESLint + Prettier，React 模块引入 Biome，提升代码规范性与可维护性；
-- 3、【新增】代码生成器兼容 TypeScript：生成器支持 前端 type/types 文件，并内置 vue3/react 前端模板（types/api/view），前后端分离（Vue/React）模式可一键生成前端代码；
-- 4、【新增】React 前端模块发布：React + Vite + AntDesign + TypeScript 前端工程正式交付，与 Vue 模式共享统一后端 API，随生产构建并行发布；
-- 5、【新增】AI + SKILL 驱动开发：仓库内置 `xxl-boot-monolith / xxl-boot-vue / xxl-boot-react` 三大开发 SKILL，AI 编程助手可自动识别并加载，按平台规范直生业务代码、自动落位并附校验清单，加速业务开发；
+- 1、【新增】React 前端版本发布：React + Vite + AntDesign + TypeScript 前端工程正式交付，与 Vue 模式共享统一后端 API，随生产构建并行发布；
+- 2、【新增】Vue 前端版本升级 TypeScript：Vue3 与 React 前端模块全面升级 TypeScript，类型约束更严谨、IDE 提示更完善；
+- 3、【新增】AI + SKILL 驱动开发：仓库内置 `xxl-boot-monolith / xxl-boot-vue / xxl-boot-react` 三大开发 SKILL，AI 编程助手可自动识别并加载，按平台规范直生业务代码、自动落位并附校验清单，加速业务开发；
+- 4、【新增】前端规范增强：Vue 模块引入 ESLint + Prettier，React 模块引入 Biome，提升代码规范性与可维护性；
+- 5、【新增】代码生成器兼容 TypeScript：生成器支持 前端 type/types 文件，并内置 vue3/react 前端模板（types/api/view），前后端分离（Vue/React）模式可一键生成前端代码；
 - 6、【新增】“新增业务模块”支持三方式：传统手工、内置代码生成器、AI + SKILL 驱动，均输出等价代码与菜单权限 SQL，可混合切换；
 - 7、【文档】官方文档重构：快速入门按 单体 / Vue / React 三种模式分述；操作指南改为“能力总览 + 分章节详解”总分结构；新增“新增业务模块”三方式详解；总体设计完善（新增 三种运行模式、统一响应规范、业务扩展与菜单零路由、AI + Skill 辅助开发设计）等章节；
 - 8、【升级】升级多项依赖至较新版本。
