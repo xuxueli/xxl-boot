@@ -437,27 +437,11 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 
 三种运行模式均基于 XXL-SSO 提供安全登录，后端账户体系与权限体系完全一致，仅前端界面形态不同。登录页（从左至右依次为：单体模式、Vue 模式、React 模式）：
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_login.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_login.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_login.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_login.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_login.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_login.png" width="300"/></p>
 
 系统首页：
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_index.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_index.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_index.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_index.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_index.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_index.png" width="300"/></p>
 
 ### 3.3 权限管控
 
@@ -467,57 +451,25 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 
 支持针对系统用户进行管理，进行用户新增、管理、角色授权等操作。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_user.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_user.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_user.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_user.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_user.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_user.png" width="300"/></p>
 
 #### 3.3.2 角色管理
 
 支持针对系统权限角色进行动态管理，进行角色新增、管理、菜单分配等操作。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_role.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_role.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_role.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_role.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_role.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_role.png" width="300"/></p>
 
 #### 3.3.3 资源管理
 
 支持针对系统资源进行细粒度管理，支持目录（type=0）、菜单（type=1）、按钮（type=2）等多类型资源管理，进行新增、管理等操作。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_resource.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_resource.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_resource.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_resource.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_resource.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_resource.png" width="300"/></p>
 
 #### 3.3.4 组织管理
 
 支持针对部门组织架构进行管理，进行多层级组织架构的新增、管理、排序等操作。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_org.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_org.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_org.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_org.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_org.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_org.png" width="300"/></p>
 
 ### 3.4 系统管理
 
@@ -525,57 +477,25 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 
 针对系统字典进行线上化管理，包括字典定义、字典数据等，动态定义及扩展。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_dict.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_dict.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_dict.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_dict.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_dict.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_dict.png" width="300"/></p>
 
 #### 3.4.2 配置中心
 
 针对常用业务数据进行动态配置，包括配置定义、配置值管理等，在线管理并实时生效。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_conf.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_conf.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_conf.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_conf.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_conf.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_conf.png" width="300"/></p>
 
 #### 3.4.3 站内消息
 
 针对系统用户推送站内消息，覆盖消息发布及维护管理、触达及已读查阅分析等完整闭环。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_msg.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_msg.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_msg.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_msg.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_msg.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_msg.png" width="300"/></p>
 
 #### 3.4.4 审计日志
 
 记录系统操作及活动日志，用于系统的监控、审计和安全分析，可快速了解系统运行情况、发现异常行为、追溯问题源头。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_log.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_log.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_log.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_log.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_log.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_log.png" width="300"/></p>
 
 > 此外，「在线用户」支持实时查看在线状态并一键踢出异常用户；「系统监控」支持服务器硬件资源监控（CPU / JVM / 磁盘等）与一键 GC 等主动优化能力，三种模式下操作逻辑一致。
 
@@ -587,15 +507,7 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 
 进入「工具-代码生成」页面，录入建表 SQL（默认提供 Demo 表 SQL 体验；前后端分离模式还需选择前端模板类型：Vue3 传 `element-plus-typescript`、React 传 `antd-typescript`），提交后生成代码配置。三种模式操作入口如下：
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_codegen.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_codegen.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_codegen.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_codegen.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_codegen.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_codegen.png" width="300"/></p>
 
 #### 第二步：编辑字段生成规则（前后端分离模式）
 
@@ -606,27 +518,13 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 - 可见性开关：isQuery / isList / isInsert / isEdit / isRequired；
 - 生成作者、包名等元信息。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_codegen2.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_codegen2.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_codegen2.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_codegen2.png" width="300"/></p>
 
 #### 第三步：预览与批量生成（前后端分离模式）
 
 点击「预览」可在线逐文件查看全部生成代码；点击「批量生成」可下载 zip 产物（后端 6 件套 + 前端 vue3/react 三文件 + `-init.sql` 菜单权限 SQL）。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_codegen3.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_codegen3.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_codegen3.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_codegen3.png" width="300"/></p>
 
 #### 第四步：落位与上线
 
@@ -636,15 +534,7 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 
 内置表单/页面构建工具，支持通过组件拖拽方式生成表单与页面，提供丰富的表单组件（输入、选择、日期、上传等）、布局与样式，支持响应式布局。生成后的表单代码可下载并接入既有工程。
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_form.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_form.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_form.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_form.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_form.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_form.png" width="300"/></p>
 
 ### 3.7 主题与辅助功能
 
@@ -652,42 +542,19 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 
 三种模式均支持主题皮肤切换与 UI 配置：
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_theme.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_theme.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_theme.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_theme.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_theme.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_theme.png" width="300"/></p>
 
 #### 3.7.2 个人中心
 
 前后端分离模式提供个人中心页，支持个人信息维护、修改密码等操作：
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_profile.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_profile.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_profile.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_profile.png" width="300"/></p>
 
 #### 3.7.3 帮助
 
 三种模式均内置帮助页面，展示平台能力与快捷键等使用说明：
 
-<table align="center">
-<tbody>
-<tr>
-<td align="center"><b>单体模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_help.png" width="340"/></td>
-<td align="center"><b>Vue 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_help.png" width="340"/></td>
-<td align="center"><b>React 模式</b><br/><img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_help.png" width="340"/></td>
-</tr>
-</tbody>
-</table>
+<p align="center"><b>单体模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/admin/img_bs_help.png" width="300"/>　<b>Vue 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/vue/img_vue_help.png" width="300"/>　<b>React 模式</b> <img src="https://www.xuxueli.com/project/static/xxl-boot/images/react/img_react_help.png" width="300"/></p>
 
 
 ## 四、新增业务模块
