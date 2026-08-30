@@ -72,14 +72,54 @@ const RoleFormModal = ({
     const [treeData, setTreeData] = useState<DataNode[]>([]);
     // 资源树：已展开节点 key 集合
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-    // 资源树：已勾选节点 key 集合（受控）
+    // 资源树：已勾选节点 key 集合
     const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
-    // 资源树：半勾选节点 key 集合（受控）
+    // 资源树：半勾选节点 key 集合
     const [halfCheckedKeys, setHalfCheckedKeys] = useState<React.Key[]>([]);
     // 资源树：是否展开所有节点
     const [expandedAll, setExpandedAll] = useState(false);
     // 资源树：是否父子联动勾选
     const [checkStrictly, setCheckStrictly] = useState(false);
+
+    /**
+     * 回显授权树：拆分已授权资源集合为完全勾选与半勾选
+     *  - 联动模式：叶子级完全勾选；父级按「子树是否全部授权」区分全选/半选，避免父级误入 checkedKeys 导致整棵子树被联动全选
+     *  - 非联动模式：不存在半选，授权集合直接全部勾选
+     *  @param tree 资源树节点数据
+     *  @param ids  角色已授权的资源 ID 集合（含半选父级）
+     */
+    const applyApprovedKeys = (tree: DataNode[], ids: number[]) => {
+        if (checkStrictly) {
+            setCheckedKeys(ids);
+            setHalfCheckedKeys([]);
+            return;
+        }
+        const approved = new Set(ids);
+        const checked: React.Key[] = [];
+        const halfChecked: React.Key[] = [];
+        /** 递归子树：返回该子树是否全部节点均被授权 */
+        const walk = (nodes: DataNode[]): boolean => {
+            let allIn = true;
+            nodes.forEach((n) => {
+                const inSet = approved.has(Number(n.key));
+                if (n.children?.length) {
+                    const childrenAllIn = walk(n.children);
+                    if (inSet) {
+                        if (childrenAllIn) checked.push(n.key);
+                        else halfChecked.push(n.key);
+                    }
+                    allIn = allIn && inSet && childrenAllIn;
+                } else {
+                    if (inSet) checked.push(n.key);
+                    allIn = allIn && inSet;
+                }
+            });
+            return allIn;
+        };
+        walk(tree);
+        setCheckedKeys(checked);
+        setHalfCheckedKeys(halfChecked);
+    };
 
     /**
      * 加载资源树与已授权集合
@@ -96,11 +136,11 @@ const RoleFormModal = ({
             setCheckedKeys([]);
             setHalfCheckedKeys([]);
 
-            // 编辑场景：初始化已勾选节点（角色已授权的资源集合）
+            // 编辑场景：初始化已授权节点（角色已授权的资源集合，含半选父级，需拆分回显）
             if (roleId) {
                 roleMenuTreeselect(roleId)
                     .then((roleRes) => {
-                        setCheckedKeys(roleRes.data || []);
+                        applyApprovedKeys(tree, roleRes.data || []);
                     })
                     .catch(() => {
                     });
@@ -266,10 +306,10 @@ const RoleFormModal = ({
                     <Tree
                         checkable                       /* 是否可选择 */
                         blockNode                       /* 占满整行 */
-                        checkStrictly={checkStrictly}   /* 是否父子联动勾选 */
-                        checkedKeys={checkedKeys}       /* 受控：已勾选节点 key 集合 */
+                        checkStrictly={checkStrictly}   /* 父子联动：是否启用 */
+                        checkedKeys={checkedKeys}       /* 已勾选节点 key 集合 */
                         onCheck={handleCheck}           /* 勾选变化回调 */
-                        expandedKeys={expandedKeys}     /* 受控：已展开节点 key 集合 */
+                        expandedKeys={expandedKeys}     /* 已展开节点 key 集合 */
                         onExpand={setExpandedKeys}      /* 展开变化回调 */
                         treeData={treeData}             /* 树节点数据 */
                     />
