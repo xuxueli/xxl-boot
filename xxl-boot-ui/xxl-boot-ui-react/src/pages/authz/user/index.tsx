@@ -215,7 +215,7 @@ const Dashboard = () => {
     };
 
     /*
-    * 表格列定义
+    * 表格列配置：表格列 + 操作列 + 筛选条件
     */
     const columns: ProColumns<API.User>[] = [
         {
@@ -335,10 +335,14 @@ const Dashboard = () => {
                     <div className={styles.userTable}>
                         {/* 表格区域 */}
                         <ProTable<API.User>
-                            actionRef={actionRef}   /* 表格Ref */
-                            rowKey="id"             /* 行唯一标识 */
-                            columns={columns}       /* 表格列定义 */
-                            search={{               /* 搜索配置：搜索参数见 “列定义” */
+                            /* 表格Ref */
+                            actionRef={actionRef}
+                            /* 行唯一标识 */
+                            rowKey="id"
+                            /* 表格列配置 */
+                            columns={columns}
+                            /* 搜索配置：搜索参数见 “列定义” */
+                            search={{
                                 labelWidth: 80,
                                 defaultCollapsed: false,
                                 optionRender: (_searchConfig, formProps, dom) => [
@@ -357,9 +361,10 @@ const Dashboard = () => {
                                     </Button>,
                                 ],
                             }}
-                            params={queryParams}    /* 搜索参数 */
+                            /* 搜索参数 */
+                            params={queryParams}
+                            /* 表格API请求 */
                             request={async (params) => {
-                                /* 表格API请求 */
                                 const res = await listUser(params);
                                 return {
                                     data: res.data?.data || [],
@@ -367,8 +372,8 @@ const Dashboard = () => {
                                     success: true,
                                 };
                             }}
+                            /* 工具栏配置：新增 + 删除 */
                             toolBarRender={() => [
-                                /* 工具栏：新增 */
                                 hasPermi('authz:user') && (
                                     <Button
                                         key="add"
@@ -382,7 +387,6 @@ const Dashboard = () => {
                                         新增
                                     </Button>
                                 ),
-                                /* 工具栏：删除 */
                                 hasPermi('authz:user') && (
                                     <Button
                                         key="delete"
@@ -395,8 +399,8 @@ const Dashboard = () => {
                                     </Button>
                                 ),
                             ]}
+                            /* 行选中：获取选中ID列表 */
                             rowSelection={{
-                                /* 行选中：获取选中ID列表 */
                                 onChange: (_keys, rows) => {
                                     setSelectedIds(rows.map((r) => r.id as number));
                                 },
