@@ -34,11 +34,11 @@
         <!-- base -->
         <slf4j-api.version>2.0.18</slf4j-api.version>
 
-        <!-- spring -->
-        <spring-boot.version>4.1.0</spring-boot.version>
+<!-- spring -->
+        <spring-boot.version>4.1.1</spring-boot.version>
         <!-- mybatis & db -->
-        <mybatis-spring-boot-starter.version>4.0.1</mybatis-spring-boot-starter.version>
-        <mysql-connector-j.version>9.7.0</mysql-connector-j.version>
+        <mybatis-spring-boot-starter.version>4.1.0</mybatis-spring-boot-starter.version>
+        <mysql-connector-j.version>26.7.0</mysql-connector-j.version>
 
         <!-- xxl-sso -->
         <xxl-sso.version>2.4.1</xxl-sso.version>
@@ -47,9 +47,9 @@
         <!-- ip2region -->
         <ip2region.version>3.3.7</ip2region.version>
         <!-- spring-ai -->
-        <spring-ai.version>2.0.0</spring-ai.version>
+        <spring-ai.version>2.0.1</spring-ai.version>
         <!-- milvus -->
-        <milvus.version>3.0.5</milvus.version>
+        <milvus.version>3.0.8</milvus.version>
     </properties>
 
     <dependencyManagement>
