@@ -323,16 +323,16 @@ public class CodegenServiceImpl implements CodegenService {
                 // 业务名小写：用于前端 business 聚合目录，与菜单 url（/module/name）及页面 import 路径保持一致
                 String cnLower = cn.toLowerCase();
 
-                // generate java
-                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/model/" + cn + ".java", render("java/entity.java.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/mapper/" + cn + "Mapper.java", render("java/mapper.java.ftl", params));
-                addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "Mapper.xml", render("java/mapper.xml.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/service/" + cn + "Service.java", render("java/service.java.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/service/impl/" + cn + "ServiceImpl.java", render("java/serviceImpl.java.ftl", params));
-                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/controller/" + cn + "Controller.java", render("java/controller.java.ftl", params));
+                // generate java（后端与前端镜像：business/{module}/{business} 双层目录）
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/" + cnLower + "/model/" + cn + ".java", render("java/entity.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/" + cnLower + "/mapper/" + cn + "Mapper.java", render("java/mapper.java.ftl", params));
+                addZipEntry(zos, "main/resources/mapper/" + module + "/" + cnLower + "/" + cn + "Mapper.xml", render("java/mapper.xml.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/" + cnLower + "/service/" + cn + "Service.java", render("java/service.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/" + cnLower + "/service/impl/" + cn + "ServiceImpl.java", render("java/serviceImpl.java.ftl", params));
+                addZipEntry(zos, "main/java/" + pkg + "/" + module + "/" + cnLower + "/controller/" + cn + "Controller.java", render("java/controller.java.ftl", params));
 
                 // generate sql
-                addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "-init.sql", render("sql/sql.ftl", params));
+                addZipEntry(zos, "main/resources/mapper/" + module + "/" + cnLower + "/" + cn + "-init.sql", render("sql/sql.ftl", params));
 
                 // generate web（根据 tplWebType 选择 vue3 或 react 模板；业务模块按页面聚合落位 business/{module}/{page}，内部再分 pages/api/types）
                 if (isReactTpl(codegen.getTplWebType())) {
