@@ -40,6 +40,8 @@ xxl-boot-ui-vue/src
 5. **菜单/权限**：插 `xxl_boot_resource` 菜单(type=1)+按钮(type=2)+`xxl_boot_role_res` 授权；页面按钮用 `v-hasPermi`。
 6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-vue`(3000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效；验证结果回填 `plan.md`。
 
+> ⚠️ **SQL 执行规范（防乱码）**：执行任何 SQL（建表、菜单/权限初始化、联调造测试数据 INSERT 等）前，必须先执行 `SET NAMES utf8mb4;`（或用 `mysql --default-character-set=utf8mb4`），否则含中文的 `COMMENT`/表名/`INSERT` 数据落库会乱码。
+
 ## 需求落盘（xxl-boot-spec）
 
 每个需求在项目根目录 `xxl-boot-spec/` 下生成一个需求子目录，把执行中产出的「方案 + SQL」沉淀其中，便于追溯与复用：
