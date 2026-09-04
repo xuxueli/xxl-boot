@@ -1,5 +1,6 @@
 /**
  * 环境变量与静态资源类型声明（env.d.ts）
+ *
  * 职责：为 Vite 工程提供类型安全的环境变量与资源模块声明：
  *   1. ImportMetaEnv / ImportMeta —— 声明 VITE_* 自定义环境变量，供 import.meta.env 类型化访问；
  *   2. *.vue —— 声明 Vue 单文件组件的模块类型；

@@ -54,7 +54,7 @@ export default {
    * 1、深色主题：theme-dark
    * 2、浅色主题：theme-light
    */
-  sideTheme: 'theme-dark',
+  sideTheme: 'theme-light',
 
   /**
    * 主题颜色
