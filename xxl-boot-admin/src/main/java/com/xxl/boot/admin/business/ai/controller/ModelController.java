@@ -120,6 +120,7 @@ public class ModelController {
             logger.info("model test success, model:{}, baseUrl:{}, response: {}", modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), response);
             return Response.ofSuccess("测试成功");
         } catch (Exception e) {
+            logger.error("model test error, model:{}, baseUrl:{}, error: {}", modelResponse.getData().getModel(), modelResponse.getData().getBaseUrl(), e.getMessage(), e);
             return Response.ofFail("测试失败：" + e.getMessage());
         }
     }
