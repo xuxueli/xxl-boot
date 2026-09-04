@@ -30,12 +30,12 @@
             <div class="card-header">
               <div class="card-header-left">
                 <SvgIcon icon-class="chart" />
-                <span>审计日志</span>
+                <span>{{ t('dashboard.auditLog') }}</span>
               </div>
               <el-radio-group v-model="chartDays" size="small" @change="loadChart">
-                <el-radio-button :value="7">7天</el-radio-button>
-                <el-radio-button :value="14">14天</el-radio-button>
-                <el-radio-button :value="30">30天</el-radio-button>
+                <el-radio-button :value="7">{{ t('dashboard.days7') }}</el-radio-button>
+                <el-radio-button :value="14">{{ t('dashboard.days14') }}</el-radio-button>
+                <el-radio-button :value="30">{{ t('dashboard.days30') }}</el-radio-button>
               </el-radio-group>
             </div>
           </template>
@@ -50,17 +50,17 @@
             <div class="card-header">
               <div class="card-header-left">
                 <SvgIcon icon-class="list" />
-                <span>站内消息</span>
+                <span>{{ t('dashboard.message') }}</span>
               </div>
             </div>
           </template>
-          <div v-if="messages.length === 0" class="msg-empty">暂无消息</div>
+          <div v-if="messages.length === 0" class="msg-empty">{{ t('dashboard.messageEmpty') }}</div>
           <div v-else class="msg-list">
             <div v-for="item in messages" :key="item.id" class="msg-item" @click="handleMsgClick(item)">
               <div class="msg-title">{{ item.title }}</div>
               <div class="msg-meta">
                 <el-tag size="small" :type="item.category === 0 ? 'success' : 'warning'">
-                  {{ item.category === 0 ? '通知' : '公告' }}
+                  {{ item.category === 0 ? t('dashboard.notify') : t('dashboard.announce') }}
                 </el-tag>
                 <span class="msg-time">{{ item.addTime }}</span>
               </div>
@@ -85,6 +85,7 @@ import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vu
 import type { ECharts } from 'echarts'
 import type { Message } from '@/modules/framework/system/message/types'
 import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
 
 /** 指标卡片项 */
@@ -98,10 +99,10 @@ interface StatItem {
 
 // 指标卡片
 const stats = ref<StatItem[]>([
-  { label: '用户数量', value: 0, icon: 'user', color: '#5b6abf', bg: '#eef0fb' },
-  { label: '角色数量', value: 0, icon: 'peoples', color: '#319c8a', bg: '#e8f6f3' },
-  { label: '日志数量', value: 0, icon: 'log', color: '#d4943c', bg: '#fcf4e8' },
-  { label: '消息数量', value: 0, icon: 'message', color: '#c5566a', bg: '#fbeef1' }
+  { label: t('dashboard.userCount'), value: 0, icon: 'user', color: '#5b6abf', bg: '#eef0fb' },
+  { label: t('dashboard.roleCount'), value: 0, icon: 'peoples', color: '#319c8a', bg: '#e8f6f3' },
+  { label: t('dashboard.logCount'), value: 0, icon: 'log', color: '#d4943c', bg: '#fcf4e8' },
+  { label: t('dashboard.messageCount'), value: 0, icon: 'message', color: '#c5566a', bg: '#fbeef1' }
 ])
 
 const messages = ref<Message[]>([])

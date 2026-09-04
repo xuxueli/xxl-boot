@@ -8,6 +8,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
+import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delConfig, listConfig } from '@/modules/framework/system/config/api';
@@ -53,11 +54,13 @@ const ConfigList = () => {
     const ids = row ? [row.id as number] : selectedIds;
     if (ids.length === 0) return;
     modal.confirm({
-      title: '系统提示',
-      content: `是否确认删除名称为"${row?.name || '这些配置'}"的数据项？`,
+      title: t('modal.title'),
+      content: t('system.config.confirmDelete', [
+        row?.name || t('system.config.batchDeleteName'),
+      ]),
       onOk: async () => {
         await delConfig(ids);
-        message.success('删除成功');
+        message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
       },
@@ -65,9 +68,9 @@ const ConfigList = () => {
   };
 
   const columns: ProColumns<API.Config>[] = [
-    { title: '序号', dataIndex: 'id', search: false, width: 80 },
+    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
     {
-      title: '配置名称',
+      title: t('system.config.configName'),
       dataIndex: 'name',
       ellipsis: true,
       render: (_, record) => (
@@ -75,14 +78,14 @@ const ConfigList = () => {
       ),
     },
     {
-      title: '配置Key',
+      title: t('system.config.configKey'),
       dataIndex: 'key',
       search: false,
       ellipsis: true,
       render: (_, record) => <Tooltip title={record.key}>{record.key}</Tooltip>,
     },
     {
-      title: '配置Value',
+      title: t('system.config.configValue'),
       dataIndex: 'value',
       search: false,
       ellipsis: true,
@@ -91,18 +94,18 @@ const ConfigList = () => {
       ),
     },
     {
-      title: '状态',
+      title: t('common.status'),
       dataIndex: 'status',
       width: 90,
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
-          {record.status === 0 ? '正常' : '停用'}
+          {record.status === 0 ? t('common.normal') : t('common.disabled')}
         </Tag>
       ),
     },
     {
-      title: '备注',
+      title: t('common.remark'),
       dataIndex: 'remark',
       search: false,
       render: (_, record) => (
@@ -119,9 +122,9 @@ const ConfigList = () => {
         </Tooltip>
       ),
     },
-    { title: '创建时间', dataIndex: 'addTime', search: false, width: 160 },
+    { title: t('common.addTime'), dataIndex: 'addTime', search: false, width: 160 },
     {
-      title: '操作',
+      title: t('common.operation'),
       valueType: 'option',
       width: 140,
       render: (_, record) => [
@@ -132,10 +135,10 @@ const ConfigList = () => {
             setFormOpen(true);
           }}
         >
-          <EditOutlined /> 修改
+          <EditOutlined /> {t('common.modify')}
         </a>,
         <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> 删除
+          <DeleteOutlined /> {t('common.delete')}
         </a>,
       ],
     },
@@ -173,7 +176,7 @@ const ConfigList = () => {
                   setFormOpen(true);
                 }}
               >
-                新增
+                {t('common.add')}
               </Button>
             ),
             hasRole('admin') && (
@@ -184,7 +187,7 @@ const ConfigList = () => {
                 disabled={!selectedIds.length}
                 onClick={() => handleDelete()}
               >
-                删除
+                {t('common.delete')}
               </Button>
             ),
           ]}

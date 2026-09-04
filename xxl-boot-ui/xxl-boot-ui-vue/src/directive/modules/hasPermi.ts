@@ -1,5 +1,6 @@
 import type { Directive, DirectiveBinding } from 'vue'
 import { useUserStore } from '@/store'
+import { t } from '@/i18n'
 
 /**
  * 操作权限指令
@@ -23,7 +24,7 @@ export default {
       }
     } else {
       // 参数非法，抛出错误
-      throw new Error('请设置操作权限标签值')
+      throw new Error(t('common.permiRequired'))
     }
   }
 } as Directive<HTMLElement, string[]>

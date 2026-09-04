@@ -9,6 +9,7 @@ import { createGlobalStyle, createStyles } from 'antd-style';
 import { clsx } from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { t } from '@/i18n';
 import { useSettingsStore } from '@/stores/settingsStore';
 
 /**
@@ -203,7 +204,7 @@ const ThemeColorPicker = () => {
                     onChange={(e) => handleHexChange(e.target.value)}
                   />
                   <Button size="small" onClick={handleConfirm}>
-                    确认
+                    {t('modal.confirmButton')}
                   </Button>
                 </div>
               </div>

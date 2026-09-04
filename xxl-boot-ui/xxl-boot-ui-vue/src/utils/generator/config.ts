@@ -3,6 +3,7 @@
  * 提供表单全局配置、可拖拽组件注册表、校验触发方式映射与 js-beautify 格式化配置。
  */
 import { readonly } from 'vue'
+import { t } from '@/i18n'
 /**
  * 正则校验项
  */
@@ -89,11 +90,11 @@ export const formConf: FormConf = {
 
 export const inputComponents: FormItemConf[] = [
   {
-    label: '单行文本',
+    label: t('tool.pagegen.cmpInput'),
     tag: 'el-input',
     tagIcon: 'input',
     type: 'text',
-    placeholder: '请输入',
+    placeholder: t('tool.pagegen.enterPlaceholder'),
     defaultValue: undefined,
     span: 24,
     labelWidth: null,
@@ -113,11 +114,11 @@ export const inputComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/input'
   },
   {
-    label: '多行文本',
+    label: t('tool.pagegen.cmpTextarea'),
     tag: 'el-input',
     tagIcon: 'textarea',
     type: 'textarea',
-    placeholder: '请输入',
+    placeholder: t('tool.pagegen.enterPlaceholder'),
     defaultValue: undefined,
     span: 24,
     labelWidth: null,
@@ -136,11 +137,11 @@ export const inputComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/input'
   },
   {
-    label: '密码',
+    label: t('tool.pagegen.cmpPassword'),
     tag: 'el-input',
     tagIcon: 'password',
     type: 'password',
-    placeholder: '请输入',
+    placeholder: t('tool.pagegen.enterPlaceholder'),
     defaultValue: undefined,
     span: 24,
     'show-password': true,
@@ -161,7 +162,7 @@ export const inputComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/input'
   },
   {
-    label: '计数器',
+    label: t('tool.pagegen.cmpNumber'),
     tag: 'el-input-number',
     tagIcon: 'number',
     placeholder: '',
@@ -184,10 +185,10 @@ export const inputComponents: FormItemConf[] = [
 
 export const selectComponents: FormItemConf[] = [
   {
-    label: '下拉选择',
+    label: t('tool.pagegen.cmpSelect'),
     tag: 'el-select',
     tagIcon: 'select',
-    placeholder: '请选择',
+    placeholder: t('common.selectPlaceholder'),
     defaultValue: undefined,
     span: 24,
     labelWidth: null,
@@ -199,11 +200,11 @@ export const selectComponents: FormItemConf[] = [
     multiple: false,
     options: [
       {
-        label: '选项一',
+        label: t('tool.pagegen.optionFirst'),
         value: 1
       },
       {
-        label: '选项二',
+        label: t('tool.pagegen.optionSecond'),
         value: 2
       }
     ],
@@ -212,10 +213,10 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/select'
   },
   {
-    label: '级联选择',
+    label: t('tool.pagegen.cmpCascader'),
     tag: 'el-cascader',
     tagIcon: 'cascader',
-    placeholder: '请选择',
+    placeholder: t('common.selectPlaceholder'),
     defaultValue: [],
     span: 24,
     labelWidth: null,
@@ -234,12 +235,12 @@ export const selectComponents: FormItemConf[] = [
       {
         id: 1,
         value: 1,
-        label: '选项1',
+        label: t('tool.pagegen.optionOne'),
         children: [
           {
             id: 2,
             value: 2,
-            label: '选项1-1'
+            label: t('tool.pagegen.optionOneSub')
           }
         ]
       }
@@ -254,7 +255,7 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/cascader'
   },
   {
-    label: '单选框组',
+    label: t('tool.pagegen.cmpRadioGroup'),
     tag: 'el-radio-group',
     tagIcon: 'radio',
     defaultValue: 0,
@@ -268,11 +269,11 @@ export const selectComponents: FormItemConf[] = [
     required: true,
     options: [
       {
-        label: '选项一',
+        label: t('tool.pagegen.optionFirst'),
         value: 1
       },
       {
-        label: '选项二',
+        label: t('tool.pagegen.optionSecond'),
         value: 2
       }
     ],
@@ -281,7 +282,7 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/radio'
   },
   {
-    label: '多选框组',
+    label: t('tool.pagegen.cmpCheckboxGroup'),
     tag: 'el-checkbox-group',
     tagIcon: 'checkbox',
     defaultValue: [],
@@ -295,11 +296,11 @@ export const selectComponents: FormItemConf[] = [
     required: true,
     options: [
       {
-        label: '选项一',
+        label: t('tool.pagegen.optionFirst'),
         value: 1
       },
       {
-        label: '选项二',
+        label: t('tool.pagegen.optionSecond'),
         value: 2
       }
     ],
@@ -308,7 +309,7 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/checkbox'
   },
   {
-    label: '开关',
+    label: t('tool.pagegen.cmpSwitch'),
     tag: 'el-switch',
     tagIcon: 'switch',
     defaultValue: false,
@@ -328,7 +329,7 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/switch'
   },
   {
-    label: '滑块',
+    label: t('tool.pagegen.cmpSlider'),
     tag: 'el-slider',
     tagIcon: 'slider',
     defaultValue: null,
@@ -346,10 +347,10 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/slider'
   },
   {
-    label: '时间选择',
+    label: t('tool.pagegen.cmpTimePicker'),
     tag: 'el-time-picker',
     tagIcon: 'time',
-    placeholder: '请选择',
+    placeholder: t('common.selectPlaceholder'),
     defaultValue: '',
     span: 24,
     labelWidth: null,
@@ -364,7 +365,7 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/time-picker'
   },
   {
-    label: '时间范围',
+    label: t('tool.pagegen.cmpTimeRange'),
     tag: 'el-time-picker',
     tagIcon: 'time-range',
     defaultValue: null,
@@ -375,9 +376,9 @@ export const selectComponents: FormItemConf[] = [
     clearable: true,
     required: true,
     'is-range': true,
-    'range-separator': '至',
-    'start-placeholder': '开始时间',
-    'end-placeholder': '结束时间',
+    'range-separator': t('tool.pagegen.rangeSeparator'),
+    'start-placeholder': t('tool.pagegen.startTime'),
+    'end-placeholder': t('tool.pagegen.endTime'),
     format: 'HH:mm:ss',
     'value-format': 'HH:mm:ss',
     regList: [],
@@ -385,10 +386,10 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/time-picker'
   },
   {
-    label: '日期选择',
+    label: t('tool.pagegen.cmpDatePicker'),
     tag: 'el-date-picker',
     tagIcon: 'date',
-    placeholder: '请选择',
+    placeholder: t('common.selectPlaceholder'),
     defaultValue: null,
     type: 'date',
     span: 24,
@@ -405,7 +406,7 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/date-picker'
   },
   {
-    label: '日期范围',
+    label: t('tool.pagegen.cmpDateRange'),
     tag: 'el-date-picker',
     tagIcon: 'date-range',
     defaultValue: null,
@@ -413,9 +414,9 @@ export const selectComponents: FormItemConf[] = [
     labelWidth: null,
     style: { width: '100%' },
     type: 'daterange',
-    'range-separator': '至',
-    'start-placeholder': '开始日期',
-    'end-placeholder': '结束日期',
+    'range-separator': t('tool.pagegen.rangeSeparator'),
+    'start-placeholder': t('tool.pagegen.startDate'),
+    'end-placeholder': t('tool.pagegen.endDate'),
     disabled: false,
     clearable: true,
     required: true,
@@ -427,7 +428,7 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/date-picker'
   },
   {
-    label: '评分',
+    label: t('tool.pagegen.cmpRate'),
     tag: 'el-rate',
     tagIcon: 'rate',
     defaultValue: 0,
@@ -445,7 +446,7 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/rate'
   },
   {
-    label: '颜色选择',
+    label: t('tool.pagegen.cmpColorPicker'),
     tag: 'el-color-picker',
     tagIcon: 'color',
     defaultValue: null,
@@ -460,7 +461,7 @@ export const selectComponents: FormItemConf[] = [
     document: 'https://element-plus.org/zh-CN/component/color-picker'
   },
   {
-    label: '上传',
+    label: t('tool.pagegen.cmpUpload'),
     tag: 'el-upload',
     tagIcon: 'upload',
     action: 'https://jsonplaceholder.typicode.com/posts/',
@@ -472,7 +473,7 @@ export const selectComponents: FormItemConf[] = [
     name: 'file',
     'auto-upload': true,
     showTip: false,
-    buttonText: '点击上传',
+    buttonText: t('tool.pagegen.uploadButton'),
     fileSize: 2,
     sizeUnit: 'MB',
     'list-type': 'text',
@@ -480,7 +481,7 @@ export const selectComponents: FormItemConf[] = [
     regList: [],
     changeTag: true,
     document: 'https://element-plus.org/zh-CN/component/upload',
-    tip: '只能上传不超过 2MB 的文件',
+    tip: t('tool.pagegen.uploadTip'),
     style: { width: '100%' }
   }
 ]
@@ -492,20 +493,20 @@ export const layoutComponents: FormItemConf[] = [
     type: 'default',
     justify: 'start',
     align: 'top',
-    label: '行容器',
+    label: t('tool.pagegen.cmpRow'),
     layoutTree: true,
     children: [],
     document: 'https://element-plus.org/zh-CN/component/layout'
   },
   {
     layout: 'colFormItem',
-    label: '按钮',
+    label: t('tool.pagegen.cmpButton'),
     changeTag: true,
     labelWidth: null,
     tag: 'el-button',
     tagIcon: 'button',
     span: 24,
-    default: '主要按钮',
+    default: t('tool.pagegen.primaryButton'),
     type: 'primary',
     icon: 'Search',
     size: 'default',

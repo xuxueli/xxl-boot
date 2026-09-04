@@ -8,6 +8,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
+import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delRole, listRole } from '@/modules/framework/authz/role/api';
@@ -65,12 +66,14 @@ const RoleList = () => {
     if (ids.length === 0) return;
     // 弹出确认框，确认后操作删除
     modal.confirm({
-      title: '系统提示',
-      content: `是否确认删除名称为"${row?.name || '这些角色'}"的数据项？`,
+      title: t('modal.title'),
+      content: row?.name
+        ? t('authz.role.confirmDelete', [row.name])
+        : t('authz.role.confirmDeleteBatch'),
       onOk: async () => {
         // 调用删除接口
         await delRole(ids);
-        message.success('删除成功');
+        message.success(t('common.deleteSuccess'));
 
         // 删除成功后，清空选中项，并刷新表格
         setSelectedIds([]);
@@ -86,38 +89,38 @@ const RoleList = () => {
    *   - 操作列：修改/删除
    */
   const columns: ProColumns<API.Role>[] = [
-    { title: '角色编号', dataIndex: 'id', search: false, width: 90 },
-    { title: '角色名称', dataIndex: 'name' },
+    { title: t('authz.role.id'), dataIndex: 'id', search: false, width: 90 },
+    { title: t('authz.role.name'), dataIndex: 'name' },
     {
-      title: '权限字符',
+      title: t('authz.role.roleKey'),
       dataIndex: 'code',
       search: false,
     },
     {
-      title: '显示顺序',
+      title: t('authz.role.order'),
       dataIndex: 'order',
       search: false,
       width: 90,
     },
     {
-      title: '状态',
+      title: t('common.status'),
       dataIndex: 'status',
       width: 90,
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
-          {record.status === 0 ? '正常' : '停用'}
+          {record.status === 0 ? t('common.normal') : t('common.disabled')}
         </Tag>
       ),
     },
     {
-      title: '创建时间',
+      title: t('common.createTime'),
       dataIndex: 'addTime',
       search: false,
       width: 160,
     },
     {
-      title: '操作',
+      title: t('common.operation'),
       valueType: 'option',
       width: 140,
       /* 操作列：修改/删除 */
@@ -129,10 +132,10 @@ const RoleList = () => {
             setFormOpen(true);
           }}
         >
-          <EditOutlined /> 修改
+          <EditOutlined /> {t('common.modify')}
         </a>,
         <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> 删除
+          <DeleteOutlined /> {t('common.delete')}
         </a>,
       ],
     },
@@ -182,7 +185,7 @@ const RoleList = () => {
                   setFormOpen(true);
                 }}
               >
-                新增
+                {t('common.add')}
               </Button>
             ),
             hasPermi('authz:role') && (
@@ -193,7 +196,7 @@ const RoleList = () => {
                 disabled={!selectedIds.length}
                 onClick={() => handleDelete()}
               >
-                删除
+                {t('common.delete')}
               </Button>
             ),
           ]}

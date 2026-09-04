@@ -42,6 +42,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { getAuthHeaders } from '@/utils/auth'
 import modal from '@/utils/modal'
 import { computed, onBeforeUnmount, ref, toRaw, watch } from 'vue'
+import { t } from '@/i18n'
 
 const quillEditorRef = ref<any>() // Quill 编辑器实例
 const uploadRef = ref<any>(null) // 图片上传 input 引用
@@ -102,7 +103,7 @@ const options = ref<any>({
       ['link', 'image', 'video']
     ]
   },
-  placeholder: '请输入内容',
+  placeholder: t('common.inputPlaceholder', [t('system.message.content')]),
   readOnly: props.readOnly
 })
 
@@ -166,14 +167,14 @@ function handleBeforeUpload(file: any) {
   const isJPG = type.includes(file.type)
   //检验文件格式
   if (!isJPG) {
-    modal.msgError(`图片格式错误!`)
+    modal.msgError(t('components.editor.imageTypeError'))
     return false
   }
   // 校检文件大小
   if (props.fileSize) {
     const isLt = file.size / 1024 / 1024 < props.fileSize
     if (!isLt) {
-      modal.msgError(`上传文件大小不能超过 ${props.fileSize} MB!`)
+      modal.msgError(t('components.upload.sizeError', [props.fileSize]))
       return false
     }
   }
@@ -191,13 +192,13 @@ function handleUploadSuccess(res: any, file?: any) {
     // 调整光标到最后
     quill.setSelection(length + 1)
   } else {
-    modal.msgError('图片插入失败')
+    modal.msgError(t('components.editor.imageInsertFail'))
   }
 }
 
 // 上传失败处理
 function handleUploadError() {
-  modal.msgError('图片插入失败')
+  modal.msgError(t('components.editor.imageInsertFail'))
 }
 
 // 粘贴板包含图片时：阻止默认粘贴，改为直接上传图片

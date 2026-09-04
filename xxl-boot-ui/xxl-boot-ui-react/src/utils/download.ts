@@ -9,6 +9,7 @@
  *       序列化采用扁平重复 key（下载类后端接口契约，如 ids=1&ids=2）。
  */
 import { message } from 'antd';
+import { t } from '@/i18n';
 import { blobValidate } from './common';
 import service, { errorCode } from './request';
 
@@ -97,11 +98,11 @@ export function download(
       await handleBlob(
         res as unknown as Blob,
         filename,
-        '下载文件出现错误，请联系管理员！',
+        t('download.failed'),
       );
     })
     .catch(() => {
-      message.error('下载文件出现错误，请联系管理员！');
+      message.error(t('download.failed'));
     });
 }
 
@@ -127,10 +128,10 @@ export function downloadGet(
       await handleBlob(
         res as unknown as Blob,
         filename,
-        '下载文件出现错误，请联系管理员！',
+        t('download.failed'),
       );
     })
     .catch(() => {
-      message.error('下载文件出现错误，请联系管理员！');
+      message.error(t('download.failed'));
     });
 }

@@ -11,6 +11,7 @@ import {
 import { App, Checkbox, Col, Divider, Space, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import React, { useEffect, useMemo, useState } from 'react';
+import { t } from '@/i18n';
 import { listResource } from '@/modules/framework/authz/resource/api';
 import {
   addRole,
@@ -191,7 +192,7 @@ const RoleFormModal = ({
       const newId = Number(res.data);
       await updateRoleRes(newId, resourceIds);
     }
-    message.success('操作成功');
+    message.success(t('common.operationSuccess'));
     onSuccess?.();
     return true;
   };
@@ -199,7 +200,7 @@ const RoleFormModal = ({
   return (
     /* 表单模态框 */
     <ModalForm<API.Role>
-      title={current?.id ? '修改角色' : '新增角色'}
+      title={current?.id ? t('common.titleEdit', [t('authz.user.role')]) : t('common.titleAdd', [t('authz.user.role')])}
       width={680}
       open={open} /* 是否打开弹窗 */
       onOpenChange={onOpenChange} /* 弹窗打开状态变化回调 */
@@ -214,34 +215,34 @@ const RoleFormModal = ({
       <ProFormText
         colProps={{ span: 12 }}
         name="name"
-        label="角色名称"
-        placeholder="请输入角色名称"
+        label={t('authz.role.name')}
+        placeholder={t('common.inputPlaceholder', [t('authz.role.name')])}
         fieldProps={{ maxLength: 30 }}
-        rules={[{ required: true, message: '角色名称不能为空' }]}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.role.name')]) }]}
       />
       <ProFormText
         colProps={{ span: 12 }}
         name="code"
-        label="权限字符"
-        placeholder="请输入权限字符"
+        label={t('authz.role.roleKey')}
+        placeholder={t('common.inputPlaceholder', [t('authz.role.roleKey')])}
         fieldProps={{ maxLength: 30 }}
-        rules={[{ required: true, message: '权限字符不能为空' }]}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.role.roleKey')]) }]}
       />
       <ProFormDigit
         colProps={{ span: 12 }}
         name="order"
-        label="显示顺序"
-        placeholder="请输入显示顺序"
+        label={t('authz.role.order')}
+        placeholder={t('common.inputPlaceholder', [t('authz.role.order')])}
         min={0}
         fieldProps={{ style: { width: '100%' } }}
       />
       <ProFormRadio.Group
         colProps={{ span: 12 }}
         name="status"
-        label="状态"
+        label={t('common.status')}
         options={[
-          { value: 0, label: '正常' },
-          { value: 1, label: '停用' },
+          { value: 0, label: t('common.normal') },
+          { value: 1, label: t('common.disabled') },
         ]}
       />
       {/* 复杂表单项：菜单权限tree */}
@@ -255,7 +256,7 @@ const RoleFormModal = ({
             marginBottom: 8,
           }}
         >
-          <span style={{ fontWeight: 600 }}>菜单权限</span>
+          <span style={{ fontWeight: 600 }}>{t('authz.role.menuPermission')}</span>
           <Space size={16}>
             <Checkbox
               checked={expandedAll}
@@ -264,16 +265,16 @@ const RoleFormModal = ({
                 setExpandedKeys(e.target.checked ? allKeys : []);
               }}
             >
-              展开/折叠
+              {t('common.expandCollapse')}
             </Checkbox>
             <Checkbox
               checked={!checkStrictly}
               onChange={(e) => setCheckStrictly(!e.target.checked)}
             >
-              父子联动
+              {t('authz.role.linkAll')}
             </Checkbox>
-            <a onClick={() => setCheckedKeys(allKeys)}>全选</a>
-            <a onClick={() => setCheckedKeys([])}>全不选</a>
+            <a onClick={() => setCheckedKeys(allKeys)}>{t('authz.role.selectAll')}</a>
+            <a onClick={() => setCheckedKeys([])}>{t('authz.role.selectNone')}</a>
           </Space>
         </div>
         <div

@@ -10,7 +10,7 @@
 
       <!-- 用户名 -->
       <el-form-item prop="username">
-        <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
+        <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" :placeholder="t('auth.login.username')">
           <template #prefix><SvgIcon icon-class="user" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
@@ -22,7 +22,7 @@
           type="password"
           size="large"
           auto-complete="off"
-          placeholder="密码"
+          :placeholder="t('auth.login.password')"
           @keyup.enter="handleLogin"
         >
           <template #prefix><SvgIcon icon-class="password" class="el-input__icon input-icon" /></template>
@@ -35,7 +35,7 @@
           v-model="loginForm.captchaResult"
           size="large"
           auto-complete="off"
-          placeholder="验证码"
+          :placeholder="t('auth.login.captcha')"
           style="width: 63%"
           @keyup.enter="handleLogin"
         >
@@ -47,13 +47,13 @@
       </el-form-item>
 
       <!-- 记住密码 -->
-      <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin: 0px 0px 8px 0px">记住密码</el-checkbox>
+      <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin: 0px 0px 8px 0px">{{ t('auth.login.remember') }}</el-checkbox>
 
       <!-- login btn -->
       <el-form-item style="width: 100%">
         <el-button :loading="loading" size="large" type="primary" style="width: 100%" @click.prevent="handleLogin">
-          <span v-if="!loading">登 录</span>
-          <span v-else>登 录 中...</span>
+          <span v-if="!loading">{{ t('auth.login.submit') }}</span>
+          <span v-else>{{ t('auth.login.loggingIn') }}</span>
         </el-button>
       </el-form-item>
     </el-form>
@@ -68,6 +68,7 @@
 
 <script setup lang="ts">
 // 导入依赖
+import { t } from '@/i18n'
 import { getCodeImg } from '../api'
 import { useUserStore } from '@/store'
 import defaultSettings from '@/default-settings'
@@ -77,7 +78,7 @@ import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { SvgIcon } from '@/components'
 
-const title = defaultSettings.title // 系统标题
+const title = t('app.title') // 系统标题
 const brandName = defaultSettings.brandName // 品牌名称
 const footerContent = defaultSettings.footerContent // 页脚版权信息
 const userStore = useUserStore()
@@ -96,9 +97,9 @@ const loginForm = ref<LoginParams>({
 
 // 表单校验规则
 const loginRules: FormRules = {
-  username: [{ required: true, trigger: 'blur', message: '请输入您的账号' }],
-  password: [{ required: true, trigger: 'blur', message: '请输入您的密码' }],
-  captchaResult: [{ required: true, trigger: 'change', message: '请输入验证码' }]
+  username: [{ required: true, trigger: 'blur', message: t('common.inputPlaceholder', [t('auth.login.username')]) }],
+  password: [{ required: true, trigger: 'blur', message: t('common.inputPlaceholder', [t('auth.login.password')]) }],
+  captchaResult: [{ required: true, trigger: 'change', message: t('common.inputPlaceholder', [t('auth.login.captcha')]) }]
 }
 
 const codeUrl = ref('') // 验证码图片 base64

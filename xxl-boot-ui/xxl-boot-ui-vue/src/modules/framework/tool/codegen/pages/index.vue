@@ -6,32 +6,32 @@
   <div class="app-container">
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
-      <el-form-item label="表名称" prop="tableName">
-        <el-input v-model="queryParams.tableName" placeholder="请输入表名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item :label="t('tool.codegen.tableName')" prop="tableName">
+        <el-input v-model="queryParams.tableName" :placeholder="t('common.inputPlaceholder', [t('tool.codegen.tableName')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="表描述" prop="tableComment">
-        <el-input v-model="queryParams.tableComment" placeholder="请输入表描述" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item :label="t('tool.codegen.tableComment')" prop="tableComment">
+        <el-input v-model="queryParams.tableComment" :placeholder="t('common.inputPlaceholder', [t('tool.codegen.tableComment')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">{{ t('common.search') }}</el-button>
+        <el-button icon="Refresh" @click="resetQuery">{{ t('common.reset') }}</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="openCreateDialog" v-hasRole="['admin']">创建</el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateDialog" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleEditTable" v-hasRole="['admin']">修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleEditTable" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="primary" plain icon="Download" :disabled="table.multiple" @click="handleGenTable" v-hasRole="['admin']"
-          >生成</el-button
+          >{{ t('tool.codegen.generateButton') }}</el-button
         >
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
@@ -40,28 +40,28 @@
     <!-- 表格区域 -->
     <el-table ref="genRef" v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" align="center" width="55"></el-table-column>
-      <el-table-column label="序号" type="index" width="50" align="center">
+      <el-table-column :label="t('common.serialNo')" type="index" width="50" align="center">
         <template #default="scope">
           <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="表名称" align="center" prop="tableName" :show-overflow-tooltip="true" />
-      <el-table-column label="表描述" align="center" prop="tableComment" :show-overflow-tooltip="true" />
-      <el-table-column label="创建时间" align="center" prop="addTime" width="160" />
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="160" />
-      <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
+      <el-table-column :label="t('tool.codegen.tableName')" align="center" prop="tableName" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('tool.codegen.tableComment')" align="center" prop="tableComment" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('common.createTime')" align="center" prop="addTime" width="160" />
+      <el-table-column :label="t('common.updateTime')" align="center" prop="updateTime" width="160" />
+      <el-table-column :label="t('common.operation')" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-tooltip content="编辑" placement="top">
-            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)" v-hasRole="['admin']">编辑</el-button>
+          <el-tooltip :content="t('common.edit')" placement="top">
+            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)" v-hasRole="['admin']">{{ t('common.edit') }}</el-button>
           </el-tooltip>
-          <el-tooltip content="删除" placement="top">
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
+          <el-tooltip :content="t('common.delete')" placement="top">
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
           </el-tooltip>
-          <el-tooltip content="预览" placement="top">
-            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasRole="['admin']">预览</el-button>
+          <el-tooltip :content="t('tool.codegen.preview')" placement="top">
+            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasRole="['admin']">{{ t('tool.codegen.preview') }}</el-button>
           </el-tooltip>
-          <el-tooltip content="生成代码" placement="top">
-            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasRole="['admin']">生成代码</el-button>
+          <el-tooltip :content="t('tool.codegen.generate')" placement="top">
+            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasRole="['admin']">{{ t('tool.codegen.generate') }}</el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -86,7 +86,7 @@
           :key="value"
         >
           <el-link underline="never" icon="DocumentCopy" v-copyText="value" v-copyText:callback="copyTextSuccess" style="float: right"
-            >&nbsp;复制
+            >&nbsp;{{ t('common.copy') }}
           </el-link>
           <pre>{{ value }}</pre>
         </el-tab-pane>
@@ -94,12 +94,12 @@
     </el-dialog>
 
     <!-- 创建表弹窗 -->
-    <el-dialog v-model="createDialog.visible" title="创建表" width="800px" top="5vh" append-to-body>
-      <span>创建表语句(支持多个建表语句)：</span>
-      <el-input type="textarea" :rows="10" placeholder="请输入文本" v-model="createDialog.content"></el-input>
+    <el-dialog v-model="createDialog.visible" :title="t('tool.codegen.createTable')" width="800px" top="5vh" append-to-body>
+      <span>{{ t('tool.codegen.createTableTip') }}</span>
+      <el-input type="textarea" :rows="10" :placeholder="t('common.inputPlaceholder', [t('components.editor.text')])" v-model="createDialog.content"></el-input>
       <template #footer>
-        <el-button type="primary" @click="handleCreateTable">确 定</el-button>
-        <el-button @click="createDialog.visible = false">取 消</el-button>
+        <el-button type="primary" @click="handleCreateTable">{{ t('modal.confirmButton') }}</el-button>
+        <el-button @click="createDialog.visible = false">{{ t('modal.cancelButton') }}</el-button>
       </template>
     </el-dialog>
 
@@ -110,6 +110,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Gen' })
+import { t } from '@/i18n'
 import { listTable, previewTable, delTable, createTable } from '../api'
 import type { CodegenTable } from '../types'
 import { useFormReset } from '@/composables/useFormReset'
@@ -153,7 +154,7 @@ const table = ref({
 // 预览弹窗
 const preview = ref({
   open: false /* 弹窗显隐 */,
-  title: '代码预览' /* 弹窗标题 */,
+  title: t('tool.codegen.codePreview') /* 弹窗标题 */,
   data: {} as Record<string, string> /* 预览代码数据 */,
   activeName: 'entity.java' /* 激活标签 */
 })
@@ -211,7 +212,7 @@ function handleSelectionChange(selection: CodegenTable[]) {
 function handleGenTable(row: any) {
   const idList = row && row.id != null ? [row.id] : table.value.ids
   if (!idList || idList.length === 0) {
-    modal.msgError('请选择要生成的数据')
+    modal.msgError(t('tool.codegen.selectGenData'))
     return
   }
   const zipName = 'xxl-boot-codegen.zip'
@@ -238,12 +239,12 @@ function openCreateDialog() {
 /** 创建表 */
 function handleCreateTable() {
   if (createDialog.value.content === '') {
-    modal.msgError('请输入建表语句')
+    modal.msgError(t('tool.codegen.enterCreateSql'))
     return
   }
   // 新建时携带前端模板类型，与后端 createTable 入参匹配
   createTable({ tableSql: createDialog.value.content, tplWebType: 'element-plus-typescript' }).then(() => {
-    modal.msgSuccess('创建成功')
+    modal.msgSuccess(t('tool.codegen.createSuccess'))
     createDialog.value.visible = false
     handleQuery()
   })
@@ -261,7 +262,7 @@ function handlePreview(row: any) {
 
 /** 复制代码成功 */
 function copyTextSuccess() {
-  modal.msgSuccess('复制成功')
+  modal.msgSuccess(t('tool.codegen.copySuccess'))
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -281,13 +282,13 @@ function handleDelete(row: any) {
     return
   }
   modal
-    .confirm('是否确认删除表编号为"' + tableIds + '"的数据项？')
+    .confirm(t('tool.codegen.deleteTableConfirm', [tableIds]))
     .then(function () {
       return delTable(tableIds)
     })
     .then(() => {
       getList()
-      modal.msgSuccess('删除成功')
+      modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }

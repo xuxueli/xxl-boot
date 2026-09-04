@@ -13,6 +13,7 @@ import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import defaultSettings from '@/default-settings';
+import { t } from '@/i18n';
 import { Footer } from '@/layouts/components';
 import { getCodeImg } from '@/modules/framework/auth/api';
 import { useUserStore } from '@/stores/userStore';
@@ -114,7 +115,7 @@ const Login = () => {
         ...values,
         captchaUuid,
       });
-      message.success('登录成功！');
+      message.success(t('auth.login.success'));
 
       // 登录成功：拉取用户信息与菜单数据
       await Promise.all([userStore.fetchUserInfo(), userStore.fetchMenuData()]);
@@ -136,7 +137,7 @@ const Login = () => {
   // 初始化：获取验证码、设置页面标题；已登录进入登录页时直接跳转（对齐 Vue 已登录访问登录页 → 首页/redirect）
   useEffect(() => {
     getCode();
-    document.title = defaultSettings.title as string;
+    document.title = t('app.title');
     if (getToken() && useUserStore.getState().currentUser) {
       navigate(
         getSafeRedirectUrl(searchParams.get('redirect')) ||
@@ -169,7 +170,7 @@ const Login = () => {
           }}
           title={defaultSettings.brandName}
           subTitle={
-            <div className={styles.subTitle}>{defaultSettings.title}</div>
+            <div className={styles.subTitle}>{t('app.title')}</div>
           }
           initialValues={{
             rememberMe: false,
@@ -182,11 +183,11 @@ const Login = () => {
               size: 'large',
               prefix: <UserOutlined />,
             }}
-            placeholder="请输入账号"
+            placeholder={t('common.inputPlaceholder', [t('authz.user.username')])}
             rules={[
               {
                 required: true,
-                message: '请输入您的账号',
+                message: t('common.inputPlaceholder', [t('authz.user.username')]),
               },
             ]}
           />
@@ -196,11 +197,11 @@ const Login = () => {
               size: 'large',
               prefix: <LockOutlined />,
             }}
-            placeholder="请输入密码"
+            placeholder={t('common.inputPlaceholder', [t('authz.user.password')])}
             rules={[
               {
                 required: true,
-                message: '请输入您的密码',
+                message: t('common.inputPlaceholder', [t('authz.user.password')]),
               },
             ]}
           />
@@ -212,25 +213,25 @@ const Login = () => {
                 prefix: <SafetyOutlined />,
                 suffix: (
                   <img
-                    alt="验证码"
+                    alt={t('auth.login.captcha')}
                     className={styles.captcha}
                     src={codeUrl}
                     onClick={getCode}
                   />
                 ),
               }}
-              placeholder="请输入验证码"
+              placeholder={t('common.inputPlaceholder', [t('auth.login.captcha')])}
               rules={[
                 {
                   required: true,
-                  message: '请输入验证码',
+                  message: t('common.inputPlaceholder', [t('auth.login.captcha')]),
                 },
               ]}
             />
           )}
           <div style={{ marginBottom: 15 }}>
             <ProFormCheckbox name="rememberMe" noStyle>
-              记住密码
+              {t('auth.login.remember')}
             </ProFormCheckbox>
           </div>
         </LoginForm>

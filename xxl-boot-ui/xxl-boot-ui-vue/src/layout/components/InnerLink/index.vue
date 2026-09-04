@@ -9,13 +9,14 @@
 
 -->
 <template>
-  <div :style="'height:' + height" v-loading="loading" element-loading-text="正在加载页面，请稍候！">
+  <div :style="'height:' + height" v-loading="loading" :element-loading-text="t('layout.innerLink.loading')">
     <iframe :id="iframeId" style="width: 100%; height: 100%" :src="src" ref="iframeRef" frameborder="no"></iframe>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { t } from '@/i18n'
 const props = defineProps({
   src: {
     type: String,

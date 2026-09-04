@@ -16,6 +16,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 import { getIconComponent } from '@/utils/icon';
+import { t } from '@/i18n';
 import {
   Footer,
   FullscreenButton,
@@ -183,7 +184,7 @@ const AppLayout = () => {
    */
   const handleSaveSettings = () => {
     useSettingsStore.getState().saveSettings();
-    message.success('设置已保存');
+    message.success(t('layout.settingSaved'));
   };
 
   /**
@@ -191,7 +192,7 @@ const AppLayout = () => {
    */
   const handleResetSettings = () => {
     useSettingsStore.getState().resetSettings();
-    message.success('设置已重置');
+    message.success(t('layout.settingReset'));
   };
 
   return (
@@ -199,7 +200,7 @@ const AppLayout = () => {
     <ProLayout
       // 将布局设置透传给 ProLayout，实时驱动标题/Logo/主题/布局等
       {...settings}
-      title={settings.title}
+      title={t('app.title')}
       logo={settings.logo}
       location={location}
       // 左侧菜单：菜单以后端资源配置为准（getRouters 返回的树）
@@ -272,10 +273,10 @@ const AppLayout = () => {
           footer: (
             <div style={{ display: 'flex', gap: 8 }}>
               <Button type="primary" block onClick={handleSaveSettings}>
-                保存设置
+                {t('layout.saveSetting')}
               </Button>
               <Button block onClick={handleResetSettings}>
-                重置设置
+                {t('layout.resetSetting')}
               </Button>
             </div>
           ),

@@ -6,7 +6,7 @@
   <!-- 右侧滑出抽屉，半屏展示 -->
   <el-drawer
     v-model="visible"
-    title="站内消息详情"
+    :title="t('layout.nav.messageDetailTitle')"
     direction="rtl"
     size="50%"
     append-to-body
@@ -17,7 +17,7 @@
       <!-- 无数据状态 -->
       <div v-if="!detail" class="message-empty">
         <el-icon><Document /></el-icon>
-        <span>暂无数据</span>
+        <span>{{ t('common.emptyData') }}</span>
       </div>
 
       <!-- 详情内容 -->
@@ -25,13 +25,13 @@
         <!-- 类型标签：通知 / 公告 / 消息 -->
         <div class="message-type-wrap">
           <span v-if="detail.category === 0" class="message-type-tag type-notify">
-            <el-icon><Bell /></el-icon> 通知
+            <el-icon><Bell /></el-icon> {{ t('layout.nav.notify') }}
           </span>
           <span v-else-if="detail.category === 1" class="message-type-tag type-announce">
-            <el-icon><Message /></el-icon> 公告
+            <el-icon><Message /></el-icon> {{ t('layout.nav.announce') }}
           </span>
           <span v-else class="message-type-tag type-notify">
-            <el-icon><Document /></el-icon> 消息
+            <el-icon><Document /></el-icon> {{ t('layout.nav.messageType') }}
           </span>
         </div>
 
@@ -50,7 +50,7 @@
           </span>
           <span class="meta-item">
             <span :class="['status-dot', isStatusNormal ? 'status-ok' : 'status-off']"></span>
-            <span>{{ isStatusNormal ? '正常' : '已关闭' }}</span>
+            <span>{{ isStatusNormal ? t('common.normal') : t('layout.nav.closed') }}</span>
           </span>
         </div>
 
@@ -65,7 +65,7 @@
         <div class="message-body">
           <div v-if="hasContent" class="message-content" v-html="detail.content" />
           <div v-else class="message-empty message-empty--inner">
-            <el-icon><Document /></el-icon> 暂无内容
+            <el-icon><Document /></el-icon> {{ t('common.emptyContent') }}
           </div>
         </div>
       </div>
@@ -76,6 +76,7 @@
 <script setup lang="ts">
 import { getMessage } from '@/modules/framework/system/message/api'
 import { computed, ref } from 'vue'
+import { t } from '@/i18n'
 
 /*
  * 消息详情：覆盖 Message 常用字段，status 支持字符串/数字两种形态，并支持预设模式（messageId / messageContent）入参

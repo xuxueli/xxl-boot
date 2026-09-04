@@ -6,14 +6,14 @@
   <div class="right-board">
     <!-- TAB -->
     <el-tabs v-model="panelState.currentTab" stretch class="center-tabs">
-      <el-tab-pane label="组件属性" name="field" />
-      <el-tab-pane label="表单属性" name="form" />
+      <el-tab-pane :label="t('tool.pagegen.fieldProps')" name="field" />
+      <el-tab-pane :label="t('tool.pagegen.formProps')" name="form" />
     </el-tabs>
 
     <!-- 组件TAB -->
     <div class="field-box">
       <!-- 组件文档 -->
-      <a class="document-link" target="_blank" :href="documentLink" title="查看组件文档">
+      <a class="document-link" target="_blank" :href="documentLink" :title="t('tool.pagegen.viewDocument')">
         <el-icon>
           <Link />
         </el-icon>
@@ -24,8 +24,8 @@
         <!-- 组件属性 -->
         <el-form v-show="panelState.currentTab === 'field' && showField" size="default" label-width="90px" label-position="top" style="">
           <!-- 组件类型 -->
-          <el-form-item v-if="activeData.changeTag" label="组件类型">
-            <el-select v-model="activeData.tagIcon" placeholder="请选择组件类型" :style="{ width: '100%' }" @change="tagChange">
+          <el-form-item v-if="activeData.changeTag" :label="t('tool.pagegen.componentType')">
+            <el-select v-model="activeData.tagIcon" :placeholder="t('common.selectPlaceholderText', [t('tool.pagegen.componentType')])" :style="{ width: '100%' }" @change="tagChange">
               <el-option-group v-for="group in tagList" :key="group.label" :label="group.label">
                 <el-option v-for="item in group.options" :key="item.label" :label="item.label" :value="item.tagIcon">
                   <SvgIcon class="node-icon" :icon-class="item.tagIcon" style="margin-right: 10px" />
@@ -36,48 +36,48 @@
           </el-form-item>
 
           <!-- 字段名 -->
-          <el-form-item v-if="activeData.vModel !== undefined" label="字段名">
-            <el-input v-model="activeData.vModel" placeholder="请输入字段名（v-model）" />
+          <el-form-item v-if="activeData.vModel !== undefined" :label="t('tool.pagegen.fieldName')">
+            <el-input v-model="activeData.vModel" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.fieldName')])" />
           </el-form-item>
 
           <!-- 组件名 -->
-          <el-form-item v-if="activeData.componentName !== undefined" label="组件名">
+          <el-form-item v-if="activeData.componentName !== undefined" :label="t('tool.pagegen.componentName')">
             {{ activeData.componentName }}
           </el-form-item>
 
           <!-- 标题 -->
-          <el-form-item v-if="activeData.label !== undefined" label="标题">
-            <el-input v-model="activeData.label" placeholder="请输入标题" />
+          <el-form-item v-if="activeData.label !== undefined" :label="t('tool.pagegen.title')">
+            <el-input v-model="activeData.label" :placeholder="t('common.inputPlaceholder', [t('system.message.title')])" />
           </el-form-item>
 
           <!-- 占位提示 -->
-          <el-form-item v-if="activeData.placeholder !== undefined" label="占位提示">
-            <el-input v-model="activeData.placeholder" placeholder="请输入占位提示" />
+          <el-form-item v-if="activeData.placeholder !== undefined" :label="t('tool.pagegen.placeholder')">
+            <el-input v-model="activeData.placeholder" :placeholder="t('tool.pagegen.placeholderInput')" />
           </el-form-item>
           <!-- 开始占位 -->
-          <el-form-item v-if="activeData['start-placeholder'] !== undefined" label="开始占位">
-            <el-input v-model="activeData['start-placeholder']" placeholder="请输入占位提示" />
+          <el-form-item v-if="activeData['start-placeholder'] !== undefined" :label="t('tool.pagegen.startPlaceholder')">
+            <el-input v-model="activeData['start-placeholder']" :placeholder="t('tool.pagegen.placeholderInput')" />
           </el-form-item>
           <!-- 结束占位 -->
-          <el-form-item v-if="activeData['end-placeholder'] !== undefined" label="结束占位">
-            <el-input v-model="activeData['end-placeholder']" placeholder="请输入占位提示" />
+          <el-form-item v-if="activeData['end-placeholder'] !== undefined" :label="t('tool.pagegen.endPlaceholder')">
+            <el-input v-model="activeData['end-placeholder']" :placeholder="t('tool.pagegen.placeholderInput')" />
           </el-form-item>
 
           <!-- 表单栅格 -->
-          <el-form-item v-if="activeData.span !== undefined" label="表单栅格">
+          <el-form-item v-if="activeData.span !== undefined" :label="t('tool.pagegen.formGrid')">
             <el-slider v-model="activeData.span" :max="24" :min="1" :marks="{ 12: '' }" @change="spanChange" />
           </el-form-item>
-          <el-form-item v-if="activeData.layout === 'rowFormItem'" label="栅格间隔">
-            <el-input-number v-model="activeData.gutter" :min="0" placeholder="栅格间隔" />
+          <el-form-item v-if="activeData.layout === 'rowFormItem'" :label="t('tool.pagegen.gridGap')">
+            <el-input-number v-model="activeData.gutter" :min="0" :placeholder="t('tool.pagegen.gridGap')" />
           </el-form-item>
 
           <!-- 排列 -->
-          <el-form-item v-if="activeData.justify !== undefined" label="水平排列">
-            <el-select v-model="activeData.justify" placeholder="请选择水平排列" :style="{ width: '100%' }">
+          <el-form-item v-if="activeData.justify !== undefined" :label="t('tool.pagegen.horizontalLayout')">
+            <el-select v-model="activeData.justify" :placeholder="t('common.selectPlaceholderText', [t('tool.pagegen.horizontalLayout')])" :style="{ width: '100%' }">
               <el-option v-for="(item, index) in justifyOptions" :key="index" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
-          <el-form-item v-if="activeData.align !== undefined" label="垂直排列">
+          <el-form-item v-if="activeData.align !== undefined" :label="t('tool.pagegen.verticalLayout')">
             <el-radio-group v-model="activeData.align">
               <el-radio-button label="top" />
               <el-radio-button label="middle" />
@@ -86,143 +86,143 @@
           </el-form-item>
 
           <!-- 标签宽度 -->
-          <el-form-item v-if="activeData.labelWidth !== undefined" label="标签宽度">
-            <el-input v-model.number="activeData.labelWidth" type="number" placeholder="请输入标签宽度" />
+          <el-form-item v-if="activeData.labelWidth !== undefined" :label="t('tool.pagegen.labelWidth')">
+            <el-input v-model.number="activeData.labelWidth" type="number" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.labelWidth')])" />
           </el-form-item>
           <!-- 组件宽度 -->
-          <el-form-item v-if="activeData.style && activeData.style.width !== undefined" label="组件宽度">
-            <el-input v-model="activeData.style.width" placeholder="请输入组件宽度" clearable />
+          <el-form-item v-if="activeData.style && activeData.style.width !== undefined" :label="t('tool.pagegen.componentWidth')">
+            <el-input v-model="activeData.style.width" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.componentWidth')])" clearable />
           </el-form-item>
 
           <!-- 默认值 -->
-          <el-form-item v-if="activeData.vModel !== undefined" label="默认值">
-            <el-input :value="setDefaultValue(activeData.defaultValue)" placeholder="请输入默认值" @input="onDefaultValueInput" />
+          <el-form-item v-if="activeData.vModel !== undefined" :label="t('tool.pagegen.defaultValue')">
+            <el-input :value="setDefaultValue(activeData.defaultValue)" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.defaultValue')])" @input="onDefaultValueInput" />
           </el-form-item>
-          <el-form-item v-if="activeData.tag === 'el-checkbox-group'" label="至少应选">
+          <el-form-item v-if="activeData.tag === 'el-checkbox-group'" :label="t('tool.pagegen.minChecked')">
             <el-input-number
               :value="activeData.min"
               :min="0"
-              placeholder="至少应选"
+              :placeholder="t('tool.pagegen.minChecked')"
               @input="activeData.min = $event ? $event : undefined"
             />
           </el-form-item>
-          <el-form-item v-if="activeData.tag === 'el-checkbox-group'" label="最多可选">
+          <el-form-item v-if="activeData.tag === 'el-checkbox-group'" :label="t('tool.pagegen.maxChecked')">
             <el-input-number
               :value="activeData.max"
               :min="0"
-              placeholder="最多可选"
+              :placeholder="t('tool.pagegen.maxChecked')"
               @input="activeData.max = $event ? $event : undefined"
             />
           </el-form-item>
 
           <!-- 前缀 -->
-          <el-form-item v-if="activeData.prepend !== undefined" label="前缀">
-            <el-input v-model="activeData.prepend" placeholder="请输入前缀" />
+          <el-form-item v-if="activeData.prepend !== undefined" :label="t('tool.pagegen.prepend')">
+            <el-input v-model="activeData.prepend" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.prepend')])" />
           </el-form-item>
-          <el-form-item v-if="activeData.append !== undefined" label="后缀">
-            <el-input v-model="activeData.append" placeholder="请输入后缀" />
+          <el-form-item v-if="activeData.append !== undefined" :label="t('tool.pagegen.append')">
+            <el-input v-model="activeData.append" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.append')])" />
           </el-form-item>
 
           <!-- 图标 -->
-          <el-form-item v-if="activeData['prefix-icon'] !== undefined" label="前图标">
-            <el-input v-model="activeData['prefix-icon']" placeholder="请输入前图标名称">
+          <el-form-item v-if="activeData['prefix-icon'] !== undefined" :label="t('tool.pagegen.prefixIcon')">
+            <el-input v-model="activeData['prefix-icon']" :placeholder="t('common.inputPlaceholder', [t('common.noun.prefixIconName')])">
               <template #append>
-                <el-button icon="Pointer" @click="openIconsDialog('prefix-icon')"> 选择 </el-button>
+                <el-button icon="Pointer" @click="openIconsDialog('prefix-icon')"> {{ t('tool.pagegen.select') }} </el-button>
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item v-if="activeData['suffix-icon'] !== undefined" label="后图标">
-            <el-input v-model="activeData['suffix-icon']" placeholder="请输入后图标名称">
+          <el-form-item v-if="activeData['suffix-icon'] !== undefined" :label="t('tool.pagegen.suffixIcon')">
+            <el-input v-model="activeData['suffix-icon']" :placeholder="t('common.inputPlaceholder', [t('common.noun.suffixIconName')])">
               <template #append>
-                <el-button icon="Pointer" @click="openIconsDialog('suffix-icon')"> 选择 </el-button>
+                <el-button icon="Pointer" @click="openIconsDialog('suffix-icon')"> {{ t('tool.pagegen.select') }} </el-button>
               </template>
             </el-input>
           </el-form-item>
 
           <!-- 分隔符 -->
-          <el-form-item v-if="activeData.tag === 'el-cascader'" label="选项分隔符">
-            <el-input v-model="activeData.separator" placeholder="请输入选项分隔符" />
+          <el-form-item v-if="activeData.tag === 'el-cascader'" :label="t('tool.pagegen.optionSeparator')">
+            <el-input v-model="activeData.separator" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.optionSeparator')])" />
           </el-form-item>
 
           <!-- 行数 -->
-          <el-form-item v-if="activeData.autosize !== undefined" label="最小行数">
-            <el-input-number v-model="activeData.autosize.minRows" :min="1" placeholder="最小行数" />
+          <el-form-item v-if="activeData.autosize !== undefined" :label="t('tool.pagegen.minRows')">
+            <el-input-number v-model="activeData.autosize.minRows" :min="1" :placeholder="t('tool.pagegen.minRows')" />
           </el-form-item>
-          <el-form-item v-if="activeData.autosize !== undefined" label="最大行数">
-            <el-input-number v-model="activeData.autosize.maxRows" :min="1" placeholder="最大行数" />
+          <el-form-item v-if="activeData.autosize !== undefined" :label="t('tool.pagegen.maxRows')">
+            <el-input-number v-model="activeData.autosize.maxRows" :min="1" :placeholder="t('tool.pagegen.maxRows')" />
           </el-form-item>
 
           <!-- 数值范围 -->
-          <el-form-item v-if="activeData.min !== undefined" label="最小值">
-            <el-input-number v-model="activeData.min" placeholder="最小值" />
+          <el-form-item v-if="activeData.min !== undefined" :label="t('tool.pagegen.minValue')">
+            <el-input-number v-model="activeData.min" :placeholder="t('tool.pagegen.minValue')" />
           </el-form-item>
-          <el-form-item v-if="activeData.max !== undefined" label="最大值">
-            <el-input-number v-model="activeData.max" placeholder="最大值" />
+          <el-form-item v-if="activeData.max !== undefined" :label="t('tool.pagegen.maxValue')">
+            <el-input-number v-model="activeData.max" :placeholder="t('tool.pagegen.maxValue')" />
           </el-form-item>
 
           <!-- 步长 -->
-          <el-form-item v-if="activeData.step !== undefined" label="步长">
-            <el-input-number v-model="activeData.step" placeholder="步数" />
+          <el-form-item v-if="activeData.step !== undefined" :label="t('tool.pagegen.step')">
+            <el-input-number v-model="activeData.step" :placeholder="t('tool.pagegen.stepPlaceholder')" />
           </el-form-item>
 
           <!-- 精度 -->
-          <el-form-item v-if="activeData.tag === 'el-input-number'" label="精度">
-            <el-input-number v-model="activeData.precision" :min="0" placeholder="精度" />
+          <el-form-item v-if="activeData.tag === 'el-input-number'" :label="t('tool.pagegen.precision')">
+            <el-input-number v-model="activeData.precision" :min="0" :placeholder="t('tool.pagegen.precision')" />
           </el-form-item>
 
           <!-- 按钮位置 -->
-          <el-form-item v-if="activeData.tag === 'el-input-number'" label="按钮位置">
+          <el-form-item v-if="activeData.tag === 'el-input-number'" :label="t('tool.pagegen.controlsPosition')">
             <el-radio-group v-model="activeData['controls-position']">
-              <el-radio-button label=""> 默认 </el-radio-button>
-              <el-radio-button label="right"> 右侧 </el-radio-button>
+              <el-radio-button label=""> {{ t('tool.pagegen.default') }} </el-radio-button>
+              <el-radio-button label="right"> {{ t('tool.pagegen.right') }} </el-radio-button>
             </el-radio-group>
           </el-form-item>
 
           <!-- 最多输入 -->
-          <el-form-item v-if="activeData.maxlength !== undefined" label="最多输入">
-            <el-input v-model="activeData.maxlength" placeholder="请输入字符长度">
-              <template v-slot:append> 个字符 </template>
+          <el-form-item v-if="activeData.maxlength !== undefined" :label="t('tool.pagegen.maxInput')">
+            <el-input v-model="activeData.maxlength" :placeholder="t('common.inputPlaceholder', [t('common.noun.charLength')])">
+              <template v-slot:append> {{ t('tool.pagegen.characters') }} </template>
             </el-input>
           </el-form-item>
 
           <!-- 提示 -->
-          <el-form-item v-if="activeData['active-text'] !== undefined" label="开启提示">
-            <el-input v-model="activeData['active-text']" placeholder="请输入开启提示" />
+          <el-form-item v-if="activeData['active-text'] !== undefined" :label="t('tool.pagegen.activeText')">
+            <el-input v-model="activeData['active-text']" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.activeText')])" />
           </el-form-item>
-          <el-form-item v-if="activeData['inactive-text'] !== undefined" label="关闭提示">
-            <el-input v-model="activeData['inactive-text']" placeholder="请输入关闭提示" />
+          <el-form-item v-if="activeData['inactive-text'] !== undefined" :label="t('tool.pagegen.inactiveText')">
+            <el-input v-model="activeData['inactive-text']" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.inactiveText')])" />
           </el-form-item>
 
-          <el-form-item v-if="activeData['active-value'] !== undefined" label="开启值">
+          <el-form-item v-if="activeData['active-value'] !== undefined" :label="t('tool.pagegen.activeValue')">
             <el-input
               :value="setDefaultValue(activeData['active-value'])"
-              placeholder="请输入开启值"
+              :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.activeValue')])"
               @input="onSwitchValueInput($event, 'active-value')"
             />
           </el-form-item>
-          <el-form-item v-if="activeData['inactive-value'] !== undefined" label="关闭值">
+          <el-form-item v-if="activeData['inactive-value'] !== undefined" :label="t('tool.pagegen.inactiveValue')">
             <el-input
               :value="setDefaultValue(activeData['inactive-value'])"
-              placeholder="请输入关闭值"
+              :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.inactiveValue')])"
               @input="onSwitchValueInput($event, 'inactive-value')"
             />
           </el-form-item>
 
-          <el-form-item v-if="activeData.type !== undefined && 'el-date-picker' === activeData.tag" label="时间类型">
-            <el-select v-model="activeData.type" placeholder="请选择时间类型" :style="{ width: '100%' }" @change="dateTypeChange">
+          <el-form-item v-if="activeData.type !== undefined && 'el-date-picker' === activeData.tag" :label="t('tool.pagegen.timeType')">
+            <el-select v-model="activeData.type" :placeholder="t('common.selectPlaceholderText', [t('tool.pagegen.timeType')])" :style="{ width: '100%' }" @change="dateTypeChange">
               <el-option v-for="(item, index) in dateOptions" :key="index" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
 
-          <el-form-item v-if="activeData.name !== undefined" label="文件字段名">
-            <el-input v-model="activeData.name" placeholder="请输入上传文件字段名" />
+          <el-form-item v-if="activeData.name !== undefined" :label="t('tool.pagegen.fileField')">
+            <el-input v-model="activeData.name" :placeholder="t('common.inputPlaceholder', [t('common.noun.fileFieldName')])" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.accept !== undefined" label="文件类型">
-            <el-select v-model="activeData.accept" placeholder="请选择文件类型" :style="{ width: '100%' }" clearable>
-              <el-option label="图片" value="image/*" />
-              <el-option label="视频" value="video/*" />
-              <el-option label="音频" value="audio/*" />
+          <el-form-item v-if="activeData.accept !== undefined" :label="t('tool.pagegen.fileType')">
+            <el-select v-model="activeData.accept" :placeholder="t('common.selectPlaceholderText', [t('tool.pagegen.fileType')])" :style="{ width: '100%' }" clearable>
+              <el-option :label="t('tool.pagegen.fileTypeImage')" value="image/*" />
+              <el-option :label="t('tool.pagegen.fileTypeVideo')" value="video/*" />
+              <el-option :label="t('tool.pagegen.fileTypeAudio')" value="audio/*" />
               <el-option label="excel" value=".xls,.xlsx" />
               <el-option label="word" value=".doc,.docx" />
               <el-option label="pdf" value=".pdf" />
@@ -230,8 +230,8 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item v-if="activeData.fileSize !== undefined" label="文件大小">
-            <el-input v-model.number="activeData.fileSize" placeholder="请输入文件大小">
+          <el-form-item v-if="activeData.fileSize !== undefined" :label="t('tool.pagegen.fileSize')">
+            <el-input v-model.number="activeData.fileSize" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.fileSize')])">
               <template v-slot:append>
                 <el-select v-model="activeData.sizeUnit" :style="{ width: '66px' }">
                   <el-option label="KB" value="KB" />
@@ -242,11 +242,11 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item v-if="activeData.action !== undefined" label="上传地址">
-            <el-input v-model="activeData.action" placeholder="请输入上传地址" clearable />
+          <el-form-item v-if="activeData.action !== undefined" :label="t('tool.pagegen.uploadUrl')">
+            <el-input v-model="activeData.action" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.uploadUrl')])" clearable />
           </el-form-item>
 
-          <el-form-item v-if="activeData['list-type'] !== undefined" label="列表类型">
+          <el-form-item v-if="activeData['list-type'] !== undefined" :label="t('tool.pagegen.listType')">
             <el-radio-group v-model="activeData['list-type']" size="small">
               <el-radio-button label="text"> text </el-radio-button>
               <el-radio-button label="picture"> picture </el-radio-button>
@@ -254,33 +254,33 @@
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item v-if="activeData.buttonText !== undefined" v-show="'picture-card' !== activeData['list-type']" label="按钮文字">
-            <el-input v-model="activeData.buttonText" placeholder="请输入按钮文字" />
+          <el-form-item v-if="activeData.buttonText !== undefined" v-show="'picture-card' !== activeData['list-type']" :label="t('tool.pagegen.buttonText')">
+            <el-input v-model="activeData.buttonText" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.buttonText')])" />
           </el-form-item>
 
-          <el-form-item v-if="activeData['range-separator'] !== undefined" label="分隔符">
-            <el-input v-model="activeData['range-separator']" placeholder="请输入分隔符" />
+          <el-form-item v-if="activeData['range-separator'] !== undefined" :label="t('tool.pagegen.separator')">
+            <el-input v-model="activeData['range-separator']" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.separator')])" />
           </el-form-item>
 
-          <el-form-item v-if="activeData['picker-options'] !== undefined" label="时间段">
-            <el-input v-model="activeData['picker-options'].selectableRange" placeholder="请输入时间段" />
+          <el-form-item v-if="activeData['picker-options'] !== undefined" :label="t('tool.pagegen.timePeriod')">
+            <el-input v-model="activeData['picker-options'].selectableRange" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.timePeriod')])" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.format !== undefined" label="时间格式">
-            <el-input :value="activeData.format" placeholder="请输入时间格式" @input="setTimeValue($event)" />
+          <el-form-item v-if="activeData.format !== undefined" :label="t('tool.pagegen.timeFormat')">
+            <el-input :value="activeData.format" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.timeFormat')])" @input="setTimeValue($event)" />
           </el-form-item>
 
           <!-- 选项 -->
           <template v-if="['el-checkbox-group', 'el-radio-group', 'el-select'].indexOf(activeData.tag!) > -1">
-            <el-divider>选项</el-divider>
+            <el-divider>{{ t('tool.pagegen.options') }}</el-divider>
             <draggable :list="activeData.options" :animation="340" group="selectItem" handle=".option-drag" item-key="label">
               <template #item="{ element, index }">
                 <div :key="index" class="select-item">
                   <div class="select-line-icon option-drag">
                     <i class="el-icon-s-operation" />
                   </div>
-                  <el-input v-model="element.label" placeholder="选项名" size="small" />
-                  <el-input placeholder="选项值" size="small" :value="element.value" @input="setOptionValue(element, $event)" />
+                  <el-input v-model="element.label" :placeholder="t('tool.pagegen.optionName')" size="small" />
+                  <el-input :placeholder="t('tool.pagegen.optionValue')" size="small" :value="element.value" @input="setOptionValue(element, $event)" />
                   <div class="close-btn select-line-icon" @click="activeData.options.splice(index, 1)">
                     <el-icon>
                       <Remove />
@@ -291,7 +291,7 @@
             </draggable>
             <div>
               <el-button icon="CirclePlus" style="margin-left: 8px; margin-top: 10px" text bg type="primary" @click="addSelectItem">
-                添加选项
+                {{ t('tool.pagegen.addOption') }}
               </el-button>
             </div>
             <el-divider />
@@ -299,23 +299,23 @@
 
           <!-- 选项2 -->
           <template v-if="['el-cascader'].indexOf(activeData.tag!) > -1">
-            <el-divider>选项</el-divider>
-            <el-form-item label="数据类型">
+            <el-divider>{{ t('tool.pagegen.options') }}</el-divider>
+            <el-form-item :label="t('tool.pagegen.dataType')">
               <el-radio-group v-model="activeData.dataType" size="small">
-                <el-radio-button label="dynamic"> 动态数据 </el-radio-button>
-                <el-radio-button label="static"> 静态数据 </el-radio-button>
+                <el-radio-button label="dynamic"> {{ t('tool.pagegen.dynamicData') }} </el-radio-button>
+                <el-radio-button label="static"> {{ t('tool.pagegen.staticData') }} </el-radio-button>
               </el-radio-group>
             </el-form-item>
 
             <template v-if="activeData.dataType === 'dynamic'">
-              <el-form-item label="标签键名">
-                <el-input v-model="activeData.labelKey" placeholder="请输入标签键名" />
+              <el-form-item :label="t('tool.pagegen.labelKey')">
+                <el-input v-model="activeData.labelKey" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.labelKey')])" />
               </el-form-item>
-              <el-form-item label="值键名">
-                <el-input v-model="activeData.valueKey" placeholder="请输入值键名" />
+              <el-form-item :label="t('tool.pagegen.valueKey')">
+                <el-input v-model="activeData.valueKey" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.valueKey')])" />
               </el-form-item>
-              <el-form-item label="子级键名">
-                <el-input v-model="activeData.childrenKey" placeholder="请输入子级键名" />
+              <el-form-item :label="t('tool.pagegen.childrenKey')">
+                <el-input v-model="activeData.childrenKey" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.childrenKey')])" />
               </el-form-item>
             </template>
 
@@ -329,54 +329,54 @@
             />
             <div v-if="activeData.dataType === 'static'">
               <el-button icon="CirclePlus" style="margin-left: 0; margin-top: 10px" type="primary" text bg @click="addTreeItem">
-                添加父级
+                {{ t('tool.pagegen.addParent') }}
               </el-button>
             </div>
             <el-divider />
           </template>
 
-          <el-form-item v-if="activeData.optionType !== undefined" label="选项样式">
+          <el-form-item v-if="activeData.optionType !== undefined" :label="t('tool.pagegen.optionStyle')">
             <el-radio-group v-model="activeData.optionType">
-              <el-radio-button label="default"> 默认 </el-radio-button>
-              <el-radio-button label="button"> 按钮 </el-radio-button>
+              <el-radio-button label="default"> {{ t('tool.pagegen.default') }} </el-radio-button>
+              <el-radio-button label="button"> {{ t('tool.pagegen.button') }} </el-radio-button>
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item v-if="activeData['active-color'] !== undefined" label="开启颜色">
+          <el-form-item v-if="activeData['active-color'] !== undefined" :label="t('tool.pagegen.activeColor')">
             <el-color-picker v-model="activeData['active-color']" />
           </el-form-item>
-          <el-form-item v-if="activeData['inactive-color'] !== undefined" label="关闭颜色">
+          <el-form-item v-if="activeData['inactive-color'] !== undefined" :label="t('tool.pagegen.inactiveColor')">
             <el-color-picker v-model="activeData['inactive-color']" />
           </el-form-item>
 
-          <el-form-item v-if="activeData['allow-half'] !== undefined" label="允许半选">
+          <el-form-item v-if="activeData['allow-half'] !== undefined" :label="t('tool.pagegen.allowHalf')">
             <el-switch v-model="activeData['allow-half']" />
           </el-form-item>
 
-          <el-form-item v-if="activeData['show-text'] !== undefined" label="辅助文字">
+          <el-form-item v-if="activeData['show-text'] !== undefined" :label="t('tool.pagegen.showText')">
             <el-switch v-model="activeData['show-text']" @change="rateTextChange" />
           </el-form-item>
 
-          <el-form-item v-if="activeData['show-score'] !== undefined" label="显示分数">
+          <el-form-item v-if="activeData['show-score'] !== undefined" :label="t('tool.pagegen.showScore')">
             <el-switch v-model="activeData['show-score']" @change="rateScoreChange" />
           </el-form-item>
 
-          <el-form-item v-if="activeData['show-stops'] !== undefined" label="显示间断点">
+          <el-form-item v-if="activeData['show-stops'] !== undefined" :label="t('tool.pagegen.showStops')">
             <el-switch v-model="activeData['show-stops']" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.range !== undefined" label="范围选择">
+          <el-form-item v-if="activeData.range !== undefined" :label="t('tool.pagegen.rangeSelect')">
             <el-switch v-model="activeData.range" @change="rangeChange" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.border !== undefined && activeData.optionType === 'default'" label="是否带边框">
+          <el-form-item v-if="activeData.border !== undefined && activeData.optionType === 'default'" :label="t('tool.pagegen.withBorder')">
             <el-switch v-model="activeData.border" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.tag === 'el-color-picker'" label="颜色格式">
+          <el-form-item v-if="activeData.tag === 'el-color-picker'" :label="t('tool.pagegen.colorFormat')">
             <el-select
               v-model="activeData['color-format']"
-              placeholder="请选择颜色格式"
+              :placeholder="t('common.selectPlaceholderText', [t('tool.pagegen.colorFormat')])"
               :style="{ width: '100%' }"
               @change="colorFormatChange"
             >
@@ -390,66 +390,66 @@
               activeData.size !== undefined &&
               (activeData.optionType === 'button' || activeData.border || activeData.tag === 'el-color-picker')
             "
-            label="选项尺寸"
+            :label="t('tool.pagegen.optionSize')"
           >
             <el-radio-group v-model="activeData.size">
-              <el-radio-button label="large"> 较大 </el-radio-button>
-              <el-radio-button label="default"> 默认 </el-radio-button>
-              <el-radio-button label="small"> 较小 </el-radio-button>
+              <el-radio-button label="large"> {{ t('tool.pagegen.large') }} </el-radio-button>
+              <el-radio-button label="default"> {{ t('tool.pagegen.default') }} </el-radio-button>
+              <el-radio-button label="small"> {{ t('tool.pagegen.small') }} </el-radio-button>
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item v-if="activeData['show-word-limit'] !== undefined" label="输入统计">
+          <el-form-item v-if="activeData['show-word-limit'] !== undefined" :label="t('tool.pagegen.inputCount')">
             <el-switch v-model="activeData['show-word-limit']" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.tag === 'el-input-number'" label="严格步数">
+          <el-form-item v-if="activeData.tag === 'el-input-number'" :label="t('tool.pagegen.strictStep')">
             <el-switch v-model="activeData['step-strictly']" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.tag === 'el-cascader'" label="是否多选">
+          <el-form-item v-if="activeData.tag === 'el-cascader'" :label="t('tool.pagegen.multiple')">
             <el-switch v-model="activeData.props.props.multiple" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.tag === 'el-cascader'" label="展示全路径">
+          <el-form-item v-if="activeData.tag === 'el-cascader'" :label="t('tool.pagegen.showAllLevels')">
             <el-switch v-model="activeData['show-all-levels']" />
           </el-form-item>
-          <el-form-item v-if="activeData.tag === 'el-cascader'" label="可否筛选">
+          <el-form-item v-if="activeData.tag === 'el-cascader'" :label="t('tool.pagegen.filterable')">
             <el-switch v-model="activeData.filterable" />
           </el-form-item>
-          <el-form-item v-if="activeData.clearable !== undefined" label="能否清空">
+          <el-form-item v-if="activeData.clearable !== undefined" :label="t('tool.pagegen.clearable')">
             <el-switch v-model="activeData.clearable" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.showTip !== undefined" label="显示提示">
+          <el-form-item v-if="activeData.showTip !== undefined" :label="t('tool.pagegen.showTip')">
             <el-switch v-model="activeData.showTip" />
           </el-form-item>
 
-          <el-form-item v-if="activeData.multiple !== undefined" label="多选文件">
+          <el-form-item v-if="activeData.multiple !== undefined" :label="t('tool.pagegen.multipleFile')">
             <el-switch v-model="activeData.multiple" />
           </el-form-item>
-          <el-form-item v-if="activeData['auto-upload'] !== undefined" label="自动上传">
+          <el-form-item v-if="activeData['auto-upload'] !== undefined" :label="t('tool.pagegen.autoUpload')">
             <el-switch v-model="activeData['auto-upload']" />
           </el-form-item>
-          <el-form-item v-if="activeData.readonly !== undefined" label="是否只读">
+          <el-form-item v-if="activeData.readonly !== undefined" :label="t('tool.pagegen.readonly')">
             <el-switch v-model="activeData.readonly" />
           </el-form-item>
-          <el-form-item v-if="activeData.disabled !== undefined" label="是否禁用">
+          <el-form-item v-if="activeData.disabled !== undefined" :label="t('tool.pagegen.disabled')">
             <el-switch v-model="activeData.disabled" />
           </el-form-item>
-          <el-form-item v-if="activeData.tag === 'el-select'" label="是否可搜索">
+          <el-form-item v-if="activeData.tag === 'el-select'" :label="t('tool.pagegen.searchable')">
             <el-switch v-model="activeData.filterable" />
           </el-form-item>
-          <el-form-item v-if="activeData.tag === 'el-select'" label="是否多选">
+          <el-form-item v-if="activeData.tag === 'el-select'" :label="t('tool.pagegen.multiple')">
             <el-switch v-model="activeData.multiple" @change="multipleChange" />
           </el-form-item>
-          <el-form-item v-if="activeData.required !== undefined" label="是否必填">
+          <el-form-item v-if="activeData.required !== undefined" :label="t('tool.pagegen.required')">
             <el-switch v-model="activeData.required" />
           </el-form-item>
 
           <!-- 布局结构树 -->
           <template v-if="activeData.layoutTree">
-            <el-divider>布局结构树</el-divider>
+            <el-divider>{{ t('tool.pagegen.layoutTree') }}</el-divider>
             <el-tree :data="[activeData]" :props="layoutTreeProps" node-key="renderKey" default-expand-all draggable>
               <template #default="{ node, data }">
                 <span class="node-label">
@@ -462,23 +462,23 @@
 
           <!-- 正则校验 -->
           <template v-if="activeData.layout === 'colFormItem'">
-            <el-divider>正则校验</el-divider>
+            <el-divider>{{ t('tool.pagegen.regexRule') }}</el-divider>
             <div v-for="(item, index) in activeData.regList" :key="index" class="reg-item">
               <span class="close-btn" @click="activeData.regList.splice(index, 1)">
                 <el-icon>
                   <Close />
                 </el-icon>
               </span>
-              <el-form-item label="表达式">
-                <el-input v-model="item.pattern" placeholder="请输入正则" />
+              <el-form-item :label="t('tool.pagegen.expression')">
+                <el-input v-model="item.pattern" :placeholder="t('common.inputPlaceholder', [t('common.noun.regex')])" />
               </el-form-item>
-              <el-form-item label="错误提示" style="margin-bottom: 0">
-                <el-input v-model="item.message" placeholder="请输入错误提示" />
+              <el-form-item :label="t('tool.pagegen.errorTip')" style="margin-bottom: 0">
+                <el-input v-model="item.message" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.errorTip')])" />
               </el-form-item>
             </div>
             <div>
               <el-button icon="CirclePlus" style="margin-left: 0; margin-top: 10px" type="primary" text bg @click="addReg">
-                添加规则
+                {{ t('tool.pagegen.addRule') }}
               </el-button>
             </div>
           </template>
@@ -486,42 +486,42 @@
 
         <!-- 表单属性 -->
         <el-form v-show="panelState.currentTab === 'form'" label-width="90px" label-position="top">
-          <el-form-item label="表单名">
-            <el-input v-model="formConf.formRef" placeholder="请输入表单名（ref）" />
+          <el-form-item :label="t('tool.pagegen.formName')">
+            <el-input v-model="formConf.formRef" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.formName')])" />
           </el-form-item>
-          <el-form-item label="表单模型">
-            <el-input v-model="formConf.formModel" placeholder="请输入数据模型" />
+          <el-form-item :label="t('tool.pagegen.formModel')">
+            <el-input v-model="formConf.formModel" :placeholder="t('common.inputPlaceholder', [t('common.noun.dataModel')])" />
           </el-form-item>
-          <el-form-item label="校验模型">
-            <el-input v-model="formConf.formRules" placeholder="请输入校验模型" />
+          <el-form-item :label="t('tool.pagegen.formRules')">
+            <el-input v-model="formConf.formRules" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.formRules')])" />
           </el-form-item>
-          <el-form-item label="表单尺寸">
+          <el-form-item :label="t('tool.pagegen.formSize')">
             <el-radio-group v-model="formConf.size">
-              <el-radio-button label="large" value="较大" />
-              <el-radio-button label="default" value="默认" />
-              <el-radio-button label="small" value="较小" />
+              <el-radio-button label="large" :value="t('tool.pagegen.large')" />
+              <el-radio-button label="default" :value="t('tool.pagegen.default')" />
+              <el-radio-button label="small" :value="t('tool.pagegen.small')" />
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="标签对齐">
+          <el-form-item :label="t('tool.pagegen.labelAlign')">
             <el-radio-group v-model="formConf.labelPosition">
-              <el-radio-button label="left" value="左对齐" />
-              <el-radio-button label="right" value="右对齐" />
-              <el-radio-button label="top" value="顶部对齐" />
+              <el-radio-button label="left" :value="t('tool.pagegen.leftAlign')" />
+              <el-radio-button label="right" :value="t('tool.pagegen.rightAlign')" />
+              <el-radio-button label="top" :value="t('tool.pagegen.topAlign')" />
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="标签宽度">
-            <el-input-number v-model="formConf.labelWidth" placeholder="标签宽度" />
+          <el-form-item :label="t('tool.pagegen.labelWidth')">
+            <el-input-number v-model="formConf.labelWidth" :placeholder="t('tool.pagegen.labelWidth')" />
           </el-form-item>
-          <el-form-item label="栅格间隔">
-            <el-input-number v-model="formConf.gutter" :min="0" placeholder="栅格间隔" />
+          <el-form-item :label="t('tool.pagegen.gridGap')">
+            <el-input-number v-model="formConf.gutter" :min="0" :placeholder="t('tool.pagegen.gridGap')" />
           </el-form-item>
-          <el-form-item label="禁用表单">
+          <el-form-item :label="t('tool.pagegen.disableForm')">
             <el-switch v-model="formConf.disabled" />
           </el-form-item>
-          <el-form-item label="表单按钮">
+          <el-form-item :label="t('tool.pagegen.formButtons')">
             <el-switch v-model="formConf.formBtns" />
           </el-form-item>
-          <el-form-item label="显示未选中组件边框">
+          <el-form-item :label="t('tool.pagegen.showUnfocusedBorder')">
             <el-switch v-model="formConf.unFocusedComponentBorder" />
           </el-form-item>
         </el-form>
@@ -538,6 +538,7 @@
 
 <script setup lang="ts">
 /** 右侧属性面板 - 逻辑 */
+import { t } from '@/i18n'
 import type { FormConf, FormItemConf } from '@/utils/generator/config'
 import draggable from 'vuedraggable'
 import { isNumberStr } from '@/utils/common'
@@ -551,7 +552,7 @@ import { SvgIcon } from '@/components'
 const idGlobal = inject('idGlobal') as Ref<number>
 const dateTimeFormat: Record<string, string> = {
   date: 'YYYY-MM-DD',
-  week: 'YYYY 第 ww 周',
+  week: t('tool.pagegen.dateWeekFormat'),
   month: 'YYYY-MM',
   year: 'YYYY',
   datetime: 'YYYY-MM-DD HH:mm:ss',
@@ -576,16 +577,16 @@ const panelState = ref({
 
 /* 面板选项配置（静态） */
 const dateTypeOptions = [
-  /* 日期类型选项 */ { label: '日(date)', value: 'date' },
-  { label: '周(week)', value: 'week' },
-  { label: '月(month)', value: 'month' },
-  { label: '年(year)', value: 'year' },
-  { label: '日期时间(datetime)', value: 'datetime' }
+  /* 日期类型选项 */ { label: t('tool.pagegen.dateDay'), value: 'date' },
+  { label: t('tool.pagegen.dateWeek'), value: 'week' },
+  { label: t('tool.pagegen.dateMonth'), value: 'month' },
+  { label: t('tool.pagegen.dateYear'), value: 'year' },
+  { label: t('tool.pagegen.dateDateTime'), value: 'datetime' }
 ]
 const dateRangeTypeOptions = [
-  /* 日期范围类型选项 */ { label: '日期范围(daterange)', value: 'daterange' },
-  { label: '月范围(monthrange)', value: 'monthrange' },
-  { label: '日期时间范围(datetimerange)', value: 'datetimerange' }
+  /* 日期范围类型选项 */ { label: t('tool.pagegen.dateRange'), value: 'daterange' },
+  { label: t('tool.pagegen.monthRange'), value: 'monthrange' },
+  { label: t('tool.pagegen.dateTimeRange'), value: 'datetimerange' }
 ]
 const colorFormatOptions = [
   /* 颜色格式选项 */ { label: 'hex', value: 'hex' },
@@ -623,8 +624,8 @@ const dateOptions = computed(() => {
 
 /* 组件类型切换选项列表 */
 const tagList = ref([
-  { label: '输入型组件', options: inputComponents },
-  { label: '选择型组件', options: selectComponents }
+  { label: t('tool.pagegen.inputComponents'), options: inputComponents },
+  { label: t('tool.pagegen.selectComponents'), options: selectComponents }
 ])
 
 /** 组件事件：向父组件通知标签切换 */

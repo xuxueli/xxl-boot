@@ -43,10 +43,10 @@
     </el-row>
 
     <!-- 操作按钮 -->
-    <span class="drawing-item-copy" title="复制" @click.stop="copyItem(element)">
+    <span class="drawing-item-copy" :title="t('common.copy')" @click.stop="copyItem(element)">
       <el-icon><CopyDocument /></el-icon>
     </span>
-    <span class="drawing-item-delete" title="删除" @click.stop="deleteItem(index)">
+    <span class="drawing-item-delete" :title="t('common.delete')" @click.stop="deleteItem(index)">
       <el-icon><Delete /></el-icon>
     </span>
   </el-col>
@@ -54,6 +54,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'DraggableItem' })
 /** 可拖拽表单项 - 逻辑 */
+import { t } from '@/i18n'
 import type { FormConf, FormItemConf } from '@/utils/generator/config'
 import draggable from 'vuedraggable'
 import render from '@/utils/generator/render'

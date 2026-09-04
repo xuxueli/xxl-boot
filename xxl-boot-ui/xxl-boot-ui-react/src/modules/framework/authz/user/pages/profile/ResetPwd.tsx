@@ -7,6 +7,7 @@ import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import type { Rule } from 'antd/es/form';
 import React from 'react';
+import { t } from '@/i18n';
 import { updateUserPwd } from '@/modules/framework/authz/user/api';
 
 /** 密码表单数据 */
@@ -22,9 +23,9 @@ interface PwdForm {
  *       实际恒为默认策略 0（任意字符），故直接固定为一条规则。
  */
 const INFO_PWD_RULES: Rule[] = [
-  { required: true, message: '新密码不能为空' },
-  { min: 6, max: 20, message: '新密码长度必须介于 6 和 20 之间' },
-  { pattern: /^[^<>"'|\\]+$/, message: '密码不能包含非法字符：< > " \' \\ |' },
+  { required: true, message: t('common.requiredMsg', [t('authz.user.newPassword')]) },
+  { min: 6, max: 20, message: t('authz.user.newPasswordLength') },
+  { pattern: /^[^<>"'|\\]+$/, message: t('authz.user.newPasswordForbiddenChar') },
 ];
 
 const ResetPwd = () => {
@@ -37,7 +38,7 @@ const ResetPwd = () => {
       values.oldPassword as string,
       values.newPassword as string,
     );
-    message.success('修改成功');
+    message.success(t('common.updateSuccess'));
     form.resetFields();
   };
 
@@ -50,44 +51,44 @@ const ResetPwd = () => {
       submitter={{
         render: ({ submit }) => [
           <Button type="primary" key="submit" onClick={() => submit()}>
-            保存
+            {t('common.save')}
           </Button>,
           <Button
             type="default"
             key="cancel"
             onClick={() => form.resetFields()}
           >
-            重置
+            {t('common.reset')}
           </Button>,
         ],
       }}
     >
       <ProFormText.Password
         name="oldPassword"
-        label="旧密码"
-        placeholder="请输入旧密码"
-        rules={[{ required: true, message: '旧密码不能为空' }]}
+        label={t('authz.user.oldPassword')}
+        placeholder={t('common.inputPlaceholder', [t('authz.user.oldPassword')])}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.user.oldPassword')]) }]}
       />
       <ProFormText.Password
         name="newPassword"
-        label="新密码"
-        placeholder="请输入新密码"
+        label={t('authz.user.newPassword')}
+        placeholder={t('common.inputPlaceholder', [t('authz.user.newPassword')])}
         rules={INFO_PWD_RULES}
       />
       <ProFormText.Password
         name="confirmPassword"
-        label="确认密码"
-        placeholder="请确认新密码"
+        label={t('authz.user.confirmPassword')}
+        placeholder={t('authz.user.confirmPasswordPlaceholder')}
         dependencies={['newPassword']}
         rules={[
-          { required: true, message: '确认密码不能为空' },
+          { required: true, message: t('common.requiredMsg', [t('authz.user.confirmPassword')]) },
           ({ getFieldValue }) => ({
             /* 自定义规则：返回 Promise，处理异步操作； */
             validator: (_, value) => {
               if (!value || getFieldValue('newPassword') === value) {
                 return Promise.resolve();
               }
-              return Promise.reject(new Error('两次输入的密码不一致'));
+              return Promise.reject(new Error(t('authz.user.passwordMismatch')));
             },
           }),
         ]}

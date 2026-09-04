@@ -13,6 +13,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Space, Tag, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useMemo, useRef, useState } from 'react';
+import { t } from '@/i18n';
 import {
   toSelectOptions,
   toValueEnum,
@@ -79,11 +80,13 @@ const MessageList = () => {
     const ids = row ? [row.id as number] : selectedIds;
     if (ids.length === 0) return;
     modal.confirm({
-      title: '系统提示',
-      content: `是否确认删除名称为"${row?.title || '这些消息'}"的数据项？`,
+      title: t('modal.title'),
+      content: t('system.message.confirmDelete', [
+        row?.title || t('system.message.batchDeleteName'),
+      ]),
       onOk: async () => {
         await delMessage(ids);
-        message.success('删除成功');
+        message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
       },
@@ -91,9 +94,9 @@ const MessageList = () => {
   };
 
   const columns: ProColumns<API.Message>[] = [
-    { title: '序号', dataIndex: 'id', search: false, width: 60 },
+    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 60 },
     {
-      title: '消息标题',
+      title: t('system.message.messageTitle'),
       dataIndex: 'title',
       width: 200,
       ellipsis: true,
@@ -110,7 +113,7 @@ const MessageList = () => {
       ),
     },
     {
-      title: '分类',
+      title: t('system.message.category'),
       dataIndex: 'category',
       width: 80,
       valueEnum: toValueEnum(messageCategoryOptions),
@@ -120,20 +123,20 @@ const MessageList = () => {
       },
     },
     {
-      title: '状态',
+      title: t('common.status'),
       dataIndex: 'status',
       width: 80,
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
-          {record.status === 0 ? '正常' : '下线'}
+          {record.status === 0 ? t('common.normal') : t('system.message.offline')}
         </Tag>
       ),
     },
-    { title: '发送人', dataIndex: 'sender', search: false, width: 90 },
-    { title: '发送时间', dataIndex: 'addTime', search: false, width: 160 },
+    { title: t('system.message.sender'), dataIndex: 'sender', search: false, width: 90 },
+    { title: t('system.message.sendTime'), dataIndex: 'addTime', search: false, width: 160 },
     {
-      title: '操作',
+      title: t('common.operation'),
       valueType: 'option',
       width: 240,
       render: (_, record) => (
@@ -144,7 +147,7 @@ const MessageList = () => {
               readUsersRef.current?.open(record);
             }}
           >
-            <TeamOutlined /> 阅读用户
+            <TeamOutlined /> {t('system.message.readUsers')}
           </a>
           <a
             key="edit"
@@ -153,10 +156,10 @@ const MessageList = () => {
               setFormOpen(true);
             }}
           >
-            <EditOutlined /> 修改
+            <EditOutlined /> {t('common.modify')}
           </a>
           <a key="delete" onClick={() => handleDelete(record)}>
-            <DeleteOutlined /> 删除
+            <DeleteOutlined /> {t('common.delete')}
           </a>
         </Space>
       ),
@@ -195,7 +198,7 @@ const MessageList = () => {
                   setFormOpen(true);
                 }}
               >
-                新增
+                {t('common.add')}
               </Button>
             ),
             hasRole('admin') && (
@@ -206,7 +209,7 @@ const MessageList = () => {
                 disabled={!selectedIds.length}
                 onClick={() => handleDelete()}
               >
-                删除
+                {t('common.delete')}
               </Button>
             ),
           ]}

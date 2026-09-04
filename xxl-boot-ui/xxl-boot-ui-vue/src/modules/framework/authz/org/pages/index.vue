@@ -6,31 +6,31 @@
   <div class="app-container">
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
-      <el-form-item label="组织名称" prop="name">
-        <el-input v-model="queryParams.name" placeholder="请输入组织名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item :label="t('authz.org.name')" prop="name">
+        <el-input v-model="queryParams.name" :placeholder="t('common.inputPlaceholder', [t('authz.org.name')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="组织状态" clearable style="width: 200px">
-          <el-option label="全部" :value="-1" />
+      <el-form-item :label="t('common.status')" prop="status">
+        <el-select v-model="queryParams.status" :placeholder="t('authz.org.statusPlaceholder')" clearable style="width: 200px">
+          <el-option :label="t('common.all')" :value="-1" />
           <el-option v-for="item in statusOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">{{ t('common.search') }}</el-button>
+        <el-button icon="Refresh" @click="resetQuery">{{ t('common.reset') }}</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Check" @click="handleSaveSort" v-hasRole="['admin']">保存排序</el-button>
+        <el-button type="warning" plain icon="Check" @click="handleSaveSort" v-hasRole="['admin']">{{ t('common.saveSort') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="info" plain icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
+        <el-button type="info" plain icon="Sort" @click="toggleExpandAll">{{ t('common.expandCollapse') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -44,29 +44,29 @@
       :default-expand-all="table.isExpandAll"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
-      <el-table-column prop="name" label="组织名称" width="260" />
-      <el-table-column label="顺序" width="130" align="center">
+      <el-table-column prop="name" :label="t('authz.org.name')" width="260" />
+      <el-table-column :label="t('authz.org.order')" width="130" align="center">
         <template #default="scope">
           <el-input-number v-model="scope.row.order" controls-position="right" :min="0" style="width: 88px" />
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column :label="t('common.status')" width="100" align="center">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
             {{ statusText(scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="manager" label="负责人" width="120" align="center" />
-      <el-table-column label="新增时间" align="center" width="170">
+      <el-table-column prop="manager" :label="t('authz.org.manager')" width="120" align="center" />
+      <el-table-column :label="t('common.addTime')" align="center" width="170">
         <template #default="scope">
           <span>{{ parseTime(scope.row.addTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="220" class-name="small-padding fixed-width">
+      <el-table-column :label="t('common.operation')" align="left" width="220" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
-          <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasRole="['admin']">新增</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Plus" @click="handleAdd(scope.row)" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
           <el-button
             v-if="scope.row.parentId !== 0"
             link
@@ -74,7 +74,7 @@
             icon="Delete"
             @click="handleDelete(scope.row)"
             v-hasRole="['admin']"
-            >删除</el-button
+            >{{ t('common.delete') }}</el-button
           >
         </template>
       </el-table-column>
@@ -85,35 +85,35 @@
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="80px">
         <el-row>
           <el-col :span="24" v-if="formState.form.parentId !== 0">
-            <el-form-item label="上级组织" prop="parentId">
+            <el-form-item :label="t('authz.org.parent')" prop="parentId">
               <el-tree-select
                 v-model="formState.form.parentId"
                 :data="orgOptions"
                 :props="{ label: 'name', children: 'children' }"
                 value-key="id"
-                placeholder="选择上级组织"
+                :placeholder="t('authz.org.parentPlaceholder')"
                 check-strictly
                 :default-expanded-keys="expandedKeys"
               />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="组织名称" prop="name">
-              <el-input v-model="formState.form.name" placeholder="请输入组织名称" />
+            <el-form-item :label="t('authz.org.name')" prop="name">
+              <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('authz.org.name')])" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="顺序" prop="order">
+            <el-form-item :label="t('authz.org.order')" prop="order">
               <el-input-number v-model="formState.form.order" controls-position="right" :min="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="负责人" prop="manager">
-              <el-input v-model="formState.form.manager" placeholder="请输入负责人" maxlength="50" />
+            <el-form-item :label="t('authz.org.manager')" prop="manager">
+              <el-input v-model="formState.form.manager" :placeholder="t('common.inputPlaceholder', [t('authz.org.manager')])" maxlength="50" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="状态">
+            <el-form-item :label="t('common.status')">
               <el-radio-group v-model="formState.form.status">
                 <el-radio v-for="item in statusOptions" :key="item.code" :value="item.code">{{ item.title }}</el-radio>
               </el-radio-group>
@@ -123,8 +123,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">{{ t('modal.confirmButton') }}</el-button>
+          <el-button @click="cancel">{{ t('modal.cancelButton') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -133,6 +133,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Org' })
+import { t } from '@/i18n'
 import { listOrg, getOrg, delOrg, addOrg, updateOrg, updateOrgSort } from '../api'
 import { useEnumOption } from '@/composables/useEnumOption'
 import { handleTree, parseTime } from '@/utils/common'
@@ -190,8 +191,8 @@ const formState = ref<FormState>({
   form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
-    name: [{ required: true, message: '组织名称不能为空', trigger: 'blur' }],
-    order: [{ required: true, message: '顺序不能为空', trigger: 'blur' }]
+    name: [{ required: true, message: t('common.requiredMsg', [t('authz.org.name')]), trigger: 'blur' }],
+    order: [{ required: true, message: t('common.requiredMsg', [t('authz.org.order')]), trigger: 'blur' }]
   }
 })
 
@@ -296,7 +297,7 @@ function handleAdd(row: any) {
     formState.value.form.parentId = row.id
   }
   formState.value.visible = true
-  formState.value.title = '新增组织'
+  formState.value.title = t('common.titleAdd', [t('common.noun.org')])
 }
 
 /** 修改按钮操作（行内修改，直接取行数据 id） */
@@ -306,7 +307,7 @@ function handleUpdate(row: Org) {
   getOrg(row.id as number).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = '修改组织'
+    formState.value.title = t('common.titleEdit', [t('common.noun.org')])
   })
 }
 
@@ -351,19 +352,19 @@ function submitForm() {
     if (valid) {
       // 上级组织不能选自己或自己的子孙
       if (!validParentId()) {
-        modal.msgError('上级组织不能选择自己或其下级组织')
+        modal.msgError(t('authz.org.parentInvalid'))
         return
       }
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
         updateOrg(formState.value.form).then((response) => {
-          modal.msgSuccess('修改成功')
+          modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
         addOrg(formState.value.form).then((response) => {
-          modal.msgSuccess('新增成功')
+          modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
         })
@@ -399,11 +400,11 @@ function handleSaveSort() {
   }
   collectChanged(table.value.list)
   if (changedIds.length === 0) {
-    modal.msgWarning('未检测到排序修改')
+    modal.msgWarning(t('common.noSortChange'))
     return
   }
   updateOrgSort({ ids: changedIds, orders: changedOrders }).then(() => {
-    modal.msgSuccess('排序保存成功')
+    modal.msgSuccess(t('common.saveSortSuccess'))
     recordOriginalOrders(table.value.list)
   })
 }
@@ -411,13 +412,13 @@ function handleSaveSort() {
 /** 删除按钮操作（行内删除，按名称提示） */
 function handleDelete(row: Org) {
   modal
-    .confirm('是否确认删除名称为"' + row.name + '"的数据项？')
+    .confirm(t('authz.org.confirmDelete', [row.name as string]))
     .then(function () {
       return delOrg([row.id as number])
     })
     .then(() => {
       getList()
-      modal.msgSuccess('删除成功')
+      modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }

@@ -9,6 +9,7 @@ import { App, Button, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delData, listData } from '@/modules/framework/system/dict/api';
@@ -59,11 +60,13 @@ const DictData = () => {
     const ids = row ? [row.id as number] : selectedIds;
     if (ids.length === 0) return;
     modal.confirm({
-      title: '系统提示',
-      content: `是否确认删除名称为"${row?.name || '这些字典项'}"的数据项？`,
+      title: t('modal.title'),
+      content: t('system.dict.confirmDeleteItem', [
+        row?.name || t('system.dict.batchDeleteItemName'),
+      ]),
       onOk: async () => {
         await delData(ids);
-        message.success('删除成功');
+        message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
       },
@@ -71,25 +74,25 @@ const DictData = () => {
   };
 
   const columns: ProColumns<API.DictItem>[] = [
-    { title: '序号', dataIndex: 'id', search: false, width: 80 },
-    { title: '字典项名称', dataIndex: 'name' },
-    { title: '字典项Code', dataIndex: 'code', search: false },
+    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
+    { title: t('system.dict.itemName'), dataIndex: 'name' },
+    { title: t('system.dict.itemCode'), dataIndex: 'code', search: false },
     {
-      title: '状态',
+      title: t('common.status'),
       dataIndex: 'status',
       width: 90,
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
-          {record.status === 0 ? '正常' : '停用'}
+          {record.status === 0 ? t('common.normal') : t('common.disabled')}
         </Tag>
       ),
     },
-    { title: '显示排序', dataIndex: 'order', search: false, width: 90 },
-    { title: '备注', dataIndex: 'remark', search: false },
-    { title: '创建时间', dataIndex: 'addTime', search: false, width: 160 },
+    { title: t('system.dict.order'), dataIndex: 'order', search: false, width: 90 },
+    { title: t('common.remark'), dataIndex: 'remark', search: false },
+    { title: t('common.addTime'), dataIndex: 'addTime', search: false, width: 160 },
     {
-      title: '操作',
+      title: t('common.operation'),
       valueType: 'option',
       width: 140,
       render: (_, record) => [
@@ -100,10 +103,10 @@ const DictData = () => {
             setFormOpen(true);
           }}
         >
-          <EditOutlined /> 修改
+          <EditOutlined /> {t('common.modify')}
         </a>,
         <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> 删除
+          <DeleteOutlined /> {t('common.delete')}
         </a>,
       ],
     },
@@ -142,7 +145,7 @@ const DictData = () => {
                   setFormOpen(true);
                 }}
               >
-                新增
+                {t('common.add')}
               </Button>
             ),
             hasRole('admin') && (
@@ -153,7 +156,7 @@ const DictData = () => {
                 disabled={!selectedIds.length}
                 onClick={() => handleDelete()}
               >
-                删除
+                {t('common.delete')}
               </Button>
             ),
             <Button
@@ -162,7 +165,7 @@ const DictData = () => {
                 navigate('/system/dict');
               }}
             >
-              关闭
+              {t('common.close')}
             </Button>,
           ]}
           rowSelection={{

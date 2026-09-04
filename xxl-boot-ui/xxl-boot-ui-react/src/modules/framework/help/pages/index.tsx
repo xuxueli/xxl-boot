@@ -6,18 +6,16 @@ import { BookOutlined, GithubOutlined } from '@ant-design/icons';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { Button, Divider, Typography } from 'antd';
 import React from 'react';
+import { t } from '@/i18n';
 import defaultSettings from '@/default-settings';
 
 const HelpCenter = () => {
   return (
     <PageContainer ghost title={false}>
       <ProCard>
-        <Typography.Title level={4}>XXL-Boot 快速开发平台</Typography.Title>
+        <Typography.Title level={4}>{t('help.title')}</Typography.Title>
         <Typography.Paragraph type="secondary">
-          一个快速开发平台，易学易用、AI驱动、开箱即用。内置安全登录、权限管控、
-          端到端代码生成、响应式
-          UI、国际化、分布式扩展等能力。整合前后端流行技术，
-          致力为中小企业、个人开发者打造开箱即用的中后台解决方案。
+          {t('help.intro')}
         </Typography.Paragraph>
         <Divider />
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -27,14 +25,14 @@ const HelpCenter = () => {
             href="https://github.com/xuxueli/xxl-boot"
             target="_blank"
           >
-            GitHub 仓库
+            {t('help.github')}
           </Button>
           <Button
             icon={<BookOutlined />}
             href="https://www.xuxueli.com/xxl-boot/"
             target="_blank"
           >
-            官方文档
+            {t('help.doc')}
           </Button>
           ｜
           <a

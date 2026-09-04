@@ -5,34 +5,34 @@
   <div class="app-container">
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
-      <el-form-item label="角色名称" prop="name">
-        <el-input v-model="queryParams.name" placeholder="请输入角色名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item :label="t('authz.role.name')" prop="name">
+        <el-input v-model="queryParams.name" :placeholder="t('common.inputPlaceholder', [t('authz.role.name')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="角色状态" clearable style="width: 200px">
-          <el-option label="全部" :value="-1" />
+      <el-form-item :label="t('common.status')" prop="status">
+        <el-select v-model="queryParams.status" :placeholder="t('authz.role.statusPlaceholder')" clearable style="width: 200px">
+          <el-option :label="t('common.all')" :value="-1" />
           <el-option v-for="item in statusOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">{{ t('common.search') }}</el-button>
+        <el-button icon="Refresh" @click="resetQuery">{{ t('common.reset') }}</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['authz:role']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['authz:role']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasPermi="['authz:role']"
-          >修改</el-button
+          >{{ t('common.modify') }}</el-button
         >
       </el-col>
       <el-col :span="1.5">
         <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasPermi="['authz:role']"
-          >删除</el-button
+          >{{ t('common.delete') }}</el-button
         >
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
@@ -41,26 +41,26 @@
     <!-- 角色列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="角色编号" align="center" prop="id" width="100" />
-      <el-table-column label="角色名称" align="center" prop="name" :show-overflow-tooltip="true" />
-      <el-table-column label="权限字符" align="center" prop="code" :show-overflow-tooltip="true" />
-      <el-table-column label="显示顺序" align="center" prop="order" width="100" />
-      <el-table-column label="状态" align="center" width="100">
+      <el-table-column :label="t('authz.role.id')" align="center" prop="id" width="100" />
+      <el-table-column :label="t('authz.role.name')" align="center" prop="name" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('authz.role.roleKey')" align="center" prop="code" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('authz.role.order')" align="center" prop="order" width="100" />
+      <el-table-column :label="t('common.status')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
             {{ statusText(scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" width="170">
+      <el-table-column :label="t('common.createTime')" align="center" width="170">
         <template #default="scope">
           <span>{{ parseTime(scope.row.addTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column :label="t('common.operation')" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['authz:role']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['authz:role']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['authz:role']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['authz:role']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -79,32 +79,32 @@
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="100px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="角色名称" prop="name">
-              <el-input v-model="formState.form.name" placeholder="请输入角色名称" maxlength="30" />
+            <el-form-item :label="t('authz.role.name')" prop="name">
+              <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('authz.role.name')])" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="权限字符" prop="code">
-              <el-input v-model="formState.form.code" placeholder="请输入权限字符" maxlength="30" />
+            <el-form-item :label="t('authz.role.roleKey')" prop="code">
+              <el-input v-model="formState.form.code" :placeholder="t('common.inputPlaceholder', [t('authz.role.roleKey')])" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="显示顺序" prop="order">
+            <el-form-item :label="t('authz.role.order')" prop="order">
               <el-input-number v-model="formState.form.order" controls-position="right" :min="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="状态">
+            <el-form-item :label="t('common.status')">
               <el-radio-group v-model="formState.form.status">
                 <el-radio v-for="item in statusOptions" :key="item.code" :value="item.code">{{ item.title }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="菜单权限">
-              <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event)">展开/折叠</el-checkbox>
-              <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event)">全选/全不选</el-checkbox>
-              <el-checkbox v-model="menuCheckStrictly" @change="handleCheckedTreeConnect($event)">父子联动</el-checkbox>
+            <el-form-item :label="t('authz.role.menuPermission')">
+              <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event)">{{ t('common.expandCollapse') }}</el-checkbox>
+              <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event)">{{ t('authz.role.selectAll') }}</el-checkbox>
+              <el-checkbox v-model="menuCheckStrictly" @change="handleCheckedTreeConnect($event)">{{ t('authz.role.linkAll') }}</el-checkbox>
               <el-tree
                 class="tree-border"
                 :data="menuOptions"
@@ -112,7 +112,7 @@
                 ref="menuRef"
                 node-key="id"
                 :check-strictly="!menuCheckStrictly"
-                empty-text="加载中，请稍候"
+                :empty-text="t('authz.role.loadingText')"
                 :props="{ label: 'name', children: 'children' }"
               ></el-tree>
             </el-form-item>
@@ -121,8 +121,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">{{ t('modal.confirmButton') }}</el-button>
+          <el-button @click="cancel">{{ t('modal.cancelButton') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -131,6 +131,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Role' })
+import { t } from '@/i18n'
 import { listRole, getRole, addRole, updateRole, delRole, roleMenuTreeselect, updateRoleRes } from '../api'
 import { listResource as menuTreeselect } from '@/modules/framework/authz/resource/api'
 import { useEnumOption } from '@/composables/useEnumOption'
@@ -188,8 +189,8 @@ const formState = ref<FormState<Role>>({
   form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
-    name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],
-    code: [{ required: true, message: '权限字符不能为空', trigger: 'blur' }]
+    name: [{ required: true, message: t('common.requiredMsg', [t('authz.role.name')]), trigger: 'blur' }],
+    code: [{ required: true, message: t('common.requiredMsg', [t('authz.role.roleKey')]), trigger: 'blur' }]
   }
 })
 
@@ -269,7 +270,7 @@ function handleAdd() {
   reset()
   getMenuTreeselect()
   formState.value.visible = true
-  formState.value.title = '新增角色'
+  formState.value.title = t('common.titleAdd', [t('authz.user.role')])
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -283,7 +284,7 @@ function handleUpdate(row: any) {
   getRole(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = '修改角色'
+    formState.value.title = t('common.titleEdit', [t('authz.user.role')])
     // 加载菜单权限树后，再勾选角色已授权资源
     getMenuTreeselect()
       .then(() => {
@@ -346,7 +347,7 @@ function submitForm() {
             return updateRoleRes(submitData.id as number, resourceIds)
           })
           .then(() => {
-            modal.msgSuccess('修改成功')
+            modal.msgSuccess(t('common.updateSuccess'))
             formState.value.visible = false
             getList()
           })
@@ -357,7 +358,7 @@ function submitForm() {
             return updateRoleRes(response.data as number, resourceIds)
           })
           .then(() => {
-            modal.msgSuccess('新增成功')
+            modal.msgSuccess(t('common.addSuccess'))
             formState.value.visible = false
             getList()
           })
@@ -373,13 +374,13 @@ function handleDelete(row: any) {
     return
   }
   modal
-    .confirm('是否确认删除角色编号为"' + roleIds + '"的数据项？')
+    .confirm(t('authz.role.confirmDelete', [roleIds]))
     .then(function () {
       return delRole(roleIds)
     })
     .then(() => {
       getList()
-      modal.msgSuccess('删除成功')
+      modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }

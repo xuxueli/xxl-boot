@@ -5,11 +5,11 @@
 <template>
   <div class="app-container tree-sidebar-manage-wrap">
     <TreePanel
-      title="组织机构"
+      :title="t('authz.user.orgTitle')"
       :tree-data="deptOptions"
       :tree-props="{ label: 'name', children: 'children' }"
       :filter-method="filterOrg"
-      search-placeholder="请输入组织名称"
+      :search-placeholder="t('common.inputPlaceholder', [t('authz.org.name')])"
       storage-key="boot-user-org-sidebar-width"
       :defaultExpandAll="true"
       @node-click="handleNodeClick"
@@ -20,40 +20,40 @@
       <div class="content-inner">
         <!-- 搜索栏 -->
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
-          <el-form-item label="用户名称" prop="username">
+          <el-form-item :label="t('common.realName')" prop="username">
             <el-input
               v-model="queryParams.username"
-              placeholder="请输入用户名称"
+              :placeholder="t('common.inputPlaceholder', [t('common.realName')])"
               clearable
               style="width: 200px"
               @keyup.enter="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select v-model="queryParams.status" placeholder="用户状态" clearable style="width: 200px">
-              <el-option label="全部" :value="-1" />
+          <el-form-item :label="t('common.status')" prop="status">
+            <el-select v-model="queryParams.status" :placeholder="t('authz.user.statusPlaceholder')" clearable style="width: 200px">
+              <el-option :label="t('common.all')" :value="-1" />
               <el-option v-for="item in statusOptions" :key="item.code" :label="item.title" :value="item.code" />
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            <el-button type="primary" icon="Search" @click="handleQuery">{{ t('common.search') }}</el-button>
+            <el-button icon="Refresh" @click="resetQuery">{{ t('common.reset') }}</el-button>
           </el-form-item>
         </el-form>
 
         <!-- 操作按钮 -->
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['authz:user']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['authz:user']">{{ t('common.add') }}</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasPermi="['authz:user']"
-              >修改</el-button
+              >{{ t('common.modify') }}</el-button
             >
           </el-col>
           <el-col :span="1.5">
             <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasPermi="['authz:user']"
-              >删除</el-button
+              >{{ t('common.delete') }}</el-button
             >
           </el-col>
           <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
@@ -62,15 +62,15 @@
         <!-- 用户列表 -->
         <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="45" align="center" />
-          <el-table-column label="用户编号" align="center" prop="id" width="80" />
-          <el-table-column label="账号" align="center" prop="username" width="110" :show-overflow-tooltip="true">
+          <el-table-column :label="t('authz.user.id')" align="center" prop="id" width="80" />
+          <el-table-column :label="t('authz.user.username')" align="center" prop="username" width="110" :show-overflow-tooltip="true">
             <template #default="scope">
               <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{ scope.row.username }}</a>
             </template>
           </el-table-column>
-          <el-table-column label="用户名称" align="center" prop="realName" width="110" :show-overflow-tooltip="true" />
-          <el-table-column label="所属组织" align="center" prop="orgName" width="120" :show-overflow-tooltip="true" />
-          <el-table-column label="状态" align="center" width="100">
+          <el-table-column :label="t('common.realName')" align="center" prop="realName" width="110" :show-overflow-tooltip="true" />
+          <el-table-column :label="t('authz.user.orgName')" align="center" prop="orgName" width="120" :show-overflow-tooltip="true" />
+          <el-table-column :label="t('common.status')" align="center" width="100">
             <template #default="scope">
               <el-switch
                 v-model="scope.row.status"
@@ -80,20 +80,20 @@
               ></el-switch>
             </template>
           </el-table-column>
-          <el-table-column label="创建时间" align="center" width="170">
+          <el-table-column :label="t('common.createTime')" align="center" width="170">
             <template #default="scope">
               <span>{{ parseTime(scope.row.addTime) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="操作" align="center" width="190" class-name="small-padding fixed-width">
+          <el-table-column :label="t('common.operation')" align="center" width="190" class-name="small-padding fixed-width">
             <template #default="scope">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['authz:user']">修改</el-button>
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['authz:user']">删除</el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['authz:user']">{{ t('common.modify') }}</el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['authz:user']">{{ t('common.delete') }}</el-button>
               <el-dropdown trigger="click" @command="() => handleResetPwd(scope.row)">
-                <el-button link type="primary" icon="DArrowRight">更多</el-button>
+                <el-button link type="primary" icon="DArrowRight">{{ t('common.more') }}</el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item icon="Key">重置密码</el-dropdown-item>
+                    <el-dropdown-item icon="Key">{{ t('authz.user.resetPwd') }}</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -117,20 +117,20 @@
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="90px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="账号" prop="username">
+            <el-form-item :label="t('authz.user.username')" prop="username">
               <el-input
                 v-model="formState.form.username"
-                placeholder="请输入账号"
+                :placeholder="t('common.inputPlaceholder', [t('auth.login.username')])"
                 maxlength="20"
                 :disabled="formState.form.id !== undefined"
               />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="密码" prop="password" :rules="formState.form.id === undefined ? passwordRules : []">
+            <el-form-item :label="t('authz.user.password')" prop="password" :rules="formState.form.id === undefined ? passwordRules : []">
               <el-input
                 v-model="formState.form.password"
-                placeholder="请输入密码"
+                :placeholder="t('common.inputPlaceholder', [t('auth.login.password')])"
                 type="password"
                 maxlength="20"
                 show-password
@@ -139,13 +139,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="用户名称" prop="realName">
-              <el-input v-model="formState.form.realName" placeholder="请输入用户名称" maxlength="50" />
+            <el-form-item :label="t('common.realName')" prop="realName">
+              <el-input v-model="formState.form.realName" :placeholder="t('common.inputPlaceholder', [t('common.realName')])" maxlength="50" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="角色">
-              <el-select v-model="formState.form.roleIds" multiple placeholder="请选择角色" style="width: 100%">
+            <el-form-item :label="t('authz.user.role')">
+              <el-select v-model="formState.form.roleIds" multiple :placeholder="t('common.selectPlaceholderText', [t('authz.user.role')])" style="width: 100%">
                 <el-option
                   v-for="item in roleOptions"
                   :key="item.id"
@@ -157,30 +157,30 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="归属组织" prop="orgId">
+            <el-form-item :label="t('authz.user.belongOrg')" prop="orgId">
               <el-tree-select
                 v-model="formState.form.orgId"
                 :data="orgOptions"
                 :props="{ label: 'name', children: 'children' }"
                 value-key="id"
-                placeholder="请选择归属组织"
+                :placeholder="t('common.selectPlaceholderText', [t('authz.user.belongOrg')])"
                 clearable
                 check-strictly
               />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="formState.form.email" placeholder="请输入邮箱" maxlength="100" />
+            <el-form-item :label="t('authz.user.email')" prop="email">
+              <el-input v-model="formState.form.email" :placeholder="t('common.inputPlaceholder', [t('authz.user.email')])" maxlength="100" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="手机号" prop="phone">
-              <el-input v-model="formState.form.phone" placeholder="请输入手机号" maxlength="11" />
+            <el-form-item :label="t('authz.user.phone')" prop="phone">
+              <el-input v-model="formState.form.phone" :placeholder="t('common.inputPlaceholder', [t('authz.user.phone')])" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="状态">
+            <el-form-item :label="t('common.status')">
               <el-radio-group v-model="formState.form.status">
                 <el-radio v-for="item in statusOptions" :key="item.code" :value="item.code">{{ item.title }}</el-radio>
               </el-radio-group>
@@ -190,8 +190,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">{{ t('modal.confirmButton') }}</el-button>
+          <el-button @click="cancel">{{ t('modal.cancelButton') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -203,6 +203,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'User' })
+import { t } from '@/i18n'
 import UserViewDrawer from './view.vue'
 import { listUser, addUser, updateUser, delUser } from '../api'
 import { listRole } from '@/modules/framework/authz/role/api'
@@ -274,18 +275,18 @@ const formState = ref<FormState<UserFormData>>({
   rules: {
     /* 校验规则 */
     username: [
-      { required: true, message: '账号不能为空', trigger: 'blur' },
-      { pattern: /^[a-z][a-z0-9]*$/, message: '格式：小写字母开头，字母/数字', trigger: 'blur' }
+      { required: true, message: t('common.requiredMsg', [t('auth.login.username')]), trigger: 'blur' },
+      { pattern: /^[a-z][a-z0-9]*$/, message: t('authz.user.usernameFormat'), trigger: 'blur' }
     ],
-    realName: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
-    phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '手机号码格式不正确', trigger: 'blur' }],
-    email: [{ type: 'email', message: '邮箱格式不正确', trigger: ['blur', 'change'] }]
+    realName: [{ required: true, message: t('common.requiredMsg', [t('common.realName')]), trigger: 'blur' }],
+    phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: t('authz.user.phoneInvalid'), trigger: 'blur' }],
+    email: [{ type: 'email', message: t('authz.user.emailInvalid'), trigger: ['blur', 'change'] }]
   }
 })
 // 密码校验规则（仅新增时生效，编辑时密码只读不校验）
 const passwordRules: FormItemRule[] = [
-  { required: true, message: '密码不能为空', trigger: 'blur' },
-  { min: 4, max: 20, message: '密码长度 4-20', trigger: 'blur' }
+  { required: true, message: t('common.requiredMsg', [t('auth.login.password')]), trigger: 'blur' },
+  { min: 4, max: 20, message: t('authz.user.passwordLength'), trigger: 'blur' }
 ]
 
 // --------------------------------- fun ---------------------------------
@@ -306,7 +307,7 @@ function getDeptTree() {
     deptOptions.value = handleTree(JSON.parse(JSON.stringify(response.data)), 'id')
     // 归属组织下拉树：默认追加「未选择」节点（id=0），对齐后端 org_id 默认值 0
     orgOptions.value = [
-      { id: 0, name: '未选择', parentId: -1, children: [] },
+      { id: 0, name: t('authz.user.noneChosen'), parentId: -1, children: [] },
       ...handleTree(JSON.parse(JSON.stringify(response.data)), 'id')
     ]
   })
@@ -402,7 +403,7 @@ function handleAdd() {
   getDeptTree()
   loadRoleOptions()
   formState.value.visible = true
-  formState.value.title = '新增用户'
+  formState.value.title = t('common.titleAdd', [t('common.noun.user')])
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -421,7 +422,7 @@ function handleUpdate(row: any) {
   }
   formState.value.form = { ...current }
   formState.value.visible = true
-  formState.value.title = '修改用户'
+  formState.value.title = t('common.titleEdit', [t('common.noun.user')])
 }
 
 /** 提交按钮 */
@@ -439,13 +440,13 @@ function submitForm() {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
         updateUser(submitData).then(() => {
-          modal.msgSuccess('修改成功')
+          modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
         addUser(submitData).then(() => {
-          modal.msgSuccess('新增成功')
+          modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
         })
@@ -461,26 +462,26 @@ function handleDelete(row: any) {
     return
   }
   modal
-    .confirm('是否确认删除用户编号为"' + userIds + '"的数据项？')
+    .confirm(t('authz.user.confirmDelete', [userIds]))
     .then(function () {
       return delUser(userIds)
     })
     .then(() => {
       getList()
-      modal.msgSuccess('删除成功')
+      modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }
 
 /** 重置密码按钮操作（通过 update 接口传递 id + password，需带上其余字段避免覆盖为空；密码校验与表单规则一致） */
 function handleResetPwd(row: User) {
-  ElMessageBox.prompt(`请输入「${row.username}」的新密码`, '重置密码', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  ElMessageBox.prompt(t('authz.user.resetPwdPrompt', [row.username as string]), t('authz.user.resetPwd'), {
+    confirmButtonText: t('modal.confirmButton'),
+    cancelButtonText: t('modal.cancelButton'),
     closeOnClickModal: false,
     inputValidator: (value) => {
-      if (!value) return '密码不能为空'
-      if (value.length < 4 || value.length > 20) return '密码长度 4-20'
+      if (!value) return t('common.requiredMsg', [t('auth.login.password')])
+      if (value.length < 4 || value.length > 20) return t('authz.user.passwordLength')
       return true
     }
   })
@@ -491,7 +492,7 @@ function handleResetPwd(row: User) {
       delete submitData.orgName
       delete submitData.roleNames
       updateUser(submitData).then(() => {
-        modal.msgSuccess('修改成功，新密码是：' + value)
+        modal.msgSuccess(t('authz.user.updatePwdSuccess', [value]))
       })
     })
     .catch(() => {})
@@ -499,7 +500,7 @@ function handleResetPwd(row: User) {
 
 /** 用户状态快速切换（通过 update 接口传递完整行数据，避免其余字段被覆盖） */
 function handleStatusChange(row: User) {
-  const text = Number(row.status) === 0 ? '正常' : '停用'
+  const text = Number(row.status) === 0 ? t('common.normal') : t('common.disabled')
   const submitData: User = { ...row, status: Number(row.status) }
   delete submitData.addTime
   delete submitData.updateTime
@@ -507,7 +508,7 @@ function handleStatusChange(row: User) {
   delete submitData.roleNames
   updateUser(submitData)
     .then(() => {
-      modal.msgSuccess(text + '成功')
+      modal.msgSuccess(t('authz.user.statusChangeSuccess', [text]))
     })
     .catch(() => {
       // 失败时回滚开关状态

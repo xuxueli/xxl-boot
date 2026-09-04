@@ -11,6 +11,7 @@ import {
 } from '@ant-design/pro-components';
 import { App, Col, Row } from 'antd';
 import React from 'react';
+import { t } from '@/i18n';
 import { Editor } from '@/components';
 import { addMessage, updateMessage } from '@/modules/framework/system/message/api';
 
@@ -38,14 +39,18 @@ const MessageFormModal = ({
     } else {
       await addMessage(data);
     }
-    message.success('操作成功');
+    message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
   return (
     <ModalForm<API.Message>
-      title={current?.id ? '修改站内消息' : '新增站内消息'}
+      title={
+        current?.id
+          ? t('common.titleEdit', [t('layout.header.messageTitle')])
+          : t('common.titleAdd', [t('layout.header.messageTitle')])
+      }
       width={780}
       open={open}
       onOpenChange={onOpenChange}
@@ -59,35 +64,35 @@ const MessageFormModal = ({
         <Col span={12}>
           <ProFormText
             name="title"
-            label="标题"
-            placeholder="请输入标题"
-            rules={[{ required: true, message: '标题不能为空' }]}
+            label={t('system.message.title')}
+            placeholder={t('common.inputPlaceholder', [t('system.message.title')])}
+            rules={[{ required: true, message: t('common.requiredMsg', [t('system.message.title')]) }]}
           />
         </Col>
         <Col span={12}>
           <ProFormSelect
             name="category"
-            label="分类"
-            placeholder="请选择分类"
+            label={t('system.message.category')}
+            placeholder={t('common.selectPlaceholderText', [t('system.message.category')])}
             options={categoryOptions}
-            rules={[{ required: true, message: '请选择分类' }]}
+            rules={[{ required: true, message: t('common.selectPlaceholderText', [t('system.message.category')]) }]}
           />
         </Col>
         <Col span={24}>
           <ProFormRadio.Group
             name="status"
-            label="状态"
+            label={t('common.status')}
             options={[
-              { value: 0, label: '正常' },
-              { value: 1, label: '下线' },
+              { value: 0, label: t('common.normal') },
+              { value: 1, label: t('system.message.offline') },
             ]}
           />
         </Col>
         <Col span={24}>
           <ProForm.Item
             name="content"
-            label="内容"
-            rules={[{ required: true, message: '内容不能为空' }]}
+            label={t('system.message.content')}
+            rules={[{ required: true, message: t('common.requiredMsg', [t('system.message.content')]) }]}
           >
             <Editor minHeight={210} />
           </ProForm.Item>

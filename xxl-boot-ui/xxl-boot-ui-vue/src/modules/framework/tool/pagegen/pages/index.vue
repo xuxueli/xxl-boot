@@ -8,7 +8,7 @@
     <div class="left-board">
       <!-- 标题 -->
       <div class="logo-wrapper">
-        <div class="logo">表单生成器 / Form Generator</div>
+        <div class="logo">{{ t('tool.pagegen.logoTitle') }}</div>
       </div>
 
       <!-- 组件选择区 -->
@@ -16,7 +16,7 @@
         <div class="components-list">
           <div class="components-title">
             <SvgIcon icon-class="component" />
-            输入型组件
+            {{ t('tool.pagegen.inputComponents') }}
           </div>
           <draggable
             class="components-draggable"
@@ -40,7 +40,7 @@
 
           <div class="components-title">
             <SvgIcon icon-class="component" />
-            选择型组件
+            {{ t('tool.pagegen.selectComponents') }}
           </div>
           <draggable
             class="components-draggable"
@@ -64,7 +64,7 @@
 
           <div class="components-title">
             <SvgIcon icon-class="component" />
-            布局型组件
+            {{ t('tool.pagegen.layoutComponents') }}
           </div>
           <draggable
             class="components-draggable"
@@ -93,9 +93,9 @@
     <div class="center-board">
       <!-- 中间画布操作栏 -->
       <div class="action-bar">
-        <el-button icon="Download" type="primary" text @click="download"> 导出vue文件 </el-button>
-        <el-button class="copy-btn-main" icon="DocumentCopy" type="primary" text @click="copy"> 复制代码 </el-button>
-        <el-button class="delete-btn" icon="Delete" text @click="empty" type="danger"> 清空 </el-button>
+        <el-button icon="Download" type="primary" text @click="download"> {{ t('tool.pagegen.exportVue') }} </el-button>
+        <el-button class="copy-btn-main" icon="DocumentCopy" type="primary" text @click="copy"> {{ t('tool.pagegen.copyCode') }} </el-button>
+        <el-button class="delete-btn" icon="Delete" text @click="empty" type="danger"> {{ t('common.clear') }} </el-button>
       </div>
 
       <!-- 中间画布 -->
@@ -125,7 +125,7 @@
             </draggable>
 
             <!-- 拖拽区域，为空 -->
-            <div v-show="!canvas.drawingList.length" class="empty-info">从左侧拖入或点选组件进行表单设计</div>
+            <div v-show="!canvas.drawingList.length" class="empty-info">{{ t('tool.pagegen.emptyInfo') }}</div>
           </el-form>
         </el-row>
       </el-scrollbar>
@@ -137,7 +137,7 @@
     <!-- 代码生成类型选择弹窗 -->
     <CodeTypeDialog
       v-model="genDialog.dialogVisible"
-      title="选择生成类型"
+      :title="t('tool.pagegen.selectGenType')"
       :genDialog.showFileName="genDialog.showFileName"
       @confirm="generate"
     />
@@ -156,6 +156,7 @@
  * 4. 代码生成：导出 vue 文件或复制代码
  */
 import type { FormConf, FormItemConf } from '@/utils/generator/config'
+import { t } from '@/i18n'
 import draggable from 'vuedraggable'
 import ClipboardJS from 'clipboard'
 import beautifier from 'js-beautify'
@@ -239,7 +240,7 @@ function download() {
  * 清空画布所有组件
  */
 function empty() {
-  modal.confirm('确定要清空所有组件吗？').then(() => {
+  modal.confirm(t('tool.pagegen.confirmClear')).then(() => {
     idGlobal.value = 100
     canvas.value.drawingList = []
     cleanDrawingDefaultValue()
@@ -443,12 +444,12 @@ onMounted(() => {
   clipboard = new ClipboardJS('#copyNode', {
     text: (trigger) => {
       const codeStr = generateCode()
-      ElNotification({ title: '成功', message: '代码已复制到剪切板，可粘贴。', type: 'success' })
+      ElNotification({ title: t('tool.pagegen.success'), message: t('tool.pagegen.copyClipboard'), type: 'success' })
       return codeStr
     }
   })
   clipboard.on('error', (e) => {
-    modal.msgError('代码复制失败')
+    modal.msgError(t('tool.pagegen.copyFail'))
   })
 })
 onUnmounted(() => {

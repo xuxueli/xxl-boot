@@ -14,6 +14,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Dropdown, Input, Modal, Switch } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useRef, useState } from 'react';
+import { t } from '@/i18n';
 import { TreePanel } from '@/components';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
@@ -103,7 +104,7 @@ const Dashboard = () => {
           {
             id: 0,
             parentId: -1,
-            name: '未选择',
+            name: t('authz.user.noneChosen'),
             children: handleTree(deepClone(list)),
           },
         ]);
@@ -150,11 +151,13 @@ const Dashboard = () => {
     const ids = row ? [row.id as number] : selectedIds;
     if (ids.length === 0) return;
     modal.confirm({
-      title: '系统提示',
-      content: `是否确认删除名称为"${row?.username || '这些用户'}"的数据项？`,
+      title: t('modal.title'),
+      content: row?.username
+        ? t('authz.user.confirmDelete', [row.username])
+        : t('authz.user.confirmDeleteBatch'),
       onOk: async () => {
         await delUser(ids);
-        message.success('删除成功');
+        message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
       },
@@ -172,7 +175,7 @@ const Dashboard = () => {
     delete data.roleNames;
     try {
       await updateUser(data);
-      message.success('操作成功');
+      message.success(t('common.operationSuccess'));
       actionRef.current?.reload();
     } catch {
       // 失败回滚由 reload 保证
@@ -190,7 +193,7 @@ const Dashboard = () => {
       resetPassword.length < 4 ||
       resetPassword.length > 20
     ) {
-      message.warning('新密码长度必须在 4 到 20 个字符之间');
+      message.warning(t('authz.user.resetPwdLength'));
       return;
     }
     resetPwdLoading.current = true;
@@ -201,7 +204,7 @@ const Dashboard = () => {
     delete data.roleNames;
     updateUser(data)
       .then(() => {
-        message.success('重置成功');
+        message.success(t('authz.user.resetPwdSuccess'));
         setResetRow(null);
         setResetPassword('');
         actionRef.current?.reload();
@@ -216,13 +219,13 @@ const Dashboard = () => {
    */
   const columns: ProColumns<API.User>[] = [
     {
-      title: '用户编号',
+      title: t('authz.user.id'),
       dataIndex: 'id',
       search: false,
       width: 90,
     },
     {
-      title: '用户账号',
+      title: t('authz.user.account'),
       dataIndex: 'username',
       render: (_, record) => (
         <a
@@ -235,38 +238,38 @@ const Dashboard = () => {
       ),
     },
     {
-      title: '用户名称',
+      title: t('common.realName'),
       dataIndex: 'realName',
       search: false,
     },
     {
-      title: '所属组织',
+      title: t('authz.user.orgName'),
       dataIndex: 'orgName',
       search: false,
     },
     {
-      title: '状态',
+      title: t('common.status'),
       dataIndex: 'status',
       width: 90,
       align: 'center',
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Switch
-          checkedChildren="正常"
-          unCheckedChildren="停用"
+          checkedChildren={t('common.normal')}
+          unCheckedChildren={t('common.disabled')}
           checked={record.status === 0}
           onChange={(checked) => handleStatusChange(record, checked ? 0 : 1)}
         />
       ),
     },
     {
-      title: '创建时间',
+      title: t('common.createTime'),
       dataIndex: 'addTime',
       search: false,
       width: 160,
     },
     {
-      title: '操作',
+      title: t('common.operation'),
       valueType: 'option',
       width: 180,
       render: (_, record) => [
@@ -277,10 +280,10 @@ const Dashboard = () => {
             setFormOpen(true);
           }}
         >
-          <EditOutlined /> 修改
+          <EditOutlined /> {t('common.modify')}
         </a>,
         <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> 删除
+          <DeleteOutlined /> {t('common.delete')}
         </a>,
         <Dropdown
           key="more"
@@ -290,7 +293,7 @@ const Dashboard = () => {
                 key: 'resetPwd',
                 label: (
                   <>
-                    <KeyOutlined /> 重置密码
+                    <KeyOutlined /> {t('authz.user.resetPwd')}
                   </>
                 ),
               },
@@ -302,7 +305,7 @@ const Dashboard = () => {
           }}
         >
           <a onClick={(e) => e.preventDefault()}>
-            <MoreOutlined /> 更多
+            <MoreOutlined /> {t('common.more')}
           </a>
         </Dropdown>,
       ],
@@ -321,7 +324,7 @@ const Dashboard = () => {
         {/* 左侧：组织tree */}
         <TreePanel
           treeData={leftOrgOptions}
-          title="组织机构"
+          title={t('authz.user.orgTitle')}
           defaultExpandAll
           onNodeClick={handleNodeClick}
           onRefresh={loadOptions}
@@ -354,7 +357,7 @@ const Dashboard = () => {
                       actionRef.current?.reload();
                     }}
                   >
-                    重置
+                    {t('common.reset')}
                   </Button>,
                 ],
               }}
@@ -381,7 +384,7 @@ const Dashboard = () => {
                       setFormOpen(true);
                     }}
                   >
-                    新增
+                    {t('common.add')}
                   </Button>
                 ),
                 hasPermi('authz:user') && (
@@ -392,7 +395,7 @@ const Dashboard = () => {
                     disabled={selectedIds.length === 0}
                     onClick={() => handleDelete()}
                   >
-                    删除
+                    {t('common.delete')}
                   </Button>
                 ),
               ]}
@@ -431,7 +434,7 @@ const Dashboard = () => {
 
       {/* 重置密码模态框：弹框 */}
       <Modal
-        title="重置密码"
+        title={t('authz.user.resetPwd')}
         open={!!resetRow}
         onOk={handleResetPwd}
         onCancel={() => {
@@ -442,10 +445,10 @@ const Dashboard = () => {
         okButtonProps={{ loading: resetPwdLoading.current }}
       >
         <p style={{ marginBottom: 8 }}>
-          为「{resetRow?.username}」设置新密码：
+          {t('authz.user.resetPwdPrompt', [resetRow?.username ?? ''])}
         </p>
         <Input.Password
-          placeholder="请输入新密码（4-20 位）"
+          placeholder={t('common.inputPlaceholder', [t('authz.user.newPassword')])}
           value={resetPassword}
           onChange={(e) => setResetPassword(e.target.value)}
           maxLength={20}

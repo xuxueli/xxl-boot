@@ -26,22 +26,23 @@
 import { useAppStore } from '@/store'
 import modal from '@/utils/modal'
 import { computed, ref } from 'vue'
+import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
 
 const appStore = useAppStore()
 const size = computed(() => appStore.size)
 /* 可选尺寸列表 */
 const sizeOptions = ref([
-  { label: '较大', value: 'large' },
-  { label: '默认', value: 'default' },
-  { label: '稍小', value: 'small' }
+  { label: t('layout.size.large'), value: 'large' },
+  { label: t('layout.size.default'), value: 'default' },
+  { label: t('layout.size.small'), value: 'small' }
 ])
 
 /*
  * 切换布局尺寸：保存后刷新页面生效
  */
 function handleSetSize(size: string) {
-  modal.loading('正在设置布局大小，请稍候...')
+  modal.loading(t('layout.size.setting'))
   appStore.setSize(size)
   setTimeout(function () {
     window.location.reload()

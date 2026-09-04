@@ -18,6 +18,7 @@ import cache from '@/utils/cache'
 import modal from '@/utils/modal'
 import { useUserStore } from '@/store'
 import defaultSettings from '@/default-settings'
+import { t } from '@/i18n'
 import type { Response } from '@/types'
 
 /**
@@ -56,10 +57,10 @@ const REPEAT_SUBMIT_MAX_SIZE = 5 * 1024 * 1024
 
 // 错误码映射表：后端业务码 → 前端展示文案
 export const errorCode: Record<string, string> = {
-  '301': '认证失败，无法访问系统资源',
-  '403': '当前操作没有权限',
-  '404': '访问资源不存在',
-  default: '系统未知错误，请反馈给管理员'
+  '301': t('request.err301'),
+  '403': t('request.err403'),
+  '404': t('request.err404'),
+  default: t('request.errDefault')
 }
 
 // ==================== 创建 axios 实例（拦截器） ====================
@@ -128,8 +129,8 @@ service.interceptors.request.use((config: InternalAxiosRequestConfig) => {
       last.time != null &&
       snapshot.time - last.time < interval
     ) {
-      console.warn(`[${snapshot.url}]: 数据正在处理，请勿重复提交`)
-      return Promise.reject(new Error('数据正在处理，请勿重复提交'))
+      console.warn(`[${snapshot.url}]: ${t('request.repeatSubmit')}`)
+      return Promise.reject(new Error(t('request.repeatSubmit')))
     }
     cache.session.setJSON(REPEAT_SUBMIT_KEY, snapshot)
   }
@@ -159,7 +160,7 @@ service.interceptors.response.use(
       if (!isRelogin.show) {
         isRelogin.show = true
         modal
-          .confirm('登录状态已过期，您可以继续留在该页面，或者重新登录')
+          .confirm(t('request.sessionExpired'))
           .then(() => {
             isRelogin.show = false
             useUserStore()
@@ -172,7 +173,7 @@ service.interceptors.response.use(
             isRelogin.show = false
           })
       }
-      return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+      return Promise.reject(t('request.sessionInvalid'))
     }
 
     // 3. 其他非成功码（非200）
@@ -189,11 +190,11 @@ service.interceptors.response.use(
   (error) => {
     let { message: msg } = error as Error
     if (msg === 'Network Error') {
-      msg = '后端接口连接异常'
+      msg = t('request.networkError')
     } else if (msg.includes('timeout')) {
-      msg = '系统接口请求超时'
+      msg = t('request.timeout')
     } else if (msg.includes('Request failed with status code')) {
-      msg = '系统接口' + msg.slice(-3) + '异常'
+      msg = t('request.httpError', [msg.slice(-3)])
     }
     modal.msgError(msg)
     return Promise.reject(error)

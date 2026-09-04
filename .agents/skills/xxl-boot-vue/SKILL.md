@@ -150,6 +150,8 @@ SQL 脚本：`{business}-table.sql`
 
 页面（含弹窗 XxxFormModal.vue）放 `pages/`，接口放 `api/`，类型放 `types/`，三者同模块聚合、无 barrel 登记；全局基础类型（Response/PageModel/ListQuery…）统一从 `@/types` 引用。「框架」内置模块在 `modules/framework/`，业务禁止混入。
 
+**i18n 落位**：用户可见文案一律 `import { t } from '@/i18n'` 引用，**禁止硬编码中文**（注释除外）；文案 key 统一维护在 `src/i18n/locales/{zh,en}.json` **单一文件**内（按域名节点分区，如 `business.*`；`app` 前置 → 公共组 `common` 等 → 平台业务组 `authz/system` 等 → 常规业务模块，顺序与另一套 UI 保持一致），zh/en 成对补。通用词（新增/修改/删除/搜索/操作/状态/正常/停用/保存成功…）复用 `common.*`，插值用 `t('key',[v])`（`{0}`）。
+
 types 参考 `src/modules/framework/system/message/types/index.ts` 封口写法；api 参考 `src/modules/framework/system/message/api/index.ts`。
 
 ### index.vue 骨架（三段式，template 略）
@@ -162,6 +164,7 @@ import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import { useEnumOption } from '@/composables/useEnumOption'
 import modal from '@/utils/modal'
+import { t } from '@/i18n'
 import { RightToolbar, Pagination } from '@/components'
 import type { FormState, TableState } from '@/types'
 import type { Demo, DemoQuery } from '../types'
@@ -178,7 +181,7 @@ const queryParams = ref<DemoQuery>({ pageNum: 1, pageSize: 10, status: -1, name:
 
 const table = ref<TableState<Demo>>({ list: [], total: 0, loading: true, showSearch: true, ids: [], single: true, multiple: true })
 
-const formState = ref<FormState<Demo>>({ visible: false, title: '', form: {}, rules: { name: [{ required: true, message: '名称不能为空', trigger: 'blur' }] } })
+const formState = ref<FormState<Demo>>({ visible: false, title: '', form: {}, rules: { name: [{ required: true, message: t('demo.nameRequired'), trigger: 'blur' }] } })
 
 // --------------------------------- fun ---------------------------------
 function getList() {
@@ -249,6 +252,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 - [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，分页 `offset/pagesize`，XML resultMap + `NOW()`，校验 `Response.ofFail`。
 - [ ] 前端：types 三件齐（实体/Query/ListQuery）并登记 barrel；api 封装 `Promise<Response<PageModel<T>>>`；列表页三段式 + `ref` 收敛 + `usePageParams`。
 - [ ] 权限：按钮 `v-hasPermi`，资源表菜单+按钮已插且已授权。注释符合 AGENTS.md 6.1。
+- [ ] i18n：页面无硬编码中文（注释除外），`t('key')` 引用且 zh/en 文案已成对维护；通用词复用 `common.*`。语言配置 `default-settings.ts` 的 `language`。
 - [ ] 防乱码：所有 `.sql` 首行有 `SET NAMES utf8mb4;`。
 - [ ] 联调：菜单可见、列表/新增/修改/删除/搜索可用、权限失效项按钮隐藏、空参数后端友好提示。
 

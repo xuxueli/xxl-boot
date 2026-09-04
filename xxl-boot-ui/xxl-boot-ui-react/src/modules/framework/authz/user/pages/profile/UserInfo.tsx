@@ -6,6 +6,7 @@
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import React from 'react';
+import { t } from '@/i18n';
 import { updateUserProfile } from '@/modules/framework/authz/user/api';
 import { closePage } from '@/utils/common';
 
@@ -42,7 +43,7 @@ const UserInfo = ({
   /** 提交保存 */
   const handleSubmit = async (values: UserInfoForm) => {
     await updateUserProfile(values as API.User);
-    message.success('修改成功');
+    message.success(t('common.updateSuccess'));
     onSuccess?.();
   };
 
@@ -60,46 +61,46 @@ const UserInfo = ({
       submitter={{
         render: ({ submit }) => [
           <Button type="primary" key="submit" onClick={() => submit()}>
-            保存
+            {t('common.save')}
           </Button>,
           <Button
             type="default"
             key="cancel"
             onClick={() => form.resetFields()}
           >
-            重置
+            {t('common.reset')}
           </Button>,
           <Button key="close" onClick={closePage}>
-            关闭
+            {t('common.close')}
           </Button>,
         ],
       }}
     >
       <ProFormText
         name="realName"
-        label="用户名称"
-        placeholder="请输入用户名称"
+        label={t('common.realName')}
+        placeholder={t('common.inputPlaceholder', [t('common.realName')])}
         fieldProps={{ maxLength: 30 }}
-        rules={[{ required: true, message: '用户名称不能为空' }]}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('common.realName')]) }]}
       />
       <ProFormText
         name="phone"
-        label="手机号码"
-        placeholder="请输入手机号码"
+        label={t('authz.user.phoneNumber')}
+        placeholder={t('common.inputPlaceholder', [t('authz.user.phoneNumber')])}
         fieldProps={{ maxLength: 11 }}
         rules={[
           {
             pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-            message: '手机号格式不正确',
+            message: t('authz.user.mobileInvalid'),
           },
         ]}
       />
       <ProFormText
         name="email"
-        label="邮箱"
-        placeholder="请输入邮箱"
+        label={t('authz.user.email')}
+        placeholder={t('common.inputPlaceholder', [t('authz.user.email')])}
         fieldProps={{ maxLength: 100 }}
-        rules={[{ type: 'email', message: '邮箱格式不正确' }]}
+        rules={[{ type: 'email', message: t('authz.user.emailInvalid') }]}
       />
     </ProForm>
   );

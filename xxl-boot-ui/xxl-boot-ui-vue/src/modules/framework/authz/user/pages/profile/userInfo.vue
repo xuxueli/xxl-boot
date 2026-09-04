@@ -5,24 +5,25 @@
 <template>
   <!-- 基本资料表单 -->
   <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
-    <el-form-item label="用户名称" prop="realName">
+    <el-form-item :label="t('common.realName')" prop="realName">
       <el-input v-model="form.realName" maxlength="30" />
     </el-form-item>
-    <el-form-item label="手机号码" prop="phone">
+    <el-form-item :label="t('authz.user.phoneNumber')" prop="phone">
       <el-input v-model="form.phone" maxlength="11" @input="(value: string) => (form.phone = value.slice(0, 11))" />
     </el-form-item>
-    <el-form-item label="邮箱" prop="email">
+    <el-form-item :label="t('authz.user.email')" prop="email">
       <el-input v-model="form.email" maxlength="100" />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submit">保存</el-button>
-      <el-button type="danger" @click="close">关闭</el-button>
+      <el-button type="primary" @click="submit">{{ t('common.save') }}</el-button>
+      <el-button type="danger" @click="close">{{ t('common.close') }}</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script setup lang="ts">
 // 引入
+import { t } from '@/i18n'
 import { updateUserProfile } from '../../api'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
@@ -46,9 +47,9 @@ const userRef = ref<FormInstance>() // 表单 ref
 const form = ref<UserInfoForm>({}) // 表单数据
 const rules = ref<FormRules>({
   // 表单校验规则
-  realName: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
-  phone: [{ pattern: /^\d{5,11}$/, message: '手机号格式不正确', trigger: 'blur' }],
-  email: [{ type: 'email', message: '邮箱格式不正确', trigger: 'blur' }]
+  realName: [{ required: true, message: t('common.requiredMsg', [t('common.realName')]), trigger: 'blur' }],
+  phone: [{ pattern: /^\d{5,11}$/, message: t('authz.user.mobileInvalid'), trigger: 'blur' }],
+  email: [{ type: 'email', message: t('authz.user.emailInvalid'), trigger: 'blur' }]
 })
 
 /** 提交按钮 */
@@ -56,7 +57,7 @@ function submit() {
   userRef.value!.validate((valid) => {
     if (valid) {
       updateUserProfile(form.value).then(() => {
-        modal.msgSuccess('修改成功')
+        modal.msgSuccess(t('common.updateSuccess'))
       })
     }
   })

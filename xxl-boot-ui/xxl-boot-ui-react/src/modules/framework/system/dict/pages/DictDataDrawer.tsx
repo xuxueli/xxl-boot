@@ -9,6 +9,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
+import { t } from '@/i18n';
 import { listData } from '@/modules/framework/system/dict/api';
 
 export type DictDataDrawerRef = {
@@ -42,7 +43,10 @@ const DictDataDrawer = forwardRef<DictDataDrawerRef>((_, ref) => {
 
   return (
     <Drawer
-      title={`字典数据（${dict?.name} - ${dict?.type}）`}
+      title={t('system.dict.dictDataTitle', [
+        dict?.name ?? '',
+        dict?.type ?? '',
+      ])}
       size={700}
       open={visible}
       onClose={() => setVisible(false)}
@@ -56,22 +60,22 @@ const DictDataDrawer = forwardRef<DictDataDrawerRef>((_, ref) => {
             marginBottom: 16,
           }}
         >
-          <Statistic title="共计条目" value={items.length} />
+          <Statistic title={t('system.dict.itemTotal')} value={items.length} />
           <Statistic
-            title="正常"
+            title={t('common.normal')}
             value={normalCount}
             valueStyle={{ color: '#52c41a' }}
           />
           {inactiveCount > 0 && (
             <Statistic
-              title="停用"
+              title={t('common.disabled')}
               value={inactiveCount}
               valueStyle={{ color: '#ff4d4f' }}
             />
           )}
         </div>
         {items.length === 0 ? (
-          <Empty description="暂无字典数据" />
+          <Empty description={t('system.dict.emptyData')} />
         ) : (
           <div
             style={{
@@ -95,11 +99,11 @@ const DictDataDrawer = forwardRef<DictDataDrawerRef>((_, ref) => {
                 <span>
                   {item.name}
                   <span style={{ marginLeft: 8, color: 'rgba(0,0,0,0.45)' }}>
-                    Code：{item.code}
+                    {t('system.dict.itemCodeText', [item.code ?? 0])}
                   </span>
                 </span>
                 <Tag color={item.status === 0 ? 'success' : 'error'}>
-                  {item.status === 0 ? '正常' : '停用'}
+                  {item.status === 0 ? t('common.normal') : t('common.disabled')}
                 </Tag>
               </div>
             ))}

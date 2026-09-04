@@ -6,34 +6,34 @@
   <div class="app-container">
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
-      <el-form-item label="日志类型" prop="type">
-        <el-select v-model="queryParams.type" placeholder="日志类型" clearable style="width: 200px">
-          <el-option label="全部" :value="-1" />
+      <el-form-item :label="t('system.log.logType')" prop="type">
+        <el-select v-model="queryParams.type" :placeholder="t('system.log.logTypePlaceholder')" clearable style="width: 200px">
+          <el-option :label="t('common.all')" :value="-1" />
           <el-option v-for="item in typeDict.options" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
-      <el-form-item label="系统模块" prop="module">
-        <el-select v-model="queryParams.module" placeholder="系统模块" clearable style="width: 200px">
-          <el-option label="全部" :value="0" />
+      <el-form-item :label="t('system.log.logModule')" prop="module">
+        <el-select v-model="queryParams.module" :placeholder="t('system.log.logModulePlaceholder')" clearable style="width: 200px">
+          <el-option :label="t('common.all')" :value="0" />
           <el-option v-for="item in moduleDict.options" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
-      <el-form-item label="日志标题" prop="title">
-        <el-input v-model="queryParams.title" placeholder="请输入日志标题" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item :label="t('system.log.logTitle')" prop="title">
+        <el-input v-model="queryParams.title" :placeholder="t('common.inputPlaceholder', [t('system.log.logTitle')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">{{ t('common.search') }}</el-button>
+        <el-button icon="Refresh" @click="resetQuery">{{ t('common.reset') }}</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasRole="['admin']">导出</el-button>
+        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasRole="['admin']">{{ t('system.log.export') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -41,34 +41,34 @@
     <!-- 日志列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="日志编号" align="center" prop="id" width="80" />
-      <el-table-column label="日志类型" align="center" width="100">
+      <el-table-column :label="t('system.log.logId')" align="center" prop="id" width="80" />
+      <el-table-column :label="t('system.log.logType')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.type === 0 ? 'primary' : 'warning'" size="small">
             {{ typeText(scope.row.type) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="系统模块" align="center" :show-overflow-tooltip="true">
+      <el-table-column :label="t('system.log.logModule')" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
           {{ moduleDict.map[scope.row.module] || scope.row.module }}
         </template>
       </el-table-column>
-      <el-table-column label="日志标题" align="center" prop="title" :show-overflow-tooltip="true" />
-      <el-table-column label="操作人" align="center" prop="operator" width="110" :show-overflow-tooltip="true" />
-      <el-table-column label="操作地址" align="center" :show-overflow-tooltip="true" width="160">
+      <el-table-column :label="t('system.log.logTitle')" align="center" prop="title" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('system.log.operator')" align="center" prop="operator" width="110" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('system.log.ipAddress')" align="center" :show-overflow-tooltip="true" width="160">
         <template #default="scope">
           {{ scope.row.ipAddress || scope.row.ip }}
         </template>
       </el-table-column>
-      <el-table-column label="新增时间" align="center" prop="addTime" width="180">
+      <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.addTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column :label="t('common.operation')" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="View" @click="handleDetail(scope.row)">详细</el-button>
+          <el-button link type="primary" icon="View" @click="handleDetail(scope.row)">{{ t('system.log.detail') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -89,6 +89,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Log' })
+import { t } from '@/i18n'
 import LogDetail from './detail.vue'
 import { pageList, delOperlog } from '../api'
 import { loadEnumItem } from '@/modules/framework/system/dict/api'
@@ -217,13 +218,13 @@ function handleDelete(row: any) {
     return
   }
   modal
-    .confirm('是否确认删除日志编号为"' + logIds + '"的数据项?')
+    .confirm(t('system.log.confirmDeleteLog', [logIds]))
     .then(function () {
       return delOperlog(logIds)
     })
     .then(() => {
       getList()
-      modal.msgSuccess('删除成功')
+      modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }

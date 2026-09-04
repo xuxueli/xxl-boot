@@ -52,37 +52,37 @@
       <template #dropdown>
         <el-dropdown-menu class="tags-dropdown-menu">
           <el-dropdown-item v-if="!isAffix(selectedDropdownTag)" command="close"
-            ><Close style="width: 1em; height: 1em" />关闭当前</el-dropdown-item
+            ><Close style="width: 1em; height: 1em" />{{ t('layout.tags.closeCurrent') }}</el-dropdown-item
           >
-          <el-dropdown-item command="closeOthers"><CircleClose style="width: 1em; height: 1em" />关闭其他</el-dropdown-item>
+          <el-dropdown-item command="closeOthers"><CircleClose style="width: 1em; height: 1em" />{{ t('layout.tags.closeOthers') }}</el-dropdown-item>
           <el-dropdown-item command="closeLeft" :disabled="isFirstView()"
-            ><Back style="width: 1em; height: 1em" />关闭左侧</el-dropdown-item
+            ><Back style="width: 1em; height: 1em" />{{ t('layout.tags.closeLeft') }}</el-dropdown-item
           >
           <el-dropdown-item command="closeRight" :disabled="isLastView()"
-            ><Right style="width: 1em; height: 1em" />关闭右侧</el-dropdown-item
+            ><Right style="width: 1em; height: 1em" />{{ t('layout.tags.closeRight') }}</el-dropdown-item
           >
-          <el-dropdown-item command="closeAll"><CircleClose style="width: 1em; height: 1em" />全部关闭</el-dropdown-item>
+          <el-dropdown-item command="closeAll"><CircleClose style="width: 1em; height: 1em" />{{ t('layout.tags.closeAll') }}</el-dropdown-item>
           <el-dropdown-item command="fullscreen" divided>
-            <template v-if="!isFullscreen"><FullScreen style="width: 1em; height: 1em" />全屏显示</template>
-            <template v-else><Close style="width: 1em; height: 1em" />退出全屏</template>
+            <template v-if="!isFullscreen"><FullScreen style="width: 1em; height: 1em" />{{ t('layout.tags.fullscreen') }}</template>
+            <template v-else><Close style="width: 1em; height: 1em" />{{ t('layout.tags.exitFullscreen') }}</template>
           </el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
 
     <!-- 刷新按钮 -->
-    <span class="tags-action-btn tags-refresh-btn" title="刷新页面" @click="refreshSelectedTag(selectedDropdownTag)">
-      <el-icon><RefreshRight /></el-icon> 刷新
+    <span class="tags-action-btn tags-refresh-btn" :title="t('layout.tags.refreshPage')" @click="refreshSelectedTag(selectedDropdownTag)">
+      <el-icon><RefreshRight /></el-icon> {{ t('layout.tags.refresh') }}
     </span>
 
     <!-- 右键上下文菜单 -->
     <ul v-show="visible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)"><RefreshRight style="width: 1em; height: 1em" />刷新页面</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)"><Close style="width: 1em; height: 1em" />关闭当前</li>
-      <li @click="closeOthersTags"><CircleClose style="width: 1em; height: 1em" />关闭其他</li>
-      <li v-if="!isFirstView()" @click="closeLeftTags"><Back style="width: 1em; height: 1em" />关闭左侧</li>
-      <li v-if="!isLastView()" @click="closeRightTags"><Right style="width: 1em; height: 1em" />关闭右侧</li>
-      <li @click="closeAllTags(selectedTag)"><CircleClose style="width: 1em; height: 1em" />全部关闭</li>
+      <li @click="refreshSelectedTag(selectedTag)"><RefreshRight style="width: 1em; height: 1em" />{{ t('layout.tags.refreshPage') }}</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)"><Close style="width: 1em; height: 1em" />{{ t('layout.tags.closeCurrent') }}</li>
+      <li @click="closeOthersTags"><CircleClose style="width: 1em; height: 1em" />{{ t('layout.tags.closeOthers') }}</li>
+      <li v-if="!isFirstView()" @click="closeLeftTags"><Back style="width: 1em; height: 1em" />{{ t('layout.tags.closeLeft') }}</li>
+      <li v-if="!isLastView()" @click="closeRightTags"><Right style="width: 1em; height: 1em" />{{ t('layout.tags.closeRight') }}</li>
+      <li @click="closeAllTags(selectedTag)"><CircleClose style="width: 1em; height: 1em" />{{ t('layout.tags.closeAll') }}</li>
     </ul>
   </div>
 </template>
@@ -97,6 +97,7 @@ import tab from '@/utils/tab'
 import defaultSettings from '@/default-settings'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
 
 const tagsViewStore = useTagsViewStore()

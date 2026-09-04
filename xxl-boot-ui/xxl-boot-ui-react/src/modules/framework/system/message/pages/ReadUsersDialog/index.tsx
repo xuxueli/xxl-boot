@@ -10,6 +10,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
+import { t } from '@/i18n';
 import { listMessageReadUsers } from '@/modules/framework/system/message/api';
 
 export type ReadUsersDialogRef = {
@@ -17,10 +18,15 @@ export type ReadUsersDialogRef = {
 };
 
 const columns: ColumnsType<API.MessageRead> = [
-  { title: '序号', width: 70, align: 'center', render: (_v, _r, i) => i + 1 },
-  { title: '登录名称', dataIndex: 'userName', align: 'center' },
-  { title: '用户名称', dataIndex: 'realName', align: 'center' },
-  { title: '阅读时间', dataIndex: 'addTime', align: 'center' },
+  {
+    title: t('common.serialNo'),
+    width: 70,
+    align: 'center',
+    render: (_v, _r, i) => i + 1,
+  },
+  { title: t('system.message.userName'), dataIndex: 'userName', align: 'center' },
+  { title: t('common.realName'), dataIndex: 'realName', align: 'center' },
+  { title: t('system.message.readTime'), dataIndex: 'addTime', align: 'center' },
 ];
 
 const ReadUsersDialog = forwardRef<ReadUsersDialogRef>((_, ref) => {
@@ -75,7 +81,7 @@ const ReadUsersDialog = forwardRef<ReadUsersDialogRef>((_, ref) => {
 
   return (
     <Modal
-      title={`「${title}」已读用户`}
+      title={t('system.message.readUsersTitle', [title])}
       width={680}
       open={visible}
       onCancel={handleClose}
@@ -92,7 +98,7 @@ const ReadUsersDialog = forwardRef<ReadUsersDialogRef>((_, ref) => {
           current,
           pageSize,
           total,
-          showTotal: (t) => `共 ${t} 条`,
+          showTotal: (total) => t('system.message.paginationTotal', [total]),
           onChange: (page, size) => {
             setCurrent(page);
             setPageSize(size);

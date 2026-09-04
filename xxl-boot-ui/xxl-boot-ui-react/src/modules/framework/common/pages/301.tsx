@@ -5,6 +5,7 @@
 import { Button, Card, Result } from 'antd';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { t } from '@/i18n';
 
 const Exception301 = () => {
   const navigate = useNavigate();
@@ -23,13 +24,13 @@ const Exception301 = () => {
       <Result
         status="403"
         title="301"
-        subTitle="对不起，您没有访问权限，请不要进行非法操作！您可以返回主页面"
+        subTitle={t('error.unauthorized')}
         extra={[
           <Button key="back" onClick={back}>
-            返回上一页
+            {t('error.backPrev')}
           </Button>,
           <Link key="home" to="/">
-            <Button type="primary">回首页</Button>
+            <Button type="primary">{t('error.backHome')}</Button>
           </Link>,
         ]}
       />

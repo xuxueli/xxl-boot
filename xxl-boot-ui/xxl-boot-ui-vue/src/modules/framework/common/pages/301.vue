@@ -5,17 +5,17 @@
 <template>
   <div class="errPage-container">
     <!-- 返回按钮 -->
-    <el-button icon="ArrowLeft" class="pan-back-btn" @click="back"> 返回 </el-button>
+    <el-button icon="ArrowLeft" class="pan-back-btn" @click="back"> {{ t('error.back') }} </el-button>
 
     <el-row>
       <!-- 提示信息 -->
       <el-col :span="12">
-        <h1 class="text-jumbo text-ginormous">301错误!</h1>
-        <h2>您没有访问权限！</h2>
-        <h6>对不起，您没有访问权限，请不要进行非法操作！您可以返回主页面</h6>
+        <h1 class="text-jumbo text-ginormous">{{ t('error.errTitle') }}</h1>
+        <h2>{{ t('error.noPermission') }}</h2>
+        <h6>{{ t('error.noPermissionTip') }}</h6>
         <ul class="list-unstyled">
           <li class="link-type">
-            <router-link to="/"> 回首页 </router-link>
+            <router-link to="/"> {{ t('error.backHome') }} </router-link>
           </li>
         </ul>
       </el-col>
@@ -33,6 +33,7 @@
 import errImage from '@/assets/images/301.gif'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { t } from '@/i18n'
 
 const route = useRoute() // 路由数据
 const router = useRouter() // 路由操作

@@ -10,7 +10,7 @@
         <el-card class="box-card">
           <template v-slot:header>
             <div class="clearfix">
-              <span>个人信息</span>
+              <span>{{ t('authz.user.personalInfo') }}</span>
             </div>
           </template>
 
@@ -19,32 +19,32 @@
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
                 <SvgIcon icon-class="user" />
-                用户账号
+                {{ t('authz.user.account') }}
                 <div class="pull-right">{{ state.user.username }}</div>
               </li>
               <li class="list-group-item">
                 <SvgIcon icon-class="phone" />
-                手机号码
+                {{ t('authz.user.phoneNumber') }}
                 <div class="pull-right">{{ state.user.phone }}</div>
               </li>
               <li class="list-group-item">
                 <SvgIcon icon-class="email" />
-                用户邮箱
+                {{ t('authz.user.emailLabel') }}
                 <div class="pull-right">{{ state.user.email }}</div>
               </li>
               <li class="list-group-item">
                 <SvgIcon icon-class="tree" />
-                所属部门
+                {{ t('authz.user.dept') }}
                 <div class="pull-right">{{ state.user.orgName }}</div>
               </li>
               <li class="list-group-item">
                 <SvgIcon icon-class="peoples" />
-                所属角色
+                {{ t('authz.user.roleLabel') }}
                 <div class="pull-right">{{ state.roleNames }}</div>
               </li>
               <li class="list-group-item">
                 <SvgIcon icon-class="date" />
-                创建日期
+                {{ t('authz.user.createDate') }}
                 <div class="pull-right">{{ state.user.addTime }}</div>
               </li>
             </ul>
@@ -57,17 +57,17 @@
         <el-card>
           <template v-slot:header>
             <div class="clearfix">
-              <span>基本资料</span>
+              <span>{{ t('authz.user.basicInfo') }}</span>
             </div>
           </template>
           <el-tabs v-model="selectedTab">
             <!-- 基本资料 -->
-            <el-tab-pane label="基本资料" name="userinfo">
+            <el-tab-pane :label="t('authz.user.basicInfo')" name="userinfo">
               <userInfo :user="state.user" />
             </el-tab-pane>
 
             <!-- 修改密码 -->
-            <el-tab-pane label="修改密码" name="resetPwd">
+            <el-tab-pane :label="t('authz.user.modifyPassword')" name="resetPwd">
               <resetPwd />
             </el-tab-pane>
           </el-tabs>
@@ -80,6 +80,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'Profile' })
 // 引入
+import { t } from '@/i18n'
 import userInfo from './userInfo.vue'
 import resetPwd from './resetPwd.vue'
 import { getUserProfile } from '../../api'

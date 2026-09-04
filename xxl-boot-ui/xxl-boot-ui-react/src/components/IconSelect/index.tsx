@@ -6,6 +6,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { Empty, Input, Popover } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useMemo, useState } from 'react';
+import { t } from '@/i18n';
 import { getIconComponent, iconList } from '@/utils/icon';
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -61,7 +62,7 @@ export type IconSelectProps = {
 const IconSelect = ({
   value,
   onChange,
-  placeholder = '请选择图标',
+  placeholder = t('common.selectPlaceholderText', [t('common.noun.icon')]),
 }: IconSelectProps) => {
   const { styles } = useStyles();
   const [keyword, setKeyword] = useState('');
@@ -89,7 +90,7 @@ const IconSelect = ({
         <div style={{ width: 280 }}>
           <Input
             size="small"
-            placeholder="搜索图标"
+            placeholder={t('components.iconSelect.search')}
             allowClear
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
@@ -98,7 +99,7 @@ const IconSelect = ({
           {filtered.length === 0 ? (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="无匹配图标"
+              description={t('components.iconSelect.noMatch')}
             />
           ) : (
             <div className={styles.grid}>

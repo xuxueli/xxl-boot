@@ -8,6 +8,7 @@
 import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
 import defaultSettings from '@/default-settings'
+import { t } from '@/i18n'
 import { useDark, useToggle } from '@vueuse/core'
 import { handleThemeStyle } from '@/utils/theme'
 
@@ -180,9 +181,9 @@ const useSettingsStore = defineStore('settings', {
 
       // 联动变更：修改 document.title
       if (this.dynamicTitle) {
-        document.title = this.menuTitle + ' - ' + defaultSettings.title
+        document.title = this.menuTitle + ' - ' + t('app.title')
       } else {
-        document.title = defaultSettings.title
+        document.title = t('app.title')
       }
     },
     /**

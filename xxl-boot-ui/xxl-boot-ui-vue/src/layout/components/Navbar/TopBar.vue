@@ -12,7 +12,7 @@
     <!-- 超出的菜单：折叠到"更多"下拉中 -->
     <el-sub-menu index="more" class="el-sub-menu__hide-arrow" v-if="moreRoutes.length > 0">
       <template #title>
-        <span>更多</span>
+        <span>{{ t('common.more') }}</span>
       </template>
       <SidebarItem :key="route.path + index" v-for="(route, index) in moreRoutes" :item="route" :base-path="route.path" />
     </el-sub-menu>
@@ -25,6 +25,7 @@ import { filterMenuRoutes, useVisibleMenuCount } from '@/utils/menu'
 import { useRoutesStore, useSettingsStore } from '@/store'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { t } from '@/i18n'
 
 const route = useRoute()
 const settingsStore = useSettingsStore()

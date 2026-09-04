@@ -15,13 +15,13 @@
         <el-icon><component :is="titleIcon" /></el-icon> {{ title }}
       </span>
       <div class="tree-actions" v-show="!collapsed">
-        <el-tooltip :content="isExpandedAll ? '收起全部' : '展开全部'" placement="right">
+        <el-tooltip :content="isExpandedAll ? t('components.treePanel.collapseAll') : t('components.treePanel.expandAll')" placement="right">
           <el-icon class="tree-action-icon" @click="toggleExpandAll">
             <ArrowDown v-if="isExpandedAll" />
             <ArrowUp v-else />
           </el-icon>
         </el-tooltip>
-        <el-tooltip content="刷新" placement="right">
+        <el-tooltip :content="t('common.refresh')" placement="right">
           <el-icon class="tree-action-icon" @click="handleRefresh"><Refresh /></el-icon>
         </el-tooltip>
         <slot name="actions"></slot>
@@ -74,7 +74,7 @@
 
     <!-- 右侧：侧边栏展开/收起按钮 -->
     <div class="collapse-button-container">
-      <el-tooltip :content="collapsed ? '展开' : '收起'" placement="right">
+      <el-tooltip :content="collapsed ? t('components.treePanel.expand') : t('components.treePanel.collapse')" placement="right">
         <el-icon class="collapse-button" @click="toggleCollapsed">
           <DArrowRight v-if="collapsed" />
           <DArrowLeft v-else />
@@ -86,6 +86,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { t } from '@/i18n'
 /**
  * defineProps 父传子
  */
@@ -136,13 +137,13 @@ const props = withDefaults(
     // 树形数据默认空数组
     treeData: () => [],
     // 标题默认
-    title: '树形结构',
+    title: t('components.treePanel.title'),
     // 标题图标默认
     titleIcon: 'OfficeBuilding',
     // 默认显示搜索框
     showSearch: true,
     // 搜索框占位符默认
-    searchPlaceholder: '请输入名称',
+    searchPlaceholder: t('common.inputPlaceholder', [t('common.noun.name')]),
     // 默认不收起侧边栏
     defaultCollapsed: false,
     // 树配置项默认：children/label 字段

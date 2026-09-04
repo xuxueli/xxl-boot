@@ -12,6 +12,7 @@ import { createStyles } from 'antd-style';
 import { clsx } from 'clsx';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Dropdown } from '@/components';
+import { t } from '@/i18n';
 import MessageDetail, {
   type MessageDetailRef,
 } from '@/modules/framework/system/message/pages/MessageDetail';
@@ -203,22 +204,22 @@ const HeaderMessage = () => {
         popupRender={() => (
           <div className={styles.panel}>
             <div className={styles.header}>
-              <span>站内消息</span>
+              <span>{t('layout.header.messageTitle')}</span>
               <span className={styles.markAll} onClick={markAllRead}>
-                全部已读
+                {t('layout.header.allRead')}
               </span>
             </div>
             {/* 加载中：展示 loading 文案 */}
             {loading ? (
               <div className={styles.loading}>
-                <LoadingOutlined spin /> 加载中...
+                <LoadingOutlined spin /> {t('common.loading')}
               </div>
             ) : /* 无公告：展示空态 */ messageList.length === 0 ? (
               <div className={styles.empty}>
                 <NotificationOutlined
                   style={{ fontSize: 24, display: 'block', marginBottom: 6 }}
                 />
-                暂无公告
+                {t('layout.header.noNotice')}
               </div>
             ) : (
               /* 有公告：渲染消息列表 */
@@ -231,7 +232,9 @@ const HeaderMessage = () => {
                   >
                     {/* 分类标签：0-通知，其他-公告 */}
                     <Tag color={item.category === 0 ? 'success' : 'warning'}>
-                      {item.category === 0 ? '通知' : '公告'}
+                      {item.category === 0
+                        ? t('layout.header.notice')
+                        : t('layout.header.announce')}
                     </Tag>
                     <span
                       className={clsx(

@@ -17,6 +17,7 @@ import React, { useRef, useState } from 'react';
 import { usePermission } from '@/hooks/usePermission';
 import { delTable, listTable } from '@/modules/framework/tool/codegen/api';
 import { downloadGet } from '@/utils/download';
+import { t } from '@/i18n';
 import EditTableModal from './EditTableModal';
 import PreviewModal, { type PreviewModalRef } from './PreviewModal';
 
@@ -70,11 +71,13 @@ const CodegenList = () => {
     const ids = row ? [row.id as number] : selectedIds;
     if (ids.length === 0) return;
     modal.confirm({
-      title: '系统提示',
-      content: `是否确认删除表编号为"${row ? row.id : ids.join(',')}"的数据项？`,
+      title: t('modal.title'),
+      content: t('tool.codegen.confirmDelete', [
+        row ? String(row.id) : ids.join(','),
+      ]),
       onOk: async () => {
         await delTable(ids);
-        message.success('删除成功');
+        message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
       },
@@ -85,7 +88,7 @@ const CodegenList = () => {
   const handleGenCode = (rows?: API.Codegen[]) => {
     const ids = rows ? rows.map((r) => r.id as number) : selectedIds;
     if (ids.length === 0) {
-      message.warning('请选择要生成的数据');
+      message.warning(t('tool.codegen.selectData'));
       return;
     }
     downloadGet('/tool/codegen/batchGenCode', { ids }, 'xxl-boot-codegen.zip');
@@ -101,7 +104,7 @@ const CodegenList = () => {
   /** 创建数据表 */
   const handleCreateTable = async () => {
     if (!tableSql.trim()) {
-      message.warning('建表 SQL 不能为空');
+      message.warning(t('tool.codegen.createTableSqlEmpty'));
       return;
     }
     setCreating(true);
@@ -109,7 +112,7 @@ const CodegenList = () => {
       const { createTable } = await import('@/modules/framework/tool/codegen/api');
       // 新建时携带前端模板类型（默认第一个选项 antd-typescript），与后端 createTable 入参匹配
       await createTable(tableSql, 'antd-typescript');
-      message.success('创建成功');
+      message.success(t('tool.codegen.createSuccess'));
       setCreateOpen(false);
       actionRef.current?.reload();
     } finally {
@@ -119,17 +122,27 @@ const CodegenList = () => {
 
   const columns: ProColumns<API.Codegen>[] = [
     {
-      title: '序号',
+      title: t('common.serialNo'),
       search: false,
       width: 70,
       render: (_, _r, index) => index + 1,
     },
-    { title: '表名称', dataIndex: 'tableName' },
-    { title: '表描述', dataIndex: 'tableComment' },
-    { title: '创建时间', dataIndex: 'addTime', search: false, width: 160 },
-    { title: '更新时间', dataIndex: 'updateTime', search: false, width: 160 },
+    { title: t('tool.codegen.tableName'), dataIndex: 'tableName' },
+    { title: t('tool.codegen.tableComment'), dataIndex: 'tableComment' },
     {
-      title: '操作',
+      title: t('common.createTime'),
+      dataIndex: 'addTime',
+      search: false,
+      width: 160,
+    },
+    {
+      title: t('common.updateTime'),
+      dataIndex: 'updateTime',
+      search: false,
+      width: 160,
+    },
+    {
+      title: t('common.operation'),
       valueType: 'option',
       width: 300,
       render: (_, record) => [
@@ -141,12 +154,12 @@ const CodegenList = () => {
               setEditOpen(true);
             }}
           >
-            <EditOutlined /> 编辑
+            <EditOutlined /> {t('common.edit')}
           </a>
         ),
         hasRole('admin') && (
           <a key="delete" onClick={() => handleDelete(record)}>
-            <DeleteOutlined /> 删除
+            <DeleteOutlined /> {t('common.delete')}
           </a>
         ),
         hasRole('admin') && (
@@ -156,12 +169,12 @@ const CodegenList = () => {
               previewRef.current?.open(record.id as number);
             }}
           >
-            <EyeOutlined /> 预览
+            <EyeOutlined /> {t('tool.codegen.preview')}
           </a>
         ),
         hasRole('admin') && (
           <a key="gen" onClick={() => handleGenCode([record])}>
-            <DownloadOutlined /> 生成代码
+            <DownloadOutlined /> {t('tool.codegen.generate')}
           </a>
         ),
       ],
@@ -200,7 +213,7 @@ const CodegenList = () => {
                   setCreateOpen(true);
                 }}
               >
-                创建
+                {t('tool.codegen.create')}
               </Button>
             ),
             hasRole('admin') && (
@@ -210,7 +223,7 @@ const CodegenList = () => {
                 disabled={selectedIds.length !== 1}
                 onClick={handleEdit}
               >
-                修改
+                {t('common.modify')}
               </Button>
             ),
             hasRole('admin') && (
@@ -221,7 +234,7 @@ const CodegenList = () => {
                 disabled={!selectedIds.length}
                 onClick={() => handleDelete()}
               >
-                删除
+                {t('common.delete')}
               </Button>
             ),
             hasRole('admin') && (
@@ -232,7 +245,7 @@ const CodegenList = () => {
                 disabled={!selectedIds.length}
                 onClick={() => handleGenCode()}
               >
-                生成
+                {t('tool.codegen.generate')}
               </Button>
             ),
           ]}
@@ -261,21 +274,21 @@ const CodegenList = () => {
       <PreviewModal ref={previewRef} />
 
       <Modal
-        title="创建数据表"
+        title={t('tool.codegen.createTable')}
         open={createOpen}
         onCancel={() => setCreateOpen(false)}
         onOk={handleCreateTable}
         confirmLoading={creating}
         width={720}
-        okText="创建"
-        cancelText="取消"
+        okText={t('tool.codegen.create')}
+        cancelText={t('modal.cancelButton')}
       >
         <Input.TextArea
           rows={12}
           value={tableSql}
           onChange={(e) => setTableSql(e.target.value)}
           style={{ fontFamily: 'monospace', fontSize: 12 }}
-          placeholder="请输入建表 SQL"
+          placeholder={t('common.inputPlaceholder', [t('common.noun.createTableSql')])}
         />
       </Modal>
     </PageContainer>

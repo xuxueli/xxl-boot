@@ -7,16 +7,15 @@
     <el-card>
       <h2>{{ brandName }}｜{{ title }}</h2>
       <p>
-        XXL-BOOT 是一个快速开发平台，易学易用、扩展丰富、开箱即用。整合前后端流行技术，致力为 中小企业、个人开发者
-        打造开箱即用的中后台解决方案。
+        {{ t('help.intro') }}
       </p>
 
       <p>
         <!-- GitHub -->
-        <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://github.com/xuxueli/xxl-boot')">访问GitHub </el-button>
+        <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://github.com/xuxueli/xxl-boot')">{{ t('help.github') }} </el-button>
 
         <!-- 帮助文档 -->
-        <el-button icon="HomeFilled" plain @click="goTarget('https://www.xuxueli.com/xxl-boot/')">帮助文档 </el-button>
+        <el-button icon="HomeFilled" plain @click="goTarget('https://www.xuxueli.com/xxl-boot/')">{{ t('help.docs') }} </el-button>
 
         <!-- icon -->
         &nbsp;&nbsp;｜&nbsp;&nbsp;
@@ -48,8 +47,9 @@
 <script setup lang="ts">
 // 引入
 import defaultSettings from '@/default-settings'
+import { t } from '@/i18n'
 
-const title = defaultSettings.title
+const title = t('app.title')
 const brandName = defaultSettings.brandName
 const version = defaultSettings.version
 const footerContent = defaultSettings.footerContent

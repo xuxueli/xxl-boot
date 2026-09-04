@@ -1,5 +1,6 @@
 import type { Directive, DirectiveBinding } from 'vue'
 import { useUserStore } from '@/store'
+import { t } from '@/i18n'
 
 /**
  * 角色权限指令
@@ -24,7 +25,7 @@ export default {
       }
     } else {
       // 参数非法，抛出错误
-      throw new Error('请设置角色权限标签值')
+      throw new Error(t('common.roleRequired'))
     }
   }
 } as Directive<HTMLElement, string[]>

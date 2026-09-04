@@ -67,6 +67,7 @@ import {
 } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useMemo, useRef, useState } from 'react';
+import { t } from '@/i18n';
 import CodeTypeDialog from './CodeTypeDialog';
 import type { FormConfig, FormWidget, WidgetType } from './config';
 import {
@@ -305,8 +306,8 @@ const renderPreview = (widget: FormWidget) => {
       return (
         <DatePicker.RangePicker
           placeholder={[
-            widget.placeholder || '开始日期',
-            widget.placeholder || '结束日期',
+            widget.placeholder || t('tool.pagegen.startDate'),
+            widget.placeholder || t('tool.pagegen.endDate'),
           ]}
           style={{ width: '100%' }}
         />
@@ -317,8 +318,8 @@ const renderPreview = (widget: FormWidget) => {
       return (
         <TimePicker.RangePicker
           placeholder={[
-            widget.placeholder || '开始时间',
-            widget.placeholder || '结束时间',
+            widget.placeholder || t('tool.pagegen.startTime'),
+            widget.placeholder || t('tool.pagegen.endTime'),
           ]}
           style={{ width: '100%' }}
         />
@@ -327,7 +328,7 @@ const renderPreview = (widget: FormWidget) => {
       return (
         <Select
           {...common}
-          placeholder={widget.placeholder || '请选择'}
+          placeholder={widget.placeholder || t('tool.pagegen.plsSelect')}
           options={(widget.options || []).map((o) => ({ value: o, label: o }))}
         />
       );
@@ -335,7 +336,7 @@ const renderPreview = (widget: FormWidget) => {
       return (
         <Cascader
           {...common}
-          placeholder={widget.placeholder || '请选择'}
+          placeholder={widget.placeholder || t('tool.pagegen.plsSelect')}
           options={toCascaderOptions(widget.options)}
         />
       );
@@ -369,7 +370,7 @@ const renderPreview = (widget: FormWidget) => {
       return (
         <Upload beforeUpload={() => false}>
           <Button icon={<UploadOutlined />}>
-            {widget.uploadText || '点击上传'}
+            {widget.uploadText || t('tool.pagegen.clickUpload')}
           </Button>
         </Upload>
       );
@@ -563,7 +564,7 @@ const RowBody = ({
   return (
     <div ref={setNodeRef} className={styles.rowBody}>
       {(widget.children || []).length === 0 ? (
-        <div className={styles.rowEmpty}>从左侧拖入或点击添加组件</div>
+        <div className={styles.rowEmpty}>{t('tool.pagegen.rowDragTip')}</div>
       ) : (
         <SortableContext
           items={(widget.children || []).map((c) => c.id)}
@@ -731,17 +732,17 @@ const PageGen = () => {
     const code = buildCode(data.type as 'file' | 'dialog');
     try {
       await navigator.clipboard.writeText(code);
-      message.success('代码已复制');
+      message.success(t('tool.pagegen.codeCopied'));
     } catch {
-      message.error('复制失败');
+      message.error(t('tool.pagegen.copyFailed'));
     }
   };
 
   /** 清空画布：二次确认 */
   const handleClear = () => {
     modal.confirm({
-      title: '系统提示',
-      content: '确定要清空所有组件吗？',
+      title: t('modal.title'),
+      content: t('tool.pagegen.clearConfirm'),
       onOk: () => {
         idRef.current = 100;
         setWidgets([]);
@@ -778,7 +779,9 @@ const PageGen = () => {
           {/* 中：画布 */}
           <div className={`${styles.panel} ${styles.canvas}`}>
             <div className={styles.toolbar}>
-              <span style={{ fontWeight: 600 }}>表单设计</span>
+              <span style={{ fontWeight: 600 }}>
+                {t('tool.pagegen.formDesign')}
+              </span>
               <div>
                 <Button
                   icon={<DownloadOutlined />}
@@ -789,7 +792,7 @@ const PageGen = () => {
                     setGenOpen(true);
                   }}
                 >
-                  导出文件
+                  {t('tool.pagegen.exportFile')}
                 </Button>
                 <Button
                   icon={<CopyOutlined />}
@@ -800,17 +803,17 @@ const PageGen = () => {
                     setGenOpen(true);
                   }}
                 >
-                  复制代码
+                  {t('tool.pagegen.copyCode')}
                 </Button>
                 <Button danger size="small" onClick={handleClear}>
-                  清空
+                  {t('common.clear')}
                 </Button>
               </div>
             </div>
             <CanvasBody>
               {widgets.length === 0 ? (
                 <div className={styles.empty}>
-                  从左侧拖入或点选组件进行表单设计
+                  {t('tool.pagegen.canvasEmpty')}
                 </div>
               ) : (
                 <SortableContext
@@ -868,7 +871,9 @@ const PageGen = () => {
 
           {/* 右：属性面板 */}
           <div className={`${styles.panel} ${styles.properties}`}>
-            <div style={{ marginLeft: 8, fontWeight: 600 }}>属性配置</div>
+            <div style={{ marginLeft: 8, fontWeight: 600 }}>
+              {t('tool.pagegen.propertyConfig')}
+            </div>
             <RightPanel
               activeData={selectedWidget}
               formConfig={config}

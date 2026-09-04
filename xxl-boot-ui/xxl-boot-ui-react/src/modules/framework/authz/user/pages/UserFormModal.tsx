@@ -11,6 +11,7 @@ import {
 } from '@ant-design/pro-components';
 import { App, Col, Row } from 'antd';
 import React, { useEffect, useMemo } from 'react';
+import { t } from '@/i18n';
 import { addUser, updateUser } from '@/modules/framework/authz/user/api';
 
 /**
@@ -78,7 +79,7 @@ const UserFormModal = ({
       await addUser(data);
     }
 
-    message.success('操作成功');
+    message.success(t('common.operationSuccess'));
     onSuccess?.();
     return true;
   };
@@ -93,7 +94,7 @@ const UserFormModal = ({
   return (
     /* 模态框 */
     <ModalForm<API.User>
-      title={current?.id ? '修改用户' : '新增用户'}
+      title={current?.id ? t('common.titleEdit', [t('common.noun.user')]) : t('common.titleAdd', [t('common.noun.user')])}
       width={640}
       open={open} /* 是否显示弹框 */
       onOpenChange={onOpenChange} /* 弹框显示状态变化触发 */
@@ -112,14 +113,14 @@ const UserFormModal = ({
         <Col span={12}>
           <ProFormText
             name="username"
-            label="账号"
-            placeholder="请输入账号"
+            label={t('authz.user.username')}
+            placeholder={t('common.inputPlaceholder', [t('authz.user.username')])}
             disabled={!!current?.id}
             rules={[
-              { required: true, message: '账号不能为空' },
+              { required: true, message: t('common.requiredMsg', [t('authz.user.username')]) },
               {
                 pattern: /^[a-z][a-z0-9]*$/,
-                message: '小写字母开头，仅允许小写字母和数字',
+                message: t('authz.user.usernameFormat'),
               },
             ]}
           />
@@ -128,11 +129,11 @@ const UserFormModal = ({
           <Col span={12}>
             <ProFormText.Password
               name="password"
-              label="密码"
-              placeholder="请输入密码"
+              label={t('authz.user.password')}
+              placeholder={t('common.inputPlaceholder', [t('authz.user.password')])}
               rules={[
-                { required: true, message: '密码不能为空' },
-                { min: 4, max: 20, message: '密码长度必须在 4 到 20 个字符' },
+                { required: true, message: t('common.requiredMsg', [t('authz.user.password')]) },
+                { min: 4, max: 20, message: t('authz.user.passwordLength') },
               ]}
             />
           </Col>
@@ -140,17 +141,17 @@ const UserFormModal = ({
         <Col span={12}>
           <ProFormText
             name="realName"
-            label="用户名称"
-            placeholder="请输入用户名称"
+            label={t('common.realName')}
+            placeholder={t('common.inputPlaceholder', [t('common.realName')])}
             fieldProps={{ maxLength: 50 }}
-            rules={[{ required: true, message: '用户名称不能为空' }]}
+            rules={[{ required: true, message: t('common.requiredMsg', [t('common.realName')]) }]}
           />
         </Col>
         <Col span={12}>
           <ProFormSelect
             name="roleIds"
-            label="角色"
-            placeholder="请选择角色"
+            label={t('authz.user.role')}
+            placeholder={t('common.selectPlaceholderText', [t('authz.user.role')])}
             mode="multiple"
             options={roleSelectOptions}
             fieldProps={{ optionDisabledProp: 'disabled' }}
@@ -159,8 +160,8 @@ const UserFormModal = ({
         <Col span={12}>
           <ProFormTreeSelect
             name="orgId"
-            label="归属组织"
-            placeholder="请选择组织"
+            label={t('authz.user.belongOrg')}
+            placeholder={t('common.selectPlaceholderText', [t('common.noun.org')])}
             fieldProps={{
               treeData: orgTreeSelectData,
               treeDefaultExpandAll: true,
@@ -171,22 +172,22 @@ const UserFormModal = ({
         <Col span={12}>
           <ProFormText
             name="email"
-            label="邮箱"
-            placeholder="请输入邮箱"
+            label={t('authz.user.email')}
+            placeholder={t('common.inputPlaceholder', [t('authz.user.email')])}
             fieldProps={{ maxLength: 100 }}
-            rules={[{ type: 'email', message: '邮箱格式不正确' }]}
+            rules={[{ type: 'email', message: t('authz.user.emailInvalid') }]}
           />
         </Col>
         <Col span={12}>
           <ProFormText
             name="phone"
-            label="手机号"
-            placeholder="请输入手机号"
+            label={t('authz.user.phone')}
+            placeholder={t('common.inputPlaceholder', [t('authz.user.phone')])}
             fieldProps={{ maxLength: 11 }}
             rules={[
               {
                 pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
-                message: '手机号格式不正确',
+                message: t('authz.user.mobileInvalid'),
               },
             ]}
           />
@@ -194,10 +195,10 @@ const UserFormModal = ({
         <Col span={12}>
           <ProFormRadio.Group
             name="status"
-            label="状态"
+            label={t('common.status')}
             options={[
-              { value: 0, label: '正常' },
-              { value: 1, label: '停用' },
+              { value: 0, label: t('common.normal') },
+              { value: 1, label: t('common.disabled') },
             ]}
           />
         </Col>

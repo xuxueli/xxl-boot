@@ -7,7 +7,7 @@
 <template>
   <div class="icon-body">
     <!-- icon输入 -->
-    <el-input v-model="iconName" class="icon-search" clearable placeholder="请输入图标名称">
+    <el-input v-model="iconName" class="icon-search" clearable :placeholder="t('common.inputPlaceholder', [t('common.noun.iconName')])">
       <template #suffix><i class="el-icon-search el-input__icon" /></template>
     </el-input>
 
@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
 /**
  * Svg Icon全量导入：

@@ -17,13 +17,13 @@
       <!-- 加载中 -->
       <div v-if="loading" class="drawer-loading">
         <el-icon class="is-loading"><Loading /></el-icon>
-        <span>加载中...</span>
+        <span>{{ t('common.loading') }}</span>
       </div>
 
       <!-- 空数据 -->
       <div v-else-if="!dataList.length" class="drawer-empty">
         <el-icon style="font-size: 36px"><Document /></el-icon>
-        <div>暂无字典数据</div>
+        <div>{{ t('system.dict.emptyData') }}</div>
       </div>
 
       <template v-else>
@@ -32,19 +32,19 @@
           <el-col :span="disabledCount > 0 ? 8 : 12">
             <div class="stat-card">
               <div class="stat-num">{{ dataList.length }}</div>
-              <div class="stat-label">共计条目</div>
+              <div class="stat-label">{{ t('system.dict.itemTotal') }}</div>
             </div>
           </el-col>
           <el-col :span="disabledCount > 0 ? 8 : 12">
             <div class="stat-card">
               <div class="stat-num success">{{ normalCount }}</div>
-              <div class="stat-label">正常</div>
+              <div class="stat-label">{{ t('common.normal') }}</div>
             </div>
           </el-col>
           <el-col v-if="disabledCount > 0" :span="8">
             <div class="stat-card">
               <div class="stat-num danger">{{ disabledCount }}</div>
-              <div class="stat-label">停用</div>
+              <div class="stat-label">{{ t('common.disabled') }}</div>
             </div>
           </el-col>
         </el-row>
@@ -52,18 +52,18 @@
         <!-- 字典项列表 -->
         <div v-for="item in dataList" :key="item.id" class="dict-item">
           <div class="dict-cell">
-            <div class="dict-cell-key">字典项名称</div>
+            <div class="dict-cell-key">{{ t('system.dict.itemName') }}</div>
             <div class="dict-cell-val">{{ item.name }}</div>
           </div>
           <div class="dict-cell">
-            <div class="dict-cell-key">字典项Code</div>
+            <div class="dict-cell-key">{{ t('system.dict.itemCode') }}</div>
             <div class="dict-cell-val">{{ item.code }}</div>
           </div>
           <div class="dict-cell">
-            <div class="dict-cell-key">状态</div>
+            <div class="dict-cell-key">{{ t('common.status') }}</div>
             <div class="dict-cell-val">
               <el-tag :type="item.status === 0 ? 'success' : 'danger'" size="small">
-                {{ item.status === 0 ? '正常' : '停用' }}
+                {{ item.status === 0 ? t('common.normal') : t('common.disabled') }}
               </el-tag>
             </div>
           </div>
@@ -74,6 +74,7 @@
 </template>
 
 <script setup lang="ts">
+import { t } from '@/i18n'
 import { listData } from '../api'
 import type { Dict, DictItem } from '../types'
 import { computed, ref, watch } from 'vue'

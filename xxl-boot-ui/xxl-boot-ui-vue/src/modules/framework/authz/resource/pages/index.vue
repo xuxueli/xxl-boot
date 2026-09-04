@@ -5,31 +5,31 @@
   <div class="app-container">
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
-      <el-form-item label="资源名称" prop="name">
-        <el-input v-model="queryParams.name" placeholder="请输入资源名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item :label="t('authz.resource.menuName')" prop="name">
+        <el-input v-model="queryParams.name" :placeholder="t('common.inputPlaceholder', [t('authz.resource.menuName')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="资源状态" clearable style="width: 200px">
-          <el-option label="全部" :value="-1" />
+      <el-form-item :label="t('common.status')" prop="status">
+        <el-select v-model="queryParams.status" :placeholder="t('authz.resource.statusPlaceholder')" clearable style="width: 200px">
+          <el-option :label="t('common.all')" :value="-1" />
           <el-option v-for="item in statusOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">{{ t('common.search') }}</el-button>
+        <el-button icon="Refresh" @click="resetQuery">{{ t('common.reset') }}</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['authz:resource']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['authz:resource']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Check" @click="handleSaveSort" v-hasPermi="['authz:resource']">保存排序</el-button>
+        <el-button type="warning" plain icon="Check" @click="handleSaveSort" v-hasPermi="['authz:resource']">{{ t('common.saveSort') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="info" plain icon="Sort" @click="toggleExpandAll">展开/折叠</el-button>
+        <el-button type="info" plain icon="Sort" @click="toggleExpandAll">{{ t('common.expandCollapse') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -43,43 +43,43 @@
       :default-expand-all="table.expandAll"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
-      <el-table-column prop="name" label="资源名称" :show-overflow-tooltip="true" width="220">
+      <el-table-column prop="name" :label="t('authz.resource.menuName')" :show-overflow-tooltip="true" width="220">
         <template #default="scope">
           <SvgIcon v-if="scope.row.icon" :icon-class="scope.row.icon" />
           <span class="ml5">{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="类型" width="100">
+      <el-table-column :label="t('authz.resource.typeColumn')" width="100">
         <template #default="scope">
-          <el-tag v-if="scope.row.type === 0" type="primary" size="small">目录</el-tag>
-          <el-tag v-else-if="scope.row.type === 1" type="success" size="small">菜单</el-tag>
-          <el-tag v-else type="warning" size="small">按钮</el-tag>
+          <el-tag v-if="scope.row.type === 0" type="primary" size="small">{{ t('authz.resource.typeDir') }}</el-tag>
+          <el-tag v-else-if="scope.row.type === 1" type="success" size="small">{{ t('authz.resource.typeMenu') }}</el-tag>
+          <el-tag v-else type="warning" size="small">{{ t('authz.resource.typeBtn') }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="order" label="排序" width="200">
+      <el-table-column prop="order" :label="t('authz.resource.order')" width="200">
         <template #default="scope">
           <el-input-number v-model="scope.row.order" controls-position="right" :min="0" style="width: 88px" />
         </template>
       </el-table-column>
-      <el-table-column prop="permission" label="权限标识" :show-overflow-tooltip="true" />
-      <el-table-column prop="url" label="菜单地址" :show-overflow-tooltip="true" />
-      <el-table-column label="显示状态" width="100">
+      <el-table-column prop="permission" :label="t('authz.resource.permission')" :show-overflow-tooltip="true" />
+      <el-table-column prop="url" :label="t('authz.resource.url')" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('authz.resource.visible')" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.visible === 0 ? 'primary' : 'info'" size="small">
             {{ visibleText(scope.row.visible) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="80">
+      <el-table-column :label="t('common.status')" width="80">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
             {{ statusText(scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="210" class-name="small-padding fixed-width">
+      <el-table-column :label="t('common.operation')" align="center" width="210" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['authz:resource']">修改</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['authz:resource']">{{ t('common.modify') }}</el-button>
           <el-button
             link
             type="primary"
@@ -87,9 +87,9 @@
             @click="handleAdd(scope.row)"
             v-if="scope.row.type !== 2"
             v-hasPermi="['authz:resource']"
-            >新增</el-button
+            >{{ t('common.add') }}</el-button
           >
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['authz:resource']">删除</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['authz:resource']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -99,39 +99,39 @@
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="100px">
         <el-row>
           <el-col :span="24">
-            <el-form-item label="上级资源">
+            <el-form-item :label="t('authz.resource.parent')">
               <el-tree-select
                 v-model="formState.form.parentId"
                 :data="menuOptions"
                 :props="{ label: 'name', children: 'children' }"
                 value-key="id"
-                placeholder="选择上级资源"
+                :placeholder="t('authz.resource.parentPlaceholder')"
                 check-strictly
               />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="资源类型" prop="type">
+            <el-form-item :label="t('authz.resource.type')" prop="type">
               <el-radio-group v-model="formState.form.type">
                 <el-radio v-for="item in typeOptions" :key="item.code" :value="item.code">{{ item.title }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="资源名称" prop="name">
-              <el-input v-model="formState.form.name" placeholder="请输入资源名称" />
+            <el-form-item :label="t('authz.resource.menuName')" prop="name">
+              <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('authz.resource.menuName')])" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="显示排序" prop="order">
+            <el-form-item :label="t('authz.resource.order')" prop="order">
               <el-input-number v-model="formState.form.order" controls-position="right" :min="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="formState.form.type !== 2">
-            <el-form-item label="资源图标" prop="icon">
+            <el-form-item :label="t('authz.resource.icon')" prop="icon">
               <el-popover placement="bottom-start" :width="540" trigger="click">
                 <template #reference>
-                  <el-input v-model="formState.form.icon" placeholder="点击选择图标" @blur="showSelectIcon" readonly>
+                  <el-input v-model="formState.form.icon" :placeholder="t('authz.resource.iconPlaceholder')" @blur="showSelectIcon" readonly>
                     <template #prefix>
                       <SvgIcon
                         v-if="formState.form.icon"
@@ -148,23 +148,23 @@
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="formState.form.type !== 2">
-            <el-form-item label="菜单地址" prop="url">
-              <el-input v-model="formState.form.url" placeholder="请输入菜单地址" />
+            <el-form-item :label="t('authz.resource.url')" prop="url">
+              <el-input v-model="formState.form.url" :placeholder="t('common.inputPlaceholder', [t('authz.resource.url')])" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="权限标识" prop="permission">
-              <el-input v-model="formState.form.permission" placeholder="请输入权限标识" maxlength="100" />
+            <el-form-item :label="t('authz.resource.permission')" prop="permission">
+              <el-input v-model="formState.form.permission" :placeholder="t('common.inputPlaceholder', [t('authz.resource.permission')])" maxlength="100" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="显示状态">
+            <el-form-item prop="visible">
               <template #label>
                 <span>
-                  <el-tooltip content="选择隐藏则将不会出现在侧边栏，但仍然可以访问" placement="top">
+                  <el-tooltip :content="t('authz.resource.visibleTip')" placement="top">
                     <el-icon><QuestionFilled /></el-icon>
                   </el-tooltip>
-                  显示状态
+                  {{ t('authz.resource.visible') }}
                 </span>
               </template>
               <el-radio-group v-model="formState.form.visible">
@@ -173,13 +173,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="资源状态">
+            <el-form-item prop="status">
               <template #label>
                 <span>
-                  <el-tooltip content="选择停用则将不会出现在侧边栏，也不能被访问" placement="top">
+                  <el-tooltip :content="t('authz.resource.statusTip')" placement="top">
                     <el-icon><QuestionFilled /></el-icon>
                   </el-tooltip>
-                  资源状态
+                  {{ t('authz.resource.statusLabel') }}
                 </span>
               </template>
               <el-radio-group v-model="formState.form.status">
@@ -191,8 +191,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">{{ t('modal.confirmButton') }}</el-button>
+          <el-button @click="cancel">{{ t('modal.cancelButton') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -201,6 +201,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Resource' })
+import { t } from '@/i18n'
 import { listResource, getResource, addResource, updateResource, delResource, updateResourceSort } from '../api'
 import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
@@ -269,8 +270,8 @@ const formState = ref<FormState>({
   form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
-    name: [{ required: true, message: '资源名称不能为空', trigger: 'blur' }],
-    order: [{ required: true, message: '显示排序不能为空', trigger: 'blur' }]
+    name: [{ required: true, message: t('common.requiredMsg', [t('authz.resource.menuName')]), trigger: 'blur' }],
+    order: [{ required: true, message: t('common.requiredMsg', [t('authz.resource.order')]), trigger: 'blur' }]
   }
 })
 
@@ -295,7 +296,7 @@ function getList() {
 function getTreeOptions() {
   listResource({}).then((response) => {
     // 后端以 parentId=0 表示顶级节点，补一个"顶级"根节点供选择
-    const topNode: Resource = { id: 0, parentId: -1, name: '根节点', children: [] }
+    const topNode: Resource = { id: 0, parentId: -1, name: t('authz.resource.rootNode'), children: [] }
     topNode.children = handleTree(response.data, 'id')
     menuOptions.value = [topNode]
   })
@@ -364,7 +365,7 @@ function handleAdd(row: any) {
   // 行内新增时以上级为当前行，顶部新增时上级为顶级（0）
   formState.value.form.parentId = row != null && row.id ? row.id : 0
   formState.value.visible = true
-  formState.value.title = '新增资源'
+  formState.value.title = t('common.titleAdd', [t('common.noun.resource')])
 }
 
 /** 修改按钮操作（行内修改，直接取行数据 id） */
@@ -374,7 +375,7 @@ function handleUpdate(row: Resource) {
   getResource(row.id as number).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = '修改资源'
+    formState.value.title = t('common.titleEdit', [t('common.noun.resource')])
   })
 }
 
@@ -398,13 +399,13 @@ function submitForm() {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
         updateResource(submitData).then((response) => {
-          modal.msgSuccess('修改成功')
+          modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
         addResource(submitData).then((response) => {
-          modal.msgSuccess('新增成功')
+          modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
         })
@@ -438,14 +439,14 @@ function handleSaveSort() {
   }
   collectChanged(table.value.list)
   if (changedList.length === 0) {
-    modal.msgWarning('未检测到排序修改')
+    modal.msgWarning(t('common.noSortChange'))
     return
   }
   updateResourceSort(
     changedList.map((item) => item.id as number),
     changedList.map((item) => item.order as number)
   ).then(() => {
-    modal.msgSuccess('排序保存成功')
+    modal.msgSuccess(t('common.saveSortSuccess'))
     recordOriginalOrders(table.value.list)
   })
 }
@@ -453,13 +454,13 @@ function handleSaveSort() {
 /** 删除按钮操作（行内删除，按名称提示） */
 function handleDelete(row: Resource) {
   modal
-    .confirm('是否确认删除名称为"' + row.name + '"的数据项?')
+    .confirm(t('authz.resource.confirmDelete', [row.name as string]))
     .then(function () {
       return delResource(row.id as number)
     })
     .then(() => {
       getList()
-      modal.msgSuccess('删除成功')
+      modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }

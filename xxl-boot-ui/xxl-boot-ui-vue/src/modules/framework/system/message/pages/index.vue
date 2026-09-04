@@ -5,37 +5,37 @@
   <div class="app-container">
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
-      <el-form-item label="分类" prop="category">
-        <el-select v-model="queryParams.category" placeholder="消息分类" clearable style="width: 200px">
-          <el-option label="全部" :value="-1" />
+      <el-form-item :label="t('system.message.category')" prop="category">
+        <el-select v-model="queryParams.category" :placeholder="t('system.message.categoryPlaceholder')" clearable style="width: 200px">
+          <el-option :label="t('common.all')" :value="-1" />
           <el-option v-for="item in categoryOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="消息状态" clearable style="width: 200px">
-          <el-option label="全部" :value="-1" />
+      <el-form-item :label="t('common.status')" prop="status">
+        <el-select v-model="queryParams.status" :placeholder="t('system.message.statusPlaceholder')" clearable style="width: 200px">
+          <el-option :label="t('common.all')" :value="-1" />
           <el-option v-for="item in statusOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
-      <el-form-item label="标题" prop="title">
-        <el-input v-model="queryParams.title" placeholder="请输入标题" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item :label="t('system.message.title')" prop="title">
+        <el-input v-model="queryParams.title" :placeholder="t('common.inputPlaceholder', [t('system.message.title')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">{{ t('common.search') }}</el-button>
+        <el-button icon="Refresh" @click="resetQuery">{{ t('common.reset') }}</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -43,37 +43,37 @@
     <!-- 消息列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" width="100" />
-      <el-table-column label="消息标题" align="center" :show-overflow-tooltip="true">
+      <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="100" />
+      <el-table-column :label="t('system.message.messageTitle')" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
           <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{ scope.row.title }}</a>
         </template>
       </el-table-column>
-      <el-table-column label="分类" align="center" width="100">
+      <el-table-column :label="t('system.message.category')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.category === 0 ? 'primary' : 'warning'" size="small">
             {{ categoryText(scope.row.category) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" width="100">
+      <el-table-column :label="t('common.status')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
             {{ statusText(scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="发送人" align="center" prop="sender" width="100" />
-      <el-table-column label="发送时间" align="center" width="170">
+      <el-table-column :label="t('system.message.sender')" align="center" prop="sender" width="100" />
+      <el-table-column :label="t('system.message.sendTime')" align="center" width="170">
         <template #default="scope">
           <span>{{ scope.row.addTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column :label="t('common.operation')" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="User" @click="handleReadUsers(scope.row)" v-hasRole="['admin']">阅读用户</el-button>
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
+          <el-button link type="primary" icon="User" @click="handleReadUsers(scope.row)" v-hasRole="['admin']">{{ t('system.message.readUsers') }}</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -92,26 +92,26 @@
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="100px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="标题" prop="title">
-              <el-input v-model="formState.form.title" placeholder="请输入标题" />
+            <el-form-item :label="t('system.message.title')" prop="title">
+              <el-input v-model="formState.form.title" :placeholder="t('common.inputPlaceholder', [t('system.message.title')])" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="分类" prop="category">
-              <el-select v-model="formState.form.category" placeholder="请选择">
+            <el-form-item :label="t('system.message.category')" prop="category">
+              <el-select v-model="formState.form.category" :placeholder="t('common.selectPlaceholder')">
                 <el-option v-for="item in categoryOptions" :key="item.code" :label="item.title" :value="item.code"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="状态">
+            <el-form-item :label="t('common.status')">
               <el-radio-group v-model="formState.form.status">
                 <el-radio v-for="item in statusOptions" :key="item.code" :value="item.code">{{ item.title }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="内容">
+            <el-form-item :label="t('system.message.content')">
               <Editor v-model="formState.form.content" :min-height="210" />
             </el-form-item>
           </el-col>
@@ -119,8 +119,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">{{ t('modal.confirmButton') }}</el-button>
+          <el-button @click="cancel">{{ t('modal.cancelButton') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -131,6 +131,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Message' })
+import { t } from '@/i18n'
 import ReadUsersDialog from './ReadUsers.vue'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
 import { listMessage, getMessage, delMessage, addMessage, updateMessage } from '../api'
@@ -183,8 +184,8 @@ const formState = ref<FormState<Message>>({
   form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
-    title: [{ required: true, message: '标题不能为空', trigger: 'blur' }],
-    category: [{ required: true, message: '分类不能为空', trigger: 'change' }]
+    title: [{ required: true, message: t('common.requiredMsg', [t('system.message.title')]), trigger: 'blur' }],
+    category: [{ required: true, message: t('common.requiredMsg', [t('system.message.category')]), trigger: 'change' }]
   }
 })
 
@@ -257,7 +258,7 @@ function handleSelectionChange(selection: Message[]) {
 function handleAdd() {
   reset()
   formState.value.visible = true
-  formState.value.title = '新增站内消息'
+  formState.value.title = t('common.titleAdd', [t('layout.nav.messageTitle')])
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -271,7 +272,7 @@ function handleUpdate(row: any) {
   getMessage(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = '修改站内消息'
+    formState.value.title = t('common.titleEdit', [t('layout.nav.messageTitle')])
   })
 }
 
@@ -282,13 +283,13 @@ function submitForm() {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
         updateMessage(formState.value.form).then((response) => {
-          modal.msgSuccess('修改成功')
+          modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
         addMessage(formState.value.form).then((response) => {
-          modal.msgSuccess('新增成功')
+          modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
         })
@@ -314,13 +315,13 @@ function handleDelete(row: any) {
     return
   }
   modal
-    .confirm('是否确认删除消息编号为"' + messageIds + '"的数据项？')
+    .confirm(t('system.message.confirmDeleteMessage', [messageIds]))
     .then(function () {
       return delMessage(messageIds)
     })
     .then(() => {
       getList()
-      modal.msgSuccess('删除成功')
+      modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }

@@ -4,7 +4,7 @@
 -->
 <template>
   <el-drawer
-    title="用户详情"
+    :title="t('authz.user.detailTitle')"
     v-model="visible"
     direction="rtl"
     size="680px"
@@ -14,11 +14,11 @@
   >
     <div v-loading="loading" class="drawer-content">
       <!-- 基本信息 -->
-      <h4 class="section-header">基本信息</h4>
+      <h4 class="section-header">{{ t('authz.user.baseInfo') }}</h4>
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">用户编号：</label>
+            <label class="info-label">{{ t('authz.user.id') }}：</label>
             <span class="info-value plaintext">{{ info.id }}</span>
           </div>
         </el-col>
@@ -26,7 +26,7 @@
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">账号：</label>
+            <label class="info-label">{{ t('authz.user.username') }}：</label>
             <span class="info-value plaintext">{{ info.username }}</span>
           </div>
         </el-col>
@@ -34,7 +34,7 @@
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">用户名称：</label>
+            <label class="info-label">{{ t('common.realName') }}：</label>
             <span class="info-value plaintext">{{ info.realName }}</span>
           </div>
         </el-col>
@@ -42,7 +42,7 @@
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">所属组织：</label>
+            <label class="info-label">{{ t('authz.user.orgName') }}：</label>
             <span class="info-value plaintext">{{ info.orgName }}</span>
           </div>
         </el-col>
@@ -50,7 +50,7 @@
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">手机号：</label>
+            <label class="info-label">{{ t('authz.user.phone') }}：</label>
             <span class="info-value plaintext">{{ info.phone }}</span>
           </div>
         </el-col>
@@ -58,7 +58,7 @@
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">邮箱：</label>
+            <label class="info-label">{{ t('authz.user.email') }}：</label>
             <span class="info-value plaintext">{{ info.email }}</span>
           </div>
         </el-col>
@@ -66,7 +66,7 @@
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">用户状态：</label>
+            <label class="info-label">{{ t('authz.user.statusLabel') }}：</label>
             <span class="info-value plaintext">
               <el-tag size="small" :type="info.status === 0 ? 'success' : 'danger'">{{ statusText(info.status) }}</el-tag>
             </span>
@@ -76,17 +76,17 @@
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">角色：</label>
-            <span class="info-value plaintext">{{ roleNames || '无角色' }}</span>
+            <label class="info-label">{{ t('authz.user.role') }}：</label>
+            <span class="info-value plaintext">{{ roleNames || t('authz.user.noRole') }}</span>
           </div>
         </el-col>
       </el-row>
       <!-- 其他信息 -->
-      <h4 class="section-header">其他信息</h4>
+      <h4 class="section-header">{{ t('authz.user.otherInfo') }}</h4>
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">创建时间：</label>
+            <label class="info-label">{{ t('common.createTime') }}：</label>
             <span class="info-value plaintext">{{ parseTime(info.addTime as string) }}</span>
           </div>
         </el-col>
@@ -94,7 +94,7 @@
       <el-row :gutter="20" class="mb8">
         <el-col :span="24">
           <div class="info-item">
-            <label class="info-label">更新时间：</label>
+            <label class="info-label">{{ t('common.updateTime') }}：</label>
             <span class="info-value plaintext">{{ parseTime(info.updateTime as string) }}</span>
           </div>
         </el-col>
@@ -105,6 +105,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'UserView' })
+import { t } from '@/i18n'
 import { listRole } from '@/modules/framework/authz/role/api'
 import { loadEnumItem } from '@/modules/framework/system/dict/api'
 import { parseTime } from '@/utils/common'
@@ -126,7 +127,7 @@ const roleNames = computed(() => {
     roleOptions.value
       .filter((r) => roleIds.includes(r.id as number))
       .map((r) => r.name)
-      .join('、') || ''
+      .join(t('authz.user.roleJoin')) || ''
   )
 })
 

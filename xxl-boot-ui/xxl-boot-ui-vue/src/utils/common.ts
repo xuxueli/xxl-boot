@@ -41,6 +41,10 @@
  *   handleTree(list)                        // 扁平数组转树形
  */
 import { h } from 'vue'
+import { t as i18nT } from '@/i18n'
+
+/* 星期键映射：与 t('common.time.weekSun') 等对应 */
+const WEEK_KEYS = ['weekSun', 'weekMon', 'weekTue', 'weekWed', 'weekThu', 'weekFri', 'weekSat'] as const
 
 // ==================== 日期 / 时间 ====================
 
@@ -90,7 +94,7 @@ export function parseTime(time: Date | number | string, pattern?: string): strin
   const timeStr = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result: string, key: string): string => {
     let value: number | string = formatObj[key]
     if (key === 'a') {
-      return ['日', '一', '二', '三', '四', '五', '六'][value]
+      return i18nT(`common.time.${WEEK_KEYS[value]}`)
     }
     if (result.length > 0 && value < 10) {
       value = '0' + value
@@ -133,18 +137,18 @@ export function formatTime(time: number | string, option?: string): string {
   const now = Date.now()
   const diff = (now - d.getTime()) / 1000
   if (diff < 30) {
-    return '刚刚'
+    return i18nT('common.time.justNow')
   } else if (diff < 3600) {
-    return Math.ceil(diff / 60) + '分钟前'
+    return i18nT('common.time.minutesAgo', [Math.ceil(diff / 60)])
   } else if (diff < 3600 * 24) {
-    return Math.ceil(diff / 3600) + '小时前'
+    return i18nT('common.time.hoursAgo', [Math.ceil(diff / 3600)])
   } else if (diff < 3600 * 24 * 2) {
-    return '1天前'
+    return i18nT('common.time.daysAgo', [1])
   }
   if (option) {
     return parseTime(t, option) || ''
   } else {
-    return d.getMonth() + 1 + '月' + d.getDate() + '日' + d.getHours() + '时' + d.getMinutes() + '分'
+    return i18nT('common.time.monthDayTime', [d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes()])
   }
 }
 

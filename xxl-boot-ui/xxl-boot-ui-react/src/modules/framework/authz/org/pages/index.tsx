@@ -14,6 +14,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, InputNumber, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
+import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delOrg, listOrg, updateOrgSort } from '@/modules/framework/authz/org/api';
@@ -111,11 +112,11 @@ const OrgList = () => {
       }
     });
     if (ids.length === 0) {
-      message.warning('没有需要保存的排序变更');
+      message.warning(t('common.noSortChange'));
       return;
     }
     await updateOrgSort(ids, orders);
-    message.success('保存排序成功');
+    message.success(t('common.saveSortSuccess'));
     actionRef.current?.reload();
   };
 
@@ -129,11 +130,11 @@ const OrgList = () => {
   /** 删除组织 */
   const handleDelete = (row: API.Org) => {
     modal.confirm({
-      title: '系统提示',
-      content: `是否确认删除名称为"${row.name}"的数据项？`,
+      title: t('modal.title'),
+      content: t('authz.org.confirmDelete', [row.name ?? '']),
       onOk: async () => {
         await delOrg([row.id as number]);
-        message.success('删除成功');
+        message.success(t('common.deleteSuccess'));
         actionRef.current?.reload();
       },
     });
@@ -141,14 +142,14 @@ const OrgList = () => {
 
   const columns: ProColumns<API.Org>[] = [
     {
-      title: '组织名称',
+      title: t('authz.org.name'),
       dataIndex: 'name',
       width: 220,
       ellipsis: true,
       render: (_, record) => <span>{record.name}</span>,
     },
     {
-      title: '顺序',
+      title: t('authz.org.order'),
       dataIndex: 'order',
       search: false,
       width: 100,
@@ -162,29 +163,29 @@ const OrgList = () => {
       ),
     },
     {
-      title: '状态',
+      title: t('common.status'),
       dataIndex: 'status',
       width: 90,
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
-          {record.status === 0 ? '正常' : '停用'}
+          {record.status === 0 ? t('common.normal') : t('common.disabled')}
         </Tag>
       ),
     },
     {
-      title: '负责人',
+      title: t('authz.org.manager'),
       dataIndex: 'manager',
       search: false,
     },
     {
-      title: '新增时间',
+      title: t('common.addTime'),
       dataIndex: 'addTime',
       search: false,
       width: 160,
     },
     {
-      title: '操作',
+      title: t('common.operation'),
       valueType: 'option',
       width: 240,
       render: (_, record) => [
@@ -195,7 +196,7 @@ const OrgList = () => {
             setFormOpen(true);
           }}
         >
-          <EditOutlined /> 修改
+          <EditOutlined /> {t('common.modify')}
         </a>,
         <a
           key="add"
@@ -204,11 +205,11 @@ const OrgList = () => {
             setFormOpen(true);
           }}
         >
-          <PlusOutlined /> 新增
+          <PlusOutlined /> {t('common.add')}
         </a>,
         record.parentId !== 0 && (
           <a key="delete" onClick={() => handleDelete(record)}>
-            <DeleteOutlined /> 删除
+            <DeleteOutlined /> {t('common.delete')}
           </a>
         ),
       ],
@@ -247,7 +248,7 @@ const OrgList = () => {
                   setFormOpen(true);
                 }}
               >
-                新增
+                {t('common.add')}
               </Button>
             ),
             <Button
@@ -255,14 +256,14 @@ const OrgList = () => {
               icon={<SaveOutlined />}
               onClick={handleSaveSort}
             >
-              保存排序
+              {t('common.saveSort')}
             </Button>,
             <Button
               key="expand"
               icon={<NodeExpandOutlined />}
               onClick={handleToggleExpand}
             >
-              展开/折叠
+              {t('common.expandCollapse')}
             </Button>,
           ]}
         />

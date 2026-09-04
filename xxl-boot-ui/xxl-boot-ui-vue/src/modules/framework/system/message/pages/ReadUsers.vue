@@ -4,13 +4,13 @@
 -->
 <template>
   <!-- 弹框组件 -->
-  <el-dialog v-model="dialog.visible" :title="`「${dialog.title}」已读用户`" width="680px" top="6vh" append-to-body @close="handleClose">
+  <el-dialog v-model="dialog.visible" :title="t('system.message.readUsersTitle', [dialog.title || ''])" width="680px" top="6vh" append-to-body @close="handleClose">
     <!-- 已读用户 table -->
     <el-table v-loading="table.loading" :data="table.list" size="small" stripe height="340px">
-      <el-table-column type="index" label="序号" width="70" align="center" />
-      <el-table-column label="登录名称" prop="userName" align="center" :show-overflow-tooltip="true" />
-      <el-table-column label="用户名称" prop="realName" align="center" :show-overflow-tooltip="true" />
-      <el-table-column label="阅读时间" prop="addTime" align="center" width="180">
+      <el-table-column type="index" :label="t('common.serialNo')" width="70" align="center" />
+      <el-table-column :label="t('system.message.userName')" prop="userName" align="center" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('common.realName')" prop="realName" align="center" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('system.message.readTime')" prop="addTime" align="center" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.addTime) }}</span>
         </template>
@@ -30,6 +30,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'ReadUsers' })
+import { t } from '@/i18n'
 import { listMessageReadUsers } from '../api'
 import { parseTime } from '@/utils/common'
 import { usePageParams } from '@/composables/usePageParams'

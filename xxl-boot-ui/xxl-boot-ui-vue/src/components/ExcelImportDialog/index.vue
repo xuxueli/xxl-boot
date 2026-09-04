@@ -23,28 +23,28 @@
       <el-icon class="el-icon--upload">
         <UploadFilled />
       </el-icon>
-      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+      <div class="el-upload__text">{{ t('components.excelImport.dragTip') }}<em>{{ t('components.excelImport.clickUpload') }}</em></div>
       <template #tip>
         <div class="el-upload__tip text-center">
           <div class="el-upload__tip">
             <el-checkbox v-model="updateSupport"> {{ updateSupportLabel }}</el-checkbox>
           </div>
-          <span>仅允许导入xls、xlsx格式文件。</span>
+          <span>{{ t('components.excelImport.formatTip') }}</span>
           <el-link
             v-if="templateUrl"
             type="primary"
             underline="never"
             style="font-size: 12px; vertical-align: baseline"
             @click="handleDownloadTemplate"
-            >下载模板
+            >{{ t('components.excelImport.downloadTemplate') }}
           </el-link>
         </div>
       </template>
     </el-upload>
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="primary" @click="handleSubmit">确 定</el-button>
-        <el-button @click="visible = false">取 消</el-button>
+        <el-button type="primary" @click="handleSubmit">{{ t('modal.confirmButton') }}</el-button>
+        <el-button @click="visible = false">{{ t('modal.cancelButton') }}</el-button>
       </div>
     </template>
   </el-dialog>
@@ -54,6 +54,7 @@
 import { getAuthHeaders } from '@/utils/auth'
 import { download } from '@/utils/download'
 import modal from '@/utils/modal'
+import { t } from '@/i18n'
 import { ElMessageBox } from 'element-plus'
 import type { UploadFile, UploadFiles } from 'element-plus'
 import { computed, nextTick, ref } from 'vue'
@@ -65,7 +66,7 @@ const props = defineProps({
   // 对话框标题
   title: {
     type: String,
-    default: '数据导入'
+    default: t('components.excelImport.title')
   },
   // 对话框宽度
   width: {
@@ -90,7 +91,7 @@ const props = defineProps({
   // 覆盖更新勾选框的说明文字
   updateSupportLabel: {
     type: String,
-    default: '是否更新已经存在的数据'
+    default: t('components.excelImport.updateSupport')
   }
 })
 
@@ -167,7 +168,7 @@ function handleSuccess(response: any) {
   uploadRef.value?.clearFiles()
   ElMessageBox.alert(
     "<div style='overflow:auto;overflow-x:hidden;max-height:70vh;padding:10px 20px 0;'>" + response.msg + '</div>',
-    '导入结果',
+    t('components.excelImport.result'),
     { dangerouslyUseHTMLString: true }
   )
   emit('success')
@@ -177,7 +178,7 @@ function handleSuccess(response: any) {
 function handleSubmit() {
   const file = selectedFile.value
   if (!file || file.length === 0 || (!file.name.toLowerCase().endsWith('.xls') && !file.name.toLowerCase().endsWith('.xlsx'))) {
-    modal.msgError('请选择后缀为 “xls”或“xlsx”的文件。')
+    modal.msgError(t('components.excelImport.selectFile'))
     return
   }
   uploadRef.value.submit()

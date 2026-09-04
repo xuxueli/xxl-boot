@@ -3,10 +3,10 @@
   功能：选择生成页面或弹窗类型，可输入文件名
 -->
 <template>
-  <el-dialog v-model="open" width="500px" title="选择生成类型" @open="onOpen" @close="onClose">
+  <el-dialog v-model="open" width="500px" :title="t('tool.pagegen.selectGenType')" @open="onOpen" @close="onClose">
     <el-form ref="codeTypeForm" :model="formData" :rules="rules" label-width="100px">
       <!-- 生成类型选择 -->
-      <el-form-item label="生成类型" prop="type">
+      <el-form-item :label="t('tool.pagegen.genType')" prop="type">
         <el-radio-group v-model="formData.type">
           <el-radio-button v-for="(item, index) in typeOptions" :key="index" :label="item.value">
             {{ item.label }}
@@ -15,21 +15,22 @@
       </el-form-item>
 
       <!-- 文件名输入 -->
-      <el-form-item v-if="showFileName" label="文件名" prop="fileName">
-        <el-input v-model="formData.fileName" placeholder="请输入文件名" clearable />
+      <el-form-item v-if="showFileName" :label="t('tool.pagegen.fileName')" prop="fileName">
+        <el-input v-model="formData.fileName" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.fileName')])" clearable />
       </el-form-item>
     </el-form>
 
     <!-- 弹窗底部按钮 -->
     <template #footer>
-      <el-button type="primary" @click="handelConfirm">确定</el-button>
-      <el-button @click="onClose">取消</el-button>
+      <el-button type="primary" @click="handelConfirm">{{ t('modal.confirmButton') }}</el-button>
+      <el-button @click="onClose">{{ t('modal.cancelButton') }}</el-button>
     </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
 /** 弹窗：显示状态 */
+import { t } from '@/i18n'
 import type { FormInstance } from 'element-plus'
 import { ref } from 'vue'
 
@@ -62,14 +63,14 @@ const rules = {
   fileName: [
     {
       required: true,
-      message: '请输入文件名',
+      message: t('common.inputPlaceholder', [t('tool.pagegen.fileName')]),
       trigger: 'blur'
     }
   ],
   type: [
     {
       required: true,
-      message: '生成类型不能为空',
+      message: t('common.requiredMsg', [t('tool.pagegen.genType')]),
       trigger: 'change'
     }
   ]
@@ -77,8 +78,8 @@ const rules = {
 
 // 生成类型
 const typeOptions = ref([
-  { label: '页面', value: 'file' },
-  { label: '弹窗', value: 'dialog' }
+  { label: t('tool.pagegen.typePage'), value: 'file' },
+  { label: t('tool.pagegen.typeDialog'), value: 'dialog' }
 ])
 
 /** 弹窗打开：需要文件名时设置默认值 */

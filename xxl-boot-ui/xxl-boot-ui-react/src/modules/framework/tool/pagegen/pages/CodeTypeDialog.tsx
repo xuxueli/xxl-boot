@@ -4,11 +4,12 @@
  */
 import { App, Form, Input, Modal, Radio } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { t } from '@/i18n';
 
 /** 生成类型配置 */
 const typeOptions = [
-  { label: '页面', value: 'file' },
-  { label: '弹窗', value: 'dialog' },
+  { label: t('tool.pagegen.typeFile'), value: 'file' },
+  { label: t('tool.pagegen.typeDialog'), value: 'dialog' },
 ];
 
 /**
@@ -52,7 +53,7 @@ const CodeTypeDialog = ({
   /** 确认生成 */
   const handleConfirm = () => {
     if (showFileName && !fileName.trim()) {
-      message.warning('请输入文件名');
+      message.warning(t('common.inputPlaceholder', [t('tool.pagegen.fileName')]));
       return;
     }
     onConfirm({ type, fileName: fileName.trim() });
@@ -61,17 +62,17 @@ const CodeTypeDialog = ({
 
   return (
     <Modal
-      title="选择生成类型"
+      title={t('tool.pagegen.selectGenType')}
       width={500}
       open={open}
       onCancel={handleClose}
       onOk={handleConfirm}
-      okText="确定"
-      cancelText="取消"
+      okText={t('modal.confirmButton')}
+      cancelText={t('modal.cancelButton')}
       destroyOnHidden
     >
       <Form layout="vertical" style={{ marginTop: 8 }}>
-        <Form.Item label="生成类型">
+        <Form.Item label={t('tool.pagegen.genType')}>
           <Radio.Group
             value={type}
             onChange={(e) => setType(e.target.value)}
@@ -80,11 +81,11 @@ const CodeTypeDialog = ({
           />
         </Form.Item>
         {showFileName && (
-          <Form.Item label="文件名" required>
+          <Form.Item label={t('tool.pagegen.fileName')} required>
             <Input
               value={fileName}
               onChange={(e) => setFileName(e.target.value)}
-              placeholder="请输入文件名"
+              placeholder={t('common.inputPlaceholder', [t('tool.pagegen.fileName')])}
               allowClear
             />
           </Form.Item>

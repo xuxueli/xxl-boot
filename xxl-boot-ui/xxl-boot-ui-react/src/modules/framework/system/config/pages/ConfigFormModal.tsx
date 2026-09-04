@@ -10,6 +10,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React from 'react';
+import { t } from '@/i18n';
 import { addConfig, updateConfig } from '@/modules/framework/system/config/api';
 
 const ConfigFormModal = ({
@@ -34,14 +35,14 @@ const ConfigFormModal = ({
     } else {
       await addConfig(data);
     }
-    message.success('操作成功');
+    message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
   return (
     <ModalForm<API.Config>
-      title={current?.id ? '修改配置' : '新增配置'}
+      title={current?.id ? t('common.titleEdit', [t('common.noun.config')]) : t('common.titleAdd', [t('common.noun.config')])}
       width={500}
       open={open}
       onOpenChange={onOpenChange}
@@ -53,43 +54,43 @@ const ConfigFormModal = ({
     >
       <ProFormText
         name="name"
-        label="配置名称"
-        placeholder="请输入配置名称"
-        rules={[{ required: true, message: '配置名称不能为空' }]}
+        label={t('system.config.configName')}
+        placeholder={t('common.inputPlaceholder', [t('system.config.configName')])}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('system.config.configName')]) }]}
       />
       <ProFormText
         name="key"
-        label="配置Key"
-        placeholder="请输入配置Key"
+        label={t('system.config.configKey')}
+        placeholder={t('common.inputPlaceholder', [t('system.config.configKey')])}
         disabled={!!current?.id}
         rules={[
-          { required: true, message: '配置Key不能为空' },
-          { min: 4, max: 100, message: '配置Key长度必须在 4 到 100 个字符' },
+          { required: true, message: t('common.requiredMsg', [t('system.config.configKey')]) },
+          { min: 4, max: 100, message: t('system.config.keyLength') },
           {
             pattern: /^[a-z][a-z0-9.]*$/,
-            message: '小写字母开头，仅允许小写字母、数字和点',
+            message: t('system.config.keyPattern'),
           },
         ]}
       />
       <ProFormTextArea
         name="value"
-        label="配置Value"
-        placeholder="请输入配置Value"
-        rules={[{ required: true, message: '配置Value不能为空' }]}
+        label={t('system.config.configValue')}
+        placeholder={t('common.inputPlaceholder', [t('system.config.configValue')])}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('system.config.configValue')]) }]}
         fieldProps={{ rows: 3 }}
       />
       <ProFormRadio.Group
         name="status"
-        label="状态"
+        label={t('common.status')}
         options={[
-          { value: 0, label: '正常' },
-          { value: 1, label: '停用' },
+          { value: 0, label: t('common.normal') },
+          { value: 1, label: t('common.disabled') },
         ]}
       />
       <ProFormTextArea
         name="remark"
-        label="备注"
-        placeholder="请输入备注"
+        label={t('common.remark')}
+        placeholder={t('common.inputPlaceholder', [t('common.remark')])}
         fieldProps={{ rows: 2 }}
       />
     </ModalForm>

@@ -5,24 +5,25 @@
 <template>
   <!-- 修改密码表单 -->
   <el-form ref="pwdRef" :model="user" :rules="rules" label-width="80px">
-    <el-form-item label="旧密码" prop="oldPassword">
-      <el-input v-model="user.oldPassword" placeholder="请输入旧密码" type="password" show-password />
+    <el-form-item :label="t('authz.user.oldPassword')" prop="oldPassword">
+      <el-input v-model="user.oldPassword" :placeholder="t('common.inputPlaceholder', [t('authz.user.oldPassword')])" type="password" show-password />
     </el-form-item>
-    <el-form-item label="新密码" prop="newPassword">
-      <el-input v-model="user.newPassword" placeholder="请输入新密码" type="password" show-password />
+    <el-form-item :label="t('authz.user.newPassword')" prop="newPassword">
+      <el-input v-model="user.newPassword" :placeholder="t('common.inputPlaceholder', [t('authz.user.newPassword')])" type="password" show-password />
     </el-form-item>
-    <el-form-item label="确认密码" prop="confirmPassword">
-      <el-input v-model="user.confirmPassword" placeholder="请确认新密码" type="password" show-password />
+    <el-form-item :label="t('authz.user.confirmPassword')" prop="confirmPassword">
+      <el-input v-model="user.confirmPassword" :placeholder="t('authz.user.confirmPasswordPlaceholder')" type="password" show-password />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="submit">保存</el-button>
-      <el-button type="danger" @click="close">关闭</el-button>
+      <el-button type="primary" @click="submit">{{ t('common.save') }}</el-button>
+      <el-button type="danger" @click="close">{{ t('common.close') }}</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script setup lang="ts">
 // 引入
+import { t } from '@/i18n'
 import { updateUserPwd } from '../../api'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
@@ -42,9 +43,9 @@ interface PwdForm {
  *       实际恒为默认策略 0（任意字符），故直接固定为一条规则。
  */
 const newPasswordRules: FormItemRule[] = [
-  { required: true, message: '新密码不能为空', trigger: 'blur' },
-  { min: 6, max: 20, message: '新密码长度必须介于 6 和 20 之间', trigger: 'blur' },
-  { pattern: /^[^<>"'|\\]+$/, message: '密码不能包含非法字符：< > " \' \\ |', trigger: 'blur' }
+  { required: true, message: t('common.requiredMsg', [t('authz.user.newPassword')]), trigger: 'blur' },
+  { min: 6, max: 20, message: t('authz.user.newPasswordLength'), trigger: 'blur' },
+  { pattern: /^[^<>"'|\\]+$/, message: t('authz.user.newPasswordForbiddenChar'), trigger: 'blur' }
 ]
 
 // 表单 ref
@@ -60,7 +61,7 @@ const user = reactive<PwdForm>({
 /** 校验两次密码是否一致 */
 const equalToPassword: FormItemRule['validator'] = (rule, value, callback) => {
   if (user.newPassword !== value) {
-    callback(new Error('两次输入的密码不一致'))
+    callback(new Error(t('authz.user.passwordMismatch')))
   } else {
     callback()
   }
@@ -68,10 +69,10 @@ const equalToPassword: FormItemRule['validator'] = (rule, value, callback) => {
 
 // 表单校验规则
 const rules = ref<FormRules>({
-  oldPassword: [{ required: true, message: '旧密码不能为空', trigger: 'blur' }],
+  oldPassword: [{ required: true, message: t('common.requiredMsg', [t('authz.user.oldPassword')]), trigger: 'blur' }],
   newPassword: newPasswordRules,
   confirmPassword: [
-    { required: true, message: '确认密码不能为空', trigger: 'blur' },
+    { required: true, message: t('common.requiredMsg', [t('authz.user.confirmPassword')]), trigger: 'blur' },
     {
       required: true,
       validator: equalToPassword,
@@ -85,7 +86,7 @@ function submit() {
   pwdRef.value!.validate((valid) => {
     if (valid) {
       updateUserPwd(user.oldPassword as string, user.newPassword as string).then((res) => {
-        modal.msgSuccess('修改成功')
+        modal.msgSuccess(t('common.updateSuccess'))
         user.oldPassword = undefined
         user.newPassword = undefined
         user.confirmPassword = undefined

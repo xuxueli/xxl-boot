@@ -12,6 +12,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
+import { t } from '@/i18n';
 import { loadEnum, toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delOperlog, pageList } from '@/modules/framework/system/log/api';
@@ -70,11 +71,11 @@ const LogList = () => {
     const ids = row ? [row.id as number] : selectedIds;
     if (ids.length === 0) return;
     modal.confirm({
-      title: '系统提示',
-      content: '是否确认删除选中的日志？',
+      title: t('modal.title'),
+      content: t('system.log.confirmDelete'),
       onOk: async () => {
         await delOperlog(ids);
-        message.success('删除成功');
+        message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
       },
@@ -95,45 +96,45 @@ const LogList = () => {
   };
 
   const columns: ProColumns<API.Log>[] = [
-    { title: '日志编号', dataIndex: 'id', search: false, width: 80 },
+    { title: t('system.log.logId'), dataIndex: 'id', search: false, width: 80 },
     {
-      title: '日志类型',
+      title: t('system.log.logType'),
       dataIndex: 'type',
       width: 100,
       valueEnum: toValueEnum(logTypeOptions),
       render: (_, record) => (
         <Tag color={record.type === 0 ? 'geekblue' : 'warning'}>
-          {record.type === 0 ? '操作日志' : '登陆日志'}
+          {record.type === 0 ? t('system.log.operLog') : t('system.log.loginLog')}
         </Tag>
       ),
     },
     {
-      title: '系统模块',
+      title: t('system.log.logModule'),
       dataIndex: 'module',
       ellipsis: true,
       valueEnum: toValueEnum(logModuleOptions),
       render: (_, record) =>
         moduleMap[record.module as number] || record.module,
     },
-    { title: '日志标题', dataIndex: 'title', ellipsis: true },
+    { title: t('system.log.logTitle'), dataIndex: 'title', ellipsis: true },
     {
-      title: '操作人',
+      title: t('system.log.operator'),
       dataIndex: 'operator',
       search: false,
       width: 110,
       ellipsis: true,
     },
     {
-      title: '操作地址',
+      title: t('system.log.ipAddress'),
       dataIndex: 'ip',
       search: false,
       width: 160,
       ellipsis: true,
       render: (_, record) => record.ipAddress || record.ip,
     },
-    { title: '新增时间', dataIndex: 'addTime', search: false, width: 180 },
+    { title: t('common.addTime'), dataIndex: 'addTime', search: false, width: 180 },
     {
-      title: '操作',
+      title: t('common.operation'),
       valueType: 'option',
       width: 100,
       render: (_, record) => [
@@ -143,7 +144,7 @@ const LogList = () => {
             detailRef.current?.open(record, moduleMap);
           }}
         >
-          <EyeOutlined /> 详细
+          <EyeOutlined /> {t('system.log.detail')}
         </a>,
       ],
     },
@@ -180,7 +181,7 @@ const LogList = () => {
                 disabled={!selectedIds.length}
                 onClick={() => handleDelete()}
               >
-                删除
+                {t('common.delete')}
               </Button>
             ),
             hasRole('admin') && (
@@ -189,7 +190,7 @@ const LogList = () => {
                 icon={<DownloadOutlined />}
                 onClick={handleExport}
               >
-                导出
+                {t('system.log.export')}
               </Button>
             ),
           ]}

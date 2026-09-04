@@ -8,17 +8,17 @@
   <div ref="rightToolbarRef" class="top-right-btn" :style="style">
     <el-row>
       <!-- “搜索” 展示/隐藏开关 -->
-      <el-tooltip class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top" v-if="search">
+      <el-tooltip class="item" effect="dark" :content="showSearch ? t('components.rightToolbar.hideSearch') : t('components.rightToolbar.showSearch')" placement="top" v-if="search">
         <el-button circle icon="Search" @click="toggleSearch()" />
       </el-tooltip>
 
       <!-- “刷新” 按钮 -->
-      <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+      <el-tooltip class="item" effect="dark" :content="t('common.refresh')" placement="top">
         <el-button circle icon="Refresh" @click="refresh()" />
       </el-tooltip>
 
       <!-- “显隐列” 按钮 -->
-      <el-tooltip class="item" effect="dark" content="显隐列" placement="top" v-if="Object.keys(columns).length > 0">
+      <el-tooltip class="item" effect="dark" :content="t('components.rightToolbar.showColumns')" placement="top" v-if="Object.keys(columns).length > 0">
         <!-- transfer 模式 -->
         <el-button circle icon="Menu" @click="showColumn()" v-if="showColumnsType === 'transfer'" />
         <!-- checkbox 模式 -->
@@ -30,7 +30,7 @@
             <el-dropdown-menu>
               <!-- 全选/反选 按钮 -->
               <el-dropdown-item>
-                <el-checkbox :indeterminate="isIndeterminate" v-model="isChecked" @change="toggleCheckAll"> 列展示 </el-checkbox>
+                <el-checkbox :indeterminate="isIndeterminate" v-model="isChecked" @change="toggleCheckAll"> {{ t('components.rightToolbar.columnDisplay') }} </el-checkbox>
               </el-dropdown-item>
               <div class="check-line"></div>
               <!-- 单列控制 -->
@@ -47,7 +47,7 @@
 
     <!-- transfer 模式：弹框 -->
     <el-dialog :title="title" v-model="open" append-to-body>
-      <el-transfer :titles="['显示', '隐藏']" v-model="value" :data="transferData" @change="dataChange"></el-transfer>
+      <el-transfer :titles="[t('components.rightToolbar.show'), t('components.rightToolbar.hide')]" v-model="value" :data="transferData" @change="dataChange"></el-transfer>
     </el-dialog>
   </div>
 </template>
@@ -55,6 +55,7 @@
 <script setup lang="ts">
 import cache from '@/utils/cache'
 import { computed, nextTick, ref } from 'vue'
+import { t } from '@/i18n'
 
 // 表格列配置项类型定义
 interface ColumnItem {
@@ -106,7 +107,7 @@ const emits = defineEmits<{
 }>()
 
 const value = ref<Array<string | number>>([]) // “隐藏列” 的索引列表
-const title = ref('显示/隐藏') // transfer模式，弹出层标题
+const title = ref(t('components.rightToolbar.title')) // transfer模式，弹出层标题
 const open = ref(false) // transfer模式，弹出层显隐状态
 const rightToolbarRef = ref<any>(null)
 

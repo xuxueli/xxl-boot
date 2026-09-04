@@ -98,6 +98,7 @@ src
 │   ├── api/                      /* 接口封装（index.ts，同目录聚合） */
 │   └── types/                    /* 类型定义（index.ts，同目录聚合） */
 ├── composables                   /* usePageParams / useDict / useEnumOption / useFormReset */
+├── i18n                          /* 文案中心：locales/{zh,en}.json（JSON 数据纯存储，t() 引用） */
 ├── components / directive / utils / store   /* 平台公共层（框架与业务共用） */
 └── types/index.ts                /* 全局基础类型（Response/PageModel/PageQuery…） */
 ```
@@ -115,7 +116,7 @@ src
 │   ├── pages/                    /* 页面 + 页内组件（index.tsx、XxxFormModal.tsx…） */
 │   ├── api/                      /* 接口封装（index.ts，同目录聚合） */
 │   └── types/                    /* 类型定义（index.d.ts，declare namespace API 全局合并） */
-├── hooks / utils / components / stores / router   /* 平台公共层 */
+├── i18n / hooks / utils / components / stores / router   /* 平台公共层（i18n 文案中心 + 公共 hook/组件） */
 └── types/index.d.ts              /* 全局基础类型（API.Response/PageModel…） */
 ```
 
@@ -196,6 +197,15 @@ src
   - 业务枚举：在 `business/{module}/{business}/enums` 定义实现 `EnumTool.IEnum` 的枚举（平台内置枚举才放 `framework/constant/enums`），前端 `useEnumOption('XxxEnum')`（React 用 `useEnumOption('XxxEnum')`）自动经 `loadEnumItem` 拉取（loadEnumItem 展开「平台枚举包 + business 根包」内包含 IEnum 枚举的包，按枚举名解析，平台包优先）；
   - 数据字典：录入 `xxl_boot_dict`，前端 `useDict('dictType')`。
 - 菜单资源：`xxl_boot_resource`（type 0 目录 / 1 菜单 / 2 按钮），`status`（0 正常 / 1 停用），`visible`（0 显示 / 1 隐藏）。
+
+### 6.8 国际化文案（i18n）
+
+- 文案统一维护于 `src/i18n/locales/{zh,en}.json`（**单一文件**，JSON 数据纯存储不支持注释，按 `domain.module.token` 嵌套、按域名节点分区），业务页面/components/utils/layouts **一律 `import { t } from '@/i18n'` 引用，禁止硬编码中文**（中文注释除外）。
+- 文件内模块顺序固定：`app`（应用级常量）前置，其次公共组 `common`/`modal`/`request`/`layout`/`components`，再次平台业务组 `auth`/`authz`/`system`/`tool`/`dashboard`/`help`/`error`，常规业务模块（`business.*` 等）放最后；**Vue 与 React 两套一致**，新增模块按组插入、勿打乱既有顺序。
+- 语言由 `default-settings.ts` 的 `language: 'zh' | 'en'` 配置控制，**不支持运行时切换**；element-plus / antd 组件语言随该配置。
+- key 复用约定：通用词（新增/修改/删除/搜索/重置/操作/状态/备注/全部/正常/停用/保存成功/删除成功…）统一走 `common.*`，`modal.*`（系统提示/确定/取消）、`request.*`（错误/超时提示）；模块特有词建 `{domain}.{module}.*`。新增文案必须 zh/en **成对**提交，缺失键回退中文再回退 key。
+- 插值：`t('key', [v])`（占位 `{0}` 下标）或 `t('key', { name })`（占位 `{name}`），禁止字符串拼接。
+- 后端下发的菜单名与 dict/enum 标签不属于前端文案，不进 i18n 文件。
 
 ## 七、内置代码生成器
 

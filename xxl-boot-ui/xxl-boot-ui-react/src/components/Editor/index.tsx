@@ -8,6 +8,7 @@ import { createStyles } from 'antd-style';
 import React, { useCallback, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { t } from '@/i18n';
 import { request } from '@/utils/request';
 
 /** 后端 API 前缀（上传返回的相对路径需拼接该前缀才能访问） */
@@ -79,11 +80,11 @@ const Editor = ({
     async (file: File): Promise<string> => {
       const allowTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg'];
       if (!allowTypes.includes(file.type)) {
-        message.error('图片格式错误!');
+        message.error(t('components.editor.imageTypeError'));
         return '';
       }
       if (file.size / 1024 / 1024 > fileSize) {
-        message.error(`上传文件大小不能超过 ${fileSize} MB!`);
+        message.error(t('components.editor.fileSizeLimit', [fileSize]));
         return '';
       }
       if (type === 'base64') {
@@ -161,7 +162,7 @@ const Editor = ({
         value={value}
         onChange={(v) => onChange?.(v)}
         readOnly={readOnly}
-        placeholder="请输入内容"
+        placeholder={t('common.inputPlaceholder', [t('system.message.content')])}
         modules={{
           toolbar: [
             ['bold', 'italic', 'underline', 'strike'],

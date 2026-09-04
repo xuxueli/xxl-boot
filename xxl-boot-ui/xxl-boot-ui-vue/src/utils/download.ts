@@ -16,6 +16,7 @@ import type FileSaver from 'file-saver'
 import service, { errorCode, type RequestConfig } from '@/utils/request'
 import { tansParams, blobValidate } from '@/utils/common'
 import modal from '@/utils/modal'
+import { t } from '@/i18n'
 
 // 全局下载 Loading 实例，用于 zip 方法中显示/关闭全屏加载遮罩
 let downloadLoadingInstance: ReturnType<typeof ElLoading.service> | null = null
@@ -37,7 +38,7 @@ export default {
    */
   zip(url: string, name: string) {
     // 显示全屏下载 Loading 遮罩，提示用户正在下载
-    downloadLoadingInstance = ElLoading.service({ text: '正在下载数据，请稍候', background: 'rgba(0, 0, 0, 0.7)' })
+    downloadLoadingInstance = ElLoading.service({ text: t('common.downloading'), background: 'rgba(0, 0, 0, 0.7)' })
     // 请求拦截器统一注入 token，响应拦截器对 blob 透传为 Blob
     service({
       method: 'get',
@@ -63,7 +64,7 @@ export default {
       .catch((r) => {
         // 请求发生网络异常或服务端错误时的兜底处理
         console.error(r)
-        ElMessage.error('下载文件出现错误，请联系管理员！')
+        ElMessage.error(t('common.downloadFail'))
         // 确保异常情况下也关闭 Loading 遮罩，避免页面一直处于加载状态
         downloadLoadingInstance?.close()
       })
@@ -117,7 +118,7 @@ export default {
  * @param config   额外的 axios 请求配置（可选）
  */
 export function download(url: string, params: object, filename: string, config?: RequestConfig): void {
-  modal.loading('正在下载数据，请稍候')
+  modal.loading(t('common.downloading'))
   service
     .post(url, params, {
       transformRequest: [(params) => tansParams(params)],
@@ -143,7 +144,7 @@ export function download(url: string, params: object, filename: string, config?:
     })
     .catch((r) => {
       console.error(r)
-      modal.msgError('下载文件出现错误，请联系管理员！')
+      modal.msgError(t('common.downloadFail'))
       modal.closeLoading()
     })
 }

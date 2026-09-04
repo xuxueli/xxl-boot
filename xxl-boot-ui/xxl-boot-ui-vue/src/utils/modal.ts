@@ -12,6 +12,7 @@
  *   modal.msgSuccess('保存成功')
  */
 import { ElMessage, ElMessageBox, ElNotification, ElLoading } from 'element-plus'
+import { t } from '@/i18n'
 
 // 全局 Loading 实例引用，供 closeLoading 关闭
 let loadingInstance: ReturnType<typeof ElLoading.service> | null = null
@@ -38,19 +39,19 @@ export default {
   // ==================== 二、对话框（MessageBox） ====================
   /** 普通提示框：只需确认，不关心返回值 */
   alert(content: string): void {
-    ElMessageBox.alert(content, '系统提示')
+    ElMessageBox.alert(content, t('modal.title'))
   },
   /** 错误提示框：强调错误语义（type = error） */
   alertError(content: string): void {
-    ElMessageBox.alert(content, '系统提示', { type: 'error' })
+    ElMessageBox.alert(content, t('modal.title'), { type: 'error' })
   },
   /** 成功提示框：强调成功语义（type = success） */
   alertSuccess(content: string): void {
-    ElMessageBox.alert(content, '系统提示', { type: 'success' })
+    ElMessageBox.alert(content, t('modal.title'), { type: 'success' })
   },
   /** 警告提示框：强调警告语义（type = warning） */
   alertWarning(content: string): void {
-    ElMessageBox.alert(content, '系统提示', { type: 'warning' })
+    ElMessageBox.alert(content, t('modal.title'), { type: 'warning' })
   },
 
   // ==================== 三、通知（Notification） ====================
@@ -78,9 +79,9 @@ export default {
    *   modal.confirm('确认删除？').then(() => { 确定操作 }).catch(() => { 取消 })
    */
   confirm(content: string): Promise<unknown> {
-    return ElMessageBox.confirm(content, '系统提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    return ElMessageBox.confirm(content, t('modal.title'), {
+      confirmButtonText: t('modal.confirmButton'),
+      cancelButtonText: t('modal.cancelButton'),
       type: 'warning'
     })
   },
@@ -89,9 +90,9 @@ export default {
    *   modal.prompt('请输入原因').then(({ value }) => { ... })
    */
   prompt(content: string): Promise<{ value: string }> {
-    return ElMessageBox.prompt(content, '系统提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    return ElMessageBox.prompt(content, t('modal.title'), {
+      confirmButtonText: t('modal.confirmButton'),
+      cancelButtonText: t('modal.cancelButton'),
       type: 'warning'
     })
   },

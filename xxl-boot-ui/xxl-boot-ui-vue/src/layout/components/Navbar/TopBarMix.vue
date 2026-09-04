@@ -14,7 +14,7 @@
 
     <!-- 超出的菜单：折叠到"更多" -->
     <el-sub-menu :style="{ '--theme': theme }" index="more" v-if="topMenus.length > visibleNumber">
-      <template #title>更多</template>
+      <template #title>{{ t('common.more') }}</template>
       <template v-for="(item, index) in topMenus">
         <el-menu-item :index="item.path || ''" :key="index" v-if="index >= visibleNumber">
           <!-- icon -->
@@ -35,6 +35,7 @@ import defaultSettings from '@/default-settings'
 import type { RouteData } from '@/store/modules/routes'
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
 
 const appStore = useAppStore()

@@ -5,10 +5,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App as AntdApp, ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
+import enUS from 'antd/locale/en_US';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from '@/components';
+import { LANG } from '@/i18n';
 import { useSettingsStore } from '@/stores/settingsStore';
 import AppRouter from './router/app/AppRouter';
 import './assets/styles/global.css';
@@ -36,7 +38,7 @@ const AppTheme = ({ children }: { children: React.ReactNode }) => {
   const colorPrimary = useSettingsStore((s) => s.settings.colorPrimary);
   return (
     <ConfigProvider
-      locale={zhCN}
+      locale={LANG === 'en' ? enUS : zhCN}
       theme={{
         token: {
           fontFamily: 'AlibabaSans, sans-serif',

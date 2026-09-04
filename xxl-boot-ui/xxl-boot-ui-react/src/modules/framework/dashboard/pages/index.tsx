@@ -20,6 +20,7 @@ import MessageDetail, {
 } from '@/modules/framework/system/message/pages/MessageDetail';
 import { getLogTrend, getStats } from '@/modules/framework/dashboard/api';
 import { listMessageTop, markMessageRead } from '@/modules/framework/system/message/api';
+import { t } from '@/i18n';
 
 const useStyles = createStyles(({ token, css }) => ({
   statCard: css`
@@ -90,28 +91,28 @@ const useStyles = createStyles(({ token, css }) => ({
 const statConfig = [
   {
     key: 'userCount',
-    label: '用户数量',
+    label: t('dashboard.statCard.user'),
     icon: <UserOutlined />,
     color: '#5b6abf',
     bg: '#eef0fb',
   },
   {
     key: 'roleCount',
-    label: '角色数量',
+    label: t('dashboard.statCard.role'),
     icon: <TeamOutlined />,
     color: '#319c8a',
     bg: '#e8f6f3',
   },
   {
     key: 'logCount',
-    label: '日志数量',
+    label: t('dashboard.statCard.log'),
     icon: <FileTextOutlined />,
     color: '#d4943c',
     bg: '#fcf4e8',
   },
   {
     key: 'messageCount',
-    label: '消息数量',
+    label: t('dashboard.statCard.message'),
     icon: <MessageOutlined />,
     color: '#c5566a',
     bg: '#fbeef1',
@@ -243,16 +244,16 @@ const Dashboard = () => {
       <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
         <ProCard
           style={{ flex: 1, minWidth: 480, marginBottom: 20 }}
-          title="审计日志"
+          title={t('dashboard.auditLog')}
           extra={
             <Radio.Group
               size="small"
               value={chartDays}
               onChange={(e) => setChartDays(e.target.value)}
             >
-              <Radio.Button value={7}>7天</Radio.Button>
-              <Radio.Button value={14}>14天</Radio.Button>
-              <Radio.Button value={30}>30天</Radio.Button>
+              <Radio.Button value={7}>{t('dashboard.days', [7])}</Radio.Button>
+              <Radio.Button value={14}>{t('dashboard.days', [14])}</Radio.Button>
+              <Radio.Button value={30}>{t('dashboard.days', [30])}</Radio.Button>
             </Radio.Group>
           }
         >
@@ -261,10 +262,10 @@ const Dashboard = () => {
 
         <ProCard
           style={{ width: 320, minWidth: 260, marginBottom: 20 }}
-          title="站内消息"
+          title={t('dashboard.msgTitle')}
         >
           {messages.length === 0 ? (
-            <Empty description="暂无消息" />
+            <Empty description={t('dashboard.msgEmpty')} />
           ) : (
             <div>
               {messages.map((item) => (
@@ -279,7 +280,9 @@ const Dashboard = () => {
                       color={item.category === 0 ? 'success' : 'warning'}
                       style={{ marginRight: 0 }}
                     >
-                      {item.category === 0 ? '通知' : '公告'}
+                      {item.category === 0
+                        ? t('dashboard.notice')
+                        : t('dashboard.announce')}
                     </Tag>
                     <span className={styles.msgTime}>{item.addTime}</span>
                   </div>

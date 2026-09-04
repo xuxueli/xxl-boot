@@ -248,6 +248,7 @@ export default function Demo() {
 ```
 
 - 页面（含弹窗 XxxFormModal.tsx）放 `pages/`，接口放 `api/`，类型放 `types/`，三者同模块聚合；全局基础类型（API.Response/PageModel…）统一 `declare namespace API` 合并。
+- **i18n 落位**：用户可见文案一律 `import { t } from '@/i18n'` 引用，**禁止硬编码中文**（注释除外）；文案 key 统一维护在 `src/i18n/locales/{zh,en}.json` **单一文件**内（按域名节点分区，如 `business.*`；`app` 前置 → 公共组 `common` 等 → 平台业务组 `authz/system` 等 → 常规业务模块，顺序与另一套 UI 保持一致），zh/en 成对补。通用词复用 `common.*`，插值用 `t('key',[v])`（`{0}`），枚举/字典下拉标签仍由后端下发不迁移。
 - 表单弹窗独立文件 `DemoFormModal.tsx`（antd Modal + Form Form.Item，新增/编辑复用），参考 `modules/framework/system/message/pages/MessageFormModal.tsx`。
 - 权限统一用 `usePermission().hasPermi('{module}:{business}:add|edit|remove')`。
 - 下拉两种来源：业务枚举 `useEnumOption('XxxEnum')` + `toValueEnum/toSelectOptions`（`hooks/useEnumOption.ts`）；数据字典 `useDict` 等价物 → antd Select 手写 options。
@@ -290,6 +291,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 - [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，分页 `offset/pagesize`，XML resultMap + `NOW()`，校验 `Response.ofFail`。
 - [ ] 前端：types 用 `declare namespace API`；api 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`；页面 ProTable `request` 取 `res.data?.data/total`。
 - [ ] 权限：按钮 `hasPermi`，资源表菜单+按钮已插且已授权。注释符合 AGENTS.md 6.1。
+- [ ] i18n：页面无硬编码中文（注释除外），`t('key')` 引用且 zh/en 文案已成对维护；通用词复用 `common.*`。语言配置 `default-settings.ts` 的 `language`。
 - [ ] 防乱码：所有 `.sql` 首行有 `SET NAMES utf8mb4;`。
 - [ ] 联调：菜单可见、列表/新增/修改/删除/搜索可用、权限失效项按钮隐藏、空参数后端友好提示。
 

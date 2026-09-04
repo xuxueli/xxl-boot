@@ -14,6 +14,7 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, InputNumber, Tag, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
+import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import {
@@ -26,14 +27,14 @@ import { getIconComponent } from '@/utils/icon';
 import ResourceFormModal from './ResourceFormModal';
 
 const typeMap: Record<number, { text: string; color: string }> = {
-  0: { text: '目录', color: 'geekblue' },
-  1: { text: '菜单', color: 'success' },
-  2: { text: '按钮', color: 'warning' },
+  0: { text: t('authz.resource.typeDir'), color: 'geekblue' },
+  1: { text: t('authz.resource.typeMenu'), color: 'success' },
+  2: { text: t('authz.resource.typeBtn'), color: 'warning' },
 };
 
 const visibleMap: Record<number, { text: string; color: string }> = {
-  0: { text: '显示', color: 'geekblue' },
-  1: { text: '隐藏', color: 'default' },
+  0: { text: t('authz.resource.visibleShow'), color: 'geekblue' },
+  1: { text: t('authz.resource.visibleHide'), color: 'default' },
 };
 
 /**
@@ -128,11 +129,11 @@ const ResourceList = () => {
       }
     });
     if (ids.length === 0) {
-      message.warning('没有需要保存的排序变更');
+      message.warning(t('common.noSortChange'));
       return;
     }
     await updateResourceSort(ids, orders);
-    message.success('保存排序成功');
+    message.success(t('common.saveSortSuccess'));
     actionRef.current?.reload();
   };
 
@@ -146,11 +147,11 @@ const ResourceList = () => {
   /** 删除资源 */
   const handleDelete = (row: API.Resource) => {
     modal.confirm({
-      title: '系统提示',
-      content: `是否确认删除名称为"${row.name}"的数据项？`,
+      title: t('modal.title'),
+      content: t('authz.resource.confirmDelete', [row.name ?? '']),
       onOk: async () => {
         await delResource([row.id as number]);
-        message.success('删除成功');
+        message.success(t('common.deleteSuccess'));
         actionRef.current?.reload();
       },
     });
@@ -158,7 +159,7 @@ const ResourceList = () => {
 
   const columns: ProColumns<API.Resource>[] = [
     {
-      title: '资源名称',
+      title: t('authz.resource.menuName'),
       dataIndex: 'name',
       width: 220,
       ellipsis: true,
@@ -173,17 +174,17 @@ const ResourceList = () => {
       },
     },
     {
-      title: '类型',
+      title: t('authz.resource.typeColumn'),
       dataIndex: 'type',
       search: false,
       width: 90,
       render: (_, record) => {
-        const t = typeMap[record.type ?? -1];
-        return t ? <Tag color={t.color}>{t.text}</Tag> : '-';
+        const tType = typeMap[record.type ?? -1];
+        return tType ? <Tag color={tType.color}>{tType.text}</Tag> : '-';
       },
     },
     {
-      title: '排序',
+      title: t('authz.resource.orderColumn'),
       dataIndex: 'order',
       search: false,
       width: 100,
@@ -197,7 +198,7 @@ const ResourceList = () => {
       ),
     },
     {
-      title: '权限标识',
+      title: t('authz.resource.permission'),
       dataIndex: 'permission',
       search: false,
       ellipsis: true,
@@ -208,7 +209,7 @@ const ResourceList = () => {
       ),
     },
     {
-      title: '菜单地址',
+      title: t('authz.resource.url'),
       dataIndex: 'url',
       search: false,
       ellipsis: true,
@@ -219,7 +220,7 @@ const ResourceList = () => {
       ),
     },
     {
-      title: '显示状态',
+      title: t('authz.resource.visible'),
       dataIndex: 'visible',
       search: false,
       width: 90,
@@ -229,18 +230,18 @@ const ResourceList = () => {
       },
     },
     {
-      title: '状态',
+      title: t('common.status'),
       dataIndex: 'status',
       width: 90,
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
-          {record.status === 0 ? '正常' : '停用'}
+          {record.status === 0 ? t('common.normal') : t('common.disabled')}
         </Tag>
       ),
     },
     {
-      title: '操作',
+      title: t('common.operation'),
       valueType: 'option',
       width: 240,
       render: (_, record) => [
@@ -251,7 +252,7 @@ const ResourceList = () => {
             setFormOpen(true);
           }}
         >
-          <EditOutlined /> 修改
+          <EditOutlined /> {t('common.modify')}
         </a>,
         record.type !== 2 && (
           <a
@@ -261,11 +262,11 @@ const ResourceList = () => {
               setFormOpen(true);
             }}
           >
-            <PlusOutlined /> 新增
+            <PlusOutlined /> {t('common.add')}
           </a>
         ),
         <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> 删除
+          <DeleteOutlined /> {t('common.delete')}
         </a>,
       ],
     },
@@ -303,7 +304,7 @@ const ResourceList = () => {
                   setFormOpen(true);
                 }}
               >
-                新增
+                {t('common.add')}
               </Button>
             ),
             hasPermi('authz:resource') && (
@@ -312,7 +313,7 @@ const ResourceList = () => {
                 icon={<SaveOutlined />}
                 onClick={handleSaveSort}
               >
-                保存排序
+                {t('common.saveSort')}
               </Button>
             ),
             <Button
@@ -320,7 +321,7 @@ const ResourceList = () => {
               icon={<NodeExpandOutlined />}
               onClick={handleToggleExpand}
             >
-              展开/折叠
+              {t('common.expandCollapse')}
             </Button>,
           ]}
         />

@@ -10,6 +10,7 @@ import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import { getToken, getTokenKeyHeader, removeToken } from './auth';
 import { tansParams } from './common';
+import { t } from '@/i18n';
 
 /** 请求自定义 header 属性：登录/防重提交/静默错误等接口级开关 */
 interface CustomHeaders {
@@ -48,10 +49,10 @@ const REPEAT_SUBMIT_MAX_SIZE = 5 * 1024 * 1024;
 
 // 错误码映射表：后端业务码 → 前端展示文案
 export const errorCode: Record<string, string> = {
-  301: '认证失败，无法访问系统资源',
-  403: '当前操作没有权限',
-  404: '访问资源不存在',
-  default: '系统未知错误，请反馈给管理员',
+  301: t('request.err301'),
+  403: t('request.err403'),
+  404: t('request.err404'),
+  default: t('request.errDefault'),
 };
 
 // ==================== 创建 axios 实例（拦截器） ====================
@@ -132,8 +133,8 @@ service.interceptors.request.use((config) => {
       last.time != null &&
       snapshot.time - last.time < interval
     ) {
-      message.warning('数据正在处理，请勿重复提交');
-      return Promise.reject(new Error('数据正在处理，请勿重复提交'));
+      message.warning(t('request.repeatSubmit'));
+      return Promise.reject(new Error(t('request.repeatSubmit')));
     }
     sessionStorage.setItem(REPEAT_SUBMIT_STORAGE_KEY, JSON.stringify(snapshot));
   }
@@ -167,10 +168,10 @@ service.interceptors.response.use(
       if (!isRelogin.show) {
         isRelogin.show = true;
         Modal.confirm({
-          title: '系统提示',
-          content: '登录状态已过期，您可以继续留在该页面，或者重新登录',
-          okText: '重新登录',
-          cancelText: '取消',
+          title: t('modal.title'),
+          content: t('request.sessionExpired'),
+          okText: t('request.relogin'),
+          cancelText: t('modal.cancelButton'),
           onOk: () => {
             isRelogin.show = false;
             removeToken();
@@ -198,11 +199,11 @@ service.interceptors.response.use(
   (error) => {
     let msg = String(error?.message || '');
     if (msg === 'Network Error') {
-      msg = '后端接口连接异常';
+      msg = t('request.networkError');
     } else if (msg.includes('timeout')) {
-      msg = '系统接口请求超时';
+      msg = t('request.timeout');
     } else if (msg.includes('Request failed with status code')) {
-      msg = `系统接口${msg.slice(-3)}异常`;
+      msg = t('request.httpError', [msg.slice(-3)]);
     }
     message.error(msg);
     return Promise.reject(error);

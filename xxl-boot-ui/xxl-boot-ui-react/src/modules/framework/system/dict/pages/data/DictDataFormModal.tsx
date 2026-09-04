@@ -11,6 +11,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React from 'react';
+import { t } from '@/i18n';
 import { addData, updateData } from '@/modules/framework/system/dict/api';
 
 const DictDataFormModal = ({
@@ -37,14 +38,14 @@ const DictDataFormModal = ({
     } else {
       await addData({ ...data, dictId });
     }
-    message.success('操作成功');
+    message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
   return (
     <ModalForm<API.DictItem>
-      title={current?.id ? '修改字典项' : '新增字典项'}
+      title={current?.id ? t('common.titleEdit', [t('common.noun.dictItem')]) : t('common.titleAdd', [t('common.noun.dictItem')])}
       width={500}
       open={open}
       onOpenChange={onOpenChange}
@@ -56,40 +57,40 @@ const DictDataFormModal = ({
     >
       <ProFormText
         name="name"
-        label="字典项名称"
-        placeholder="请输入字典项名称"
-        rules={[{ required: true, message: '字典项名称不能为空' }]}
+        label={t('system.dict.itemName')}
+        placeholder={t('common.inputPlaceholder', [t('system.dict.itemName')])}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('system.dict.itemName')]) }]}
       />
       <ProFormText
         name="code"
-        label="字典项Code"
-        placeholder="请输入字典项Code"
+        label={t('system.dict.itemCode')}
+        placeholder={t('common.inputPlaceholder', [t('system.dict.itemCode')])}
         disabled={!!current?.id}
         rules={[
-          { required: true, message: '字典项Code不能为空' },
-          { pattern: /^[0-9]+$/, message: '编码必须为数字' },
+          { required: true, message: t('common.requiredMsg', [t('system.dict.itemCode')]) },
+          { pattern: /^[0-9]+$/, message: t('system.dict.itemCodePattern') },
         ]}
       />
       <ProFormRadio.Group
         name="status"
-        label="状态"
+        label={t('common.status')}
         options={[
-          { value: 0, label: '正常' },
-          { value: 1, label: '停用' },
+          { value: 0, label: t('common.normal') },
+          { value: 1, label: t('common.disabled') },
         ]}
       />
       <ProFormDigit
         name="order"
-        label="显示排序"
-        placeholder="请输入显示排序"
+        label={t('system.dict.order')}
+        placeholder={t('common.inputPlaceholder', [t('authz.resource.order')])}
         min={0}
-        rules={[{ required: true, message: '显示排序不能为空' }]}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.resource.order')]) }]}
         fieldProps={{ style: { width: '100%' } }}
       />
       <ProFormTextArea
         name="remark"
-        label="备注"
-        placeholder="请输入备注"
+        label={t('common.remark')}
+        placeholder={t('common.inputPlaceholder', [t('common.remark')])}
         fieldProps={{ rows: 2 }}
       />
     </ModalForm>

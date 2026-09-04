@@ -11,6 +11,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
+import { t } from '@/i18n';
 import { addOrg, listOrg, updateOrg } from '@/modules/framework/authz/org/api';
 import { handleTree } from '@/utils/common';
 
@@ -24,7 +25,7 @@ const mapToSelect = (orgs: API.Org[]): any[] =>
 
 /** 含根节点的 TreeSelect 数据 */
 const toTreeSelectData = (orgs: API.Org[]): any[] => [
-  { title: '根组织', value: 0, children: mapToSelect(orgs) },
+  { title: t('authz.org.rootNode'), value: 0, children: mapToSelect(orgs) },
 ];
 
 /** 判断某组织节点的树内是否包含目标 id（防环校验用） */
@@ -73,21 +74,21 @@ const OrgFormModal = ({
       // 防环校验：选中的上级组织不能是自己或其子孙
       const currentNode = orgOptions.find((o) => o.id === current.id);
       if (currentNode && isInTree(currentNode, values.parentId)) {
-        message.warning('不能选择自身或子孙组织作为上级组织');
+        message.warning(t('authz.org.parentInvalid'));
         return false;
       }
       await updateOrg({ ...data, id: current.id });
     } else {
       await addOrg(data);
     }
-    message.success('操作成功');
+    message.success(t('common.operationSuccess'));
     onSuccess?.();
     return true;
   };
 
   return (
     <ModalForm<API.Org>
-      title={current?.id ? '修改组织' : '新增组织'}
+      title={current?.id ? t('common.titleEdit', [t('common.noun.org')]) : t('common.titleAdd', [t('common.noun.org')])}
       width={600}
       open={open}
       onOpenChange={onOpenChange}
@@ -106,44 +107,44 @@ const OrgFormModal = ({
       <ProFormTreeSelect
         colProps={{ span: 24 }}
         name="parentId"
-        label="上级组织"
-        placeholder="请选择上级组织"
+        label={t('authz.org.parent')}
+        placeholder={t('common.selectPlaceholderText', [t('authz.org.parent')])}
         fieldProps={{
           treeData: treeSelectData,
           treeDefaultExpandAll: true,
         }}
-        rules={[{ required: true, message: '请选择上级组织' }]}
+        rules={[{ required: true, message: t('common.selectPlaceholderText', [t('authz.org.parent')]) }]}
       />
       <ProFormText
         colProps={{ span: 12 }}
         name="name"
-        label="组织名称"
-        placeholder="请输入组织名称"
-        rules={[{ required: true, message: '组织名称不能为空' }]}
+        label={t('authz.org.name')}
+        placeholder={t('common.inputPlaceholder', [t('authz.org.name')])}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.org.name')]) }]}
       />
       <ProFormDigit
         colProps={{ span: 12 }}
         name="order"
-        label="顺序"
-        placeholder="请输入顺序"
+        label={t('authz.org.order')}
+        placeholder={t('common.inputPlaceholder', [t('authz.org.order')])}
         min={0}
-        rules={[{ required: true, message: '顺序不能为空' }]}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.org.order')]) }]}
         fieldProps={{ style: { width: '100%' } }}
       />
       <ProFormText
         colProps={{ span: 12 }}
         name="manager"
-        label="负责人"
-        placeholder="请输入负责人"
+        label={t('authz.org.manager')}
+        placeholder={t('common.inputPlaceholder', [t('authz.org.manager')])}
         fieldProps={{ maxLength: 50 }}
       />
       <ProFormRadio.Group
         colProps={{ span: 12 }}
         name="status"
-        label="状态"
+        label={t('common.status')}
         options={[
-          { value: 0, label: '正常' },
-          { value: 1, label: '停用' },
+          { value: 0, label: t('common.normal') },
+          { value: 1, label: t('common.disabled') },
         ]}
       />
     </ModalForm>

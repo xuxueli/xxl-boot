@@ -10,6 +10,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+import { t } from '@/i18n';
 import { useEnumOption } from '@/hooks/useEnumOption';
 import { listRole } from '@/modules/framework/authz/role/api';
 
@@ -75,7 +76,7 @@ const UserView = forwardRef<UserViewRef>((_, ref) => {
    */
   const resolveRoleNames = useCallback(async (roleIds?: number[]) => {
     if (!roleIds || roleIds.length === 0) {
-      setRoleNames('无角色');
+      setRoleNames(t('authz.user.noRole'));
       return;
     }
     try {
@@ -84,10 +85,10 @@ const UserView = forwardRef<UserViewRef>((_, ref) => {
       const names = all
         .filter((r) => roleIds.includes(r.id as number))
         .map((r) => r.name)
-        .join('、');
-      setRoleNames(names || '无角色');
+        .join(t('authz.user.roleJoin'));
+      setRoleNames(names || t('authz.user.noRole'));
     } catch {
-      setRoleNames('无角色');
+      setRoleNames(t('authz.user.noRole'));
     }
   }, []);
 
@@ -131,7 +132,7 @@ const UserView = forwardRef<UserViewRef>((_, ref) => {
   return (
     /* 抽屉详情 */
     <Drawer
-      title="用户详情"
+      title={t('authz.user.detailTitle')}
       size={680}
       open={visible}
       onClose={() => setVisible(false)}
@@ -140,30 +141,30 @@ const UserView = forwardRef<UserViewRef>((_, ref) => {
       {user && (
         /* 用户详情 */
         <Descriptions column={1} size="middle" bordered>
-          <Descriptions.Item label="用户编号">{user.id}</Descriptions.Item>
-          <Descriptions.Item label="用户账号">
+          <Descriptions.Item label={t('authz.user.id')}>{user.id}</Descriptions.Item>
+          <Descriptions.Item label={t('authz.user.account')}>
             {user.username}
           </Descriptions.Item>
-          <Descriptions.Item label="用户名称">
+          <Descriptions.Item label={t('common.realName')}>
             {user.realName}
           </Descriptions.Item>
-          <Descriptions.Item label="所属部门">
+          <Descriptions.Item label={t('authz.user.dept')}>
             {user.orgName || '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="手机号码">
+          <Descriptions.Item label={t('authz.user.phoneNumber')}>
             {user.phone || '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="用户邮箱">
+          <Descriptions.Item label={t('authz.user.emailLabel')}>
             {user.email || '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="帐号状态">
+          <Descriptions.Item label={t('authz.user.statusLabel')}>
             {status ? <Tag color={status.color}>{status.text}</Tag> : '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="所属角色">{roleNames}</Descriptions.Item>
-          <Descriptions.Item label="创建时间">
+          <Descriptions.Item label={t('authz.user.roleLabel')}>{roleNames}</Descriptions.Item>
+          <Descriptions.Item label={t('common.createTime')}>
             {user.addTime || '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="更新时间">
+          <Descriptions.Item label={t('common.updateTime')}>
             {user.updateTime || '-'}
           </Descriptions.Item>
         </Descriptions>

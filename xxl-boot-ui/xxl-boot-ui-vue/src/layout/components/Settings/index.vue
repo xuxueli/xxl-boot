@@ -6,29 +6,29 @@
   <el-drawer v-model="showSettingsRef" :withHeader="false" :lock-scroll="false" direction="rtl" size="300px">
     <!-- 菜单导航设置 -->
     <div class="setting-drawer-title">
-      <h3 class="drawer-title">菜单导航设置</h3>
+      <h3 class="drawer-title">{{ t('layout.settings.navTitle') }}</h3>
     </div>
     <div class="nav-wrap">
-      <el-tooltip content="左侧菜单" placement="bottom">
+      <el-tooltip :content="t('layout.settings.sideMenu')" placement="bottom">
         <div class="item left" @click="handleNavType('side')" :class="{ activeItem: navType === 'side' }"><b></b><b></b></div>
       </el-tooltip>
-      <el-tooltip content="顶部菜单" placement="bottom">
+      <el-tooltip :content="t('layout.settings.topMenu')" placement="bottom">
         <div class="item top" @click="handleNavType('top')" :class="{ activeItem: navType === 'top' }"><b></b><b></b></div>
       </el-tooltip>
-      <el-tooltip content="混合菜单" placement="bottom">
+      <el-tooltip :content="t('layout.settings.mixMenu')" placement="bottom">
         <div class="item mix" @click="handleNavType('mix')" :class="{ activeItem: navType === 'mix' }"><b></b><b></b></div>
       </el-tooltip>
     </div>
 
     <!-- 主题风格设置 -->
     <div class="setting-drawer-title">
-      <h3 class="drawer-title">主题风格设置</h3>
+      <h3 class="drawer-title">{{ t('layout.settings.themeTitle') }}</h3>
     </div>
     <div class="setting-drawer-block-checbox">
       <div class="setting-drawer-block-checbox-item" @click="handleTheme('theme-dark')">
         <img src="@/assets/images/dark.svg" alt="dark" />
         <div v-if="sideTheme === 'theme-dark'" class="setting-drawer-block-checbox-selectIcon" style="display: block">
-          <i aria-label="图标: check" class="anticon anticon-check">
+          <i :aria-label="t('layout.settings.iconCheck')" class="anticon anticon-check">
             <svg
               viewBox="64 64 896 896"
               data-icon="check"
@@ -49,7 +49,7 @@
       <div class="setting-drawer-block-checbox-item" @click="handleTheme('theme-light')">
         <img src="@/assets/images/light.svg" alt="light" />
         <div v-if="sideTheme === 'theme-light'" class="setting-drawer-block-checbox-selectIcon" style="display: block">
-          <i aria-label="图标: check" class="anticon anticon-check">
+          <i :aria-label="t('layout.settings.iconCheck')" class="anticon anticon-check">
             <svg
               viewBox="64 64 896 896"
               data-icon="check"
@@ -69,7 +69,7 @@
       </div>
     </div>
     <div class="drawer-item">
-      <span>主题颜色</span>
+      <span>{{ t('layout.settings.themeColor') }}</span>
       <span class="comp-style">
         <el-color-picker v-model="theme" :predefine="predefineColors" />
       </span>
@@ -77,62 +77,62 @@
     <el-divider />
 
     <!-- 系统布局配置 -->
-    <h3 class="drawer-title">系统布局配置</h3>
+    <h3 class="drawer-title">{{ t('layout.settings.layoutTitle') }}</h3>
 
     <div class="drawer-item">
-      <span>开启页签</span>
+      <span>{{ t('layout.settings.enableTags') }}</span>
       <span class="comp-style">
         <el-switch v-model="settingsStore.tagsView" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>持久化标签页</span>
+      <span>{{ t('layout.settings.persistTags') }}</span>
       <span class="comp-style">
         <el-switch v-model="tagsViewPersist" :disabled="!settingsStore.tagsView" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>显示页签图标</span>
+      <span>{{ t('layout.settings.showTagsIcon') }}</span>
       <span class="comp-style">
         <el-switch v-model="settingsStore.tagsIcon" :disabled="!settingsStore.tagsView" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>标签页样式</span>
+      <span>{{ t('layout.settings.tagsStyle') }}</span>
       <span class="comp-style">
         <el-radio-group v-model="settingsStore.tagsViewStyle" :disabled="!settingsStore.tagsView" size="small">
-          <el-radio-button label="card">卡片</el-radio-button>
-          <el-radio-button label="chrome">谷歌</el-radio-button>
+          <el-radio-button label="card">{{ t('layout.settings.cardStyle') }}</el-radio-button>
+          <el-radio-button label="chrome">{{ t('layout.settings.chromeStyle') }}</el-radio-button>
         </el-radio-group>
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>固定 Header</span>
+      <span>{{ t('layout.settings.fixedHeader') }}</span>
       <span class="comp-style">
         <el-switch v-model="settingsStore.fixedHeader" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>显示 Logo</span>
+      <span>{{ t('layout.settings.showLogo') }}</span>
       <span class="comp-style">
         <el-switch v-model="settingsStore.sidebarLogo" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>动态标题</span>
+      <span>{{ t('layout.settings.dynamicTitle') }}</span>
       <span class="comp-style">
         <el-switch v-model="dynamicTitle" class="drawer-switch" />
       </span>
     </div>
 
     <div class="drawer-item">
-      <span>底部版权</span>
+      <span>{{ t('layout.settings.footer') }}</span>
       <span class="comp-style">
         <el-switch v-model="settingsStore.footerVisible" class="drawer-switch" />
       </span>
@@ -140,8 +140,8 @@
 
     <el-divider />
 
-    <el-button type="primary" plain icon="DocumentAdd" @click="saveSetting">保存配置</el-button>
-    <el-button plain icon="Refresh" @click="resetSetting">重置配置</el-button>
+    <el-button type="primary" plain icon="DocumentAdd" @click="saveSetting">{{ t('layout.settings.save') }}</el-button>
+    <el-button plain icon="Refresh" @click="resetSetting">{{ t('layout.settings.reset') }}</el-button>
   </el-drawer>
 </template>
 
@@ -149,6 +149,7 @@
 import { useAppStore, useSettingsStore, useTagsViewStore } from '@/store'
 import modal from '@/utils/modal'
 import { computed, onMounted, ref } from 'vue'
+import { t } from '@/i18n'
 
 const appStore = useAppStore()
 const settingsStore = useSettingsStore()
@@ -258,7 +259,7 @@ onMounted(() => {
  * 保存设置到 localStorage
  */
 function saveSetting() {
-  modal.loading('正在保存到本地，请稍候...')
+  modal.loading(t('layout.settings.saving'))
 
   // 若不保存标签页，主动清除 - 标签页缓存
   if (!tagsViewPersist.value) {
@@ -283,7 +284,7 @@ function resetSetting() {
   tagsViewStore.clearVisitedViews()
 
   // 弹框提示：Open
-  modal.loading('正在清除设置缓存并刷新，请稍候...')
+  modal.loading(t('layout.settings.resetting'))
 
   // Setting设置：持久化
   settingsStore.resetSetting()

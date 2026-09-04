@@ -24,6 +24,7 @@ import type { ColumnsType } from 'antd/es/table';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { queryDictList } from '@/modules/framework/system/dict/api';
 import { getGenTable, updateGenTable } from '@/modules/framework/tool/codegen/api';
+import { t } from '@/i18n';
 
 const javaTypeOptions = [
   'Long',
@@ -51,15 +52,15 @@ const queryTypeOptions = [
   { value: 'BETWEEN', label: 'BETWEEN' },
 ];
 const htmlTypeOptions = [
-  { value: 'input', label: '文本框' },
-  { value: 'textarea', label: '文本域' },
-  { value: 'select', label: '下拉框' },
-  { value: 'radio', label: '单选框' },
-  { value: 'checkbox', label: '复选框' },
-  { value: 'datetime', label: '日期控件' },
-  { value: 'imageUpload', label: '图片上传' },
-  { value: 'fileUpload', label: '文件上传' },
-  { value: 'editor', label: '富文本控件' },
+  { value: 'input', label: t('tool.codegen.htmlTypeInput') },
+  { value: 'textarea', label: t('tool.codegen.htmlTypeTextarea') },
+  { value: 'select', label: t('tool.codegen.htmlTypeSelect') },
+  { value: 'radio', label: t('tool.codegen.htmlTypeRadio') },
+  { value: 'checkbox', label: t('tool.codegen.htmlTypeCheckbox') },
+  { value: 'datetime', label: t('tool.codegen.htmlTypeDatetime') },
+  { value: 'imageUpload', label: t('tool.codegen.htmlTypeImageUpload') },
+  { value: 'fileUpload', label: t('tool.codegen.htmlTypeFileUpload') },
+  { value: 'editor', label: t('tool.codegen.htmlTypeEditor') },
 ];
 
 /** 拖拽行上下文：向行内单元格的拖拽手柄传递激活节点与事件 */
@@ -234,13 +235,13 @@ const EditTableModal = ({
   const handleSubmit = async () => {
     const values = await form.validateFields();
     if (fields.length === 0) {
-      message.warning('字段信息不能为空');
+      message.warning(t('tool.codegen.fieldEmpty'));
       return;
     }
     setSaving(true);
     try {
       await updateGenTable({ ...info, ...values, fieldList: fields });
-      message.success('操作成功');
+      message.success(t('common.saveSuccess'));
       onSuccess?.();
       onOpenChange(false);
     } finally {
@@ -250,7 +251,7 @@ const EditTableModal = ({
 
   const columns: ColumnsType<API.CodegenField> = [
     {
-      title: '排序',
+      title: t('tool.codegen.sort'),
       width: 72,
       align: 'center',
       render: (_, _r, index) => (
@@ -261,13 +262,13 @@ const EditTableModal = ({
       ),
     },
     {
-      title: '字段名',
+      title: t('tool.codegen.fieldColumn'),
       dataIndex: 'columnName',
       width: 120,
       render: (v) => <span style={{ color: 'rgba(0,0,0,0.45)' }}>{v}</span>,
     },
     {
-      title: '字段注释',
+      title: t('tool.codegen.fieldComment'),
       dataIndex: 'columnComment',
       width: 100,
       render: (_, record) => (
@@ -278,7 +279,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: 'Java类型',
+      title: t('tool.codegen.javaType'),
       dataIndex: 'javaType',
       width: 95,
       render: (_, record) => (
@@ -292,7 +293,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: 'Java属性',
+      title: t('tool.codegen.javaField'),
       dataIndex: 'javaField',
       width: 100,
       render: (_, record) => (
@@ -303,7 +304,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: '插入',
+      title: t('tool.codegen.isInsert'),
       dataIndex: 'isInsert',
       width: 56,
       align: 'center',
@@ -316,7 +317,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: '编辑',
+      title: t('common.edit'),
       dataIndex: 'isEdit',
       width: 56,
       align: 'center',
@@ -329,7 +330,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: '列表',
+      title: t('tool.codegen.isList'),
       dataIndex: 'isList',
       width: 56,
       align: 'center',
@@ -342,7 +343,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: '查询',
+      title: t('tool.codegen.isQuery'),
       dataIndex: 'isQuery',
       width: 56,
       align: 'center',
@@ -355,7 +356,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: '查询方式',
+      title: t('tool.codegen.queryType'),
       dataIndex: 'queryType',
       width: 95,
       render: (_, record) => (
@@ -369,7 +370,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: '必填',
+      title: t('tool.codegen.isRequired'),
       dataIndex: 'isRequired',
       width: 56,
       align: 'center',
@@ -381,7 +382,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: '显示类型',
+      title: t('tool.codegen.htmlType'),
       dataIndex: 'htmlType',
       width: 105,
       render: (_, record) => (
@@ -395,7 +396,7 @@ const EditTableModal = ({
       ),
     },
     {
-      title: '字典类型',
+      title: t('tool.codegen.dictType'),
       dataIndex: 'dictType',
       width: 110,
       render: (_, record) => (
@@ -427,15 +428,15 @@ const EditTableModal = ({
 
   return (
     <Modal
-      title="编辑生成配置"
+      title={t('tool.codegen.editConfig')}
       width="90%"
       open={open}
       onCancel={() => onOpenChange(false)}
       onOk={handleSubmit}
       confirmLoading={saving}
       destroyOnHidden
-      okText="保存"
-      cancelText="取消"
+      okText={t('common.save')}
+      cancelText={t('modal.cancelButton')}
     >
       <Tabs
         activeKey={activeTab}
@@ -443,14 +444,16 @@ const EditTableModal = ({
         items={[
           {
             key: 'info',
-            label: '配置信息',
+            label: t('tool.codegen.configInfo'),
             children: (
               <Form
                 form={form}
                 labelCol={{ flex: '150px' }}
                 style={{ marginTop: 8 }}
               >
-                <div style={{ fontWeight: 600, marginBottom: 8 }}>基本信息</div>
+                <div style={{ fontWeight: 600, marginBottom: 8 }}>
+                  {t('tool.codegen.baseInfo')}
+                </div>
                 <div
                   style={{
                     display: 'grid',
@@ -459,17 +462,27 @@ const EditTableModal = ({
                 >
                   <Form.Item
                     name="tableName"
-                    label="表名称"
-                    rules={[{ required: true, message: '表名称不能为空' }]}
+                    label={t('tool.codegen.tableName')}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('common.requiredMsg', [t('tool.codegen.tableName')]),
+                      },
+                    ]}
                   >
-                    <Input placeholder="请输入表名称" />
+                    <Input placeholder={t('common.inputPlaceholder', [t('tool.codegen.tableName')])} />
                   </Form.Item>
-                  <Form.Item name="tableComment" label="表描述">
-                    <Input placeholder="请输入表描述" />
+                  <Form.Item
+                    name="tableComment"
+                    label={t('tool.codegen.tableComment')}
+                  >
+                    <Input
+                      placeholder={t('common.inputPlaceholder', [t('tool.codegen.tableComment')])}
+                    />
                   </Form.Item>
                 </div>
                 <div style={{ fontWeight: 600, margin: '16px 0 8px' }}>
-                  生成信息
+                  {t('tool.codegen.genInfo')}
                 </div>
                 <div
                   style={{
@@ -479,61 +492,84 @@ const EditTableModal = ({
                 >
                   <Form.Item
                     name="packageName"
-                    label="生成包路径"
-                    rules={[{ required: true, message: '生成包路径不能为空' }]}
+                    label={t('tool.codegen.packageName')}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('common.requiredMsg', [t('tool.codegen.packageName')]),
+                      },
+                    ]}
                   >
-                    <Input placeholder="如 com.xxl.boot" />
+                    <Input placeholder={t('tool.codegen.packageNamePlaceholder')} />
                   </Form.Item>
                   <Form.Item
                     name="moduleName"
-                    label="生成模块名"
-                    rules={[{ required: true, message: '生成模块名不能为空' }]}
+                    label={t('tool.codegen.moduleName')}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('common.requiredMsg', [t('tool.codegen.moduleName')]),
+                      },
+                    ]}
                   >
-                    <Input placeholder="如 system" />
+                    <Input placeholder={t('tool.codegen.moduleNamePlaceholder')} />
                   </Form.Item>
                   <Form.Item
                     name="businessName"
-                    label="生成业务名"
-                    rules={[{ required: true, message: '生成业务名不能为空' }]}
+                    label={t('tool.codegen.businessName')}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('common.requiredMsg', [t('tool.codegen.businessName')]),
+                      },
+                    ]}
                   >
-                    <Input placeholder="如 user" />
+                    <Input placeholder={t('tool.codegen.businessNamePlaceholder')} />
                   </Form.Item>
                   <Form.Item
                     name="functionName"
-                    label="生成功能名"
-                    rules={[{ required: true, message: '生成功能名不能为空' }]}
+                    label={t('tool.codegen.functionName')}
+                    rules={[
+                      {
+                        required: true,
+                        message: t('common.requiredMsg', [t('tool.codegen.functionName')]),
+                      },
+                    ]}
                   >
-                    <Input placeholder="如 用户管理" />
+                    <Input placeholder={t('tool.codegen.functionNamePlaceholder')} />
                   </Form.Item>
-                  <Form.Item name="functionAuthor" label="生成功能作者">
-                    <Input placeholder="如 xuxueli" />
+                  <Form.Item name="functionAuthor" label={t('tool.codegen.functionAuthor')}>
+                    <Input placeholder={t('tool.codegen.functionAuthorPlaceholder')} />
                   </Form.Item>
-                  <Form.Item name="formColNum" label="表单布局">
+                  <Form.Item name="formColNum" label={t('tool.codegen.formLayout')}>
                     <Select
                       options={[
-                        { value: 1, label: '单列' },
-                        { value: 2, label: '双列' },
-                        { value: 3, label: '三列' },
+                        { value: 1, label: t('tool.codegen.singleCol') },
+                        { value: 2, label: t('tool.codegen.doubleCol') },
+                        { value: 3, label: t('tool.codegen.tripleCol') },
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item name="tplCategory" label="生成模板">
+                  <Form.Item name="tplCategory" label={t('tool.codegen.tplCategory')}>
                     <Select
                       options={[
-                        { value: 'crud', label: '单表（crud）' },
-                        { value: 'tree', label: '树表（tree）' },
+                        { value: 'crud', label: t('tool.codegen.singleTable') },
+                        { value: 'tree', label: t('tool.codegen.treeTable') },
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item name="tplWebType" label="前端模板">
+                  <Form.Item name="tplWebType" label={t('tool.codegen.tplWebType')}>
                     <Select options={tplWebTypeOptions} />
                   </Form.Item>
                   <Form.Item
                     name="remark"
-                    label="备注"
+                    label={t('common.remark')}
                     style={{ gridColumn: '1 / -1' }}
                   >
-                    <Input.TextArea rows={2} placeholder="请输入备注" />
+                    <Input.TextArea
+                      rows={2}
+                      placeholder={t('common.inputPlaceholder', [t('common.remark')])}
+                    />
                   </Form.Item>
                 </div>
               </Form>
@@ -541,7 +577,7 @@ const EditTableModal = ({
           },
           {
             key: 'fields',
-            label: '字段信息',
+            label: t('tool.codegen.fieldInfo'),
             children: (
               <div style={{ marginTop: 8 }}>
                 <DndContext
@@ -561,7 +597,7 @@ const EditTableModal = ({
                       columns={columns}
                       dataSource={fields}
                       components={{ body: { row: SortableRow } }}
-                      footer={() => '拖拽行首把手可调整字段顺序'}
+                      footer={() => t('tool.codegen.dragTip')}
                     />
                   </SortableContext>
                 </DndContext>

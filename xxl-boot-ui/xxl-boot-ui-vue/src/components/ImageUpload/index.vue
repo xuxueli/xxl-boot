@@ -32,18 +32,18 @@
 
     <!-- 上传提示 -->
     <div class="el-upload__tip" v-if="showTip && !disabled">
-      请上传
+      {{ t('components.upload.prefix') }}
       <template v-if="fileSize">
-        大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b>
+        {{ t('components.upload.size') }} <b style="color: #f56c6c">{{ fileSize }}MB</b>
       </template>
       <template v-if="fileType">
-        格式为 <b style="color: #f56c6c">{{ fileType.join('/') }}</b>
+        {{ t('components.upload.type') }} <b style="color: #f56c6c">{{ fileType.join('/') }}</b>
       </template>
-      的文件
+      {{ t('components.upload.suffix') }}
     </div>
 
     <!-- 预览弹窗 -->
-    <el-dialog v-model="dialogVisible" title="预览" width="800px" append-to-body>
+    <el-dialog v-model="dialogVisible" :title="t('components.imageUpload.preview')" width="800px" append-to-body>
       <img :src="dialogImageUrl" style="display: block; max-width: 100%; margin: 0 auto" />
     </el-dialog>
   </div>
@@ -55,6 +55,7 @@ import { isExternal } from '@/utils/validate'
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { t } from '@/i18n'
 
 /**
  * defineProps
@@ -170,29 +171,29 @@ function handleBeforeUpload(file: any) {
     isImg = file.type.indexOf('image') > -1
   }
   if (!isImg) {
-    modal.msgError(`文件格式不正确，请上传${props.fileType.join('/')}图片格式文件!`)
+    modal.msgError(t('components.imageUpload.typeError', [props.fileType.join('/')]))
     return false
   }
   // 文件名不能含逗号（v-model 以逗号分隔）
   if (file.name.includes(',')) {
-    modal.msgError('文件名不正确，不能包含英文逗号!')
+    modal.msgError(t('components.upload.commaError'))
     return false
   }
   // 校验文件大小
   if (props.fileSize) {
     const isLt = file.size / 1024 / 1024 < props.fileSize
     if (!isLt) {
-      modal.msgError(`上传图片大小不能超过 ${props.fileSize} MB!`)
+      modal.msgError(t('components.upload.imageSizeError', [props.fileSize]))
       return false
     }
   }
-  modal.loading('正在上传图片，请稍候...')
+  modal.loading(t('components.imageUpload.uploading'))
   number.value++
 }
 
 // 图片数量超出限制提示
 function handleExceed() {
-  modal.msgError(`上传文件数量不能超过 ${props.limit} 个!`)
+  modal.msgError(t('components.upload.limitError', [props.limit]))
 }
 
 // 上传成功回调：后端返回 200 则记录；否则回滚计数并从列表中移除
@@ -239,7 +240,7 @@ function uploadedSuccessfully() {
 
 // 上传失败处理：关闭 loading 并提示
 function handleUploadError() {
-  modal.msgError('上传图片失败')
+  modal.msgError(t('components.imageUpload.fail'))
   modal.closeLoading()
 }
 

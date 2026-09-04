@@ -13,6 +13,7 @@ import {
 } from '@ant-design/pro-components';
 import { App, Col, Row } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
+import { t } from '@/i18n';
 import { IconSelect } from '@/components';
 import {
   addResource,
@@ -31,7 +32,7 @@ const mapToSelect = (resources: API.Resource[]): any[] =>
 
 /** 含根节点的 TreeSelect 数据 */
 const toTreeSelectData = (resources: API.Resource[]): any[] => [
-  { title: '根节点', value: 0, children: mapToSelect(resources) },
+  { title: t('authz.resource.rootNode'), value: 0, children: mapToSelect(resources) },
 ];
 
 const ResourceFormModal = ({
@@ -74,14 +75,14 @@ const ResourceFormModal = ({
     } else {
       await addResource(data);
     }
-    message.success('操作成功');
+    message.success(t('common.operationSuccess'));
     onSuccess?.();
     return true;
   };
 
   return (
     <ModalForm<API.Resource>
-      title={current?.id ? '修改资源' : '新增资源'}
+      title={current?.id ? t('common.titleEdit', [t('common.noun.resource')]) : t('common.titleAdd', [t('common.noun.resource')])}
       width={680}
       open={open}
       onOpenChange={onOpenChange}
@@ -102,41 +103,41 @@ const ResourceFormModal = ({
         <Col span={24}>
           <ProFormTreeSelect
             name="parentId"
-            label="上级资源"
-            placeholder="请选择上级资源"
+            label={t('authz.resource.parent')}
+            placeholder={t('common.selectPlaceholderText', [t('authz.resource.parent')])}
             fieldProps={{
               treeData: parentTreeSelectData,
               treeDefaultExpandAll: true,
             }}
-            rules={[{ required: true, message: '请选择上级资源' }]}
+            rules={[{ required: true, message: t('common.selectPlaceholderText', [t('authz.resource.parent')]) }]}
           />
         </Col>
         <Col span={24}>
           <ProFormRadio.Group
             name="type"
-            label="资源类型"
+            label={t('authz.resource.type')}
             options={[
-              { value: 0, label: '目录' },
-              { value: 1, label: '菜单' },
-              { value: 2, label: '按钮' },
+              { value: 0, label: t('authz.resource.typeDir') },
+              { value: 1, label: t('authz.resource.typeMenu') },
+              { value: 2, label: t('authz.resource.typeBtn') },
             ]}
           />
         </Col>
         <Col span={12}>
           <ProFormText
             name="name"
-            label="资源名称"
-            placeholder="请输入资源名称"
-            rules={[{ required: true, message: '资源名称不能为空' }]}
+            label={t('authz.resource.menuName')}
+            placeholder={t('common.inputPlaceholder', [t('authz.resource.menuName')])}
+            rules={[{ required: true, message: t('common.requiredMsg', [t('authz.resource.menuName')]) }]}
           />
         </Col>
         <Col span={12}>
           <ProFormDigit
             name="order"
-            label="显示排序"
-            placeholder="请输入显示排序"
+            label={t('authz.resource.order')}
+            placeholder={t('common.inputPlaceholder', [t('authz.resource.order')])}
             min={0}
-            rules={[{ required: true, message: '显示排序不能为空' }]}
+            rules={[{ required: true, message: t('common.requiredMsg', [t('authz.resource.order')]) }]}
             fieldProps={{ style: { width: '100%' } }}
           />
         </Col>
@@ -146,15 +147,15 @@ const ResourceFormModal = ({
               type !== 2 ? (
                 <Row gutter={16}>
                   <Col span={12}>
-                    <ProForm.Item name="icon" label="资源图标">
+                    <ProForm.Item name="icon" label={t('authz.resource.icon')}>
                       <IconSelect />
                     </ProForm.Item>
                   </Col>
                   <Col span={12}>
                     <ProFormText
                       name="url"
-                      label="菜单地址"
-                      placeholder="请输入菜单地址"
+                      label={t('authz.resource.url')}
+                      placeholder={t('common.inputPlaceholder', [t('authz.resource.url')])}
                     />
                   </Col>
                 </Row>
@@ -165,28 +166,28 @@ const ResourceFormModal = ({
         <Col span={24}>
           <ProFormText
             name="permission"
-            label="权限标识"
-            placeholder="请输入权限标识"
+            label={t('authz.resource.permission')}
+            placeholder={t('common.inputPlaceholder', [t('authz.resource.permission')])}
             fieldProps={{ maxLength: 100 }}
           />
         </Col>
         <Col span={12}>
           <ProFormRadio.Group
             name="visible"
-            label="显示状态"
+            label={t('authz.resource.visible')}
             options={[
-              { value: 0, label: '显示' },
-              { value: 1, label: '隐藏' },
+              { value: 0, label: t('authz.resource.visibleShow') },
+              { value: 1, label: t('authz.resource.visibleHide') },
             ]}
           />
         </Col>
         <Col span={12}>
           <ProFormRadio.Group
             name="status"
-            label="资源状态"
+            label={t('authz.resource.statusLabel')}
             options={[
-              { value: 0, label: '正常' },
-              { value: 1, label: '停用' },
+              { value: 0, label: t('common.normal') },
+              { value: 1, label: t('common.disabled') },
             ]}
           />
         </Col>

@@ -2,6 +2,7 @@
  * 表单生成器配置（pagegen/config）
  * 提供组件类型定义、左侧组件库分组、默认组件工厂与表单全局配置。
  */
+import { t } from '@/i18n';
 
 /**
  * 组件类型
@@ -66,27 +67,27 @@ export interface FormConfig {
   formBtns: boolean /* 是否显示表单按钮 */;
 }
 
-/** 组件中文标题 */
+/** 组件标题（界面显示名） */
 export const widgetTitles: Record<WidgetType, string> = {
-  input: '单行文本',
-  textarea: '多行文本',
-  password: '密码输入',
-  number: '数字输入',
-  select: '下拉选择',
-  cascader: '级联选择',
-  radio: '单选框组',
-  checkbox: '多选框组',
-  switch: '开关',
-  slider: '滑块',
-  time: '时间选择',
-  'time-range': '时间范围',
-  date: '日期选择',
-  'date-range': '日期范围',
-  rate: '评分',
-  color: '颜色选择',
-  upload: '上传',
-  row: '行容器',
-  button: '按钮',
+  input: t('tool.pagegen.widgetInput'),
+  textarea: t('tool.pagegen.widgetTextarea'),
+  password: t('tool.pagegen.widgetPassword'),
+  number: t('tool.pagegen.widgetNumber'),
+  select: t('tool.pagegen.widgetSelect'),
+  cascader: t('tool.pagegen.widgetCascader'),
+  radio: t('tool.pagegen.widgetRadio'),
+  checkbox: t('tool.pagegen.widgetCheckbox'),
+  switch: t('tool.pagegen.widgetSwitch'),
+  slider: t('tool.pagegen.widgetSlider'),
+  time: t('tool.pagegen.widgetTime'),
+  'time-range': t('tool.pagegen.widgetTimeRange'),
+  date: t('tool.pagegen.widgetDate'),
+  'date-range': t('tool.pagegen.widgetDateRange'),
+  rate: t('tool.pagegen.widgetRate'),
+  color: t('tool.pagegen.widgetColor'),
+  upload: t('tool.pagegen.widgetUpload'),
+  row: t('tool.pagegen.widgetRow'),
+  button: t('tool.pagegen.widgetButton'),
 };
 
 /** 组件库分组（选择型） */
@@ -119,9 +120,9 @@ export const layoutGroups: WidgetType[] = ['row', 'button'];
 
 /** 组件库类型列表 */
 export const paletteGroups: { title: string; types: WidgetType[] }[] = [
-  { title: '输入型组件', types: inputGroups },
-  { title: '选择型组件', types: selectGroups },
-  { title: '布局型组件', types: layoutGroups },
+  { title: t('tool.pagegen.groupInput'), types: inputGroups },
+  { title: t('tool.pagegen.groupSelect'), types: selectGroups },
+  { title: t('tool.pagegen.groupLayout'), types: layoutGroups },
 ];
 
 /** 表单全局配置默认值 */
@@ -158,7 +159,7 @@ export function createWidget(type: WidgetType, id: number): FormWidget {
     return {
       id,
       type,
-      label: '确定',
+      label: t('modal.confirmButton'),
       buttonType: 'primary',
       span: 24,
     };
@@ -170,7 +171,7 @@ export function createWidget(type: WidgetType, id: number): FormWidget {
       type,
       vModel: `field${id}`,
       label: widgetTitles[type],
-      placeholder: '请选择',
+      placeholder: t('tool.pagegen.plsSelect'),
       required: true,
       /* 级联选择默认演示层级路径，其余选项组件用扁平选项 */
       options:
@@ -212,7 +213,7 @@ export function createWidget(type: WidgetType, id: number): FormWidget {
       label: widgetTitles[type],
       required: true,
       span: 24,
-      uploadText: '点击上传',
+      uploadText: t('tool.pagegen.clickUpload'),
     };
   }
   return {
@@ -220,7 +221,7 @@ export function createWidget(type: WidgetType, id: number): FormWidget {
     type,
     vModel: `field${id}`,
     label: widgetTitles[type],
-    placeholder: '请输入',
+    placeholder: t('tool.pagegen.plsInput'),
     required: false,
     span: 24,
   };

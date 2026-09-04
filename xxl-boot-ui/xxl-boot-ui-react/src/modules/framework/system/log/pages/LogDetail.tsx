@@ -15,6 +15,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
+import { t } from '@/i18n';
 
 export type LogDetailRef = {
   open: (row: API.Log, moduleMap: Record<number, string>) => void;
@@ -120,7 +121,7 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
   const copyText = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      message.success('已复制');
+      message.success(t('common.copied'));
     } catch {
       // 降级：execCommand 兜底
       const textarea = document.createElement('textarea');
@@ -129,13 +130,13 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
-      message.success('已复制');
+      message.success(t('common.copied'));
     }
   };
 
   return (
     <Modal
-      title="日志详情"
+      title={t('system.log.detailTitle')}
       width={700}
       open={visible}
       onCancel={() => setVisible(false)}
@@ -147,24 +148,28 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
           {/* 基本信息 */}
           <div className={styles.detailCard}>
             <div className={styles.detailCardTitle}>
-              <InfoCircleOutlined /> 基本信息
+              <InfoCircleOutlined /> {t('system.log.basicInfo')}
             </div>
             <Row className={styles.detailRow}>
               <Col span={12}>
                 <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>日志类型</span>
+                  <span className={styles.detailLabel}>
+                    {t('system.log.logType')}
+                  </span>
                   <span className={styles.detailValue}>
                     {row.type === 0
-                      ? '操作日志'
+                      ? t('system.log.operLog')
                       : row.type === 1
-                        ? '登陆日志'
+                        ? t('system.log.loginLog')
                         : row.type}
                   </span>
                 </div>
               </Col>
               <Col span={12}>
                 <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>系统模块</span>
+                  <span className={styles.detailLabel}>
+                    {t('system.log.logModule')}
+                  </span>
                   <span className={styles.detailValue}>
                     {moduleMap[row.module as number] || row.module}
                   </span>
@@ -174,13 +179,17 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
             <Row className={styles.detailRow}>
               <Col span={12}>
                 <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>日志编号</span>
+                  <span className={styles.detailLabel}>
+                    {t('system.log.logId')}
+                  </span>
                   <span className={styles.detailValue}>{row.id}</span>
                 </div>
               </Col>
               <Col span={12}>
                 <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>日志标题</span>
+                  <span className={styles.detailLabel}>
+                    {t('system.log.logTitle')}
+                  </span>
                   <span className={styles.detailValue}>{row.title}</span>
                 </div>
               </Col>
@@ -190,18 +199,22 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
           {/* 操作人信息 */}
           <div className={styles.detailCard}>
             <div className={styles.detailCardTitle}>
-              <UserOutlined /> 操作人信息
+              <UserOutlined /> {t('system.log.operatorInfo')}
             </div>
             <Row className={styles.detailRow}>
               <Col span={12}>
                 <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>操作人</span>
+                  <span className={styles.detailLabel}>
+                    {t('system.log.operator')}
+                  </span>
                   <span className={styles.detailValue}>{row.operator}</span>
                 </div>
               </Col>
               <Col span={12}>
                 <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>操作时间</span>
+                  <span className={styles.detailLabel}>
+                    {t('system.log.operateTime')}
+                  </span>
                   <span className={styles.detailValue}>{row.addTime}</span>
                 </div>
               </Col>
@@ -209,13 +222,15 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
             <Row className={styles.detailRow}>
               <Col span={12}>
                 <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>操作IP</span>
+                  <span className={styles.detailLabel}>{t('system.log.ip')}</span>
                   <span className={styles.detailValue}>{row.ip}</span>
                 </div>
               </Col>
               <Col span={12}>
                 <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>操作地址</span>
+                  <span className={styles.detailLabel}>
+                    {t('system.log.ipAddress')}
+                  </span>
                   <span className={styles.detailValue}>
                     {row.ipAddress || row.ip}
                   </span>
@@ -227,7 +242,7 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
           {/* 日志内容 */}
           <div className={styles.detailCard}>
             <div className={styles.detailCardTitle}>
-              <FileTextOutlined /> 日志内容
+              <FileTextOutlined /> {t('system.log.logContent')}
             </div>
             <div className={styles.codeBody}>
               <div className={styles.codeWrap}>
@@ -236,11 +251,11 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
                     size="small"
                     onClick={() => copyText(row.content || '')}
                   >
-                    复制
+                    {t('common.copy')}
                   </Button>
                 </div>
                 <pre className={styles.codePre}>
-                  {row.content || '（无数据）'}
+                  {row.content || t('system.log.noData')}
                 </pre>
               </div>
             </div>

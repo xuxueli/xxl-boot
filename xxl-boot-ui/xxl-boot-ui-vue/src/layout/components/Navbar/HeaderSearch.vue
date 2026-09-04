@@ -15,7 +15,7 @@
         size="large"
         @input="querySearch"
         :prefix-icon="Search"
-        placeholder="菜单搜索，支持标题、URL模糊查询"
+        :placeholder="t('layout.search.placeholder')"
         clearable
         @keyup.enter="selectActiveResult"
         @keydown.up.prevent="navigateResult('up')"
@@ -25,7 +25,7 @@
 
       <!-- 搜索结果：计数 -->
       <div class="result-count" v-if="search && options.length > 0">
-        找到 <strong>{{ options.length }}</strong> 个结果
+        {{ t('layout.search.found') }} <strong>{{ options.length }}</strong> {{ t('layout.search.results') }}
       </div>
 
       <!-- 搜索结果：结果列表 / 空状态 -->
@@ -63,19 +63,19 @@
               <Search />
             </el-icon>
             <p class="empty-text">
-              未找到 "<strong>{{ search }}</strong
-              >" 相关菜单
+              {{ t('layout.search.notFound') }} "<strong>{{ search }}</strong
+              >" {{ t('layout.search.relatedMenu') }}
             </p>
-            <p class="empty-tip">试试其他关键词或路径</p>
+            <p class="empty-tip">{{ t('layout.search.emptyTip') }}</p>
           </div>
         </el-scrollbar>
       </div>
 
       <!-- 快捷键说明 -->
       <div class="search-footer">
-        <span class="shortcut-item"> <kbd>↑</kbd><kbd>↓</kbd> 切换 </span>
-        <span class="shortcut-item"> <kbd>↵</kbd> 选择 </span>
-        <span class="shortcut-item"> <kbd>Esc</kbd> 关闭 </span>
+        <span class="shortcut-item"> <kbd>↑</kbd><kbd>↓</kbd> {{ t('layout.search.switch') }} </span>
+        <span class="shortcut-item"> <kbd>↵</kbd> {{ t('layout.search.select') }} </span>
+        <span class="shortcut-item"> <kbd>Esc</kbd> {{ t('common.close') }} </span>
       </div>
     </el-dialog>
   </div>
@@ -90,6 +90,7 @@ import { useSettingsStore, useRoutesStore } from '@/store'
 import type { InputInstance } from 'element-plus'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
 
 const settingsStore = useSettingsStore()

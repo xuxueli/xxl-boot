@@ -4,6 +4,7 @@
  */
 import { Button, Card, Result } from 'antd';
 import React from 'react';
+import { t } from '@/i18n';
 
 /**
  * 判断是否动态导入（chunk）加载失败
@@ -31,10 +32,12 @@ function renderErrorFallback(
 ) {
   const isChunkError = isChunkLoadError(error);
 
-  const title = isChunkError ? '页面加载失败' : '页面出错了';
+  const title = isChunkError
+    ? t('components.errorBoundary.titleChunk')
+    : t('components.errorBoundary.titleError');
   const subTitle = isChunkError
-    ? '页面资源加载失败，请刷新重试。'
-    : '抱歉，页面发生异常，请刷新或返回首页。';
+    ? t('components.errorBoundary.subTitleChunk')
+    : t('components.errorBoundary.subTitleError');
 
   return (
     <Card variant="borderless" style={{ margin: 24 }}>
@@ -45,7 +48,7 @@ function renderErrorFallback(
         extra={[
           isChunkError && (
             <Button type="primary" key="retry" onClick={onRetry}>
-              重试
+              {t('components.errorBoundary.retry')}
             </Button>
           ),
           <Button
@@ -53,10 +56,10 @@ function renderErrorFallback(
             key="reload"
             onClick={onReload}
           >
-            刷新页面
+            {t('components.errorBoundary.reload')}
           </Button>,
           <Button href="/" key="home">
-            返回首页
+            {t('components.errorBoundary.backHome')}
           </Button>,
         ].filter(Boolean)}
       />

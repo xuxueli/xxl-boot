@@ -10,6 +10,7 @@ import React, {
   useState,
 } from 'react';
 import { previewTable } from '@/modules/framework/tool/codegen/api';
+import { t } from '@/i18n';
 
 export type PreviewModalRef = {
   open: (id: number) => void;
@@ -51,9 +52,9 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
   const copyText = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      message.success('已复制');
+      message.success(t('common.copied'));
     } catch {
-      message.error('复制失败');
+      message.error(t('tool.codegen.copyFailed'));
     }
   };
 
@@ -61,7 +62,7 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
 
   return (
     <Modal
-      title="代码预览"
+      title={t('tool.codegen.codePreview')}
       width="80%"
       open={visible}
       onCancel={() => setVisible(false)}
@@ -82,7 +83,7 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
                     size="small"
                     onClick={() => copyText(codeMap[name] || '')}
                   >
-                    复制
+                    {t('common.copy')}
                   </Button>
                 </div>
                 <pre

@@ -18,8 +18,8 @@
 
       <!-- 面板头部：标题 + 全部已读按钮 -->
       <div class="message-header">
-        <span class="message-title">站内消息</span>
-        <span class="message-mark-all" @click="markAllRead">全部已读</span>
+        <span class="message-title">{{ t('layout.nav.messageTitle') }}</span>
+        <span class="message-mark-all" @click="markAllRead">{{ t('layout.nav.markAllRead') }}</span>
       </div>
 
       <!-- 加载中 -->
@@ -27,7 +27,7 @@
         <el-icon class="is-loading">
           <Loading />
         </el-icon>
-        加载中...
+        {{ t('common.loading') }}
       </div>
 
       <!-- 空状态 -->
@@ -35,7 +35,7 @@
         <el-icon style="font-size: 24px; display: block; margin-bottom: 6px">
           <Postcard />
         </el-icon>
-        暂无公告
+        {{ t('layout.nav.messageEmpty') }}
       </div>
 
       <!-- 公告列表 -->
@@ -49,7 +49,7 @@
         >
           <!-- 公告标签 -->
           <el-tag size="small" :type="item.category === 0 ? 'success' : 'warning'" class="message-tag">
-            {{ item.category === 0 ? '通知' : '公告' }}
+            {{ item.category === 0 ? t('layout.nav.notify') : t('layout.nav.announce') }}
           </el-tag>
           <!-- 标题 / 时间 -->
           <span class="message-item-title">{{ item.title }}</span>
@@ -68,6 +68,7 @@ import HeaderMessageDetail from './HeaderMessageDetail.vue'
 import { listMessageTop, markMessageRead, markMessageReadAll } from '@/modules/framework/system/message/api'
 import type { Message } from '@/modules/framework/system/message/types'
 import { onMounted, ref } from 'vue'
+import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
 
 /*

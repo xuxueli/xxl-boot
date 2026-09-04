@@ -17,6 +17,7 @@
       "~/*": ["./*"]                  /* 路径别名 ~ → 项目根目录 */
     },
     "types": ["vite/client", "element-plus/global"],    /* 注入全局类型：Vite 环境变量 + Element Plus 全局组件 */
+    "resolveJsonModule": true,                          /* 允许 import JSON（i18n 文案以 JSON 维护） */
     "lib": ["ES2022", "DOM", "DOM.Iterable"],           /* 引入标准库类型（语言 + 浏览器 DOM） */
     "noEmit": true                                      /* 仅做类型检查，不产出编译文件（由 Vite/esbuild 负责构建） */
   },

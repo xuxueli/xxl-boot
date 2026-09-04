@@ -10,6 +10,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React from 'react';
+import { t } from '@/i18n';
 import { addType, updateType } from '@/modules/framework/system/dict/api';
 
 const DictFormModal = ({
@@ -34,14 +35,14 @@ const DictFormModal = ({
     } else {
       await addType(data);
     }
-    message.success('操作成功');
+    message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
   return (
     <ModalForm<API.Dict>
-      title={current?.id ? '修改字典Type' : '新增字典Type'}
+      title={current?.id ? t('common.titleEdit', [t('system.dict.dictType')]) : t('common.titleAdd', [t('system.dict.dictType')])}
       width={500}
       open={open}
       onOpenChange={onOpenChange}
@@ -53,36 +54,36 @@ const DictFormModal = ({
     >
       <ProFormText
         name="name"
-        label="字典名称"
-        placeholder="请输入字典名称"
-        rules={[{ required: true, message: '字典名称不能为空' }]}
+        label={t('system.dict.dictName')}
+        placeholder={t('common.inputPlaceholder', [t('system.dict.dictName')])}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('system.dict.dictName')]) }]}
       />
       <ProFormText
         name="type"
-        label="字典Type"
-        placeholder="请输入字典Type"
+        label={t('system.dict.dictType')}
+        placeholder={t('common.inputPlaceholder', [t('system.dict.dictType')])}
         disabled={!!current?.id}
         rules={[
-          { required: true, message: '字典Type不能为空' },
-          { min: 2, max: 100, message: '字典Type长度必须在 2 到 100 个字符' },
+          { required: true, message: t('common.requiredMsg', [t('system.dict.dictType')]) },
+          { min: 2, max: 100, message: t('system.dict.typeLength') },
           {
             pattern: /^[a-z][a-zA-Z0-9]*$/,
-            message: '小写字母开头，仅允许字母和数字',
+            message: t('system.dict.typePattern'),
           },
         ]}
       />
       <ProFormRadio.Group
         name="status"
-        label="状态"
+        label={t('common.status')}
         options={[
-          { value: 0, label: '正常' },
-          { value: 1, label: '停用' },
+          { value: 0, label: t('common.normal') },
+          { value: 1, label: t('common.disabled') },
         ]}
       />
       <ProFormTextArea
         name="remark"
-        label="备注"
-        placeholder="请输入备注"
+        label={t('common.remark')}
+        placeholder={t('common.inputPlaceholder', [t('common.remark')])}
         fieldProps={{ rows: 2 }}
       />
     </ModalForm>

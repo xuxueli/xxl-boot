@@ -12,6 +12,7 @@ import { Modal, Spin } from 'antd';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Dropdown } from '@/components';
+import { t } from '@/i18n';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 
@@ -27,12 +28,12 @@ const menuItems: MenuProps['items'] = [
   {
     key: 'profile',
     icon: <IdcardOutlined />,
-    label: '个人中心',
+    label: t('layout.header.profile'),
   },
   {
     key: 'theme',
     icon: <SkinOutlined />,
-    label: '主题设置',
+    label: t('layout.header.theme'),
   },
   {
     type: 'divider' as const,
@@ -40,7 +41,7 @@ const menuItems: MenuProps['items'] = [
   {
     key: 'logout',
     icon: <LogoutOutlined />,
-    label: '退出登录',
+    label: t('layout.header.logout'),
   },
 ];
 
@@ -60,10 +61,10 @@ const HeaderAvatar = ({ children }: GlobalHeaderRightProps) => {
     /* 退出登录：二次确认后调用 store 退出并跳转登录页 */
     if (key === 'logout') {
       Modal.confirm({
-        title: '系统提示',
-        content: '确定注销并退出系统吗？',
-        okText: '确定',
-        cancelText: '取消',
+        title: t('modal.title'),
+        content: t('layout.header.logoutConfirm'),
+        okText: t('modal.confirmButton'),
+        cancelText: t('modal.cancelButton'),
         onOk: async () => {
           // 事件回调中直接调用 store action，避免为单次调用挂载 store 订阅
           await useUserStore.getState().logout();

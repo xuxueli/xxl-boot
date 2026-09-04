@@ -21,7 +21,7 @@
 import logo from '@/assets/images/logo.png'
 import { useSettingsStore } from '@/store'
 import variables from '@/assets/styles/variables.module.scss'
-import defaultSettings from '@/default-settings'
+import { t } from '@/i18n'
 import { computed } from 'vue'
 
 /*
@@ -51,7 +51,7 @@ defineProps({
   }
 })
 
-const title = defaultSettings.title
+const title = t('app.title')
 const settingsStore = useSettingsStore()
 const sideTheme = computed(() => settingsStore.sideTheme)
 

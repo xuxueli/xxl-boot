@@ -7,8 +7,8 @@
     <el-dialog v-model="value" width="980px" :close-on-click-modal="false" :modal-append-to-body="false" @open="onOpen" @close="onClose">
       <!-- 选择 -->
       <template #header="{ close, titleId, titleClass }">
-        选择图标
-        <el-input v-model="key" size="small" :style="{ width: '260px' }" placeholder="请输入图标名称" prefix-icon="Search" clearable />
+        {{ t('tool.pagegen.selectIcon') }}
+        <el-input v-model="key" size="small" :style="{ width: '260px' }" :placeholder="t('common.inputPlaceholder', [t('common.noun.iconName')])" prefix-icon="Search" clearable />
       </template>
 
       <!-- 图标列表 -->
@@ -27,6 +27,7 @@
 </template>
 <script setup lang="ts">
 /** 图标选择弹窗 - 逻辑 */
+import { t } from '@/i18n'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 

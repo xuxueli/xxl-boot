@@ -1137,7 +1137,8 @@ public @interface Permission {
 
 ### 版本 v2.1.1 Release Notes[ING]
 - 1、【强化】Vue/React 模块化重构：以业务域（Business Domain）为目录进行模块化管理，提升代码可维护性与可扩展性；
-- 2、【优化】通用代码下沉 Tool 依赖层，代码结构优化；
+- 2、【重构】I18N 国际化重构：统一国际化资源文件结构，支持多语言配置，并优化前端国际化加载逻辑；
+- 3、【优化】通用代码下沉 Tool 依赖层，代码结构优化；
 
 
 ### TODO LIST

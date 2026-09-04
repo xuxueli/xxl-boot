@@ -36,18 +36,18 @@
         <!-- 全屏 -->
         <Screenfull id="screenfull" class="right-menu-item hover-effect" />
         <!-- 主题 -->
-        <el-tooltip content="主题模式" effect="dark" placement="bottom">
+        <el-tooltip :content="t('layout.nav.themeMode')" effect="dark" placement="bottom">
           <div class="right-menu-item hover-effect theme-switch-wrapper" @click="toggleTheme">
             <SvgIcon v-if="settingsStore.isDark" icon-class="sunny" />
             <SvgIcon v-if="!settingsStore.isDark" icon-class="moon" />
           </div>
         </el-tooltip>
         <!-- 布局尺寸 -->
-        <el-tooltip content="布局大小" effect="dark" placement="bottom">
+        <el-tooltip :content="t('layout.nav.layoutSize')" effect="dark" placement="bottom">
           <SizeSelect id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
         <!-- 通知 -->
-        <el-tooltip content="消息通知" effect="dark" placement="bottom">
+        <el-tooltip :content="t('layout.nav.message')" effect="dark" placement="bottom">
           <HeaderMessage id="header-message" class="right-menu-item hover-effect" />
         </el-tooltip>
       </template>
@@ -72,15 +72,15 @@
           <el-dropdown-menu>
             <!-- 个人中心  -->
             <router-link to="/user/profile">
-              <el-dropdown-item>个人中心</el-dropdown-item>
+              <el-dropdown-item>{{ t('layout.nav.profile') }}</el-dropdown-item>
             </router-link>
             <!-- 布局设置  -->
             <el-dropdown-item command="setLayout" v-if="settingsStore.showSettings">
-              <span>布局设置</span>
+              <span>{{ t('layout.nav.layoutSetting') }}</span>
             </el-dropdown-item>
             <!-- 退出登录  -->
             <el-dropdown-item divided command="logout">
-              <span>退出登录</span>
+              <span>{{ t('layout.nav.logout') }}</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -103,6 +103,7 @@ import HeaderMessage from './HeaderMessage.vue'
 import { useAppStore, useUserStore, useSettingsStore } from '@/store'
 import defaultSettings from '@/default-settings'
 import { nextTick } from 'vue'
+import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
 
 const appStore = useAppStore()
@@ -134,9 +135,9 @@ function handleCommand(command: string | number | object) {
  * 退出登录：二次确认后清除登录态并跳转首页
  */
 function logout() {
-  ElMessageBox.confirm('确定注销并退出系统吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  ElMessageBox.confirm(t('layout.nav.logoutConfirm'), t('modal.title'), {
+    confirmButtonText: t('modal.confirmButton'),
+    cancelButtonText: t('modal.cancelButton'),
     type: 'warning'
   })
     .then(() => {

@@ -3,35 +3,35 @@
   功能：展示单条日志的详细信息
 -->
 <template>
-  <el-dialog title="日志详细" v-model="visible" width="700px" append-to-body>
+  <el-dialog :title="t('system.log.detailTitle')" v-model="visible" width="700px" append-to-body>
     <div class="detail-wrap">
       <!-- 基本信息 -->
       <div class="detail-card">
         <div class="detail-card-title">
-          <el-icon><InfoFilled /></el-icon> 基本信息
+          <el-icon><InfoFilled /></el-icon> {{ t('system.log.basicInfo') }}
         </div>
         <el-row class="detail-row">
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">日志类型</span
-              ><span class="detail-value">{{ row.type === 0 ? '操作日志' : row.type === 1 ? '登陆日志' : row.type }}</span>
+              <span class="detail-label">{{ t('system.log.logType') }}</span
+              ><span class="detail-value">{{ row.type === 0 ? t('system.log.operLog') : row.type === 1 ? t('system.log.loginLog') : row.type }}</span>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">系统模块</span><span class="detail-value">{{ moduleMap[row.module] || row.module }}</span>
+              <span class="detail-label">{{ t('system.log.logModule') }}</span><span class="detail-value">{{ moduleMap[row.module] || row.module }}</span>
             </div>
           </el-col>
         </el-row>
         <el-row class="detail-row">
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">日志编号</span><span class="detail-value">{{ row.id }}</span>
+              <span class="detail-label">{{ t('system.log.logId') }}</span><span class="detail-value">{{ row.id }}</span>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">日志标题</span><span class="detail-value">{{ row.title }}</span>
+              <span class="detail-label">{{ t('system.log.logTitle') }}</span><span class="detail-value">{{ row.title }}</span>
             </div>
           </el-col>
         </el-row>
@@ -40,29 +40,29 @@
       <!-- 操作人信息 -->
       <div class="detail-card">
         <div class="detail-card-title">
-          <el-icon><User /></el-icon> 操作人信息
+          <el-icon><User /></el-icon> {{ t('system.log.operatorInfo') }}
         </div>
         <el-row class="detail-row">
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">操作人</span><span class="detail-value">{{ row.operator }}</span>
+              <span class="detail-label">{{ t('system.log.operator') }}</span><span class="detail-value">{{ row.operator }}</span>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">操作时间</span><span class="detail-value">{{ row.addTime }}</span>
+              <span class="detail-label">{{ t('system.log.operateTime') }}</span><span class="detail-value">{{ row.addTime }}</span>
             </div>
           </el-col>
         </el-row>
         <el-row class="detail-row">
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">操作IP</span><span class="detail-value">{{ row.ip }}</span>
+              <span class="detail-label">{{ t('system.log.ip') }}</span><span class="detail-value">{{ row.ip }}</span>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">操作地址</span><span class="detail-value">{{ row.ipAddress || row.ip }}</span>
+              <span class="detail-label">{{ t('system.log.ipAddress') }}</span><span class="detail-value">{{ row.ipAddress || row.ip }}</span>
             </div>
           </el-col>
         </el-row>
@@ -71,14 +71,14 @@
       <!-- 日志内容 -->
       <div class="detail-card">
         <div class="detail-card-title">
-          <el-icon><Document /></el-icon> 日志内容
+          <el-icon><Document /></el-icon> {{ t('system.log.logContent') }}
         </div>
         <div class="code-body">
           <div class="code-wrap">
             <div class="code-action">
-              <el-button size="small" icon="CopyDocument" @click="copyText(row.content)">复制</el-button>
+              <el-button size="small" icon="CopyDocument" @click="copyText(row.content)">{{ t('common.copy') }}</el-button>
             </div>
-            <pre class="code-pre">{{ row.content || '（无数据）' }}</pre>
+            <pre class="code-pre">{{ row.content || t('system.log.noData') }}</pre>
           </div>
         </div>
       </div>
@@ -87,6 +87,7 @@
 </template>
 
 <script setup lang="ts">
+import { t } from '@/i18n'
 import modal from '@/utils/modal'
 
 /**
@@ -128,7 +129,7 @@ function copyText(str: string | undefined) {
   const text = str || ''
   // 优先使用 Clipboard API，不支持时降级为 execCommand
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => modal.msgSuccess('已复制'))
+    navigator.clipboard.writeText(text).then(() => modal.msgSuccess(t('system.log.copied')))
   } else {
     const ta = document.createElement('textarea')
     ta.value = text
@@ -136,7 +137,7 @@ function copyText(str: string | undefined) {
     ta.select()
     document.execCommand('copy')
     document.body.removeChild(ta)
-    modal.msgSuccess('已复制')
+    modal.msgSuccess(t('system.log.copied'))
   }
 }
 </script>

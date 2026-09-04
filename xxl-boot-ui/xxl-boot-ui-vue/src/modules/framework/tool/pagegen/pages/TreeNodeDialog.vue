@@ -5,7 +5,7 @@
 <template>
   <div>
     <el-dialog
-      title="添加选项"
+      :title="t('tool.pagegen.addOption')"
       v-model="open"
       width="800px"
       :close-on-click-modal="false"
@@ -16,13 +16,13 @@
       <!-- 表单 -->
       <el-form ref="treeNodeForm" :model="formData" :rules="rules" label-width="100px">
         <el-col :span="24">
-          <el-form-item label="选项名" prop="label">
-            <el-input v-model="formData.label" placeholder="请输入选项名" clearable />
+          <el-form-item :label="t('tool.pagegen.optionName')" prop="label">
+            <el-input v-model="formData.label" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.optionName')])" clearable />
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="选项值" prop="value">
-            <el-input v-model="formData.value" placeholder="请输入选项值" clearable>
+          <el-form-item :label="t('tool.pagegen.optionValue')" prop="value">
+            <el-input v-model="formData.value" :placeholder="t('common.inputPlaceholder', [t('tool.pagegen.optionValue')])" clearable>
               <template #append>
                 <el-select v-model="dataType" :style="{ width: '100px' }">
                   <el-option
@@ -42,8 +42,8 @@
       <!-- btn -->
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="handelConfirm">确 定</el-button>
-          <el-button @click="onClose">取 消</el-button>
+          <el-button type="primary" @click="handelConfirm">{{ t('modal.confirmButton') }}</el-button>
+          <el-button @click="onClose">{{ t('modal.cancelButton') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -51,6 +51,7 @@
 </template>
 <script setup lang="ts">
 /** 树节点添加弹窗 - 逻辑 */
+import { t } from '@/i18n'
 import type { FormInstance } from 'element-plus'
 import { ref } from 'vue'
 
@@ -71,14 +72,14 @@ const rules = {
   label: [
     {
       required: true,
-      message: '请输入选项名',
+      message: t('common.inputPlaceholder', [t('tool.pagegen.optionName')]),
       trigger: 'blur'
     }
   ],
   value: [
     {
       required: true,
-      message: '请输入选项值',
+      message: t('common.inputPlaceholder', [t('tool.pagegen.optionValue')]),
       trigger: 'blur'
     }
   ]
@@ -93,8 +94,8 @@ const dataTypeOptions = ref<
     disabled?: boolean
   }[]
 >([
-  { label: '字符串', value: 'string' },
-  { label: '数字', value: 'number' }
+  { label: t('tool.pagegen.dataTypeString'), value: 'string' },
+  { label: t('tool.pagegen.dataTypeNumber'), value: 'number' }
 ])
 
 const id = ref(100) /* 节点 ID 自增 */

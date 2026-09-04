@@ -23,19 +23,19 @@
       v-if="!disabled"
     >
       <!-- 上传按钮 -->
-      <el-button type="primary">选取文件</el-button>
+      <el-button type="primary">{{ t('components.fileUpload.selectFile') }}</el-button>
     </el-upload>
 
     <!-- 上传提示 -->
     <div class="el-upload__tip" v-if="showTip && !disabled">
-      请上传
+      {{ t('components.upload.prefix') }}
       <template v-if="fileSize">
-        大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b></template
+        {{ t('components.upload.size') }} <b style="color: #f56c6c">{{ fileSize }}MB</b></template
       >
       <template v-if="fileType">
-        格式为 <b style="color: #f56c6c">{{ fileType.join('/') }}</b></template
+        {{ t('components.upload.type') }} <b style="color: #f56c6c">{{ fileType.join('/') }}</b></template
       >
-      的文件
+      {{ t('components.upload.suffix') }}
     </div>
 
     <!-- 文件列表 -->
@@ -45,7 +45,7 @@
           <span class="el-icon-document"> {{ getFileName(file.name) }} </span>
         </el-link>
         <div class="ele-upload-list__item-content-action">
-          <el-link underline="never" @click="handleDelete(index)" type="danger" v-if="!disabled">&nbsp;删除</el-link>
+          <el-link underline="never" @click="handleDelete(index)" type="danger" v-if="!disabled">&nbsp;{{ t('common.delete') }}</el-link>
         </div>
       </li>
     </transition-group>
@@ -57,6 +57,7 @@ import { getAuthHeaders } from '@/utils/auth'
 import Sortable from 'sortablejs'
 import modal from '@/utils/modal'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { t } from '@/i18n'
 
 /**
  * defineProps
@@ -160,36 +161,36 @@ function handleBeforeUpload(file: any) {
     const fileExt = fileName[fileName.length - 1]
     const isTypeOk = props.fileType.indexOf(fileExt) >= 0
     if (!isTypeOk) {
-      modal.msgError(`文件格式不正确，请上传${props.fileType.join('/')}格式文件!`)
+      modal.msgError(t('components.fileUpload.typeError', [props.fileType.join('/')]))
       return false
     }
   }
   // 校检文件名是否包含特殊字符
   if (file.name.includes(',')) {
-    modal.msgError('文件名不正确，不能包含英文逗号!')
+    modal.msgError(t('components.upload.commaError'))
     return false
   }
   // 校检文件大小
   if (props.fileSize) {
     const isLt = file.size / 1024 / 1024 < props.fileSize
     if (!isLt) {
-      modal.msgError(`上传文件大小不能超过 ${props.fileSize} MB!`)
+      modal.msgError(t('components.upload.sizeError', [props.fileSize]))
       return false
     }
   }
-  modal.loading('正在上传文件，请稍候...')
+  modal.loading(t('components.fileUpload.uploading'))
   number.value++
   return true
 }
 
 // 文件数量超出限制提示
 function handleExceed() {
-  modal.msgError(`上传文件数量不能超过 ${props.limit} 个!`)
+  modal.msgError(t('components.upload.limitError', [props.limit]))
 }
 
 // 上传失败处理
 function handleUploadError(err: any) {
-  modal.msgError('上传文件失败')
+  modal.msgError(t('components.fileUpload.fail'))
   modal.closeLoading()
 }
 

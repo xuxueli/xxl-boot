@@ -6,34 +6,34 @@
   <div class="app-container">
     <!-- 搜索栏 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
-      <el-form-item label="字典名称" prop="name">
-        <el-input v-model="queryParams.name" placeholder="请输入字典名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item :label="t('system.dict.dictName')" prop="name">
+        <el-input v-model="queryParams.name" :placeholder="t('common.inputPlaceholder', [t('system.dict.dictName')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="字典Type" prop="type">
-        <el-input v-model="queryParams.type" placeholder="请输入字典Type" clearable style="width: 200px" @keyup.enter="handleQuery" />
+      <el-form-item :label="t('system.dict.dictType')" prop="type">
+        <el-input v-model="queryParams.type" :placeholder="t('common.inputPlaceholder', [t('system.dict.dictType')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="字典状态" clearable style="width: 200px">
-          <el-option label="全部" :value="-1" />
+      <el-form-item :label="t('common.status')" prop="status">
+        <el-select v-model="queryParams.status" :placeholder="t('system.dict.statusPlaceholder')" clearable style="width: 200px">
+          <el-option :label="t('common.all')" :value="-1" />
           <el-option v-for="item in statusOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">{{ t('common.search') }}</el-button>
+        <el-button icon="Refresh" @click="resetQuery">{{ t('common.reset') }}</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -41,27 +41,27 @@
     <!-- 字典类型列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" width="80" />
-      <el-table-column label="字典名称" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
-      <el-table-column label="字典Type" align="center" :show-overflow-tooltip="true">
+      <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="80" />
+      <el-table-column :label="t('system.dict.dictName')" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('system.dict.dictType')" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
           <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{ scope.row.type }}</a>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" width="80">
+      <el-table-column :label="t('common.status')" align="center" width="80">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
             {{ statusText(scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
-      <el-table-column label="新增时间" align="center" prop="addTime" width="170" />
-      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
+      <el-table-column :label="t('common.remark')" align="center" prop="remark" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
+      <el-table-column :label="t('common.operation')" align="center" width="220" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">修改</el-button>
-          <el-button link type="primary" icon="Operation" @click="handleDataList(scope.row)" v-hasRole="['admin']">列表</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Operation" @click="handleDataList(scope.row)" v-hasRole="['admin']">{{ t('system.dict.dataList') }}</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -78,25 +78,25 @@
     <!-- 添加或修改字典对话框 -->
     <el-dialog :title="formState.title" v-model="formState.visible" width="500px" append-to-body>
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="100px">
-        <el-form-item label="字典名称" prop="name">
-          <el-input v-model="formState.form.name" placeholder="请输入字典名称" />
+        <el-form-item :label="t('system.dict.dictName')" prop="name">
+          <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('system.dict.dictName')])" />
         </el-form-item>
-        <el-form-item label="字典Type" prop="type">
-          <el-input v-model="formState.form.type" placeholder="请输入字典Type" :disabled="formState.form.id != undefined" />
+        <el-form-item :label="t('system.dict.dictType')" prop="type">
+          <el-input v-model="formState.form.type" :placeholder="t('common.inputPlaceholder', [t('system.dict.dictType')])" :disabled="formState.form.id != undefined" />
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item :label="t('common.status')">
           <el-radio-group v-model="formState.form.status">
             <el-radio v-for="item in statusOptions" :key="item.code" :value="item.code">{{ item.title }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="formState.form.remark" type="textarea" placeholder="请输入备注"></el-input>
+        <el-form-item :label="t('common.remark')" prop="remark">
+          <el-input v-model="formState.form.remark" type="textarea" :placeholder="t('common.inputPlaceholder', [t('common.remark')])"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitForm">{{ t('modal.confirmButton') }}</el-button>
+          <el-button @click="cancel">{{ t('modal.cancelButton') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -107,6 +107,7 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Dict' })
+import { t } from '@/i18n'
 import DictDataDrawer from './detail.vue'
 import { listType, getType, delType, addType, updateType } from '../api'
 import { useEnumOption } from '@/composables/useEnumOption'
@@ -149,11 +150,11 @@ const formState = ref<FormState<Dict>>({
   form: {} /* 表单数据 */,
   rules: {
     /* 校验规则 */
-    name: [{ required: true, message: '字典名称不能为空', trigger: 'blur' }],
+    name: [{ required: true, message: t('common.requiredMsg', [t('system.dict.dictName')]), trigger: 'blur' }],
     type: [
-      { required: true, message: '字典Type不能为空', trigger: 'blur' },
-      { pattern: /^[a-z][a-zA-Z0-9]*$/, message: '以小写字母开头，由字母和数字组成', trigger: 'blur' },
-      { min: 2, max: 100, message: '长度需在2-100之间', trigger: 'blur' }
+      { required: true, message: t('common.requiredMsg', [t('system.dict.dictType')]), trigger: 'blur' },
+      { pattern: /^[a-z][a-zA-Z0-9]*$/, message: t('system.dict.typePattern'), trigger: 'blur' },
+      { min: 2, max: 100, message: t('system.dict.typeLength'), trigger: 'blur' }
     ]
   }
 })
@@ -241,7 +242,7 @@ function handleSelectionChange(selection: Dict[]) {
 function handleAdd() {
   reset()
   formState.value.visible = true
-  formState.value.title = '新增字典'
+  formState.value.title = t('common.titleAdd', [t('common.noun.dict')])
 }
 
 /** 字典项抽屉 */
@@ -251,7 +252,7 @@ function handleViewData(row: Dict) {
 
 /** 字典数据列表页面 */
 function handleDataList(row: Dict) {
-  tab.openPage('字典数据', '/system/dict/data', { dictId: String(row.id) })
+  tab.openPage(t('system.dict.dictDataTitle'), '/system/dict/data', { dictId: String(row.id) })
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -265,7 +266,7 @@ function handleUpdate(row: any) {
   getType(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = '修改字典'
+    formState.value.title = t('common.titleEdit', [t('common.noun.dict')])
   })
 }
 
@@ -276,13 +277,13 @@ function submitForm() {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
         updateType(formState.value.form).then((response) => {
-          modal.msgSuccess('修改成功')
+          modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
         addType(formState.value.form).then((response) => {
-          modal.msgSuccess('新增成功')
+          modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
         })
@@ -298,13 +299,13 @@ function handleDelete(row: any) {
     return
   }
   modal
-    .confirm('是否确认删除字典编号为"' + dictIds + '"的数据项？')
+    .confirm(t('system.dict.confirmDeleteDict', [dictIds]))
     .then(function () {
       return delType(dictIds)
     })
     .then(() => {
       getList()
-      modal.msgSuccess('删除成功')
+      modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }

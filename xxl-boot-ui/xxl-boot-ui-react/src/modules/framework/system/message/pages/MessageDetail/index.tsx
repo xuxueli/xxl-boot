@@ -11,6 +11,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
+import { t } from '@/i18n';
 import { getMessage } from '@/modules/framework/system/message/api';
 
 export type MessageDetailRef = {
@@ -20,12 +21,24 @@ export type MessageDetailRef = {
 /** 分类标签映射：0-通知 1-公告 */
 const categoryTag = (category?: number) => {
   if (category === 0) {
-    return { icon: <BellOutlined />, text: '通知', color: 'success' };
+    return {
+      icon: <BellOutlined />,
+      text: t('system.message.notice'),
+      color: 'success',
+    };
   }
   if (category === 1) {
-    return { icon: <MessageOutlined />, text: '公告', color: 'warning' };
+    return {
+      icon: <MessageOutlined />,
+      text: t('system.message.announcement'),
+      color: 'warning',
+    };
   }
-  return { icon: <MessageOutlined />, text: '消息', color: 'default' };
+  return {
+    icon: <MessageOutlined />,
+    text: t('system.message.message'),
+    color: 'default',
+  };
 };
 
 const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
@@ -66,7 +79,7 @@ const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
 
   return (
     <Drawer
-      title="消息详情"
+      title={t('system.message.detailTitle')}
       size="50%"
       open={visible}
       onClose={handleClose}
@@ -84,13 +97,17 @@ const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
               </span>
             </div>
             <div style={{ marginBottom: 24, color: 'rgba(0,0,0,0.45)' }}>
-              <span style={{ marginRight: 16 }}>发送人：{message.sender}</span>
+              <span style={{ marginRight: 16 }}>
+                {t('system.message.senderLabel', [message.sender ?? ''])}
+              </span>
               <span style={{ marginRight: 16 }}>{message.addTime}</span>
               <Tag
                 color={message.status === 0 ? 'success' : 'default'}
                 style={{ marginRight: 0 }}
               >
-                {message.status === 0 ? '正常' : '已关闭'}
+                {message.status === 0
+                  ? t('common.normal')
+                  : t('system.message.closed')}
               </Tag>
             </div>
             <div
@@ -98,7 +115,7 @@ const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
               // 富文本消息内容渲染，与 Vue 版 v-html 保持一致
               // biome-ignore lint/security/noDangerouslySetInnerHtml: 富文本内容为后端管理，信任渲染
               dangerouslySetInnerHTML={{
-                __html: message.content || '（无内容）',
+                __html: message.content || t('system.message.noContent'),
               }}
             />
           </div>

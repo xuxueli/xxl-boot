@@ -13,6 +13,7 @@ import { Input, Tooltip, Tree } from 'antd';
 import { createStyles } from 'antd-style';
 import { clsx } from 'clsx';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { t } from '@/i18n';
 
 const useStyles = createStyles(({ token, css }) => ({
   panel: css`
@@ -150,9 +151,9 @@ const filterTree = (data: API.Org[], keyword: string): API.Org[] => {
 
 const TreePanel = ({
   treeData = [],
-  title = '树形结构',
+  title = t('components.treePanel.title'),
   showSearch = true,
-  searchPlaceholder = '请输入名称',
+  searchPlaceholder = t('components.treePanel.search'),
   defaultExpandAll = false,
   onNodeClick,
   onRefresh,
@@ -266,7 +267,13 @@ const TreePanel = ({
               {title}
             </span>
             <div className={styles.actions}>
-              <Tooltip title={expanded ? '收起全部' : '展开全部'}>
+              <Tooltip
+                title={
+                  expanded
+                    ? t('components.treePanel.collapseAll')
+                    : t('components.treePanel.expandAll')
+                }
+              >
                 {expanded ? (
                   <UpOutlined
                     className={styles.actionIcon}
@@ -280,7 +287,7 @@ const TreePanel = ({
                 )}
               </Tooltip>
               {onRefresh && (
-                <Tooltip title="刷新">
+                <Tooltip title={t('components.treePanel.refresh')}>
                   <ReloadOutlined
                     className={styles.actionIcon}
                     onClick={onRefresh}
@@ -326,7 +333,12 @@ const TreePanel = ({
           <div className={styles.resizeHandle} onMouseDown={startResize} />
         </>
       )}
-      <Tooltip title={collapsed ? '展开' : '收起'} placement="right">
+      <Tooltip
+        title={
+          collapsed ? t('components.treePanel.expand') : t('components.treePanel.collapse')
+        }
+        placement="right"
+      >
         <ColumnHeightOutlined
           style={{
             position: 'absolute',

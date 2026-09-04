@@ -12,6 +12,7 @@ import {
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { App, Card, Descriptions, Spin, Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { t } from '@/i18n';
 import { getUserProfile } from '@/modules/framework/authz/user/api';
 import ResetPwd from './ResetPwd';
 import UserInfo from './UserInfo';
@@ -47,7 +48,7 @@ const Profile = () => {
         setRoleNames(((res.data?.roleNames as string[]) || []).join(', '));
       })
       .catch(() => {
-        message.error('个人信息加载失败');
+        message.error(t('authz.user.loadProfileError'));
       })
       .finally(() => {
         setLoading(false);
@@ -80,7 +81,7 @@ const Profile = () => {
         <div style={{ display: 'flex', gap: 16 }}>
           {/* 个人信息 */}
           <Card
-            title="个人信息"
+            title={t('authz.user.personalInfo')}
             style={{ width: 300, flexShrink: 0 }}
             styles={{ body: { paddingTop: 8 } }}
           >
@@ -89,7 +90,7 @@ const Profile = () => {
                 label={
                   <span>
                     <UserOutlined style={{ marginRight: 4 }} />
-                    用户账号
+                    {t('authz.user.account')}
                   </span>
                 }
               >
@@ -99,7 +100,7 @@ const Profile = () => {
                 label={
                   <span>
                     <PhoneOutlined style={{ marginRight: 4 }} />
-                    手机号码
+                    {t('authz.user.phoneNumber')}
                   </span>
                 }
               >
@@ -109,7 +110,7 @@ const Profile = () => {
                 label={
                   <span>
                     <MailOutlined style={{ marginRight: 4 }} />
-                    用户邮箱
+                    {t('authz.user.emailLabel')}
                   </span>
                 }
               >
@@ -119,7 +120,7 @@ const Profile = () => {
                 label={
                   <span>
                     <TeamOutlined style={{ marginRight: 4 }} />
-                    所属部门
+                    {t('authz.user.dept')}
                   </span>
                 }
               >
@@ -129,7 +130,7 @@ const Profile = () => {
                 label={
                   <span>
                     <TeamOutlined style={{ marginRight: 4 }} />
-                    所属角色
+                    {t('authz.user.roleLabel')}
                   </span>
                 }
               >
@@ -139,7 +140,7 @@ const Profile = () => {
                 label={
                   <span>
                     <CalendarOutlined style={{ marginRight: 4 }} />
-                    创建日期
+                    {t('authz.user.createDate')}
                   </span>
                 }
               >
@@ -158,12 +159,12 @@ const Profile = () => {
               items={[
                 {
                   key: 'userinfo',
-                  label: '基本资料',
+                  label: t('authz.user.basicInfo'),
                   children: <UserInfo user={user} onSuccess={loadUser} />,
                 },
                 {
                   key: 'resetPwd',
-                  label: '修改密码',
+                  label: t('authz.user.modifyPassword'),
                   children: <ResetPwd />,
                 },
               ]}
