@@ -32,7 +32,7 @@
 /**
  * ${codegen.functionName}（树表列表页）
  * Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
- * 放置路径：src/pages/${codegen.moduleName}/${codegen.businessName?lower_case}/index.tsx
+ * 放置路径：src/modules/business/${codegen.moduleName}/${codegen.businessName?lower_case}/pages/index.tsx
  */
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
@@ -54,7 +54,7 @@ import {
   get${codegen.businessName},
   list${codegen.businessName},
   update${codegen.businessName},
-} from '@/services/${codegen.moduleName}/${codegen.businessName?lower_case}';
+} from '../api';
 
 const ${codegen.businessName}List = () => {
   const { message, modal } = App.useApp();

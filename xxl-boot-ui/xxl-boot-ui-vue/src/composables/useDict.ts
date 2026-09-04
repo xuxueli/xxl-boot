@@ -8,7 +8,7 @@
  */
 import { ref, toRefs } from 'vue'
 import { useDictStore } from '@/store'
-import { loadDictItem } from '@/api/system/dict/data'
+import { loadDictItem } from '@/modules/framework/system/dict/api'
 import type { DictTagOption } from '@/types'
 
 const dictStore = useDictStore()

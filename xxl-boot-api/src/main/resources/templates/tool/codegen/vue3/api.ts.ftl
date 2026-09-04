@@ -3,7 +3,7 @@
  * Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
  */
 import { request } from '@/utils/request'
-import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}ListQuery } from '@/types/${codegen.moduleName}/${codegen.businessName?lower_case}'
+import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}ListQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
 // 查询${codegen.functionName}列表

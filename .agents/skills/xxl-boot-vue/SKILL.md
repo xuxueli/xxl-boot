@@ -1,6 +1,6 @@
 ---
 name: xxl-boot-vue
-description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-vue 端口 3000，Element Plus + TypeScript）下新增或改造业务模块。当任务涉及修改 xxl-boot-api/src/main/java/com/xxl/boot/api/business 或 xxl-boot-ui-vue/src/views|api|types 时加载本技能。
+description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-vue 端口 3000，Element Plus + TypeScript）下新增或改造业务模块。当任务涉及修改 xxl-boot-api/src/main/java/com/xxl/boot/api/business 或 xxl-boot-ui-vue/src/modules 时加载本技能。
 ---
 
 # XXL-Boot · Vue3 分离模式开发 Skill
@@ -23,9 +23,9 @@ xxl-boot-api/src/main
 ├── java/com/xxl/boot/api/business/{module}  ← 新增业务落此（可经后台代码生成器产出或按模板直生）
 └── resources/mapper/{module}/               ← 业务 Mapper XML
 xxl-boot-ui-vue/src
-├── views/{module}/{page}/index.vue          ← 页面（DB 菜单 url 驱动，零路由改动）
-├── api/{module}/{page}.ts                   ← 接口封装
-└── types/{module}/{page}.ts → 在 types/api.ts barrel 登记
+├── modules/framework/{domain}/{module}/     ← 平台内置模块（authz/system/tool/…，同目录聚合 pages+api+types）
+├── modules/business/{module}/{page}/        ← 业务模块（pages/ + api/ + types/ 三子目录，同模块自包含）
+└── types/index.ts                           ← 全局基础类型（Response/PageModel/PageQuery…）
 ```
 
 通用规范（返回结构、注释、命名、DB）见仓库根 `AGENTS.md` 第六节。
@@ -36,7 +36,7 @@ xxl-boot-ui-vue/src
 1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签，仅动后端时则不动前端）；菜单+按钮+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口（api 8090 / vue 3000）。确认结果即时回填到子目录 `plan.md`。
 2. **建表**：`xxl_boot_*` SQL，公共字段 `id/add_time/update_time`，TINYINT 状态，`COMMENT` 注释；SQL 脚本写入该需求子目录（如 `{business}-table.sql`、`{business}-init.sql`）。
 3. **生成或手写代码**：本 Skill 缺省策略为 AI 直接按内置模板（`xxl-boot-api/src/main/resources/templates/tool/codegen/{java,vue3}/*.ftl`）渲染等价代码落位；同时提示用户可后台「工具-代码生成」走内置生成器（见第六节）。
-4. **落位**：后端 Java 落 `business/{module}`，Mapper XML 落 `resources/mapper/{module}/`；前端三个文件落 `views|api|types/{module}/{page}`，并在 `types/api.ts` barrel 补一行。
+4. **落位**：后端 Java 落 `business/{module}`，Mapper XML 落 `resources/mapper/{module}/`；前端业务模块聚合落 `modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts）。
 5. **菜单/权限**：插 `xxl_boot_resource` 菜单(type=1)+按钮(type=2)+`xxl_boot_role_res` 授权；页面按钮用 `v-hasPermi`。
 6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-vue`(3000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效；验证结果回填 `plan.md`。
 
@@ -103,9 +103,9 @@ SQL 脚本：`{business}-table.sql`
 ## 五、前端改造
 | 文件 | 位置 | 要点 |
 |---|---|---|
-| `types/{module}/{business}.ts` | src/types/ | 实体+Query(pageNum/pageSize)+ListQuery；types/api.ts barrel 补一行 |
-| `api/{module}/{business}.ts` | src/api/ | list/get/add/del/update，Promise<Response<PageModel<T>>> |
-| `views/{module}/{business}/index.vue` | src/views/ | 三段式；usePageParams 转 offset/pagesize；按钮 v-hasPermi |
+| `types/index.ts` | modules/business/{module}/{business}/ | 实体+Query(pageNum/pageSize)+ListQuery |
+| `api/index.ts` | modules/business/{module}/{business}/ | list/get/add/del/update，Promise<Response<PageModel<T>>> |
+| `pages/index.vue` | modules/business/{module}/{business}/ | 三段式；usePageParams 转 offset/pagesize；按钮 v-hasPermi |
 
 ## 六、验证结果 / 变更记录
 - [ ] 需求结论确认并回填第一节
@@ -142,27 +142,27 @@ SQL 脚本：`{business}-table.sql`
 
 | 文件 | 位置 | 说明 |
 |---|---|---|
-| types | `src/types/{module}/{page}.ts` | `Xxx` 实体 + `XxxQuery`(pageNum/pageSize 表单形态) + `XxxListQuery = ListQuery<XxxQuery>` |
-| api | `src/api/{module}/{page}.ts` | `request({url:'/{module}/{page}/pageList',params:...})` |
-| view | `src/views/{module}/{page}/index.vue` | 三段式列表页 |
+| types | `src/modules/business/{module}/{business}/types/index.ts` | `Xxx` 实体 + `XxxQuery`(pageNum/pageSize 表单形态) + `XxxListQuery = ListQuery<XxxQuery>` |
+| api | `src/modules/business/{module}/{business}/api/index.ts` | `request({url:'/{module}/{page}/pageList',params:...})` |
+| view | `src/modules/business/{module}/{business}/pages/index.vue` | 三段式列表页 |
 
-`src/types/api.ts` barrel 补一行 `export * from './{module}/{page}'`。
+页面（含弹窗 XxxFormModal.vue）放 `pages/`，接口放 `api/`，类型放 `types/`，三者同模块聚合、无 barrel 登记；全局基础类型（Response/PageModel/ListQuery…）统一从 `@/types` 引用。「框架」内置模块在 `modules/framework/`，业务禁止混入。
 
-types 参考 `src/types/system/message.ts` 封口写法；api 参考 `src/api/system/message.ts`。
+types 参考 `src/modules/framework/system/message/types/index.ts` 封口写法；api 参考 `src/modules/framework/system/message/api/index.ts`。
 
 ### index.vue 骨架（三段式，template 略）
 
 ```ts
 <script setup lang="ts">
 defineOptions({ name: 'Demo' })
-import { listDemo, getDemo, addDemo, delDemo, updateDemo } from '@/api/demo/demo'
+import { listDemo, getDemo, addDemo, delDemo, updateDemo } from '../api'
 import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import { useEnumOption } from '@/composables/useEnumOption'
 import modal from '@/utils/modal'
 import { RightToolbar, Pagination } from '@/components'
 import type { FormState, TableState } from '@/types'
-import type { Demo, DemoQuery } from '@/types/demo/demo'
+import type { Demo, DemoQuery } from '../types'
 import type { FormInstance } from 'element-plus'
 import { ref } from 'vue'
 
@@ -202,7 +202,7 @@ getList()
 </script>
 ```
 
-- 模板：搜索表单（`queryParams`）、`<el-table>` + 操作列用 `v-hasPermi="['demo:demo:add|edit|remove']"`、`<Pagination>`、`<el-dialog :title="formState.title" v-model="formState.visible">` + `@/components` 的 Editor/ImageUpload 等按需引入。**完整样例看 `src/views/system/message/index.vue`。**
+- 模板：搜索表单（`queryParams`）、`<el-table>` + 操作列用 `v-hasPermi="['demo:demo:add|edit|remove']"`、`<Pagination>`、`<el-dialog :title="formState.title" v-model="formState.visible">` + `@/components` 的 Editor/ImageUpload 等按需引入。**完整样例看 `src/modules/framework/system/message/index.vue`。**
 - `getList()` 一律经 `usePageParams(queryParams)()` 转 `offset/pagesize`；从 `response.data.data / response.data.total` 取值。
 
 ## 菜单 / 权限注册 SQL
@@ -210,7 +210,7 @@ getList()
 模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl`（生成 `{business}-init.sql`）。要点：
 
 ```sql
--- 菜单（type=1；url 同时充当路由 path 与 views/ 组件定位 key）
+-- 菜单（type=1；url 同时充当路由 path 与 modules/ 组件定位 key）
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
 VALUES (0, 'Demo管理', 1, 'demo:demo', '/demo/demo', '', 999, 0, 0, now(), now());
 SELECT @parentId := LAST_INSERT_ID();
@@ -224,7 +224,7 @@ INSERT INTO `xxl_boot_role_res` (`role_id`,`res_id`,`add_time`,`update_time`)
 VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parentId+2, now(), now()), (1, @parentId+3, now(), now());
 ```
 
-页面文件 `src/views/demo/demo/index.vue` 建好后前端 `loadView` 自动映射，**无需改路由**。
+页面文件 `src/modules/business/{module}/{page}/pages/index.vue` 建好后前端 `loadView` 自动映射，**无需改路由**。
 
 ## 枚举下拉（可选）
 
@@ -252,7 +252,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 ## 参考文件（绝对路径）
 
 - 后端直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/java/*.ftl`
-- 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-vue/src/views/system/message/index.vue`
-- API / 类型样例：`xxl-boot-ui/xxl-boot-ui-vue/src/api/system/message.ts`、`src/types/system/message.ts`
+- 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/message/pages/index.vue`
+- API / 类型样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/message/{api,types}/index.ts`
 - 菜单 SQL 模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl`
-- 代码生成前端页：`xxl-boot-ui/xxl-boot-ui-vue/src/views/tool/codegen/{index,editTable}.vue`
+- 代码生成前端页：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/tool/codegen/{index,editTable}.vue`

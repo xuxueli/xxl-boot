@@ -1,6 +1,6 @@
 ---
 name: xxl-boot-react
-description: 在 XXL-Boot 前后端分离的 React 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-react 端口 4000，Ant Design ProTable + TypeScript）下新增或改造业务模块。当任务涉及修改 xxl-boot-api/src/main/java/com/xxl/boot/api/business 或 xxl-boot-ui-react/src/pages|services|types 时加载本技能。
+description: 在 XXL-Boot 前后端分离的 React 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-react 端口 4000，Ant Design ProTable + TypeScript）下新增或改造业务模块。当任务涉及修改 xxl-boot-api/src/main/java/com/xxl/boot/api/business 或 xxl-boot-ui-react/src/modules 时加载本技能。
 ---
 
 # XXL-Boot · React 分离模式开发 Skill
@@ -23,9 +23,9 @@ xxl-boot-api/src/main
 ├── java/com/xxl/boot/api/business/{module}  ← 后端新增业务落此（可经后台代码生成器产出或按模板直生）
 └── resources/mapper/{module}/               ← 业务 Mapper XML
 xxl-boot-ui-react/src
-├── pages/{module}/{page}/index.tsx          ← 页面（DB 菜单 url 驱动，零路由改动）+ XxxFormModal.tsx
-├── services/{module}/{page}.ts              ← 接口封装
-└── types/{module}/{page}.d.ts               ← declare namespace API {}
+├── modules/framework/{domain}/{module}/     ← 平台内置模块（authz/system/tool/…，同目录聚合 pages+api+types）
+├── modules/business/{module}/{page}/        ← 业务模块（pages/ + api/ + types/ 三子目录，同模块自包含）
+└── types/index.d.ts                         ← 全局基础类型（API.Response/PageModel…）
 ```
 
 通用规范（返回结构、注释、命名、DB）见仓库根 `AGENTS.md` 第六节。
@@ -36,7 +36,7 @@ xxl-boot-ui-react/src
 1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签，仅动后端时则不动前端）；菜单+按钮+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口（api 8090 / react 4000）。确认结果即时回填到子目录 `plan.md`。
 2. **建表**：`xxl_boot_*` SQL，公共字段 `id/add_time/update_time`，TINYINT 状态，`COMMENT` 注释；SQL 脚本写入该需求子目录（如 `{business}-table.sql`、`{business}-init.sql`）。
 3. **生成或手写代码**：本 Skill 缺省策略为 AI 直接按内置模板（`xxl-boot-api/src/main/resources/templates/tool/codegen/{java,react}/*.ftl`）渲染等价代码落位；同时提示用户可后台「工具-代码生成」走内置生成器（见第六节）。
-4. **落位**：后端 Java 落 `business/{module}`，Mapper XML 落 `resources/mapper/{module}/`；前端三个文件落 `pages|services|types/{module}/{page}`。
+4. **落位**：后端 Java 落 `business/{module}`，Mapper XML 落 `resources/mapper/{module}/`；前端业务模块聚合落 `modules/business/{module}/{business}/`（pages/index.tsx + api/index.ts + types/index.d.ts）。
 5. **菜单/权限**：插 `xxl_boot_resource` 菜单(type=1)+按钮(type=2)+`xxl_boot_role_res` 授权；按钮用 `hasPermi('{module}:{business}:add')`。
 6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-react`(4000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效；验证结果回填 `plan.md`。
 
@@ -103,9 +103,9 @@ SQL 脚本：`{business}-table.sql`
 ## 五、前端改造
 | 文件 | 位置 | 要点 |
 |---|---|---|
-| `types/{module}/{business}.d.ts` | src/types/ | declare namespace API { Xxx / XxxQuery / XxxListQuery } |
-| `services/{module}/{business}.ts` | src/services/ | request<API.Response<API.PageModel<T>>>；current/pageSize→offset/pagesize |
-| `pages/{module}/{business}/index.tsx` | src/pages/ | ProTable+PageContainer；hasPermi 控制按钮 |
+| `types/index.d.ts` | modules/business/{module}/{business}/ | declare namespace API { Xxx / XxxQuery / XxxListQuery } |
+| `api/index.ts` | modules/business/{module}/{business}/ | request<API.Response<API.PageModel<T>>>；current/pageSize→offset/pagesize |
+| `pages/index.tsx` | modules/business/{module}/{business}/ | ProTable+PageContainer；hasPermi 控制按钮 |
 
 ## 六、验证结果 / 变更记录
 - [ ] 需求结论确认并回填第一节
@@ -135,7 +135,7 @@ SQL 脚本：`{business}-table.sql`
 
 以业务 `Demo` 为例，后端路径 `/demo/demo`：
 
-### 1. types：`src/types/demo/demo.d.ts`
+### 1. types：`src/modules/business/demo/demo/types/index.d.ts`
 
 ```ts
 /**
@@ -154,7 +154,7 @@ declare namespace API {
 }
 ```
 
-### 2. services：`src/services/demo/demo.ts`
+### 2. api：`src/modules/business/demo/demo/api/index.ts`
 
 ```ts
 /**
@@ -185,7 +185,7 @@ export async function delDemo(ids: number[]) {
 }
 ```
 
-### 3. 页面：`src/pages/demo/demo/index.tsx`（ProTable）
+### 3. 页面：`src/modules/business/demo/demo/pages/index.tsx`（ProTable）
 
 ```tsx
 import { useRequest } from 'ahooks';
@@ -193,7 +193,7 @@ import { PageContainer, ProTable, type ActionType } from '@ant-design/pro-compon
 import { App, Button, Space } from 'antd';
 import { useRef, useState } from 'react';
 import DemoFormModal from './DemoFormModal';
-import { listDemo, delDemo } from '@/services/demo/demo';
+import { listDemo, delDemo } from '../api';
 import { useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 
@@ -245,14 +245,15 @@ export default function Demo() {
 }
 ```
 
-- 表单弹窗独立文件 `DemoFormModal.tsx`（antd Modal + Form Form.Item，新增/编辑复用），参考 `pages/system/message/MessageFormModal.tsx`。
+- 页面（含弹窗 XxxFormModal.tsx）放 `pages/`，接口放 `api/`，类型放 `types/`，三者同模块聚合；全局基础类型（API.Response/PageModel…）统一 `declare namespace API` 合并。
+- 表单弹窗独立文件 `DemoFormModal.tsx`（antd Modal + Form Form.Item，新增/编辑复用），参考 `modules/framework/system/message/pages/MessageFormModal.tsx`。
 - 权限统一用 `usePermission().hasPermi('{module}:{business}:add|edit|remove')`。
 - 下拉两种来源：业务枚举 `useEnumOption('XxxEnum')` + `toValueEnum/toSelectOptions`（`hooks/useEnumOption.ts`）；数据字典 `useDict` 等价物 → antd Select 手写 options。
 - 删除确认用 `App.useApp().modal.confirm`（`onOk` 内发请求），提示用 `App.useApp().message`。
 
 ## 菜单 / 权限注册 SQL
 
-与 Vue 模式完全一致（前端菜单同样由 `xxl_boot_resource` url 驱动，React `loadView` 映射 `pages/{module}/{page}/index.tsx`）：
+与 Vue 模式完全一致（前端菜单同样由 `xxl_boot_resource` url 驱动，React `loadView` 映射 `modules/{framework|business}/{domain}/{module}/pages/{xxx}(/index).tsx`）：
 
 ```sql
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
@@ -285,7 +286,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 - [ ] 需求子目录 `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md`（六大块齐全）+ SQL 已落盘并同步。
 - [ ] `xxl-boot-api` 下 `mvn -q compile` 通过；`xxl-boot-ui-react` 下 `npm run build`（或 eslint）通过。
 - [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，分页 `offset/pagesize`，XML resultMap + `NOW()`，校验 `Response.ofFail`。
-- [ ] 前端：types 用 `declare namespace API`；services 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`；页面 ProTable `request` 取 `res.data?.data/total`。
+- [ ] 前端：types 用 `declare namespace API`；api 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`；页面 ProTable `request` 取 `res.data?.data/total`。
 - [ ] 权限：按钮 `hasPermi`，资源表菜单+按钮已插且已授权。注释符合 AGENTS.md 6.1。
 - [ ] 联调：菜单可见、列表/新增/修改/删除/搜索可用、权限失效项按钮隐藏、空参数后端友好提示。
 
@@ -293,7 +294,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 
 - 后端直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/java/*.ftl`
 - React 直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/react/*.ftl`
-- 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-react/src/pages/system/message/index.tsx`、`MessageFormModal.tsx`
-- API / 类型样例：`xxl-boot-ui/xxl-boot-ui-react/src/services/system/message.ts`、`src/types/system/message.d.ts`
+- 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-react/src/modules/framework/system/message/pages/index.tsx`、`MessageFormModal.tsx`
+- API / 类型样例：`xxl-boot-ui/xxl-boot-ui-react/src/modules/framework/system/message/{api,types}/index.{ts,d.ts}`
 - hooks：`xxl-boot-ui/xxl-boot-ui-react/src/hooks/{useEnumOption,usePermission}.ts`
 - 菜单 SQL 模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl`

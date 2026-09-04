@@ -89,35 +89,42 @@ Mapper XML 对应：`resources/mapper/framework/...`（平台内置）与 `resou
 
 ### 4.2 前端 Vue（xxl-boot-ui-vue）
 
+模块化统一管理：全部模块按「模块自包含」落位 `src/modules`，顶级用 `framework/`（平台内置：authz/system/tool/dashboard/…）与 `business/`（项目业务）隔离；同一模块的页面、接口、类型按 `pages/`、`api/`、`types/` 三个子目录聚合维护。
+
 ```
 src
-├── views/{module}/{page}/index.vue          /* 页面（动态挂载，见 4.4） */
-├── api/{module}/{page}.ts                   /* 接口封装 */
-├── types/{module}/{page}.ts  → api.ts barrel /* 类型定义（barrel 集中导出） */
-├── composables                              /* usePageParams / useDict / useEnumOption / useFormReset */
-├── components                               /* RightToolbar、Pagination、Editor、ImageUpload…按需 import */
-├── directive                                /* v-hasPermi / v-hasRole */
-├── utils                                    /* request、modal、download */
-└── store                                    /* user / dict / routes */
+├── modules/{framework|business}/{domain}/{module}/   /* 模块自包含目录 */
+│   ├── pages/                    /* 页面 + 页内组件（index.vue、data.vue、XxxFormModal.vue…） */
+│   ├── api/                      /* 接口封装（index.ts，同目录聚合） */
+│   └── types/                    /* 类型定义（index.ts，同目录聚合） */
+├── composables                   /* usePageParams / useDict / useEnumOption / useFormReset */
+├── components / directive / utils / store   /* 平台公共层（框架与业务共用） */
+└── types/index.ts                /* 全局基础类型（Response/PageModel/PageQuery…） */
 ```
+
+- 平台内置示例：`src/modules/framework/auth/`（登录：pages/login.vue + api/）、`src/modules/framework/authz/org/`、`src/modules/framework/system/dict/`（pages/{index,data}.vue + api/ + types/）、`src/modules/framework/dashboard/`（pages/index.vue + api/）等。
+- 业务新增示例：`src/modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts + FormModal.vue），与后端 `com.xxl.boot.api.business.{module}` 镜像。
 
 ### 4.3 前端 React（xxl-boot-ui-react）
 
+与 Vue 同套模块化规范，结构、命名与学生完全镜像：
+
 ```
 src
-├── pages/{module}/{page}/index.tsx          /* 页面（ProTable + PageContainer） */
-├── services/{module}/{page}.ts              /* 接口封装 */
-├── types/{module}/{page}.d.ts               /* declare namespace API {} */
-├── hooks                                    /* usePermission、useEnumOption */
-├── utils / components / stores / router     /* 请求、通用组件、状态、路由 */
+├── modules/{framework|business}/{domain}/{module}/   /* 模块自包含目录 */
+│   ├── pages/                    /* 页面 + 页内组件（index.tsx、XxxFormModal.tsx…） */
+│   ├── api/                      /* 接口封装（index.ts，同目录聚合） */
+│   └── types/                    /* 类型定义（index.d.ts，declare namespace API 全局合并） */
+├── hooks / utils / components / stores / router   /* 平台公共层 */
+└── types/index.d.ts              /* 全局基础类型（API.Response/PageModel…） */
 ```
 
 ### 4.4 菜单零路由改动约定
 
 前端菜单完全由数据库 `xxl_boot_resource` 驱动，**新增页面无需动路由代码**：
 
-- Vue：界面文件 `views/{module}/xxx/index.vue` 建好后，在资源表插入 `type=1` 菜单并配置 `url='/module/xxx'`（url 同时充当路由 path 与前端组件定位 key），前端 `loadView` 自动映射 `views/module/xxx/index.vue`；
-- React：同理映射到 `pages/module/xxx/index.tsx`；
+- Vue：界面文件 `modules/{framework|business}/{domain}/{module}/pages/{xxx}(/index).vue` 建好后，在资源表插入 `type=1` 菜单并配置 `url='/module/xxx'`（url 同时充当路由 path 与前端组件定位 key），前端 `loadView` 按 `modules/` 下相对路径（自动剥离 `framework/`/`business/` 与 `pages/` 段）映射对应页面；
+- React：同理映射到 `modules/{framework|business}/{domain}/{module}/pages/{xxx}(/index).tsx`；
 - 单体：`index.ftl` 遍历资源表 `type=0`（目录）/`type=1`（菜单）渲染侧边栏，url 为上下文路径下的相对地址。
 
 新菜单需在 `xxl_boot_role_res` 中给角色授权（默认管理员 `role_id=1`）。
@@ -161,7 +168,7 @@ src
 ### 6.4 前端 Vue 规范
 
 - 组件 import 名称与模板标签统一 PascalCase（`import NoticeDetailView` 对应 `<NoticeDetailView>`）。
-- script 除基础 import 外，按 “ref data → fun → page init” 三节组织，节顶注释为 `/* --- {功能，前后33个-} --- */`，参考 `views/system/message/index.vue`。
+- script 除基础 import 外，按 “ref data → fun → page init” 三节组织，节顶注释为 `/* --- {功能，前后33个-} --- */`，参考 `modules/framework/system/message/pages/index.vue`。
 - 响应式数据一律使用 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；逻辑相关数据收敛为对象：`queryParams`（搜索栏）、`table`（表格数据与状态）、`formState`（表单数据与规则）。
 - 避免啰嗦写法：`defineModel('visible')` + 模板 `v-model` 直连，不用 props/emits/computed 桥接；模板直接用 `props.row`，不建冗余 computed 别名。
 - 列表页固定套路：`getList()` 经 `usePageParams(queryParams)(产生 offset/pagesize` 后请求，从 `response.data.data / response.data.total` 赋值。
@@ -171,7 +178,7 @@ src
 
 - 列表页基于 `ProTable` + `PageContainer`，`request` 从 `res.data?.data`（列表）、`res.data?.total`（总数）取值。
 - API 封装统一 `request<API.Response<API.PageModel<T>>>`，入参 `current/pageSize` 需在函数内转换为 `offset/pagesize` 再传后端。
-- 类型定义于 `types/{module}/{page}.d.ts`，统一 `declare namespace API { type Xxx = {...} }`。
+- 类型定义于 `modules/{framework|business}/{domain}/{module}/types/index.d.ts`，统一 `declare namespace API { type Xxx = {...} }`。
 - 枚举下拉用 `useEnumOption` + `toValueEnum`/`toSelectOptions`；权限用 `usePermission().hasPermi(...)`。
 
 ### 6.6 数据库规范

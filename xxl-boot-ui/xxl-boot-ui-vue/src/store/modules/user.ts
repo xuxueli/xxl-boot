@@ -7,7 +7,7 @@
  *   actions — login / getInfo / logout
  */
 import { defineStore } from 'pinia'
-import { login, logout, getInfo } from '@/api/login'
+import { login, logout, getInfo } from '@/modules/framework/auth/api'
 import { getToken, removeToken, setTokenWithAge } from '@/utils/auth'
 import type { LoginInfo, LoginParams, Response } from '@/types'
 

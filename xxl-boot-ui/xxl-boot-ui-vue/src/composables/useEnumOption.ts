@@ -9,7 +9,7 @@
  *     useEnumOption('MessageCategoryEnum', 'MessageStatusEnum')
  */
 import { ref, type Ref } from 'vue'
-import { loadEnumItem } from '@/api/system/dict/data'
+import { loadEnumItem } from '@/modules/framework/system/dict/api'
 import type { EnumOption } from '@/types'
 
 /**

@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { getMessage } from '@/api/system/message'
+import { getMessage } from '@/modules/framework/system/message/api'
 import { computed, ref } from 'vue'
 
 /*

@@ -42,17 +42,17 @@ export const constantRoutes: RouteObject[] = [
   // 登录
   {
     path: '/login',
-    element: lazyLoad(() => import('@/pages/login')),
+    element: lazyLoad(() => import('@/modules/framework/auth/pages/login')),
   },
   // 301：未授权、无权限或会话过期
   {
     path: '/301',
-    element: lazyLoad(() => import('@/pages/common/301')),
+    element: lazyLoad(() => import('@/modules/framework/common/pages/301')),
   },
   // 404：访问资源不存在。兜底 catch-all，编排（buildAppRoutes）时置于数组末段
   {
     path: '*',
-    element: lazyLoad(() => import('@/pages/common/404')),
+    element: lazyLoad(() => import('@/modules/framework/common/pages/404')),
   },
   // 主布局：首页默认跳转工作台；业务路由由编排（buildAppRoutes）注入 children
   {
@@ -75,7 +75,7 @@ export const constantRoutes: RouteObject[] = [
     children: [
       {
         path: 'profile',
-        element: lazyLoad(() => import('@/pages/authz/user/profile')),
+        element: lazyLoad(() => import('@/modules/framework/authz/user/pages/profile')),
       },
     ],
   },
@@ -84,29 +84,29 @@ export const constantRoutes: RouteObject[] = [
 // ==================== 动态路由转换 ====================
 
 /**
- * 预先收集 pages 目录下页面文件，供后端 component 字符串按需映射（对齐 Vue loadView）
- *      - 注意：glob 使用 @ 别名时，Vite 返回的 key 可能为绝对路径或别名路径，统一提取 pages 相对段构建索引
+ * 预先收集 modules 目录下页面文件，供后端 component 字符串按需映射（对齐 Vue loadView）
+ *      - 注意：glob 使用 @ 别名时，Vite 返回的 key 可能为绝对路径或别名路径，统一提取 modules 相对段构建索引
  */
-const pageModules = import.meta.glob('@/pages/**/index.tsx');
-const fileModules = import.meta.glob('@/pages/*.tsx');
+const pageModules = import.meta.glob('@/modules/**/index.tsx');
 
 /**
- * 页面模块索引：pages 相对段（如 dashboard / authz/user/index） → 懒加载工厂
+ * 页面模块索引：modules 相对段（如 framework/authz/user/index / dashboard/index，剥离 category 前缀后） → 懒加载工厂
  *      - 说明：一次性构建，供 loadView 直接按路径判断是否存在（兼容 key 的绝对/别名/相对形式）
  */
 const pageMap = new Map<
   string,
   () => Promise<{ default: React.ComponentType }>
 >();
-for (const [modulePath, factory] of Object.entries({
-  ...pageModules,
-  ...fileModules,
-})) {
-  const pagesIdx = modulePath.indexOf('/pages/');
-  if (pagesIdx === -1) continue;
+for (const [modulePath, factory] of Object.entries(pageModules)) {
+  const modulesIdx = modulePath.indexOf('/modules/');
+  if (modulesIdx === -1) continue;
   const relative = modulePath
-    .slice(pagesIdx + '/pages/'.length)
-    // 去掉扩展名：authz/user/index.tsx → authz/user/index；dashboard.tsx → dashboard
+    .slice(modulesIdx + '/modules/'.length)
+    // 去掉 category 前缀（framework|business）：framework/authz/user/pages/index.tsx → authz/user/pages/index
+    .replace(/^(framework|business)\//, '')
+    // 去掉页面目录（pages）段：authz/user/pages/index.tsx → authz/user/index
+    .replace('/pages/', '/')
+    // 去掉扩展名：authz/user/index.tsx → authz/user/index
     .replace(/\.(ts|tsx)$/, '');
   pageMap.set(
     relative,
@@ -116,8 +116,8 @@ for (const [modulePath, factory] of Object.entries({
 
 /**
  * 按后端 component 字符串匹配页面组件（与 Vue loadView 一致）：
- *      - 1) 依次判断 pages/{path}.tsx 是否存在（单文件格式，如 dashboard）；
- *      - 2) 未命中再判断 pages/{path}/index.tsx 是否存在（目录格式，如 authz/user）。
+ *      - 1) 判断 modules/{framework|business}/{path}/index.tsx 是否存在（目录格式，如 authz/user → authz/user/index）；
+ *      - 2) 未命中时按原 key 再试一次（兼容顶层平铺页，如 /dashboard → dashboard/index）。
  *
  * @param component 后端路由组件地址（如 /authz/user）
  * @returns 页面组件懒加载工厂；未匹配到时返回 undefined
@@ -127,14 +127,10 @@ export const loadView = (
 ): (() => Promise<{ default: React.ComponentType }>) | undefined => {
   if (!component) return undefined;
 
-  // pages 相对段：去除前导斜杠，如 /authz/user → authz/user
+  // modules 相对段（剥离 category 前缀）：去除前导斜杠，如 /authz/user → authz/user
   const key = component.replace(/^\//, '');
 
-  // 匹配单文件格式：pages/dashboard.tsx
-  const fileModule = pageMap.get(key);
-  if (fileModule) return fileModule;
-
-  // 匹配目录格式：pages/authz/user/index.tsx
+  // 匹配目录格式：modules/framework/authz/user/index.tsx
   const indexModule = pageMap.get(`${key}/index`);
   if (indexModule) return indexModule;
 

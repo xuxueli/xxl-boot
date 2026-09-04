@@ -183,8 +183,8 @@
 <script setup lang="ts">
 defineOptions({ name: '${codegen.businessName}' })
 import type { FormInstance, FormRules } from 'element-plus'
-import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName}, export${codegen.businessName} } from '@/api/${codegen.moduleName}/${codegen.businessName?lower_case}'
-import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}Query } from '@/types/${codegen.moduleName}/${codegen.businessName?lower_case}'
+import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName}, export${codegen.businessName} } from '../api'
+import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}Query } from '../types'
 import { addDateRange } from '@/utils/common'
 import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'

@@ -14,12 +14,12 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Dropdown } from '@/components';
 import MessageDetail, {
   type MessageDetailRef,
-} from '@/pages/system/message/MessageDetail';
+} from '@/modules/framework/system/message/pages/MessageDetail';
 import {
   listMessageTop,
   markMessageRead,
   markMessageReadAll,
-} from '@/services/system/message';
+} from '@/modules/framework/system/message/api';
 
 /** 消息面板及铃铛触发区样式 */
 const useStyles = createStyles(({ token, css }) => ({

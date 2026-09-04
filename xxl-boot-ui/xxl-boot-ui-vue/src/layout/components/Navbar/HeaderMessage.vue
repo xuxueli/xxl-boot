@@ -65,8 +65,8 @@
 
 <script setup lang="ts">
 import HeaderMessageDetail from './HeaderMessageDetail.vue'
-import { listMessageTop, markMessageRead, markMessageReadAll } from '@/api/system/message'
-import type { Message } from '@/types/api'
+import { listMessageTop, markMessageRead, markMessageReadAll } from '@/modules/framework/system/message/api'
+import type { Message } from '@/modules/framework/system/message/types'
 import { onMounted, ref } from 'vue'
 import { SvgIcon } from '@/components'
 

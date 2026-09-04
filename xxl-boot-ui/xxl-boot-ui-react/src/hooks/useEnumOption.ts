@@ -3,7 +3,7 @@
  * 能力：从 /system/dict/loadEnumItem 加载枚举项，QueryClient 自动缓存去重。
  */
 import { useQuery } from '@tanstack/react-query';
-import { loadEnumItem } from '@/services/system/dict';
+import { loadEnumItem } from '@/modules/framework/system/dict/api';
 
 export interface EnumOption {
   code: number;

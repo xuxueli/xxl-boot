@@ -5,12 +5,12 @@
 import { defineStore } from 'pinia'
 import { markRaw } from 'vue'
 import { constantRoutes } from '@/router'
-import { getRouters } from '@/api/login'
+import { getRouters } from '@/modules/framework/auth/api'
 import Layout from '@/layout/index.vue'
 import { InnerLink, ParentView } from '@/layout/components'
 
-// 预先收集 views 目录下所有 .vue 文件，供后端路由字符串按需映射
-const modules = import.meta.glob('./../../views/**/*.vue')
+// 预先收集 modules 目录下所有 .vue 文件，供后端路由字符串按需映射
+const modules = import.meta.glob('./../../modules/**/*.vue')
 
 /** 路由 meta 数据 */
 export interface RouteMetaData {
@@ -124,7 +124,7 @@ function transformRoutes(routerMap: RouteData[], flatten = false): RouteData[] {
           const _component = loadView(route.component as string)
           if (typeof _component === 'undefined') {
             console.error(`transformRoutes loadView fail, route.component：[${route.component}]，重定向到 404`)
-            route.component = markRaw(() => import('@/views/common/404.vue'))
+            route.component = markRaw(() => import('@/modules/framework/common/pages/404.vue'))
           } else {
             route.component = markRaw(_component)
           }
@@ -134,7 +134,7 @@ function transformRoutes(routerMap: RouteData[], flatten = false): RouteData[] {
         const _component = loadView(route.path)
         if (typeof _component === 'undefined') {
           console.error(`transformRoutes loadView fail, route.path：[${route.path}]，重定向到 404`)
-          route.component = markRaw(() => import('@/views/common/404.vue'))
+          route.component = markRaw(() => import('@/modules/framework/common/pages/404.vue'))
         } else {
           route.component = markRaw(_component)
         }
@@ -176,16 +176,16 @@ function filterChildren(childrenMap: RouteData[]): RouteData[] {
  * 按 view 路径匹配页面组件
  *
  * 支持两种格式匹配：
- *   1) /path/index   → 匹配 views/path/index.vue
- *   2) /path         → 尝试匹配 views/path/index.vue（目录格式，自动补全 index）
+ *   1) /path/index   → 匹配 modules/framework|business/{path}/pages/index.vue
+ *   2) /path         → 尝试匹配 modules/framework|business/{path}/pages/index.vue（目录格式，自动补全 index）
  */
 export const loadView = (view: string): (() => Promise<unknown>) | undefined => {
   let res: (() => Promise<unknown>) | undefined
   // 去掉 view 可能携带的前导 "/"，统一匹配格式
   const key = view.replace(/^\//, '')
   for (const path in modules) {
-    // ./views/{org/user/index}.vue → org/user/index
-    const relative = path.split('/views/')[1].replace('.vue', '')
+    // 剥离 category（framework|business）与页面目录（pages）段：modules/.../{pages/index.vue} → {path}/index
+    const relative = path.split('/modules/')[1].replace(/\.vue$/, '').replace(/^(framework|business)\//, '').replace('/pages/', '/')
     if (relative === key) {
       // 匹配到页面组件，返回 () => import() 异步工厂
       res = () => modules[path]()
@@ -195,7 +195,7 @@ export const loadView = (view: string): (() => Promise<unknown>) | undefined => 
   if (!res) {
     const keyWithIndex = key + '/index'
     for (const path in modules) {
-      const relative = path.split('/views/')[1].replace('.vue', '')
+      const relative = path.split('/modules/')[1].replace(/\.vue$/, '').replace(/^(framework|business)\//, '').replace('/pages/', '/')
       if (relative === keyWithIndex) {
         res = () => modules[path]()
       }

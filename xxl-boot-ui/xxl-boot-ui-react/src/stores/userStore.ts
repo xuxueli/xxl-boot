@@ -14,7 +14,7 @@ import {
   getRouters,
   login as loginApi,
   logout as logoutApi,
-} from '@/services/login';
+} from '@/modules/framework/auth/api';
 import { removeToken, setTokenWithAge } from '@/utils/auth';
 
 /**

@@ -320,7 +320,7 @@ public class CodegenServiceImpl implements CodegenService {
                 String pkg = codegen.getPackageName() != null ? codegen.getPackageName().replace('.', '/') : "com.xxl.boot.api.business";
                 String module = codegen.getModuleName() != null ? codegen.getModuleName() : "demo";
                 String cn = codegen.getBusinessName() != null ? codegen.getBusinessName() : "Demo";
-                // 业务名小写：用于 vue 目录、api/types 文件名，与菜单 url（/module/name）及页面 import 路径保持一致
+                // 业务名小写：用于前端 business 聚合目录，与菜单 url（/module/name）及页面 import 路径保持一致
                 String cnLower = cn.toLowerCase();
 
                 // generate java
@@ -334,22 +334,22 @@ public class CodegenServiceImpl implements CodegenService {
                 // generate sql
                 addZipEntry(zos, "main/resources/mapper/" + module + "/" + cn + "-init.sql", render("sql/sql.ftl", params));
 
-                // generate web（根据 tplWebType 选择 vue3 或 react 模板）
+                // generate web（根据 tplWebType 选择 vue3 或 react 模板；业务模块按页面聚合落位 business/{module}/{page}，内部再分 pages/api/types）
                 if (isReactTpl(codegen.getTplWebType())) {
-                    addZipEntry(zos, "react/types/" + module + "/" + cnLower + ".d.ts", render("react/types.ts.ftl", params));
-                    addZipEntry(zos, "react/services/" + module + "/" + cnLower + ".ts", render("react/api.ts.ftl", params));
+                    addZipEntry(zos, "react/business/" + module + "/" + cnLower + "/types/index.d.ts", render("react/types.ts.ftl", params));
+                    addZipEntry(zos, "react/business/" + module + "/" + cnLower + "/api/index.ts", render("react/api.ts.ftl", params));
                     if ("tree".equals(codegen.getTplCategory())) {
-                        addZipEntry(zos, "react/pages/" + module + "/" + cnLower + "/index.tsx", render("react/index-tree.tsx.ftl", params));
+                        addZipEntry(zos, "react/business/" + module + "/" + cnLower + "/pages/index.tsx", render("react/index-tree.tsx.ftl", params));
                     } else {
-                        addZipEntry(zos, "react/pages/" + module + "/" + cnLower + "/index.tsx", render("react/index.tsx.ftl", params));
+                        addZipEntry(zos, "react/business/" + module + "/" + cnLower + "/pages/index.tsx", render("react/index.tsx.ftl", params));
                     }
                 } else {
-                    addZipEntry(zos, "vue/types/" + module + "/" + cnLower + ".ts", render("vue3/types.ts.ftl", params));
-                    addZipEntry(zos, "vue/api/" + module + "/" + cnLower + ".ts", render("vue3/api.ts.ftl", params));
+                    addZipEntry(zos, "vue/business/" + module + "/" + cnLower + "/types/index.ts", render("vue3/types.ts.ftl", params));
+                    addZipEntry(zos, "vue/business/" + module + "/" + cnLower + "/api/index.ts", render("vue3/api.ts.ftl", params));
                     if ("tree".equals(codegen.getTplCategory())) {
-                        addZipEntry(zos, "vue/views/" + module + "/" + cnLower + "/index.vue", render("vue3/index-tree.vue.ftl", params));
+                        addZipEntry(zos, "vue/business/" + module + "/" + cnLower + "/pages/index.vue", render("vue3/index-tree.vue.ftl", params));
                     } else {
-                        addZipEntry(zos, "vue/views/" + module + "/" + cnLower + "/index.vue", render("vue3/index.vue.ftl", params));
+                        addZipEntry(zos, "vue/business/" + module + "/" + cnLower + "/pages/index.vue", render("vue3/index.vue.ftl", params));
                     }
                 }
 

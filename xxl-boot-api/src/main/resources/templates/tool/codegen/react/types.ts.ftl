@@ -9,7 +9,7 @@
 /**
  * ${codegen.functionName} 类型定义
  * Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
- * 放置路径：src/types/${codegen.moduleName}/${codegen.businessName?lower_case}.d.ts
+ * 放置路径：src/modules/business/${codegen.moduleName}/${codegen.businessName?lower_case}/types/index.d.ts
  */
 declare namespace API {
   /** ${codegen.functionName}实体 */

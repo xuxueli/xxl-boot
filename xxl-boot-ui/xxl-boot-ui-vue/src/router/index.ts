@@ -27,7 +27,7 @@ export const constantRoutes = [
   // 登录
   {
     path: '/login',
-    component: () => import('@/views/login.vue'),
+    component: () => import('@/modules/framework/auth/pages/login.vue'),
     hidden: true
   },
   // 首页：默认跳转 “/index”
@@ -45,7 +45,7 @@ export const constantRoutes = [
       {
         name: 'Profile',
         path: '/user/profile/:activeTab?',
-        component: () => import('@/views/authz/user/profile/index.vue'),
+        component: () => import('@/modules/framework/authz/user/pages/profile/index.vue'),
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
@@ -58,20 +58,20 @@ export const constantRoutes = [
     children: [
       {
         path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index.vue')
+        component: () => import('@/modules/framework/common/pages/redirect/index.vue')
       }
     ]
   },
   // 301：未授权或会话过期
   {
     path: '/301',
-    component: () => import('@/views/common/301.vue'),
+    component: () => import('@/modules/framework/common/pages/301.vue'),
     hidden: true
   },
   // 404：访问资源不存在。兜底，必须放在末段
   {
     path: '/:pathMatch(.*)*',
-    component: () => import('@/views/common/404.vue'),
+    component: () => import('@/modules/framework/common/pages/404.vue'),
     hidden: true
   }
 ]
