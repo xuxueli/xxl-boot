@@ -5,7 +5,7 @@
         </#if>
     </#list>
 </#if>
-package ${codegen.packageName}.${codegen.moduleName}.model;
+package ${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower_case}.model;
 
 import java.io.Serializable;
 <#if importDdate?? && importDdate>

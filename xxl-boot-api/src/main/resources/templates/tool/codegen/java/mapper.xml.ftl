@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="${codegen.packageName}.${codegen.moduleName}.mapper.${codegen.businessName}Mapper">
+<mapper namespace="${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower_case}.mapper.${codegen.businessName}Mapper">
 
-    <resultMap id="${codegen.businessName}" type="${codegen.packageName}.${codegen.moduleName}.model.${codegen.businessName}" >
+    <resultMap id="${codegen.businessName}" type="${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower_case}.model.${codegen.businessName}" >
     <#if fields?exists && fields?size gt 0>
     <#list fields as fieldItem >
         <result column="${fieldItem.columnName}" property="${fieldItem.javaField}" />

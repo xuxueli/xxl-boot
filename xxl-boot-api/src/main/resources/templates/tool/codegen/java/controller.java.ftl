@@ -1,4 +1,4 @@
-package ${codegen.packageName}.${codegen.moduleName}.controller;
+package ${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower_case}.controller;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +12,8 @@ import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
 import com.xxl.sso.core.annotation.XxlSso;
 
-import ${codegen.packageName}.${codegen.moduleName}.model.${codegen.businessName};
-import ${codegen.packageName}.${codegen.moduleName}.service.${codegen.businessName}Service;
+import ${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower_case}.model.${codegen.businessName};
+import ${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower_case}.service.${codegen.businessName}Service;
 
 <#assign cn = codegen.businessName />
 <#assign cnLower = cn?uncap_first />
