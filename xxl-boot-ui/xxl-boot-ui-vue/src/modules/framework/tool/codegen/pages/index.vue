@@ -111,7 +111,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'Gen' })
 import { listTable, previewTable, delTable, createTable } from '../api'
-import type { CodegenTable } from '../api'
+import type { CodegenTable } from '../types'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import downloadPlugin from '@/utils/download'

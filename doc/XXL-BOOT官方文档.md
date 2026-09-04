@@ -1135,7 +1135,7 @@ public @interface Permission {
 </details>
 
 ### 版本 v2.1.1 Release Notes[ING]
-- 1、【强化】Vue/React 功能模块代码重构：Vue、React 新增业务模块，文件现在分散维护。后续统一模块化管理，相同业务模块代码在同一个目录维护。。
+- 1、【强化】Vue/React 模块化重构：以业务域（Business Domain）为目录进行模块化管理，提升代码可维护性与可扩展性；
 - 2、【优化】通用代码下沉 Tool 依赖层，代码结构优化；
 
 

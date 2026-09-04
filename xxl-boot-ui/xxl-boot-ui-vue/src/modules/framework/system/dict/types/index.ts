@@ -1,6 +1,6 @@
 import type { ListQuery } from '@/types'
 /**
- * 数据字典类型定义（views/system/dict 页面）
+ * 数据字典类型定义（system/dict 模块）
  * 对应后端 Dict.java、DictItem.java
  */
 
@@ -59,3 +59,10 @@ export type DictListQuery = ListQuery<DictQuery>
 
 /** 字典项列表请求参数（请求形态：offset/pagesize，供 api 使用） */
 export type DataListQuery = ListQuery<DataQuery>
+
+/** 字典下拉选项（queryDictList 返回结构） */
+export interface DictSelectOption {
+  dictId: number
+  dictName: string
+  dictType: string
+}

@@ -1,4 +1,5 @@
 import { request } from '@/utils/request'
+import type { CaptchaData } from '../types'
 import type { LoginInfo, MenuRoute, Response } from '@/types'
 
 /**
@@ -52,18 +53,6 @@ export function logout(): Promise<Response<unknown>> {
     url: '/auth/logout',
     method: 'post'
   })
-}
-
-/**
- * 验证码结构。
- */
-export interface CaptchaData {
-  /** 是否启用验证码 */
-  enable: boolean
-  /** 验证码图片 Base64 */
-  image: string
-  /** 验证码标识 */
-  uuid: string
 }
 
 /**

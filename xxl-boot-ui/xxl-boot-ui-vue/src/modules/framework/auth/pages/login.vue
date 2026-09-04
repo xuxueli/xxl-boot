@@ -71,7 +71,7 @@
 import { getCodeImg } from '../api'
 import { useUserStore } from '@/store'
 import defaultSettings from '@/default-settings'
-import type { LoginParams } from '@/types'
+import type { LoginParams } from '@/modules/framework/auth/types'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

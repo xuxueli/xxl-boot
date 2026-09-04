@@ -1,30 +1,11 @@
 import { request } from '@/utils/request'
+import type { DashboardStats, LogTrendItem } from '../types'
 import type { Response } from '@/types'
 
 /**
  * 名称：首页 Dashboard API
  * 能力：提供首页指标卡片、审计日志趋势接口。
  */
-
-/** 首页指标卡片数据 */
-export interface DashboardStats {
-  /** 用户数量 */
-  userCount: number
-  /** 角色数量 */
-  roleCount: number
-  /** 日志数量 */
-  logCount: number
-  /** 消息数量 */
-  messageCount: number
-}
-
-/** 日志趋势单日数据点 */
-export interface LogTrendItem {
-  /** 日期（YYYY-MM-DD） */
-  date: string
-  /** 当日日志量 */
-  count: number
-}
 
 /**
  * 首页：指标卡片。

@@ -9,7 +9,8 @@
 import { defineStore } from 'pinia'
 import { login, logout, getInfo } from '@/modules/framework/auth/api'
 import { getToken, removeToken, setTokenWithAge } from '@/utils/auth'
-import type { LoginInfo, LoginParams, Response } from '@/types'
+import type { LoginInfo, Response } from '@/types'
+import type { LoginParams } from '@/modules/framework/auth/types'
 
 /** 用户会话状态 */
 interface UserState {

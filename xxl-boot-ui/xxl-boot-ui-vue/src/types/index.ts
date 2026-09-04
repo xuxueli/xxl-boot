@@ -84,18 +84,6 @@ export interface DictTagOption {
 // --------------------------------- 登录认证 ---------------------------------
 
 /**
- * 登录入参
- * 对应 /auth/login 登录接口请求体
- */
-export interface LoginParams {
-  username: string
-  password: string
-  captchaUuid?: string
-  captchaResult?: string
-  rememberMe?: boolean
-}
-
-/**
  * 登录用户信息
  * 对应 xxl-sso（com.xxl.sso.core.model.LoginInfo），/auth/loginCheck 返回
  */

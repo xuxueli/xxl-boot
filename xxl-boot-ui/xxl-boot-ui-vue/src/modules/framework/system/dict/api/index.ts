@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { Dict, DictItem, DataListQuery, DictListQuery } from '../types'
+import type { Dict, DictItem, DictSelectOption, DataListQuery, DictListQuery } from '../types'
 import type { EnumOption, PageModel, Response } from '@/types'
 
 /**
@@ -152,13 +152,6 @@ export function delType(id: number | number[]): Promise<Response<unknown>> {
     method: 'post',
     params: { ids: Array.isArray(id) ? id : [id] }
   })
-}
-
-/** 字典下拉选项（queryDictList 返回结构） */
-export interface DictSelectOption {
-  dictId: number
-  dictName: string
-  dictType: string
 }
 
 /**
