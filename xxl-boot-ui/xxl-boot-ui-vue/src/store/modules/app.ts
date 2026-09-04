@@ -10,7 +10,7 @@ import { isLeafMenu, findActiveTopMenu, flattenChildrenRoutes } from '@/utils/me
 import type { RouteData } from '@/store/modules/routes'
 
 // 持久化存储Key：localStorage key constant
-const SIDEBAR_STATUS_KEY = 'boot-sidebar-status'
+const SIDEBAR_STATUS_KEY = 'boot-layout-sidebar'
 const FONTSIZE_KEY = 'boot-fontsize'
 
 /** 侧边栏状态 */

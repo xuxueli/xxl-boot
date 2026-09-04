@@ -13,7 +13,9 @@ import { useDark, useToggle } from '@vueuse/core'
 import { handleThemeStyle } from '@/utils/theme'
 
 // 初始化暗黑模式：跟随系统
-const isDark = useDark()
+const isDark = useDark({
+  storageKey: 'boot-layout-dark', 
+})
 // 切换暗黑模式：联动更新
 const toggleDark = useToggle(isDark)
 

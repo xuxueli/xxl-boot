@@ -13,7 +13,7 @@ import defaultSettings from '@/default-settings';
 /** 主题设置持久化：localStorage 键名 */
 const SETTINGS_KEY = 'boot-layout-setting';
 /** 侧边栏折叠状态持久化：localStorage 键名 */
-const COLLAPSED_KEY = 'boot-layout-collapsed';
+const COLLAPSED_KEY = 'boot-layout-sidebar';
 
 /**
  * 读取持久化设置
