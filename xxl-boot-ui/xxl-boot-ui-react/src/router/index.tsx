@@ -114,8 +114,6 @@ for (const [modulePath, factory] of Object.entries(pageModules)) {
   );
 }
 
-// ==================== 刷新/直达预加载 ====================
-
 /**
  * 浏览器刷新（携带原 URL）等整页加载场景：提前按当前 pathname 触发目标页面 chunk 的 import()，
  * 模块进入运行时缓存，后续 React.lazy 命中缓存即时渲染，避免刷新后目标页闪骨架屏。
