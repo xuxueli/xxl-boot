@@ -20,11 +20,11 @@ description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-api 端口 8
 ```
 xxl-boot-api/src/main
 ├── java/com/xxl/boot/api/framework/…        ← 平台内置（controller/service/mapper/model/constant/enums/web）
-├── java/com/xxl/boot/api/business/{module}  ← 新增业务落此（可经后台代码生成器产出或按模板直生）
-└── resources/mapper/{module}/               ← 业务 Mapper XML
+├── java/com/xxl/boot/api/business/{module}/{business}  ← 新增业务落此（与前端双层镜像；可经后台代码生成器产出或按模板直生）
+└── resources/mapper/{module}/{business}/    ← 业务 Mapper XML（与前/后端目录镜像）
 xxl-boot-ui-vue/src
 ├── modules/framework/{domain}/{module}/     ← 平台内置模块（authz/system/tool/…，同目录聚合 pages+api+types）
-├── modules/business/{module}/{page}/        ← 业务模块（pages/ + api/ + types/ 三子目录，同模块自包含）
+├── modules/business/{module}/{business}/    ← 业务模块（pages/ + api/ + types/ 三子目录，与后端双层镜像）
 └── types/index.ts                           ← 全局基础类型（Response/PageModel/PageQuery…）
 ```
 
@@ -36,7 +36,7 @@ xxl-boot-ui-vue/src
 1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签，仅动后端时则不动前端）；菜单+按钮+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口（api 8090 / vue 3000）。确认结果即时回填到子目录 `plan.md`。
 2. **建表**：`xxl_boot_*` SQL，公共字段 `id/add_time/update_time`，TINYINT 状态，`COMMENT` 注释；SQL 脚本写入该需求子目录（如 `{business}-table.sql`、`{business}-init.sql`）。
 3. **生成或手写代码**：本 Skill 缺省策略为 AI 直接按内置模板（`xxl-boot-api/src/main/resources/templates/tool/codegen/{java,vue3}/*.ftl`）渲染等价代码落位；同时提示用户可后台「工具-代码生成」走内置生成器（见第六节）。
-4. **落位**：后端 Java 落 `business/{module}`，Mapper XML 落 `resources/mapper/{module}/`；前端业务模块聚合落 `modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts）。
+4. **落位**：前后端双层镜像——后端 Java 落 `business/{module}/{business}`，Mapper XML 落 `resources/mapper/{module}/{business}/`；前端业务模块聚合落 `modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts）。
 5. **菜单/权限**：插 `xxl_boot_resource` 菜单(type=1)+按钮(type=2)+`xxl_boot_role_res` 授权；页面按钮用 `v-hasPermi`。
 6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-vue`(3000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效；验证结果回填 `plan.md`。
 
@@ -65,7 +65,7 @@ xxl-boot-ui-vue/src
 | 运行模式 | Vue3 分离（xxl-boot-api 8090 + xxl-boot-ui-vue 3000） |
 | 模块/业务命名 | `{module}/{business}`，包 `com.xxl.boot.api.business.{module}` |
 | 核心字段与业务规则 | 字段清单 + 必填/唯一/模糊搜索规则 |
-| 状态/枚举下拉 | 无 / 枚举 `{XxxEnum}`（business/{module}/enums）/ 字典 `{dictType}` |
+| 状态/枚举下拉 | 无 / 枚举 `{XxxEnum}`（business/{module}/{business}/enums）/ 字典 `{dictType}` |
 | 特殊组件 | 无 / Editor 富文本 / ImageUpload 图片上传 |
 | 页面形态 | 标准 CRUD / 详情页 / 多页签 |
 | 出码方式 | AI 按模板直生 / 后台「工具-代码生成」 |
@@ -93,12 +93,12 @@ SQL 脚本：`{business}-table.sql`
 ## 四、后端改造
 | 文件 | 位置 | 要点 |
 |---|---|---|
-| `{Business}.java` | business/{module}/model/ | 实体驼峰；Date 字段 @JsonFormat |
-| `{Business}Mapper.java` | business/{module}/mapper/ | insert/delete/update/load/pageList/pageListCount |
-| `{Business}Mapper.xml` | resources/mapper/{module}/ | resultMap 显式映射；add/update_time 用 NOW()；查询 <if> 动态拼条件 |
-| `{Business}Service.java` | business/{module}/service/ | 方法顺序 pageList/load/insert/delete/update |
-| `{Business}ServiceImpl.java` | business/{module}/service/impl/ | StringTool 校验，失败 Response.ofFail |
-| `{Business}Controller.java` | business/{module}/controller/ | 全 @XxlSso；分页 offset/pagesize；删除 ids[] |
+| `{Business}.java` | business/{module}/{business}/model/ | 实体驼峰；Date 字段 @JsonFormat |
+| `{Business}Mapper.java` | business/{module}/{business}/mapper/ | insert/delete/update/load/pageList/pageListCount |
+| `{Business}Mapper.xml` | resources/mapper/{module}/{business}/ | resultMap 显式映射；add/update_time 用 NOW()；查询 <if> 动态拼条件 |
+| `{Business}Service.java` | business/{module}/{business}/service/ | 方法顺序 pageList/load/insert/delete/update |
+| `{Business}ServiceImpl.java` | business/{module}/{business}/service/impl/ | StringTool 校验，失败 Response.ofFail |
+| `{Business}Controller.java` | business/{module}/{business}/controller/ | 全 @XxlSso；分页 offset/pagesize；删除 ids[] |
 
 接口：`/{module}/{business}/pageList|load|insert|delete|update`
 
@@ -121,15 +121,15 @@ SQL 脚本：`{business}-table.sql`
 
 ## 后端落位清单（7 件套）
 
-以业务 `Demo`、模块 `demo` 为例，包名 `com.xxl.boot.api.business.demo`：
+以业务 `Demo`、模块 `demo` 为例，包名 `com.xxl.boot.api.business.demo.demo`（模块+业务双层镜像）：
 
 | 文件 | 位置 | 说明 |
 |---|---|---|
-| `Demo.java` | `java/.../business/demo/model/Demo.java` | 实体，字段驼峰 |
-| `DemoMapper.java` | `java/.../business/demo/mapper/DemoMapper.java` | insert/delete/update/load/pageList/pageListCount |
-| `DemoMapper.xml` | `resources/mapper/demo/DemoMapper.xml` | resultMap 显式映射；`add_time/update_time` 用 `NOW()` |
-| `DemoService.java` / `DemoServiceImpl.java` | `java/.../business/demo/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
-| `DemoController.java` | `java/.../business/demo/controller/DemoController.java` | `@RestController @RequestMapping("/demo/demo")`，全 `@XxlSso` |
+| `Demo.java` | `java/.../business/demo/demo/model/Demo.java` | 实体，字段驼峰 |
+| `DemoMapper.java` | `java/.../business/demo/demo/mapper/DemoMapper.java` | insert/delete/update/load/pageList/pageListCount |
+| `DemoMapper.xml` | `resources/mapper/demo/demo/DemoMapper.xml` | resultMap 显式映射；`add_time/update_time` 用 `NOW()` |
+| `DemoService.java` / `DemoServiceImpl.java` | `java/.../business/demo/demo/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
+| `DemoController.java` | `java/.../business/demo/demo/controller/DemoController.java` | `@RestController @RequestMapping("/demo/demo")`，全 `@XxlSso` |
 
 **直生入口**：直接读模板 `templates/tool/codegen/java/*.ftl`（controller/service/service_impl/mapper/mapper.xml/entity 六文件）即可得到准确骨架与落位路径。
 
@@ -226,11 +226,11 @@ INSERT INTO `xxl_boot_role_res` (`role_id`,`res_id`,`add_time`,`update_time`)
 VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parentId+2, now(), now()), (1, @parentId+3, now(), now());
 ```
 
-页面文件 `src/modules/business/{module}/{page}/pages/index.vue` 建好后前端 `loadView` 自动映射，**无需改路由**。
+页面文件 `src/modules/business/{module}/{business}/pages/index.vue` 建好后前端 `loadView` 自动映射，**无需改路由**。
 
 ## 枚举下拉（可选）
 
-业务模块枚举（含下拉）统一放 `business/{module}/enums`，实现 `EnumTool.IEnum(getCode/getTitle)`；`framework/constant/enums` 仅保留平台内置枚举，业务代码一律不侵入。`loadEnumItem` 展开「平台枚举包 + business 根包」内包含 IEnum 枚举的包，按枚举名解析（平台包优先），前端 `useEnumOption('XxxEnum')` 自动取 `{code,title}`。数据字典场景改用 `useDict('dictType')`（录入 `xxl_boot_dict`）。
+业务模块枚举（含下拉）统一放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum(getCode/getTitle)`；`framework/constant/enums` 仅保留平台内置枚举，业务代码一律不侵入。`loadEnumItem` 展开「平台枚举包 + business 根包」内包含 IEnum 枚举的包，按枚举名解析（平台包优先），前端 `useEnumOption('XxxEnum')` 自动取 `{code,title}`。数据字典场景改用 `useDict('dictType')`（录入 `xxl_boot_dict`）。
 
 ## 内置代码生成器（快速出码）
 

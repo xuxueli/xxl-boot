@@ -80,12 +80,12 @@ framework
 ├── annotation · config · util               /* 注解、配置、工具 */
 ```
 
-**新增业务一律落 `business/{moduleName}` 包**（`framework` 仅属于平台内置能力，不要塞业务）：
+**新增业务一律落 `business/{module}/{business}` 双层镜像包**（`framework` 仅属于平台内置能力，不要塞业务）：
 
-- api 模式：`com.xxl.boot.api.business.{module}`，首个模块可走内置代码生成器产出（模板见第七节与对应 Skill）
+- api 模式：前端 `src/modules/business/{module}/{business}/`（pages/api/types）与后端 `com.xxl.boot.api.business.{module}.{business}`（controller/service/mapper/model/enums 子包）**双层镜像**，业务后缀与接口路径 `/{module}/{business}` 一致；首个模块可走内置代码生成器产出（模板见第七节与对应 Skill）
 - 单体模式：`com.xxl.boot.admin.business.{module}`，参考 `.../business/ai`
 
-Mapper XML 对应：`resources/mapper/framework/...`（平台内置）与 `resources/mapper/{moduleName}/`（业务）。
+Mapper XML 对应：`resources/mapper/framework/...`（平台内置）与 `resources/mapper/{module}/{business}/`（业务，与前/后端目录镜像）。
 
 ### 4.2 前端 Vue（xxl-boot-ui-vue）
 
@@ -103,11 +103,11 @@ src
 ```
 
 - 平台内置示例：`src/modules/framework/auth/`（登录：pages/login.vue + api/）、`src/modules/framework/authz/org/`、`src/modules/framework/system/dict/`（pages/{index,data}.vue + api/ + types/）、`src/modules/framework/dashboard/`（pages/index.vue + api/）等。
-- 业务新增示例：`src/modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts + FormModal.vue），与后端 `com.xxl.boot.api.business.{module}` 镜像。
+- 业务新增示例：`src/modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts + FormModal.vue），与后端 `com.xxl.boot.api.business.{module}.{business}` 双层镜像。
 
 ### 4.3 前端 React（xxl-boot-ui-react）
 
-与 Vue 同套模块化规范，结构、命名与学生完全镜像：
+与 Vue 同套模块化规范，结构、命名与学生完全镜像，且与后端 `com.xxl.boot.api.business.{module}.{business}` 双层镜像：
 
 ```
 src
@@ -193,7 +193,7 @@ src
 - 登录鉴权：后端 `@XxlSso`；按钮权限标识 `{module}:{business}:add / edit / remove`。
 - 前端权限：Vue `v-hasPermi="['{module}:{business}:add']"`（或 `v-hasRole="['admin']"`）、React `hasPermi('{module}:{business}:add')`。
 - 下拉选项两种来源：
-  - 业务枚举：在 `business/{module}/enums` 定义实现 `EnumTool.IEnum` 的枚举（平台内置枚举才放 `framework/constant/enums`），前端 `useEnumOption('XxxEnum')`（React 用 `useEnumOption('XxxEnum')`）自动经 `loadEnumItem` 拉取（loadEnumItem 展开「平台枚举包 + business 根包」内包含 IEnum 枚举的包，按枚举名解析，平台包优先）；
+  - 业务枚举：在 `business/{module}/{business}/enums` 定义实现 `EnumTool.IEnum` 的枚举（平台内置枚举才放 `framework/constant/enums`），前端 `useEnumOption('XxxEnum')`（React 用 `useEnumOption('XxxEnum')`）自动经 `loadEnumItem` 拉取（loadEnumItem 展开「平台枚举包 + business 根包」内包含 IEnum 枚举的包，按枚举名解析，平台包优先）；
   - 数据字典：录入 `xxl_boot_dict`，前端 `useDict('dictType')`。
 - 菜单资源：`xxl_boot_resource`（type 0 目录 / 1 菜单 / 2 按钮），`status`（0 正常 / 1 停用），`visible`（0 显示 / 1 隐藏）。
 
@@ -201,11 +201,11 @@ src
 
 | 模式 | 位置 | 用法 | 产物 |
 |---|---|---|---|
-| api 分离 | 后台菜单「工具-代码生成」/ `POST /tool/codegen/createTable`（传建表 SQL + `tplWebType`） | 创建表 → 编辑字段（`COLLECT`, import queryType/htmlType/dictType，isQuery/isList/isInsert/isEdit/isRequired）→ preview 预览 / batchGenCode 下载 zip | 后端 `business/{module}` 6 件套、前端 vue3/react 文件、`-init.sql`（菜单+按钮+授权），落位见对应 Skill |
+| api 分离 | 后台菜单「工具-代码生成」/ `POST /tool/codegen/createTable`（传建表 SQL + `tplWebType`） | 创建表 → 编辑字段（`COLLECT`, import queryType/htmlType/dictType，isQuery/isList/isInsert/isEdit/isRequired）→ preview 预览 / batchGenCode 下载 zip | 后端 `business/{module}/{business}` 6 件套、前端 vue3/react 文件、`-init.sql`（菜单+按钮+授权），落位见对应 Skill |
 | 单体 | 后台「代码生成」/ `POST /tool/codegen/genCode` | 传 `tableSql / author / packagePath / businessName` | `controller/service/service_impl/mapper/mapper_xml/entity/page` 7 段代码 |
 
 - vue 前端模板固定传 `tplWebType='element-plus-typescript'`，react 传 `'antd-typescript'`。
-- 生成代码强制依赖 `id` 主键；业务代码落 `business/{module}` 而**不是** `framework`。
+- 生成代码强制依赖 `id` 主键；业务代码落 `business/{module}/{business}` 而**不是** `framework`。
 - Skill 缺省策略：AI 按模板直生等价代码落位，同时在交付说明中提示可走后台生成器。
 
 ## 八、验收与提交
