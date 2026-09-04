@@ -114,6 +114,23 @@ for (const [modulePath, factory] of Object.entries(pageModules)) {
   );
 }
 
+// ==================== 刷新/直达预加载 ====================
+
+/**
+ * 浏览器刷新（携带原 URL）等整页加载场景：提前按当前 pathname 触发目标页面 chunk 的 import()，
+ * 模块进入运行时缓存，后续 React.lazy 命中缓存即时渲染，避免刷新后目标页闪骨架屏。
+ * 说明：仅模块加载（整页首次进入）时执行一次；应用内 SPA 跳转不预加载，仍保持路由级懒加载。
+ */
+(() => {
+  try {
+    const path = window.location.pathname.replace(/^\//, '');
+    const preload = pageMap.get(`${path}/index`);
+    if (preload) void preload();
+  } catch (e) {
+    console.debug('preload current page fail', e);
+  }
+})();
+
 /**
  * 按后端 component 字符串匹配页面组件（与 Vue loadView 一致）：
  *      - 1) 判断 modules/{framework|business}/{path}/index.tsx 是否存在（目录格式，如 authz/user → authz/user/index）；
