@@ -950,6 +950,7 @@ public @interface Permission {
 - 平台核心：`framework` 包仅承载平台内置能力（登录、权限、系统管理、工具等），不承载具体业务；
 - 业务扩展：新增业务一律落位到 `business/{module}` 包（后端）、`resources/mapper/{module}/`（Mapper XML）、`templates/business/{module}/`（单体 FTL 页面）；
 - 菜单零路由：前端菜单完全由数据库 `xxl_boot_resource` 驱动，新建页面文件后仅需插入菜单记录（`url` 配置为 `/module/business`）并授权，前端 `loadView` 自动映射页面，全程无需改动路由代码；
+- 模块/业务命名：两级命名 `{module}/{business}`，`{module}` 为业务模块域（对应后端包 `business.{module}`、权限前缀 `{module}:*`，可聚合多个业务页），`{business}` 为具体业务页/实体名（对应 Controller 与菜单 url）；
 - 三种模式落位对照：
 
 ```
