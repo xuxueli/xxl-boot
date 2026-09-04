@@ -4,7 +4,7 @@
  * 功能：文案统一维护于 src/i18n/locales/{zh,en}.json（JSON 数据，业界标准），
  *       本模块负责收集合并；当前语言由 default-settings.ts 的 language 配置控制（不支持运行时切换）。
  *
- * @author xuxueli 2026-09-04
+ * @author xuxueli 2026-09-05
  */
 import defaultSettings from '@/default-settings';
 import en from './locales/en.json';
