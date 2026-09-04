@@ -43,7 +43,7 @@ xxl-boot-admin/src
 5. **注册菜单**：`xxl_boot_resource` 插菜单（type=1）或目录（type=0）+ `xxl_boot_role_res` 授权（role_id=1）。
 6. **验证**：启动 `xxl-boot-admin`（8080），登录后菜单可见、CRUD 可用；接口自测；验证结果回填 `plan.md`。
 
-> ⚠️ **SQL 执行规范（防乱码）**：执行任何 SQL（建表、菜单/权限初始化、联调造测试数据 INSERT 等）前，必须先执行 `SET NAMES utf8mb4;`（或用 `mysql --default-character-set=utf8mb4`），否则含中文的 `COMMENT`/表名/`INSERT` 数据落库会乱码。
+> ⚠️ **SQL 执行规范（强制，防乱码）**：写/执行任何含中文的 SQL（建表、菜单/权限初始化、联调造测试数据 INSERT 等）前，必须确保连接字符集为 utf8mb4，否则中文 `COMMENT`/表名/`INSERT` 数据落库会乱码。本项目 MySQL 跑在 docker 容器（容器名 `mysql`），其 CLI 默认连接字符集是 **latin1**，必须按下列姿势执行：
 
 ## 需求落盘（xxl-boot-spec）
 
@@ -287,6 +287,7 @@ VALUES (1, @catId, now(), now()), (1, LAST_INSERT_ID(), now(), now());
 - [ ] 参数校验返回 `Response.ofFail`；实体/DTO/Adaptor 文案、注释符合 AGENTS.md 6.1。
 - [ ] FTL：`commonStyle/commonScript`、`admin.table.js` 引入完整；`#data_filter/#data_operation/#data_list/#addModal/#updateModal` id 规范。
 - [ ] 菜单已插资源表并授权；启动后侧边栏可见、点击可打开页面、CRUD 可用。
+- [ ] 防乱码：所有 `.sql` 首行有 `SET NAMES utf8mb4;`。
 
 ## 参考文件（绝对路径）
 
