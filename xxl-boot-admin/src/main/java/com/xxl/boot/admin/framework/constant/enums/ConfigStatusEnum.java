@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.framework.constant.enums;
 
-import com.xxl.boot.admin.framework.util.EnumTool;
+import com.xxl.tool.core.EnumTool;
 
 /**
  * 配置状态枚举
@@ -20,10 +20,12 @@ public enum ConfigStatusEnum implements EnumTool.IEnum {
         this.title = title;
     }
 
+    @Override
     public int getCode() {
         return code;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }

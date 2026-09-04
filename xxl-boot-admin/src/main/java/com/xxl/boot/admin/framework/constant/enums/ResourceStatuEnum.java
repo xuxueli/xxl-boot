@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.framework.constant.enums;
 
-import com.xxl.boot.admin.framework.util.EnumTool;
+import com.xxl.tool.core.EnumTool;
 
 /**
  * 资源状态枚举

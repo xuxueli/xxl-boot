@@ -6,9 +6,9 @@ import com.xxl.boot.admin.framework.model.dto.DictItemDTO;
 import com.xxl.boot.admin.framework.model.entity.Dict;
 import com.xxl.boot.admin.framework.model.entity.DictItem;
 import com.xxl.boot.admin.framework.service.DictService;
-import com.xxl.boot.admin.framework.util.EnumTool;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.core.CollectionTool;
+import com.xxl.tool.core.EnumTool;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
@@ -121,8 +121,11 @@ public class DictController {
     @ResponseBody
     @XxlSso
     public Response<List<EnumTool.EnumItemVO>> loadEnum(String enumName) {
+        // 平台枚举包 + 业务根包（业务枚举统一落 business 包内，不侵入 framework）
         List<EnumTool.EnumItemVO> list = EnumTool.getEnumItemList(
-                List.of("com.xxl.boot.admin.framework.constant.enums"), enumName);
+                List.of("com.xxl.boot.admin.framework.constant.enums",
+                        "com.xxl.boot.admin.business.constant.enums"),
+                enumName);
         return CollectionTool.isNotEmpty(list) ?
                 Response.ofSuccess(list) :
                 Response.ofFail("枚举不存在: " + enumName);

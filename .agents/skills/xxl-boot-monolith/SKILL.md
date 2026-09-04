@@ -181,6 +181,10 @@ public class DemoController {
 - pageList 返回 `PageModel`：查询列表 + `pageListCount`，entity 列表经 Adaptor 转 DTO。
 - Mapper 接口声明 `insert/delete/update/load/pageList/pageListCount`；XML 显式 `resultMap` 字段映射，insert/update 的 `add_time`/`update_time` 用 `NOW()`。
 
+## 枚举落位
+
+业务模块枚举（含下拉）统一放 `business/{module}/enums`（对照 `business/ai/enums`）；`framework/constant/enums` 仅保留平台内置枚举，业务代码一律不侵入。下拉枚举在 `Controller.index()` 用 `model.addAttribute("XxxStatusEnum", XxxStatusEnum.values())` 注入，FTL 通过 `<#list XxxStatusEnum as item>` 渲染 select；若需前端经 `loadEnumItem` 拉取，`DictController.loadEnum` 已支持展开 `business` 根包内的 IEnum 枚举包解析。
+
 ## FreeMarker 页面骨架
 
 业务页面放 `templates/business/{module}/demo.ftl`，**强烈建议先通读 `templates/framework/system/config.ftl` 作为完整范例再动手**。标准 CRUD 页 = 5 块：

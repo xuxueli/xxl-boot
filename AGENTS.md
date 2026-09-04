@@ -186,7 +186,7 @@ src
 - 登录鉴权：后端 `@XxlSso`；按钮权限标识 `{module}:{business}:add / edit / remove`。
 - 前端权限：Vue `v-hasPermi="['{module}:{business}:add']"`（或 `v-hasRole="['admin']"`）、React `hasPermi('{module}:{business}:add')`。
 - 下拉选项两种来源：
-  - 业务枚举：在 `constant/enums/` 定义实现 `EnumTool.IEnum` 的枚举，前端 `useEnumOption('XxxEnum')`（React 用 `useEnumOption('XxxEnum')`）自动经 `loadEnumItem` 拉取；
+  - 业务枚举：在 `business/{module}/enums` 定义实现 `EnumTool.IEnum` 的枚举（平台内置枚举才放 `framework/constant/enums`），前端 `useEnumOption('XxxEnum')`（React 用 `useEnumOption('XxxEnum')`）自动经 `loadEnumItem` 拉取（loadEnumItem 展开「平台枚举包 + business 根包」内包含 IEnum 枚举的包，按枚举名解析，平台包优先）；
   - 数据字典：录入 `xxl_boot_dict`，前端 `useDict('dictType')`。
 - 菜单资源：`xxl_boot_resource`（type 0 目录 / 1 菜单 / 2 按钮），`status`（0 正常 / 1 停用），`visible`（0 显示 / 1 隐藏）。
 

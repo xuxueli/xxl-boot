@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.framework.constant.enums;
 
-import com.xxl.boot.admin.framework.util.EnumTool;
+import com.xxl.tool.core.EnumTool;
 
 /**
  * 日志类型枚举，定义日志的分类（操作日志/登录日志）

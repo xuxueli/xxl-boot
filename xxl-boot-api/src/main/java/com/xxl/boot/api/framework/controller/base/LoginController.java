@@ -222,21 +222,8 @@ public class LoginController {
 	 * logout with header
 	 */
 	private static Response<String> logoutWithHeader(HttpServletRequest request) {
-
-		// todo, will replace by new version
-		// get header
-		String token = request.getHeader(XxlSsoHelper.getInstance().getTokenKey());
-		if (StringTool.isBlank(token)) {
-			return Response.ofSuccess();    // not login; no need to logout.
-		}
-		// parse token
-		LoginInfo loginInfoForToken = TokenHelper.parseToken(token);
-		if (loginInfoForToken == null) {
-			return Response.ofSuccess();			// invalid token; no need to logout.
-		}
-
 		// do logout
-		return XxlSsoHelper.logout(token);
+		return XxlSsoHelper.logoutWithHeader(request);
 	}
 
 	/**

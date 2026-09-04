@@ -1,6 +1,6 @@
 package com.xxl.boot.admin.framework.constant.enums;
 
-import com.xxl.boot.admin.framework.util.EnumTool;
+import com.xxl.tool.core.EnumTool;
 
 /**
  * 系统模块枚举，定义所有支持日志记录的模块

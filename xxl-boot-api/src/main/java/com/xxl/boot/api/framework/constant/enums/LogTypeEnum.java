@@ -1,6 +1,6 @@
 package com.xxl.boot.api.framework.constant.enums;
 
-import com.xxl.boot.api.framework.util.EnumTool;
+import com.xxl.tool.core.EnumTool;
 
 /**
  * 日志类型枚举

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
@@ -36,8 +37,9 @@ public class WebHandlerExceptionResolver implements HandlerExceptionResolver {
 		boolean isJson = false;
 		if (handler instanceof HandlerMethod) {
 			HandlerMethod method = (HandlerMethod)handler;
-			isJson = method.getMethodAnnotation(ResponseBody.class)!=null;
-			// TODO, RestController should be processed
+			// Support both @ResponseBody on method and @RestController/@ResponseBody on class.
+			isJson = method.hasMethodAnnotation(ResponseBody.class)
+					|| AnnotatedElementUtils.hasAnnotation(method.getBeanType(), ResponseBody.class);
 		}
 
 		// process error

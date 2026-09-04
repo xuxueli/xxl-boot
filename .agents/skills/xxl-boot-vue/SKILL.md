@@ -63,7 +63,7 @@ xxl-boot-ui-vue/src
 | 运行模式 | Vue3 分离（xxl-boot-api 8090 + xxl-boot-ui-vue 3000） |
 | 模块/业务命名 | `{module}/{business}`，包 `com.xxl.boot.api.business.{module}` |
 | 核心字段与业务规则 | 字段清单 + 必填/唯一/模糊搜索规则 |
-| 状态/枚举下拉 | 无 / 枚举 `{XxxEnum}`（framework.constant.enums）/ 字典 `{dictType}` |
+| 状态/枚举下拉 | 无 / 枚举 `{XxxEnum}`（business/{module}/enums）/ 字典 `{dictType}` |
 | 特殊组件 | 无 / Editor 富文本 / ImageUpload 图片上传 |
 | 页面形态 | 标准 CRUD / 详情页 / 多页签 |
 | 出码方式 | AI 按模板直生 / 后台「工具-代码生成」 |
@@ -228,7 +228,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 
 ## 枚举下拉（可选）
 
-需要下拉的业务枚举统一放 `com.xxl.boot.api.framework.constant.enums`（`loadEnumItem` 扫描该包，枚举实现 `EnumTool.IEnum(getCode/getTitle)`），前端 `useEnumOption('XxxEnum')` 自动取 `{code,title}`；不需要下拉的枚举可放 `business/{module}/enums`。数据字典场景改用 `useDict('dictType')`（录入 `xxl_boot_dict`）。
+业务模块枚举（含下拉）统一放 `business/{module}/enums`，实现 `EnumTool.IEnum(getCode/getTitle)`；`framework/constant/enums` 仅保留平台内置枚举，业务代码一律不侵入。`loadEnumItem` 展开「平台枚举包 + business 根包」内包含 IEnum 枚举的包，按枚举名解析（平台包优先），前端 `useEnumOption('XxxEnum')` 自动取 `{code,title}`。数据字典场景改用 `useDict('dictType')`（录入 `xxl_boot_dict`）。
 
 ## 内置代码生成器（快速出码）
 
