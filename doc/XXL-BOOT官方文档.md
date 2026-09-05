@@ -665,7 +665,7 @@ AI 生成的代码经 review 确认后，形成代码 PR 并提交到仓库：
 
 #### 第四步：落位与上线
 
-1. 按产物目录结构将代码复制到对应工程（后端 `business/{module}`、资源文件 `resources/mapper/{module}/`；前端 `views|api|types/{module}/{page}`），并在 `src/types/api.ts` barrel 补一行导出；
+1. 按产物目录结构将代码复制到对应工程（后端 `business/{module}`、业务资源文件 `resources/mapper/business/{module}/{business}/`；前端 `views|api|types/{module}/{page}`），并在 `src/types/api.ts` barrel 补一行导出；
 2. 执行 `-init.sql` 完成菜单与权限注册；
 3. 重启后端、刷新前端，菜单自动出现，模块即可联调使用。
 
@@ -700,7 +700,7 @@ src/main/java/com/xxl/boot/api/business/demo/
 ├── service/impl/DemoServiceImpl.java# 业务实现（方法顺序 pageList/load/insert/delete/update）
 └── controller/DemoController.java   # @RestController + @RequestMapping("/demo/demo") + @XxlSso
 
-src/main/resources/mapper/demo/DemoMapper.xml   # resultMap 显式映射，add_time/update_time 用 NOW()
+src/main/resources/mapper/business/demo/demo/DemoMapper.xml   # 业务 Mapper XML，resultMap 显式映射，add_time/update_time 用 NOW()
 ```
 
 要点：
@@ -948,7 +948,7 @@ public @interface Permission {
 新增业务模块遵循“平台核心不动、业务可插拔”的扩展原则：
 
 - 平台核心：`framework` 包仅承载平台内置能力（登录、权限、系统管理、工具等），不承载具体业务；
-- 业务扩展：新增业务一律落位到 `business/{module}` 包（后端）、`resources/mapper/{module}/`（Mapper XML）、`templates/business/{module}/`（单体 FTL 页面）；
+- 业务扩展：新增业务一律落位到 `business/{module}` 包（后端）、`resources/mapper/business/{module}/`（业务 Mapper XML，平台内置为 `resources/mapper/framework/{module}/`）、`templates/business/{module}/`（单体 FTL 页面）；
 - 菜单零路由：前端菜单完全由数据库 `xxl_boot_resource` 驱动，新建页面文件后仅需插入菜单记录（`url` 配置为 `/module/business`）并授权，前端 `loadView` 自动映射页面，全程无需改动路由代码；
 - 模块/业务命名：两级命名 `{module}/{business}`，`{module}` 为业务模块域（对应后端包 `business.{module}`、权限前缀 `{module}:*`，可聚合多个业务页），`{business}` 为具体业务页/实体名（对应 Controller 与菜单 url）；
 - 三种模式落位对照：
@@ -956,7 +956,7 @@ public @interface Permission {
 ```
                    单体模式              前后端分离（Vue）         前后端分离（React）
 后端   Controller  business/{module}    business/{module}        business/{module}
-后端   Mapper XML  mapper/business/{m}  mapper/{module}          mapper/{module}
+后端   Mapper XML  mapper/business/{m}  mapper/business/{m}/{b} mapper/business/{m}/{b}
 前端   页面        templates/business/{m}/xxx.ftl   views/{m}/{p}/index.vue   pages/{m}/{p}/index.tsx
 前端   接口封装    （服务端渲染）          api/{m}/{p}.ts          services/{m}/{p}.ts
 前端   类型        （服务端渲染）          types/{m}/{p}.ts        types/{m}/{p}.d.ts

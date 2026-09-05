@@ -21,7 +21,8 @@ description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-api 端口 8
 xxl-boot-api/src/main
 ├── java/com/xxl/boot/api/framework/…        ← 平台内置（controller/service/mapper/model/constant/enums/web）
 ├── java/com/xxl/boot/api/business/{module}/{business}  ← 新增业务落此（与前端双层镜像；可经后台代码生成器产出或按模板直生）
-└── resources/mapper/{module}/{business}/    ← 业务 Mapper XML（与前/后端目录镜像）
+└── resources/mapper/framework/{module}/     ← 平台内置 Mapper XML
+└── resources/mapper/business/{module}/{business}/  ← 业务 Mapper XML（与后端 Java 双层镜像）
 xxl-boot-ui-vue/src
 ├── modules/framework/{domain}/{module}/     ← 平台内置模块（authz/system/tool/…，同目录聚合 pages+api+types）
 ├── modules/business/{module}/{business}/    ← 业务模块（pages/ + api/ + types/ 三子目录，与后端双层镜像）
@@ -36,7 +37,7 @@ xxl-boot-ui-vue/src
 1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签，仅动后端时则不动前端）；菜单+按钮+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口（api 8090 / vue 3000）。确认结果即时回填到子目录 `plan.md`。
 2. **建表**：`xxl_boot_*` SQL，公共字段 `id/add_time/update_time`，TINYINT 状态，`COMMENT` 注释；SQL 脚本写入该需求子目录（如 `{business}-table.sql`、`{business}-init.sql`）。
 3. **生成或手写代码**：本 Skill 缺省策略为 AI 直接按内置模板（`xxl-boot-api/src/main/resources/templates/tool/codegen/{java,vue3}/*.ftl`）渲染等价代码落位；同时提示用户可后台「工具-代码生成」走内置生成器（见第六节）。
-4. **落位**：前后端双层镜像——后端 Java 落 `business/{module}/{business}`，Mapper XML 落 `resources/mapper/{module}/{business}/`；前端业务模块聚合落 `modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts）。
+4. **落位**：前后端双层镜像——后端 Java 落 `business/{module}/{business}`，Mapper XML 按平台/业务区分落 `resources/mapper/framework/{module}` 或 `resources/mapper/business/{module}/{business}/`；前端业务模块聚合落 `modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts）。
 5. **菜单/权限**：插 `xxl_boot_resource` 菜单(type=1)+按钮(type=2)+`xxl_boot_role_res` 授权；页面按钮用 `v-hasPermi`。
 6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-vue`(3000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效；验证结果回填 `plan.md`。
 
@@ -95,7 +96,7 @@ SQL 脚本：`{business}-table.sql`
 |---|---|---|
 | `{Business}.java` | business/{module}/{business}/model/ | 实体驼峰；Date 字段 @JsonFormat |
 | `{Business}Mapper.java` | business/{module}/{business}/mapper/ | insert/delete/update/load/pageList/pageListCount |
-| `{Business}Mapper.xml` | resources/mapper/{module}/{business}/ | resultMap 显式映射；add/update_time 用 NOW()；查询 <if> 动态拼条件 |
+| `{Business}Mapper.xml` | resources/mapper/business/{module}/{business}/ | resultMap 显式映射；add/update_time 用 NOW()；查询 <if> 动态拼条件 |
 | `{Business}Service.java` | business/{module}/{business}/service/ | 方法顺序 pageList/load/insert/delete/update |
 | `{Business}ServiceImpl.java` | business/{module}/{business}/service/impl/ | StringTool 校验，失败 Response.ofFail |
 | `{Business}Controller.java` | business/{module}/{business}/controller/ | 全 @XxlSso；分页 offset/pagesize；删除 ids[] |
@@ -127,7 +128,7 @@ SQL 脚本：`{business}-table.sql`
 |---|---|---|
 | `Demo.java` | `java/.../business/demo/demo/model/Demo.java` | 实体，字段驼峰 |
 | `DemoMapper.java` | `java/.../business/demo/demo/mapper/DemoMapper.java` | insert/delete/update/load/pageList/pageListCount |
-| `DemoMapper.xml` | `resources/mapper/demo/demo/DemoMapper.xml` | resultMap 显式映射；`add_time/update_time` 用 `NOW()` |
+| `DemoMapper.xml` | `resources/mapper/business/demo/demo/DemoMapper.xml` | resultMap 显式映射；`add_time/update_time` 用 `NOW()` |
 | `DemoService.java` / `DemoServiceImpl.java` | `java/.../business/demo/demo/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
 | `DemoController.java` | `java/.../business/demo/demo/controller/DemoController.java` | `@RestController @RequestMapping("/demo/demo")`，全 `@XxlSso` |
 

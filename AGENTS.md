@@ -85,7 +85,7 @@ framework
 - api 模式：前端 `src/modules/business/{module}/{business}/`（pages/api/types）与后端 `com.xxl.boot.api.business.{module}.{business}`（controller/service/mapper/model/enums 子包）**双层镜像**，业务后缀与接口路径 `/{module}/{business}` 一致；首个模块可走内置代码生成器产出（模板见第七节与对应 Skill）
 - 单体模式：`com.xxl.boot.admin.business.{module}`，参考 `.../business/ai`
 
-Mapper XML 对应：`resources/mapper/framework/...`（平台内置）与 `resources/mapper/{module}/{business}/`（业务，与前/后端目录镜像）。
+Mapper XML 对应：统一按首层 `framework/` 与 `business/` 区分——平台内置落 `resources/mapper/framework/{module}`（如 framework/authz、framework/system）；业务模块落 `resources/mapper/business/{module}`（单体，如 business/ai）或 `resources/mapper/business/{module}/{business}`（前后端分离双层镜像）。
 
 ### 4.2 前端 Vue（xxl-boot-ui-vue）
 
