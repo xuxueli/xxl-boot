@@ -1149,6 +1149,8 @@ public @interface Permission {
 - 9、【修复】前后端分离Vue版本，前端复制实效问题修复；
 - 10、【修复】前后端分离React版本，未登录redirect路径拼接问题修复；
 
+### 版本 v2.2.1 Release Notes[ING]
+
 
 ### TODO LIST
 - 1、单体版本优化：
