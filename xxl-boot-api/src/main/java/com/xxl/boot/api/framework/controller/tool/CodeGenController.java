@@ -100,7 +100,7 @@ public class CodeGenController {
     @RequestMapping("/batchGenCode")
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "批量生成代码")
-    public void batchGenCode(HttpServletResponse response, @RequestBody List<Integer> ids) throws IOException {
+    public void batchGenCode(HttpServletResponse response, @RequestParam List<Integer> ids) throws IOException {
         if (ids == null || ids.isEmpty()) {
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().write(GsonTool.toJson(Response.ofFail("请选择要生成的表")));
