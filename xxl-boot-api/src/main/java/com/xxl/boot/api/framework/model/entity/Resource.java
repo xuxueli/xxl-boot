@@ -71,14 +71,6 @@ public class Resource implements Serializable {
     */
     private Date updateTime;
 
-    public Resource() {
-    }
-    public Resource(int parentId, int Id, String name) {
-        setId(Id);
-        setParentId(parentId);
-        setName(name);
-    }
-
     public int getId() {
         return id;
     }

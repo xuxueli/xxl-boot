@@ -26,17 +26,26 @@ public class ResourceServiceImplTest extends AbstractSpringMvcTest {
     @MockitoBean
     private ResourceMapper resourceMapper;
 
+    /** 构造测试资源对象 */
+    private static Resource newResource(int parentId, int id, String name) {
+        Resource resource = new Resource();
+        resource.setParentId(parentId);
+        resource.setId(id);
+        resource.setName(name);
+        return resource;
+    }
+
     @Test
     public void treeListTest(){
         // mock data
         List<Resource> mockData = new ArrayList<>();
-        mockData.add(new Resource(0,1,"1"));
-        mockData.add(new Resource(0,2,"2"));
-        mockData.add(new Resource(2,21,"21"));
-        mockData.add(new Resource(21,211,"211"));
-        mockData.add(new Resource(21,212,"212"));
-        mockData.add(new Resource(2,22,"22"));
-        mockData.add(new Resource(0,3,"3"));
+        mockData.add(newResource(0, 1, "1"));
+        mockData.add(newResource(0, 2, "2"));
+        mockData.add(newResource(2, 21, "21"));
+        mockData.add(newResource(21, 211, "211"));
+        mockData.add(newResource(21, 212, "212"));
+        mockData.add(newResource(2, 22, "22"));
+        mockData.add(newResource(0, 3, "3"));
 
         // mock
         Mockito.when(resourceMapper.queryResource(null, -1)).thenReturn(mockData);
