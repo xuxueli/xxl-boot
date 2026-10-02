@@ -1146,6 +1146,8 @@ public @interface Permission {
 - 5、【优化】通用代码下沉 Tool 依赖层，代码结构优化；
 - 6、【调整】AI能力合并至 [XXL-AI](https://github.com/xuxueli/xxl-ai) 项目，后续AI能力持续在 XXL-AI 项目迭代升级；
 - 8、【升级】升级多项依赖至较新版本。
+- 9、【修复】前后端分离Vue版本，前端复制实效问题修复；
+- 10、【修复】前后端分离React版本，未登录redirect路径拼接问题修复；
 
 
 ### TODO LIST
