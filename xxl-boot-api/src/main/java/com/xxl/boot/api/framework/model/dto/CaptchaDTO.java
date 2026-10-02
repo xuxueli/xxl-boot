@@ -7,11 +7,9 @@ package com.xxl.boot.api.framework.model.dto;
  */
 public class CaptchaDTO {
 
-    private String uuid;
+    private String uuid;    /* 验证码标识 */
 
-    private String image;
-
-    private boolean enable;
+    private String image;   /* 验证码图片 Base64 */
 
     public String getUuid() {
         return uuid;
@@ -27,13 +25,5 @@ public class CaptchaDTO {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public void setEnable(boolean enable) {
-        this.enable = enable;
     }
 }

@@ -18,7 +18,6 @@ declare global {
 
     /** 验证码数据 */
     type CaptchaData = {
-      enable: boolean;
       image: string;
       uuid: string;
     };

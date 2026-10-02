@@ -21,8 +21,6 @@ export interface LoginParams {
  * 验证码结构。
  */
 export interface CaptchaData {
-  /** 是否启用验证码 */
-  enable: boolean
   /** 验证码图片 Base64 */
   image: string
   /** 验证码标识 */
