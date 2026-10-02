@@ -72,7 +72,7 @@ public class DictController {
     /**
      * 新增字典
      *
-     * @param xxlBootDict 字典实体（JSON请求体）
+     * @param xxlBootDict 字典实体
      */
     @RequestMapping("/insert")
     @XxlSso
@@ -87,14 +87,14 @@ public class DictController {
      */
     @RequestMapping("/delete")
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
+    public Response<String> delete(@RequestBody List<Integer> ids) {
         return dictService.delete(ids);
     }
 
     /**
      * 更新字典
      *
-     * @param xxlBootDict 字典实体（JSON请求体）
+     * @param xxlBootDict 字典实体
      */
     @RequestMapping("/update")
     @XxlSso
@@ -132,7 +132,7 @@ public class DictController {
     /**
      * 新增字典项
      *
-     * @param xxlBootDictItem 字典项实体（JSON请求体）
+     * @param xxlBootDictItem 字典项实体
      */
     @RequestMapping("/itemInsert")
     @XxlSso
@@ -147,14 +147,14 @@ public class DictController {
      */
     @RequestMapping("/itemDelete")
     @XxlSso
-    public Response<String> itemDelete(@RequestParam("ids[]") List<Integer> ids) {
+    public Response<String> itemDelete(@RequestBody List<Integer> ids) {
         return dictService.deleteItem(ids);
     }
 
     /**
      * 更新字典项
      *
-     * @param xxlBootDictItem 字典项实体（JSON请求体）
+     * @param xxlBootDictItem 字典项实体
      */
     @RequestMapping("/itemUpdate")
     @XxlSso

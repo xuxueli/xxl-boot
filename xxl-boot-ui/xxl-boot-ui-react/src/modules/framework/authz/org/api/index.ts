@@ -27,7 +27,7 @@ export async function getOrg(id: number) {
 }
 
 /**
- * 新增组织（JSON 请求体）。
+ * 新增组织。
  * @param data 组织数据
  */
 export async function addOrg(data: API.Org) {
@@ -38,7 +38,7 @@ export async function addOrg(data: API.Org) {
 }
 
 /**
- * 修改组织（JSON 请求体）。
+ * 修改组织。
  * @param data 组织数据
  */
 export async function updateOrg(data: API.Org) {
@@ -55,7 +55,7 @@ export async function updateOrg(data: API.Org) {
 export async function delOrg(ids: number[]) {
   return request<API.Response<unknown>>('/authz/org/delete', {
     method: 'POST',
-    params: { ids },
+    data: ids,
   });
 }
 
@@ -67,6 +67,6 @@ export async function delOrg(ids: number[]) {
 export async function updateOrgSort(ids: number[], orders: number[]) {
   return request<API.Response<unknown>>('/authz/org/updateSort', {
     method: 'POST',
-    params: { ids, orders },
+    data: { ids, orders },
   });
 }

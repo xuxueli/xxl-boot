@@ -1,5 +1,6 @@
 package com.xxl.boot.api.framework.controller.authz;
 
+import com.xxl.boot.api.framework.model.dto.request.SortRequest;
 import com.xxl.boot.api.framework.model.entity.Org;
 import com.xxl.boot.api.framework.service.OrgService;
 import com.xxl.sso.core.annotation.XxlSso;
@@ -65,7 +66,7 @@ public class OrgController {
      */
     @RequestMapping("/delete")
     @XxlSso(permission = "authz:org")
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestBody List<Integer> ids){
         return orgService.delete(ids);
     }
 
@@ -83,9 +84,8 @@ public class OrgController {
      */
     @RequestMapping("/updateSort")
     @XxlSso(permission = "authz:org")
-    public Response<String> updateSort(@RequestParam("ids[]") List<Integer> ids,
-                                       @RequestParam("orders[]") List<Integer> orders){
-        return orgService.updateSort(ids, orders);
+    public Response<String> updateSort(@RequestBody SortRequest request){
+        return orgService.updateSort(request.getIds(), request.getOrders());
     }
 
 }

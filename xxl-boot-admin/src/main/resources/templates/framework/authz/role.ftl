@@ -439,10 +439,11 @@ $(function() {
 		$.ajax({
 			type : 'POST',
 			url : base_url + "/authz/role/updateRoleRes",
-			data : {
+			contentType : "application/json",
+			data : JSON.stringify({
 				"roleId":currentRoleId,
 				"resourceIds":checkedIds
-			},
+			}),
 			dataType : "json",
 			success : function(data){
 				if (data.code == "200") {

@@ -704,7 +704,7 @@ src/main/resources/mapper/business/demo/demo/DemoMapper.xml   # 业务 Mapper XM
 ```
 
 要点：
-- Controller 全部接口加 `@XxlSso` 鉴权；分页入参统一 `offset`、`pagesize`；删除使用 `@RequestParam("ids[]") List<Integer>` 支持批量；
+- Controller 全部接口加 `@XxlSso` 鉴权，统一 `@RequestMapping`（不限定 HTTP 方法）；分页/查询走 URL 参数（`@RequestParam`，前端 `params`），`insert`/`update` 走 `@RequestBody` 实体、`delete` 走 `@RequestBody List<Integer> ids`（JSON，前端 `data`）；分页入参统一 `offset`、`pagesize`；
 - 参数校验使用 `StringTool / RegexTool / CollectionTool`，失败返回 `Response.ofFail("提示")`；
 - 统一返回 `Response{code,msg,data}`，分页返回 `Response<PageModel>`。
 
@@ -939,6 +939,7 @@ public @interface Permission {
 
 - 统一返回结构 `Response{ code、msg、data }`（`com.xxl.tool.response.Response`），code 200 表示成功；
 - 分页统一返回 `Response<PageModel>`；分页入参统一 `offset`、`pagesize`；
+- CRUD 参数通道：分页与查询条件走 URL（`@RequestParam`）；结构化实体（`insert`/`update`）与集合（`delete` 的 `List<Integer> ids`）走 JSON 请求体（`@RequestBody`）；复合参数（`SortRequest`/`RoleResRequest` 等）可定义 DTO，CRUD 不为 delete 包 `IdsRequest`；
 - 接口路径规范：`/{module}/{business}/pageList|load|insert|delete|update`，业务接口统一 `@RequestMapping("/{module}/{business}")` + `@XxlSso` 鉴权；
 - 前端取值约定：`response.data`（成功数据）、`response.data.data`（列表）、`response.data.total`（总数）；
 - Mapper XML 中显式配置字段映射（resultMap），`add_time` / `update_time` 写入用 `NOW()`。
@@ -1140,7 +1141,7 @@ public @interface Permission {
 - 2、【重构】I18N 国际化重构：统一国际化资源文件结构，支持多语言配置，并优化前端国际化加载逻辑；
 - 3、【优化】通用代码下沉 Tool 依赖层，代码结构优化；
 - 4、【调整】AI能力合并至 [XXL-AI](https://github.com/xuxueli/xxl-ai) 项目，后续AI能力持续在 XXL-AI 项目迭代升级；
-
+- 5、【TODO】I18N 国际化：支持多语言动态切换；
 
 ### TODO LIST
 - 1、单体版本，代码生成 支持自定义代码层级目录；

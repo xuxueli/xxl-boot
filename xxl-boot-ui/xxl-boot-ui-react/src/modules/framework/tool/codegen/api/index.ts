@@ -59,7 +59,7 @@ export async function updateGenTable(data: API.Codegen) {
 export async function createTable(tableSql: string, tplWebType: string) {
   return request<API.Response<unknown>>('/tool/codegen/createTable', {
     method: 'POST',
-    params: { tableSql, tplWebType },
+    data: { tableSql, tplWebType },
   });
 }
 
@@ -81,6 +81,6 @@ export async function previewTable(id: number) {
 export async function delTable(ids: number[]) {
   return request<API.Response<unknown>>('/tool/codegen/delete', {
     method: 'POST',
-    params: { ids },
+    data: ids,
   });
 }

@@ -99,7 +99,7 @@ SQL 脚本：`{business}-table.sql`
 | `{Business}Mapper.xml` | resources/mapper/business/{module}/{business}/ | resultMap 显式映射；add/update_time 用 NOW()；查询 <if> 动态拼条件 |
 | `{Business}Service.java` | business/{module}/{business}/service/ | 方法顺序 pageList/load/insert/delete/update |
 | `{Business}ServiceImpl.java` | business/{module}/{business}/service/impl/ | StringTool 校验，失败 Response.ofFail |
-| `{Business}Controller.java` | business/{module}/{business}/controller/ | 全 @XxlSso；分页 offset/pagesize；删除 ids[] |
+| `{Business}Controller.java` | business/{module}/{business}/controller/ | 全 @XxlSso；统一 @RequestMapping；分页/查询 @RequestParam；insert/update @RequestBody；delete @RequestBody List<Integer> |
 
 接口：`/{module}/{business}/pageList|load|insert|delete|update`
 
@@ -136,17 +136,17 @@ SQL 脚本：`{business}-table.sql`
 
 后端要点：
 
-- Controller 分页方法签名：`int offset(默认0)`、`int pagesize(默认10)` + 查询参数，返回 `Response<PageModel<XxxDTO/Entity>>`。
+- Controller 方法统一 `@RequestMapping`；分页/查询用 `@RequestParam`（`offset`/`pagesize` + 查询字段），返回 `Response<PageModel<XxxDTO/Entity>>`。
 - 参数校验用 `StringTool/RegexTool/CollectionTool`，失败 `Response.ofFail("提示")`；唯一性校验库中查一遍再插。
 - DTO 时间展示转字符串（`DateTool.formatDateTime`），用 Adaptor 完成 entity→dto。
-- 接口路径**全小写**：`/{module}/{business}/pageList|load|insert|delete|update`；删除批量 `@RequestParam("ids[]") List<Integer>`。
+- 接口路径**全小写**：`/{module}/{business}/pageList|load|insert|delete|update`；CRUD 参数通道：分页/查询走 URL（`@RequestParam`），`insert`/`update` 走 `@RequestBody` 实体，`delete` 走 `@RequestBody List<Integer> ids`（集合不用包装 DTO）。
 
 ## 前端落位清单（3 文件 + barrel）
 
 | 文件 | 位置 | 说明 |
 |---|---|---|
 | types | `src/modules/business/{module}/{business}/types/index.ts` | `Xxx` 实体 + `XxxQuery`(pageNum/pageSize 表单形态) + `XxxListQuery = ListQuery<XxxQuery>` |
-| api | `src/modules/business/{module}/{business}/api/index.ts` | `request({url:'/{module}/{page}/pageList',params:...})` |
+| api | `src/modules/business/{module}/{business}/api/index.ts` | `request({url:'/{module}/{page}/pageList', method:'get', params:...})`；写操作 `method:'post', data:...`（delete 传裸数组） |
 | view | `src/modules/business/{module}/{business}/pages/index.vue` | 三段式列表页 |
 
 页面（含弹窗 XxxFormModal.vue）放 `pages/`，接口放 `api/`，类型放 `types/`，三者同模块聚合、无 barrel 登记；全局基础类型（Response/PageModel/ListQuery…）统一从 `@/types` 引用。「框架」内置模块在 `modules/framework/`，业务禁止混入。
@@ -250,7 +250,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 
 - [ ] 需求子目录 `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md`（六大块齐全）+ SQL 已落盘并同步。
 - [ ] `xxl-boot-api` 下 `mvn -q compile` 通过。
-- [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，分页 `offset/pagesize`，XML resultMap + `NOW()`，校验 `Response.ofFail`。
+- [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，统一 `@RequestMapping`；分页/查询 `@RequestParam`，`insert`/`update` `@RequestBody`，`delete` `@RequestBody List<Integer>`，校验 `Response.ofFail`。
 - [ ] 前端：types 三件齐（实体/Query/ListQuery）并登记 barrel；api 封装 `Promise<Response<PageModel<T>>>`；列表页三段式 + `ref` 收敛 + `usePageParams`。
 - [ ] 权限：按钮 `v-hasPermi`，资源表菜单+按钮已插且已授权。注释符合 AGENTS.md 6.1。
 - [ ] i18n：页面无硬编码中文（注释除外），`t('key')` 引用且 zh/en 文案已成对维护；通用词复用 `common.*`。语言配置 `default-settings.ts` 的 `language`。

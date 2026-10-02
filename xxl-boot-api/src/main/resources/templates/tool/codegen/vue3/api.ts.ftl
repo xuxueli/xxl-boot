@@ -47,7 +47,7 @@ export function del${codegen.businessName}(id: number | number[]): Promise<Respo
   return request({
     url: '/${codegen.moduleName}/${codegen.businessName?lower_case}/delete',
     method: 'post',
-    params: { 'ids[]': id }
+    data: Array.isArray(id) ? id : [id]
   })
 }
 
@@ -55,7 +55,7 @@ export function del${codegen.businessName}(id: number | number[]): Promise<Respo
 export function export${codegen.businessName}(query: ${codegen.businessName}ListQuery): Promise<Response<unknown>> {
   return request({
     url: '/${codegen.moduleName}/${codegen.businessName?lower_case}/export',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: query
   })
 }

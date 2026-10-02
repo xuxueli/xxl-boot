@@ -1,12 +1,14 @@
 package com.xxl.boot.admin.framework.controller.authz;
 
 import com.xxl.boot.admin.framework.constant.enums.RoleStatusEnum;
+import com.xxl.boot.admin.framework.model.dto.request.RoleResRequest;
 import com.xxl.boot.admin.framework.model.entity.Role;
 import com.xxl.boot.admin.framework.service.RoleService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.PageModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -45,9 +47,9 @@ public class RoleController {
     @ResponseBody
     @XxlSso(permission = "authz:role")
     public Response<PageModel<Role>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                     @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                     String name,
-                                                     @RequestParam(required = false, defaultValue = "-1") int status) {
+                                              @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                              String name,
+                                              @RequestParam(required = false, defaultValue = "-1") int status) {
         PageModel<Role> pageModel = roleService.pageList(offset, pagesize, name, status);
         return Response.ofSuccess(pageModel);
     }
@@ -58,7 +60,7 @@ public class RoleController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso(permission = "authz:role")
-    public Response<String> insert(Role xxlBootRole){
+    public Response<String> insert(@RequestBody Role xxlBootRole){
         return roleService.insert(xxlBootRole);
     }
 
@@ -68,7 +70,7 @@ public class RoleController {
     @RequestMapping("/delete")
     @ResponseBody
     @XxlSso(permission = "authz:role")
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
+    public Response<String> delete(@RequestBody List<Integer> ids) {
         return roleService.deleteByIds(ids);
     }
 
@@ -78,7 +80,7 @@ public class RoleController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso(permission = "authz:role")
-    public Response<String> update(Role xxlBootRole){
+    public Response<String> update(@RequestBody Role xxlBootRole){
         return roleService.update(xxlBootRole);
     }
 
@@ -108,9 +110,8 @@ public class RoleController {
     @RequestMapping("/updateRoleRes")
     @ResponseBody
     @XxlSso(permission = "authz:role")
-    public Response<String> updateRoleRes(@RequestParam int roleId,
-                                          @RequestParam(value = "resourceIds[]", required = false) List<Integer> resourceIds){
-        return roleService.updateRoleRes(roleId, resourceIds);
+    public Response<String> updateRoleRes(@RequestBody RoleResRequest request){
+        return roleService.updateRoleRes(request.getRoleId(), request.getResourceIds());
     }
 
 

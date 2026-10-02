@@ -8,15 +8,25 @@ import type { PageModel, Response } from '@/types'
  */
 
 /**
- * 查询生成表列表。
- * @param query 查询参数。
+ * 查询生成表列表（URL 查询参数，前端 pageNum/pageSize 转换为后端 offset）。
+ * @param query 查询参数（pageNum/pageSize/tableName/tableComment）。
  * @returns 生成表列表。
  */
-export function listTable(query: object): Promise<Response<PageModel<CodegenTable>>> {
+export function listTable(query: {
+  pageNum?: number
+  pageSize?: number
+  tableName?: string
+  tableComment?: string
+}): Promise<Response<PageModel<CodegenTable>>> {
   return request({
     url: '/tool/codegen/pageList',
     method: 'get',
-    params: query
+    params: {
+      offset: ((query.pageNum || 1) - 1) * (query.pageSize || 10),
+      pageSize: query.pageSize || 10,
+      tableName: query.tableName,
+      tableComment: query.tableComment
+    }
   })
 }
 
@@ -55,7 +65,7 @@ export function createTable(data: object): Promise<Response<unknown>> {
   return request({
     url: '/tool/codegen/createTable',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
@@ -74,13 +84,13 @@ export function previewTable(tableId: number): Promise<Response<Record<string, s
 
 /**
  * 删除生成表数据。
- * @param tableId 表 ID。
+ * @param tableId 表 ID 或表 ID 数组。
  * @returns 删除结果。
  */
 export function delTable(tableId: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/tool/codegen/delete',
     method: 'post',
-    params: { ids: tableId }
+    data: Array.isArray(tableId) ? tableId : [tableId]
   })
 }

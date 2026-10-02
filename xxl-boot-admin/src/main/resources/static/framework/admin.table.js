@@ -314,9 +314,8 @@
                 $.ajax({
                     type : 'POST',
                     url : url,
-                    data : {
-                        "ids" : selectIds
-                    },
+                    contentType : "application/json",
+                    data : JSON.stringify(selectIds),
                     dataType : "json",
                     success : function(data){
                         if (data.code === 200) {
@@ -385,7 +384,13 @@
             },
             submitHandler : function(form) {
                 // post
-                $.post(url, readFormData(), function(data, status) {
+                $.ajax({
+                    type : 'POST',
+                    url : url,
+                    contentType : "application/json",
+                    data : JSON.stringify(readFormData()),
+                    dataType : "json",
+                    success : function(data, status) {
                     if (data.code === 200) {
                         $('#addModal').modal('hide');
                         layer.msg( I18n.system_opt_add + I18n.system_success );
@@ -400,6 +405,7 @@
                             icon: '2'
                         });
                     }
+                }
                 });
             }
         });
@@ -461,7 +467,13 @@
                 // request
                 var paramData = readFormData();
 
-                $.post(url, paramData, function(data, status) {
+                $.ajax({
+                    type : 'POST',
+                    url : url,
+                    contentType : "application/json",
+                    data : JSON.stringify(paramData),
+                    dataType : "json",
+                    success : function(data, status) {
                     if (data.code === 200) {
                         $('#updateModal').modal('hide');
                         layer.msg( I18n.system_opt_edit + I18n.system_success );
@@ -476,6 +488,7 @@
                             icon: '2'
                         });
                     }
+                }
                 });
             }
         });

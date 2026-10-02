@@ -19,6 +19,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -64,21 +65,21 @@ public class DictController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(Dict xxlBootDict) {
+    public Response<String> insert(@RequestBody Dict xxlBootDict) {
         return dictService.insert(xxlBootDict);
     }
 
     @RequestMapping("/delete")
     @ResponseBody
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
+    public Response<String> delete(@RequestBody List<Integer> ids) {
         return dictService.delete(ids);
     }
 
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(Dict xxlBootDict) {
+    public Response<String> update(@RequestBody Dict xxlBootDict) {
         return dictService.update(xxlBootDict);
     }
 
@@ -86,10 +87,10 @@ public class DictController {
     @ResponseBody
     @XxlSso
     public Response<PageModel<DictItemDTO>> itemPageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                                @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                                @RequestParam(required = false, defaultValue = "-1") int status,
-                                                                long dictId,
-                                                                String name) {
+                                                         @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                         @RequestParam(required = false, defaultValue = "-1") int status,
+                                                         long dictId,
+                                                         String name) {
         PageModel<DictItemDTO> pageModel = dictService.itemPageList(dictId, name, status, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
@@ -104,21 +105,21 @@ public class DictController {
     @RequestMapping("/itemInsert")
     @ResponseBody
     @XxlSso
-    public Response<String> itemInsert(DictItem xxlBootDictItem) {
+    public Response<String> itemInsert(@RequestBody DictItem xxlBootDictItem) {
         return dictService.insertItem(xxlBootDictItem);
     }
 
     @RequestMapping("/itemDelete")
     @ResponseBody
     @XxlSso
-    public Response<String> itemDelete(@RequestParam("ids[]") List<Integer> ids) {
+    public Response<String> itemDelete(@RequestBody List<Integer> ids) {
         return dictService.deleteItem(ids);
     }
 
     @RequestMapping("/itemUpdate")
     @ResponseBody
     @XxlSso
-    public Response<String> itemUpdate(DictItem xxlBootDictItem) {
+    public Response<String> itemUpdate(@RequestBody DictItem xxlBootDictItem) {
         return dictService.updateItem(xxlBootDictItem);
     }
 

@@ -8,15 +8,17 @@ import com.xxl.boot.admin.framework.service.LogService;
 import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
 import jakarta.annotation.Resource;
 
 import com.xxl.tool.response.Response;
 import com.xxl.tool.response.PageModel;
+
+import java.util.List;
 
 /**
  * 日志管理 Controller，提供日志的增删改查功能
@@ -72,7 +74,7 @@ public class LogController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(Log xxlBootLog) {
+    public Response<String> insert(@RequestBody Log xxlBootLog) {
         return xxlBootLogService.insert(xxlBootLog);
     }
 
@@ -82,7 +84,7 @@ public class LogController {
     @RequestMapping("/delete")
     @ResponseBody
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
+    public Response<String> delete(@RequestBody List<Integer> ids) {
         return xxlBootLogService.delete(ids);
     }
 
@@ -92,7 +94,7 @@ public class LogController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(Log xxlBootLog) {
+    public Response<String> update(@RequestBody Log xxlBootLog) {
         return xxlBootLogService.update(xxlBootLog);
     }
 

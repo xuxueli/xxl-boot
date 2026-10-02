@@ -1,10 +1,12 @@
 package com.xxl.boot.api.framework.controller.authz;
 
 import com.xxl.boot.api.framework.model.dto.ResourceDTO;
+import com.xxl.boot.api.framework.model.dto.request.SortRequest;
 import com.xxl.boot.api.framework.model.entity.Resource;
 import com.xxl.boot.api.framework.service.ResourceService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.Response;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,7 +70,7 @@ public class ResourceController {
      */
     @RequestMapping("/insert")
     @XxlSso(permission = "authz:resource")
-    public Response<String> insert(Resource xxlBootResource){
+    public Response<String> insert(@RequestBody Resource xxlBootResource){
         return resourceService.insert(xxlBootResource);
     }
 
@@ -77,7 +79,7 @@ public class ResourceController {
      */
     @RequestMapping("/delete")
     @XxlSso(permission = "authz:resource")
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestBody List<Integer> ids){
         return resourceService.delete(ids);
     }
 
@@ -86,7 +88,7 @@ public class ResourceController {
      */
     @RequestMapping("/update")
     @XxlSso(permission = "authz:resource")
-    public Response<String> update(Resource xxlBootResource){
+    public Response<String> update(@RequestBody Resource xxlBootResource){
         return resourceService.update(xxlBootResource);
     }
 
@@ -95,9 +97,8 @@ public class ResourceController {
      */
     @RequestMapping("/updateSort")
     @XxlSso(permission = "authz:resource")
-    public Response<String> updateSort(@RequestParam("ids[]") List<Integer> ids,
-                                       @RequestParam("orders[]") List<Integer> orders){
-        return resourceService.updateSort(ids, orders);
+    public Response<String> updateSort(@RequestBody SortRequest request){
+        return resourceService.updateSort(request.getIds(), request.getOrders());
     }
 
 }

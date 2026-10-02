@@ -34,7 +34,7 @@ export function getResource(id: number): Promise<Response<Resource>> {
 }
 
 /**
- * 新增资源（后端以请求参数绑定实体）。
+ * 新增资源
  * @param data 资源数据。
  * @returns 新增结果。
  */
@@ -42,12 +42,12 @@ export function addResource(data: Resource): Promise<Response<unknown>> {
   return request({
     url: '/authz/resource/insert',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
 /**
- * 修改资源（后端以请求参数绑定实体）。
+ * 修改资源
  * @param data 资源数据。
  * @returns 修改结果。
  */
@@ -55,12 +55,12 @@ export function updateResource(data: Resource): Promise<Response<unknown>> {
   return request({
     url: '/authz/resource/update',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
 /**
- * 批量更新资源排序。
+ * 批量更新资源排序
  * @param ids    资源 ID 列表。
  * @param orders 排序值列表（与 ids 一一对应）。
  * @returns 保存结果。
@@ -69,12 +69,12 @@ export function updateResourceSort(ids: number[], orders: number[]): Promise<Res
   return request({
     url: '/authz/resource/updateSort',
     method: 'post',
-    params: { ids, orders }
+    data: { ids, orders }
   })
 }
 
 /**
- * 删除资源。
+ * 删除资源
  * @param ids 资源 ID 或资源 ID 数组。
  * @returns 删除结果。
  */
@@ -82,6 +82,6 @@ export function delResource(ids: number | number[]): Promise<Response<unknown>> 
   return request({
     url: '/authz/resource/delete',
     method: 'post',
-    params: { ids: Array.isArray(ids) ? ids : [ids] }
+    data: Array.isArray(ids) ? ids : [ids]
   })
 }

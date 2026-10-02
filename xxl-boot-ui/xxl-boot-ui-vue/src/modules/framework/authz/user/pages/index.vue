@@ -343,7 +343,7 @@ function getList() {
   const { pageNum, pageSize, orgIds, ...rest } = queryParams.value
   const params = {
     ...rest,
-    orgIds: orgIds.join(',') || undefined,
+    orgIds: orgIds && orgIds.length ? orgIds.join(',') : undefined,
     offset: (pageNum - 1) * pageSize,
     pagesize: pageSize
   }

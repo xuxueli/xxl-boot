@@ -665,18 +665,25 @@ $(function() {
                 "order": $("#itemAddModal .form input[name=order]").val(),
                 "remark": $("#itemAddModal .form textarea[name=remark]").val()
             };
-            $.post(base_url + "/system/dict/itemInsert", data, function(data, status) {
-                if (data.code === 200) {
-                    $('#itemAddModal').modal('hide');
-                    layer.msg(I18n.system_opt_add + I18n.system_success);
-                    itemTable.bootstrapTable('refresh');
-                } else {
-                    layer.open({
-                        title: I18n.system_tips,
-                        btn: [ I18n.system_ok ],
-                        content: (data.msg || I18n.system_opt_add + I18n.system_fail),
-                        icon: '2'
-                    });
+            $.ajax({
+                type : 'POST',
+                url : base_url + "/system/dict/itemInsert",
+                contentType : "application/json",
+                data : JSON.stringify(data),
+                dataType : "json",
+                success : function(data, status) {
+                    if (data.code === 200) {
+                        $('#itemAddModal').modal('hide');
+                        layer.msg(I18n.system_opt_add + I18n.system_success);
+                        itemTable.bootstrapTable('refresh');
+                    } else {
+                        layer.open({
+                            title: I18n.system_tips,
+                            btn: [ I18n.system_ok ],
+                            content: (data.msg || I18n.system_opt_add + I18n.system_fail),
+                            icon: '2'
+                        });
+                    }
                 }
             });
         }
@@ -699,7 +706,8 @@ $(function() {
             $.ajax({
                 type : 'POST',
                 url : base_url + "/system/dict/itemDelete",
-                data : { "ids" : selectIds },
+                contentType : "application/json",
+                data : JSON.stringify(selectIds),
                 dataType : "json",
                 success : function(data){
                     if (data.code === 200) {
@@ -780,18 +788,25 @@ $(function() {
                 "order": $("#itemUpdateModal .form input[name=order]").val(),
                 "remark": $("#itemUpdateModal .form textarea[name=remark]").val()
             };
-            $.post(base_url + "/system/dict/itemUpdate", data, function(data, status) {
-                if (data.code === 200) {
-                    $('#itemUpdateModal').modal('hide');
-                    layer.msg(I18n.system_opt_edit + I18n.system_success);
-                    itemTable.bootstrapTable('refresh');
-                } else {
-                    layer.open({
-                        title: I18n.system_tips,
-                        btn: [ I18n.system_ok ],
-                        content: (data.msg || I18n.system_opt_edit + I18n.system_fail),
-                        icon: '2'
-                    });
+            $.ajax({
+                type : 'POST',
+                url : base_url + "/system/dict/itemUpdate",
+                contentType : "application/json",
+                data : JSON.stringify(data),
+                dataType : "json",
+                success : function(data, status) {
+                    if (data.code === 200) {
+                        $('#itemUpdateModal').modal('hide');
+                        layer.msg(I18n.system_opt_edit + I18n.system_success);
+                        itemTable.bootstrapTable('refresh');
+                    } else {
+                        layer.open({
+                            title: I18n.system_tips,
+                            btn: [ I18n.system_ok ],
+                            content: (data.msg || I18n.system_opt_edit + I18n.system_fail),
+                            icon: '2'
+                        });
+                    }
                 }
             });
         }

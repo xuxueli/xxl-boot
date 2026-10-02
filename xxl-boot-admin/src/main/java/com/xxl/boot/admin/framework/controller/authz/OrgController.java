@@ -6,6 +6,7 @@ import com.xxl.boot.admin.framework.service.OrgService;
 import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -54,7 +55,7 @@ public class OrgController {
     @ResponseBody
     @XxlSso(permission = "authz:org")
     public Response<List<Org>> treeList(@RequestParam(required = false) String name,
-                                               @RequestParam(required = false, defaultValue = "-1") int status) {
+                                        @RequestParam(required = false, defaultValue = "-1") int status) {
 
         List<Org> treeListData = orgService.treeList(name, status);
         return Response.ofSuccess(treeListData);
@@ -76,7 +77,7 @@ public class OrgController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso(permission = "authz:org")
-    public Response<String> insert(Org xxlBootOrg){
+    public Response<String> insert(@RequestBody Org xxlBootOrg){
         return orgService.insert(xxlBootOrg);
     }
 
@@ -86,7 +87,7 @@ public class OrgController {
     @RequestMapping("/delete")
     @ResponseBody
     @XxlSso(permission = "authz:org")
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestBody List<Integer> ids){
         return orgService.delete(ids);
     }
 
@@ -96,7 +97,7 @@ public class OrgController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso(permission = "authz:org")
-    public Response<String> update(Org xxlBootOrg){
+    public Response<String> update(@RequestBody Org xxlBootOrg){
         return orgService.update(xxlBootOrg);
     }
 

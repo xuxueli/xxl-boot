@@ -1,11 +1,13 @@
 package com.xxl.boot.api.framework.controller.authz;
 
+import com.xxl.boot.api.framework.model.dto.request.RoleResRequest;
 import com.xxl.boot.api.framework.model.entity.Role;
 import com.xxl.boot.api.framework.service.RoleService;
 import com.xxl.sso.core.annotation.XxlSso;
 import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,7 +44,7 @@ public class RoleController {
      */
     @RequestMapping("/insert")
     @XxlSso(permission = "authz:role")
-    public Response<Integer> insert(Role xxlBootRole){
+    public Response<Integer> insert(@RequestBody Role xxlBootRole){
         return roleService.insert(xxlBootRole);
     }
 
@@ -51,7 +53,7 @@ public class RoleController {
      */
     @RequestMapping("/delete")
     @XxlSso(permission = "authz:role")
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
+    public Response<String> delete(@RequestBody List<Integer> ids) {
         return roleService.deleteByIds(ids);
     }
 
@@ -60,7 +62,7 @@ public class RoleController {
      */
     @RequestMapping("/update")
     @XxlSso(permission = "authz:role")
-    public Response<String> update(Role xxlBootRole){
+    public Response<String> update(@RequestBody Role xxlBootRole){
         return roleService.update(xxlBootRole);
     }
 
@@ -87,9 +89,8 @@ public class RoleController {
      */
     @RequestMapping("/updateRoleRes")
     @XxlSso(permission = "authz:role")
-    public Response<String> updateRoleRes(@RequestParam int roleId,
-                                          @RequestParam(value = "resourceIds[]", required = false) List<Integer> resourceIds){
-        return roleService.updateRoleRes(roleId, resourceIds);
+    public Response<String> updateRoleRes(@RequestBody RoleResRequest request){
+        return roleService.updateRoleRes(request.getRoleId(), request.getResourceIds());
     }
 
 }

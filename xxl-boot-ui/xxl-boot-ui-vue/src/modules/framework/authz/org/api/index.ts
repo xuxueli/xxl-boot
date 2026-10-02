@@ -8,7 +8,7 @@ import type { Response } from '@/types'
  */
 
 /**
- * 查询组织树列表（扁平数组，前端需 handleTree 组装）。
+ * 查询组织树列表（扁平数组，前端需 handleTree 组装，URL 查询参数）。
  * @param query 查询参数（name/status，status 默认 -1 全部）。
  * @returns 组织列表。
  */
@@ -60,7 +60,7 @@ export function updateOrg(data: Org): Promise<Response<unknown>> {
 }
 
 /**
- * 保存组织排序（批量更新顺序，ids[]/orders[] 数组参数）。
+ * 保存组织排序（批量更新顺序）。
  * @param data 排序数据（{ ids: [], orders: [] }）。
  * @returns 保存结果。
  */
@@ -68,12 +68,12 @@ export function updateOrgSort(data: { ids: number[]; orders: number[] }): Promis
   return request({
     url: '/authz/org/updateSort',
     method: 'post',
-    params: { ids: data.ids, orders: data.orders }
+    data: { ids: data.ids, orders: data.orders }
   })
 }
 
 /**
- * 删除组织。
+ * 删除组织
  * @param ids 组织 ID 或组织 ID 数组。
  * @returns 删除结果。
  */
@@ -81,6 +81,6 @@ export function delOrg(ids: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/authz/org/delete',
     method: 'post',
-    params: { ids: Array.isArray(ids) ? ids : [ids] }
+    data: Array.isArray(ids) ? ids : [ids]
   })
 }

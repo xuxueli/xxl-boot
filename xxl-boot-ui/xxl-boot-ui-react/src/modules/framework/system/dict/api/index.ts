@@ -40,7 +40,7 @@ export async function getType(id: number) {
 }
 
 /**
- * 新增字典类型（JSON 请求体）。
+ * 新增字典类型。
  * @param data 字典类型数据
  */
 export async function addType(data: API.Dict) {
@@ -51,7 +51,7 @@ export async function addType(data: API.Dict) {
 }
 
 /**
- * 修改字典类型（JSON 请求体）。
+ * 修改字典类型。
  * @param data 字典类型数据
  */
 export async function updateType(data: API.Dict) {
@@ -68,7 +68,7 @@ export async function updateType(data: API.Dict) {
 export async function delType(ids: number[]) {
   return request<API.Response<unknown>>('/system/dict/delete', {
     method: 'POST',
-    params: { ids },
+    data: ids,
   });
 }
 
@@ -140,7 +140,7 @@ export async function loadDictItem(type: string) {
 }
 
 /**
- * 新增字典项（JSON 请求体）。
+ * 新增字典项。
  * @param data 字典项数据
  */
 export async function addData(data: API.DictItem) {
@@ -151,7 +151,7 @@ export async function addData(data: API.DictItem) {
 }
 
 /**
- * 修改字典项（JSON 请求体）。
+ * 修改字典项。
  * @param data 字典项数据
  */
 export async function updateData(data: API.DictItem) {
@@ -168,7 +168,7 @@ export async function updateData(data: API.DictItem) {
 export async function delData(ids: number[]) {
   return request<API.Response<unknown>>('/system/dict/itemDelete', {
     method: 'POST',
-    params: { ids },
+    data: ids,
   });
 }
 

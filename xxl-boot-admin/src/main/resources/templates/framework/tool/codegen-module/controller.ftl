@@ -2,11 +2,11 @@ package ${classInfo.packageName}.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
 import jakarta.annotation.Resource;
 
 import com.xxl.tool.response.Response;
@@ -15,6 +15,8 @@ import com.xxl.sso.core.annotation.XxlSso;
 
 import ${classInfo.packageName}.model.${classInfo.className};
 import ${classInfo.packageName}.service.${classInfo.className}Service;
+
+import java.util.List;
 
 <#assign classNameLower = classInfo.className?uncap_first />
 
@@ -67,7 +69,7 @@ public class ${classInfo.className}Controller {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(${classInfo.className} ${classNameLower}){
+    public Response<String> insert(@RequestBody ${classInfo.className} ${classNameLower}){
         return ${classNameLower}Service.insert(${classNameLower});
     }
 
@@ -77,7 +79,7 @@ public class ${classInfo.className}Controller {
     @RequestMapping("/delete")
     @ResponseBody
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestBody List<Integer> ids){
         return ${classNameLower}Service.delete(ids);
     }
 
@@ -87,7 +89,7 @@ public class ${classInfo.className}Controller {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(${classInfo.className} ${classNameLower}){
+    public Response<String> update(@RequestBody ${classInfo.className} ${classNameLower}){
         return ${classNameLower}Service.update(${classNameLower});
     }
 

@@ -10,7 +10,7 @@ import type { EnumOption, PageModel, Response } from '@/types'
 /* ---------------------- 字典项（数据） ---------------------- */
 
 /**
- * 分页查询字典项列表。
+ * 分页查询字典项列表
  * @param query 查询参数（dictId/offset/pagesize）。
  * @returns 字典项分页列表。
  */
@@ -83,14 +83,14 @@ export function delData(id: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/system/dict/itemDelete',
     method: 'post',
-    params: { ids: Array.isArray(id) ? id : [id] }
+    data: Array.isArray(id) ? id : [id]
   })
 }
 
 /* ---------------------- 字典类型 ---------------------- */
 
 /**
- * 分页查询字典类型列表。
+ * 分页查询字典类型列表
  * @param query 查询参数（name/code/status/offset/pagesize）。
  * @returns 字典类型分页列表。
  */
@@ -150,7 +150,7 @@ export function delType(id: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/system/dict/delete',
     method: 'post',
-    params: { ids: Array.isArray(id) ? id : [id] }
+    data: Array.isArray(id) ? id : [id]
   })
 }
 

@@ -8,6 +8,7 @@ import com.xxl.boot.admin.framework.service.ResourceService;
 import com.xxl.sso.core.annotation.XxlSso;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -67,7 +68,7 @@ public class ResourceController {
     @ResponseBody
     @XxlSso(permission = "authz:resource")
     public Response<List<ResourceDTO>> treeList(@RequestParam(required = false) String name,
-                                                       @RequestParam(required = false, defaultValue = "-1") int status) {
+                                                @RequestParam(required = false, defaultValue = "-1") int status) {
 
         List<ResourceDTO> treeListData = resourceService.treeList(name, status);
         return Response.ofSuccess(treeListData);
@@ -89,7 +90,7 @@ public class ResourceController {
     @ResponseBody
     @XxlSso(permission = "authz:resource")
     public Response<List<ResourceDTO>> simpleTreeList(@RequestParam(required = false) String name,
-                                                             @RequestParam(required = false, defaultValue = "-1") int status) {
+                                                      @RequestParam(required = false, defaultValue = "-1") int status) {
         List<ResourceDTO> treeListData = resourceService.simpleTreeList(name, status);
         return Response.ofSuccess(treeListData);
     }
@@ -110,7 +111,7 @@ public class ResourceController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso(permission = "authz:resource")
-    public Response<String> insert(Resource xxlBootResource){
+    public Response<String> insert(@RequestBody Resource xxlBootResource){
         return resourceService.insert(xxlBootResource);
     }
 
@@ -120,7 +121,7 @@ public class ResourceController {
     @RequestMapping("/delete")
     @ResponseBody
     @XxlSso(permission = "authz:resource")
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestBody List<Integer> ids){
         return resourceService.delete(ids);
     }
 
@@ -130,7 +131,7 @@ public class ResourceController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso(permission = "authz:resource")
-    public Response<String> update(Resource xxlBootResource){
+    public Response<String> update(@RequestBody Resource xxlBootResource){
         return resourceService.update(xxlBootResource);
     }
 

@@ -17,6 +17,7 @@ import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -57,10 +58,10 @@ public class UserController {
     @ResponseBody
     @XxlSso(permission = "authz:user")
     public Response<PageModel<UserDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                        @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                        String username,
-                                                        @RequestParam(required = false, defaultValue = "-1") int status,
-                                                        @RequestParam(required = false, defaultValue = "0") int orgId) {
+                                                 @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                 String username,
+                                                 @RequestParam(required = false, defaultValue = "-1") int status,
+                                                 @RequestParam(required = false, defaultValue = "0") int orgId) {
 
         PageModel<UserDTO> pageModel = userService.pageList(offset, pagesize, username, status, orgId);
         return Response.ofSuccess(pageModel);
@@ -70,7 +71,7 @@ public class UserController {
     @ResponseBody
     @XxlSso(permission = "authz:user")
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER, title = "新增用户")
-    public Response<String> add(UserDTO xxlJobUser) {
+    public Response<String> add(@RequestBody UserDTO xxlJobUser) {
         return userService.insert(xxlJobUser);
     }
 
@@ -78,7 +79,7 @@ public class UserController {
     @ResponseBody
     @XxlSso(permission = "authz:user")
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER, title = "更新用户")
-    public Response<String> update(HttpServletRequest request, UserDTO xxlJobUser) {
+    public Response<String> update(HttpServletRequest request, @RequestBody UserDTO xxlJobUser) {
         // xxl-sso, logincheck
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 
@@ -90,7 +91,7 @@ public class UserController {
     @XxlSso(permission = "authz:user")
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.USER, title = "删除用户")
     public Response<String> delete(HttpServletRequest request,
-                                   @RequestParam("ids[]") List<Integer> ids) {
+                                   @RequestBody List<Integer> ids) {
         // xxl-sso, logincheck
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
 

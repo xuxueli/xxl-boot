@@ -8,7 +8,7 @@ import type { PageModel, Response } from '@/types'
  */
 
 /**
- * 分页查询配置列表。
+ * 分页查询配置列表
  * @param query 查询参数（name/key/status/offset/pagesize）。
  * @returns 配置分页列表。
  */
@@ -81,6 +81,6 @@ export function delConfig(id: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/system/config/delete',
     method: 'post',
-    params: { ids: Array.isArray(id) ? id : [id] }
+    data: Array.isArray(id) ? id : [id]
   })
 }

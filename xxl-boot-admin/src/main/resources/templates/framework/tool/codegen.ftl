@@ -321,12 +321,13 @@ $(function () {
 		$.ajax({
 			type : 'POST',
 			url : base_url + "/tool/codegen/genCode",
-			data : {
+			contentType : "application/json",
+			data : JSON.stringify({
 				"tableSql" : tableSql,
 				"author" : author,
 				"packagePath" : packagePath,
 				"businessName" : businessName
-			},
+			}),
 			dataType : "json",
 			success : function(data){
 				if (data.code == 200) {

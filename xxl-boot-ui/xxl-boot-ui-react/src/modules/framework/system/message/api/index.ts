@@ -41,7 +41,7 @@ export async function getMessage(id: number) {
 }
 
 /**
- * 新增消息（JSON 请求体）。
+ * 新增消息。
  * @param data 消息数据
  */
 export async function addMessage(data: API.Message) {
@@ -52,7 +52,7 @@ export async function addMessage(data: API.Message) {
 }
 
 /**
- * 修改消息（JSON 请求体）。
+ * 修改消息。
  * @param data 消息数据
  */
 export async function updateMessage(data: API.Message) {
@@ -69,7 +69,7 @@ export async function updateMessage(data: API.Message) {
 export async function delMessage(ids: number[]) {
   return request<API.Response<unknown>>('/system/message/delete', {
     method: 'POST',
-    params: { ids },
+    data: ids,
   });
 }
 

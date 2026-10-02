@@ -8,7 +8,7 @@ import type { PageModel, Response } from '@/types'
  */
 
 /**
- * 分页查询日志列表。
+ * 分页查询日志列表
  * @param query 查询参数（type/module/title/offset/pagesize）。
  * @returns 日志分页列表。
  */
@@ -29,6 +29,6 @@ export function delOperlog(ids: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/system/log/delete',
     method: 'post',
-    params: { ids: Array.isArray(ids) ? ids : [ids] }
+    data: Array.isArray(ids) ? ids : [ids]
   })
 }

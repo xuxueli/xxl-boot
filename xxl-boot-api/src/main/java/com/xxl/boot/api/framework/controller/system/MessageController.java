@@ -70,7 +70,7 @@ public class MessageController {
     /**
      * 新增消息
      *
-     * @param xxlBootMessage 消息实体（JSON请求体）
+     * @param xxlBootMessage 消息实体
      * @param request        当前请求
      */
     @RequestMapping("/insert")
@@ -90,14 +90,14 @@ public class MessageController {
      */
     @RequestMapping("/delete")
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestBody List<Integer> ids){
         return messageService.delete(ids);
     }
 
     /**
      * 更新消息
      *
-     * @param xxlBootMessage 消息实体（JSON请求体）
+     * @param xxlBootMessage 消息实体
      */
     @RequestMapping("/update")
     @XxlSso

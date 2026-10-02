@@ -3,6 +3,7 @@ package com.xxl.boot.admin.framework.controller.tool;
 import com.xxl.boot.admin.framework.annotation.XxlLog;
 import com.xxl.boot.admin.framework.constant.enums.LogModuleEnum;
 import com.xxl.boot.admin.framework.constant.enums.LogTypeEnum;
+import com.xxl.boot.admin.framework.model.dto.request.GenCodeRequest;
 import com.xxl.boot.admin.framework.util.codegen.ClassInfo;
 import com.xxl.boot.admin.framework.util.codegen.TableParseUtil;
 import com.xxl.sso.core.annotation.XxlSso;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -52,29 +54,26 @@ public class CodeGenController {
     @ResponseBody
     @XxlSso
     @XxlLog(type= LogTypeEnum.OPT_LOG, module = LogModuleEnum.CODE_GEN, title = "生成代码")
-    public Response<Map<String, String>> codeGenerate(String tableSql,
-                                                       String author,
-                                                       String packagePath,
-                                                       String businessName) {
+    public Response<Map<String, String>> codeGenerate(@RequestBody GenCodeRequest request) {
 
         try {
             // 参数校验
-            if (StringTool.isBlank(tableSql)) {
+            if (StringTool.isBlank(request.getTableSql())) {
                 return Response.ofFail("表结构信息不可为空");
             }
-            if (StringTool.isBlank(author)) {
+            if (StringTool.isBlank(request.getAuthor())) {
                 return Response.ofFail("Author不可为空");
             }
-            if (StringTool.isBlank(packagePath)) {
+            if (StringTool.isBlank(request.getPackagePath())) {
                 return Response.ofFail("Package路径不可为空");
             }
 
             // 解析表结构
-            ClassInfo classInfo = TableParseUtil.processTableIntoClassInfo(tableSql);
-            classInfo.setAuthor(author);
-            classInfo.setPackageName(packagePath);
-            if (StringTool.isNotBlank(businessName)) {
-                classInfo.setClassName(businessName);
+            ClassInfo classInfo = TableParseUtil.processTableIntoClassInfo(request.getTableSql());
+            classInfo.setAuthor(request.getAuthor());
+            classInfo.setPackageName(request.getPackagePath());
+            if (StringTool.isNotBlank(request.getBusinessName())) {
+                classInfo.setClassName(request.getBusinessName());
             }
 
             // 准备 FreeMarker 模板参数

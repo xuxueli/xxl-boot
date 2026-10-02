@@ -52,7 +52,7 @@ export async function getConfigKey(key: string) {
 }
 
 /**
- * 新增配置（JSON 请求体）。
+ * 新增配置。
  * @param data 配置数据
  */
 export async function addConfig(data: API.Config) {
@@ -63,7 +63,7 @@ export async function addConfig(data: API.Config) {
 }
 
 /**
- * 修改配置（JSON 请求体）。
+ * 修改配置。
  * @param data 配置数据
  */
 export async function updateConfig(data: API.Config) {
@@ -80,6 +80,6 @@ export async function updateConfig(data: API.Config) {
 export async function delConfig(ids: number[]) {
   return request<API.Response<unknown>>('/system/config/delete', {
     method: 'POST',
-    params: { ids },
+    data: ids,
   });
 }

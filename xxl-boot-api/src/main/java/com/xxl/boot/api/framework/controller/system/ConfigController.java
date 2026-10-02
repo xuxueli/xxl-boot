@@ -68,7 +68,7 @@ public class ConfigController {
     /**
      * 新增配置
      *
-     * @param xxlBootConfig 配置实体（JSON请求体）
+     * @param xxlBootConfig 配置实体
      */
     @RequestMapping("/insert")
     @XxlSso
@@ -83,14 +83,14 @@ public class ConfigController {
      */
     @RequestMapping("/delete")
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestBody List<Integer> ids){
         return configService.delete(ids);
     }
 
     /**
      * 更新配置
      *
-     * @param xxlBootConfig 配置实体（JSON请求体）
+     * @param xxlBootConfig 配置实体
      */
     @RequestMapping("/update")
     @XxlSso

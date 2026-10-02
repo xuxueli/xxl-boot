@@ -8,7 +8,7 @@ import type { PageModel, Response } from '@/types'
  */
 
 /**
- * 分页查询角色列表。
+ * 分页查询角色列表（URL 查询参数）。
  * @param query 查询参数（offset/pagesize/name/status）。
  * @returns 角色分页列表（response.data.data / response.data.total）。
  */
@@ -34,7 +34,7 @@ export function getRole(id: number): Promise<Response<Role>> {
 }
 
 /**
- * 新增角色（后端以请求参数绑定实体）。
+ * 新增角色。
  * @param data 角色数据。
  * @returns 新增结果。
  */
@@ -42,12 +42,12 @@ export function addRole(data: Role): Promise<Response<unknown>> {
   return request({
     url: '/authz/role/insert',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
 /**
- * 修改角色（后端以请求参数绑定实体）。
+ * 修改角色。
  * @param data 角色数据。
  * @returns 修改结果。
  */
@@ -55,7 +55,7 @@ export function updateRole(data: Role): Promise<Response<unknown>> {
   return request({
     url: '/authz/role/update',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
@@ -68,7 +68,7 @@ export function delRole(ids: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/authz/role/delete',
     method: 'post',
-    params: { ids: Array.isArray(ids) ? ids : [ids] }
+    data: Array.isArray(ids) ? ids : [ids]
   })
 }
 
@@ -95,6 +95,6 @@ export function updateRoleRes(roleId: number, resourceIds: number[]): Promise<Re
   return request({
     url: '/authz/role/updateRoleRes',
     method: 'post',
-    params: { roleId, resourceIds }
+    data: { roleId, resourceIds }
   })
 }

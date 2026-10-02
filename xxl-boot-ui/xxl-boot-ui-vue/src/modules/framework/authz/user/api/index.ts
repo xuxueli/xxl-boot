@@ -8,7 +8,7 @@ import type { PageModel, Response } from '@/types'
  */
 
 /**
- * 分页查询用户列表。
+ * 分页查询用户列表（URL 查询参数）。
  * @param query 查询参数（offset/pagesize/username/status/orgIds）。
  * @returns 用户分页列表（response.data.data / response.data.total）。
  */
@@ -21,7 +21,7 @@ export function listUser(query: UserListQuery): Promise<Response<PageModel<User>
 }
 
 /**
- * 新增用户（后端以请求参数绑定实体）。
+ * 新增用户。
  * @param data 用户数据。
  * @returns 新增结果。
  */
@@ -29,12 +29,12 @@ export function addUser(data: UserForm): Promise<Response<unknown>> {
   return request({
     url: '/authz/user/add',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
 /**
- * 修改用户（后端以请求参数绑定实体）。
+ * 修改用户。
  * @param data 用户数据。
  * @returns 修改结果。
  */
@@ -42,7 +42,7 @@ export function updateUser(data: UserForm): Promise<Response<unknown>> {
   return request({
     url: '/authz/user/update',
     method: 'post',
-    params: data
+    data: data
   })
 }
 
@@ -55,7 +55,7 @@ export function delUser(ids: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/authz/user/delete',
     method: 'post',
-    params: { ids: Array.isArray(ids) ? ids : [ids] }
+    data: Array.isArray(ids) ? ids : [ids]
   })
 }
 
@@ -71,7 +71,7 @@ export function getUserProfile(): Promise<Response<User>> {
 }
 
 /**
- * 更新个人中心信息（JSON 请求体）。
+ * 更新个人中心信息。
  * @param data 用户资料数据。
  * @returns 更新结果。
  */

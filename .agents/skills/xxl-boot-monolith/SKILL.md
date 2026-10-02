@@ -10,7 +10,7 @@ description: 在 XXL-Boot 单体模式（xxl-boot-admin，Spring Boot + FreeMark
 ## 何时使用
 
 - 运行/改动对象是 `xxl-boot-admin`（端口 8080，FreeMarker 服务端渲染）。
-- 需要新增一个既有后端接口又有页面的业务模块（对照 `business/ai`）。
+- 需要新增一个既有后端接口又有页面的业务模块。
 - 需要在单体平台补一个简单的 CRUD 页面（对照 `framework/system/config.ftl`）。
 
 如任务同时涉及后端接口与独立前端项目（Vue/React），请改用 `xxl-boot-vue` / `xxl-boot-react`。
@@ -100,7 +100,7 @@ SQL 脚本：`{business}-table.sql`
 | `{Business}Mapper.java` | business/{module}/mapper/ | insert/delete/update/load/pageList/pageListCount |
 | `{Business}Mapper.xml` | resources/mapper/business/{module}/ | resultMap 显式映射；add/update_time 用 NOW()；<if> 动态拼条件 |
 | `{Business}Service.java` / `{Business}ServiceImpl.java` | business/{module}/service/(impl/) | 方法顺序 pageList/load/insert/delete/update |
-| `{Business}Controller.java` | business/{module}/controller/ | 视图入口 @RequestMapping 返回 ftl view + @ResponseBody 数据接口；全 @XxlSso；分页 offset/pagesize；删除 ids[] |
+| `{Business}Controller.java` | business/{module}/controller/ | 视图入口 @RequestMapping 返回 ftl view + @ResponseBody 数据接口；全 @XxlSso；统一 @RequestMapping；分页/查询 @RequestParam；insert/update @RequestBody；delete @RequestBody List<Integer> |
 
 接口：`/{module}/{business}/pageList|load|insert|delete|update`（数据接口 @ResponseBody）
 
@@ -136,7 +136,7 @@ SQL 脚本：`{business}-table.sql`
 ### Controller 骨架（单体差异：视图 + 数据接口共存）
 
 - 页面入口：`@RequestMapping("/demo/demo")` + `@XxlSso`，返回 view 名 `/business/demo/demo`，并把页面需要的枚举 `model.addAttribute("DemoStatusEnum", ...)`。
-- 数据接口：`pageList/load/insert/delete/update`，加 `@ResponseBody`，返回 `Response` / `Response<PageModel<DemoDTO>>`，入参分页统一 `offset/pagesize`，删除用 `@RequestParam("ids[]") List<Integer> ids`。
+- 数据接口：`pageList/load/insert/delete/update`，加 `@ResponseBody`，返回 `Response` / `Response<PageModel<DemoDTO>>`；**CRUD 参数通道**：统一 `@RequestMapping`，分页/查询走 URL（`@RequestParam`），`insert`/`update` 走 `@RequestBody` 实体，`delete` 走 `@RequestBody List<Integer> ids`（集合不用包装 DTO）。
 - 全部加 `@XxlSso`。参考 `framework/controller/system/ConfigController.java`。
 
 ```java
@@ -167,15 +167,17 @@ public class DemoController {
     public Response<Demo> load(int id) { return demoService.load(id); }
 
     @RequestMapping("/insert") @ResponseBody @XxlSso
-    public Response<String> insert(Demo demo) { return demoService.insert(demo); }
+    public Response<String> insert(@RequestBody Demo demo) { return demoService.insert(demo); }
 
     @RequestMapping("/delete") @ResponseBody @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) { return demoService.delete(ids); }
+    public Response<String> delete(@RequestBody List<Integer> ids) { return demoService.delete(ids); }
 
     @RequestMapping("/update") @ResponseBody @XxlSso
-    public Response<String> update(Demo demo) { return demoService.update(demo); }
+    public Response<String> update(@RequestBody Demo demo) { return demoService.update(demo); }
 }
 ```
+
+> 分页/查询字段直接用 `@RequestParam`（`offset`/`pagesize` + `status`/`name` 等），不再定义分页请求 DTO。
 
 ### Service / Mapper
 
@@ -185,7 +187,7 @@ public class DemoController {
 
 ## 枚举落位
 
-业务模块枚举（含下拉）统一放 `business/{module}/enums`（对照 `business/ai/enums`）；`framework/constant/enums` 仅保留平台内置枚举，业务代码一律不侵入。下拉枚举在 `Controller.index()` 用 `model.addAttribute("XxxStatusEnum", XxxStatusEnum.values())` 注入，FTL 通过 `<#list XxxStatusEnum as item>` 渲染 select；若需前端经 `loadEnumItem` 拉取，`DictController.loadEnum` 已支持展开 `business` 根包内的 IEnum 枚举包解析。
+业务模块枚举（含下拉）统一放 `business/{module}/enums`；`framework/constant/enums` 仅保留平台内置枚举，业务代码一律不侵入。下拉枚举在 `Controller.index()` 用 `model.addAttribute("XxxStatusEnum", XxxStatusEnum.values())` 注入，FTL 通过 `<#list XxxStatusEnum as item>` 渲染 select；若需前端经 `loadEnumItem` 拉取，`DictController.loadEnum` 已支持展开 `business` 根包内的 IEnum 枚举包解析。
 
 ## FreeMarker 页面骨架
 
@@ -197,7 +199,7 @@ public class DemoController {
 4. 表格 `#data_list`（`table table-bordered table-striped`，thead 留空）+ `#addModal` / `#updateModal` 两个 Bootstrap modal（`form-horizontal form`，末尾更新 modal 需 `<input type="hidden" name="id">`）。
 5. 底部：`<@netCommon.commonScript />` + `bootstrap-table.min.js` + `admin.table.js` + 页面 `$(function(){...})`。
 
-页脚 JS 直接调用 `$.adminTable`（封装见 `static/framework/admin.table.js`）：
+页脚 JS 直接调用 `$.adminTable`（封装见 `static/framework/admin.table.js`）：列表分页/查询按表单提交（`@RequestParam`），新增/更新/删除按 JSON 提交（`@RequestBody`，删除传裸数组），页面无需额外处理；页面内自定义 `$.ajax` 时按同样规则选择表单或 JSON，禁止把复杂参数拼到 URL。
 
 ```js
 $.adminTable.initTable({
@@ -246,7 +248,7 @@ $.adminTable.initUpdate({
 });
 ```
 
-> 复杂业务（多页签、详情页、关联下拉）参考 `templates/business/ai/*.ftl` 与对应 Controller。
+> 复杂业务（多页签、详情页、关联下拉）参考 `templates/framework/system/config.ftl` 与对应 Controller。
 
 ## 菜单注册 SQL
 
@@ -282,7 +284,7 @@ VALUES (1, @catId, now(), now()), (1, LAST_INSERT_ID(), now(), now());
 
 - [ ] 需求子目录 `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md`（六大块齐全）+ SQL 已落盘并同步。
 - [ ] 后端 `mvn -q compile` 通过（在 `xxl-boot-admin` 下）。
-- [ ] Controller 视图 + `@ResponseBody` 数据接口齐全，全部 `@XxlSso`；数据接口方法顺序 `pageList/load/insert/delete/update`。
+- [ ] Controller 视图 + `@ResponseBody` 数据接口齐全，全部 `@XxlSso`；数据接口方法顺序 `pageList/load/insert/delete/update`，统一 `@RequestMapping`；分页/查询 `@RequestParam`，`insert`/`update` `@RequestBody`，`delete` `@RequestBody List<Integer>`。
 - [ ] Mapper XML 显式 resultMap；`add_time/update_time` `NOW()`；分页 `offset/pagesize`。
 - [ ] 参数校验返回 `Response.ofFail`；实体/DTO/Adaptor 文案、注释符合 AGENTS.md 6.1。
 - [ ] FTL：`commonStyle/commonScript`、`admin.table.js` 引入完整；`#data_filter/#data_operation/#data_list/#addModal/#updateModal` id 规范。
@@ -294,5 +296,5 @@ VALUES (1, @catId, now(), now()), (1, LAST_INSERT_ID(), now(), now());
 - 标准 CRUD 页面：`xxl-boot-admin/src/main/resources/templates/framework/system/config.ftl`
 - 前端表格封装：`xxl-boot-admin/src/main/resources/static/framework/admin.table.js`
 - 后端 Controller 范例：`xxl-boot-admin/src/main/java/com/xxl/boot/admin/framework/controller/system/ConfigController.java`
-- 复杂业务模块：`xxl-boot-admin/src/main/java/com/xxl/boot/admin/business/ai/**` + `templates/business/ai/*.ftl`
+- 复杂业务模块参考 `xxl-boot-admin/src/main/resources/templates/framework/system/config.ftl` 与 `framework/controller/system/ConfigController.java`
 - 代码生成模板：`xxl-boot-admin/src/main/resources/templates/framework/tool/codegen-module/*.ftl`

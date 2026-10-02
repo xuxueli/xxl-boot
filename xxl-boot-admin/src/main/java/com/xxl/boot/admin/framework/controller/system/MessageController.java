@@ -12,12 +12,14 @@ import com.xxl.tool.response.PageModel;
 import com.xxl.tool.response.Response;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 
 /**
@@ -52,9 +54,9 @@ public class MessageController {
     @ResponseBody
     @XxlSso
     public Response<PageModel<MessageDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                           @RequestParam(required = false, defaultValue = "10") int pagesize,
-                                                           int status,
-                                                           String title) {
+                                                    @RequestParam(required = false, defaultValue = "10") int pagesize,
+                                                    int status,
+                                                    String title) {
         PageModel<MessageDTO> pageModel = messageService.pageList(status, title, offset, pagesize);
         return Response.ofSuccess(pageModel);
     }
@@ -75,7 +77,7 @@ public class MessageController {
     @RequestMapping("/insert")
     @ResponseBody
     @XxlSso
-    public Response<String> insert(Message xxlBootMessage, HttpServletRequest request){
+    public Response<String> insert(@RequestBody Message xxlBootMessage, HttpServletRequest request){
 
         // xxl-sso, logincheck
         Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);
@@ -89,7 +91,7 @@ public class MessageController {
     @RequestMapping("/delete")
     @ResponseBody
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids){
+    public Response<String> delete(@RequestBody List<Integer> ids){
         return messageService.delete(ids);
     }
 
@@ -99,7 +101,7 @@ public class MessageController {
     @RequestMapping("/update")
     @ResponseBody
     @XxlSso
-    public Response<String> update(Message xxlBootMessage){
+    public Response<String> update(@RequestBody Message xxlBootMessage){
         return messageService.update(xxlBootMessage);
     }
 

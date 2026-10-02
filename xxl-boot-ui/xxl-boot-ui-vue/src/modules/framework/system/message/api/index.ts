@@ -9,7 +9,7 @@ import type { PageModel, Response } from '@/types'
  */
 
 /**
- * 分页查询消息列表。
+ * 分页查询消息列表（URL 查询参数）。
  * @param query 查询参数（title/status/offset/pagesize）。
  * @returns 消息分页列表。
  */
@@ -69,7 +69,7 @@ export function delMessage(id: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/system/message/delete',
     method: 'post',
-    params: { ids: Array.isArray(id) ? id : [id] }
+    data: Array.isArray(id) ? id : [id]
   })
 }
 
@@ -85,7 +85,7 @@ export function listMessageTop(): Promise<Response<Message[]>> {
 }
 
 /**
- * 标记单条消息已读。
+ * 标记单条消息已读
  * @param id 消息ID。
  * @returns 标记结果。
  */
@@ -98,7 +98,7 @@ export function markMessageRead(id: number): Promise<Response<unknown>> {
 }
 
 /**
- * 批量标记消息已读。
+ * 批量标记消息已读
  * @param ids 消息ID，逗号分隔字符串。
  * @returns 批量标记结果。
  */
@@ -111,7 +111,7 @@ export function markMessageReadAll(ids: string): Promise<Response<unknown>> {
 }
 
 /**
- * 分页查询消息的已读用户列表。
+ * 分页查询消息的已读用户列表
  * @param query 查询参数（messageId/offset/pagesize）。
  * @returns 已读用户分页列表。
  */

@@ -99,7 +99,7 @@ SQL 脚本：`{business}-table.sql`
 | `{Business}Mapper.xml` | resources/mapper/business/{module}/{business}/ | resultMap 显式映射；add/update_time 用 NOW()；查询 <if> 动态拼条件 |
 | `{Business}Service.java` | business/{module}/{business}/service/ | 方法顺序 pageList/load/insert/delete/update |
 | `{Business}ServiceImpl.java` | business/{module}/{business}/service/impl/ | StringTool 校验，失败 Response.ofFail |
-| `{Business}Controller.java` | business/{module}/{business}/controller/ | 全 @XxlSso；分页 offset/pagesize；删除 ids[] |
+| `{Business}Controller.java` | business/{module}/{business}/controller/ | 全 @XxlSso；统一 @RequestMapping；分页/查询 @RequestParam；insert/update @RequestBody；delete @RequestBody List<Integer> |
 
 接口：`/{module}/{business}/pageList|load|insert|delete|update`
 
@@ -107,7 +107,7 @@ SQL 脚本：`{business}-table.sql`
 | 文件 | 位置 | 要点 |
 |---|---|---|
 | `types/index.d.ts` | modules/business/{module}/{business}/ | declare namespace API { Xxx / XxxQuery / XxxListQuery } |
-| `api/index.ts` | modules/business/{module}/{business}/ | request<API.Response<API.PageModel<T>>>；current/pageSize→offset/pagesize |
+| `api/index.ts` | modules/business/{module}/{business}/ | request<API.Response<API.PageModel<T>>>；current/pageSize→offset/pagesize；列表 GET+params，写操作 POST+data |
 | `pages/index.tsx` | modules/business/{module}/{business}/ | ProTable+PageContainer；hasPermi 控制按钮 |
 
 ## 六、验证结果 / 变更记录
@@ -132,7 +132,7 @@ SQL 脚本：`{business}-table.sql`
 | `DemoService.java` / `DemoServiceImpl.java` | `java/.../business/demo/demo/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
 | `DemoController.java` | `java/.../business/demo/demo/controller/DemoController.java` | `@RestController @RequestMapping("/demo/demo")`，全 `@XxlSso` |
 
-**直生入口**：读模板 `templates/tool/codegen/java/*.ftl` 得准确骨架与落位路径。要点：分页 `offset/pagesize`（默认 0/10）、校验 `StringTool/RegexTool` 返回 `Response.ofFail`、删除 `@RequestParam("ids[]") List<Integer>`、接口路径全小写 `/{module}/{business}/pageList|load|insert|delete|update`。
+**直生入口**：读模板 `templates/tool/codegen/java/*.ftl` 得准确骨架与落位路径。要点：CRUD 统一 `@RequestMapping`，分页/查询 `@RequestParam`，`insert`/`update` `@RequestBody` 实体，`delete` `@RequestBody List<Integer> ids`（集合走 JSON，不包 `IdsRequest`）、校验 `StringTool/RegexTool` 返回 `Response.ofFail`、接口路径全小写 `/{module}/{business}/pageList|load|insert|delete|update`。
 
 ## 前端落位清单（3 文件）
 
@@ -166,7 +166,7 @@ declare namespace API {
  */
 import { request } from '@/utils/request';
 
-/** 分页查询列表（current/pageSize 在函数内转 offset/pagesize） */
+/** 分页查询列表（current/pageSize 在函数内转 offset/pagesize，分页/查询走 URL 参数） */
 export async function listDemo(params: { current?: number; pageSize?: number; status?: number; name?: string }) {
   const { current = 1, pageSize = 10, ...rest } = params || {};
   return request<API.Response<API.PageModel<API.Demo>>>('/demo/demo/pageList', {
@@ -184,7 +184,7 @@ export async function updateDemo(data: API.Demo) {
   return request<API.Response<unknown>>('/demo/demo/update', { method: 'POST', data });
 }
 export async function delDemo(ids: number[]) {
-  return request<API.Response<unknown>>('/demo/demo/delete', { method: 'POST', params: { ids } });
+  return request<API.Response<unknown>>('/demo/demo/delete', { method: 'POST', data: ids });
 }
 ```
 
@@ -289,8 +289,8 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 
 - [ ] 需求子目录 `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md`（六大块齐全）+ SQL 已落盘并同步。
 - [ ] `xxl-boot-api` 下 `mvn -q compile` 通过；`xxl-boot-ui-react` 下 `npm run build`（或 eslint）通过。
-- [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，分页 `offset/pagesize`，XML resultMap + `NOW()`，校验 `Response.ofFail`。
-- [ ] 前端：types 用 `declare namespace API`；api 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`；页面 ProTable `request` 取 `res.data?.data/total`。
+- [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，统一 `@RequestMapping`；分页/查询 `@RequestParam`，`insert`/`update` `@RequestBody`，`delete` `@RequestBody List<Integer>`；XML resultMap + `NOW()`，校验 `Response.ofFail`。
+- [ ] 前端：types 用 `declare namespace API`；api 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`，列表 GET+params、写操作 POST+data（delete 裸数组）；页面 ProTable `request` 取 `res.data?.data/total`。
 - [ ] 权限：按钮 `hasPermi`，资源表菜单+按钮已插且已授权。注释符合 AGENTS.md 6.1。
 - [ ] i18n：页面无硬编码中文（注释除外），`t('key')` 引用且 zh/en 文案已成对维护；通用词复用 `common.*`。语言配置 `default-settings.ts` 的 `language`。
 - [ ] 防乱码：所有 `.sql` 首行有 `SET NAMES utf8mb4;`。

@@ -83,9 +83,9 @@ framework
 **新增业务一律落 `business/{module}/{business}` 双层镜像包**（`framework` 仅属于平台内置能力，不要塞业务）：
 
 - api 模式：前端 `src/modules/business/{module}/{business}/`（pages/api/types）与后端 `com.xxl.boot.api.business.{module}.{business}`（controller/service/mapper/model/enums 子包）**双层镜像**，业务后缀与接口路径 `/{module}/{business}` 一致；首个模块可走内置代码生成器产出（模板见第七节与对应 Skill）
-- 单体模式：`com.xxl.boot.admin.business.{module}`，参考 `.../business/ai`
+- 单体模式：`com.xxl.boot.admin.business.{module}`
 
-Mapper XML 对应：统一按首层 `framework/` 与 `business/` 区分——平台内置落 `resources/mapper/framework/{module}`（如 framework/authz、framework/system）；业务模块落 `resources/mapper/business/{module}`（单体，如 business/ai）或 `resources/mapper/business/{module}/{business}`（前后端分离双层镜像）。
+Mapper XML 对应：统一按首层 `framework/` 与 `business/` 区分——平台内置落 `resources/mapper/framework/{module}`（如 framework/authz、framework/system）；业务模块落 `resources/mapper/business/{module}`（单体）或 `resources/mapper/business/{module}/{business}`（前后端分离双层镜像）。
 
 ### 4.2 前端 Vue（xxl-boot-ui-vue）
 
@@ -155,6 +155,7 @@ src
 - 分层职责清晰：Controller 参数接收与校验、Service 业务逻辑、Mapper 数据访问，不跨层越权。
 - 接口路径「模块前缀 + 动词式后缀」：`/system/message/pageList`、`/load`、`/insert`、`/delete`、`/update`。
 - 业务接口统一 `@RequestMapping("/{module}/{business}")` + `@XxlSso` 鉴权注解。
+- CRUD 参数通道：接口统一 `@RequestMapping("/{module}/{business}")` + 动词式后缀（不限定 HTTP 方法）；分页、查询条件与简单标量走 URL（`@RequestParam`，前端 `params`）；结构化实体（`insert`/`update`）与集合（`delete` 的 `List<Integer> ids`）走 JSON 请求体（`@RequestBody`，前端 `data`）。复合参数（`SortRequest`/`RoleResRequest` 等）可定义 DTO，但 CRUD 不为 delete 再包一层 `IdsRequest`。
 - Java set/get 方法不折叠，使用正常方法体。
 - mapper XML 中显式配置字段映射（resultMap），`add_time`/`update_time` 写入用 `NOW()`。
 - 参数校验使用工具类：`StringTool`、`RegexTool`、`CollectionTool` 等，返回 `Response.ofFail("提示")`。
@@ -164,6 +165,7 @@ src
 
 - 后端统一返回 `Response{ code、msg、data }`（`com.xxl.tool.response.Response`），code 200 成功。
 - 分页返回 `Response<PageModel>`；分页入参统一 `offset`、`pagesize`。
+- 参数通道：分页与查询条件走 URL（`@RequestParam`）；结构化实体与集合（`insert`/`update`、`delete` 的 `List<Integer>`）走 JSON 请求体（`@RequestBody`）。
 - 前端取值：`response.data`（成功数据）、`response.data.data`（列表）、`response.data.total`（总数），**不要直接拿返回值操作**。
 
 ### 6.4 前端 Vue 规范
@@ -173,12 +175,13 @@ src
 - 响应式数据一律使用 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；逻辑相关数据收敛为对象：`queryParams`（搜索栏）、`table`（表格数据与状态）、`formState`（表单数据与规则）。
 - 避免啰嗦写法：`defineModel('visible')` + 模板 `v-model` 直连，不用 props/emits/computed 桥接；模板直接用 `props.row`，不建冗余 computed 别名。
 - 列表页固定套路：`getList()` 经 `usePageParams(queryParams)(产生 offset/pagesize` 后请求，从 `response.data.data / response.data.total` 赋值。
+- 接口封装：列表/查询/单值用 `method: 'get'` + `params`；`insert`/`update` 用 `method: 'post'` + `data`；`delete` 用 `method: 'post'` + `data`（裸数组 `Array.isArray(ids) ? ids : [ids]`）。
 - 通用能力复用 `@/composables/*`、`@/components`（按需 import）、`@/utils/modal`，禁止重复造轮子。
 
 ### 6.5 前端 React 规范
 
 - 列表页基于 `ProTable` + `PageContainer`，`request` 从 `res.data?.data`（列表）、`res.data?.total`（总数）取值。
-- API 封装统一 `request<API.Response<API.PageModel<T>>>`，入参 `current/pageSize` 需在函数内转换为 `offset/pagesize` 再传后端。
+- API 封装统一 `request<API.Response<API.PageModel<T>>>`，入参 `current/pageSize` 在函数内转 `offset/pagesize`；列表/查询用 GET + `params`，`insert`/`update` 用 POST + `data`，`delete` 用 POST + `data`（裸数组）。
 - 类型定义于 `modules/{framework|business}/{domain}/{module}/types/index.d.ts`，统一 `declare namespace API { type Xxx = {...} }`。
 - 枚举下拉用 `useEnumOption` + `toValueEnum`/`toSelectOptions`；权限用 `usePermission().hasPermi(...)`。
 
@@ -216,6 +219,7 @@ src
 
 - vue 前端模板固定传 `tplWebType='element-plus-typescript'`，react 传 `'antd-typescript'`。
 - 生成代码强制依赖 `id` 主键；业务代码落 `business/{module}/{business}` 而**不是** `framework`。
+- 生成代码遵循 CRUD 参数通道约定：Controller 统一 `@RequestMapping`，分页/查询 `@RequestParam`，`insert`/`update` `@RequestBody` 实体，`delete` `@RequestBody List<Integer> ids`；前端 api 对应 `GET+params` / `POST+data`（delete 传裸数组）。
 - Skill 缺省策略：AI 按模板直生等价代码落位，同时在交付说明中提示可走后台生成器。
 
 ## 八、验收与提交

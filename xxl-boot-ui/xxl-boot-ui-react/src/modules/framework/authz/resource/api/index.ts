@@ -33,7 +33,7 @@ export async function getResource(id: number) {
 export async function addResource(data: API.Resource) {
   return request<API.Response<unknown>>('/authz/resource/insert', {
     method: 'POST',
-    params: data,
+    data,
   });
 }
 
@@ -44,7 +44,7 @@ export async function addResource(data: API.Resource) {
 export async function updateResource(data: API.Resource) {
   return request<API.Response<unknown>>('/authz/resource/update', {
     method: 'POST',
-    params: data,
+    data,
   });
 }
 
@@ -55,7 +55,7 @@ export async function updateResource(data: API.Resource) {
 export async function delResource(ids: number[]) {
   return request<API.Response<unknown>>('/authz/resource/delete', {
     method: 'POST',
-    params: { ids },
+    data: ids,
   });
 }
 
@@ -67,6 +67,6 @@ export async function delResource(ids: number[]) {
 export async function updateResourceSort(ids: number[], orders: number[]) {
   return request<API.Response<unknown>>('/authz/resource/updateSort', {
     method: 'POST',
-    params: { ids, orders },
+    data: { ids, orders },
   });
 }

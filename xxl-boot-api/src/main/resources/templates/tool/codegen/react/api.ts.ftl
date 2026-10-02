@@ -82,6 +82,6 @@ export async function update${codegen.businessName}(data: API.${codegen.business
 export async function del${codegen.businessName}(ids: number[]) {
   return request<API.Response<unknown>>(
     '/${codegen.moduleName}/${codegen.businessName?lower_case}/delete',
-    { method: 'POST', params: { ids } },
+    { method: 'POST', data: ids },
   );
 }

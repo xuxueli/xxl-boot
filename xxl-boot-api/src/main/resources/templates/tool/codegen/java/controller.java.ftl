@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import jakarta.annotation.Resource;
 
 import com.xxl.tool.response.Response;
@@ -14,6 +13,8 @@ import com.xxl.sso.core.annotation.XxlSso;
 
 import ${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower_case}.model.${codegen.businessName};
 import ${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower_case}.service.${codegen.businessName}Service;
+
+import java.util.List;
 
 <#assign cn = codegen.businessName />
 <#assign cnLower = cn?uncap_first />
@@ -64,7 +65,7 @@ public class ${cn}Controller {
     */
     @RequestMapping("/delete")
     @XxlSso
-    public Response<String> delete(@RequestParam("ids[]") List<Integer> ids) {
+    public Response<String> delete(@RequestBody List<Integer> ids) {
         return ${cnLower}Service.delete(ids);
     }
 

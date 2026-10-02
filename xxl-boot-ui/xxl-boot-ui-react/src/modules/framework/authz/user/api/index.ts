@@ -35,7 +35,7 @@ export async function listUser(params: {
 export async function addUser(data: API.User) {
   return request<API.Response<unknown>>('/authz/user/add', {
     method: 'POST',
-    params: data,
+    data,
   });
 }
 
@@ -46,7 +46,7 @@ export async function addUser(data: API.User) {
 export async function updateUser(data: API.User) {
   return request<API.Response<unknown>>('/authz/user/update', {
     method: 'POST',
-    params: data,
+    data,
   });
 }
 
@@ -57,7 +57,7 @@ export async function updateUser(data: API.User) {
 export async function delUser(ids: number | number[]) {
   return request<API.Response<unknown>>('/authz/user/delete', {
     method: 'POST',
-    params: { ids },
+    data: Array.isArray(ids) ? ids : [ids],
   });
 }
 
@@ -72,7 +72,7 @@ export async function getUserProfile() {
 }
 
 /**
- * 更新个人中心信息（JSON 请求体）。
+ * 更新个人中心信息。
  * @param data 用户资料数据
  */
 export async function updateUserProfile(data: API.User) {
