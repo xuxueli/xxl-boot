@@ -4,29 +4,46 @@
  *      - 菜单（from后端）：ProLayout#menuDataRender 支持多种菜单模式，后端返回的路由树可直接渲染为菜单
  *      - 消息铃铛：ProLayout#actionsRender
  *      - 头像下拉：ProLayout#avatarProps
+ *     - 主题设置面板：LayoutSettingDrawer
  *      - 页脚：ProLayout#footerRender
- *      - 主题设置面板：SettingDrawer
+ *      - 内容区：LayoutContent；
+ *
+ * @author xuxueli 2026-08-15
  */
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuDataItem } from '@ant-design/pro-components';
-import { ProLayout, SettingDrawer } from '@ant-design/pro-components';
-import { App, Button } from 'antd';
+import { ProLayout } from '@ant-design/pro-components';
 import React, { useCallback, useMemo } from 'react';
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import defaultSettings from '@/default-settings';
+import { t } from '@/i18n';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 import { getIconComponent } from '@/utils/icon';
-import { t } from '@/i18n';
 import {
   Footer,
   FullscreenButton,
   HeaderAvatar,
   HeaderMessage,
+  LayoutContent,
+  LayoutSettingDrawer,
   ThemeColorPicker,
 } from './components';
 
+/* 菜单项标题/图标样式：模块级常量，避免每次渲染新建样式对象 */
+const MENU_LABEL_STYLE = { display: 'inline-flex', alignItems: 'center' } as const;
+const MENU_ICON_STYLE = { marginRight: 8, display: 'inline-flex' } as const;
+
+/* 面包屑：单层级页面也展示（稳定引用） */
+const BREADCRUMB_PROPS = { minLength: 1 };
+
+/* 面包屑项：只读展示，不支持点击跳转（稳定引用） */
+const breadcrumbItemRender = (route: { title?: React.ReactNode }) => (
+  <span>{route.title}</span>
+);
+
 /**
- * 将后端菜单树转换为 ProLayout 菜单数据
+ * 构建菜单：一次遍历同时产出「菜单数据」与「目录→第一个叶子路径」映射
  *
  * <pre>
  *     原始菜单格式：
@@ -61,77 +78,16 @@ import {
  *          }]
  *     }
  * </pre>
+ *
+ * @param routes 后端 /getRouters 返回的菜单树
+ * @returns items：ProLayout 菜单数据；redirectMap：目录路径 → 第一个叶子路径
  */
-const buildMenuData = (routes: API.RouterVo[]): MenuDataItem[] => {
-  return routes
-    .filter((r) => !r.hidden)
-    .map((r) => {
-      // 根级菜单：后端 getRouters 会包裹一层 meta=null 的父节点，
-      // 仅含一个子节点时，直接以子节点作为菜单项展示
-      if (!r.meta && r.children?.length === 1) {
-        const child = r.children[0];
-
-        // parse root item: path、name、icon
-        const promoted: MenuDataItem = {
-          path: child.path || r.path,
-          name: child.meta?.title,
-        };
-        const Icon = getIconComponent(child.meta?.icon);
-        if (Icon) {
-          promoted.icon = <Icon />;
-        }
-        return promoted;
-      }
-
-      // parse no-root: path、name、icon、children
-      const item: MenuDataItem = {
-        path: r.path,
-        name: r.meta?.title,
-      };
-      const Icon = getIconComponent(r.meta?.icon);
-      if (Icon) {
-        item.icon = <Icon />;
-      }
-      if (r.children?.length) {
-        item.children = buildMenuData(r.children);
-      }
-      return item;
-    });
-};
-
-/**
- * 菜单项标题渲染：为二级及以下菜单补充展示图标
- * 说明：pro-layout 的 siderMenuType=sub 模式下，仅第一级菜单项渲染 icon，深层菜单项（子菜单/叶子项）默认不展示，
- *       这里在自定义渲染逻辑中手动补充图标。
- * @param item 菜单数据项
- * @returns 菜单标题节点
- */
-const renderMenuLabel = (item: MenuDataItem) => {
-  // 未设置图标：直接返回菜单名
-  if (!item.icon) {
-    return item.name;
-  }
-  // 设置图标：图标 + 菜单名 水平排列
-  return (
-    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-      <span style={{ marginRight: 8, display: 'inline-flex' }}>
-        {item.icon}
-      </span>
-      {item.name}
-    </span>
-  );
-};
-
-/**
- * 构建「目录路径 → 第一个叶子路径」映射表
- * 说明：splitMenus（自动分割菜单）下目录会被渲染成扁平菜单项且 children 被剥离，
- *       点击时需跳转到第一个叶子子项（真实页面），避免跳到目录路径导致 404
- */
-const buildDirRedirectMap = (
+const buildMenu = (
   routes: API.RouterVo[],
-): Record<string, string> => {
-  const map: Record<string, string> = {};
+): { items: MenuDataItem[]; redirectMap: Record<string, string> } => {
+  const redirectMap: Record<string, string> = {};
 
+  /* 查找子树中的第一个叶子路径（目录点击跳转用） */
   const findFirstLeaf = (nodes: API.RouterVo[]): string | undefined => {
     for (const node of nodes) {
       /* 叶子节点：直接使用其路径 */
@@ -143,44 +99,80 @@ const buildDirRedirectMap = (
     return undefined;
   };
 
-  const walk = (nodes: API.RouterVo[]) => {
-    for (const node of nodes) {
-      /* 目录节点（有子项且自身有路径）：记录映射，点击时跳转第一个叶子子项 */
-      if (node.children?.length && node.path) {
-        const firstLeaf = findFirstLeaf(node.children);
-        if (firstLeaf) map[node.path] = firstLeaf;
-      }
-      if (node.children?.length) walk(node.children);
-    }
-  };
+  /* 递归转换：过滤隐藏项、构造菜单项，并记录目录跳转映射 */
+  const toItems = (nodes: API.RouterVo[]): MenuDataItem[] =>
+    nodes
+      .filter((r) => !r.hidden)
+      .map((r) => {
+        /* 目录节点：记录「目录路径 → 第一个叶子路径」，供菜单点击跳转（避免目录 404） */
+        if (r.children?.length && r.path) {
+          const firstLeaf = findFirstLeaf(r.children);
+          if (firstLeaf) redirectMap[r.path] = firstLeaf;
+        }
 
-  walk(routes);
-  return map;
+        /* 根级包装节点（meta 为空且仅 1 个可见子项）：提升子项为菜单项 */
+        if (!r.meta && r.children?.length === 1 && !r.children[0].hidden) {
+          const child = r.children[0];
+          const item: MenuDataItem = {
+            path: child.path || r.path,
+            name: child.meta?.title,
+          };
+          const Icon = getIconComponent(child.meta?.icon);
+          if (Icon) item.icon = <Icon />;
+          return item;
+        }
+
+        /* 普通节点：path、name、icon、children */
+        const item: MenuDataItem = { path: r.path, name: r.meta?.title };
+        const Icon = getIconComponent(r.meta?.icon);
+        if (Icon) item.icon = <Icon />;
+        if (r.children?.length) item.children = toItems(r.children);
+        return item;
+      });
+
+  return { items: toItems(routes), redirectMap };
+};
+
+/**
+ * 菜单项标题渲染：为二级及以下菜单补充展示图标
+ * 说明：pro-layout 的 siderMenuType=sub 模式下，仅第一级菜单项渲染 icon，深层菜单项默认不展示，
+ *       这里在自定义渲染逻辑中手动补充图标。
+ *
+ * @param item 菜单数据项
+ * @returns 菜单标题节点
+ */
+const renderMenuLabel = (item: MenuDataItem) => {
+  /* 未设置图标：直接返回菜单名 */
+  if (!item.icon) {
+    return item.name;
+  }
+  /* 设置图标：图标 + 菜单名 水平排列 */
+  return (
+    <span style={MENU_LABEL_STYLE}>
+      <span style={MENU_ICON_STYLE}>{item.icon}</span>
+      {item.name}
+    </span>
+  );
 };
 
 /**
  * AppLayout 组件
  */
 const AppLayout = () => {
-  const { message } = App.useApp();
   const location = useLocation();
   const navigate = useNavigate();
   const currentUser = useUserStore((s) => s.currentUser);
   const menuData = useUserStore((s) => s.menuData);
   /* 布局设置：消费 settingsStore，控制标题/Logo/主题色/布局模式等 */
   const settings = useSettingsStore((s) => s.settings);
-  /* 设置面板开关：控制 SettingDrawer 显隐 */
-  const settingDrawerOpen = useSettingsStore((s) => s.settingDrawerOpen);
   /* 侧边栏折叠状态：受控于 settingsStore，点击开关即时持久化 */
   const collapsed = useSettingsStore((s) => s.collapsed);
-  /* 目录路径 → 第一个叶子路径 映射，供菜单点击跳转（避免目录 404） */
-  const dirRedirectMap = useMemo(
-    () => buildDirRedirectMap(menuData),
+
+  /* 菜单数据 + 目录跳转映射：一次遍历产出，仅在 menuData 变化时重建 */
+  const { items: menuDataItems, redirectMap: dirRedirectMap } = useMemo(
+    () => buildMenu(menuData),
     [menuData],
   );
-
-  /* 菜单数据：仅在 menuData 变化时重建，避免每次路由切换重新生成整棵菜单树与图标元素 */
-  const menuDataItems = useMemo(() => buildMenuData(menuData), [menuData]);
 
   /* 菜单数据渲染：引用稳定，减少 ProLayout 内部菜单重渲染 */
   const menuDataRender = useCallback(() => menuDataItems, [menuDataItems]);
@@ -188,7 +180,8 @@ const AppLayout = () => {
   /* 菜单点击跳转：目录项跳转其第一个叶子子项（避免 404），其余正常跳转 */
   const menuItemRender = useCallback(
     (item: MenuDataItem, dom: React.ReactNode) => {
-      const targetPath = dirRedirectMap[item.path as string] || item.path;
+      const path = item.path ?? '';
+      const targetPath = dirRedirectMap[path] || path;
       const label = item.icon ? renderMenuLabel(item) : dom;
       return targetPath ? <Link to={targetPath}>{label}</Link> : label;
     },
@@ -232,24 +225,11 @@ const AppLayout = () => {
     [],
   );
 
-  /* 菜单头部点击：回到首页 */
-  const handleMenuHeaderClick = useCallback(() => navigate('/'), [navigate]);
-
-  /**
-   * 保存设置：将当前设置持久化，刷新后保持
-   */
-  const handleSaveSettings = useCallback(() => {
-    useSettingsStore.getState().saveSettings();
-    message.success(t('layout.settingSaved'));
-  }, [message]);
-
-  /**
-   * 重置设置：清除持久化设置，并恢复默认配置
-   */
-  const handleResetSettings = useCallback(() => {
-    useSettingsStore.getState().resetSettings();
-    message.success(t('layout.settingReset'));
-  }, [message]);
+  /* 菜单头部点击：回到首页（与 default-settings.homePath 对齐） */
+  const handleMenuHeaderClick = useCallback(
+    () => navigate(defaultSettings.homePath ?? '/dashboard'),
+    [navigate],
+  );
 
   /* 底部区域：设置面板关闭页脚时返回 false 隐藏，否则渲染 Footer（引用稳定） */
   const footerRender = useMemo(
@@ -257,27 +237,28 @@ const AppLayout = () => {
     [settings.footerRender],
   );
 
+  /* 应用标题：语言变更会触发根组件按 key 重挂载，故只需计算一次 */
+  const appTitle = useMemo(() => t('app.title'), []);
+
   return (
     // ProLayout：Ant Design Pro 提供的布局组件，支持菜单、面包屑、页脚、主题设置等功能
     <ProLayout
       // 将布局设置透传给 ProLayout，实时驱动标题/Logo/主题/布局等
       {...settings}
-      title={t('app.title')}
+      title={appTitle}
       logo={settings.logo}
       location={location}
-      // 左侧菜单：菜单以后端资源配置为准（getRouters 返回的树）
+      // 左侧菜单：菜单以后端资源配置为准（菜单数据 + 渲染/点击回调均已记忆化）
       menuDataRender={menuDataRender}
-      // 左侧菜单：点击菜单项跳转路由（目录项跳转其第一个叶子子项，避免 404；其他正常跳转；）
       menuItemRender={menuItemRender}
-      // 顶部面包屑：单层级页面（如首页、帮助中心）也展示面包屑
-      breadcrumbProps={{ minLength: 1 }}
-      // 顶部面包屑：只读展示，不支持点击跳转
-      itemRender={(route) => <span>{route.title}</span>}
+      // 顶部面包屑：单层级页面（如首页、帮助中心）也展示、只读不可点击
+      breadcrumbProps={BREADCRUMB_PROPS}
+      itemRender={breadcrumbItemRender}
       // 顶部区域：全屏切换 + 站内消息
       actionsRender={actionsRender}
       // 顶部区域：用户信息
       avatarProps={avatarProps}
-      // 底部区域：页脚（设置面板关闭页脚时返回 false 隐藏，否则渲染 Footer）
+      // 底部区域：页脚
       footerRender={footerRender}
       // 禁用断点：避免 antd Sider 挂载时按视口触发 onCollapse(false)，覆盖持久化的折叠状态
       breakpoint={false}
@@ -288,37 +269,9 @@ const AppLayout = () => {
       onMenuHeaderClick={handleMenuHeaderClick}
     >
       {/* 页面内容区域 */}
-      <Outlet />
+      <LayoutContent />
       {/* 主题设置面板：设置变更实时写入 settingsStore，不写 URL 参数 */}
-      <SettingDrawer
-        disableUrlParams
-        enableDarkTheme
-        collapse={settingDrawerOpen}
-        onCollapseChange={(open) =>
-          useSettingsStore.getState().setSettingDrawerOpen(open)
-        }
-        settings={settings as any}
-        onSettingChange={(s) =>
-          useSettingsStore.getState().setSettings(s as any)
-        }
-        // 隐藏内置"复制设置"按钮与"生产环境提示"，由底部自定义保存/重置按钮接管
-        hideCopyButton
-        hideHintAlert
-        // 自定义底部操作区：保存设置 / 重置设置
-        drawerProps={{
-          // 抽屉底部操作区：保存设置/ 重置设置（恢复默认）
-          footer: (
-            <div style={{ display: 'flex', gap: 8 }}>
-              <Button type="primary" block onClick={handleSaveSettings}>
-                {t('layout.saveSetting')}
-              </Button>
-              <Button block onClick={handleResetSettings}>
-                {t('layout.resetSetting')}
-              </Button>
-            </div>
-          ),
-        }}
-      />
+      <LayoutSettingDrawer />
       {/* 主题色区域右侧的颜色选择器（支持自定义取色） */}
       <ThemeColorPicker />
     </ProLayout>

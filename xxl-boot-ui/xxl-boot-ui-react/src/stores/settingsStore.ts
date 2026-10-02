@@ -53,7 +53,7 @@ interface SettingsState {
   /** 侧边栏折叠状态：true 为收起 */
   collapsed: boolean;
   /** 更新布局设置：与默认配置浅合并后覆盖 */
-  setSettings: (settings: ProLayoutProps) => void;
+  setSettings: (settings: Partial<ProLayoutProps>) => void;
   /** 开关设置面板 */
   setSettingDrawerOpen: (open: boolean) => void;
   /** 更新折叠状态：即时写入 localStorage */
