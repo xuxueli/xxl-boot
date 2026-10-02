@@ -1,6 +1,6 @@
 {
   "name": "XXL-BOOT",
-  "version": "2.1.1-SNAPSHOT",
+  "version": "2.2.0",
   "private": true,
   "type": "module",
   "description": "XXL-BOOT | 快速开发平台",
@@ -24,11 +24,11 @@
   ],
   "dependencies": {
     "@ant-design/icons": "6.3.4",
-    "@ant-design/pro-components": "3.1.14-7",
+    "@ant-design/pro-components": "3.1.15-3",
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/sortable": "10.0.0",
     "@dnd-kit/utilities": "3.2.2",
-    "@tanstack/react-query": "5.104.0",
+    "@tanstack/react-query": "5.104.1",
     "antd": "6.6.5",
     "antd-style": "4.1.0",
     "axios": "1.20.0",
@@ -43,7 +43,7 @@
     "zustand": "5.0.15"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.14",
+    "@biomejs/biome": "2.5.15",
     "@types/js-cookie": "3.0.6",
     "@types/node": "26.6.4",
     "@types/react": "19.3.0",
