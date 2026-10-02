@@ -16,6 +16,7 @@ import defaultSettings from '@/default-settings';
 import { t } from '@/i18n';
 import { Footer } from '@/layouts/components';
 import { getCodeImg } from '@/modules/framework/auth/api';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 import { getToken } from '@/utils/auth';
 
@@ -87,8 +88,8 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // 验证码相关状态：开关、图片地址、唯一标识（提交登录时回传）
-  const [captchaEnabled, setCaptchaEnabled] = useState(false);
+  // 验证码相关状态：开关（后端基础配置）、图片地址、唯一标识（提交登录时回传）
+  const captchaEnabled = useSettingsStore((s) => s.captchaEnabled);
   const [codeUrl, setCodeUrl] = useState('');
   const [captchaUuid, setCaptchaUuid] = useState('');
 
@@ -96,7 +97,6 @@ const Login = () => {
   const getCode = async () => {
     try {
       const res = await getCodeImg();
-      setCaptchaEnabled(res.data?.enable ?? false);
       setCodeUrl(res.data?.image || '');
       setCaptchaUuid(res.data?.uuid || '');
     } catch (error) {

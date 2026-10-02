@@ -50,6 +50,13 @@ public interface ConfigService {
     Response<Config> loadByKey(String key);
 
     /**
+     * 按配置Key查询（带本地缓存，60s 过期）
+     *
+     * @param key 配置Key
+     */
+    Response<Config> loadByKeyWithCache(String key);
+
+    /**
      * 分页查询配置列表
      *
      * @param status   状态（-1 全部、0 正常、1 停用）

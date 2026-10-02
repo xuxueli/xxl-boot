@@ -4,16 +4,20 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App as AntdApp, ConfigProvider } from 'antd';
+import type { Locale } from 'antd/es/locale';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { ErrorBoundary } from '@/components';
-import { LANG } from '@/i18n';
+import type { I18nLang } from '@/i18n';
 import { useSettingsStore } from '@/stores/settingsStore';
 import AppRouter from './router/app/AppRouter';
 import './assets/styles/global.css';
+
+/** antd 语言包注册表：新增语言时在此补充，Record 保证不漏配 */
+const antdLocales: Record<I18nLang, Locale> = { zh: zhCN, en: enUS };
 
 /**
  * TanStack Query 配置
@@ -36,9 +40,18 @@ const queryClient = new QueryClient({
  */
 const AppTheme = ({ children }: { children: React.ReactNode }) => {
   const colorPrimary = useSettingsStore((s) => s.settings.colorPrimary);
+  const language = useSettingsStore((s) => s.language);
+  const loadBaseConfig = useSettingsStore((s) => s.loadBaseConfig);
+
+  // 启动加载系统基础配置（界面语言、登录验证码开关），使前端语言与后端保持一致
+  useEffect(() => {
+    loadBaseConfig();
+  }, [loadBaseConfig]);
+
   return (
     <ConfigProvider
-      locale={LANG === 'en' ? enUS : zhCN}
+      key={language}
+      locale={antdLocales[language]}
       theme={{
         token: {
           fontFamily: 'AlibabaSans, sans-serif',

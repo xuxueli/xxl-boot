@@ -66,3 +66,14 @@ export async function getRouters() {
     method: 'GET',
   });
 }
+
+/**
+ * 加载系统基础配置（界面语言、登录验证码开关）。
+ * @returns 基础配置数据
+ */
+export async function loadBaseConfig() {
+  return request<API.Response<API.BaseConfig>>('/loadBaseConfig', {
+    headers: { isToken: false },
+    method: 'GET',
+  });
+}

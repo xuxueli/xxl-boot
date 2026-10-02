@@ -12,7 +12,6 @@ const Settings: ProLayoutProps & {
   brandName?: string;
   homePath?: string;
   version?: string;
-  language?: 'zh' | 'en';
 } = {
   /**
    * 品牌/产品名称
@@ -23,11 +22,6 @@ const Settings: ProLayoutProps & {
    * 版本
    */
   version: '2.1.1-SNAPSHOT',
-
-  /**
-   * 界面语言：zh 中文 / en 英文（由 i18n 读取，不支持运行时切换）
-   */
-  language: 'zh',
 
   /**
    * 首页路径

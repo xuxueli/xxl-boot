@@ -205,7 +205,7 @@ src
 
 - 文案统一维护于 `src/i18n/locales/{zh,en}.json`（**单一文件**，JSON 数据纯存储不支持注释，按 `domain.module.token` 嵌套、按域名节点分区），业务页面/components/utils/layouts **一律 `import { t } from '@/i18n'` 引用，禁止硬编码中文**（中文注释除外）。
 - 文件内模块顺序固定：`app`（应用级常量）前置，其次公共组 `common`/`modal`/`request`/`layout`/`components`，再次平台业务组 `auth`/`authz`/`system`/`tool`/`dashboard`/`help`/`error`，常规业务模块（`business.*` 等）放最后；**Vue 与 React 两套一致**，新增模块按组插入、勿打乱既有顺序。
-- 语言由 `default-settings.ts` 的 `language: 'zh' | 'en'` 配置控制，**不支持运行时切换**；element-plus / antd 组件语言随该配置。
+- 语言由后端系统配置 `system.i18n.language`（取值 `zh` / `en`，存 `xxl_boot_config`；后端经 `ConfigService.loadByKeyWithCache` 读取，60s 本地缓存）决定；前端启动调用 `/loadBaseConfig` 拉取并同步（默认 zh 兜底），保证与后端一致。element-plus / antd 组件语言随当前语言响应式切换。
 - key 复用约定：通用词（新增/修改/删除/搜索/重置/操作/状态/备注/全部/正常/停用/保存成功/删除成功…）统一走 `common.*`，`modal.*`（系统提示/确定/取消）、`request.*`（错误/超时提示）；模块特有词建 `{domain}.{module}.*`。新增文案必须 zh/en **成对**提交，缺失键回退中文再回退 key。
 - 插值：`t('key', [v])`（占位 `{0}` 下标）或 `t('key', { name })`（占位 `{name}`），禁止字符串拼接。
 - 后端下发的菜单名与 dict/enum 标签不属于前端文案，不进 i18n 文件。

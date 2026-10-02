@@ -18,11 +18,6 @@ export default {
   version: '2.1.1-SNAPSHOT',
 
   /**
-   * 界面语言：zh 中文 / en 英文（由 i18n 读取，不支持运行时切换）
-   */
-  language: 'zh',
-
-  /**
    * 首页路径
    */
   homePath: '/dashboard',

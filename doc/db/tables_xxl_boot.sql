@@ -244,22 +244,22 @@ VALUES (1, 1, 1, now(), now()),
        (2, 2, 2, now(), now());
 
 INSERT INTO `xxl_boot_resource` (`id`, `parent_id`, `name`, `type`, `permission`, `url`, `icon`, `order`, `status`, `visible`, `add_time`, `update_time`)
-VALUES (1, 0, '首页', 1, 'dashboard', '/dashboard', 'fa-home', 100, 0, 0, now(), now()),
-       (2, 0, '权限管理', 0, 'authz', '/authz', 'fa-users', 900, 0, 0, now(), now()),
-       (3, 2, '用户管理', 1, 'authz:user', '/authz/user', '', 901, 0, 0, now(), now()),
-       (4, 2, '角色管理', 1, 'authz:role', '/authz/role', '', 902, 0, 0, now(), now()),
-       (5, 2, '资源管理', 1, 'authz:resource', '/authz/resource', '', 903, 0, 0, now(), now()),
-       (6, 2, '组织管理', 1, 'authz:org', '/authz/org', '', 904, 0, 0, now(), now()),
-       (7, 0, '系统管理', 0, 'system', '/system', 'fa-cogs', 910, 0, 0, now(), now()),
-       (8, 7, '字典管理', 1, 'system:dict', '/system/dict', '', 911, 0, 0, now(), now()),
-       (9, 7, '字典项管理', 1, 'system:dict', '/system/dict/data', '', 911, 0, 1, now(), now()),
-       (10, 7, '配置管理', 1, 'system:config', '/system/config', '', 912, 0, 0, now(), now()),
-       (11, 7, '站内消息', 1, 'system:message', '/system/message', '', 913, 0, 0, now(), now()),
-       (12, 7, '审计日志', 1, 'system:log', '/system/log', '', 914, 0, 0, now(), now()),
-       (13, 0, '系统工具', 0, 'tool', '/tool', 'fa-wrench', 920, 0, 0, now(), now()),
-       (14, 13, '代码生成', 1, 'tool:codegen', '/tool/codegen', '', 921, 0, 0, now(), now()),
-       (15, 13, '表单构建', 1, 'tool:pagegen', '/tool/pagegen', '', 922, 0, 0, now(), now()),
-       (16, 0, '帮助中心', 1, 'help', '/help', 'fa-book', 930, 0, 0, now(), now());
+VALUES (1, 0, '首页', 1, 'dashboard', '/dashboard', 'dashboard', 100, 0, 0, now(), now()),
+       (2, 0, '权限管理', 0, 'authz', '/authz', 'monitor', 900, 0, 0, now(), now()),
+       (3, 2, '用户管理', 1, 'authz:user', '/authz/user', 'user', 901, 0, 0, now(), now()),
+       (4, 2, '角色管理', 1, 'authz:role', '/authz/role', 'peoples', 902, 0, 0, now(), now()),
+       (5, 2, '资源管理', 1, 'authz:resource', '/authz/resource', 'tree-table', 903, 0, 0, now(), now()),
+       (6, 2, '组织管理', 1, 'authz:org', '/authz/org', 'tree', 904, 0, 0, now(), now()),
+       (7, 0, '系统管理', 0, 'system', '/system', 'system', 910, 0, 0, now(), now()),
+       (8, 7, '字典管理', 1, 'system:dict', '/system/dict', 'dict', 911, 0, 0, now(), now()),
+       (9, 7, '字典项管理', 1, 'system:dict', '/system/dict/data', 'dict', 911, 0, 1, now(), now()),
+       (10, 7, '配置管理', 1, 'system:config', '/system/config', 'edit', 912, 0, 0, now(), now()),
+       (11, 7, '站内消息', 1, 'system:message', '/system/message', 'message', 913, 0, 0, now(), now()),
+       (12, 7, '审计日志', 1, 'system:log', '/system/log', 'log', 914, 0, 0, now(), now()),
+       (13, 0, '系统工具', 0, 'tool', '/tool', 'tool', 920, 0, 0, now(), now()),
+       (14, 13, '代码生成', 1, 'tool:codegen', '/tool/codegen', 'build', 921, 0, 0, now(), now()),
+       (15, 13, '表单构建', 1, 'tool:pagegen', '/tool/pagegen', 'code', 922, 0, 0, now(), now()),
+       (16, 0, '帮助中心', 1, 'help', '/help', 'guide', 930, 0, 0, now(), now());
 
 INSERT INTO `xxl_boot_role_res` (`role_id`, `res_id`, `add_time`, `update_time`)
 VALUES (1, 1, now(), now()),
@@ -299,7 +299,8 @@ VALUES (0, 'XXL-BOOT | 快速开发平台', '<p><strong>XXL-BOOT </strong>是一
 ', 'admin', 0, now(), now());
 
 INSERT INTO `xxl_boot_config` (`name`, `key`, `value`, `status`, `remark`, `add_time`, `update_time`)
-VALUES ('系统配置-登录验证码启用开关', 'system.login.captcha.enabled', 'true', 0, 'true 开启，false 关闭', now(), now());
+VALUES ('系统配置-登录验证码启用开关', 'system.login.captcha.enabled', 'true', 0, 'true 开启，false 关闭', now(), now()),
+       ('系统配置-界面语言', 'system.i18n.language', 'zh', 0, 'zh 中文，en 英文', now(), now());
 
 INSERT INTO xxl_boot.xxl_boot_dict (id, name, type, status, add_time, update_time, remark)
 VALUES (1, '用户性别', 'sex', 0, '2026-08-02 02:33:53', '2026-08-02 02:33:53', null);

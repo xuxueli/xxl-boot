@@ -7,9 +7,6 @@ import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
-import elZhCn from 'element-plus/es/locale/lang/zh-cn'
-import elEn from 'element-plus/es/locale/lang/en'
-import { LANG } from '@/i18n'
 
 // 核心模块
 import App from '@/App.vue'
@@ -34,7 +31,7 @@ const app = createApp(App)
 app.use(router)
 app.use(store)
 app.use(ElementPlus, {
-  locale: LANG === 'en' ? elEn : elZhCn,
+  // 语言包由 App.vue 的 el-config-provider 响应式提供（以后端配置为准）
   size: (localStorage.getItem(FONTSIZE_KEY) || 'default') as AppSize
 })
 

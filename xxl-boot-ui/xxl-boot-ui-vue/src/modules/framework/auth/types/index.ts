@@ -3,6 +3,8 @@
  * 覆盖登录入参、验证码数据结构。
  */
 
+import type { I18nLang } from '@/i18n'
+
 /**
  * 登录入参
  * 对应 /auth/login 登录接口请求体
@@ -25,4 +27,14 @@ export interface CaptchaData {
   image: string
   /** 验证码标识 */
   uuid: string
+}
+
+/**
+ * 系统基础配置结构。
+ */
+export interface BaseConfig {
+  /** 界面语言：zh/en */
+  language: I18nLang
+  /** 登录验证码开关 */
+  captchaEnabled: boolean
 }

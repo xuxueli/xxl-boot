@@ -1,80 +1,65 @@
 /**
  * i18n - 前端国际化文案中心
  *
- * 功能：文案统一维护于 src/i18n/locales/{zh,en}.json（JSON 数据，业界标准），
- *       本模块负责收集合并；当前语言由 default-settings.ts 的 language 配置控制（不支持运行时切换）。
+ * 功能：文案维护于 src/i18n/locales/{zh,en}.json；语言默认 zh，由后端基础配置经 setLang 同步；
+ *       新增语言仅在 bundles 追加一行即可（I18nLang 类型与文案表随之自动派生）；
+ *       语言变更后由根组件整树重挂载刷新文案。
  *
  * @author xuxueli 2026-09-05
  */
-import defaultSettings from '@/default-settings';
 import en from './locales/en.json';
 import zh from './locales/zh.json';
 
-/** 支持的语言 */
-export type I18nLang = 'zh' | 'en';
+/** 语言注册表：新增语言仅需追加一行 */
+const bundles = { zh, en } as const;
 
-/** 当前语言：由 default-settings.ts 配置，编译期固定 */
-export const LANG: I18nLang = (defaultSettings.language as I18nLang) || 'zh';
+/** 支持的语言（由注册表派生，禁止另行维护） */
+export type I18nLang = keyof typeof bundles;
 
-/** 文案 key 联合类型：由 zh 文案对象推导，提供编译期补全与拼写校验（zh/en 始终保持成对） */
-export type MessageKey = DeepKey<typeof zh>;
+/** 默认语言 */
+const DEFAULT_LANG: I18nLang = 'zh';
 
-type DeepKey<T> = T extends object
-  ? { [K in keyof T]: T[K] extends object
-      ? `${K & string}.${DeepKey<T[K]>}`
-      : K & string
-    }[keyof T]
-  : never;
+/** 当前语言：默认 zh，非法值回退默认 */
+let lang: I18nLang = DEFAULT_LANG;
 
-/** 插值参数：数组按下标 {0}{1} 顺序替换；对象按 {name} 键名替换 */
-export type I18nArgs = Array<string | number> | Record<string, string | number>;
+/** 获取当前语言 */
+export const getLang = (): I18nLang => lang;
 
-/* 构造期将嵌套文案拍平为 Map：key → 文案，避免运行时逐层取值与反复 split */
-function flatten(
-  data: Record<string, unknown>,
-  prefix = '',
-  out = new Map<string, string>()
-): Map<string, string> {
-  for (const [k, v] of Object.entries(data)) {
-    const path = prefix ? `${prefix}.${k}` : k;
-    if (v != null && typeof v === 'object') {
-      flatten(v as Record<string, unknown>, path, out);
-    } else {
-      out.set(path, String(v));
-    }
-  }
-  return out;
-}
-
-const messages: Record<I18nLang, Map<string, string>> = {
-  zh: flatten(zh),
-  en: flatten(en)
+/** 设置当前语言（由后端基础配置同步，非法值回退默认） */
+export const setLang = (value?: string): void => {
+  lang = value != null && value in bundles ? (value as I18nLang) : DEFAULT_LANG;
 };
 
-/** 单次正则插值：{0}{1} / {name} 一次性替换，参数缺失时保留占位符 */
-function interpolate(tpl: string, args: I18nArgs): string {
-  if (Array.isArray(args)) {
-    return tpl.replace(/\{(\d+)\}/g, (raw, i: string) => {
-      const v = args[Number(i)];
-      return v == null ? raw : String(v);
-    });
-  }
-  return tpl.replace(/\{(\w+)\}/g, (raw, name: string) => {
-    const v = args[name];
-    return v == null ? raw : String(v);
-  });
-}
+/** 文案 key 联合类型：由 zh 文案推导，提供编译期补全与拼写校验（各语言成对） */
+export type MessageKey = DeepKey<typeof zh>;
+type DeepKey<T> = T extends object
+  ? { [K in keyof T]: T[K] extends object ? `${K & string}.${DeepKey<T[K]>}` : K & string }[keyof T]
+  : never;
+
+/** 拍平嵌套文案：{ a: { b: 'x' } } → { 'a.b': 'x' } */
+const flat = (data: Record<string, unknown>, prefix = ''): Record<string, string> =>
+  Object.entries(data).reduce((out, [k, v]) => {
+    const key = prefix ? `${prefix}.${k}` : k;
+    return Object.assign(
+      out,
+      v && typeof v === 'object' ? flat(v as Record<string, unknown>, key) : { [key]: String(v) },
+    );
+  }, {} as Record<string, string>);
+
+const messages = Object.fromEntries(
+  Object.entries(bundles).map(([key, value]) => [key, flat(value)]),
+) as Record<I18nLang, Record<string, string>>;
 
 /**
- * 翻译：按当前语言取文案，缺失时回退中文，仍无则返回 key 本身
+ * 翻译：按当前语言取文案，缺失回退默认语言，再缺失返回 key；支持 {0}/{name} 插值
+ *
  * @param key  文案 key，如 'system.message.title'
- * @param args 插值参数：数组按下标 {0}{1} 顺序替换；对象按 {name} 键名替换
+ * @param args 插值参数：数组按下标 {0}{1}、对象按 {name} 取值
  * @returns 翻译后的文案
  */
-export function t(key: MessageKey, args?: I18nArgs): string {
-  const raw = messages[LANG].get(key) ?? messages.zh.get(key) ?? key;
-  if (!args || raw.indexOf('{') === -1) return raw;
-  return interpolate(raw, args);
+export function t(key: MessageKey, args?: Array<string | number> | Record<string, string | number>): string {
+  const raw = messages[lang][key] ?? messages[DEFAULT_LANG][key] ?? key;
+  if (!args) return raw;
+  const vars = args as Record<string, string | number>;
+  return raw.replace(/\{(\w+)\}/g, (placeholder, name) => (vars[name] == null ? placeholder : String(vars[name])));
 }
-
-export default { t, LANG };

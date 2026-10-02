@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { CaptchaData } from '../types'
+import type { BaseConfig, CaptchaData } from '../types'
 import type { LoginInfo, MenuRoute, Response } from '@/types'
 
 /**
@@ -77,6 +77,20 @@ export function getCodeImg(): Promise<Response<CaptchaData>> {
 export const getRouters = (): Promise<Response<MenuRoute[]>> => {
   return request({
     url: '/getRouters',
+    method: 'get'
+  })
+}
+
+/**
+ * 加载系统基础配置（界面语言、登录验证码开关）。
+ * @returns 基础配置数据。
+ */
+export function loadBaseConfig(): Promise<Response<BaseConfig>> {
+  return request({
+    url: '/loadBaseConfig',
+    headers: {
+      isToken: false
+    },
     method: 'get'
   })
 }

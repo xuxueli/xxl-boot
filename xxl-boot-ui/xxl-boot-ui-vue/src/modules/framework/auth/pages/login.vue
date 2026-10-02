@@ -70,11 +70,11 @@
 // 导入依赖
 import { t } from '@/i18n'
 import { getCodeImg } from '../api'
-import { useUserStore } from '@/store'
+import { useUserStore, useSettingsStore } from '@/store'
 import defaultSettings from '@/default-settings'
 import type { LoginParams } from '@/modules/framework/auth/types'
 import type { FormInstance, FormRules } from 'element-plus'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { SvgIcon } from '@/components'
 
@@ -82,6 +82,7 @@ const title = t('app.title') // 系统标题
 const brandName = defaultSettings.brandName // 品牌名称
 const footerContent = defaultSettings.footerContent // 页脚版权信息
 const userStore = useUserStore()
+const settingsStore = useSettingsStore() // 系统设置（含后端基础配置）
 const route = useRoute() // 路由
 const router = useRouter() // 路由
 const loginRef = ref<FormInstance>() // 登录表单 ref
@@ -104,7 +105,7 @@ const loginRules: FormRules = {
 
 const codeUrl = ref('') // 验证码图片 base64
 const loading = ref(false) // 登录按钮 loading
-const captchaEnabled = ref(true) // 验证码开关（默认开启，实际由后端 /auth/captcha 返回的 enable 决定）
+const captchaEnabled = computed(() => settingsStore.captchaEnabled) // 验证码开关（后端系统配置，经基础配置同步）
 const redirect = ref<string>() // 登录后重定向地址
 
 // 监听路由参数，获取重定向地址
@@ -153,7 +154,6 @@ function handleLogin() {
 /** 获取验证码图片，根据开关控制显示 */
 function getCode() {
   getCodeImg().then((res) => {
-    captchaEnabled.value = res.data.enable
     codeUrl.value = res.data.image
     loginForm.value.captchaUuid = res.data.uuid
   })

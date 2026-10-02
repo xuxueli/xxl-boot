@@ -1,8 +1,11 @@
 package com.xxl.boot.api.framework.controller.base;
 
 import com.xxl.boot.api.framework.constant.enums.ResourceTypeEnum;
+import com.xxl.boot.api.framework.model.dto.BaseConfigDTO;
 import com.xxl.boot.api.framework.model.dto.MetaVo;
 import com.xxl.boot.api.framework.model.dto.RouterVo;
+import com.xxl.boot.api.framework.model.entity.Config;
+import com.xxl.boot.api.framework.service.ConfigService;
 import com.xxl.boot.api.framework.service.ResourceService;
 import com.xxl.boot.api.framework.util.I18nUtil;
 import com.xxl.sso.core.annotation.XxlSso;
@@ -33,6 +36,9 @@ public class IndexController {
 	@Resource
 	private ResourceService resourceService;
 
+	@Resource
+	private ConfigService configService;
+
     // ---------------------- index ----------------------
 
 	@RequestMapping("/")
@@ -42,6 +48,27 @@ public class IndexController {
                 I18nUtil.getString("admin_name_full"),
                 I18nUtil.getString("admin_version")
         );
+	}
+
+
+	// ---------------------- loadBaseConfig ----------------------
+
+	/**
+	 * 加载系统基础配置
+	 *
+	 * 返回：界面语言（后端系统配置，本地缓存）、登录验证码开关
+	 */
+	@RequestMapping("/loadBaseConfig")
+	@XxlSso(login = false)
+	public Response<BaseConfigDTO> loadBaseConfig() {
+		BaseConfigDTO baseConfigDTO = new BaseConfigDTO();
+		baseConfigDTO.setLanguage(I18nUtil.getI18n());
+
+		// 登录验证码开关：从系统配置中读取（配置Key：system.login.captcha.enabled，值为 true/false）
+		Config captchaConfig = configService.loadByKeyWithCache("system.login.captcha.enabled").getData();
+		baseConfigDTO.setCaptchaEnabled(captchaConfig != null && Boolean.parseBoolean(captchaConfig.getValue()));
+
+		return Response.ofSuccess(baseConfigDTO);
 	}
 
 

@@ -5,6 +5,9 @@ import com.xxl.boot.api.framework.model.adaptor.ConfigAdaptor;
 import com.xxl.boot.api.framework.model.dto.ConfigDTO;
 import com.xxl.boot.api.framework.model.entity.Config;
 import com.xxl.boot.api.framework.service.ConfigService;
+import com.xxl.tool.cache.CacheTool;
+import com.xxl.tool.cache.iface.Cache;
+import com.xxl.tool.cache.iface.CacheLoader;
 import com.xxl.tool.core.RegexTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.response.PageModel;
@@ -24,6 +27,13 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Resource
     private ConfigMapper configMapper;
+
+    /**
+     * 配置本地缓存：Key → Config，60s 过期（初始化场景专用，降低重复查询）
+     */
+    private final Cache<String, Config> configCache = CacheTool.<String, Config>newLRUCache(1000)
+            .expireAfterWrite(30 * 1000L)
+            .build();
 
     /**
      * 新增配置
@@ -88,6 +98,20 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Response<Config> loadByKey(String key) {
         Config record = configMapper.loadByKey(key);
+        return Response.ofSuccess(record);
+    }
+
+    /**
+     * 按配置Key查询（带本地缓存，60s 过期）
+     */
+    @Override
+    public Response<Config> loadByKeyWithCache(String key) {
+        Config record = configCache.get(key, new CacheLoader<String, Config>() {
+            @Override
+            public Config load(String cacheKey) {
+                return configMapper.loadByKey(cacheKey);
+            }
+        });
         return Response.ofSuccess(record);
     }
 

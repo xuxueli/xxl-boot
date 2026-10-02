@@ -9,6 +9,8 @@
 import type { ProLayoutProps } from '@ant-design/pro-components';
 import { create } from 'zustand';
 import defaultSettings from '@/default-settings';
+import { getLang, setLang, type I18nLang } from '@/i18n';
+import { loadBaseConfig as fetchBaseConfig } from '@/modules/framework/auth/api';
 
 /** 主题设置持久化：localStorage 键名 */
 const SETTINGS_KEY = 'boot-layout-setting';
@@ -60,6 +62,12 @@ interface SettingsState {
   saveSettings: () => void;
   /** 重置设置：恢复默认配置并清除 localStorage 缓存 */
   resetSettings: () => void;
+  /** 界面语言：zh/en（与后端系统配置保持一致） */
+  language: I18nLang;
+  /** 登录验证码开关（与后端系统配置保持一致） */
+  captchaEnabled: boolean;
+  /** 加载系统基础配置（界面语言、登录验证码开关） */
+  loadBaseConfig: () => Promise<void>;
 }
 
 export const useSettingsStore = create<SettingsState>()((set, get) => ({
@@ -69,6 +77,10 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   settingDrawerOpen: false,
   /* 初始折叠状态：优先取 localStorage 缓存，否则展开 */
   collapsed: loadCollapsed(),
+  /* 初始界面语言：默认 zh（i18n 兜底），启动后由后端基础配置同步 */
+  language: getLang(),
+  /* 初始验证码开关：默认开启，启动后由后端基础配置同步 */
+  captchaEnabled: true,
 
   /**
    * 更新布局设置
@@ -105,5 +117,25 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   setCollapsed: (collapsed) => {
     localStorage.setItem(COLLAPSED_KEY, String(collapsed));
     set({ collapsed });
+  },
+
+  /**
+   * 加载系统基础配置：界面语言、登录验证码开关
+   *  - 界面语言同步至 i18n，保证前端语言与后端系统配置一致；
+   *  - 加载失败保持默认配置。
+   */
+  loadBaseConfig: async () => {
+    try {
+      const res = await fetchBaseConfig();
+      const config = res.data;
+      if (!config) {
+        return;
+      }
+      setLang(config.language);
+      set({ language: config.language, captchaEnabled: config.captchaEnabled });
+    } catch (error) {
+      /* 基础配置加载失败不阻塞应用，保持默认配置 */
+      console.error('loadBaseConfig failed', error);
+    }
   },
 }));

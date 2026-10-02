@@ -8,9 +8,10 @@
 import { defineStore } from 'pinia'
 import { nextTick } from 'vue'
 import defaultSettings from '@/default-settings'
-import { t } from '@/i18n'
+import { t, setLang, getLang } from '@/i18n'
 import { useDark, useToggle } from '@vueuse/core'
 import { handleThemeStyle } from '@/utils/theme'
+import { loadBaseConfig as fetchBaseConfig } from '@/modules/framework/auth/api'
 
 // 初始化暗黑模式：跟随系统
 const isDark = useDark({
@@ -52,6 +53,10 @@ interface SettingsState {
   dynamicTitle: boolean
   /** 是否显示底部版权 */
   footerVisible: boolean
+  /** 界面语言：zh/en（与后端系统配置保持一致） */
+  language: string
+  /** 登录验证码开关（与后端系统配置保持一致） */
+  captchaEnabled: boolean
 }
 
 /**
@@ -96,7 +101,11 @@ const useSettingsStore = defineStore('settings', {
     // 暗黑模式-是否
     isDark: isDark.value,
     // 系统配置：用户已保存配置优先，否则使用默认配置
-    ...pickConfigurable({ ...defaultSettings, ...storageSetting })
+    ...pickConfigurable({ ...defaultSettings, ...storageSetting }),
+    // 界面语言：默认 zh（i18n 兜底），启动后由后端基础配置同步
+    language: getLang(),
+    // 登录验证码开关：默认开启，启动后由后端基础配置同步
+    captchaEnabled: true
   }),
   /**
    * 动作方法定义
@@ -195,6 +204,26 @@ const useSettingsStore = defineStore('settings', {
      */
     setNavType(val: string) {
       this.navType = val
+    },
+    /**
+     * 加载系统基础配置（界面语言、登录验证码开关）
+     *   - 界面语言：同步至 i18n，保证前端语言与后端系统配置一致
+     *   - 加载失败：保持默认配置
+     */
+    async loadBaseConfig() {
+      try {
+        const response = await fetchBaseConfig()
+        const config = response.data
+        if (!config) {
+          return
+        }
+        this.language = config.language
+        this.captchaEnabled = config.captchaEnabled
+        setLang(config.language)
+      } catch (error) {
+        /* 基础配置加载失败不阻塞应用，保持默认配置 */
+        console.error('loadBaseConfig failed', error)
+      }
     }
   }
 })
