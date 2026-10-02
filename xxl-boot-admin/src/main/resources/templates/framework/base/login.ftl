@@ -20,7 +20,7 @@
 		</div>
 		<form id="loginForm" method="post" >
 			<div class="login-box-body">
-				<p class="login-box-msg">${I18n.admin_name}</p>
+				<p class="login-box-msg" style="font-size: 16px;">${I18n.admin_name}</p>
 				<div class="form-group has-feedback">
 	            	<input type="text" name="userName" class="form-control" placeholder="${I18n.login_username_placeholder}"  maxlength="20" >
 	            	<span class="glyphicon glyphicon-envelope form-control-feedback"></span>

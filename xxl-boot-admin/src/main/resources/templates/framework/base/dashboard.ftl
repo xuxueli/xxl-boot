@@ -64,8 +64,15 @@
 
         </div>
 
-        <#-- 指标卡片图标样式：浅色底 + 彩色图标，参考 UI dashboard -->
+        <#-- 指标卡片样式：压缩高度 + 浅色底彩色图标，参考 UI dashboard -->
         <style>
+            /* 指标卡片：压缩 AdminLTE 默认 90px 的高度，控制在 70px */
+            .info-box { min-height: 70px; margin-bottom: 15px; }
+            .info-box .info-box-icon { height: 70px; width: 70px; font-size: 30px; line-height: 70px; }
+            .info-box .info-box-content { margin-left: 70px; padding: 10px; }
+            .info-box .info-box-text { font-size: 13px; }
+            .info-box .info-box-number { font-size: 20px; font-weight: 600; }
+            /* 图标配色 */
             .info-box-icon.icon-user { background-color: #36a3f7; }
             .info-box-icon.icon-role { background-color: #6ab8a8; }
             .info-box-icon.icon-log { background-color: #e0b06b; }
@@ -178,39 +185,24 @@
 <script>
 $(function () {
 
-    /**
-     * 站内消息：点击查看详情
-     */
-    $("#messageList").on('click', '.showdetail',function() {
+    /* --- 审计日志：折线图 --- */
 
-        // fill
-        $('#showMessageModal .title').text( $(this).attr('data-title') );
-        $('#showMessageModal .msg-content').html( $(this).attr('data-content') );
-        $('#showMessageModal .sender').text( $(this).attr('data-sender') );
-        $('#showMessageModal .addTime').text( $(this).attr('data-addTime') );
+    var lineChart = null;   // ECharts 实例，复用避免重复创建
 
-        // show
-        $('#showMessageModal').modal({backdrop: false, keyboard: false}).modal('show');
-    });
-
-    /**
-     * 审计日志趋势：折线图
-     *
-     * @param days 统计天数
-     */
-    function loadChart(days) {
+    // 按天数加载审计日志趋势并渲染
+    function loadLogTrend(days) {
         $.ajax({
-            type : 'POST',
-            url : base_url + '/dashboard/logTrend',
-            data : { 'days': days },
-            dataType : "json",
-            success : function(data){
+            type: 'POST',
+            url: base_url + '/dashboard/logTrend',
+            data: { days: days },
+            dataType: 'json',
+            success: function (data) {
                 if (data.code == 200) {
-                    lineChartInit(data.data, days)
+                    lineChartRender(data.data, days);
                 } else {
                     layer.open({
                         title: I18n.system_tips,
-                        btn: [ I18n.system_ok ],
+                        btn: [I18n.system_ok],
                         content: (data.msg || '图表数据加载失败'),
                         icon: '2'
                     });
@@ -219,93 +211,97 @@ $(function () {
         });
     }
 
-    /**
-     * 折线图初始化：按天补全日期序列，无数据日期补 0
-     *
-     * @param data 后端返回 [{date, count}, ...]
-     * @param days 统计天数
-     */
-    function lineChartInit(data, days) {
+    // 渲染折线图：首次创建实例并监听尺寸变化，之后仅更新数据
+    function lineChartRender(data, days) {
+        if (!lineChart) {
+            var el = document.getElementById('lineChart');
+            lineChart = echarts.init(el);
+            // 容器宽度变化时自适应重绘：仪表盘运行在 iframe 中，window.resize 不可靠，故监听容器自身
+            if (window.ResizeObserver) {
+                new ResizeObserver(function () { lineChart.resize(); }).observe(el);
+            } else {
+                $(window).on('resize', function () { lineChart.resize(); });
+            }
+        }
+        lineChart.setOption(lineChartOption(data, days));
+    }
 
-        // 1、转为 Map：date → count，方便按日期查找
-        var dateMap = {};
+    // 构建折线图配置：按天补全日期序列，无数据日期补 0
+    function lineChartOption(data, days) {
+
+        // 转为 Map：date → count，方便按日期查找
+        var countMap = {};
         $.each(data || [], function (i, item) {
-            dateMap[item.date] = item.count;
+            countMap[item.date] = item.count;
         });
 
-        // 2、生成连续日期序列，每天对应一个数据点
+        // 生成连续日期序列，每天对应一个数据点
         var dates = [];
         var counts = [];
-        var now = new Date();
+        var today = new Date();
         for (var i = days - 1; i >= 0; i--) {
-            var d = new Date(now);
-            d.setDate(d.getDate() - i);
-            var key = formatDate(d);
+            var date = new Date(today);
+            date.setDate(date.getDate() - i);
+            var key = formatDate(date);
             dates.push(key);
-            counts.push(dateMap[key] || 0); // 无数据日期补 0
+            counts.push(countMap[key] || 0);
         }
 
-        // 3、渲染折线图（渐变面积 + 平滑曲线）
-        var option = {
-            animation: false,                                  // 关闭开场动画，数据一次性渲染
-            tooltip: { trigger: 'axis' },                      // 悬浮提示：轴触发
-            grid: { left: 40, right: 20, bottom: 30, top: 20 }, // 图表边距
+        // 渲染折线图（渐变面积 + 平滑曲线）
+        return {
+            animation: false,
+            tooltip: { trigger: 'axis' },
+            grid: { left: 40, right: 20, bottom: 30, top: 20 },
             // X轴：日期
-            xAxis: {
-                type: 'category',
-                data: dates,
-                axisLabel: { fontSize: 11, color: '#909399' }  // X 轴标签样式
-            },
+            xAxis: { type: 'category', data: dates, axisLabel: { fontSize: 11, color: '#909399' } },
             // Y轴：数量
-            yAxis: {
-                type: 'value',
-                minInterval: 1,                                // Y 轴最小间隔为 1
-                axisLabel: { fontSize: 11, color: '#909399' }
-            },
+            yAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 11, color: '#909399' } },
             // 数据：折线
             series: [{
-                data: counts,
                 type: 'line',
-                smooth: true,                                  // 平滑曲线
-                lineStyle: { width: 2, color: '#3c8dbc' },     // 折线样式
-                areaStyle: {                                   // 渐变面积填充
+                data: counts,
+                smooth: true,
+                itemStyle: { color: '#3c8dbc' },                            // 数据点颜色
+                lineStyle: { width: 2, color: '#3c8dbc' },                  // 折线样式
+                areaStyle: {                                                // 渐变面积填充
                     color: {
-                        type: 'linear',
-                        x: 0, y: 0, x2: 0, y2: 1,
+                        type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
                         colorStops: [
-                            { offset: 0, color: 'rgba(60,141,188,0.3)' }, // 顶部：30% 透明度
-                            { offset: 1, color: 'rgba(60,141,188,0.02)' } // 底部：2% 透明度
+                            { offset: 0, color: 'rgba(60,141,188,0.3)' },   // 顶部：30% 透明度
+                            { offset: 1, color: 'rgba(60,141,188,0.02)' }   // 底部：2% 透明度
                         ]
                     }
-                },
-                itemStyle: { color: '#3c8dbc' }                // 数据点颜色
+                }
             }]
         };
-
-        var chart = echarts.init(document.getElementById('lineChart'));
-        chart.setOption(option);
     }
 
-    /**
-     * 日期格式化：yyyy-MM-dd
-     */
+    // 日期格式化：yyyy-MM-dd
     function formatDate(date) {
-        var y = date.getFullYear();
-        var m = (date.getMonth() + 1);
+        var m = date.getMonth() + 1;
         var d = date.getDate();
-        m = m < 10 ? ('0' + m) : m;
-        d = d < 10 ? ('0' + d) : d;
-        return y + '-' + m + '-' + d;
+        return date.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d);
     }
 
-    // 初始化：默认加载 30 天数据
-    loadChart(30);
+    /* --- 站内消息：点击查看详情 --- */
+
+    $("#messageList").on('click', '.showdetail', function () {
+        $('#showMessageModal .title').text($(this).attr('data-title'));
+        $('#showMessageModal .msg-content').html($(this).attr('data-content'));
+        $('#showMessageModal .sender').text($(this).attr('data-sender'));
+        $('#showMessageModal .addTime').text($(this).attr('data-addTime'));
+        $('#showMessageModal').modal({ backdrop: false, keyboard: false }).modal('show');
+    });
+
+    /* --- 页面初始化 --- */
+
+    loadLogTrend(30);
 
     // 天数切换：重新加载图表
     $('.chart-days').on('click', function () {
         $('.chart-days').removeClass('active');
         $(this).addClass('active');
-        loadChart($(this).attr('data-days'));
+        loadLogTrend($(this).attr('data-days'));
     });
 
 });
