@@ -1143,7 +1143,7 @@ public @interface Permission {
 - 4、【调整】AI能力合并至 [XXL-AI](https://github.com/xuxueli/xxl-ai) 项目，后续AI能力持续在 XXL-AI 项目迭代升级；
 - 5、【优化】前后端交互参数规范化：复杂参数统一使用Post请求体传输，非复杂参数使用Get请求URL传输，存量接口统一改造并沉淀SKILL；
 - 6、【优化】I18N 国际化：前后端分离项目，前后端文案内容各自维护，选择语言后端固定配置（本地缓存）、前端语言与后端保持一致；
-- 7、【优化】单体版本，iframe弹框居中优化；
+- 7、【优化】弹框交互优化：单体版本项目，iframe中内容弹框(modal/layer)，支持自适应性居中并在顶层展示；
 
 ### TODO LIST
 - 1、单体版本优化：
