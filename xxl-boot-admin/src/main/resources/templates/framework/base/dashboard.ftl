@@ -247,6 +247,7 @@ $(function () {
 
         // 3、渲染折线图（渐变面积 + 平滑曲线）
         var option = {
+            animation: false,                                  // 关闭开场动画，数据一次性渲染
             tooltip: { trigger: 'axis' },                      // 悬浮提示：轴触发
             grid: { left: 40, right: 20, bottom: 30, top: 20 }, // 图表边距
             // X轴：日期

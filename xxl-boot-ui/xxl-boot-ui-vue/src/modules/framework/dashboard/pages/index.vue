@@ -199,6 +199,7 @@ function loadChart() {
     }
     chartInstance = echarts.init(chartRef.value as HTMLElement)
     chartInstance.setOption({
+      animation: false, // 关闭开场动画，数据一次性渲染
       tooltip: { trigger: 'axis' }, // 悬浮提示：轴触发
       grid: { left: 40, right: 20, bottom: 30, top: 20 }, // 图表边距
       // X轴：日期

@@ -172,6 +172,7 @@ const Dashboard = () => {
     if (!chartRef.current) return;
     const chart = echarts.init(chartRef.current);
     chart.setOption({
+      animation: false, // 关闭开场动画，数据一次性渲染
       tooltip: { trigger: 'axis' },
       grid: { left: 40, right: 20, bottom: 30, top: 20 },
       // X轴：日期，标签横向展示，过密时自动隐藏部分刻度
