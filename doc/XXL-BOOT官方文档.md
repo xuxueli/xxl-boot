@@ -1128,11 +1128,11 @@ public @interface Permission {
     （详细操作步骤，参考 “4.1 方式一：AI + SKILL 驱动开发”）
 
     ```
-    // 1、进入仓库：使用 AI 编程助手（如 opencode）打开 XXL-BOOT 仓库，根据项目运行模式选择对应 SKILL（xxl-boot-monolith / xxl-boot-vue / xxl-boot-react）；
-    // 2、输入需求：明确业务诉求，将 诉求 输入给 AI（AI会主动进行需求澄清）
-    // 3、AI完成需求：AI 会自动加载对应 SKILL，按“需求落盘 → 澄清 → 建表 → 后端 → 前端 → 菜单权限 → 验证”标准流程直生代码并落位。
-    // 4、AI验收需求：AI 启动服务联调验收，并按校验清单完整自检交付。
-    // 5、人工复核：人工复核验收，确认无误后合并PR，即可上线交付。
+    1、进入仓库：使用 AI 编程助手（如 opencode）打开 XXL-BOOT 仓库，根据项目运行模式选择对应 SKILL（xxl-boot-monolith / xxl-boot-vue / xxl-boot-react）；
+    2、输入需求：明确业务诉求，将 诉求 输入给 AI（AI会主动进行需求澄清）
+    3、AI完成需求：AI 会自动加载对应 SKILL，按“需求落盘 → 澄清 → 建表 → 后端 → 前端 → 菜单权限 → 验证”标准流程直生代码并落位。
+    4、AI验收需求：AI 启动服务联调验收，并按校验清单完整自检交付。
+    5、人工复核：人工复核验收，确认无误后合并PR，即可上线交付。
     ```
 </details>
 
@@ -1145,9 +1145,9 @@ public @interface Permission {
 - 4、【优化】前后端交互参数规范化：复杂参数统一使用Post请求体传输，非复杂参数使用Get请求URL传输，存量接口统一改造并沉淀SKILL；
 - 5、【优化】通用代码下沉 Tool 依赖层，代码结构优化；
 - 6、【调整】AI能力合并至 [XXL-AI](https://github.com/xuxueli/xxl-ai) 项目，后续AI能力持续在 XXL-AI 项目迭代升级；
-- 8、【升级】升级多项依赖至较新版本。
-- 9、【修复】前后端分离Vue版本，前端复制实效问题修复；
-- 10、【修复】前后端分离React版本，未登录redirect路径拼接问题修复；
+- 7、【升级】升级多项依赖至较新版本。
+- 8、【修复】前后端分离Vue版本，前端复制实效问题修复；
+- 9、【修复】前后端分离React版本，未登录redirect路径拼接问题修复；
 
 ### 版本 v2.2.1 Release Notes[ING]
 
