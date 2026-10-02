@@ -11,7 +11,7 @@ import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout, SettingDrawer } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
@@ -174,26 +174,88 @@ const AppLayout = () => {
   /* 侧边栏折叠状态：受控于 settingsStore，点击开关即时持久化 */
   const collapsed = useSettingsStore((s) => s.collapsed);
   /* 目录路径 → 第一个叶子路径 映射，供菜单点击跳转（避免目录 404） */
-  const dirRedirectMap = React.useMemo(
+  const dirRedirectMap = useMemo(
     () => buildDirRedirectMap(menuData),
     [menuData],
   );
 
+  /* 菜单数据：仅在 menuData 变化时重建，避免每次路由切换重新生成整棵菜单树与图标元素 */
+  const menuDataItems = useMemo(() => buildMenuData(menuData), [menuData]);
+
+  /* 菜单数据渲染：引用稳定，减少 ProLayout 内部菜单重渲染 */
+  const menuDataRender = useCallback(() => menuDataItems, [menuDataItems]);
+
+  /* 菜单点击跳转：目录项跳转其第一个叶子子项（避免 404），其余正常跳转 */
+  const menuItemRender = useCallback(
+    (item: MenuDataItem, dom: React.ReactNode) => {
+      const targetPath = dirRedirectMap[item.path as string] || item.path;
+      const label = item.icon ? renderMenuLabel(item) : dom;
+      return targetPath ? <Link to={targetPath}>{label}</Link> : label;
+    },
+    [dirRedirectMap],
+  );
+
+  /* 顶部操作区：全屏切换 + 站内消息（引用稳定） */
+  const actionsRender = useCallback(
+    () => [
+      <FullscreenButton key="fullscreen" />,
+      <HeaderMessage key="header-message" />,
+    ],
+    [],
+  );
+
+  /* 用户信息区：仅在用户变化时重建 */
+  const avatarProps = useMemo(
+    () => ({
+      title: (
+        <>
+          <UserOutlined style={{ fontSize: 18 }} />
+          <span
+            style={{ fontWeight: 'bold', paddingLeft: 2, paddingRight: 2 }}
+          >
+            {currentUser?.realName || currentUser?.userName}
+          </span>
+          <DownOutlined style={{ fontSize: 14 }} />
+        </>
+      ),
+      render: (_: unknown, avatarChildren: React.ReactNode) => (
+        <HeaderAvatar>{avatarChildren}</HeaderAvatar>
+      ),
+    }),
+    [currentUser],
+  );
+
+  /* 侧边栏折叠：切换时持久化到 localStorage（引用稳定） */
+  const handleCollapse = useCallback(
+    (isCollapsed: boolean) =>
+      useSettingsStore.getState().setCollapsed(isCollapsed),
+    [],
+  );
+
+  /* 菜单头部点击：回到首页 */
+  const handleMenuHeaderClick = useCallback(() => navigate('/'), [navigate]);
+
   /**
    * 保存设置：将当前设置持久化，刷新后保持
    */
-  const handleSaveSettings = () => {
+  const handleSaveSettings = useCallback(() => {
     useSettingsStore.getState().saveSettings();
     message.success(t('layout.settingSaved'));
-  };
+  }, [message]);
 
   /**
    * 重置设置：清除持久化设置，并恢复默认配置
    */
-  const handleResetSettings = () => {
+  const handleResetSettings = useCallback(() => {
     useSettingsStore.getState().resetSettings();
     message.success(t('layout.settingReset'));
-  };
+  }, [message]);
+
+  /* 底部区域：设置面板关闭页脚时返回 false 隐藏，否则渲染 Footer（引用稳定） */
+  const footerRender = useMemo(
+    () => (settings.footerRender === false ? false : () => <Footer />),
+    [settings.footerRender],
+  );
 
   return (
     // ProLayout：Ant Design Pro 提供的布局组件，支持菜单、面包屑、页脚、主题设置等功能
@@ -204,51 +266,26 @@ const AppLayout = () => {
       logo={settings.logo}
       location={location}
       // 左侧菜单：菜单以后端资源配置为准（getRouters 返回的树）
-      menuDataRender={() => buildMenuData(menuData)}
+      menuDataRender={menuDataRender}
       // 左侧菜单：点击菜单项跳转路由（目录项跳转其第一个叶子子项，避免 404；其他正常跳转；）
-      menuItemRender={(item, dom) => {
-        const targetPath = dirRedirectMap[item.path as string] || item.path;
-        // 叶子菜单项：pro-layout 仅第一级默认渲染 icon，这里统一手动渲染标题，保证二级及以下叶子项也展示 icon
-        const label = item.icon ? renderMenuLabel(item) : dom;
-        return targetPath ? <Link to={targetPath}>{label}</Link> : label;
-      }}
+      menuItemRender={menuItemRender}
       // 顶部面包屑：单层级页面（如首页、帮助中心）也展示面包屑
       breadcrumbProps={{ minLength: 1 }}
       // 顶部面包屑：只读展示，不支持点击跳转
       itemRender={(route) => <span>{route.title}</span>}
       // 顶部区域：全屏切换 + 站内消息
-      actionsRender={() => [
-        <FullscreenButton key="fullscreen" />,
-        <HeaderMessage key="header-message" />,
-      ]}
+      actionsRender={actionsRender}
       // 顶部区域：用户信息
-      avatarProps={{
-        title: (
-          <>
-            <UserOutlined style={{ fontSize: 18 }} />
-            <span
-              style={{ fontWeight: 'bold', paddingLeft: 2, paddingRight: 2 }}
-            >
-              {currentUser?.realName || currentUser?.userName}
-            </span>
-            <DownOutlined style={{ fontSize: 14 }} />
-          </>
-        ),
-        render: (_, avatarChildren) => (
-          <HeaderAvatar>{avatarChildren}</HeaderAvatar>
-        ),
-      }}
+      avatarProps={avatarProps}
       // 底部区域：页脚（设置面板关闭页脚时返回 false 隐藏，否则渲染 Footer）
-      footerRender={settings.footerRender === false ? false : () => <Footer />}
+      footerRender={footerRender}
       // 禁用断点：避免 antd Sider 挂载时按视口触发 onCollapse(false)，覆盖持久化的折叠状态
       breakpoint={false}
       // 侧边栏折叠：受控展开/收起，切换时持久化到 localStorage
       collapsed={collapsed}
-      onCollapse={(isCollapsed) =>
-        useSettingsStore.getState().setCollapsed(isCollapsed)
-      }
+      onCollapse={handleCollapse}
       // 左侧菜单头部：点击事件
-      onMenuHeaderClick={() => navigate('/')}
+      onMenuHeaderClick={handleMenuHeaderClick}
     >
       {/* 页面内容区域 */}
       <Outlet />
