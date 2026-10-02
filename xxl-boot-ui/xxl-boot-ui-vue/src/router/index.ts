@@ -140,7 +140,8 @@ router.beforeEach(async (to, from) => {
         // 路由初始化异常：退出登录
         await useUserStore().logout()
         const errMsg = err instanceof Error ? err.message : JSON.stringify(err)
-        ElMessage.error('Init Router Error:' + errMsg)
+        console.debug('Init Router Error:' + errMsg)
+        ElMessage.error(errMsg)
         return { path: '/' }
       }
     }
