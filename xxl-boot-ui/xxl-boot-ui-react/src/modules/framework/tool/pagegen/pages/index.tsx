@@ -68,6 +68,7 @@ import {
 import { createStyles } from 'antd-style';
 import React, { useMemo, useRef, useState } from 'react';
 import { t } from '@/i18n';
+import { copyToClipboard } from '@/utils/common';
 import CodeTypeDialog from './CodeTypeDialog';
 import type { FormConfig, FormWidget, WidgetType } from './config';
 import {
@@ -730,10 +731,10 @@ const PageGen = () => {
   /** 复制代码：弹框选择生成类型后复制 */
   const handleCopy = async (data: { type: string; fileName?: string }) => {
     const code = buildCode(data.type as 'file' | 'dialog');
-    try {
-      await navigator.clipboard.writeText(code);
+    const success = await copyToClipboard(code);
+    if (success) {
       message.success(t('tool.pagegen.codeCopied'));
-    } catch {
+    } else {
       message.error(t('tool.pagegen.copyFailed'));
     }
   };

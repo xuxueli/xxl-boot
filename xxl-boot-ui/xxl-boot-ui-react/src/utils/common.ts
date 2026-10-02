@@ -8,6 +8,7 @@
  *   4. tansParams  - 参数序列化（支持嵌套对象展开）
  *   5. blobValidate - 验证 blob 是否为合法文件数据
  *   6. deepClone   - 简易深克隆
+ *   7. copyToClipboard - 复制文本到剪贴板（含降级兜底）
  */
 
 // ==================== 日期 / 时间 ====================
@@ -207,4 +208,67 @@ export function deepClone<T>(source: T): T {
     }
   });
   return targetObj as T;
+}
+
+// ==================== 剪贴板 ====================
+
+/**
+ * 复制文本到剪贴板
+ * 优先异步剪贴板 API（安全上下文），不可用时降级 execCommand（兼容 HTTP）。
+ * @param text - 待复制文本
+ * @returns 是否复制成功
+ */
+export async function copyToClipboard(text: string): Promise<boolean> {
+  // 空文本直接视为失败：写入空串会清空剪贴板
+  if (!text) return false;
+
+  // 安全上下文（HTTPS / localhost）：优先用异步剪贴板 API
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // 非安全上下文 / 权限异常，继续走 execCommand 兜底
+    }
+  }
+
+  return execCommandCopy(text);
+}
+
+/**
+ * execCommand 兜底复制
+ * 仅靠临时 textarea 选区时，弹窗焦点陷阱等场景会复制为空，
+ * 故通过 copy 事件的 clipboardData.setData 显式写入，不依赖选区内容。
+ * @param text - 待复制文本
+ * @returns 是否复制成功
+ */
+function execCommandCopy(text: string): boolean {
+  // copy 事件中直接写入目标文本
+  let copied = false;
+  const handleCopy = (event: ClipboardEvent) => {
+    if (!event.clipboardData) return;
+    event.clipboardData.setData('text/plain', text);
+    event.preventDefault();
+    copied = true;
+  };
+  document.addEventListener('copy', handleCopy, true);
+
+  // 需要一个可编辑选区作为 execCommand 的触发上下文，移出视口避免影响页面
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.readOnly = true;
+  textarea.style.cssText = 'position:fixed;top:0;left:-9999px';
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  let ok = false;
+  try {
+    ok = document.execCommand('copy');
+  } catch {
+    ok = false;
+  } finally {
+    textarea.remove();
+    document.removeEventListener('copy', handleCopy, true);
+  }
+  return copied || ok;
 }

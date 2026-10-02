@@ -173,14 +173,14 @@ service.interceptors.response.use(
             isRelogin.show = false
           })
       }
-      return Promise.reject(t('request.sessionInvalid'))
+      return Promise.reject(new Error(t('request.sessionInvalid')))
     }
 
     // 3. 其他非成功码（非200）
     if (code !== 200) {
       const msg = data.msg || errorCode[String(code)] || errorCode.default
       modal.msgError(msg)
-      return Promise.reject(msg ? new Error(msg) : 'error')
+      return Promise.reject(new Error(msg))
     }
 
     // 4. 业务成功：返回 { code, msg, data }

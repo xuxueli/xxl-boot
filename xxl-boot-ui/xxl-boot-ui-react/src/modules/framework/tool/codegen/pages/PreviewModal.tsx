@@ -11,6 +11,7 @@ import React, {
 } from 'react';
 import { previewTable } from '@/modules/framework/tool/codegen/api';
 import { t } from '@/i18n';
+import { copyToClipboard } from '@/utils/common';
 
 export type PreviewModalRef = {
   open: (id: number) => void;
@@ -50,10 +51,10 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
 
   /** 复制代码 */
   const copyText = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
+    const success = await copyToClipboard(text);
+    if (success) {
       message.success(t('common.copied'));
-    } catch {
+    } else {
       message.error(t('tool.codegen.copyFailed'));
     }
   };

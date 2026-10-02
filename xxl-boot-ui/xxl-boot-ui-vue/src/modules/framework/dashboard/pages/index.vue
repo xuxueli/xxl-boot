@@ -110,6 +110,7 @@ const chartRef = ref<HTMLElement>()
 const chartDays = ref(30)
 const messageDetailRef = ref<InstanceType<typeof MessageDetailView>>()
 let chartInstance: ECharts | null = null
+let resizeObserver: ResizeObserver | null = null
 
 /**
  * init
@@ -118,12 +119,18 @@ onMounted(() => {
   loadStats()
   loadMessages()
   nextTick(loadChart)
+  // 容器尺寸变化时自适应重绘：窗口缩放、侧边栏折叠等场景
+  if (chartRef.value) {
+    resizeObserver = new ResizeObserver(() => chartInstance?.resize())
+    resizeObserver.observe(chartRef.value)
+  }
 })
 
 /**
  * destory
  */
 onUnmounted(() => {
+  resizeObserver?.disconnect()
   chartInstance?.dispose()
 })
 

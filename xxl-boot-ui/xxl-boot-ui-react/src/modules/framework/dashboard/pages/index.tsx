@@ -207,7 +207,11 @@ const Dashboard = () => {
         },
       ],
     });
+    // 容器尺寸变化时自适应重绘：窗口缩放、侧边栏折叠等场景
+    const resizeObserver = new ResizeObserver(() => chart.resize());
+    resizeObserver.observe(chartRef.current);
     return () => {
+      resizeObserver.disconnect();
       chart.dispose();
     };
   }, [trendData]);

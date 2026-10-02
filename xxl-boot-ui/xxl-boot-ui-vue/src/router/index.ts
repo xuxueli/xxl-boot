@@ -32,7 +32,7 @@ export const constantRoutes = [
   },
   // 首页：默认跳转 “/index”
   {
-    path: '',
+    path: '/',
     redirect: defaultSettings.homePath
   },
   // 个人中心：hidden 控制侧栏不显示
@@ -139,7 +139,11 @@ router.beforeEach(async (to, from) => {
       } catch (err) {
         // 路由初始化异常：退出登录
         await useUserStore().logout()
-        const errMsg = err instanceof Error ? err.message : JSON.stringify(err)
+        const errMsg = err instanceof Error ?
+            err.message
+            : typeof err === 'string'
+                ? err
+                : JSON.stringify(err)
         console.debug('Init Router Error:' + errMsg)
         ElMessage.error(errMsg)
         return { path: '/' }

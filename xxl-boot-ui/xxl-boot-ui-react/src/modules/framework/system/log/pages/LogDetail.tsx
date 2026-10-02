@@ -16,6 +16,7 @@ import React, {
   useState,
 } from 'react';
 import { t } from '@/i18n';
+import { copyToClipboard } from '@/utils/common';
 
 export type LogDetailRef = {
   open: (row: API.Log, moduleMap: Record<number, string>) => void;
@@ -119,17 +120,8 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
 
   /** 复制内容 */
   const copyText = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      message.success(t('common.copied'));
-    } catch {
-      // 降级：execCommand 兜底
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
+    const success = await copyToClipboard(text);
+    if (success) {
       message.success(t('common.copied'));
     }
   };
