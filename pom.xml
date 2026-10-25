@@ -30,20 +30,20 @@
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.12.0</central-publishing-maven-plugin.version>
         <!-- base -->
         <slf4j-api.version>2.0.20</slf4j-api.version>
 
         <!-- spring -->
-        <spring-boot.version>4.1.1</spring-boot.version>
+        <spring-boot.version>4.1.2</spring-boot.version>
         <!-- mybatis & db -->
         <mybatis-spring-boot-starter.version>4.1.0</mybatis-spring-boot-starter.version>
-        <mysql-connector-j.version>26.7.0</mysql-connector-j.version>
+        <mysql-connector-j.version>26.10.0</mysql-connector-j.version>
 
         <!-- xxl-sso -->
         <xxl-sso.version>2.4.1</xxl-sso.version>
         <!-- poi (excel ) -->
-        <poi.version>5.5.1</poi.version>
+        <poi.version>6.0.0</poi.version>
         <!-- ip2region -->
         <ip2region.version>3.3.7</ip2region.version>
     </properties>
