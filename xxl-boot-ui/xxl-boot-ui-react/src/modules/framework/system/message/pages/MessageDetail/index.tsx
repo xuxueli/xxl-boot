@@ -1,22 +1,20 @@
 /**
  * 组件：MessageDetail（消息详情抽屉）
  * 功能：展示消息标题、分类、发送人、时间、状态与富文本内容；
- *       供顶部铃铛、首页、消息管理页复用，通过 ref.open(payload) 打开。
+ *       供顶部铃铛、首页、消息管理页复用，通过 open 属性控制显示。
  */
 import { BellOutlined, MessageOutlined } from '@ant-design/icons';
 import { Drawer, Spin, Tag } from 'antd';
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
 import { getMessage } from '@/modules/framework/system/message/api';
 
-export type MessageDetailRef = {
-  open: (payload: number | API.Message) => void;
-};
+/* 组件入参 */
+interface MessageDetailProps {
+  open: boolean;                  /* 是否显示 */
+  payload?: number | API.Message; /* 消息 ID 或消息对象 */
+  onClose: () => void;            /* 关闭回调 */
+}
 
 /** 分类标签映射：0-通知 1-公告 */
 const categoryTag = (category?: number) => {
@@ -41,16 +39,13 @@ const categoryTag = (category?: number) => {
   };
 };
 
-const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
-  const [visible, setVisible] = useState(false);
+function MessageDetail({ open, payload, onClose }: MessageDetailProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<API.Message | null>(null);
 
-  /**
-   * 打开抽屉：支持直接传消息对象或消息 ID
-   */
-  const open = useCallback((payload: number | API.Message) => {
-    setVisible(true);
+  /* 打开抽屉时加载消息：支持直接传消息对象或消息 ID */
+  useEffect(() => {
+    if (!open || payload == null) return;
     if (typeof payload === 'object') {
       setMessage(payload);
       setLoading(false);
@@ -65,14 +60,12 @@ const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
-
-  useImperativeHandle(ref, () => ({ open }));
+  }, [open, payload]);
 
   /** 关闭抽屉 */
   const handleClose = () => {
-    setVisible(false);
     setMessage(null);
+    onClose();
   };
 
   const tag = categoryTag(message?.category);
@@ -81,7 +74,7 @@ const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
     <Drawer
       title={t('system.message.detailTitle')}
       size="50%"
-      open={visible}
+      open={open}
       onClose={handleClose}
       destroyOnHidden
     >
@@ -123,6 +116,6 @@ const MessageDetail = forwardRef<MessageDetailRef>((_, ref) => {
       )}
     </Drawer>
   );
-});
+}
 
 export default MessageDetail;

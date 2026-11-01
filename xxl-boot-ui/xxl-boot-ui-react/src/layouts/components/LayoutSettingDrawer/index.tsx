@@ -5,7 +5,6 @@
 import type { SettingDrawerProps } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
-import React from 'react';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { t } from '@/i18n';
 

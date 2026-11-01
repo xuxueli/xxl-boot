@@ -5,7 +5,6 @@
 
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
-import React from 'react';
 import { t } from '@/i18n';
 import { updateUserProfile } from '@/modules/framework/authz/user/api';
 import { closePage } from '@/utils/common';

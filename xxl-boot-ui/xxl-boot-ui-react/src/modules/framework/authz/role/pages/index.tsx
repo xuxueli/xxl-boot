@@ -7,7 +7,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';

@@ -3,19 +3,17 @@
  * 功能：按模板文件 Tabs 预览生成代码，支持复制
  */
 import { App, Button, Modal, Spin, Tabs } from 'antd';
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import { useEffect, useState } from 'react';
 import { previewTable } from '@/modules/framework/tool/codegen/api';
 import { t } from '@/i18n';
 import { copyToClipboard } from '@/utils/common';
 
-export type PreviewModalRef = {
-  open: (id: number) => void;
-};
+/* 组件入参 */
+interface PreviewModalProps {
+  open: boolean;       /* 是否显示 */
+  id?: number;         /* 待预览的表 ID */
+  onClose: () => void; /* 关闭回调 */
+}
 
 /** 模板文件名 → 标签（去掉目录与 .ftl 后缀） */
 const fileNameToLabel = (fileName: string): string => {
@@ -23,15 +21,15 @@ const fileNameToLabel = (fileName: string): string => {
   return base.replace(/\.ftl$/, '');
 };
 
-const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
+function PreviewModal({ open, id, onClose }: PreviewModalProps) {
   const { message } = App.useApp();
-  const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [codeMap, setCodeMap] = useState<Record<string, string>>({});
   const [activeKey, setActiveKey] = useState('');
 
-  const open = useCallback((id: number) => {
-    setVisible(true);
+  /* 打开弹窗时加载预览代码 */
+  useEffect(() => {
+    if (!open || id == null) return;
     setLoading(true);
     setActiveKey('');
     setCodeMap({});
@@ -45,9 +43,7 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
-
-  useImperativeHandle(ref, () => ({ open }));
+  }, [open, id]);
 
   /** 复制代码 */
   const copyText = async (text: string) => {
@@ -65,8 +61,8 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
     <Modal
       title={t('tool.codegen.codePreview')}
       width="80%"
-      open={visible}
-      onCancel={() => setVisible(false)}
+      open={open}
+      onCancel={onClose}
       footer={null}
       destroyOnHidden
     >
@@ -107,6 +103,6 @@ const PreviewModal = forwardRef<PreviewModalRef>((_, ref) => {
       </Spin>
     </Modal>
   );
-});
+}
 
 export default PreviewModal;

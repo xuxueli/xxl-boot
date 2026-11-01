@@ -7,6 +7,8 @@ import { HolderOutlined } from '@ant-design/icons';
 import {
   closestCenter,
   DndContext,
+  type DraggableAttributes,
+  type DraggableSyntheticListeners,
   type DragEndEvent,
   PointerSensor,
   useSensor,
@@ -66,8 +68,8 @@ const htmlTypeOptions = [
 /** 拖拽行上下文：向行内单元格的拖拽手柄传递激活节点与事件 */
 const RowContext = React.createContext<{
   setActivatorNodeRef: (ref: HTMLElement | null) => void;
-  attributes: any;
-  listeners: any;
+  attributes: DraggableAttributes;
+  listeners: DraggableSyntheticListeners;
 } | null>(null);
 
 /** 拖拽手柄：用于拖拽调整字段行顺序 */
@@ -84,8 +86,11 @@ const DragHandle = () => {
   );
 };
 
+/* 可拖拽表格行 props：antd 行属性 + data-row-key */
+type SortableRowProps = React.ComponentProps<'tr'> & { 'data-row-key': string };
+
 /** 可拖拽表格行 */
-const SortableRow = (props: any) => {
+const SortableRow = (props: SortableRowProps) => {
   const {
     attributes,
     listeners,
@@ -95,7 +100,7 @@ const SortableRow = (props: any) => {
     transition,
     isDragging,
   } = useSortable({ id: props['data-row-key'] });
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     ...(isDragging ? { position: 'relative', zIndex: 999 } : {}),

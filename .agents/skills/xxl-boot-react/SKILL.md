@@ -410,6 +410,7 @@ export default DemoFormModal;
 - 枚举：`useEnumOption('XxxEnum')` 返回 `EnumOption[]`（不是按枚举名分组），配合 `toValueEnum`（表格列）/`toSelectOptions`（Select/ProFormSelect）。
 - 字典：平台没有 React 版 `useDict` hook；使用 `loadDictItem`（`@/modules/framework/system/dict/api`）配合 `useEffect/useState` 或 ProForm 的 `request` 加载 options。
 - 删除确认用 `App.useApp().modal.confirm`（`onOk` 内发请求），提示用 `App.useApp().message`；成功后 `actionRef.current?.reload()`。
+- 弹窗/抽屉用受控 `open` + `onClose`，展示数据通过 props 传入；不用 ref 暴露 `open()` 等命令式方法。
 
 ### i18n（React）
 
@@ -468,6 +469,7 @@ POST /tool/codegen/createTable
 - [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
 - [ ] 前端 types 用 `declare namespace API`；api 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`。
 - [ ] 页面为 `pages/index.tsx`，`ProTable.request` 取 `res.data?.data/total`；未引入项目不存在的依赖（如 `ahooks`）。
+- [ ] 组件声明符合规范：普通函数 + 显式 props，无 `React.FC`/`forwardRef`/`propTypes`/函数组件 `defaultProps`；弹窗用受控 `open`。
 - [ ] 按钮 `hasPermi`；资源表菜单+按钮已插且已授权；菜单可见、页面能打开。
 - [ ] i18n：页面无硬编码中文（注释除外），语言由后端 `system.i18n.language` 控制，前端已由 `/loadBaseConfig` 同步。
 - [ ] SQL 按 `AGENTS.md`「SQL 执行规范」执行，中文无乱码。

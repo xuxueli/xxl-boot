@@ -4,18 +4,16 @@
  */
 import { Modal, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { t } from '@/i18n';
 import { listMessageReadUsers } from '@/modules/framework/system/message/api';
 
-export type ReadUsersDialogRef = {
-  open: (row: API.Message) => void;
-};
+/* 组件入参 */
+interface ReadUsersDialogProps {
+  open: boolean;         /* 是否显示 */
+  message?: API.Message; /* 当前消息 */
+  onClose: () => void;   /* 关闭回调 */
+}
 
 const columns: ColumnsType<API.MessageRead> = [
   {
@@ -29,15 +27,12 @@ const columns: ColumnsType<API.MessageRead> = [
   { title: t('system.message.readTime'), dataIndex: 'addTime', align: 'center' },
 ];
 
-const ReadUsersDialog = forwardRef<ReadUsersDialogRef>((_, ref) => {
-  const [visible, setVisible] = useState(false);
-  const [title, setTitle] = useState('');
+function ReadUsersDialog({ open, message, onClose }: ReadUsersDialogProps) {
   const [list, setList] = useState<API.MessageRead[]>([]);
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
-  const [messageId, setMessageId] = useState<number>();
 
   /** 加载已读用户列表（id 为必传，避免依赖 state 回调产生陈旧值） */
   const loadData = useCallback((id: number, page: number, size: number) => {
@@ -53,37 +48,30 @@ const ReadUsersDialog = forwardRef<ReadUsersDialogRef>((_, ref) => {
       });
   }, []);
 
-  /** 打开弹窗：回显消息信息并加载已读用户列表 */
-  const open = useCallback(
-    (row: API.Message) => {
-      setVisible(true);
-      setTitle(row.title || '');
-      setMessageId(row.id);
-      setCurrent(1);
-      setPageSize(10);
-      setList([]);
-      setTotal(0);
-      if (row.id != null) {
-        loadData(row.id, 1, 10);
-      }
-    },
-    [loadData],
-  );
-
-  useImperativeHandle(ref, () => ({ open }));
+  /* 打开弹窗或切换消息时重置分页并加载已读用户列表 */
+  useEffect(() => {
+    if (!open) return;
+    setCurrent(1);
+    setPageSize(10);
+    setList([]);
+    setTotal(0);
+    if (message?.id != null) {
+      loadData(message.id, 1, 10);
+    }
+  }, [open, message, loadData]);
 
   /** 关闭弹窗，清空数据 */
   const handleClose = () => {
-    setVisible(false);
     setList([]);
     setTotal(0);
+    onClose();
   };
 
   return (
     <Modal
-      title={t('system.message.readUsersTitle', [title])}
+      title={t('system.message.readUsersTitle', [message?.title || ''])}
       width={680}
-      open={visible}
+      open={open}
       onCancel={handleClose}
       footer={null}
       destroyOnHidden
@@ -102,14 +90,14 @@ const ReadUsersDialog = forwardRef<ReadUsersDialogRef>((_, ref) => {
           onChange: (page, size) => {
             setCurrent(page);
             setPageSize(size);
-            if (messageId != null) {
-              loadData(messageId, page, size);
+            if (message?.id != null) {
+              loadData(message.id, page, size);
             }
           },
         }}
       />
     </Modal>
   );
-});
+}
 
 export default ReadUsersDialog;

@@ -10,7 +10,6 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { App, Col, Row } from 'antd';
-import React from 'react';
 import { t } from '@/i18n';
 import { Editor } from '@/components';
 import { addMessage, updateMessage } from '@/modules/framework/system/message/api';

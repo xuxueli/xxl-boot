@@ -3,34 +3,23 @@
  * 功能：展示用户基本信息、角色、状态与时间
  */
 import { Descriptions, Drawer, Tag } from 'antd';
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
 import { useEnumOption } from '@/hooks/useEnumOption';
 import { listRole } from '@/modules/framework/authz/role/api';
 
-/*
- * 组件引用类型
- *    - open: 打开详情抽屉，传入用户数据
- */
-export type UserViewRef = {
-  open: (row: API.User) => void;
-};
+/* 组件入参 */
+interface UserViewProps {
+  open: boolean;         /* 是否显示 */
+  user: API.User | null; /* 当前用户 */
+  onClose: () => void;   /* 关闭回调 */
+}
 
 /*
  * 组件：UserView（用户详情抽屉）
  * 功能：展示用户基本信息、角色、状态与时间
  */
-const UserView = forwardRef<UserViewRef>((_, ref) => {
-  // 组件状态
-  const [visible, setVisible] = useState(false);
-  // 当前用户数据
-  const [user, setUser] = useState<API.User | null>(null);
+function UserView({ open, user, onClose }: UserViewProps) {
   // 当前用户角色名称（由角色 ID 解析而来）
   const [roleNames, setRoleNames] = useState('');
 
@@ -92,39 +81,11 @@ const UserView = forwardRef<UserViewRef>((_, ref) => {
     }
   }, []);
 
-  /*
-   * 打开详情抽屉
-   */
-  const open = useCallback(
-    (row: API.User) => {
-      setUser(row);
-      setVisible(true);
-      resolveRoleNames(row.roleIds);
-    },
-    [resolveRoleNames],
-  );
-
-  /*
-   * 打开详情抽屉：暴露给父组件的 ref 方法
-   *
-   *
-   * useImperativeHandle：
-   *       - 定义：自定义暴露给父组件的 ref 方法。
-   *       - 作用：允许父组件通过 ref 调用子组件的内部方法或访问子组件的状态。
-   *       - 说明：useImperativeHandle 接收两个参数：
-   *           - 1、ref：父组件传入的 ref 对象。从 forwardRef 接收到的第二个参数。
-   *           - 2、createHandle：一个函数，返回一个对象，该对象包含要暴露给父组件的方法或属性。
-   *       - 使用示例：
-   *         <pre>
-   *             useImperativeHandle(ref, () => ({
-   *                open: () => {
-   *                     // 这里是要暴露给父组件的方法逻辑
-   *                     setVisible(true);
-   *                 }
-   *           }));
-   *        </pre>
-   */
-  useImperativeHandle(ref, () => ({ open }));
+  /* 打开抽屉或切换用户时解析角色名称 */
+  useEffect(() => {
+    if (!open) return;
+    resolveRoleNames(user?.roleIds);
+  }, [open, user, resolveRoleNames]);
 
   // 解析用户状态
   const status = user ? statusMap[user.status ?? -1] : undefined;
@@ -134,8 +95,8 @@ const UserView = forwardRef<UserViewRef>((_, ref) => {
     <Drawer
       title={t('authz.user.detailTitle')}
       size={680}
-      open={visible}
-      onClose={() => setVisible(false)}
+      open={open}
+      onClose={onClose}
       destroyOnHidden
     >
       {user && (
@@ -171,6 +132,6 @@ const UserView = forwardRef<UserViewRef>((_, ref) => {
       )}
     </Drawer>
   );
-});
+}
 
 export default UserView;

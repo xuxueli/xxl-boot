@@ -3,40 +3,34 @@
  * 功能：展示某字典类型的字典项列表与统计
  */
 import { Drawer, Empty, Spin, Statistic, Tag } from 'antd';
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
 import { listData } from '@/modules/framework/system/dict/api';
 
-export type DictDataDrawerRef = {
-  open: (row: API.Dict) => void;
-};
+/* 组件入参 */
+interface DictDataDrawerProps {
+  open: boolean;         /* 是否显示 */
+  dict: API.Dict | null; /* 当前字典 */
+  onClose: () => void;   /* 关闭回调 */
+}
 
-const DictDataDrawer = forwardRef<DictDataDrawerRef>((_, ref) => {
-  const [visible, setVisible] = useState(false);
-  const [dict, setDict] = useState<API.Dict | null>(null);
+function DictDataDrawer({ open, dict, onClose }: DictDataDrawerProps) {
   const [items, setItems] = useState<API.DictItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const open = useCallback((row: API.Dict) => {
-    setDict(row);
-    setVisible(true);
+  /* 打开抽屉或切换字典时加载字典项 */
+  useEffect(() => {
+    if (!open || !dict) return;
     setLoading(true);
     setItems([]);
-    listData({ dictId: row.id, current: 1, pageSize: 100 })
+    listData({ dictId: dict.id, current: 1, pageSize: 100 })
       .then((res) => {
         setItems(res.data?.data || []);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, []);
-
-  useImperativeHandle(ref, () => ({ open }));
+  }, [open, dict]);
 
   const normalCount = items.filter((i) => i.status === 0).length;
   const inactiveCount = items.length - normalCount;
@@ -48,8 +42,8 @@ const DictDataDrawer = forwardRef<DictDataDrawerRef>((_, ref) => {
         dict?.type ?? '',
       ])}
       size={700}
-      open={visible}
-      onClose={() => setVisible(false)}
+      open={open}
+      onClose={onClose}
       destroyOnHidden
     >
       <Spin spinning={loading}>
@@ -112,6 +106,6 @@ const DictDataDrawer = forwardRef<DictDataDrawerRef>((_, ref) => {
       </Spin>
     </Drawer>
   );
-});
+}
 
 export default DictDataDrawer;

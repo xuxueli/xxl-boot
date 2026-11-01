@@ -7,7 +7,8 @@
  *   - 已登录但会话未加载：拉取用户信息与菜单，加载完成后再渲染（避免路由未注册时先命中 404）。
  */
 import { message, Spin } from 'antd';
-import React, { useEffect } from 'react';
+import type React from 'react';
+import { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import { getToken } from '@/utils/auth';

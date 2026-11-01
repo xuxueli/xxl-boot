@@ -5,7 +5,8 @@
  */
 import { message } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useCallback, useEffect, useRef } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { t } from '@/i18n';

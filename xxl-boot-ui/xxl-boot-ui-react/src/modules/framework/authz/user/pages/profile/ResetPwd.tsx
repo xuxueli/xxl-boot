@@ -6,7 +6,6 @@
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import type { Rule } from 'antd/es/form';
-import React from 'react';
 import { t } from '@/i18n';
 import { updateUserPwd } from '@/modules/framework/authz/user/api';
 

@@ -10,7 +10,8 @@ import {
 } from '@ant-design/pro-components';
 import { App, Checkbox, Col, Divider, Space, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
-import React, { useEffect, useMemo, useState } from 'react';
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
 import { listResource } from '@/modules/framework/authz/resource/api';
 import {

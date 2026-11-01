@@ -10,7 +10,7 @@ import {
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
 import { App } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
 import { addOrg, listOrg, updateOrg } from '@/modules/framework/authz/org/api';
 import { handleTree } from '@/utils/common';

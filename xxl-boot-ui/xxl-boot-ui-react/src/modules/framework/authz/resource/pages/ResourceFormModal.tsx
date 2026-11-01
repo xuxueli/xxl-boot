@@ -12,7 +12,7 @@ import {
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
 import { App, Col, Row } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
 import { IconSelect } from '@/components';
 import {

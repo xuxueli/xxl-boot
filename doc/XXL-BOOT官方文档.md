@@ -1151,7 +1151,8 @@ public @interface Permission {
 
 ### 版本 v2.2.1 Release Notes[ING]
 - 1、【优化】前端组件规范重构：标准化前端组件写法，类似 React.FC 等组件写法升级普通函数组件写法，提升组件可维护性；
-
+- 2、【规范】研发SKILL/Agent.md 规范化：标准化研发SKILL/Agent.md 规范，便于AI编程助手识别加载；
+- 3、【升级】升级多项依赖至较新版本。
 
 ### TODO LIST
 - 1、单体版本优化：

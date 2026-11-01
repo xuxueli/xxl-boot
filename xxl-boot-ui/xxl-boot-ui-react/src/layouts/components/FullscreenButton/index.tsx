@@ -4,7 +4,7 @@
  */
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { createStyles } from 'antd-style';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /** 全屏按钮样式 */
 const useStyles = createStyles(({ token, css }) => ({

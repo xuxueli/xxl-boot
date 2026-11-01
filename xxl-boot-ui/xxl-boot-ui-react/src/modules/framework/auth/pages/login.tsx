@@ -10,7 +10,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import defaultSettings from '@/default-settings';
 import { t } from '@/i18n';
@@ -48,28 +48,41 @@ const useStyles = createStyles(({ token }) => {
       display: 'flex',
       flexDirection: 'column',
       height: '100vh',
-      // 浅色渐变底色：白 → 淡蓝灰 → 淡紫灰，斜向与光带走向呼应
-      background:
-        'linear-gradient(155deg, #ffffff 0%, #f2f4fb 55%, #e7ecf8 100%)',
-      // 光带：从顶部中间（50%,0）起沿斜向延伸，穿过右侧中间（100%,50%）
-      '&::before': {
-        content: '""',
-        position: 'absolute',
-        left: '50%',
-        top: 0,
-        width: 3200,
-        height: 150,
-        transformOrigin: '0 0',
-        // 16:9 视口下「顶中→右中」方向约 30°，其余比例略有偏差，被 overflow 裁切
-        transform: 'rotate(30deg)',
-        pointerEvents: 'none',
-        // 光带颜色由「淡蓝 → 青 → 蓝紫 → 淡紫」渐进，整体偏浅、柔和
-        background:
-          'linear-gradient(90deg, transparent 44%, rgba(101, 166, 246, 0.12) 50%, rgba(94, 179, 244, 0.22) 55%, rgba(128, 138, 244, 0.15) 60%, rgba(144, 116, 232, 0.06) 65%, transparent 70%)',
+      // 白底 + 低对比柔光：左上淡蓝、右缘淡紫、右下淡青，中心留白承托登录表单
+      background: [
+        // 左上淡蓝：自左上角铺开，沿左侧向下淡出
+        'radial-gradient(ellipse 90% 75% at 0% 8%, rgba(205, 226, 249, 0.95) 0%, rgba(205, 226, 249, 0.5) 42%, rgba(205, 226, 249, 0) 76%)',
+        // 右缘淡紫：贴右边界纵向晕开，峰值落在右侧中部
+        'radial-gradient(ellipse 55% 75% at 104% 45%, rgba(206, 206, 241, 0.9) 0%, rgba(206, 206, 241, 0.4) 45%, rgba(206, 206, 241, 0) 74%)',
+        // 右下淡青：与淡紫自然衔接
+        'radial-gradient(ellipse 65% 60% at 86% 104%, rgba(205, 235, 241, 0.9) 0%, rgba(205, 235, 241, 0.3) 45%, rgba(205, 235, 241, 0) 70%)',
+        // 顶部极淡冷灰：右侧稍压灰，避免上方过白
+        'linear-gradient(180deg, rgba(240, 243, 249, 0.8) 0%, rgba(240, 243, 249, 0) 20%)',
+        '#ffffff',
+      ].join(','),
+      // 卡片内副标题上下留白收紧，贴近参考图紧凑布局
+      '& .ant-pro-form-login-desc': {
+        marginBlockStart: 8,
+        marginBlockEnd: 24,
+      },
+      // 表单行间距收紧，贴近参考图紧凑排布
+      '& .ant-form-item': {
+        marginBottom: 16,
       },
     },
     subTitle: {
-      fontSize: 16,
+      fontSize: 18,
+      color: '#3a3a3a',
+      textAlign: 'center',
+    },
+    brand: {
+      marginBottom: 16,
+      fontSize: 30,
+      fontWeight: 600,
+      lineHeight: '40px',
+      letterSpacing: '0.5px',
+      color: '#4a4a4a',
+      textAlign: 'center',
     },
     captcha: {
       height: 32,
@@ -83,7 +96,7 @@ const useStyles = createStyles(({ token }) => {
  * 登录页组件
  */
 const Login = () => {
-  const { styles } = useStyles();
+  const { styles, theme } = useStyles();
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -156,27 +169,43 @@ const Login = () => {
           justifyContent: 'center',
         }}
       >
-        <LoginForm
-          contentStyle={{
-            minWidth: 280,
-            maxWidth: '75vw',
+        {/* 品牌标题在卡片外，卡片内只放副标题与表单 */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            transform: 'translateY(-6%)',
           }}
-          // 覆盖容器默认的 flex:1 / height:100%，使其按内容高度参与外层居中；
-          // 居中后整体上移一屏高度的 15%，实现「居中稍微靠上」
-          containerStyle={{
-            flex: 'none',
-            height: 'auto',
-            transform: 'translateY(-15%)',
-          }}
-          title={defaultSettings.brandName}
-          subTitle={
-            <div className={styles.subTitle}>{t('app.title')}</div>
-          }
-          initialValues={{
-            rememberMe: false,
-          }}
-          onFinish={handleSubmit}
         >
+          <div className={styles.brand}>{defaultSettings.brandName}</div>
+          <LoginForm
+            contentStyle={{
+              width: '100%',
+              minWidth: 0,
+              maxWidth: '100%',
+            }}
+            // 覆盖容器默认的 flex:1 / height:100%，使其按内容高度参与外层居中；
+            // 同时为表单区域加白色卡片底色 + 圆角 + 柔和投影
+            containerStyle={{
+              flex: 'none',
+              height: 'auto',
+              boxSizing: 'border-box',
+              width: 376,
+              maxWidth: '92vw',
+              padding: '24px 24px 28px',
+              background: theme.colorBgContainer,
+              borderRadius: 6,
+              boxShadow: '0 2px 12px rgba(0, 0, 0, 0.08)',
+            }}
+            subTitle={
+              <div className={styles.subTitle}>{t('app.title')}</div>
+            }
+            initialValues={{
+              rememberMe: false,
+            }}
+            onFinish={handleSubmit}
+          >
           <ProFormText
             name="username"
             fieldProps={{
@@ -234,7 +263,8 @@ const Login = () => {
               {t('auth.login.remember')}
             </ProFormCheckbox>
           </div>
-        </LoginForm>
+          </LoginForm>
+        </div>
       </div>
       <Footer />
     </div>

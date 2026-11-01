@@ -3,7 +3,7 @@
  * 功能：选择生成类型（页面/弹窗），导出时额外支持输入文件名
  */
 import { App, Form, Input, Modal, Radio } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
 
 /** 生成类型配置 */

@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Modal, Spin } from 'antd';
-import React from 'react';
+import type React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Dropdown } from '@/components';
 import { t } from '@/i18n';

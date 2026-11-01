@@ -13,7 +13,8 @@
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuDataItem } from '@ant-design/pro-components';
 import { ProLayout } from '@ant-design/pro-components';
-import React, { useCallback, useMemo } from 'react';
+import type React from 'react';
+import { useCallback, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import defaultSettings from '@/default-settings';
 import { t } from '@/i18n';

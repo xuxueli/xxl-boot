@@ -4,7 +4,6 @@
  */
 import { GithubOutlined } from '@ant-design/icons';
 import { createStyles } from 'antd-style';
-import React from 'react';
 
 /** 页脚与链接样式 */
 const useStyles = createStyles(({ token, css }) => ({

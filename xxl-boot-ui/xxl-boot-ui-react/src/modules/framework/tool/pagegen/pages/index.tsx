@@ -66,7 +66,8 @@ import {
   Upload,
 } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useMemo, useRef, useState } from 'react';
+import type React from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { copyToClipboard } from '@/utils/common';
 import CodeTypeDialog from './CodeTypeDialog';

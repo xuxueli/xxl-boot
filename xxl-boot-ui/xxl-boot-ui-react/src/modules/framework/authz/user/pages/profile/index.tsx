@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { App, Card, Descriptions, Spin, Tabs } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
 import { getUserProfile } from '@/modules/framework/authz/user/api';
 import ResetPwd from './ResetPwd';

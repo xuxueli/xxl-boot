@@ -13,7 +13,8 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Dropdown, Input, Modal, Switch } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useEffect, useRef, useState } from 'react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { TreePanel } from '@/components';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
@@ -23,7 +24,7 @@ import { listRole } from '@/modules/framework/authz/role/api';
 import { delUser, listUser, updateUser } from '@/modules/framework/authz/user/api';
 import { deepClone, handleTree } from '@/utils/common';
 import UserFormModal from './UserFormModal';
-import UserView, { type UserViewRef } from './UserView';
+import UserView from './UserView';
 
 /**
  * 用户表格样式
@@ -57,8 +58,10 @@ const Dashboard = () => {
   const { message, modal } = App.useApp();
   // 表格操作引用
   const actionRef = useRef<ActionType>(null);
-  // 用户详情抽屉引用
-  const userViewRef = useRef<UserViewRef>(null);
+  // 用户详情抽屉显隐
+  const [userViewOpen, setUserViewOpen] = useState(false);
+  // 当前查看的用户
+  const [userViewData, setUserViewData] = useState<API.User | null>(null);
   const { hasPermi } = usePermission();
   const { styles } = useStyles();
 
@@ -230,7 +233,8 @@ const Dashboard = () => {
       render: (_, record) => (
         <a
           onClick={() => {
-            userViewRef.current?.open(record);
+            setUserViewData(record);
+            setUserViewOpen(true);
           }}
         >
           {record.username}
@@ -430,7 +434,11 @@ const Dashboard = () => {
       />
 
       {/* 查看模态框：抽屉内容 */}
-      <UserView ref={userViewRef} />
+      <UserView
+        open={userViewOpen}
+        user={userViewData}
+        onClose={() => setUserViewOpen(false)}
+      />
 
       {/* 重置密码模态框：弹框 */}
       <Modal

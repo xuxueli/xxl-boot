@@ -17,7 +17,7 @@ import { loadEnum, toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delOperlog, pageList } from '@/modules/framework/system/log/api';
 import { download } from '@/utils/download';
-import LogDetail, { type LogDetailRef } from './LogDetail';
+import LogDetail from './LogDetail';
 
 /**
  * 日志表格样式
@@ -44,7 +44,8 @@ const useStyles = createStyles(({ css }) => ({
 const LogList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
-  const detailRef = useRef<LogDetailRef>(null);
+  const [detailOpen, setDetailOpen] = useState(false); /* 详情弹窗显隐 */
+  const [detailRow, setDetailRow] = useState<API.Log | null>(null); /* 当前日志 */
   const { hasRole } = usePermission();
   const { styles } = useStyles();
 
@@ -141,7 +142,8 @@ const LogList = () => {
         <a
           key="detail"
           onClick={() => {
-            detailRef.current?.open(record, moduleMap);
+            setDetailRow(record);
+            setDetailOpen(true);
           }}
         >
           <EyeOutlined /> {t('system.log.detail')}
@@ -209,7 +211,12 @@ const LogList = () => {
           tableAlertRender={false}
         />
       </div>
-      <LogDetail ref={detailRef} />
+      <LogDetail
+        open={detailOpen}
+        row={detailRow}
+        moduleMap={moduleMap}
+        onClose={() => setDetailOpen(false)}
+      />
     </PageContainer>
   );
 };

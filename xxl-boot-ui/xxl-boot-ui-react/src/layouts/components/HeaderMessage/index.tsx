@@ -10,12 +10,10 @@ import {
 import { Badge, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import { clsx } from 'clsx';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Dropdown } from '@/components';
 import { t } from '@/i18n';
-import MessageDetail, {
-  type MessageDetailRef,
-} from '@/modules/framework/system/message/pages/MessageDetail';
+import MessageDetail from '@/modules/framework/system/message/pages/MessageDetail';
 import {
   listMessageTop,
   markMessageRead,
@@ -135,7 +133,8 @@ const useStyles = createStyles(({ token, css }) => ({
  */
 const HeaderMessage = () => {
   const { styles } = useStyles();
-  const messageViewRef = useRef<MessageDetailRef>(null); /* 详情抽屉引用 */
+  const [detailOpen, setDetailOpen] = useState(false); /* 详情抽屉显隐 */
+  const [detailPayload, setDetailPayload] = useState<number>(); /* 详情消息 ID */
   const [messageList, setMessageList] = useState<API.Message[]>(
     [],
   ); /* 顶部公告列表 */
@@ -176,7 +175,8 @@ const HeaderMessage = () => {
       setUnreadCount((count) => Math.max(0, count - 1));
     }
     /* 打开详情抽屉（按消息 ID 拉取完整内容） */
-    messageViewRef.current?.open(item.id as number);
+    setDetailPayload(item.id as number);
+    setDetailOpen(true);
   };
 
   /**
@@ -260,7 +260,11 @@ const HeaderMessage = () => {
         </div>
       </Dropdown>
       {/* 消息详情抽屉 */}
-      <MessageDetail ref={messageViewRef} />
+      <MessageDetail
+        open={detailOpen}
+        payload={detailPayload}
+        onClose={() => setDetailOpen(false)}
+      />
     </>
   );
 };

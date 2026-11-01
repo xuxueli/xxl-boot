@@ -3,7 +3,6 @@
  * 功能：提示用户页面不存在，提供返回首页入口
  */
 import { Button, Card, Result } from 'antd';
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { t } from '@/i18n';
 

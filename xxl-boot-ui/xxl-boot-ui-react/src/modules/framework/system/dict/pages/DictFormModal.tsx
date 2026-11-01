@@ -9,7 +9,6 @@ import {
   ProFormTextArea,
 } from '@ant-design/pro-components';
 import { App } from 'antd';
-import React from 'react';
 import { t } from '@/i18n';
 import { addType, updateType } from '@/modules/framework/system/dict/api';
 

@@ -9,18 +9,8 @@ import {
 } from '@ant-design/icons';
 import { App, Button, Col, Modal, Row } from 'antd';
 import { createStyles } from 'antd-style';
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useState,
-} from 'react';
 import { t } from '@/i18n';
 import { copyToClipboard } from '@/utils/common';
-
-export type LogDetailRef = {
-  open: (row: API.Log, moduleMap: Record<number, string>) => void;
-};
 
 /**
  * 日志详情样式
@@ -103,20 +93,17 @@ const useStyles = createStyles(({ css }) => ({
   `,
 }));
 
-const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
+/* 组件入参 */
+interface LogDetailProps {
+  open: boolean;                     /* 是否显示 */
+  row: API.Log | null;               /* 当前日志 */
+  moduleMap: Record<number, string>; /* 模块名称映射 */
+  onClose: () => void;               /* 关闭回调 */
+}
+
+function LogDetail({ open, row, moduleMap, onClose }: LogDetailProps) {
   const { message } = App.useApp();
   const { styles } = useStyles();
-  const [visible, setVisible] = useState(false);
-  const [row, setRow] = useState<API.Log | null>(null);
-  const [moduleMap, setModuleMap] = useState<Record<number, string>>({});
-
-  const open = useCallback((data: API.Log, map: Record<number, string>) => {
-    setRow(data);
-    setModuleMap(map);
-    setVisible(true);
-  }, []);
-
-  useImperativeHandle(ref, () => ({ open }));
 
   /** 复制内容 */
   const copyText = async (text: string) => {
@@ -130,8 +117,8 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
     <Modal
       title={t('system.log.detailTitle')}
       width={700}
-      open={visible}
-      onCancel={() => setVisible(false)}
+      open={open}
+      onCancel={onClose}
       footer={null}
       destroyOnHidden
     >
@@ -256,6 +243,6 @@ const LogDetail = forwardRef<LogDetailRef>((_, ref) => {
       )}
     </Modal>
   );
-});
+}
 
 export default LogDetail;

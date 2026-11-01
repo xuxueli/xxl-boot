@@ -5,7 +5,6 @@
 import { BookOutlined, GithubOutlined } from '@ant-design/icons';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { Button, Divider, Typography } from 'antd';
-import React from 'react';
 import { t } from '@/i18n';
 import defaultSettings from '@/default-settings';
 

@@ -13,7 +13,6 @@ import {
   Tabs,
   Tag,
 } from 'antd';
-import React from 'react';
 import { t } from '@/i18n';
 import type { FormConfig, FormWidget, WidgetType } from './config';
 import {

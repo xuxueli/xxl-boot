@@ -13,7 +13,6 @@ import { Dropdown as AntdDropdown } from 'antd';
 import type { DropDownProps } from 'antd/es/dropdown';
 import { createStyles } from 'antd-style';
 import { clsx } from 'clsx';
-import React from 'react';
 
 /**
  * 统一下拉样式

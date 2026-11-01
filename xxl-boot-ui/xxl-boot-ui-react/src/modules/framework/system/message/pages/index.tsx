@@ -12,7 +12,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Space, Tag, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { t } from '@/i18n';
 import {
   toSelectOptions,
@@ -21,9 +21,9 @@ import {
 } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delMessage, listMessage } from '@/modules/framework/system/message/api';
-import MessageDetail, { type MessageDetailRef } from './MessageDetail';
+import MessageDetail from './MessageDetail';
 import MessageFormModal from './MessageFormModal';
-import ReadUsersDialog, { type ReadUsersDialogRef } from './ReadUsersDialog';
+import ReadUsersDialog from './ReadUsersDialog';
 
 /**
  * 消息表格样式
@@ -50,8 +50,10 @@ const useStyles = createStyles(({ css }) => ({
 const MessageList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
-  const messageViewRef = useRef<MessageDetailRef>(null);
-  const readUsersRef = useRef<ReadUsersDialogRef>(null);
+  const [detailOpen, setDetailOpen] = useState(false); /* 详情抽屉显隐 */
+  const [detailPayload, setDetailPayload] = useState<number>(); /* 详情消息 ID */
+  const [readOpen, setReadOpen] = useState(false); /* 已读弹窗显隐 */
+  const [readMessage, setReadMessage] = useState<API.Message>(); /* 已读弹窗消息 */
   const { hasRole } = usePermission();
   const { styles } = useStyles();
 
@@ -104,7 +106,8 @@ const MessageList = () => {
         <Tooltip title={record.title}>
           <a
             onClick={() => {
-              messageViewRef.current?.open(record.id as number);
+              setDetailPayload(record.id as number);
+              setDetailOpen(true);
             }}
           >
             {record.title}
@@ -144,7 +147,8 @@ const MessageList = () => {
           <a
             key="readUsers"
             onClick={() => {
-              readUsersRef.current?.open(record);
+              setReadMessage(record);
+              setReadOpen(true);
             }}
           >
             <TeamOutlined /> {t('system.message.readUsers')}
@@ -235,8 +239,16 @@ const MessageList = () => {
         categoryOptions={categorySelectOptions}
         onSuccess={() => actionRef.current?.reload()}
       />
-      <MessageDetail ref={messageViewRef} />
-      <ReadUsersDialog ref={readUsersRef} />
+      <MessageDetail
+        open={detailOpen}
+        payload={detailPayload}
+        onClose={() => setDetailOpen(false)}
+      />
+      <ReadUsersDialog
+        open={readOpen}
+        message={readMessage}
+        onClose={() => setReadOpen(false)}
+      />
     </PageContainer>
   );
 };

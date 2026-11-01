@@ -14,10 +14,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, Empty, Radio, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import * as echarts from 'echarts';
-import React, { useEffect, useRef, useState } from 'react';
-import MessageDetail, {
-  type MessageDetailRef,
-} from '@/modules/framework/system/message/pages/MessageDetail';
+import { useEffect, useRef, useState } from 'react';
+import MessageDetail from '@/modules/framework/system/message/pages/MessageDetail';
 import { getLogTrend, getStats } from '@/modules/framework/dashboard/api';
 import { listMessageTop, markMessageRead } from '@/modules/framework/system/message/api';
 import { t } from '@/i18n';
@@ -121,7 +119,8 @@ const statConfig = [
 
 const Dashboard = () => {
   const { styles } = useStyles();
-  const messageDetailRef = useRef<MessageDetailRef>(null);
+  const [detailOpen, setDetailOpen] = useState(false); /* 详情抽屉显隐 */
+  const [detailPayload, setDetailPayload] = useState<number>(); /* 详情消息 ID */
 
   const [chartDays, setChartDays] = useState(30);
 
@@ -161,7 +160,8 @@ const Dashboard = () => {
 
   /** 消息列表 - 点击查看详情，标记已读 */
   const handleMsgClick = (item: API.Message) => {
-    messageDetailRef.current?.open(item.id as number);
+    setDetailPayload(item.id as number);
+    setDetailOpen(true);
     markMessageRead(item.id as number).catch(() => {});
   };
 
@@ -298,7 +298,11 @@ const Dashboard = () => {
         </ProCard>
       </div>
 
-      <MessageDetail ref={messageDetailRef} />
+      <MessageDetail
+        open={detailOpen}
+        payload={detailPayload}
+        onClose={() => setDetailOpen(false)}
+      />
     </PageContainer>
   );
 };

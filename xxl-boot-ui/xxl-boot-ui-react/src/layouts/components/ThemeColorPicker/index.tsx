@@ -7,7 +7,7 @@
 import { Button, ColorPicker, Input } from 'antd';
 import { createGlobalStyle, createStyles } from 'antd-style';
 import { clsx } from 'clsx';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { t } from '@/i18n';
 import { useSettingsStore } from '@/stores/settingsStore';

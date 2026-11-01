@@ -3,7 +3,6 @@
  * 功能：提示用户无访问权限，提供返回上一页或回首页入口
  */
 import { Button, Card, Result } from 'antd';
-import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { t } from '@/i18n';
 

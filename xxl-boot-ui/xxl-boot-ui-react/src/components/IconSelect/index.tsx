@@ -5,7 +5,7 @@
 import { DownOutlined } from '@ant-design/icons';
 import { Empty, Input, Popover } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { t } from '@/i18n';
 import { getIconComponent, iconList } from '@/utils/icon';
 

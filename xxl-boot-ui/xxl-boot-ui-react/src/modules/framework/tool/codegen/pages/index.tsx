@@ -13,13 +13,13 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Input, Modal } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { usePermission } from '@/hooks/usePermission';
 import { delTable, listTable } from '@/modules/framework/tool/codegen/api';
 import { downloadGet } from '@/utils/download';
 import { t } from '@/i18n';
 import EditTableModal from './EditTableModal';
-import PreviewModal, { type PreviewModalRef } from './PreviewModal';
+import PreviewModal from './PreviewModal';
 
 const demoTableSql = `CREATE TABLE \`product01\` (
   \`id\`            INT             NOT NULL AUTO_INCREMENT      COMMENT '主键ID',
@@ -55,7 +55,8 @@ const useStyles = createStyles(({ css }) => ({
 const CodegenList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
-  const previewRef = useRef<PreviewModalRef>(null);
+  const [previewOpen, setPreviewOpen] = useState(false); /* 预览弹窗显隐 */
+  const [previewId, setPreviewId] = useState<number>(); /* 预览表 ID */
   const { hasRole } = usePermission();
   const { styles } = useStyles();
 
@@ -166,7 +167,8 @@ const CodegenList = () => {
           <a
             key="preview"
             onClick={() => {
-              previewRef.current?.open(record.id as number);
+              setPreviewId(record.id as number);
+              setPreviewOpen(true);
             }}
           >
             <EyeOutlined /> {t('tool.codegen.preview')}
@@ -271,7 +273,11 @@ const CodegenList = () => {
         id={editId}
         onSuccess={() => actionRef.current?.reload()}
       />
-      <PreviewModal ref={previewRef} />
+      <PreviewModal
+        open={previewOpen}
+        id={previewId}
+        onClose={() => setPreviewOpen(false)}
+      />
 
       <Modal
         title={t('tool.codegen.createTable')}

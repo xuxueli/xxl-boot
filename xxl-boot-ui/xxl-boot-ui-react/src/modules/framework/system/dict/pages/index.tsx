@@ -12,13 +12,13 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { delType, listType } from '@/modules/framework/system/dict/api';
-import DictDataDrawer, { type DictDataDrawerRef } from './DictDataDrawer';
+import DictDataDrawer from './DictDataDrawer';
 import DictFormModal from './DictFormModal';
 
 /**
@@ -46,7 +46,8 @@ const useStyles = createStyles(({ css }) => ({
 const DictList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
-  const drawerRef = useRef<DictDataDrawerRef>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false); /* 抽屉显隐 */
+  const [drawerDict, setDrawerDict] = useState<API.Dict | null>(null); /* 当前字典 */
   const navigate = useNavigate();
   const { hasRole } = usePermission();
   const { styles } = useStyles();
@@ -86,7 +87,8 @@ const DictList = () => {
       render: (_, record) => (
         <a
           onClick={() => {
-            drawerRef.current?.open(record);
+            setDrawerDict(record);
+            setDrawerOpen(true);
           }}
         >
           {record.type}
@@ -203,7 +205,11 @@ const DictList = () => {
         current={formCurrent}
         onSuccess={() => actionRef.current?.reload()}
       />
-      <DictDataDrawer ref={drawerRef} />
+      <DictDataDrawer
+        open={drawerOpen}
+        dict={drawerDict}
+        onClose={() => setDrawerOpen(false)}
+      />
     </PageContainer>
   );
 };

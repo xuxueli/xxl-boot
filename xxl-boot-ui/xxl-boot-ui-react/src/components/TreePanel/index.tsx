@@ -12,7 +12,8 @@ import {
 import { Input, Tooltip, Tree } from 'antd';
 import { createStyles } from 'antd-style';
 import { clsx } from 'clsx';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import type React from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '@/i18n';
 
 const useStyles = createStyles(({ token, css }) => ({
