@@ -39,6 +39,20 @@ xxl-boot-ui/xxl-boot-ui-react/src
 - 优先复用 `@/hooks`、`@/components`、`@/utils/request`；同一逻辑第三次出现才新增 Hook，不提前封装。
 - 列表页用 `ProTable` 直接编排；复杂表单/详情拆到 `pages/` 下独立组件，避免请求、表格、弹窗状态混在一个文件。
 - 状态保持局部 `useState` + `App.useApp()`；不引入额外状态库或第二套请求封装。
+- 组件声明统一为普通函数 + 显式 props 类型，不叠加 React 的包装类型、运行时校验与兼容写法：
+
+```tsx
+interface DemoProps {
+  id: number;          /* 主键 */
+  onClose: () => void; /* 关闭回调 */
+}
+
+export default function Demo({ id, onClose }: DemoProps) {
+  return <div>{id}</div>;
+}
+```
+
+  同类写法一并排除：`React.FC`/`FunctionComponent`（类型别名，表达不了泛型）、`forwardRef`（React 19 起 `ref` 可直接作为 props，已无必要）、`propTypes` 与函数组件的 `defaultProps`（React 19 已移除，改用 TS 类型与解构默认值）；类组件仅用于错误边界等无 Hook 等价物的场景。`React.ReactNode`/`ComponentType` 等命名空间类型用于 props 与类型约束属正常，`React.memo`/`lazy` 属运行时优化，不受此限。
 
 ## 初始化与启动
 

@@ -1150,6 +1150,7 @@ public @interface Permission {
 - 9、【修复】前后端分离React版本，未登录redirect路径拼接问题修复；
 
 ### 版本 v2.2.1 Release Notes[ING]
+- 1、【优化】前端组件规范重构：标准化前端组件写法，类似 React.FC 等组件写法升级普通函数组件写法，提升组件可维护性；
 
 
 ### TODO LIST

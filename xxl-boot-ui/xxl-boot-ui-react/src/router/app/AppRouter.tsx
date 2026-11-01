@@ -4,13 +4,13 @@
  *       经 useRoutes 渲染；菜单变化（登录/刷新）时实时重新匹配，
  *       实现「后端菜单唯一数据源」的动态路由（对齐 Vue router.addRoute）。
  */
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 import { useUserStore } from '@/stores/userStore';
 import RequireAuth from '../guards/RequireAuth';
 import { buildAppRoutes, buildBusinessRoutes } from '../index';
 
-const AppRouter: React.FC = () => {
+function AppRouter() {
   const menuData = useUserStore((s) => s.menuData);
 
   /**
@@ -47,6 +47,6 @@ const AppRouter: React.FC = () => {
 
   // 全局登录守卫：登录校验 + 会话/菜单加载完成后渲染路由
   return <RequireAuth>{useRoutes(routeObjects)}</RequireAuth>;
-};
+}
 
 export default AppRouter;
