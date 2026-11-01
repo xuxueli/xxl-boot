@@ -5,262 +5,387 @@ description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-api 端口 8
 
 # XXL-Boot · Vue3 分离模式开发 Skill
 
-目标：把 XXL-Boot 的 `xxl-boot-api` + `xxl-boot-ui-vue` 当作脚手架，规范、快速地新增/改造一个业务模块。本 Skill 覆盖「建表 → 后端 → 前端 → 菜单/权限 → 验证」全流程，含落位清单、代码骨架与校验清单。
+目标：把 `xxl-boot-api` + `xxl-boot-ui-vue` 当作脚手架，规范、快速地新增/改造业务模块。本 Skill 只写 Vue 模式差异；跨模式共性（需求落盘、数据库、接口通道、i18n 原则、验收）见仓库根 `AGENTS.md`。
 
 ## 何时使用
 
 - 前后端分离，前端是 Vue3（Element Plus + TS）。
-- 需要新增一个带列表页的业务模块（标准 CRUD）。
-- 只需要动后端接口而不动前端时，同样适用（取「后端落位」一节）。
-
-如运行对象是 `xxl-boot-admin` 单人渲染，用 `xxl-boot-monolith`；如前端是 React，用 `xxl-boot-react`。
+- 新增带列表页的标准 CRUD 业务模块。
+- 只改后端接口、不动前端时同样适用（取「后端落位」一节）。
+- 前端是 React 用 `xxl-boot-react`；改 `xxl-boot-admin` 用 `xxl-boot-monolith`。
 
 ## 前置：工程结构速览
 
 ```
 xxl-boot-api/src/main
-├── java/com/xxl/boot/api/framework/…        ← 平台内置（controller/service/mapper/model/constant/enums/web）
-├── java/com/xxl/boot/api/business/{module}/{business}  ← 新增业务落此（与前端双层镜像；可经后台代码生成器产出或按模板直生）
-└── resources/mapper/framework/{module}/     ← 平台内置 Mapper XML
-└── resources/mapper/business/{module}/{business}/  ← 业务 Mapper XML（与后端 Java 双层镜像）
-xxl-boot-ui-vue/src
-├── modules/framework/{domain}/{module}/     ← 平台内置模块（authz/system/tool/…，同目录聚合 pages+api+types）
-├── modules/business/{module}/{business}/    ← 业务模块（pages/ + api/ + types/ 三子目录，与后端双层镜像）
-└── types/index.ts                           ← 全局基础类型（Response/PageModel/PageQuery…）
+├── java/com/xxl/boot/api/framework/…                      ← 平台内置
+├── java/com/xxl/boot/api/business/{module}/{business}/    ← 新增业务（与前端双层镜像）
+└── resources/mapper/framework/{module}/                   ← 平台内置 Mapper XML
+└── resources/mapper/business/{module}/{business}/         ← 业务 Mapper XML
+
+xxl-boot-ui/xxl-boot-ui-vue/src
+├── modules/framework/{domain}/{module}/                   ← 平台内置（pages + api + types）
+├── modules/business/{module}/{business}/                  ← 业务模块（pages + api + types）
+├── composables/                                           ← usePageParams / useEnumOption / useDict / useFormReset
+├── components/                                            ← Editor / ImageUpload / Pagination / RightToolbar…
+└── types/index.ts                                         ← Response / PageModel / ListQuery / TableState / FormState…
 ```
 
-通用规范（返回结构、注释、命名、DB）见仓库根 `AGENTS.md` 第六节。
+后端与 React 模式**完全共用**，落位规则一致；前端差异见本 Skill。
 
-## 标准流程
+## 实现原则（Vue）
 
-0. **需求落盘（先建立）**：先按「需求落盘（xxl-boot-spec）」一节在项目根 `xxl-boot-spec/{yyyyMMdd}-{business}/` 创建需求子目录，随后确认的需求结论、方案、SQL 全部落入该目录（见下文专属章节）。
-1. **需求确认（第一步，必须）**：接到任务先不写代码，主动向用户确认需求细节，用户确认后再执行。至少确认：模块与业务命名（`{module}/{business}`）及目录归属；核心字段、状态/枚举下拉、是否需文件上传/富文本等特殊组件；页面形态（标准 CRUD / 详情页 / 多页签，仅动后端时则不动前端）；菜单+按钮+角色授权是否一并处理；出码方式（AI 按模板直生 or 后台「代码生成」）；验证范围与启动端口（api 8090 / vue 3000）。确认结果即时回填到子目录 `plan.md`。
-2. **建表**：`xxl_boot_*` SQL，公共字段 `id/add_time/update_time`，TINYINT 状态，`COMMENT` 注释；SQL 脚本写入该需求子目录（如 `{business}-table.sql`、`{business}-init.sql`）。
-3. **生成或手写代码**：本 Skill 缺省策略为 AI 直接按内置模板（`xxl-boot-api/src/main/resources/templates/tool/codegen/{java,vue3}/*.ftl`）渲染等价代码落位；同时提示用户可后台「工具-代码生成」走内置生成器（见第六节）。
-4. **落位**：前后端双层镜像——后端 Java 落 `business/{module}/{business}`，Mapper XML 按平台/业务区分落 `resources/mapper/framework/{module}` 或 `resources/mapper/business/{module}/{business}/`；前端业务模块聚合落 `modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts）。
-5. **菜单/权限**：插 `xxl_boot_resource` 菜单(type=1)+按钮(type=2)+`xxl_boot_role_res` 授权；页面按钮用 `v-hasPermi`。
-6. **验证**：起 `xxl-boot-api`(8090) + `xxl-boot-ui-vue`(3000，代理 /api→8090)，菜单可见、CRUD 可用、权限生效；验证结果回填 `plan.md`。
+遵循 `AGENTS.md`「设计原则」与「通用约定」，Vue 侧落地：
+- 优先复用 `@/composables`、`@/components`、`@/utils/modal`；同一逻辑第三次出现才新增 Composable，不提前封装。
+- 列表页只负责编排；复杂表单、详情、多页签拆到 `pages/` 下独立组件，避免渲染/交互/状态混在一个文件。
+- 状态统一 `ref` + `queryParams/table/formState` 收敛；不引入第二套状态或弹窗方案。
 
-> ⚠️ **SQL 执行规范（强制，防乱码）**：写/执行任何含中文的 SQL（建表、菜单/权限初始化、联调造测试数据 INSERT 等）前，必须确保连接字符集为 utf8mb4，否则中文 `COMMENT`/表名/`INSERT` 数据落库会乱码。本项目 MySQL 跑在 docker 容器（容器名 `mysql`），其 CLI 默认连接字符集是 **latin1**，必须按下列姿势执行：
+## 初始化与启动
 
-## 需求落盘（xxl-boot-spec）
+- 数据库：按 `AGENTS.md`「SQL 执行规范」执行 `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_vue.sql`。
+- 后端：`cd xxl-boot-api && mvn spring-boot:run`（8090，Redis 需先启动）。
+- 前端：`cd xxl-boot-ui/xxl-boot-ui-vue && npm i && npm run dev`（3000，代理 `/api` → 8090）。
+- 类型检查/构建：`npm run type-check` / `npm run build`。
 
-每个需求在项目根目录 `xxl-boot-spec/` 下生成一个需求子目录，把执行中产出的「方案 + SQL」沉淀其中，便于追溯与复用：
+## 执行要点
 
-1. **目录命名**：`xxl-boot-spec/{yyyyMMdd}-{business}/`（同日多个需求用业务名区分，如 `20260830-product`）。
-2. **方案**：`plan.md`，一份完整开发方案文档，须覆盖「需求相关 / 数据库设计 / 菜单·授权 / 后端改造 / 前端改造 / 验证结果」六大块，按下方「plan.md 模板」生成骨架后随实现同步回填；
-3. **SQL**：建表 SQL 与菜单/权限 SQL 一并落盘（如 `{business}-table.sql`、`{business}-init.sql`），作为本需求专属脚本；如需进总库初始化，再同步一份到 `doc/db/`。
+- 本模式端口：api `8090`、vue `3000`。
+- 后端落 `business/{module}/{business}`，Mapper XML 落 `resources/mapper/business/{module}/{business}/`，前端落 `modules/business/{module}/{business}/`。
+- 菜单 SQL、页面定位与权限写法按本 Skill 后续章节执行；需求落盘与标准流程按 `AGENTS.md`。
 
-执行全程保持该目录与实现同步：先建目录落方案骨架 → 建表写 SQL → 落位实现 → 验证后回填结论。
+## 后端落位（与 React 共用）
 
-### plan.md 模板（Vue 分离模式）
-
-```markdown
-# {业务名}开发方案（{module}/{business}）
-
-> 需求目录：`xxl-boot-spec/{yyyyMMdd}-{business}/` | 日期：{yyyy-MM-dd}
-
-## 一、需求相关
-| 项 | 结论 |
-|---|---|
-| 运行模式 | Vue3 分离（xxl-boot-api 8090 + xxl-boot-ui-vue 3000） |
-| 模块/业务命名 | `{module}/{business}`，包 `com.xxl.boot.api.business.{module}` |
-| 核心字段与业务规则 | 字段清单 + 必填/唯一/模糊搜索规则 |
-| 状态/枚举下拉 | 无 / 枚举 `{XxxEnum}`（business/{module}/{business}/enums）/ 字典 `{dictType}` |
-| 特殊组件 | 无 / Editor 富文本 / ImageUpload 图片上传 |
-| 页面形态 | 标准 CRUD / 详情页 / 多页签 |
-| 出码方式 | AI 按模板直生 / 后台「工具-代码生成」 |
-| 验证范围 | 编译验证 or 起 api+vue 联调 |
-
-## 二、数据库设计
-表：`xxl_boot_{business}`
-| 字段 | 类型 | 说明 | 备注 |
-|---|---|---|---|
-| id | BIGINT | 主键自增 | 框架约定 |
-| {field} | {type} | {说明} | {必填/模糊/唯一/下拉} |
-| add_time | DATETIME | 新增时间 | NOW() |
-| update_time | DATETIME | 更新时间 | NOW() |
-
-索引/约束：`i_` 前缀唯一索引（如有）。
-状态枚举取值：`{code-title}`（存 `xxl_boot_*` 之外用框架枚举或字典）。
-SQL 脚本：`{business}-table.sql`
-
-## 三、菜单 / 授权
-- 菜单（type=1）：`{名称}` permission=`{module}:{business}` url=`/{module}/{business}`
-- 按钮（type=2）：新增 `:add` / 修改 `:edit` / 删除 `:remove`
-- 角色授权：`xxl_boot_role_res` role_id=1
-- SQL 脚本：`{business}-init.sql`
-
-## 四、后端改造
-| 文件 | 位置 | 要点 |
-|---|---|---|
-| `{Business}.java` | business/{module}/{business}/model/ | 实体驼峰；Date 字段 @JsonFormat |
-| `{Business}Mapper.java` | business/{module}/{business}/mapper/ | insert/delete/update/load/pageList/pageListCount |
-| `{Business}Mapper.xml` | resources/mapper/business/{module}/{business}/ | resultMap 显式映射；add/update_time 用 NOW()；查询 <if> 动态拼条件 |
-| `{Business}Service.java` | business/{module}/{business}/service/ | 方法顺序 pageList/load/insert/delete/update |
-| `{Business}ServiceImpl.java` | business/{module}/{business}/service/impl/ | StringTool 校验，失败 Response.ofFail |
-| `{Business}Controller.java` | business/{module}/{business}/controller/ | 全 @XxlSso；统一 @RequestMapping；分页/查询 @RequestParam；insert/update @RequestBody；delete @RequestBody List<Integer> |
-
-接口：`/{module}/{business}/pageList|load|insert|delete|update`
-
-## 五、前端改造
-| 文件 | 位置 | 要点 |
-|---|---|---|
-| `types/index.ts` | modules/business/{module}/{business}/ | 实体+Query(pageNum/pageSize)+ListQuery |
-| `api/index.ts` | modules/business/{module}/{business}/ | list/get/add/del/update，Promise<Response<PageModel<T>>> |
-| `pages/index.vue` | modules/business/{module}/{business}/ | 三段式；usePageParams 转 offset/pagesize；按钮 v-hasPermi |
-
-## 六、验证结果 / 变更记录
-- [ ] 需求结论确认并回填第一节
-- [ ] 建表 SQL 执行通过，字段与实体一致
-- [ ] 菜单/按钮/授权已插库且终端可见
-- [ ] 后端 `mvn -q compile` 通过
-- [ ] 前端 vue-tsc / eslint 通过
-- [ ] 联调：菜单可见、CRUD/搜索可用、无权限按钮隐藏、空参数友好提示
-- [ ] 变更记录（本次改动时间与说明）
-```
-
-## 后端落位清单（7 件套）
-
-以业务 `Demo`、模块 `demo` 为例，包名 `com.xxl.boot.api.business.demo.demo`（模块+业务双层镜像）：
+以业务 `Demo`、模块 `demo`、接口路径 `/demo/demo` 为例，包名 `com.xxl.boot.api.business.demo.demo`：
 
 | 文件 | 位置 | 说明 |
 |---|---|---|
-| `Demo.java` | `java/.../business/demo/demo/model/Demo.java` | 实体，字段驼峰 |
-| `DemoMapper.java` | `java/.../business/demo/demo/mapper/DemoMapper.java` | insert/delete/update/load/pageList/pageListCount |
-| `DemoMapper.xml` | `resources/mapper/business/demo/demo/DemoMapper.xml` | resultMap 显式映射；`add_time/update_time` 用 `NOW()` |
+| `Demo.java` | `java/.../business/demo/demo/model/Demo.java` | 实体，字段驼峰；`Date` 字段加 `@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")` |
+| `DemoMapper.java` | `java/.../business/demo/demo/mapper/DemoMapper.java` | `insert/delete/update/load/pageList/pageListCount` |
+| `DemoMapper.xml` | `resources/mapper/business/demo/demo/DemoMapper.xml` | `resultMap` 显式映射；`add_time/update_time` 用 `NOW()`；查询用 `<if>` 动态拼条件 |
 | `DemoService.java` / `DemoServiceImpl.java` | `java/.../business/demo/demo/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
-| `DemoController.java` | `java/.../business/demo/demo/controller/DemoController.java` | `@RestController @RequestMapping("/demo/demo")`，全 `@XxlSso` |
+| `DemoController.java` | `java/.../business/demo/demo/controller/DemoController.java` | `@RestController @RequestMapping("/demo/demo")`，全部方法 `@XxlSso` |
 
-**直生入口**：直接读模板 `templates/tool/codegen/java/*.ftl`（controller/service/service_impl/mapper/mapper.xml/entity 六文件）即可得到准确骨架与落位路径。
+接口契约（路径、参数通道、返回结构、校验、方法顺序）按 `AGENTS.md`「后端通用规范」；本模式只需保证包路径与 Mapper XML 双层镜像。
 
-后端要点：
+### 代码生成器产物的 Vue 专属修正
 
-- Controller 方法统一 `@RequestMapping`；分页/查询用 `@RequestParam`（`offset`/`pagesize` + 查询字段），返回 `Response<PageModel<XxxDTO/Entity>>`。
-- 参数校验用 `StringTool/RegexTool/CollectionTool`，失败 `Response.ofFail("提示")`；唯一性校验库中查一遍再插。
-- DTO 时间展示转字符串（`DateTool.formatDateTime`），用 Adaptor 完成 entity→dto。
-- 接口路径**全小写**：`/{module}/{business}/pageList|load|insert|delete|update`；CRUD 参数通道：分页/查询走 URL（`@RequestParam`），`insert`/`update` 走 `@RequestBody` 实体，`delete` 走 `@RequestBody List<Integer> ids`（集合不用包装 DTO）。
+- Vue 模板会生成「导出」按钮与 `exportDemo` 接口，但后端默认没有 `export` 接口：要么补实现，要么删按钮/API。
+- 其余固定缺口（查询条件、校验、i18n、树表）按 `AGENTS.md`「代码生成器」逐项补齐。
 
-## 前端落位清单（3 文件 + barrel）
+## 前端落位（3 文件 + 页内组件）
+
+以 `/demo/demo` 为例：
 
 | 文件 | 位置 | 说明 |
 |---|---|---|
-| types | `src/modules/business/{module}/{business}/types/index.ts` | `Xxx` 实体 + `XxxQuery`(pageNum/pageSize 表单形态) + `XxxListQuery = ListQuery<XxxQuery>` |
-| api | `src/modules/business/{module}/{business}/api/index.ts` | `request({url:'/{module}/{page}/pageList', method:'get', params:...})`；写操作 `method:'post', data:...`（delete 传裸数组） |
-| view | `src/modules/business/{module}/{business}/pages/index.vue` | 三段式列表页 |
+| types | `src/modules/business/demo/demo/types/index.ts` | 实体 + Query + Form + ListQuery |
+| api | `src/modules/business/demo/demo/api/index.ts` | `request` 封装，`Promise<Response<PageModel<T>>>` |
+| view | `src/modules/business/demo/demo/pages/index.vue` | 三段式列表页 |
+| 页内组件 | 同 `pages/` 下，如 `DemoFormModal.vue` | 弹窗独立文件时使用 |
 
-页面（含弹窗 XxxFormModal.vue）放 `pages/`，接口放 `api/`，类型放 `types/`，三者同模块聚合、无 barrel 登记；全局基础类型（Response/PageModel/ListQuery…）统一从 `@/types` 引用。「框架」内置模块在 `modules/framework/`，业务禁止混入。
+页面、接口、类型同模块聚合，**没有 barrel 登记**；全局基础类型统一从 `@/types` 引用。
 
-**i18n 落位**：用户可见文案一律 `import { t } from '@/i18n'` 引用，**禁止硬编码中文**（注释除外）；文案 key 统一维护在 `src/i18n/locales/{zh,en}.json` **单一文件**内（按域名节点分区，如 `business.*`；`app` 前置 → 公共组 `common` 等 → 平台业务组 `authz/system` 等 → 常规业务模块，顺序与另一套 UI 保持一致），zh/en 成对补。通用词（新增/修改/删除/搜索/操作/状态/正常/停用/保存成功…）复用 `common.*`，插值用 `t('key',[v])`（`{0}`）。
+### 1. types：`types/index.ts`
 
-types 参考 `src/modules/framework/system/message/types/index.ts` 封口写法；api 参考 `src/modules/framework/system/message/api/index.ts`。
+```ts
+import type { ListQuery } from '@/types'
 
-### index.vue 骨架（三段式，template 略）
+/** Demo 实体 */
+export interface Demo {
+  id?: number
+  /** 名称 */
+  name?: string
+  /** 状态：0-正常、1-停用 */
+  status?: number
+  addTime?: string
+  updateTime?: string
+}
+
+/** 搜索栏查询参数（前端表单形态） */
+export interface DemoQuery {
+  pageNum: number
+  pageSize: number
+  name?: string
+  status?: number
+}
+
+/** 新增/修改表单 */
+export interface DemoForm {
+  id?: number
+  name?: string
+  status?: number
+}
+
+/** 列表接口请求参数（offset/pagesize 形态） */
+export type DemoListQuery = ListQuery<DemoQuery>
+```
+
+### 2. api：`api/index.ts`
+
+```ts
+import { request } from '@/utils/request'
+import type { Demo, DemoForm, DemoListQuery } from '../types'
+import type { PageModel, Response } from '@/types'
+
+/** 分页查询 Demo */
+export function listDemo(query: DemoListQuery): Promise<Response<PageModel<Demo>>> {
+  return request({
+    url: '/demo/demo/pageList',
+    method: 'get',
+    params: query
+  })
+}
+
+/** 查询 Demo 详情 */
+export function getDemo(id: number): Promise<Response<Demo>> {
+  return request({
+    url: '/demo/demo/load',
+    method: 'get',
+    params: { id }
+  })
+}
+
+/** 新增 Demo */
+export function addDemo(data: DemoForm): Promise<Response<unknown>> {
+  return request({
+    url: '/demo/demo/insert',
+    method: 'post',
+    data
+  })
+}
+
+/** 修改 Demo */
+export function updateDemo(data: DemoForm): Promise<Response<unknown>> {
+  return request({
+    url: '/demo/demo/update',
+    method: 'post',
+    data
+  })
+}
+
+/** 删除 Demo（支持单条/批量） */
+export function delDemo(id: number | number[]): Promise<Response<unknown>> {
+  return request({
+    url: '/demo/demo/delete',
+    method: 'post',
+    data: Array.isArray(id) ? id : [id]
+  })
+}
+```
+
+### 3. 页面：`pages/index.vue`（script 骨架）
+
+模板部分：搜索表单 + 操作按钮（`v-hasPermi`） + `<el-table>` + `<Pagination>` + `<el-dialog>`；完整范例先看 `modules/framework/system/message/pages/index.vue`。
 
 ```ts
 <script setup lang="ts">
 defineOptions({ name: 'Demo' })
-import { listDemo, getDemo, addDemo, delDemo, updateDemo } from '../api'
-import { useFormReset } from '@/composables/useFormReset'
+import { t } from '@/i18n'
+import { ref } from 'vue'
+import { listDemo, getDemo, addDemo, updateDemo, delDemo } from '../api'
 import { usePageParams } from '@/composables/usePageParams'
 import { useEnumOption } from '@/composables/useEnumOption'
+import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
-import { t } from '@/i18n'
-import { RightToolbar, Pagination } from '@/components'
+import type { Demo, DemoForm, DemoQuery } from '../types'
 import type { FormState, TableState } from '@/types'
-import type { Demo, DemoQuery } from '../types'
 import type { FormInstance } from 'element-plus'
-import { ref } from 'vue'
 
 const resetForm = useFormReset()
 
 // --------------------------------- ref data ---------------------------------
-const demoRef = ref<FormInstance>()            /* 编辑表单 ref */
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
+const formRef = ref<FormInstance>() /* 编辑表单 ref */
 const { DemoStatusEnum: statusOptions } = useEnumOption('DemoStatusEnum')
 
-const queryParams = ref<DemoQuery>({ pageNum: 1, pageSize: 10, status: -1, name: undefined })
+const queryParams = ref<DemoQuery>({ pageNum: 1, pageSize: 10, name: undefined, status: -1 })
 
-const table = ref<TableState<Demo>>({ list: [], total: 0, loading: true, showSearch: true, ids: [], single: true, multiple: true })
+const table = ref<TableState<Demo>>({
+  list: [],
+  total: 0,
+  loading: true,
+  showSearch: true,
+  ids: [],
+  single: true,
+  multiple: true
+})
 
-const formState = ref<FormState<Demo>>({ visible: false, title: '', form: {}, rules: { name: [{ required: true, message: t('demo.nameRequired'), trigger: 'blur' }] } })
+const formState = ref<FormState<DemoForm>>({
+  visible: false,
+  title: '',
+  form: {},
+  rules: {
+    name: [{ required: true, message: t('common.requiredMsg', [t('business.demo.name')]), trigger: 'blur' }]
+  }
+})
 
 // --------------------------------- fun ---------------------------------
 function getList() {
   table.value.loading = true
-  const params = usePageParams(queryParams)()   // pageNum/pageSize → offset/pagesize
+  const params = usePageParams(queryParams)()
   listDemo(params).then((response) => {
-    table.value.list = response.data.data        // 列表
-    table.value.total = response.data.total      // 总数
+    table.value.list = response.data.data
+    table.value.total = response.data.total
     table.value.loading = false
   })
 }
-function reset() { formState.value.form = { id: undefined, name: undefined, status: 0 }; resetForm('demoRef') }
-function handleQuery() { queryParams.value.pageNum = 1; getList() }
-function resetQuery() { resetForm('queryRef'); handleQuery() }
-function handleSelectionChange(selection: Demo[]) { table.value.ids = selection.map(i => i.id as number); table.value.single = selection.length !== 1; table.value.multiple = !selection.length }
-function handleAdd() { reset(); formState.value.visible = true; formState.value.title = '新增Demo' }
-function handleUpdate(row: any) { reset(); const id = row?.id ?? table.value.ids[0]; if (id == null) return; getDemo(id).then(r => { formState.value.form = r.data; formState.value.visible = true; formState.value.title = '修改Demo' }) }
-function handleDelete(row: any) { const ids = row?.id ?? table.value.ids; if (ids == null || (Array.isArray(ids) && ids.length === 0)) return; modal.confirm('是否确认删除编号为"' + ids + '"的数据项？').then(() => delDemo(ids)).then(() => { getList(); modal.msgSuccess('删除成功') }).catch(() => {}) }
-function submitForm() { demoRef.value!.validate(valid => { if (!valid) return; (formState.value.form.id != null ? updateDemo(formState.value.form) : addDemo(formState.value.form)).then(() => { modal.msgSuccess(formState.value.form.id != null ? '修改成功' : '新增成功'); formState.value.visible = false; getList() }) }) }
+
+function reset() {
+  formState.value.form = { id: undefined, name: undefined, status: 0 }
+  resetForm('formRef')
+}
+
+function handleQuery() {
+  queryParams.value.pageNum = 1
+  getList()
+}
+
+function resetQuery() {
+  resetForm('queryRef')
+  handleQuery()
+}
+
+function handleSelectionChange(selection: Demo[]) {
+  table.value.ids = selection.map((item) => item.id as number)
+  table.value.single = selection.length !== 1
+  table.value.multiple = !selection.length
+}
+
+function handleAdd() {
+  reset()
+  formState.value.visible = true
+  formState.value.title = t('common.titleAdd', [t('business.demo.title')])
+}
+
+/** 顶部按钮点击传入的是事件对象，需回退到勾选 id */
+function handleUpdate(row: any) {
+  reset()
+  const id = row?.id ?? table.value.ids[0]
+  if (id == null) return
+  getDemo(id).then((response) => {
+    formState.value.form = response.data
+    formState.value.visible = true
+    formState.value.title = t('common.titleEdit', [t('business.demo.title')])
+  })
+}
+
+function submitForm() {
+  formRef.value?.validate((valid) => {
+    if (!valid) return
+    const isEdit = formState.value.form.id != null
+    const request = isEdit ? updateDemo(formState.value.form) : addDemo(formState.value.form)
+    request.then(() => {
+      modal.msgSuccess(isEdit ? t('common.updateSuccess') : t('common.addSuccess'))
+      formState.value.visible = false
+      getList()
+    })
+  })
+}
+
+/** 顶部按钮点击传入的是事件对象，需回退到勾选 ids */
+function handleDelete(row: any) {
+  const ids = row?.id ?? table.value.ids
+  if (ids == null || (Array.isArray(ids) && ids.length === 0)) return
+  modal
+    .confirm(t('business.demo.confirmDelete', [ids]))
+    .then(() => delDemo(ids))
+    .then(() => {
+      getList()
+      modal.msgSuccess(t('common.deleteSuccess'))
+    })
+    .catch(() => {})
+}
 
 // --------------------------------- page init ---------------------------------
 getList()
 </script>
 ```
 
-- 模板：搜索表单（`queryParams`）、`<el-table>` + 操作列用 `v-hasPermi="['demo:demo:add|edit|remove']"`、`<Pagination>`、`<el-dialog :title="formState.title" v-model="formState.visible">` + `@/components` 的 Editor/ImageUpload 等按需引入。**完整样例看 `src/modules/framework/system/message/index.vue`。**
-- `getList()` 一律经 `usePageParams(queryParams)()` 转 `offset/pagesize`；从 `response.data.data / response.data.total` 取值。
+### Vue 页面约定
+
+- `script` 除基础 import 外按「ref data → fun → page init」三节组织，节顶注释为 `/* --- {功能，前后33个-} --- */`。
+- 响应式数据一律 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；搜索栏、表格状态、表单状态分别收敛为 `queryParams`、`table`、`formState`。
+- 列表固定经 `usePageParams(queryParams)()` 把 `pageNum/pageSize` 转 `offset/pagesize`；取 `response.data.data` 与 `response.data.total`。
+- 组件 import 名称与模板标签统一 PascalCase；按钮权限 `v-hasPermi="['demo:demo:add']"`，角色权限 `v-hasRole="['admin']"`。
+- 表单弹窗推荐 `defineModel('visible')` + 模板 `v-model` 直连；通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
+
+### i18n（Vue）
+
+- 文案文件：`src/i18n/locales/{zh,en}.json`（单一文件，按域名节点分区，`business.*` 放最后）。
+- 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 受 `MessageKey` 类型约束，先补文案再引用。
+- 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`，Element Plus 语言随当前语言切换。
 
 ## 菜单 / 权限注册 SQL
 
-模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl`（生成 `{business}-init.sql`）。要点：
-
 ```sql
+SET NAMES utf8mb4;
+
 -- 菜单（type=1；url 同时充当路由 path 与 modules/ 组件定位 key）
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
 VALUES (0, 'Demo管理', 1, 'demo:demo', '/demo/demo', '', 999, 0, 0, now(), now());
 SELECT @parentId := LAST_INSERT_ID();
+
 -- 按钮（type=2）
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
 VALUES (@parentId, 'Demo新增', 2, 'demo:demo:add', '', '', 1, 0, 0, now(), now()),
        (@parentId, 'Demo修改', 2, 'demo:demo:edit', '', '', 2, 0, 0, now(), now()),
        (@parentId, 'Demo删除', 2, 'demo:demo:remove', '', '', 3, 0, 0, now(), now());
--- 授权（默认管理员）
+
+-- 按钮ID（多值插入 LAST_INSERT_ID 返回首行，自增连续）
+SELECT @btnAddId := LAST_INSERT_ID();
+SET @btnEditId = @btnAddId + 1, @btnDelId = @btnAddId + 2;
+
+-- 授权（默认管理员 role_id=1）
 INSERT INTO `xxl_boot_role_res` (`role_id`,`res_id`,`add_time`,`update_time`)
-VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parentId+2, now(), now()), (1, @parentId+3, now(), now());
+VALUES (1, @parentId, now(), now()),
+       (1, @btnAddId, now(), now()),
+       (1, @btnEditId, now(), now()),
+       (1, @btnDelId, now(), now());
 ```
 
-页面文件 `src/modules/business/{module}/{business}/pages/index.vue` 建好后前端 `loadView` 自动映射，**无需改路由**。
+页面文件 `src/modules/business/{module}/{business}/pages/index.vue` 建好后，`loadView` 按 `url` 自动映射；也支持 `pages/{xxx}.vue`（此时菜单 `url` 写到 `/{module}/{business}/{xxx}`）。**无需改路由代码。**
 
-## 枚举下拉（可选）
+## 枚举 / 字典
 
-业务模块枚举（含下拉）统一放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum(getCode/getTitle)`；`framework/constant/enums` 仅保留平台内置枚举，业务代码一律不侵入。`loadEnumItem` 展开「平台枚举包 + business 根包」内包含 IEnum 枚举的包，按枚举名解析（平台包优先），前端 `useEnumOption('XxxEnum')` 自动取 `{code,title}`。数据字典场景改用 `useDict('dictType')`（录入 `xxl_boot_dict`）。
+- 业务枚举放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
+- 枚举下拉：`const { DemoStatusEnum: statusOptions } = useEnumOption('DemoStatusEnum')`，返回 `Record<string, Ref<EnumOption[]>>`，模板用 `statusOptions`，提交用 `item.code`。
+- 数据字典：`const { sys_user_sex } = useDict('sys_user_sex')`；字段映射为 `{ label, value }`。
 
-## 内置代码生成器（快速出码）
+## 内置代码生成器（Vue）
 
-后台「工具-代码生成」或接口 `POST /tool/codegen/createTable`：
+后台「工具-代码生成」或接口：
 
 ```json
+POST /tool/codegen/createTable
 { "tableSql": "CREATE TABLE xxl_boot_demo (...)", "tplWebType": "element-plus-typescript" }
 ```
 
-→ `update` 编辑字段（htmlType/queryType/dictType/isQuery/isList/isInsert/isEdit/isRequired）→ `preview` 逐文件预览 / `batchGenCode` 下载 zip（后端 6 件套 + vue3 三文件 + `-init.sql`）。落位见上文两张清单。
+流程：`createTable` 建记录 → `update` 编辑字段（`queryType/htmlType/dictType/isQuery/isList/isInsert/isEdit/isRequired`）→ `preview` 逐文件预览 / `batchGenCode?ids=...` 下载 zip。
+
+产物：
+
+- 后端：`main/java/.../business/{module}/{business}/{model,mapper,service,service/impl,controller}` + `main/resources/mapper/business/{module}/{business}/{Business}Mapper.xml` + `{Business}-init.sql`；
+- 前端：`vue/business/{module}/{business}/{types,api,pages}`；
+- 字段 `id` 是强依赖；`tplCategory=tree` 时前端出 `index-tree.vue`。
+
+> 解压后按项目目录合并；生成代码的补齐项见「Vue 专属修正」。
 
 ## 校验清单
 
-- [ ] 需求子目录 `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md`（六大块齐全）+ SQL 已落盘并同步。
-- [ ] `xxl-boot-api` 下 `mvn -q compile` 通过。
-- [ ] 后端：Controller 全 `@XxlSso`，方法顺序 `pageList/load/insert/delete/update`，统一 `@RequestMapping`；分页/查询 `@RequestParam`，`insert`/`update` `@RequestBody`，`delete` `@RequestBody List<Integer>`，校验 `Response.ofFail`。
-- [ ] 前端：types 三件齐（实体/Query/ListQuery）并登记 barrel；api 封装 `Promise<Response<PageModel<T>>>`；列表页三段式 + `ref` 收敛 + `usePageParams`。
-- [ ] 权限：按钮 `v-hasPermi`，资源表菜单+按钮已插且已授权。注释符合 AGENTS.md 6.1。
-- [ ] i18n：页面无硬编码中文（注释除外），`t('key')` 引用且 zh/en 文案已成对维护；通用词复用 `common.*`。语言配置 `default-settings.ts` 的 `language`。
-- [ ] 防乱码：所有 `.sql` 首行有 `SET NAMES utf8mb4;`。
-- [ ] 联调：菜单可见、列表/新增/修改/删除/搜索可用、权限失效项按钮隐藏、空参数后端友好提示。
+- [ ] `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md` 六大块与 SQL 已落盘并同步（模板见 `AGENTS.md`「需求落盘」）。
+- [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
+- [ ] 前端 types 四件（实体/Query/Form/ListQuery）齐全，api 返回 `Promise<Response<PageModel<T>>>`，页面三段式 + `ref` 收敛 + `usePageParams`。
+- [ ] 按钮 `v-hasPermi`；资源表菜单+按钮已插且已授权；菜单可见、页面能打开。
+- [ ] i18n：页面无硬编码中文（注释除外），语言由后端 `system.i18n.language` 控制，前端已由 `/loadBaseConfig` 同步。
+- [ ] SQL 按 `AGENTS.md`「SQL 执行规范」执行，中文无乱码。
+- [ ] 联调：列表/新增/修改/删除/搜索可用，无权限按钮隐藏，空参数后端友好提示。
 
-## 参考文件（绝对路径）
+## 参考文件
 
 - 后端直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/java/*.ftl`
+- Vue 直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/vue3/*.ftl`
 - 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/message/pages/index.vue`
 - API / 类型样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/message/{api,types}/index.ts`
+- 组合式函数：`xxl-boot-ui/xxl-boot-ui-vue/src/composables/{usePageParams,useEnumOption,useDict,useFormReset}.ts`
 - 菜单 SQL 模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl`
-- 代码生成前端页：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/tool/codegen/{index,editTable}.vue`
+- 代码生成前端页：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/tool/codegen/`

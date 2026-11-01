@@ -1,10 +1,12 @@
 # XXL-Boot 脚手架使用与开发规范
 
-以 XXL-Boot 为脚手架开发业务，请先明确自己的运行模式，再按对应 Skill 的标准流程作业。
+以 XXL-Boot 为脚手架开发业务，先明确运行模式，再加载对应 Skill。
+
+> 本文只维护**跨模式共性原则与契约**。目录、页面骨架、启动/构建命令、代码生成器细节、模式专属 i18n 与菜单 SQL，统一维护在 `.agents/skills/xxl-boot-{vue|react|monolith}/SKILL.md`。两处不要重复维护同一内容。
 
 ## 一、项目概览
 
-XXL-Boot 是一个快速开发平台 / 脚手架，采用 Monorepo 统一托管「单体项目」与「前后端分离项目」，可一键构建、按模式拆分使用。
+XXL-Boot 是一个快速开发平台 / 脚手架，采用 Monorepo 统一托管「单体项目」与「前后端分离项目」。
 
 | 模块 | 说明 |
 |---|---|
@@ -13,11 +15,11 @@ XXL-Boot 是一个快速开发平台 / 脚手架，采用 Monorepo 统一托管�
 | `xxl-boot-ui/xxl-boot-ui-vue` | Vue3 前端（Element Plus + TypeScript + Vite），端口 3000 |
 | `xxl-boot-ui/xxl-boot-ui-react` | React 前端（Ant Design ProTable + TypeScript + Vite），端口 4000 |
 
-通用依赖：`xxl-tool`（工具与统一响应）、`xxl-sso`（登录鉴权，注解 `@XxlSso`）、MyBatis（Mapper + XML）、MySQL、Redis（api 模式必需）。
+通用依赖：`xxl-tool`（工具与统一响应）、`xxl-sso`（登录鉴权，`@XxlSso`）、MyBatis（Mapper + XML）、MySQL、Redis（api 模式必需）。
 
-> 推荐对外交付形态：`xxl-boot-api` + `xxl-boot-ui-vue`（或 `-react`）的前后端分离模式，做业务扩展最顺滑。
+> 推荐交付形态：`xxl-boot-api` + `xxl-boot-ui-vue`（或 `-react`）的前后端分离模式，业务扩展最顺滑。
 
-## 二、三种运行模式与 Skill 速查
+## 二、运行模式与 Skill 速查
 
 | 运行模式 | 组成 | 什么时候用 | 加载 Skill |
 |---|---|---|---|
@@ -25,210 +27,186 @@ XXL-Boot 是一个快速开发平台 / 脚手架，采用 Monorepo 统一托管�
 | Vue 分离 | `xxl-boot-api` + `xxl-boot-ui-vue` | 前后端分离，前端用 Vue3 | `xxl-boot-vue` |
 | React 分离 | `xxl-boot-api` + `xxl-boot-ui-react` | 前后端分离，前端用 React | `xxl-boot-react` |
 
-三个 Skill 均位于 `.agents/skills/`，描述了「新增/改造一个业务模块」的完整落位与模板；本项目已内置可复现的执行环境会自动发现并加载匹配的 Skill。启动项目前先看第三节，写代码前先加载对应 Skill。
+- 环境：JDK 17+、Maven 3.6+、Node 18+、MySQL 8、Redis（api 模式）。
+- 数据库连接：`xxl-boot-api` / `xxl-boot-admin` 的 `application.properties`（默认 `127.0.0.1:3306/xxl_boot`，`root/root_pwd`）；默认账号 `admin`。
+- 数据库初始化、服务启动、前端构建与模式专属验证命令，见对应 Skill。
+- Skill 与本文冲突时，以当前代码和本文共性约束为准，并同步修正 Skill。
 
-## 三、快速开始
+## 三、设计原则
 
-前置环境：JDK 17+、Maven 3.6+、Node 18+、MySQL 8、Redis（api 模式）。
+四条原则按优先级执行；冲突时先满足简单与职责清晰，再考虑复用。
 
-### 3.1 初始化数据库
+> 速记：能删就删 → 第三次再抽 → 一个变更理由 → 已有方案优先。
 
-```sql
--- 1. 建库 + 全量框架表 + 种子数据
-source doc/db/tables_xxl_boot.sql;
+| 原则 | 核心要求 | 落地判据 / 禁止 |
+|---|---|---|
+| **KISS 优先** | 先写最直接能工作的实现，能删就删 | 禁止非必要接口、工厂、配置项、包装函数；禁止为假想需求预留扩展点 |
+| **DRY，但只在必要时抽象** | 同一逻辑出现**第三次**再抽公共实现 | 两处相似但边界不同的代码可保留；禁止提前建抽象层 |
+| **单一职责** | 一个文件/函数/组件只承担一个变更理由 | 渲染、消毒、交互、状态等边界混在一起就拆；拆到能一句话描述职责 |
+| **同类场景同一方案** | 已有工具/组件/模式能覆盖就不另起一套 | 新方案必须说明旧方案为何不适用；禁止同一问题多套写法并存 |
 
--- 2. 按运行模式替换菜单图标（三选一）
-source doc/db/tables_xxl_boot_modular_vue.sql;     -- Vue 分离模式
-source doc/db/tables_xxl_boot_modular_react.sql;   -- React 分离模式
-source doc/db/tables_xxl_boot_monolith.sql;        -- 单体模式
-```
+补充约束：
 
-数据库连接配置分别在 `xxl-boot-api/src/main/resources/application.properties`、`xxl-boot-admin/src/main/resources/application.properties`（默认 `jdbc:mysql://127.0.0.1:3306/xxl_boot`，root）。默认账号 `admin`。
+- 抽象前先回答：是否已重复第三次？现有工具是否已覆盖？现在是否真的需要？三个答案不成立就不抽象。
+- 不新增“仅转发”的 Service/Controller/函数；不为一次性逻辑建工具类。
+- 修复问题时优先改现有实现，不平行复制一份“新版本”。
 
-### 3.2 单体模式（可选）
-
-```bash
-cd xxl-boot-admin && mvn spring-boot:run   # 8080
-```
-
-### 3.3 Vue / React 分离模式
-
-```bash
-# 后端 API（Redis 需先启动）
-cd xxl-boot-api && mvn spring-boot:run     # 8090
-
-# 前端 Vue（本地代理 /api → 8090）
-cd xxl-boot-ui/xxl-boot-ui-vue && npm i && npm run dev   # 3000
-# 或前端 React
-cd xxl-boot-ui/xxl-boot-ui-react && npm i && npm run dev # 4000
-```
-
-## 四、工程结构与业务代码落位
-
-### 4.1 后端（xxl-boot-admin / xxl-boot-api）
-
-框架代码按分层分包（两套包名镜像）：`com.xxl.boot.admin.framework` 与 `com.xxl.boot.api.framework`：
-
-```
-framework
-├── controller/{system,authz,tool,base}      /* 接口入口，只做参数接收与校验 */
-├── service/  +  service/impl/               /* 业务逻辑：接口 + 实现 */
-├── mapper/{system,authz,tool}               /* 数据访问接口 */
-├── model/{entity,dto,adaptor}               /* 实体 / 展示DTO / 实体转DTO */
-├── constant/{enums,consts}                  /* 枚举与常量 */
-├── web/{xxlsso,xxllog,error}                /* 登录态、审计日志、错误页 */
-├── annotation · config · util               /* 注解、配置、工具 */
-```
-
-**新增业务一律落 `business/{module}/{business}` 双层镜像包**（`framework` 仅属于平台内置能力，不要塞业务）：
-
-- api 模式：前端 `src/modules/business/{module}/{business}/`（pages/api/types）与后端 `com.xxl.boot.api.business.{module}.{business}`（controller/service/mapper/model/enums 子包）**双层镜像**，业务后缀与接口路径 `/{module}/{business}` 一致；首个模块可走内置代码生成器产出（模板见第七节与对应 Skill）
-- 单体模式：`com.xxl.boot.admin.business.{module}`
-
-Mapper XML 对应：统一按首层 `framework/` 与 `business/` 区分——平台内置落 `resources/mapper/framework/{module}`（如 framework/authz、framework/system）；业务模块落 `resources/mapper/business/{module}`（单体）或 `resources/mapper/business/{module}/{business}`（前后端分离双层镜像）。
-
-### 4.2 前端 Vue（xxl-boot-ui-vue）
-
-模块化统一管理：全部模块按「模块自包含」落位 `src/modules`，顶级用 `framework/`（平台内置：authz/system/tool/dashboard/…）与 `business/`（项目业务）隔离；同一模块的页面、接口、类型按 `pages/`、`api/`、`types/` 三个子目录聚合维护。
-
-```
-src
-├── modules/{framework|business}/{domain}/{module}/   /* 模块自包含目录 */
-│   ├── pages/                    /* 页面 + 页内组件（index.vue、data.vue、XxxFormModal.vue…） */
-│   ├── api/                      /* 接口封装（index.ts，同目录聚合） */
-│   └── types/                    /* 类型定义（index.ts，同目录聚合） */
-├── composables                   /* usePageParams / useDict / useEnumOption / useFormReset */
-├── i18n                          /* 文案中心：locales/{zh,en}.json（JSON 数据纯存储，t() 引用） */
-├── components / directive / utils / store   /* 平台公共层（框架与业务共用） */
-└── types/index.ts                /* 全局基础类型（Response/PageModel/PageQuery…） */
-```
-
-- 平台内置示例：`src/modules/framework/auth/`（登录：pages/login.vue + api/）、`src/modules/framework/authz/org/`、`src/modules/framework/system/dict/`（pages/{index,data}.vue + api/ + types/）、`src/modules/framework/dashboard/`（pages/index.vue + api/）等。
-- 业务新增示例：`src/modules/business/{module}/{business}/`（pages/index.vue + api/index.ts + types/index.ts + FormModal.vue），与后端 `com.xxl.boot.api.business.{module}.{business}` 双层镜像。
-
-### 4.3 前端 React（xxl-boot-ui-react）
-
-与 Vue 同套模块化规范，结构、命名与学生完全镜像，且与后端 `com.xxl.boot.api.business.{module}.{business}` 双层镜像：
-
-```
-src
-├── modules/{framework|business}/{domain}/{module}/   /* 模块自包含目录 */
-│   ├── pages/                    /* 页面 + 页内组件（index.tsx、XxxFormModal.tsx…） */
-│   ├── api/                      /* 接口封装（index.ts，同目录聚合） */
-│   └── types/                    /* 类型定义（index.d.ts，declare namespace API 全局合并） */
-├── i18n / hooks / utils / components / stores / router   /* 平台公共层（i18n 文案中心 + 公共 hook/组件） */
-└── types/index.d.ts              /* 全局基础类型（API.Response/PageModel…） */
-```
-
-### 4.4 菜单零路由改动约定
-
-前端菜单完全由数据库 `xxl_boot_resource` 驱动，**新增页面无需动路由代码**：
-
-- Vue：界面文件 `modules/{framework|business}/{domain}/{module}/pages/{xxx}(/index).vue` 建好后，在资源表插入 `type=1` 菜单并配置 `url='/module/xxx'`（url 同时充当路由 path 与前端组件定位 key），前端 `loadView` 按 `modules/` 下相对路径（自动剥离 `framework/`/`business/` 与 `pages/` 段）映射对应页面；
-- React：同理映射到 `modules/{framework|business}/{domain}/{module}/pages/{xxx}(/index).tsx`；
-- 单体：`index.ftl` 遍历资源表 `type=0`（目录）/`type=1`（菜单）渲染侧边栏，url 为上下文路径下的相对地址。
-
-新菜单需在 `xxl_boot_role_res` 中给角色授权（默认管理员 `role_id=1`）。
-
-## 五、新功能开发标准流程
-
-1. **建表**：数据库新建 `xxl_boot_*` 业务表（规范见 6.6）。
-2. **生成/手写代码**：可后台使用内置代码生成器（见七），或按对应 Skill 模板直生等价代码。
-3. **落位与权限**：按对应 Skill 落位后端/前端文件；插入资源表菜单 + 按钮 + 角色授权。
-4. **联调验证**：起后端 + 前端，验证菜单可见、CRUD 可用、权限生效。
-5. **规范复核**：对照第六节规范与 Skill 内「校验清单」过一遍再提交。
-
-> 标准动作在开发前加载对应模式 Skill：`xxl-boot-monolith` / `xxl-boot-vue` / `xxl-boot-react`。
-
-## 六、代码规范
-
-### 6.1 通用约定
+## 四、通用约定
 
 - 使用中文沟通、中文注释。
-- 命名：类名大驼峰、变量/方法小驼峰；命名表达真实语义，避免无意义单字母与拼音；常量全大写 + 下划线。
-- 布尔属性不使用 `isXxx` 前缀命名，避免与 getter 冲突。
-- 注释覆盖 Java 与前端文件：文件顶部一行功能描述，间隔一行加 `@author 作者 yyyy-mm-dd`；方法注释用 `/* xxx */` 多行；属性注释在右侧 `/* xxx */` 垂直对齐；方法内部分支逻辑也需注释；已有注释需符合上述要求。
-- 避免过度设计，注重复用、易理解、易维护；同一类场景保持同一套实现方案。
+- 命名表达真实语义：类名大驼峰、变量/方法小驼峰、常量全大写下划线；避免无意义单字母与拼音；布尔属性不用 `isXxx` 前缀（避免与 getter 冲突）。
+- 注释：文件顶部一行功能描述 + 空行 + `@author 作者 yyyy-mm-dd`；方法用 `/* xxx */` 多行注释；属性注释右侧 `/* xxx */` 垂直对齐；分支逻辑需注释；无死代码、无调试残留。
+- **依赖版本一律固定**：
+  - `package.json` 写精确版本（如 `"yaml": "2.9.1"`），禁止 `^`、`~`、`*`、区间；
+  - `pom.xml` 的依赖与版本属性写精确版本（如 `<xxl-sso.version>2.4.1</xxl-sso.version>`），禁止 `LATEST`、`RELEASE`、区间；
+  - 新增或升级依赖必须同步 `package-lock.json`，根 `packages[""]` 与依赖项同样精确；上游传递依赖由 lock 固化。
+- 新增依赖前先确认现有依赖/工具能否覆盖；不能覆盖才新增，并在变更说明中写清用途。
 
-### 6.2 后端分层与接口规范
+## 五、开发流程与需求落盘
 
-- 分层职责清晰：Controller 参数接收与校验、Service 业务逻辑、Mapper 数据访问，不跨层越权。
-- 接口路径「模块前缀 + 动词式后缀」：`/system/message/pageList`、`/load`、`/insert`、`/delete`、`/update`。
-- 业务接口统一 `@RequestMapping("/{module}/{business}")` + `@XxlSso` 鉴权注解。
-- CRUD 参数通道：接口统一 `@RequestMapping("/{module}/{business}")` + 动词式后缀（不限定 HTTP 方法）；分页、查询条件与简单标量走 URL（`@RequestParam`，前端 `params`）；结构化实体（`insert`/`update`）与集合（`delete` 的 `List<Integer> ids`）走 JSON 请求体（`@RequestBody`，前端 `data`）。复合参数（`SortRequest`/`RoleResRequest` 等）可定义 DTO，但 CRUD 不为 delete 再包一层 `IdsRequest`。
-- Java set/get 方法不折叠，使用正常方法体。
-- mapper XML 中显式配置字段映射（resultMap），`add_time`/`update_time` 写入用 `NOW()`。
-- 参数校验使用工具类：`StringTool`、`RegexTool`、`CollectionTool` 等，返回 `Response.ofFail("提示")`。
-- 业务方法模板顺序固定：`pageList / load / insert / delete / update`（见各 Controller）。
+### 5.1 需求落盘
 
-### 6.3 数据结构
+每个需求在项目根目录 `xxl-boot-spec/` 下建独立子目录，沉淀「方案 + SQL」：
 
-- 后端统一返回 `Response{ code、msg、data }`（`com.xxl.tool.response.Response`），code 200 成功。
-- 分页返回 `Response<PageModel>`；分页入参统一 `offset`、`pagesize`。
-- 参数通道：分页与查询条件走 URL（`@RequestParam`）；结构化实体与集合（`insert`/`update`、`delete` 的 `List<Integer>`）走 JSON 请求体（`@RequestBody`）。
-- 前端取值：`response.data`（成功数据）、`response.data.data`（列表）、`response.data.total`（总数），**不要直接拿返回值操作**。
+1. 目录：`xxl-boot-spec/{yyyyMMdd}-{business}/`（同日多需求用业务名区分）。
+2. 方案：`plan.md`，覆盖「需求相关 / 数据库设计 / 菜单·授权 / 后端改造 / 前端改造 / 验证结果」六大块，随实现同步回填。
+3. SQL：建表与菜单/权限 SQL 一并落盘（如 `{business}-table.sql`、`{business}-init.sql`）；如需进总库初始化，再同步到 `doc/db/`。
 
-### 6.4 前端 Vue 规范
+`plan.md` 通用骨架：
 
-- 组件 import 名称与模板标签统一 PascalCase（`import NoticeDetailView` 对应 `<NoticeDetailView>`）。
-- script 除基础 import 外，按 “ref data → fun → page init” 三节组织，节顶注释为 `/* --- {功能，前后33个-} --- */`，参考 `modules/framework/system/message/pages/index.vue`。
-- 响应式数据一律使用 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；逻辑相关数据收敛为对象：`queryParams`（搜索栏）、`table`（表格数据与状态）、`formState`（表单数据与规则）。
-- 避免啰嗦写法：`defineModel('visible')` + 模板 `v-model` 直连，不用 props/emits/computed 桥接；模板直接用 `props.row`，不建冗余 computed 别名。
-- 列表页固定套路：`getList()` 经 `usePageParams(queryParams)(产生 offset/pagesize` 后请求，从 `response.data.data / response.data.total` 赋值。
-- 接口封装：列表/查询/单值用 `method: 'get'` + `params`；`insert`/`update` 用 `method: 'post'` + `data`；`delete` 用 `method: 'post'` + `data`（裸数组 `Array.isArray(ids) ? ids : [ids]`）。
-- 通用能力复用 `@/composables/*`、`@/components`（按需 import）、`@/utils/modal`，禁止重复造轮子。
+```markdown
+# {业务名}开发方案（{module}/{business}）
 
-### 6.5 前端 React 规范
+> 需求目录：`xxl-boot-spec/{yyyyMMdd}-{business}/` | 日期：{yyyy-MM-dd}
 
-- 列表页基于 `ProTable` + `PageContainer`，`request` 从 `res.data?.data`（列表）、`res.data?.total`（总数）取值。
-- API 封装统一 `request<API.Response<API.PageModel<T>>>`，入参 `current/pageSize` 在函数内转 `offset/pagesize`；列表/查询用 GET + `params`，`insert`/`update` 用 POST + `data`，`delete` 用 POST + `data`（裸数组）。
-- 类型定义于 `modules/{framework|business}/{domain}/{module}/types/index.d.ts`，统一 `declare namespace API { type Xxx = {...} }`。
-- 枚举下拉用 `useEnumOption` + `toValueEnum`/`toSelectOptions`；权限用 `usePermission().hasPermi(...)`。
+## 一、需求相关
+| 项 | 结论 |
+|---|---|
+| 运行模式 | Vue 分离 / React 分离 / 单体 |
+| 模块与命名 | `{module}/{business}`；后端包名、前端目录 |
+| 核心字段与规则 | 字段清单 + 必填/唯一/模糊搜索规则 |
+| 状态/枚举/字典 | 无 / 枚举 `{XxxEnum}` / 字典 `{dictType}` |
+| 特殊组件与页面形态 | 富文本/上传等；标准 CRUD / 详情 / 多页签 |
+| 出码方式 | AI 按模板直生 / 后台「代码生成」 |
+| 验证范围 | 编译 / 起服务联调（端口） |
 
-### 6.6 数据库规范
+## 二、数据库设计
+表、字段、索引、状态取值；SQL 脚本：`{business}-table.sql`
 
-- 表名前缀 `xxl_boot_`；字段下划线命名，Java 属性对应驼峰。
+## 三、菜单 / 授权
+菜单、按钮权限、角色授权；SQL 脚本：`{business}-init.sql`
+
+## 四、后端改造
+文件落位、接口路径、查询条件、校验与业务规则
+
+## 五、前端改造
+页面/接口/类型文件落位，权限与 i18n 处理
+
+## 六、验证结果 / 变更记录
+- [ ] 需求确认并回填第一节
+- [ ] 建表 SQL 执行通过，字段与实体一致
+- [ ] 菜单/按钮/授权已插库且可见
+- [ ] 后端编译通过
+- [ ] 前端类型检查/构建通过
+- [ ] 联调：菜单可见、CRUD/搜索可用、无权限项隐藏、空参数友好提示
+- [ ] 变更记录（时间与说明）
+```
+
+### 5.2 标准流程
+
+0. **需求落盘**：建需求目录与 `plan.md` 骨架。
+1. **需求确认（先确认后编码）**：命名与归属、字段与规则、枚举/字典、特殊组件、页面形态、菜单与授权、出码方式、验证范围；结论回填 `plan.md`。
+2. **建表**：新增 `xxl_boot_*` 业务表，遵守「数据与资源」规范；SQL 落盘并按「SQL 执行规范」执行。
+3. **生成 / 手写代码**：按对应 Skill 的落位与模板实现，或用代码生成器产出基线。
+4. **落位与权限**：按 Skill 落位；插入菜单/按钮并授权。
+5. **联调验证**：按 Skill 的启动命令验证菜单、CRUD、搜索、权限、i18n 与空参数提示。
+6. **规范复核**：对照设计原则、通用约定与 Skill 校验清单逐项确认后提交。
+
+### 5.3 SQL 执行规范（强制，防乱码）
+
+含中文的 SQL（建表、菜单/权限初始化、测试数据）必须：
+
+1. `.sql` 文件首行加 `SET NAMES utf8mb4;`；
+2. 执行时显式指定客户端字符集 `--default-character-set=utf8mb4`；
+3. 不依赖 MySQL CLI 默认字符集（可能为 latin1）。
+
+```bash
+# 容器方式（容器名/密码以本机 compose 为准；当前默认 xxl-boot-mysql / root_pwd）
+docker exec -i xxl-boot-mysql mysql -uroot -proot_pwd \
+  --default-character-set=utf8mb4 xxl_boot \
+  < xxl-boot-spec/{yyyyMMdd}-{business}/{business}-table.sql
+
+# 本机 CLI 方式
+mysql -h127.0.0.1 -uroot -proot_pwd --default-character-set=utf8mb4 xxl_boot \
+  < xxl-boot-spec/{yyyyMMdd}-{business}/{business}-table.sql
+```
+
+## 六、后端通用规范
+
+- 分层职责：Controller 只做参数接收/校验与响应，Service 承载业务，Mapper 只做数据访问，不跨层越权。
+- 平台能力放 `framework`，业务代码放 `business`；业务代码禁止塞入 `framework`。具体包路径与 Mapper XML 落位见对应 Skill。
+- 接口路径：`/{module}/{business}/{pageList|load|insert|delete|update}`；业务 Controller 统一 `@RequestMapping("/{module}/{business}")`，全部方法 `@XxlSso`。
+- CRUD 参数通道：
+  - 分页、查询条件与简单标量走 URL（`@RequestParam`，前端 `params`）；
+  - `insert`/`update` 走 JSON 实体（`@RequestBody`，前端 `data`）；
+  - `delete` 走 JSON 集合（`@RequestBody List<Integer> ids`，前端 `data` 裸数组），不再包一层 `IdsRequest`。
+- 返回结构：统一 `Response{ code, msg, data }`，code 200 成功；分页 `Response<PageModel>`，入参统一 `offset`、`pagesize`。
+- 参数校验用 `StringTool`、`RegexTool`、`CollectionTool` 等，失败返回 `Response.ofFail("提示")`；唯一性字段先查再插/改。
+- 业务方法顺序固定：`pageList / load / insert / delete / update`。
+- Mapper XML 显式 `resultMap`；`add_time`/`update_time` 写入用 `NOW()`；查询条件用 `<if>` 动态拼接。
+- Java set/get 不折叠，使用正常方法体。
+
+## 七、数据与资源
+
+### 7.1 数据库
+
+- 表名前缀 `xxl_boot_`；字段下划线命名，Java 属性驼峰。
 - 公共字段：`id`（主键自增）、`add_time`、`update_time`；状态字段用 `TINYINT`（0 正常 / 1 停用类）。
 - 唯一索引命名 `i_` 前缀；字段一律 `COMMENT` 注释。
-- 枚举类存 `xxl_boot_*` 之外的可选值：优先使用框架枚举（见 6.7），状态类下拉选项优先选择框/单选。
+- 枚举值不落 `xxl_boot_*` 表：优先使用框架枚举或 `xxl_boot_dict` 字典。
 
-### 6.7 权限、枚举与字典
+### 7.2 菜单与权限
 
-- 登录鉴权：后端 `@XxlSso`；按钮权限标识 `{module}:{business}:add / edit / remove`。
-- 前端权限：Vue `v-hasPermi="['{module}:{business}:add']"`（或 `v-hasRole="['admin']"`）、React `hasPermi('{module}:{business}:add')`。
-- 下拉选项两种来源：
-  - 业务枚举：在 `business/{module}/{business}/enums` 定义实现 `EnumTool.IEnum` 的枚举（平台内置枚举才放 `framework/constant/enums`），前端 `useEnumOption('XxxEnum')`（React 用 `useEnumOption('XxxEnum')`）自动经 `loadEnumItem` 拉取（loadEnumItem 展开「平台枚举包 + business 根包」内包含 IEnum 枚举的包，按枚举名解析，平台包优先）；
-  - 数据字典：录入 `xxl_boot_dict`，前端 `useDict('dictType')`。
-- 菜单资源：`xxl_boot_resource`（type 0 目录 / 1 菜单 / 2 按钮），`status`（0 正常 / 1 停用），`visible`（0 显示 / 1 隐藏）。
+- 菜单由数据库 `xxl_boot_resource` 驱动，新增页面无需改前端路由代码。
+- `type`：`0` 目录、`1` 菜单、`2` 按钮；`status`：`0` 正常、`1` 停用；`visible`：`0` 显示、`1` 隐藏。
+- 菜单 `url` 同时充当路由 path 与页面定位 key；按钮以 `permission` 标识，业务标识统一 `{module}:{business}:add|edit|remove`。
+- 新菜单必须在 `xxl_boot_role_res` 授权（默认管理员 `role_id=1`）。
+- 前端权限校验语法、菜单 SQL 与页面定位规则，见对应 Skill。
 
-### 6.8 国际化文案（i18n）
+### 7.3 枚举与字典
 
-- 文案统一维护于 `src/i18n/locales/{zh,en}.json`（**单一文件**，JSON 数据纯存储不支持注释，按 `domain.module.token` 嵌套、按域名节点分区），业务页面/components/utils/layouts **一律 `import { t } from '@/i18n'` 引用，禁止硬编码中文**（中文注释除外）。
-- 文件内模块顺序固定：`app`（应用级常量）前置，其次公共组 `common`/`modal`/`request`/`layout`/`components`，再次平台业务组 `auth`/`authz`/`system`/`tool`/`dashboard`/`help`/`error`，常规业务模块（`business.*` 等）放最后；**Vue 与 React 两套一致**，新增模块按组插入、勿打乱既有顺序。
-- 语言由后端系统配置 `system.i18n.language`（取值 `zh` / `en`，存 `xxl_boot_config`；后端经 `ConfigService.loadByKeyWithCache` 读取，60s 本地缓存）决定；前端启动调用 `/loadBaseConfig` 拉取并同步（默认 zh 兜底），保证与后端一致。element-plus / antd 组件语言随当前语言响应式切换。
-- key 复用约定：通用词（新增/修改/删除/搜索/重置/操作/状态/备注/全部/正常/停用/保存成功/删除成功…）统一走 `common.*`，`modal.*`（系统提示/确定/取消）、`request.*`（错误/超时提示）；模块特有词建 `{domain}.{module}.*`。新增文案必须 zh/en **成对**提交，缺失键回退中文再回退 key。
-- 插值：`t('key', [v])`（占位 `{0}` 下标）或 `t('key', { name })`（占位 `{name}`），禁止字符串拼接。
-- 后端下发的菜单名与 dict/enum 标签不属于前端文案，不进 i18n 文件。
+- 业务枚举放业务模块的 `enums` 包，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
+- 枚举下拉统一经 `loadEnumItem` 按枚举名解析，后端动态扫描平台包与业务包。
+- 数据字典录入 `xxl_boot_dict`，前端按对应 Skill 提供的能力加载。
 
-## 七、内置代码生成器
+## 八、前端通用规范
 
-| 模式 | 位置 | 用法 | 产物 |
-|---|---|---|---|
-| api 分离 | 后台菜单「工具-代码生成」/ `POST /tool/codegen/createTable`（传建表 SQL + `tplWebType`） | 创建表 → 编辑字段（`COLLECT`, import queryType/htmlType/dictType，isQuery/isList/isInsert/isEdit/isRequired）→ preview 预览 / batchGenCode 下载 zip | 后端 `business/{module}/{business}` 6 件套、前端 vue3/react 文件、`-init.sql`（菜单+按钮+授权），落位见对应 Skill |
-| 单体 | 后台「代码生成」/ `POST /tool/codegen/genCode` | 传 `tableSql / author / packagePath / businessName` | `controller/service/service_impl/mapper/mapper_xml/entity/page` 7 段代码 |
+- 前端按「模块自包含」组织：同一模块的页面、接口、类型放在同一模块目录下；业务模块与平台 `framework` 模块隔离。
+- 接口通道：遵循第六节，前端请求参数/请求体形态与后端保持一致。
+- 列表数据从 `response.data.data` 取，总数从 `response.data.total` 取；不直接操作原始响应。
+- 用户可见文案统一走 i18n，禁止硬编码中文（注释除外）；通用词优先复用 `common.*`，新增文案 zh/en 成对提交。
+- 组件、Hook/Composable、工具优先复用平台已有实现；重复第三次才抽公共能力。
+- 目录结构、页面骨架、状态组织、权限指令/Hook、i18n 文件与语言加载，见对应 Skill。
 
-- vue 前端模板固定传 `tplWebType='element-plus-typescript'`，react 传 `'antd-typescript'`。
-- 生成代码强制依赖 `id` 主键；业务代码落 `business/{module}/{business}` 而**不是** `framework`。
-- 生成代码遵循 CRUD 参数通道约定：Controller 统一 `@RequestMapping`，分页/查询 `@RequestParam`，`insert`/`update` `@RequestBody` 实体，`delete` `@RequestBody List<Integer> ids`；前端 api 对应 `GET+params` / `POST+data`（delete 传裸数组）。
-- Skill 缺省策略：AI 按模板直生等价代码落位，同时在交付说明中提示可走后台生成器。
+## 九、代码生成器
 
-## 八、验收与提交
+- 代码生成器用于快速产出基线，不是交付标准；产物必须按对应 Skill 复核、补齐、改造后再提交。
+- 生成代码强制依赖 `id` 主键；业务代码落 `business`，不落 `framework`。
+- 所有模式共有的固定缺口：
+  - `pageList` 默认只生成 `offset/pagesize`，`isQuery` 字段不会自动生成查询条件；需补 Controller 参数、Service 方法、Mapper 参数与 XML `<if>`；
+  - 校验通常只有空值判断，需补必填、长度/格式、唯一性与友好提示；
+  - 前端模板可能生成硬编码中文，需迁移到 i18n；
+  - 树表模板依赖树形接口与字段，需按实际业务补齐。
+- 生成器入口、模板类型、产物路径与模式专属修正项，见对应 Skill。
 
-- 后端：`mvn -q compile` 通过；接口用页面/接口工具自测（pageList/load/insert/update/delete、权限、空参数）。
-- 前端：Vue `npm run build`（或 eslint）+ 菜单可见 + CRUD 正常；React 同。
-- 提交：只提交任务相关文件，不提交 target/dist/node_modules 等产物；提交信息简洁符合仓库风格。
+## 十、验收与提交
+
+- 后端：编译通过；`pageList/load/insert/delete/update`、权限、空参数提示自测通过。
+- 前端/单体：对应 Skill 的类型检查或构建通过；菜单可见、CRUD/搜索正常、无权限项隐藏、页面无模板/运行错误。
+- SQL：脚本首行含 `SET NAMES utf8mb4;`，执行后中文无乱码。
+- 质量：符合设计原则与通用约定；无死代码、无调试残留、无多余依赖、版本已固定。
+- 提交：只提交任务相关文件，不提交 `target/dist/node_modules` 等产物；提交信息简洁并符合仓库风格。
 
 ---
 
-- 基础规范条款源参考：GVim 现有 `xxl-boot-admin`、`xxl-boot-api`、`xxl-boot-ui` 各模块既有实现。
-- 三模式作业细则、落位清单、模板骨架与校验清单分别在 `.agents/skills/xxl-boot-monolith|vue|react/SKILL.md`。
+- 三模式作业细则、落位清单、模板骨架、启动/验证命令与校验清单分别在 `.agents/skills/xxl-boot-monolith|vue|react/SKILL.md`。
