@@ -188,6 +188,7 @@ import { t } from '@/i18n'
 import modal from '@/utils/modal'
 import type { FormState, TableState } from '@/types'
 import { ref } from 'vue'
+import { Pagination, RightToolbar } from '@/components'
 <#if hasImageUpload>
 import { ImageUpload } from '@/components'
 </#if>

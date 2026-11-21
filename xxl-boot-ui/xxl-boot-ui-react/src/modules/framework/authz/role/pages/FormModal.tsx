@@ -79,10 +79,12 @@ const FormModal = ({
   const [treeData, setTreeData] = useState<DataNode[]>([]);
   // 资源树：已展开节点 key 集合
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-  // 资源树：已勾选节点（受控，联动模式为 {checked, halfChecked} 对象）
-  const [checkedKeys, setCheckedKeys] = useState<
-    React.Key[] | { checked: React.Key[]; halfChecked: React.Key[] }
-  >([]);
+  // 资源树：已勾选节点（联动模式下为完全勾选，半选父级单独记录）
+  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
+  // 资源树：半选父级 key 集合（联动模式下保存时必须一并提交）
+  const [halfCheckedKeys, setHalfCheckedKeys] = useState<React.Key[]>([]);
+  // 资源树：仅父级被授权、子级全未授权的节点；联动模式下 antd 不会显示，需要额外保留
+  const [preservedParentKeys, setPreservedParentKeys] = useState<React.Key[]>([]);
   // 资源树：是否展开所有节点
   const [expandedAll, setExpandedAll] = useState(false);
   // 资源树：是否父子联动勾选
@@ -99,6 +101,8 @@ const FormModal = ({
     // 非联动模式：直接勾选授权集合
     if (checkStrictly) {
       setCheckedKeys(ids);
+      setHalfCheckedKeys([]);
+      setPreservedParentKeys([]);
       return;
     }
 
@@ -114,11 +118,30 @@ const FormModal = ({
       });
     };
     treeWalk(tree);
-    // 叶子进 checked、父级进 halfChecked，完整保留授权集合
-    setCheckedKeys({
-      checked: ids.filter((id) => !parentKeys.has(id)),
-      halfChecked: ids.filter((id) => parentKeys.has(id)),
-    });
+    // 叶子进 checked、父级进 halfChecked，避免 antd conductCheck 时丢掉父级授权
+    const authorized = new Set(ids);
+    setCheckedKeys(ids.filter((id) => !parentKeys.has(id)));
+    setHalfCheckedKeys(ids.filter((id) => parentKeys.has(id)));
+
+    // 仅父级授权、子级全未授权的节点：antd 联动模式无法显示，单独保留以免保存时丢失
+    const preserved: React.Key[] = [];
+    const collectParentOnly = (nodes: DataNode[]) => {
+      nodes.forEach((n) => {
+        if (!n.children?.length) return;
+        const hasAuthorizedChild = (list: DataNode[]): boolean =>
+          list.some(
+            (child) =>
+              authorized.has(Number(child.key)) ||
+              (child.children ? hasAuthorizedChild(child.children) : false),
+          );
+        if (!hasAuthorizedChild(n.children)) {
+          preserved.push(n.key);
+        }
+        collectParentOnly(n.children);
+      });
+    };
+    collectParentOnly(tree);
+    setPreservedParentKeys(preserved);
   };
 
   /**
@@ -158,22 +181,31 @@ const FormModal = ({
   const allKeys = useMemo(() => collectAllKeys(treeData), [treeData]);
 
   /**
-   * 树勾选变化：受控记录勾选（onCheck 首参已含联动的 halfChecked，直接存储）
+   * 树勾选变化：联动模式的半选父级由 onCheck 第二参返回，必须单独记录
    */
   const handleCheck = (
     keys: React.Key[] | { checked: React.Key[]; halfChecked: React.Key[] },
+    info?: { halfCheckedKeys?: React.Key[] },
   ) => {
-    setCheckedKeys(keys);
+    const nextHalf = Array.isArray(keys)
+      ? (info?.halfCheckedKeys ?? [])
+      : (keys.halfChecked ?? []);
+    if (Array.isArray(keys)) {
+      setCheckedKeys(keys);
+    } else {
+      setCheckedKeys(keys.checked ?? []);
+    }
+    // 合并“仅父级授权”的历史节点，避免联动模式无法展示时被静默清空
+    setHalfCheckedKeys([
+      ...new Set([...nextHalf, ...preservedParentKeys]),
+    ]);
   };
 
   /**
    * 收集勾选 + 半勾选的资源 id
    */
   const getMenuAllCheckedKeys = (): number[] => {
-    const { checked, halfChecked } = Array.isArray(checkedKeys)
-      ? { checked: checkedKeys, halfChecked: [] as React.Key[] }
-      : checkedKeys;
-    return [...checked, ...halfChecked]
+    return [...halfCheckedKeys, ...checkedKeys]
       .map((k) => Number(k))
       .filter((k) => !Number.isNaN(k));
   };
@@ -282,8 +314,24 @@ const FormModal = ({
             >
               {t('authz.role.linkAll')}
             </Checkbox>
-            <a onClick={() => setCheckedKeys(allKeys)}>{t('authz.role.selectAll')}</a>
-            <a onClick={() => setCheckedKeys([])}>{t('authz.role.selectNone')}</a>
+            <a
+              onClick={() => {
+                setCheckedKeys(allKeys);
+                setHalfCheckedKeys([]);
+                setPreservedParentKeys([]);
+              }}
+            >
+              {t('authz.role.selectAll')}
+            </a>
+            <a
+              onClick={() => {
+                setCheckedKeys([]);
+                setHalfCheckedKeys([]);
+                setPreservedParentKeys([]);
+              }}
+            >
+              {t('authz.role.selectNone')}
+            </a>
           </Space>
         </div>
         <div

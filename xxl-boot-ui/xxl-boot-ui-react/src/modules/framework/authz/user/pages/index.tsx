@@ -193,7 +193,11 @@ const UserList = () => {
       return;
     }
     setResetPwdLoading(true);
-    const data = toUserForm({ ...resetRow, password: resetPassword });
+    // 先收敛可提交字段，再补回新密码，避免 toUserForm 丢弃 password
+    const data: API.UserForm = {
+      ...toUserForm(resetRow),
+      password: resetPassword,
+    };
     userApi
       .update(data)
       .then(() => {

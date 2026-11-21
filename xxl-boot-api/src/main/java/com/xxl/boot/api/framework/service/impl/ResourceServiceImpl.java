@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
 * Resource Service Impl
@@ -113,17 +115,17 @@ public class ResourceServiceImpl implements ResourceService {
 			parentMap.put(resource.getId(), resource.getParentId());
 		}
 		// 从待设置的父节点向上回溯，命中当前节点即成环
+		Set<Integer> visited = new HashSet<>();
 		Integer cursor = parentId;
 		while (cursor != null && cursor != 0) {
+			// 已访问说明存量数据本身存在环，直接终止避免死循环
+			if (!visited.add(cursor)) {
+				break;
+			}
 			if (cursor == id) {
 				return true;
 			}
-			Integer next = parentMap.get(cursor);
-			// 已到达根节点或遇到脏数据时终止，避免死循环
-			if (next == null || next.equals(cursor)) {
-				break;
-			}
-			cursor = next;
+			cursor = parentMap.get(cursor);
 		}
 		return false;
 	}

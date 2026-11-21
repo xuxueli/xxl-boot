@@ -21,7 +21,7 @@ export const ${codegen.businessName?uncap_first}Api = {
   pageList(query: ${codegen.businessName}Query): Promise<Response<PageModel<${codegen.businessName}>>> {
     const { pageNum, pageSize, ...search } = query
     return request({
-      url: '/${codegen.moduleName}/${codegen.businessName?lower_case}/pageList',
+      url: '/${codegen.moduleName}/${codegen.businessName?uncap_first}/pageList',
       method: 'get',
       params: {
         offset: (pageNum - 1) * pageSize,
@@ -39,7 +39,7 @@ export const ${codegen.businessName?uncap_first}Api = {
    */
   load(id: number): Promise<Response<${codegen.businessName}>> {
     return request({
-      url: '/${codegen.moduleName}/${codegen.businessName?lower_case}/load',
+      url: '/${codegen.moduleName}/${codegen.businessName?uncap_first}/load',
       method: 'get',
       params: { id }
     })
@@ -53,7 +53,7 @@ export const ${codegen.businessName?uncap_first}Api = {
    */
   insert(data: ${codegen.businessName}Form): Promise<Response<unknown>> {
     return request({
-      url: '/${codegen.moduleName}/${codegen.businessName?lower_case}/insert',
+      url: '/${codegen.moduleName}/${codegen.businessName?uncap_first}/insert',
       method: 'post',
       data
     })
@@ -67,7 +67,7 @@ export const ${codegen.businessName?uncap_first}Api = {
    */
   delete(ids: number | number[]): Promise<Response<unknown>> {
     return request({
-      url: '/${codegen.moduleName}/${codegen.businessName?lower_case}/delete',
+      url: '/${codegen.moduleName}/${codegen.businessName?uncap_first}/delete',
       method: 'post',
       data: Array.isArray(ids) ? ids : [ids]
     })
@@ -81,7 +81,7 @@ export const ${codegen.businessName?uncap_first}Api = {
    */
   update(data: ${codegen.businessName}Form): Promise<Response<unknown>> {
     return request({
-      url: '/${codegen.moduleName}/${codegen.businessName?lower_case}/update',
+      url: '/${codegen.moduleName}/${codegen.businessName?uncap_first}/update',
       method: 'post',
       data
     })

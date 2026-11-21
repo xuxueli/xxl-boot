@@ -36,7 +36,7 @@ export const ${codegen.businessName?uncap_first}Api = {
   }) {
     const { current = 1, pageSize = 10, ...rest } = params || {};
     return request<API.Response<API.PageModel<API.${codegen.businessName}>>>(
-      '/${codegen.moduleName}/${codegen.businessName?lower_case}/pageList',
+      '/${codegen.moduleName}/${codegen.businessName?uncap_first}/pageList',
       {
         method: 'GET',
         params: {
@@ -56,7 +56,7 @@ export const ${codegen.businessName?uncap_first}Api = {
    */
   load(id: number) {
     return request<API.Response<API.${codegen.businessName}>>(
-      '/${codegen.moduleName}/${codegen.businessName?lower_case}/load',
+      '/${codegen.moduleName}/${codegen.businessName?uncap_first}/load',
       { method: 'GET', params: { id } },
     );
   },
@@ -69,7 +69,7 @@ export const ${codegen.businessName?uncap_first}Api = {
    */
   insert(data: API.${codegen.businessName}) {
     return request<API.Response<unknown>>(
-      '/${codegen.moduleName}/${codegen.businessName?lower_case}/insert',
+      '/${codegen.moduleName}/${codegen.businessName?uncap_first}/insert',
       { method: 'POST', data },
     );
   },
@@ -82,7 +82,7 @@ export const ${codegen.businessName?uncap_first}Api = {
    */
   delete(ids: number | number[]) {
     return request<API.Response<unknown>>(
-      '/${codegen.moduleName}/${codegen.businessName?lower_case}/delete',
+      '/${codegen.moduleName}/${codegen.businessName?uncap_first}/delete',
       { method: 'POST', data: Array.isArray(ids) ? ids : [ids] },
     );
   },
@@ -95,7 +95,7 @@ export const ${codegen.businessName?uncap_first}Api = {
    */
   update(data: API.${codegen.businessName}) {
     return request<API.Response<unknown>>(
-      '/${codegen.moduleName}/${codegen.businessName?lower_case}/update',
+      '/${codegen.moduleName}/${codegen.businessName?uncap_first}/update',
       { method: 'POST', data },
     );
   },
