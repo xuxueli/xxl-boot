@@ -4,7 +4,7 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { CodegenTable } from '../types'
+import type { CodegenDetail, CodegenForm, CodegenListQuery, CodegenTable, CreateTableRequest } from '../types'
 import type { PageModel, Response } from '@/types'
 
 /** 代码生成 API，调用方式：codegenApi.pageList(...) */
@@ -12,34 +12,29 @@ export const codegenApi = {
   /**
    * 分页查询生成表
    *
-   * @param query 分页与查询条件（pageNum/pageSize/tableName/tableComment）
+   * @param query 分页与查询条件（offset/pagesize 形态）
    * @returns 生成表分页结果
    */
-  pageList(query: {
-    pageNum?: number
-    pageSize?: number
-    tableName?: string
-    tableComment?: string
-  }): Promise<Response<PageModel<CodegenTable>>> {
+  pageList(query: CodegenListQuery): Promise<Response<PageModel<CodegenTable>>> {
+    // 后端 CodegenController 该接口分页字段为 pageSize，这里完成 pagesize → pageSize 的适配
+    const { pagesize, ...rest } = query
     return request({
       url: '/tool/codegen/pageList',
       method: 'get',
       params: {
-        offset: ((query.pageNum || 1) - 1) * (query.pageSize || 10),
-        pageSize: query.pageSize || 10,
-        tableName: query.tableName,
-        tableComment: query.tableComment
+        ...rest,
+        pageSize: pagesize
       }
     })
   },
 
   /**
-   * 查询生成表详情
+   * 查询生成表详情（含字段列表）
    *
    * @param id 生成表主键
    * @returns 生成表详情
    */
-  detail(id: number): Promise<Response<CodegenTable>> {
+  detail(id: number): Promise<Response<CodegenDetail>> {
     return request({
       url: '/tool/codegen/detail',
       method: 'get',
@@ -48,40 +43,12 @@ export const codegenApi = {
   },
 
   /**
-   * 更新代码生成配置
-   *
-   * @param data 生成配置数据
-   * @returns 保存结果
-   */
-  update(data: CodegenTable): Promise<Response<unknown>> {
-    return request({
-      url: '/tool/codegen/update',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
-   * 删除生成表数据（支持单条/批量）
-   *
-   * @param ids 生成表主键或主键数组
-   * @returns 删除结果
-   */
-  delete(ids: number | number[]): Promise<Response<unknown>> {
-    return request({
-      url: '/tool/codegen/delete',
-      method: 'post',
-      data: Array.isArray(ids) ? ids : [ids]
-    })
-  },
-
-  /**
-   * 在数据库中创建表
+   * 通过 SQL 创建表
    *
    * @param data 建表参数
    * @returns 创建结果
    */
-  createTable(data: object): Promise<Response<unknown>> {
+  createTable(data: CreateTableRequest): Promise<Response<unknown>> {
     return request({
       url: '/tool/codegen/createTable',
       method: 'post',
@@ -100,6 +67,34 @@ export const codegenApi = {
       url: '/tool/codegen/preview',
       method: 'get',
       params: { id }
+    })
+  },
+
+  /**
+   * 删除生成表数据（支持单条/批量）
+   *
+   * @param ids 生成表主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/tool/codegen/delete',
+      method: 'post',
+      data: Array.isArray(ids) ? ids : [ids]
+    })
+  },
+
+  /**
+   * 更新代码生成配置
+   *
+   * @param data 生成配置数据（含字段列表）
+   * @returns 保存结果
+   */
+  update(data: CodegenForm): Promise<Response<unknown>> {
+    return request({
+      url: '/tool/codegen/update',
+      method: 'post',
+      data
     })
   }
 }

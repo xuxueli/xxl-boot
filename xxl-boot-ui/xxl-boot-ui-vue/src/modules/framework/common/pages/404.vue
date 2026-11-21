@@ -1,6 +1,7 @@
 <!--
-  页面：404（未找到）
+  404（未找到）
   功能：提示用户页面不存在，提供返回首页入口
+  @author xuxueli 2026-11-22
 -->
 <template>
   <div class="wscn-http404-container">
@@ -29,15 +30,12 @@
 </template>
 
 <script setup lang="ts">
-// 引入
-import defaultSettings from '@/default-settings'
 import { computed } from 'vue'
 import { t } from '@/i18n'
+import defaultSettings from '@/default-settings'
 
-// 提示文字
-let message = computed(() => {
-  return t('error.notFoundHeadline')
-})
+/** 主标题文案，随语言切换联动 */
+const message = computed(() => t('error.notFoundHeadline'))
 </script>
 
 <style lang="scss" scoped>

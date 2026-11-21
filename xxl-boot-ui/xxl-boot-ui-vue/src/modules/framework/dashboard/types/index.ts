@@ -1,6 +1,7 @@
 /**
- * 类型定义：首页 Dashboard（dashboard 模块）
- * 覆盖首页指标卡片、审计日志趋势数据结构。
+ * @fileoverview Dashboard 类型定义
+ * @description 首页指标卡片与审计日志趋势数据结构，对应后端 DashboardController
+ * @author xuxueli 2026-11-22
  */
 
 /** 首页指标卡片数据 */

@@ -1,9 +1,10 @@
 <!--
-  组件：DictDataDrawer（字典项抽屉）
-  功能：展示指定字典下的全部字典项
+  DictDataDrawer（字典项抽屉）
+  功能：展示指定字典下的全部字典项，并统计正常/停用数量
+  @author xuxueli 2026-11-22
 -->
 <template>
-  <el-drawer :model-value="visible" direction="rtl" size="700px" append-to-body @update:model-value="$emit('update:visible', $event)">
+  <el-drawer :model-value="visible" direction="rtl" size="700px" append-to-body @update:model-value="emit('update:visible', $event)">
     <!-- 自定义标题 -->
     <template #header>
       <div class="drawer-head">
@@ -74,14 +75,17 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ name: 'DictDataDrawer' })
+import { computed, ref, watch } from 'vue'
 import { t } from '@/i18n'
 import { dictApi } from '../api'
 import type { Dict, DictItem } from '../types'
-import { computed, ref, watch } from 'vue'
 
 /** 抽屉入参 */
 interface DrawerProps {
+  /** 抽屉显隐 */
   visible: boolean
+  /** 当前查看的字典行 */
   row: Dict
 }
 
@@ -90,19 +94,23 @@ const props = withDefaults(defineProps<DrawerProps>(), {
   row: () => ({})
 })
 
-const emit = defineEmits(['update:visible'])
+/** 向父组件同步显隐状态 */
+const emit = defineEmits<{
+  'update:visible': [visible: boolean]
+}>()
 
 const loading = ref(false) /* 加载状态 */
 const dataList = ref<DictItem[]>([]) /* 字典项列表 */
 
-const normalCount = computed(() => dataList.value.filter((r) => r.status === 0).length)
-const disabledCount = computed(() => dataList.value.filter((r) => r.status !== 0).length)
+// 正常/停用数量，用于顶部统计卡片
+const normalCount = computed(() => dataList.value.filter((item) => item.status === 0).length)
+const disabledCount = computed(() => dataList.value.filter((item) => item.status !== 0).length)
 
-/* 弹窗打开时加载数据，关闭时清空 */
+// 抽屉打开时加载数据，关闭时清空，避免下次打开闪现上次内容
 watch(
   () => props.visible,
-  (val) => {
-    if (val) {
+  (visible) => {
+    if (visible) {
       loadData()
     } else {
       dataList.value = []
@@ -110,16 +118,19 @@ watch(
   }
 )
 
-/** 加载字典项列表 */
+/** 加载当前字典下的字典项列表 */
 function loadData() {
+  // 缺少字典主键时无法查询，直接返回
   if (!props.row?.id) return
   loading.value = true
   dataList.value = []
   dictApi.itemPageList({ dictId: props.row.id, offset: 0, pagesize: 100 })
     .then((response) => {
-      dataList.value = response.data.data || []
+      dataList.value = response.data.data ?? []
     })
-    .catch(() => {})
+    .catch(() => {
+      // 错误已由请求层提示，继续走到 finally 复位 loading
+    })
     .finally(() => {
       loading.value = false
     })

@@ -1,6 +1,7 @@
 <!--
-  页面：Dashboard（首页）
+  Dashboard（首页）
   功能：统计概览、日志趋势、最新消息
+  @author xuxueli 2026-11-22
 -->
 <template>
   <div class="app-container dashboard">
@@ -76,28 +77,35 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ name: 'Index' })
+defineOptions({ name: 'Dashboard' })
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import * as echarts from 'echarts'
+import { t } from '@/i18n'
+import { SvgIcon } from '@/components'
+import { parseTime } from '@/utils/common'
 import { dashboardApi } from '../api'
 import { messageApi } from '@/modules/framework/system/message/api'
-import { parseTime } from '@/utils/common'
-import * as echarts from 'echarts'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
 import type { ECharts } from 'echarts'
 import type { Message } from '@/modules/framework/system/message/types'
-import { nextTick, onMounted, onUnmounted, ref } from 'vue'
-import { t } from '@/i18n'
-import { SvgIcon } from '@/components'
 
 /** 指标卡片项 */
 interface StatItem {
+  /** 卡片标题 */
   label: string
+  /** 统计数值 */
   value: number
+  /** 图标名 */
   icon: string
+  /** 图标颜色 */
   color: string
+  /** 图标背景色 */
   bg: string
 }
 
-// 指标卡片
+// ---------------------- 响应式数据 ----------------------
+
+// 指标卡片：顺序固定为用户、角色、日志、消息，加载后按下标回填数值
 const stats = ref<StatItem[]>([
   { label: t('dashboard.userCount'), value: 0, icon: 'user', color: '#5b6abf', bg: '#eef0fb' },
   { label: t('dashboard.roleCount'), value: 0, icon: 'peoples', color: '#319c8a', bg: '#e8f6f3' },
@@ -105,19 +113,161 @@ const stats = ref<StatItem[]>([
   { label: t('dashboard.messageCount'), value: 0, icon: 'message', color: '#c5566a', bg: '#fbeef1' }
 ])
 
+// 顶部消息列表
 const messages = ref<Message[]>([])
+
+// 折线图容器与统计天数（默认最近 30 天）
 const chartRef = ref<HTMLElement>()
 const chartDays = ref(30)
+
+// 消息详情抽屉
 const messageDetailRef = ref<InstanceType<typeof MessageDetailView>>()
+
+// ECharts 实例与容器尺寸监听器，卸载时统一释放
 let chartInstance: ECharts | null = null
 let resizeObserver: ResizeObserver | null = null
 
+// ---------------------- 数据检索 ----------------------
+
+/** 指标卡片 - 数据加载 */
+function loadStats() {
+  dashboardApi
+    .stats()
+    .then((response) => {
+      const data = response.data
+      // 无数据时保留卡片默认值 0
+      if (!data) return
+      stats.value[0].value = data.userCount
+      stats.value[1].value = data.roleCount
+      stats.value[2].value = data.logCount
+      stats.value[3].value = data.messageCount
+    })
+    .catch(() => {
+      // 错误已由请求层提示，卡片保留默认值
+    })
+}
+
+/** 顶部消息列表 - 数据加载 */
+function loadMessages() {
+  messageApi
+    .listTop()
+    .then((response) => {
+      messages.value = response.data || []
+    })
+    .catch(() => {
+      // 错误已由请求层提示，列表保持为空
+    })
+}
+
 /**
- * init
+ * 加载日志趋势折线图
+ *
+ * 1. 请求后端获取指定天数内的每日日志量
+ * 2. 将返回的 [{date, count}] 转为 Map，便于按日期查找
+ * 3. 生成完整的日期序列（从 days-1 天前 → 今天），无数据日期补 0，确保折线图连续不断点
+ * 4. 初始化 ECharts 实例，配置折线图选项
  */
+function loadChart() {
+  const days = chartDays.value
+  dashboardApi
+    .logTrend(days)
+    .then((response) => {
+      // 图表容器尚未挂载时直接返回，避免 echarts.init 报错
+      const chartEl = chartRef.value
+      if (!chartEl) return
+      // 后端返回 [{date: '2026-07-11', count: 3}, ...]
+      const list = response.data || []
+
+      // 1、转为 Map：date → count，方便按日期查找
+      const dateMap: Record<string, number> = {}
+      list.forEach((item) => {
+        dateMap[item.date] = item.count
+      })
+
+      // 2、生成连续日期序列，每天对应一个数据点
+      const dates: string[] = []
+      const counts: number[] = []
+      const now = new Date()
+      for (let i = days - 1; i >= 0; i--) {
+        const day = new Date(now)
+        day.setDate(day.getDate() - i)
+        const key = parseTime(day, '{y}-{m}-{d}')
+
+        dates.push(key || '')
+        counts.push(dateMap[key || ''] || 0) // 无数据日期补 0
+      }
+
+      // 3、渲染折线图（渐变面积 + 平滑曲线）
+      if (chartInstance) {
+        chartInstance.dispose()
+      }
+      chartInstance = echarts.init(chartEl)
+      chartInstance.setOption({
+        animation: false, // 关闭开场动画，数据一次性渲染
+        tooltip: { trigger: 'axis' }, // 悬浮提示：轴触发
+        grid: { left: 40, right: 20, bottom: 30, top: 20 }, // 图表边距
+        // X轴：日期
+        xAxis: {
+          type: 'category',
+          data: dates,
+          axisLabel: { fontSize: 11, color: '#909399' }
+        },
+        yAxis: {
+          type: 'value',
+          minInterval: 1, // Y 轴最小间隔为 1
+          axisLabel: { fontSize: 11, color: '#909399' }
+        },
+        // 数据系列：日志量折线
+        series: [
+          {
+            data: counts,
+            type: 'line',
+            smooth: true, // 平滑曲线
+            lineStyle: { width: 2, color: '#409EFF' },
+            areaStyle: {
+              // 渐变面积填充
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  { offset: 0, color: 'rgba(64,158,255,0.3)' }, // 顶部：30% 透明度
+                  { offset: 1, color: 'rgba(64,158,255,0.02)' } // 底部：2% 透明度
+                ]
+              }
+            },
+            itemStyle: { color: '#409EFF' } // 数据点颜色
+          }
+        ]
+      })
+    })
+    .catch(() => {
+      // 错误已由请求层提示，保留上一次图表
+    })
+}
+
+// ---------------------- 页面交互 ----------------------
+
+/**
+ * 消息列表 - 点击查看详情，并标记已读
+ *
+ * @param item 消息行数据
+ */
+function handleMsgClick(item: Message) {
+  if (item.id == null) return
+  messageDetailRef.value?.open(item.id)
+  // 标记已读失败不阻断详情展示，错误由请求层提示
+  messageApi.markRead(item.id).catch(() => {})
+}
+
+// ---------------------- 页面初始化 ----------------------
+
 onMounted(() => {
   loadStats()
   loadMessages()
+  // 图表容器需等 DOM 渲染完成后再初始化
   nextTick(loadChart)
   // 容器尺寸变化时自适应重绘：窗口缩放、侧边栏折叠等场景
   if (chartRef.value) {
@@ -126,127 +276,10 @@ onMounted(() => {
   }
 })
 
-/**
- * destory
- */
 onUnmounted(() => {
   resizeObserver?.disconnect()
   chartInstance?.dispose()
 })
-
-/**
- * 指标卡片 - 数据加载
- */
-function loadStats() {
-  dashboardApi.stats().then((res) => {
-    const data = res.data
-    stats.value[0].value = data.userCount
-    stats.value[1].value = data.roleCount
-    stats.value[2].value = data.logCount
-    stats.value[3].value = data.messageCount
-  })
-}
-
-/**
- * 消息列表 - 数据加载
- */
-function loadMessages() {
-  messageApi.listTop().then((res) => {
-    messages.value = res.data || []
-  })
-}
-
-/**
- * 消息列表 - 点击查看详情，标记已读
- */
-function handleMsgClick(item: Message) {
-  messageDetailRef.value!.open(item.id as number)
-  messageApi.markRead(item.id as number)
-}
-
-/**
- * 加载日志趋势折线图
- *
- * 1. 请求后端获取指定天数内的每日日志量
- * 2. 将返回的 [{date, count}] 转为 Map，便于按日期查找
- * 3. 生成完整的日期序列（从 days-1 天前 → 今天），
- *    无数据日期补 0，确保折线图连续不断点
- * 4. 初始化 ECharts 实例，配置折线图选项
- */
-function loadChart() {
-  const days = chartDays.value
-  dashboardApi.logTrend(days).then((res) => {
-    // 后端返回 [{date: '2026-07-11', count: 3}, ...]
-    const list = res.data || []
-
-    // 1、转为 Map：date → count，方便按日期查找
-    const dateMap: Record<string, number> = {}
-    list.forEach((i) => {
-      dateMap[i.date] = i.count
-    })
-
-    // 2、生成连续日期序列，每天对应一个数据点
-    const dates: string[] = []
-    const counts: number[] = []
-    const now = new Date()
-    for (let i = days - 1; i >= 0; i--) {
-      // format day time
-      const d = new Date(now)
-      d.setDate(d.getDate() - i)
-      const key = parseTime(d, '{y}-{m}-{d}')
-
-      // write day date
-      dates.push(key || '')
-      counts.push(dateMap[key || ''] || 0) // 无数据日期补 0
-    }
-
-    // 3、渲染折线图（渐变面积 + 平滑曲线）
-    if (chartInstance) {
-      chartInstance.dispose()
-    }
-    chartInstance = echarts.init(chartRef.value as HTMLElement)
-    chartInstance.setOption({
-      animation: false, // 关闭开场动画，数据一次性渲染
-      tooltip: { trigger: 'axis' }, // 悬浮提示：轴触发
-      grid: { left: 40, right: 20, bottom: 30, top: 20 }, // 图表边距
-      // X轴：日期
-      xAxis: {
-        type: 'category',
-        data: dates,
-        axisLabel: { fontSize: 11, color: '#909399' } // X 轴标签样式
-      },
-      yAxis: {
-        type: 'value',
-        minInterval: 1, // Y 轴最小间隔为 1
-        axisLabel: { fontSize: 11, color: '#909399' }
-      },
-      // X轴：数据
-      series: [
-        {
-          data: counts,
-          type: 'line',
-          smooth: true, // 平滑曲线
-          lineStyle: { width: 2, color: '#409EFF' }, // 折线样式
-          areaStyle: {
-            // 渐变面积填充
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                { offset: 0, color: 'rgba(64,158,255,0.3)' }, // 顶部：30% 透明度
-                { offset: 1, color: 'rgba(64,158,255,0.02)' } // 底部：2% 透明度
-              ]
-            }
-          },
-          itemStyle: { color: '#409EFF' } // 数据点颜色
-        }
-      ]
-    })
-  })
-}
 </script>
 
 <style scoped lang="scss">

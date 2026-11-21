@@ -12,7 +12,7 @@ export const userApi = {
   /**
    * 分页查询用户
    *
-   * @param query 分页与查询条件（offset/pagesize 形态）
+   * @param query 分页与查询条件（offset/pagesize 形态，orgIds 为逗号分隔字符串）
    * @returns 用户分页结果
    */
   pageList(query: UserListQuery): Promise<Response<PageModel<User>>> {
@@ -20,48 +20,6 @@ export const userApi = {
       url: '/authz/user/pageList',
       method: 'get',
       params: query
-    })
-  },
-
-  /**
-   * 新增用户
-   *
-   * @param data 用户数据
-   * @returns 保存结果
-   */
-  add(data: UserForm): Promise<Response<unknown>> {
-    return request({
-      url: '/authz/user/add',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
-   * 更新用户
-   *
-   * @param data 用户数据
-   * @returns 保存结果
-   */
-  update(data: UserForm): Promise<Response<unknown>> {
-    return request({
-      url: '/authz/user/update',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
-   * 删除用户（支持单条/批量）
-   *
-   * @param ids 用户主键或主键数组
-   * @returns 删除结果
-   */
-  delete(ids: number | number[]): Promise<Response<unknown>> {
-    return request({
-      url: '/authz/user/delete',
-      method: 'post',
-      data: Array.isArray(ids) ? ids : [ids]
     })
   },
 
@@ -101,6 +59,48 @@ export const userApi = {
   updateProfile(data: User): Promise<Response<unknown>> {
     return request({
       url: '/authz/user/updateProfile',
+      method: 'post',
+      data
+    })
+  },
+
+  /**
+   * 新增用户
+   *
+   * @param data 用户表单数据
+   * @returns 保存结果
+   */
+  add(data: UserForm): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/user/add',
+      method: 'post',
+      data
+    })
+  },
+
+  /**
+   * 删除用户（支持单条/批量）
+   *
+   * @param ids 单个主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/user/delete',
+      method: 'post',
+      data: Array.isArray(ids) ? ids : [ids]
+    })
+  },
+
+  /**
+   * 更新用户
+   *
+   * @param data 用户表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: UserForm): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/user/update',
       method: 'post',
       data
     })

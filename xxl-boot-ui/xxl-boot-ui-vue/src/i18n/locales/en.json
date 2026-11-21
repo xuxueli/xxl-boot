@@ -287,6 +287,7 @@
       "basicInfo": "Basic Profile",
       "modifyPassword": "Change Password",
       "confirmDelete": "Are you sure you want to delete user ID \"{0}\"?",
+      "confirmBatchDelete": "Are you sure you want to delete the {0} selected users?",
       "resetPwdPrompt": "Please enter the new password for \"{0}\"",
       "updatePwdSuccess": "Updated successfully, new password is: {0}",
       "statusChangeSuccess": "{0} succeeded",
@@ -308,7 +309,8 @@
       "selectAll": "Select All/None",
       "linkAll": "Parent-Child Link",
       "loadingText": "Loading, please wait...",
-      "confirmDelete": "Are you sure you want to delete role ID \"{0}\"?"
+      "confirmDelete": "Are you sure you want to delete role ID \"{0}\"?",
+      "confirmBatchDelete": "Are you sure you want to delete the {0} selected roles?"
     },
     "org": {
       "name": "Org Name",
@@ -361,6 +363,7 @@
       "typePattern": "Must start with a lowercase letter and contain only letters and digits",
       "typeLength": "Length must be between 2 and 100",
       "confirmDeleteDict": "Are you sure to delete the dict item with ID \"{0}\"?",
+    "confirmBatchDelete": "Are you sure to delete the {0} selected dictionaries?",
       "dataList": "List",
       "dictDataTitle": "Dict Data",
       "emptyData": "No dict data",
@@ -385,6 +388,7 @@
       "ipAddress": "IP Address",
       "detail": "Detail",
       "confirmDeleteLog": "Are you sure to delete the log with ID \"{0}\"?",
+    "confirmBatchDelete": "Are you sure to delete the {0} selected logs?",
       "detailTitle": "Log Detail",
       "basicInfo": "Basic Info",
       "operLog": "Operation Log",
@@ -407,6 +411,7 @@
       "readUsers": "Read Users",
       "content": "Content",
       "confirmDeleteMessage": "Are you sure to delete the message with ID \"{0}\"?",
+    "confirmBatchDelete": "Are you sure to delete the {0} selected messages?",
       "readUsersTitle": "Read Users of \"{0}\"",
       "userName": "Login Name",
       "readTime": "Read Time"

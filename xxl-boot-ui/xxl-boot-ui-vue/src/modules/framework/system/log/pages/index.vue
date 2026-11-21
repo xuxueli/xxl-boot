@@ -1,21 +1,22 @@
 <!--
-  页面：Log（日志管理）
-  功能：查询、删除日志，查看日志详情
+  Log（日志管理）
+  功能：日志的分页查询、导出与删除，并查看日志详情
+  @author xuxueli 2026-11-22
 -->
 <template>
   <div class="app-container">
     <!-- 搜索栏 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="auto" v-show="table.showSearch">
       <el-form-item :label="t('system.log.logType')" prop="type">
         <el-select v-model="queryParams.type" :placeholder="t('system.log.logTypePlaceholder')" clearable style="width: 200px">
           <el-option :label="t('common.all')" :value="-1" />
-          <el-option v-for="item in typeDict.options" :key="item.code" :label="item.title" :value="item.code" />
+          <el-option v-for="item in typeOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item :label="t('system.log.logModule')" prop="module">
         <el-select v-model="queryParams.module" :placeholder="t('system.log.logModulePlaceholder')" clearable style="width: 200px">
           <el-option :label="t('common.all')" :value="0" />
-          <el-option v-for="item in moduleDict.options" :key="item.code" :label="item.title" :value="item.code" />
+          <el-option v-for="item in moduleOptions" :key="item.code" :label="item.title" :value="item.code" />
         </el-select>
       </el-form-item>
       <el-form-item :label="t('system.log.logTitle')" prop="title">
@@ -30,7 +31,7 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeLog()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport" v-hasRole="['admin']">{{ t('system.log.export') }}</el-button>
@@ -38,37 +39,33 @@
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
-    <!-- 日志列表 -->
-    <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
+    <!-- 数据列表 -->
+    <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="50" align="center" />
       <el-table-column :label="t('system.log.logId')" align="center" prop="id" width="80" />
       <el-table-column :label="t('system.log.logType')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.type === 0 ? 'primary' : 'warning'" size="small">
-            {{ enumTitle(typeDict.options, scope.row.type) }}
+            {{ enumTitle(typeOptions, scope.row.type) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="t('system.log.logModule')" align="center" :show-overflow-tooltip="true">
+      <el-table-column :label="t('system.log.logModule')" align="center" show-overflow-tooltip>
         <template #default="scope">
-          {{ moduleDict.map[scope.row.module] || scope.row.module }}
+          {{ moduleMap[scope.row.module ?? ''] ?? scope.row.module }}
         </template>
       </el-table-column>
-      <el-table-column :label="t('system.log.logTitle')" align="center" prop="title" :show-overflow-tooltip="true" />
-      <el-table-column :label="t('system.log.operator')" align="center" prop="operator" width="110" :show-overflow-tooltip="true" />
-      <el-table-column :label="t('system.log.ipAddress')" align="center" :show-overflow-tooltip="true" width="160">
+      <el-table-column :label="t('system.log.logTitle')" align="center" prop="title" show-overflow-tooltip />
+      <el-table-column :label="t('system.log.operator')" align="center" prop="operator" width="110" show-overflow-tooltip />
+      <el-table-column :label="t('system.log.ipAddress')" align="center" width="160" show-overflow-tooltip>
         <template #default="scope">
           {{ scope.row.ipAddress || scope.row.ip }}
         </template>
       </el-table-column>
-      <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.addTime) }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="180" />
       <el-table-column :label="t('common.operation')" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="View" @click="handleDetail(scope.row)">{{ t('system.log.detail') }}</el-button>
+          <el-button link type="primary" icon="View" @click="openDetail(scope.row)">{{ t('system.log.detail') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -82,165 +79,165 @@
       @pagination="getList"
     />
 
-    <!-- 详情弹窗 -->
-    <LogDetail v-model:visible="detail.visible" :row="detail.row" :module-map="moduleDict.map" />
+    <!-- 日志详情弹窗 -->
+    <LogDetail v-model:visible="detail.visible" :row="detail.row" :module-map="moduleMap" />
   </div>
 </template>
 
 <script setup lang="ts">
 defineOptions({ name: 'Log' })
+import { computed, ref } from 'vue'
+import type { FormInstance } from 'element-plus'
 import { t } from '@/i18n'
+import { Pagination, RightToolbar } from '@/components'
 import LogDetail from './detail.vue'
-import { logApi } from '../api'
-import { dictApi } from '@/modules/framework/system/dict/api'
-import { parseTime } from '@/utils/common'
-import { enumTitle } from '@/composables/useEnumOption'
+import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { download } from '@/utils/download'
+import { logApi } from '../api'
 import type { Log, LogQuery } from '../types'
-import type { EnumOption, TableState } from '@/types'
-import type { FormInstance } from 'element-plus'
-import { ref } from 'vue'
-import { RightToolbar, Pagination } from '@/components'
+import type { TableState } from '@/types'
 
 /** 详情弹窗状态 */
 interface DetailState {
+  /** 弹窗显隐 */
   visible: boolean
+  /** 当前查看的日志行 */
   row: Log
 }
 
-/** 枚举数据状态（下拉选项 + 编码 → 名称映射） */
-interface DictState {
-  options: EnumOption[]
-  map: Record<number | string, string | undefined>
-}
+// ---------------------- 响应式数据 ----------------------
 
-// --------------------------------- ref data ---------------------------------
+const queryRef = ref<FormInstance>() /* 搜索栏表单 */
 
-// 组件实例引用：搜索栏表单 ref
-const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
+// 日志类型、系统模块选项，由后端枚举接口加载
+const { LogTypeEnum: typeOptions, LogModuleEnum: moduleOptions } = useEnumOption('LogTypeEnum', 'LogModuleEnum')
 
-// 筛选：表单数据
+// 系统模块编码 → 名称映射，供列表与详情展示
+const moduleMap = computed(() => {
+  const map: Record<number | string, string | undefined> = {}
+  moduleOptions.value.forEach((item) => {
+    map[item.code] = item.title
+  })
+  return map
+})
+
+// 搜索栏筛选条件与分页参数
 const queryParams = ref<LogQuery>({
   pageNum: 1 /* 当前页码 */,
   pageSize: 10 /* 每页条数 */,
-  type: -1 /* 日志类型（-1 全部） */,
-  module: 0 /* 系统模块编码（0 全部） */,
+  type: -1 /* 日志类型筛选，-1 表示全部 */,
+  module: 0 /* 系统模块筛选，0 表示全部 */,
   title: undefined /* 日志标题 */
 })
 
-// 表格：UI数据
+// 列表数据与勾选状态，勾选结果决定删除按钮是否可用
 const table = ref<TableState<Log>>({
-  list: [] /* 表格：列表数据 */,
-  total: 0 /* 表格：总条数 */,
-  loading: true /* 表格：加载状态 */,
-  showSearch: true /* 表格：是否显示搜索栏 */,
-  ids: [] /* 表格：选中行 ID 数组 */,
-  multiple: true /* 表格：是否多选 */
+  list: [], // 日志列表
+  total: 0, // 总条数
+  loading: true, // 加载状态
+  showSearch: true, // 是否显示搜索栏
+  ids: [], // 勾选行主键
+  multiple: true // 删除按钮是否禁用
 })
 
-// 详情弹框：UI数据
+// 详情弹窗
 const detail = ref<DetailState>({
-  visible: false /* 详情弹窗：可见状态 */,
-  row: {} /* 详情弹窗：当前查看的日志行 */
+  visible: false, // 弹窗显隐
+  row: {} // 当前查看的日志行
 })
 
-// 枚举数据（下拉选项 + 编码→名称映射）
-const typeDict = ref<DictState>({
-  options: [] /* 日志类型下拉选项 */,
-  map: {} /* 日志类型编码 → 名称映射 */
-})
-const moduleDict = ref<DictState>({
-  options: [] /* 系统模块下拉选项 */,
-  map: {} /* 系统模块编码 → 名称映射 */
-})
+// ---------------------- 分页检索 ----------------------
 
-// --------------------------------- fun ---------------------------------
-
-/** 查询日志列表 */
+/**
+ * 查询日志分页数据
+ *
+ * 失败提示由请求层统一处理，此处只负责复位 loading
+ */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 → 后端请求参数（offset/pagesize）
-  const params = usePageParams(queryParams)()
-  logApi.pageList(params).then((response) => {
-    table.value.list = response.data.data
-    table.value.total = response.data.total
-    table.value.loading = false
-  })
+  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
+  logApi.pageList(usePageParams(queryParams)())
+    .then((response) => {
+      table.value.list = response.data.data
+      table.value.total = response.data.total
+    })
+    .catch(() => {
+      // 错误已由请求层提示，继续走到 finally 复位 loading
+    })
+    .finally(() => {
+      table.value.loading = false
+    })
 }
 
-/** 搜索按钮操作 */
+/** 搜索：回到第一页后查询 */
 function handleQuery() {
+  // 筛选条件已变化，回到第一页可避免停留在超出结果范围的页码
   queryParams.value.pageNum = 1
   getList()
 }
 
-/** 重置按钮操作 */
+/** 重置搜索条件后重新查询 */
 function resetQuery() {
   queryRef.value?.resetFields()
-  queryParams.value.pageNum = 1
-  getList()
+  handleQuery()
 }
 
-/** 多选框选中数据 */
-function handleSelectionChange(selection: Log[]) {
+// ---------------------- 数据操作（增删改） ----------------------
+
+/**
+ * 同步表格勾选结果，驱动批量删除按钮状态
+ *
+ * @param selection 当前勾选行
+ */
+function syncSelection(selection: Log[]) {
   table.value.ids = selection.map((item) => item.id as number)
   table.value.multiple = !selection.length
 }
 
-/** 查看日志详情 */
-function handleDetail(row: Log) {
-  detail.value = { visible: true, row }
-}
-
-/** 导出日志 */
-function handleExport() {
-  download(
-    'system/log/export',
-    {
-      ...usePageParams(queryParams)()
-    },
-    `log_${new Date().getTime()}.xlsx`
-  )
-}
-
-/** 删除日志（顶部按钮 @click 传事件对象，取勾选 ids） */
-function handleDelete(row: any) {
-  const logIds = row?.id ?? table.value.ids
-  if (logIds == null || (Array.isArray(logIds) && logIds.length === 0)) {
-    return
-  }
+/**
+ * 删除日志（单条或批量），成功后刷新列表
+ *
+ * @param row 行数据；顶部按钮调用时为空，此时删除勾选行
+ */
+function removeLog(row?: Log) {
+  // 行按钮只删当前行；顶部按钮删除勾选行
+  const ids = row ? (row.id != null ? [row.id] : []) : table.value.ids
+  // 无记录可删时直接返回，避免弹出空删除确认框
+  if (ids.length === 0) return
+  const confirmText = row
+    ? t('system.log.confirmDeleteLog', [row.title ?? String(row.id)])
+    : t('system.log.confirmBatchDelete', [ids.length])
   modal
-    .confirm(t('system.log.confirmDeleteLog', [logIds]))
-    .then(function () {
-      return logApi.delete(logIds)
-    })
+    .confirm(confirmText)
+    .then(() => logApi.delete(ids))
     .then(() => {
+      // 删除当前页最后一条时回退一页，避免停留在空页
+      if (table.value.list.length === ids.length && queryParams.value.pageNum > 1) {
+        queryParams.value.pageNum -= 1
+      }
       getList()
       modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }
 
-// --------------------------------- page init ---------------------------------
+/**
+ * 打开日志详情弹窗
+ *
+ * @param row 日志行
+ */
+function openDetail(row: Log) {
+  detail.value = { visible: true, row }
+}
 
-// 加载日志类型、系统模块枚举（下拉选项）
-dictApi.loadEnum('LogTypeEnum').then((res) => {
-  typeDict.value.options = res.data
-  typeDict.value.map = {}
-  typeDict.value.options.forEach((item) => {
-    typeDict.value.map[item.code] = item.title
-  })
-})
-dictApi.loadEnum('LogModuleEnum').then((res) => {
-  moduleDict.value.options = res.data
-  moduleDict.value.map = {}
-  moduleDict.value.options.forEach((item) => {
-    moduleDict.value.map[item.code] = item.title
-  })
-})
+/** 导出日志（条件与当前查询一致） */
+function handleExport() {
+  download('system/log/export', { ...usePageParams(queryParams)() }, `log_${new Date().getTime()}.xlsx`)
+}
 
-// 页面初始化加载日志列表
+// ---------------------- 页面初始化 ----------------------
+
 getList()
 </script>

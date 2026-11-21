@@ -1,35 +1,35 @@
 <!--
-  组件：画布可拖拽表单项
-  功能：渲染单个表单项/行容器，支持选中、复制、删除
+  DraggableItem（画布可拖拽表单项）
+  功能：渲染单个表单项或行容器，支持选中、复制、删除
+  @author xuxueli 2026-11-22
 -->
 <template>
   <el-col :span="element.span" :class="className" @click.stop="activeItem(element)">
     <!-- 表单项 -->
     <el-form-item
+      v-if="element.layout === 'colFormItem'"
       :label="element.label"
       :label-width="element.labelWidth ? element.labelWidth + 'px' : undefined"
       :required="element.required"
-      v-if="element.layout === 'colFormItem'"
     >
       <render :key="element.tag" :conf="element" v-model="element.defaultValue" />
     </el-form-item>
 
-    <!--    行容器 -->
-    <el-row :gutter="element.gutter" :class="element.class" @click.stop="activeItem(element)" v-else>
+    <!-- 行容器 -->
+    <el-row v-else :gutter="element.gutter" :class="element.class" @click.stop="activeItem(element)">
       <span class="component-name"> {{ element.componentName }} </span>
       <draggable
         group="componentsGroup"
         :animation="340"
-        :list="element.children"
+        :list="element.children ?? []"
         class="drag-wrapper"
         item-key="label"
-        ref="draggableItemRef"
         :component-data="getComponentData()"
       >
         <template #item="scoped">
           <DraggableItem
             :key="scoped.element.renderKey"
-            :drawing-list="element.children!"
+            :drawing-list="element.children ?? []"
             :element="scoped.element"
             :index="index"
             :active-id="activeId"
@@ -53,7 +53,7 @@
 </template>
 <script setup lang="ts">
 defineOptions({ name: 'DraggableItem' })
-/** 可拖拽表单项 - 逻辑 */
+
 import { t } from '@/i18n'
 import type { FormConf, FormItemConf } from '@/utils/generator/config'
 import draggable from 'vuedraggable'
@@ -71,25 +71,38 @@ const props = defineProps({
   },
   formConf: { type: Object as PropType<FormConf>, required: true }
 })
-const className = ref('') /* 组件样式类名（选中/拖拽态） */
-const draggableItemRef = ref<HTMLElement | null>(null) /* 拖拽项元素 ref */
 
-/*
- * 组件回调：选中 / 复制 / 删除组件
- */
-const emits = defineEmits(['activeItem', 'copyItem', 'deleteItem'])
+/** 组件事件：选中 / 复制 / 删除 */
+const emits = defineEmits<{
+  activeItem: [item: FormItemConf]
+  copyItem: [item: FormItemConf, parent: FormItemConf[]]
+  deleteItem: [index: number | undefined, parent: FormItemConf[]]
+}>()
+
+/* 组件样式类名（选中/拖拽态） */
+const className = ref('')
 
 /** 选中当前组件 */
 function activeItem(item: FormItemConf) {
   emits('activeItem', item)
 }
 
-/** 复制当前组件 */
+/**
+ * 复制当前组件
+ *
+ * @param item   待复制组件
+ * @param parent 所在父容器；缺省时回退到当前层级
+ */
 function copyItem(item: FormItemConf, parent?: FormItemConf[]) {
   emits('copyItem', item, parent ?? props.drawingList)
 }
 
-/** 删除当前组件 */
+/**
+ * 删除当前组件
+ *
+ * @param item   待删除组件下标
+ * @param parent 所在父容器；缺省时回退到当前层级
+ */
 function deleteItem(item: number | undefined, parent?: FormItemConf[]) {
   emits('deleteItem', item, parent ?? props.drawingList)
 }
@@ -103,7 +116,7 @@ function getComponentData() {
   }
 }
 
-/* 监听激活 ID，更新选中样式 */
+// 激活 ID 变化时刷新选中样式，行容器与表单项使用不同基础类名
 watch(
   () => props.activeId,
   (val) => {

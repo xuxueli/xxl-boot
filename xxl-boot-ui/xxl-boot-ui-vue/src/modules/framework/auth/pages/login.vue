@@ -1,6 +1,7 @@
 <!--
-  页面：Login（登录页面）
+  Login（登录页面）
   功能：账号密码登录、验证码获取与展示、记住密码（Cookie 回填）
+  @author xuxueli 2026-11-21
 -->
 <template>
   <div class="login">
@@ -49,7 +50,7 @@
       <!-- 记住密码 -->
       <el-checkbox prop="rememberMe" v-model="loginForm.rememberMe" style="margin: 0px 0px 8px 0px">{{ t('auth.login.remember') }}</el-checkbox>
 
-      <!-- login btn -->
+      <!-- 登录按钮 -->
       <el-form-item style="width: 100%">
         <el-button :loading="loading" size="large" type="primary" style="width: 100%" @click.prevent="handleLogin">
           <span v-if="!loading">{{ t('auth.login.submit') }}</span>
@@ -57,7 +58,7 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <!--  底部版权  -->
+    <!-- 底部版权 -->
     <div class="el-login-footer">
       {{ footerContent }}
       <a href="https://www.xuxueli.com/xxl-boot/" target="_blank" style="margin-left: 5px; text-decoration: underline">xuxueli</a>
@@ -67,25 +68,26 @@
 </template>
 
 <script setup lang="ts">
-// 导入依赖
-import { t } from '@/i18n'
-import { authApi } from '../api'
-import { useUserStore, useSettingsStore } from '@/store'
-import defaultSettings from '@/default-settings'
-import type { LoginParams } from '@/modules/framework/auth/types'
-import type { FormInstance, FormRules } from 'element-plus'
-import { ref, watch, computed } from 'vue'
+defineOptions({ name: 'Login' })
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import type { FormInstance, FormRules } from 'element-plus'
+import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
+import { useSettingsStore, useUserStore } from '@/store'
+import defaultSettings from '@/default-settings'
+import { authApi } from '../api'
+import type { LoginParams } from '../types'
 
-const title = t('app.title') // 系统标题
-const brandName = defaultSettings.brandName // 品牌名称
-const footerContent = defaultSettings.footerContent // 页脚版权信息
+const title = t('app.title') /* 系统标题 */
+const brandName = defaultSettings.brandName /* 品牌名称 */
+const footerContent = defaultSettings.footerContent /* 页脚版权信息 */
+
 const userStore = useUserStore()
-const settingsStore = useSettingsStore() // 系统设置（含后端基础配置）
-const route = useRoute() // 路由
-const router = useRouter() // 路由
-const loginRef = ref<FormInstance>() // 登录表单 ref
+const settingsStore = useSettingsStore() /* 系统设置（含后端基础配置） */
+const route = useRoute()
+const router = useRouter()
+const loginRef = ref<FormInstance>() /* 登录表单 ref */
 
 // 登录表单数据
 const loginForm = ref<LoginParams>({
@@ -97,66 +99,65 @@ const loginForm = ref<LoginParams>({
 })
 
 // 表单校验规则
-const loginRules: FormRules = {
+const loginRules: FormRules<LoginParams> = {
   username: [{ required: true, trigger: 'blur', message: t('common.inputPlaceholder', [t('auth.login.username')]) }],
   password: [{ required: true, trigger: 'blur', message: t('common.inputPlaceholder', [t('auth.login.password')]) }],
   captchaResult: [{ required: true, trigger: 'change', message: t('common.inputPlaceholder', [t('auth.login.captcha')]) }]
 }
 
-const codeUrl = ref('') // 验证码图片 base64
-const loading = ref(false) // 登录按钮 loading
-const captchaEnabled = computed(() => settingsStore.captchaEnabled) // 验证码开关（后端系统配置，经基础配置同步）
-const redirect = ref<string>() // 登录后重定向地址
+const codeUrl = ref('') /* 验证码图片 Base64 */
+const loading = ref(false) /* 登录按钮 loading */
+const captchaEnabled = computed(() => settingsStore.captchaEnabled) /* 验证码开关（后端系统配置，经基础配置同步） */
+const redirect = ref<string>() /* 登录后重定向地址 */
 
 // 监听路由参数，获取重定向地址
 watch(
   route,
   (newRoute) => {
-    redirect.value = (newRoute.query && newRoute.query.redirect) as string | undefined
+    redirect.value = typeof newRoute.query.redirect === 'string' ? newRoute.query.redirect : undefined
   },
   { immediate: true }
 )
 
 /**
- * 处理登录：
- *    - 表单校验
- *    - →调用登录接口
- *    - →路由跳转
+ * 处理登录：表单校验 → 调用登录接口 → 路由跳转
  */
 function handleLogin() {
-  loginRef.value!.validate((valid) => {
-    if (valid) {
-      loading.value = true
-      // 执行登录
-      userStore
-        .login(loginForm.value)
-        .then(() => {
-          const query = route.query
-          const otherQueryParams = Object.keys(query).reduce((acc: Record<string, any>, cur) => {
-            if (cur !== 'redirect') {
-              acc[cur] = query[cur]
-            }
-            return acc
-          }, {})
-          router.push({ path: redirect.value || '/', query: otherQueryParams })
-        })
-        .catch(() => {
-          loading.value = false
-          // 重新获取验证码
-          if (captchaEnabled.value) {
-            getCode()
-          }
-        })
-    }
+  loginRef.value?.validate((valid) => {
+    // 校验失败时保持当前页面，等待用户修正
+    if (!valid) return
+    loading.value = true
+    userStore
+      .login(loginForm.value)
+      .then(() => {
+        // 登录成功后保留原路由参数，仅移除 redirect，跳转到目标页面
+        const otherQueryParams = { ...route.query }
+        delete otherQueryParams.redirect
+        router.push({ path: redirect.value || '/', query: otherQueryParams })
+      })
+      .catch(() => {
+        // 登录失败后重新获取验证码，避免使用已失效的验证码
+        if (captchaEnabled.value) {
+          getCode()
+        }
+      })
+      .finally(() => {
+        loading.value = false
+      })
   })
 }
 
 /** 获取验证码图片，根据开关控制显示 */
 function getCode() {
-  authApi.captcha().then((res) => {
-    codeUrl.value = res.data.image
-    loginForm.value.captchaUuid = res.data.uuid
-  })
+  authApi
+    .captcha()
+    .then((response) => {
+      // 验证码关闭时后端返回空数据，无需回填图片与标识
+      if (!response.data) return
+      codeUrl.value = response.data.image
+      loginForm.value.captchaUuid = response.data.uuid
+    })
+    .catch(() => {})
 }
 
 /** 初始化：获取验证码 */

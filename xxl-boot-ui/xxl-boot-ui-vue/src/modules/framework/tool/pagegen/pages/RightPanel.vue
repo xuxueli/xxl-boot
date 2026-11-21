@@ -1,16 +1,17 @@
 <!--
-  组件：右侧属性面板
-  功能：展示选中组件的属性配置（组件属性/表单属性），支持编辑
+  RightPanel（右侧属性面板）
+  功能：展示选中组件的属性配置（组件属性 / 表单属性），支持编辑
+  @author xuxueli 2026-11-22
 -->
 <template>
   <div class="right-board">
-    <!-- TAB -->
+    <!-- 面板页签 -->
     <el-tabs v-model="panelState.currentTab" stretch class="center-tabs">
       <el-tab-pane :label="t('tool.pagegen.fieldProps')" name="field" />
       <el-tab-pane :label="t('tool.pagegen.formProps')" name="form" />
     </el-tabs>
 
-    <!-- 组件TAB -->
+    <!-- 组件属性页签 -->
     <div class="field-box">
       <!-- 组件文档 -->
       <a class="document-link" target="_blank" :href="documentLink" :title="t('tool.pagegen.viewDocument')">
@@ -297,7 +298,7 @@
             <el-divider />
           </template>
 
-          <!-- 选项2 -->
+          <!-- 级联选择器选项 -->
           <template v-if="['el-cascader'].indexOf(activeData.tag!) > -1">
             <el-divider>{{ t('tool.pagegen.options') }}</el-divider>
             <el-form-item :label="t('tool.pagegen.dataType')">
@@ -537,7 +538,6 @@
 </template>
 
 <script setup lang="ts">
-/** 右侧属性面板 - 逻辑 */
 import { t } from '@/i18n'
 import type { FormConf, FormItemConf } from '@/utils/generator/config'
 import draggable from 'vuedraggable'
@@ -545,9 +545,40 @@ import { isNumberStr } from '@/utils/common'
 import IconsDialog from './IconsDialog.vue'
 import TreeNodeDialog from './TreeNodeDialog.vue'
 import { inputComponents, selectComponents } from '@/utils/generator/config'
-import { computed, h, inject, ref, resolveComponent } from 'vue'
+import { computed, inject, ref, resolveComponent } from 'vue'
 import type { PropType, Ref } from 'vue'
+import type { RenderContentContext, RenderContentFunction } from 'element-plus'
 import { SvgIcon } from '@/components'
+
+/** 面板 UI 状态 */
+interface PanelState {
+  /** 当前页签：field 组件属性 / form 表单属性 */
+  currentTab: string
+  /** 当前待插入的树节点数组 */
+  currentNode: FormItemConf[] | null
+  /** 树节点弹窗显隐 */
+  dialogVisible: boolean
+  /** 图标选择弹窗显隐 */
+  iconsVisible: boolean
+  /** 当前编辑的图标字段名 */
+  currentIconModel: string
+}
+
+/** 组件类型分组 */
+interface TagGroup {
+  /** 分组标题 */
+  label: string
+  /** 分组下的组件列表 */
+  options: FormItemConf[]
+}
+
+/** 通用下拉选项 */
+interface LabelValueOption {
+  /** 展示文案 */
+  label: string
+  /** 选项值 */
+  value: string
+}
 
 const idGlobal = inject('idGlobal') as Ref<number>
 const dateTimeFormat: Record<string, string> = {
@@ -567,44 +598,44 @@ const props = defineProps({
 })
 
 /* 面板 UI 状态 */
-const panelState = ref({
-  currentTab: 'field' /* 当前 tab：组件属性 / 表单属性 */,
-  currentNode: null as any /* 当前操作树节点 */,
-  dialogVisible: false /* 树节点弹窗 */,
-  iconsVisible: false /* 图标选择弹窗 */,
-  currentIconModel: null as any /* 当前编辑的图标模型名 */
+const panelState = ref<PanelState>({
+  currentTab: 'field',
+  currentNode: null,
+  dialogVisible: false,
+  iconsVisible: false,
+  currentIconModel: ''
 })
 
 /* 面板选项配置（静态） */
-const dateTypeOptions = [
-  /* 日期类型选项 */ { label: t('tool.pagegen.dateDay'), value: 'date' },
+const dateTypeOptions: LabelValueOption[] = [
+  { label: t('tool.pagegen.dateDay'), value: 'date' },
   { label: t('tool.pagegen.dateWeek'), value: 'week' },
   { label: t('tool.pagegen.dateMonth'), value: 'month' },
   { label: t('tool.pagegen.dateYear'), value: 'year' },
   { label: t('tool.pagegen.dateDateTime'), value: 'datetime' }
 ]
-const dateRangeTypeOptions = [
-  /* 日期范围类型选项 */ { label: t('tool.pagegen.dateRange'), value: 'daterange' },
+const dateRangeTypeOptions: LabelValueOption[] = [
+  { label: t('tool.pagegen.dateRange'), value: 'daterange' },
   { label: t('tool.pagegen.monthRange'), value: 'monthrange' },
   { label: t('tool.pagegen.dateTimeRange'), value: 'datetimerange' }
 ]
-const colorFormatOptions = [
-  /* 颜色格式选项 */ { label: 'hex', value: 'hex' },
+const colorFormatOptions: LabelValueOption[] = [
+  { label: 'hex', value: 'hex' },
   { label: 'rgb', value: 'rgb' },
   { label: 'rgba', value: 'rgba' },
   { label: 'hsv', value: 'hsv' },
   { label: 'hsl', value: 'hsl' }
 ]
-const justifyOptions = [
-  /* flex 水平排列选项 */ { label: 'start', value: 'start' },
+const justifyOptions: LabelValueOption[] = [
+  { label: 'start', value: 'start' },
   { label: 'end', value: 'end' },
   { label: 'center', value: 'center' },
   { label: 'space-around', value: 'space-around' },
   { label: 'space-between', value: 'space-between' }
 ]
 const layoutTreeProps = {
-  /* 布局树展示配置 */
-  label(data: any) {
+  /** 树节点展示文案：优先组件名，否则「标题: 字段名」 */
+  label(data: FormItemConf) {
     return data.componentName || `${data.label}: ${data.vModel}`
   }
 }
@@ -612,8 +643,9 @@ const layoutTreeProps = {
 const documentLink = computed(() => props.activeData.document || 'https://element-plus.org/zh-CN/guide/installation')
 
 /* 日期类型选项计算：单日期 / 日期范围 */
-const dateOptions = computed(() => {
+const dateOptions = computed<LabelValueOption[]>(() => {
   if (props.activeData.type !== undefined && props.activeData.tag === 'el-date-picker') {
+    // 存在开始占位符视为范围选择
     if (props.activeData['start-placeholder'] === undefined) {
       return dateTypeOptions
     }
@@ -623,13 +655,13 @@ const dateOptions = computed(() => {
 })
 
 /* 组件类型切换选项列表 */
-const tagList = ref([
+const tagList = ref<TagGroup[]>([
   { label: t('tool.pagegen.inputComponents'), options: inputComponents },
   { label: t('tool.pagegen.selectComponents'), options: selectComponents }
 ])
 
 /** 组件事件：向父组件通知标签切换 */
-const emit = defineEmits(['tag-change'])
+const emit = defineEmits<{ 'tag-change': [target: FormItemConf] }>()
 
 /** 添加正则校验规则 */
 function addReg() {
@@ -641,7 +673,7 @@ function addSelectItem() {
   props.activeData.options.push({ label: '', value: '' })
 }
 
-/** 添加树节点（cascader） */
+/** 添加树节点（cascader）：打开弹窗并记录插入位置 */
 function addTreeItem() {
   ++idGlobal.value
   panelState.value.dialogVisible = true
@@ -649,45 +681,38 @@ function addTreeItem() {
 }
 
 /** 渲染树节点操作按钮（添加子级 / 删除） */
-function renderContent(h: any, { node, data, store }: any) {
-  return h(
-    'div',
-    {
-      class: 'custom-tree-node'
-    },
-    [
-      h('span', node.label),
-      h(
-        'span',
-        {
-          class: 'node-operation'
-        },
-        [
-          h(resolveComponent('el-link'), {
-            type: 'primary',
-            icon: resolveComponent('Plus'),
-            underline: 'never',
-            onClick: () => {
-              append(data)
-            }
-          }),
-          h(resolveComponent('el-link'), {
-            type: 'danger',
-            icon: resolveComponent('Delete'),
-            underline: 'never',
-            style: 'margin-left: 5px;',
-            onClick: () => {
-              remove(node, data)
-            }
-          })
-        ]
-      )
-    ]
-  )
+const renderContent: RenderContentFunction = (h, { node, data }) => {
+  const treeNodeData = data as FormItemConf
+  return h('div', { class: 'custom-tree-node' }, [
+    h('span', node.label),
+    h('span', { class: 'node-operation' }, [
+      h(resolveComponent('el-link'), {
+        type: 'primary',
+        icon: resolveComponent('Plus'),
+        underline: 'never',
+        onClick: () => {
+          appendTreeNode(treeNodeData)
+        }
+      }),
+      h(resolveComponent('el-link'), {
+        type: 'danger',
+        icon: resolveComponent('Delete'),
+        underline: 'never',
+        style: 'margin-left: 5px;',
+        onClick: () => {
+          removeTreeNode(node, treeNodeData)
+        }
+      })
+    ])
+  ])
 }
 
-/** 添加子节点 */
-function append(data: any) {
+/**
+ * 添加子节点：确保 children 存在后打开弹窗
+ *
+ * @param data 父节点数据
+ */
+function appendTreeNode(data: FormItemConf) {
   if (!data.children) {
     data.children = []
   }
@@ -695,121 +720,194 @@ function append(data: any) {
   panelState.value.currentNode = data.children
 }
 
-/** 删除节点 */
-function remove(node: any, data: any) {
-  const { parent } = node
-  const children = parent.data.children || parent.data
-  const index = children.findIndex((d: any) => d.id === data.id)
-  children.splice(index, 1)
+/**
+ * 删除树节点：从父级 children 中定位并移除
+ *
+ * @param node 树节点实例
+ * @param data 节点数据
+ */
+function removeTreeNode(node: RenderContentContext['node'], data: FormItemConf) {
+  const parentData = node.parent?.data
+  // 根节点没有父级数据，无法定位同级数组
+  if (!parentData) return
+  const children: FormItemConf[] = Array.isArray(parentData) ? parentData : (parentData.children ?? [])
+  const index = children.findIndex((item) => item.id === data.id)
+  // 未找到对应节点时不做删除
+  if (index > -1) children.splice(index, 1)
 }
 
-/** 接收弹窗返回的树节点 */
-function addNode(data: any) {
-  panelState.value.currentNode.push(data)
+/** 接收弹窗返回的树节点，追加到当前操作数组 */
+function addNode(data: FormItemConf) {
+  panelState.value.currentNode?.push(data)
 }
 
-/** 设置选项值：数字字符串转数字 */
-function setOptionValue(item: any, val: any) {
+/**
+ * 设置选项值：数字字符串转数字
+ *
+ * @param item 选项对象
+ * @param val  输入值
+ */
+function setOptionValue(item: FormItemConf, val: string) {
   item.value = isNumberStr(val) ? +val : val
 }
 
-/** 默认值转换为输入框显示格式 */
-function setDefaultValue(val: any) {
+/**
+ * 默认值转换为输入框显示格式
+ *
+ * @param val 默认值
+ * @returns 可展示的字符串 / 数字 / 空值
+ */
+function setDefaultValue(val: unknown): string | number | null {
   if (Array.isArray(val)) {
     return val.join(',')
   }
-  if (['string', 'number'].indexOf(val) > -1) {
-    return val
+  if (['string', 'number'].indexOf(typeof val) > -1) {
+    return val as string | number
   }
   if (typeof val === 'boolean') {
     return `${val}`
   }
-  return val
+  return val as string | number | null
 }
 
-/** 默认值输入处理：数组/布尔/字符串/数字 */
-function onDefaultValueInput(str: any) {
+/**
+ * 默认值输入处理：数组 / 布尔 / 字符串 / 数字
+ *
+ * @param str 输入框文本
+ */
+function onDefaultValueInput(str: string) {
   if (Array.isArray(props.activeData.defaultValue)) {
-    /* 数组：逗号分隔 */
-    props.activeData.defaultValue = str.split(',').map((val: any) => (isNumberStr(val) ? +val : val))
+    // 数组：逗号分隔，逐项还原数字
+    props.activeData.defaultValue = str.split(',').map((val) => (isNumberStr(val) ? +val : val))
   } else if (['true', 'false'].indexOf(str) > -1) {
-    /* 布尔 */
-    props.activeData.defaultValue = JSON.parse(str)
+    // 布尔值按 JSON 解析
+    props.activeData.defaultValue = JSON.parse(str) as boolean
   } else {
-    /* 字符串和数字 */
+    // 其余按数字或字符串处理
     props.activeData.defaultValue = isNumberStr(str) ? +str : str
   }
 }
 
-/** switch 开关值输入处理 */
-function onSwitchValueInput(val: any, name: any) {
+/**
+ * switch 开关值输入处理
+ *
+ * @param val  输入文本
+ * @param name 目标属性名
+ */
+function onSwitchValueInput(val: string, name: string) {
   if (['true', 'false'].indexOf(val) > -1) {
-    props.activeData[name] = JSON.parse(val)
+    props.activeData[name] = JSON.parse(val) as boolean
   } else {
     props.activeData[name] = isNumberStr(val) ? +val : val
   }
 }
 
-/** 设置时间格式 */
-function setTimeValue(val: any, type?: any) {
+/**
+ * 设置时间格式
+ *
+ * @param val  显示的格式
+ * @param type 日期类型，周类型需修正 value-format
+ */
+function setTimeValue(val: string, type?: string) {
   const valueFormat = type === 'week' ? dateTimeFormat.date : val
   props.activeData.defaultValue = null
   props.activeData['value-format'] = valueFormat
   props.activeData.format = val
 }
 
-/** 栅格跨度变更 */
-function spanChange(val: any) {
+/**
+ * 栅格跨度变更
+ *
+ * @param val 滑块值
+ */
+function spanChange(val: number | number[]) {
   props.formConf.span = val
 }
 
-/** 多选切换：重置默认值 */
-function multipleChange(val: any) {
+/**
+ * 多选切换：重置默认值
+ *
+ * @param val 是否多选
+ */
+function multipleChange(val: boolean | string | number) {
   props.activeData.defaultValue = val ? [] : ''
 }
 
-/** 日期类型切换 */
-function dateTypeChange(val: any) {
+/**
+ * 日期类型切换：同步 value-format
+ *
+ * @param val 日期类型
+ */
+function dateTypeChange(val: string) {
   setTimeValue(dateTimeFormat[val], val)
 }
 
-/** 范围选择切换 */
-function rangeChange(val: any) {
+/**
+ * 范围选择切换
+ *
+ * @param val 是否范围选择
+ */
+function rangeChange(val: boolean | string | number) {
   props.activeData.defaultValue = val ? [props.activeData.min, props.activeData.max] : props.activeData.min
 }
 
-/** 评分辅助文字切换：取消显示分数 */
-function rateTextChange(val: any) {
+/**
+ * 评分辅助文字切换：开启时取消显示分数
+ *
+ * @param val 是否显示辅助文字
+ */
+function rateTextChange(val: boolean | string | number) {
   if (val) props.activeData['show-score'] = false
 }
 
-/** 评分显示分数切换：取消显示辅助文字 */
-function rateScoreChange(val: any) {
+/**
+ * 评分显示分数切换：开启时取消显示辅助文字
+ *
+ * @param val 是否显示分数
+ */
+function rateScoreChange(val: boolean | string | number) {
   if (val) props.activeData['show-text'] = false
 }
 
-/** 颜色格式切换 */
-function colorFormatChange(val: any) {
+/**
+ * 颜色格式切换：重置默认值并刷新渲染 key
+ *
+ * @param val 颜色格式
+ */
+function colorFormatChange(val: string | null) {
   props.activeData.defaultValue = null
-  props.activeData['show-alpha'] = val.indexOf('a') > -1
+  props.activeData['show-alpha'] = (val ?? '').indexOf('a') > -1
   props.activeData.renderKey = +new Date()
 }
 
-/** 打开图标选择弹窗 */
-function openIconsDialog(model: any) {
+/**
+ * 打开图标选择弹窗
+ *
+ * @param model 图标字段名
+ */
+function openIconsDialog(model: string) {
   panelState.value.iconsVisible = true
   panelState.value.currentIconModel = model
 }
 
-/** 设置选中图标 */
-function setIcon(val: any) {
+/**
+ * 设置选中图标
+ *
+ * @param val 图标名
+ */
+function setIcon(val: string) {
   props.activeData[panelState.value.currentIconModel] = val
 }
 
-/** 切换组件类型 */
+/**
+ * 切换组件类型：按图标定位组件配置并通知父组件
+ *
+ * @param tagIcon 组件图标标识
+ */
 function tagChange(tagIcon: string) {
-  let target = inputComponents.find((item) => item.tagIcon === tagIcon)
-  if (!target) target = selectComponents.find((item) => item.tagIcon === tagIcon)
+  const target = inputComponents.find((item) => item.tagIcon === tagIcon) ?? selectComponents.find((item) => item.tagIcon === tagIcon)
+  // 未匹配到组件配置时不做切换，避免向父组件传递空数据
+  if (!target) return
   emit('tag-change', target)
 }
 </script>

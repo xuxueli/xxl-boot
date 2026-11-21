@@ -4,7 +4,7 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { Role, RoleListQuery } from '../types'
+import type { Role, RoleForm, RoleListQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
 /** 角色 API，调用方式：roleApi.pageList(...) */
@@ -24,48 +24,6 @@ export const roleApi = {
   },
 
   /**
-   * 新增角色
-   *
-   * @param data 角色数据
-   * @returns 保存结果
-   */
-  insert(data: Role): Promise<Response<unknown>> {
-    return request({
-      url: '/authz/role/insert',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
-   * 删除角色（支持单条/批量）
-   *
-   * @param ids 角色主键或主键数组
-   * @returns 删除结果
-   */
-  delete(ids: number | number[]): Promise<Response<unknown>> {
-    return request({
-      url: '/authz/role/delete',
-      method: 'post',
-      data: Array.isArray(ids) ? ids : [ids]
-    })
-  },
-
-  /**
-   * 更新角色
-   *
-   * @param data 角色数据
-   * @returns 保存结果
-   */
-  update(data: Role): Promise<Response<unknown>> {
-    return request({
-      url: '/authz/role/update',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
    * 查询角色详情
    *
    * @param id 角色主键
@@ -80,7 +38,7 @@ export const roleApi = {
   },
 
   /**
-   * 查询角色已授权的资源
+   * 查询角色已授权的资源主键
    *
    * @param roleId 角色主键
    * @returns 资源主键列表
@@ -105,6 +63,48 @@ export const roleApi = {
       url: '/authz/role/updateRoleRes',
       method: 'post',
       data: { roleId, resourceIds }
+    })
+  },
+
+  /**
+   * 新增角色
+   *
+   * @param data 角色表单数据
+   * @returns 新角色主键（用于继续保存菜单权限）
+   */
+  insert(data: RoleForm): Promise<Response<number>> {
+    return request({
+      url: '/authz/role/insert',
+      method: 'post',
+      data
+    })
+  },
+
+  /**
+   * 删除角色（支持单条/批量）
+   *
+   * @param ids 单个主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/role/delete',
+      method: 'post',
+      data: Array.isArray(ids) ? ids : [ids]
+    })
+  },
+
+  /**
+   * 更新角色
+   *
+   * @param data 角色表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: RoleForm): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/role/update',
+      method: 'post',
+      data
     })
   }
 }

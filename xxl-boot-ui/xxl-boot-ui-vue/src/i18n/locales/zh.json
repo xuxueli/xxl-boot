@@ -287,6 +287,7 @@
       "basicInfo": "基本资料",
       "modifyPassword": "修改密码",
       "confirmDelete": "是否确认删除用户编号为\"{0}\"的数据项？",
+      "confirmBatchDelete": "是否确认删除选中的 {0} 个用户？",
       "resetPwdPrompt": "请输入「{0}」的新密码",
       "updatePwdSuccess": "修改成功，新密码是：{0}",
       "statusChangeSuccess": "{0}成功",
@@ -308,7 +309,8 @@
       "selectAll": "全选/全不选",
       "linkAll": "父子联动",
       "loadingText": "加载中，请稍候",
-      "confirmDelete": "是否确认删除角色编号为\"{0}\"的数据项？"
+      "confirmDelete": "是否确认删除角色编号为\"{0}\"的数据项？",
+      "confirmBatchDelete": "是否确认删除选中的 {0} 个角色？"
     },
     "org": {
       "name": "组织名称",
@@ -361,6 +363,7 @@
       "typePattern": "以小写字母开头，由字母和数字组成",
       "typeLength": "长度需在2-100之间",
       "confirmDeleteDict": "是否确认删除字典编号为\"{0}\"的数据项？",
+    "confirmBatchDelete": "是否确认删除选中的 {0} 项字典？",
       "dataList": "列表",
       "dictDataTitle": "字典数据",
       "emptyData": "暂无字典数据",
@@ -385,6 +388,7 @@
       "ipAddress": "操作地址",
       "detail": "详细",
       "confirmDeleteLog": "是否确认删除日志编号为\"{0}\"的数据项?",
+    "confirmBatchDelete": "是否确认删除选中的 {0} 条日志？",
       "detailTitle": "日志详细",
       "basicInfo": "基本信息",
       "operLog": "操作日志",
@@ -407,6 +411,7 @@
       "readUsers": "阅读用户",
       "content": "内容",
       "confirmDeleteMessage": "是否确认删除消息编号为\"{0}\"的数据项？",
+    "confirmBatchDelete": "是否确认删除选中的 {0} 条消息？",
       "readUsersTitle": "「{0}」已读用户",
       "userName": "登录名称",
       "readTime": "阅读时间"

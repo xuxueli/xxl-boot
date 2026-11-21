@@ -1,6 +1,7 @@
 <!--
-  页面：301（无权限）
+  301（无权限）
   功能：提示用户无访问权限，提供返回上一页或回首页入口
+  @author xuxueli 2026-11-22
 -->
 <template>
   <div class="errPage-container">
@@ -20,31 +21,31 @@
         </ul>
       </el-col>
 
-      <!-- 插画 -->
+      <!-- 插画（装饰性图片，alt 留空避免朗读冗余） -->
       <el-col :span="12">
-        <img :src="errGif" width="313" height="428" alt="Girl has dropped her ice cream." />
+        <img :src="errGif" width="313" height="428" alt="" />
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script setup lang="ts">
-// 引入
 import errImage from '@/assets/images/301.gif'
-import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { t } from '@/i18n'
 
-const route = useRoute() // 路由数据
-const router = useRouter() // 路由操作
+const route = useRoute()
+const router = useRouter()
 
-// 301 动图（加时间戳防缓存）
-const errGif = ref(errImage + '?' + +new Date())
+// 301 动图追加时间戳，规避浏览器缓存
+const errGif = `${errImage}?${Date.now()}`
 
-/** 返回上一页或首页 */
+/**
+ * 返回上一页；命中 noGoBack 标记时改为回到首页，避免回退形成循环
+ */
 function back() {
+  // 命中 noGoBack 标记时不回退，避免再次进入无权限页
   if (route.query.noGoBack) {
-    // 标记不回退时跳转首页
     router.push({ path: '/' })
   } else {
     router.go(-1)

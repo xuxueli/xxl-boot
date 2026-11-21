@@ -4,13 +4,13 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { Resource, ResourceQuery } from '../types'
+import type { Resource, ResourceForm, ResourceQuery } from '../types'
 import type { Response } from '@/types'
 
 /** 资源 API，调用方式：resourceApi.treeList(...) */
 export const resourceApi = {
   /**
-   * 查询资源树列表（扁平数据，由前端转树）
+   * 查询资源树列表（后端返回扁平数组，前端用 handleTree 组装）
    *
    * @param query 查询参数（name/status）
    * @returns 资源列表
@@ -38,12 +38,27 @@ export const resourceApi = {
   },
 
   /**
-   * 新增资源
+   * 批量更新资源排序
    *
-   * @param data 资源数据
+   * @param ids 资源主键列表
+   * @param orders 排序值列表（与 ids 一一对应）
    * @returns 保存结果
    */
-  insert(data: Resource): Promise<Response<unknown>> {
+  updateSort(ids: number[], orders: number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/resource/updateSort',
+      method: 'post',
+      data: { ids, orders }
+    })
+  },
+
+  /**
+   * 新增资源
+   *
+   * @param data 表单数据
+   * @returns 保存结果
+   */
+  insert(data: ResourceForm): Promise<Response<unknown>> {
     return request({
       url: '/authz/resource/insert',
       method: 'post',
@@ -54,7 +69,7 @@ export const resourceApi = {
   /**
    * 删除资源（支持单条/批量）
    *
-   * @param ids 资源主键或主键数组
+   * @param ids 单个主键或主键数组
    * @returns 删除结果
    */
   delete(ids: number | number[]): Promise<Response<unknown>> {
@@ -68,29 +83,14 @@ export const resourceApi = {
   /**
    * 更新资源
    *
-   * @param data 资源数据
+   * @param data 表单数据（含主键）
    * @returns 保存结果
    */
-  update(data: Resource): Promise<Response<unknown>> {
+  update(data: ResourceForm): Promise<Response<unknown>> {
     return request({
       url: '/authz/resource/update',
       method: 'post',
       data
-    })
-  },
-
-  /**
-   * 批量更新资源排序
-   *
-   * @param ids 资源主键列表
-   * @param orders 排序值列表（与 ids 一一对应）
-   * @returns 保存结果
-   */
-  updateSort(ids: number[], orders: number[]): Promise<Response<unknown>> {
-    return request({
-      url: '/authz/resource/updateSort',
-      method: 'post',
-      data: { ids, orders }
     })
   }
 }

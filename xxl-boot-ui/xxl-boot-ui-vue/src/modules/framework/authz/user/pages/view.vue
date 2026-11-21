@@ -1,6 +1,7 @@
 <!--
   UserView（用户详情抽屉）
-  展示用户基本信息、角色信息及账号相关数据
+  功能：展示用户基本信息、角色信息及账号相关数据
+  @author xuxueli 2026-11-22
 -->
 <template>
   <el-drawer
@@ -87,7 +88,7 @@
         <el-col :span="24">
           <div class="info-item">
             <label class="info-label">{{ t('common.createTime') }}：</label>
-            <span class="info-value plaintext">{{ parseTime(info.addTime as string) }}</span>
+            <span class="info-value plaintext">{{ parseTime(info.addTime ?? '') }}</span>
           </div>
         </el-col>
       </el-row>
@@ -95,7 +96,7 @@
         <el-col :span="24">
           <div class="info-item">
             <label class="info-label">{{ t('common.updateTime') }}：</label>
-            <span class="info-value plaintext">{{ parseTime(info.updateTime as string) }}</span>
+            <span class="info-value plaintext">{{ parseTime(info.updateTime ?? '') }}</span>
           </div>
         </el-col>
       </el-row>
@@ -105,45 +106,55 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'UserView' })
+import { computed, ref } from 'vue'
 import { t } from '@/i18n'
-import { roleApi } from '@/modules/framework/authz/role/api'
-import { dictApi } from '@/modules/framework/system/dict/api'
 import { enumTitle } from '@/composables/useEnumOption'
 import { parseTime } from '@/utils/common'
+import { roleApi } from '@/modules/framework/authz/role/api'
+import { dictApi } from '@/modules/framework/system/dict/api'
 import type { User } from '../types'
 import type { Role } from '@/modules/framework/authz/role/types'
 import type { EnumOption } from '@/types'
-import { computed, ref } from 'vue'
 
-const visible = ref(false)
-const loading = ref(false)
-const info = ref<User>({})
-const statusOptions = ref<EnumOption[]>([])
-const roleOptions = ref<Role[]>([])
+const visible = ref(false) /* 抽屉显隐 */
+const loading = ref(false) /* 加载状态 */
+const info = ref<User>({}) /* 用户详情 */
+const statusOptions = ref<EnumOption[]>([]) /* 用户状态选项 */
+const roleOptions = ref<Role[]>([]) /* 角色选项，用于将角色 ID 翻译为名称 */
 
+// 角色名称：根据用户已分配角色 ID 匹配角色选项后拼接展示
 const roleNames = computed(() => {
-  const roleIds = info.value.roleIds as number[] | undefined
+  const roleIds = info.value.roleIds
   if (!roleIds || !roleIds.length) return ''
   return (
     roleOptions.value
-      .filter((r) => roleIds.includes(r.id as number))
-      .map((r) => r.name)
+      .filter((role) => role.id != null && roleIds.includes(role.id))
+      .map((role) => role.name)
       .join(t('authz.user.roleJoin')) || ''
   )
 })
 
-/** 打开详情抽屉 */
+/**
+ * 打开详情抽屉并加载角色、状态枚举
+ *
+ * @param row 用户行数据
+ */
 function open(row: User) {
   visible.value = true
   loading.value = true
   info.value = { ...row }
-  roleApi.pageList({ offset: 0, pagesize: 999 }).then((response) => {
-    roleOptions.value = response.data.data
-  })
-  dictApi.loadEnum('UserStatuEnum')
-    .then((res) => {
-      statusOptions.value = res.data
+  roleApi
+    .pageList({ offset: 0, pagesize: 999 })
+    .then((response) => {
+      roleOptions.value = response.data.data
     })
+    .catch(() => {})
+  dictApi
+    .loadEnum('UserStatuEnum')
+    .then((response) => {
+      statusOptions.value = response.data
+    })
+    .catch(() => {})
     .finally(() => {
       loading.value = false
     })

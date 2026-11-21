@@ -4,11 +4,10 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { Message, MessageListQuery } from '../types'
-import type { User } from '@/modules/framework/authz/user/types'
+import type { Message, MessageForm, MessageListQuery, MessageRead, MessageReadListQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
-/** 消息 API，调用方式：messageApi.pageList(...) */
+/** 站内消息 API，调用方式：messageApi.pageList(...) */
 export const messageApi = {
   /**
    * 分页查询消息
@@ -39,49 +38,7 @@ export const messageApi = {
   },
 
   /**
-   * 新增消息
-   *
-   * @param data 消息数据
-   * @returns 保存结果
-   */
-  insert(data: Message): Promise<Response<unknown>> {
-    return request({
-      url: '/system/message/insert',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
-   * 删除消息（支持单条/批量）
-   *
-   * @param ids 消息主键或主键数组
-   * @returns 删除结果
-   */
-  delete(ids: number | number[]): Promise<Response<unknown>> {
-    return request({
-      url: '/system/message/delete',
-      method: 'post',
-      data: Array.isArray(ids) ? ids : [ids]
-    })
-  },
-
-  /**
-   * 更新消息
-   *
-   * @param data 消息数据
-   * @returns 保存结果
-   */
-  update(data: Message): Promise<Response<unknown>> {
-    return request({
-      url: '/system/message/update',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
-   * 查询首页顶部消息（最近 5 条，附已读状态）
+   * 查询首页顶部消息（最近 5 条，附当前用户已读状态）
    *
    * @returns 顶部消息列表
    */
@@ -126,11 +83,53 @@ export const messageApi = {
    * @param query 查询参数（messageId/offset/pagesize）
    * @returns 已读用户分页结果
    */
-  readUsers(query: object): Promise<Response<PageModel<User>>> {
+  readUsers(query: MessageReadListQuery): Promise<Response<PageModel<MessageRead>>> {
     return request({
       url: '/system/message/readUsers',
       method: 'get',
       params: query
+    })
+  },
+
+  /**
+   * 新增消息
+   *
+   * @param data 表单数据
+   * @returns 保存结果
+   */
+  insert(data: MessageForm): Promise<Response<unknown>> {
+    return request({
+      url: '/system/message/insert',
+      method: 'post',
+      data
+    })
+  },
+
+  /**
+   * 删除消息（支持单条/批量）
+   *
+   * @param ids 单个主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/system/message/delete',
+      method: 'post',
+      data: Array.isArray(ids) ? ids : [ids]
+    })
+  },
+
+  /**
+   * 更新消息
+   *
+   * @param data 表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: MessageForm): Promise<Response<unknown>> {
+    return request({
+      url: '/system/message/update',
+      method: 'post',
+      data
     })
   }
 }

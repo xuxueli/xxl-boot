@@ -1,6 +1,7 @@
 <!--
-  页面：表单设计器（首页）
+  PageGen（表单设计器）
   功能：拖拽式表单设计，支持组件添加、属性配置、代码生成
+  @author xuxueli 2026-11-22
 -->
 <template>
   <div class="container">
@@ -138,7 +139,7 @@
     <CodeTypeDialog
       v-model="genDialog.dialogVisible"
       :title="t('tool.pagegen.selectGenType')"
-      :genDialog.showFileName="genDialog.showFileName"
+      :show-file-name="genDialog.showFileName"
       @confirm="generate"
     />
 
@@ -148,70 +149,108 @@
 </template>
 
 <script setup lang="ts">
-/**
- * 表单设计器 - 主逻辑
- * 1. 左侧组件库：输入型、选择型、布局型组件列表
- * 2. 中间画布：拖拽放置组件，支持选中、复制、删除
- * 3. 右侧面板：组件属性 / 表单属性配置
- * 4. 代码生成：导出 vue 文件或复制代码
- */
-import type { FormConf, FormItemConf } from '@/utils/generator/config'
-import { t } from '@/i18n'
+defineOptions({ name: 'PageGen' })
+
+import { nextTick, onMounted, onUnmounted, provide, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
 import ClipboardJS from 'clipboard'
 import beautifier from 'js-beautify'
-import { inputComponents, selectComponents, layoutComponents, formConf as formConfData } from '@/utils/generator/config'
-import { beautifierConf } from '@/utils/generator/config'
-import { drawingDefaultValue, initDrawingDefaultValue, cleanDrawingDefaultValue } from '@/utils/generator/drawingDefault'
-import { makeUpHtml, vueTemplate, vueScript, cssStyle } from '@/utils/generator/html'
-import { makeUpJs } from '@/utils/generator/js'
+import { ElNotification } from 'element-plus'
+import { t } from '@/i18n'
+import { SvgIcon } from '@/components'
+import type { FormConf, FormItemConf } from '@/utils/generator/config'
+import { beautifierConf, formConf as formConfData, inputComponents, layoutComponents, selectComponents } from '@/utils/generator/config'
+import { cleanDrawingDefaultValue, drawingDefaultValue, initDrawingDefaultValue } from '@/utils/generator/drawingDefault'
+import { cssStyle, makeUpHtml, vueScript, vueTemplate } from '@/utils/generator/html'
 import { makeUpCss } from '@/utils/generator/css'
+import { makeUpJs } from '@/utils/generator/js'
 import Download from '@/utils/download'
 import modal from '@/utils/modal'
-import { ElNotification } from 'element-plus'
+import CodeTypeDialog from './CodeTypeDialog.vue'
 import DraggableItem from './DraggableItem.vue'
 import RightPanel from './RightPanel.vue'
-import CodeTypeDialog from './CodeTypeDialog.vue'
-import { onMounted, watch } from 'vue'
-import { nextTick, onUnmounted, provide, ref } from 'vue'
-import { SvgIcon } from '@/components'
 
-// --------------------------------- ref data ---------------------------------
+/** 代码生成方式 */
+type GenerateOperation = 'copy' | 'download'
+
+/** 代码生成弹窗回传的生成配置 */
+interface GenerateConfig {
+  /** 下载文件名 */
+  fileName?: string
+  /** 生成类型：file-页面、dialog-弹窗 */
+  type: string
+}
+
+/** 画布状态 */
+interface CanvasState {
+  /** 画布中的组件列表 */
+  drawingList: FormItemConf[]
+  /** 当前选中组件 */
+  activeData: FormItemConf
+  /** 当前选中组件 ID */
+  activeId: number | string
+}
+
+/** 代码生成弹窗状态 */
+interface GenDialogState {
+  /** 弹窗显隐 */
+  dialogVisible: boolean
+  /** 是否显示文件名输入 */
+  showFileName: boolean
+  /** 生成方式 */
+  operationType: GenerateOperation | ''
+  /** 生成配置，确认生成后写入 */
+  generateConf: GenerateConfig | null
+  /** 表单组装数据：全局配置 + 画布组件 */
+  formData: FormConf & { fields: FormItemConf[] }
+}
+
+/** 拖拽结束事件，仅关心来源与目标容器 */
+interface DragEndEvent {
+  /** 拖拽来源容器 */
+  from: unknown
+  /** 拖拽目标容器 */
+  to: unknown
+}
+
+// ---------------------- 响应式数据 ----------------------
 
 // 初始化画布默认配置
 initDrawingDefaultValue()
 
-/* 画布状态 */
-const canvas = ref<{
-  drawingList: FormItemConf[] /* 画布中的组件列表 */
-  activeData: FormItemConf /* 当前选中组件 */
-  activeId: number | string /* 当前选中组件 ID */
-}>({
+// 画布状态
+const canvas = ref<CanvasState>({
   drawingList: drawingDefaultValue,
   activeData: drawingDefaultValue[0],
-  activeId: drawingDefaultValue[0].formId!
-})
-let oldActiveId: number | string | undefined /* 上一次选中 ID，用于 placeholder 联动 */
-let tempActiveData: FormItemConf | undefined /* 拖拽结束暂存激活组件 */
-
-/* 生成代码弹窗状态 */
-const genDialog = ref({
-  dialogVisible: false /* 生成类型弹窗 */,
-  showFileName: false /* 是否显示文件名输入 */,
-  operationType: '' /* 操作类型：copy / download */,
-  generateConf: null as any /* 生成配置 */,
-  formData: {} as FormConf & { fields: FormItemConf[] } /* 表单组装数据 */
+  activeId: drawingDefaultValue[0].formId ?? 0
 })
 
-/* 全局配置 */
-const idGlobal = ref(100) /* 全局组件 ID 自增 */
+// 上一次选中 ID，用于占位提示联动
+let oldActiveId: number | string | undefined
+// 拖拽结束暂存的激活组件
+let tempActiveData: FormItemConf | undefined
+
+// 代码生成弹窗状态
+const genDialog = ref<GenDialogState>({
+  dialogVisible: false,
+  showFileName: false,
+  operationType: '',
+  generateConf: null,
+  formData: {} as FormConf & { fields: FormItemConf[] }
+})
+
+// 全局组件 ID 自增，通过 provide 供子组件分配组件 ID
+const idGlobal = ref(100)
 provide('idGlobal', idGlobal)
-const formConf = ref(formConfData) /* 表单全局配置 */
+// 表单全局配置
+const formConf = ref(formConfData)
 
-// --------------------------------- fun ---------------------------------
+// ---------------------- 画布操作 ----------------------
 
 /**
- * 激活选中组件
+ * 激活选中组件，同步属性面板数据
+ *
+ * @param element 被选中的组件
  */
 function activeFormItem(element: FormItemConf) {
   canvas.value.activeData = element
@@ -219,46 +258,22 @@ function activeFormItem(element: FormItemConf) {
 }
 
 /**
- * 复制代码：打开弹框，不显示文件
- */
-function copy() {
-  genDialog.value.dialogVisible = true
-  genDialog.value.showFileName = false
-  genDialog.value.operationType = 'copy'
-}
-
-/**
- * 下载 vue 文件：打开弹框，显示文件属性
- */
-function download() {
-  genDialog.value.dialogVisible = true
-  genDialog.value.showFileName = true
-  genDialog.value.operationType = 'download'
-}
-
-/**
- * 清空画布所有组件
- */
-function empty() {
-  modal.confirm(t('tool.pagegen.confirmClear')).then(() => {
-    idGlobal.value = 100
-    canvas.value.drawingList = []
-    cleanDrawingDefaultValue()
-  })
-}
-
-/**
  * 拖拽结束回调：从组件库拖入画布时，激活拖入的组件
+ *
+ * @param event 拖拽结束事件
  */
-function onEnd(obj: any) {
-  if (obj.from !== obj.to) {
-    canvas.value.activeData = tempActiveData!
+function onEnd(event: DragEndEvent) {
+  // 仅处理跨容器拖拽（组件库 → 画布），同容器内排序不切换选中项
+  if (event.from !== event.to && tempActiveData) {
+    canvas.value.activeData = tempActiveData
     canvas.value.activeId = idGlobal.value
   }
 }
 
 /**
  * 点击添加组件到画布
+ *
+ * @param item 组件库中的源组件
  */
 function addComponent(item: FormItemConf) {
   const clone = cloneComponent(item)
@@ -267,17 +282,22 @@ function addComponent(item: FormItemConf) {
 }
 
 /**
- * 克隆组件：生成新 ID、设置 vModel / componentName
+ * 克隆组件：生成新 ID，并设置 vModel / componentName
+ *
+ * @param origin 源组件配置
+ * @returns 克隆后的组件配置
  */
 function cloneComponent(origin: FormItemConf): FormItemConf {
-  const clone: FormItemConf = JSON.parse(JSON.stringify(origin))
+  const clone: FormItemConf = JSON.parse(JSON.stringify(origin)) as FormItemConf
   clone.formId = ++idGlobal.value
   clone.span = formConf.value.span
-  clone.renderKey = +new Date() /* 改变 renderKey 实现强制更新 */
+  // 改变 renderKey 实现画布强制更新
+  clone.renderKey = +new Date()
   if (!clone.layout) clone.layout = 'colFormItem'
   if (clone.layout === 'colFormItem') {
     clone.vModel = `field${idGlobal.value}`
-    clone.placeholder !== undefined && (clone.placeholder += clone.label)
+    // 占位提示需要跟随字段标题，保持两者语义一致
+    if (clone.placeholder !== undefined) clone.placeholder += clone.label
     tempActiveData = clone
   } else if (clone.layout === 'rowFormItem') {
     delete clone.label
@@ -285,21 +305,26 @@ function cloneComponent(origin: FormItemConf): FormItemConf {
     clone.gutter = formConf.value.gutter
     tempActiveData = clone
   }
-  return tempActiveData as FormItemConf
+  return clone
 }
 
 /**
- * 复制画布中的组件
+ * 复制画布中的组件，副本插入到同一父级列表
+ *
+ * @param item 被复制的组件
+ * @param parent 组件所属列表
  */
 function drawingItemCopy(item: FormItemConf, parent: FormItemConf[]) {
-  let clone = JSON.parse(JSON.stringify(item)) as FormItemConf
-  clone = createIdAndKey(clone)
+  const clone = createIdAndKey(JSON.parse(JSON.stringify(item)) as FormItemConf)
   parent.push(clone)
   activeFormItem(clone)
 }
 
 /**
  * 递归生成新 ID 和 renderKey
+ *
+ * @param item 待处理的组件
+ * @returns 处理后的组件
  */
 function createIdAndKey(item: FormItemConf): FormItemConf {
   item.formId = ++idGlobal.value
@@ -317,10 +342,16 @@ function createIdAndKey(item: FormItemConf): FormItemConf {
 
 /**
  * 删除画布中的组件
+ *
+ * @param index 待删除组件下标
+ * @param parent 组件所属列表
  */
 function drawingItemDelete(index: number | undefined, parent: FormItemConf[]) {
-  parent.splice(index as number, 1)
+  // 下标缺失时无法定位组件，直接返回避免误删首项
+  if (index == null) return
+  parent.splice(index, 1)
   nextTick(() => {
+    // 删除后选中画布最后一个组件，避免属性面板停留在已删除数据
     const len = canvas.value.drawingList.length
     if (len) {
       activeFormItem(canvas.value.drawingList[len - 1])
@@ -329,7 +360,9 @@ function drawingItemDelete(index: number | undefined, parent: FormItemConf[]) {
 }
 
 /**
- * 切换组件类型：保留 vModel / formId / span，替换其他属性
+ * 切换组件类型：保留 vModel / formId / span，其余同类型属性沿用原值
+ *
+ * @param newTag 新组件类型配置
  */
 function tagChange(newTag: FormItemConf) {
   newTag = cloneComponent(newTag)
@@ -339,17 +372,20 @@ function tagChange(newTag: FormItemConf) {
   delete canvas.value.activeData.tag
   delete canvas.value.activeData.tagIcon
   delete canvas.value.activeData.document
-  Object.keys(newTag).forEach((key) => {
+  for (const key of Object.keys(newTag)) {
     if (canvas.value.activeData[key] !== undefined && typeof canvas.value.activeData[key] === typeof newTag[key]) {
       newTag[key] = canvas.value.activeData[key]
     }
-  })
+  }
   canvas.value.activeData = newTag
   updateDrawingList(newTag, canvas.value.drawingList)
 }
 
 /**
- * 更新画布中的组件数据
+ * 更新画布中的组件数据（支持行容器递归替换）
+ *
+ * @param newTag 新组件数据
+ * @param list 待查找的组件列表
  */
 function updateDrawingList(newTag: FormItemConf, list: FormItemConf[]) {
   const index = list.findIndex((item) => item.formId === canvas.value.activeId)
@@ -363,17 +399,53 @@ function updateDrawingList(newTag: FormItemConf, list: FormItemConf[]) {
 }
 
 /**
- * 生成代码：组件回调- 弹窗确认后执行
+ * 清空画布所有组件
  */
-function generate(data: any) {
-  genDialog.value.generateConf = data
+function empty() {
+  modal
+    .confirm(t('tool.pagegen.confirmClear'))
+    .then(() => {
+      idGlobal.value = 100
+      canvas.value.drawingList = []
+      cleanDrawingDefaultValue()
+    })
+    .catch(() => {})
+}
+
+// ---------------------- 代码生成 ----------------------
+
+/**
+ * 复制代码到剪贴板：打开弹窗，不显示文件名输入
+ */
+function copy() {
+  genDialog.value.dialogVisible = true
+  genDialog.value.showFileName = false
+  genDialog.value.operationType = 'copy'
+}
+
+/**
+ * 下载 vue 文件：打开弹窗，显示文件名输入
+ */
+function download() {
+  genDialog.value.dialogVisible = true
+  genDialog.value.showFileName = true
+  genDialog.value.operationType = 'download'
+}
+
+/**
+ * 生成代码：弹窗确认后按操作类型执行复制或下载
+ *
+ * @param conf 弹窗回传的生成配置
+ */
+function generate(conf: GenerateConfig) {
+  genDialog.value.generateConf = conf
   nextTick(() => {
     switch (genDialog.value.operationType) {
       case 'copy':
-        execCopy(data)
+        execCopy()
         break
       case 'download':
-        execDownload(data)
+        execDownload(conf)
         break
       default:
         break
@@ -382,54 +454,65 @@ function generate(data: any) {
 }
 
 /**
- * 下载 vue 文件
+ * 下载生成的 vue 文件
+ *
+ * @param conf 生成配置（含文件名）
  */
-function execDownload(data: any) {
+function execDownload(conf: GenerateConfig) {
   const codeStr = generateCode()
   const blob = new Blob([codeStr], { type: 'text/plain;charset=utf-8' })
-  Download.saveAs(blob, data.fileName)
+  // 文件名缺失时回退到时间戳，避免保存流程因空文件名中断
+  Download.saveAs(blob, conf.fileName ?? `${+new Date()}.vue`)
 }
 
 /**
- * 复制代码到剪切板
+ * 复制代码到剪贴板：触发隐藏节点，内容由 ClipboardJS 回调生成
  */
-function execCopy(data: any) {
-  document.getElementById('copyNode')!.click()
+function execCopy() {
+  document.getElementById('copyNode')?.click()
 }
 
 /**
- * 组装表单数据：画布组件 + 全局配置
+ * 组装生成数据：画布组件快照 + 表单全局配置
  */
-function AssembleFormData() {
-  genDialog.value.formData = { fields: JSON.parse(JSON.stringify(canvas.value.drawingList)), ...formConf.value }
+function assembleFormData() {
+  genDialog.value.formData = {
+    // 深拷贝画布组件，避免生成过程反向修改画布
+    fields: JSON.parse(JSON.stringify(canvas.value.drawingList)) as FormItemConf[],
+    ...formConf.value
+  } as FormConf & { fields: FormItemConf[] }
 }
 
 /**
- * 生成 vue 代码（html + script + css）
+ * 生成 vue 代码（template + script + style）
+ *
+ * @returns 格式化后的完整代码
  */
 function generateCode() {
-  const { type } = genDialog.value.generateConf
-  AssembleFormData()
+  const type = genDialog.value.generateConf?.type ?? 'file'
+  assembleFormData()
   const script = vueScript(makeUpJs(genDialog.value.formData, type))
   const html = vueTemplate(makeUpHtml(genDialog.value.formData, type))
   const css = cssStyle(makeUpCss(genDialog.value.formData))
   return beautifier.html(html + script + css, beautifierConf.html)
 }
 
-// --------------------------------- page init ---------------------------------
+// ---------------------- 页面初始化 ----------------------
 
-/* 监听标题变化，同步更新占位提示 */
+// 监听选中组件标题变化，同步更新占位提示
 watch(
   () => canvas.value.activeData.label,
   (val, oldVal) => {
-    if (canvas.value.activeData.placeholder === undefined || !canvas.value.activeData.tag || oldActiveId !== canvas.value.activeId) {
+    const activeData = canvas.value.activeData
+    // 占位提示未初始化、组件无 tag 或切换了选中项时不做联动
+    if (activeData.placeholder === undefined || !activeData.tag || oldActiveId !== canvas.value.activeId) {
       return
     }
-    canvas.value.activeData.placeholder = canvas.value.activeData.placeholder.replace(oldVal, '') + val
+    activeData.placeholder = activeData.placeholder.replace(oldVal ?? '', '') + (val ?? '')
   }
 )
 
-/* 记录当前激活 ID，用于上文 watch */
+// 记录当前激活 ID，供上方标题监听判断是否切换了选中项
 watch(
   () => canvas.value.activeId,
   (val) => {
@@ -438,20 +521,23 @@ watch(
   { immediate: true }
 )
 
-/* 初始化剪切板复制 */
+// 剪切板实例，组件卸载时销毁
 let clipboard: ClipboardJS | null = null
+
 onMounted(() => {
+  // 复制动作由隐藏节点触发，ClipboardJS 在回调中生成代码并写入剪贴板
   clipboard = new ClipboardJS('#copyNode', {
-    text: (trigger) => {
+    text: () => {
       const codeStr = generateCode()
       ElNotification({ title: t('tool.pagegen.success'), message: t('tool.pagegen.copyClipboard'), type: 'success' })
       return codeStr
     }
   })
-  clipboard.on('error', (e) => {
+  clipboard.on('error', () => {
     modal.msgError(t('tool.pagegen.copyFail'))
   })
 })
+
 onUnmounted(() => {
   clipboard?.destroy()
 })

@@ -1,12 +1,13 @@
 <!--
-  组件：图标选择弹窗
+  IconsDialog（图标选择弹窗）
   功能：展示 Element Plus 图标列表，按名称搜索并选择
+  @author xuxueli 2026-11-22
 -->
 <template>
   <div class="icon-dialog">
-    <el-dialog v-model="value" width="980px" :close-on-click-modal="false" :modal-append-to-body="false" @open="onOpen" @close="onClose">
-      <!-- 选择 -->
-      <template #header="{ close, titleId, titleClass }">
+    <el-dialog v-model="value" width="980px" :close-on-click-modal="false" :modal-append-to-body="false">
+      <!-- 弹窗标题：内置关键词搜索 -->
+      <template #header>
         {{ t('tool.pagegen.selectIcon') }}
         <el-input v-model="key" size="small" :style="{ width: '260px' }" :placeholder="t('common.inputPlaceholder', [t('common.noun.iconName')])" prefix-icon="Search" clearable />
       </template>
@@ -26,41 +27,42 @@
   </div>
 </template>
 <script setup lang="ts">
-/** 图标选择弹窗 - 逻辑 */
 import { t } from '@/i18n'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 
-const iconList = ref<string[]>([]) /* 当前展示的图标列表 */
-const originList: string[] = [] /* 全量图标列表 */
-const key = ref('') /* 搜索关键词 */
-const active = ref('') /* 当前选中图标 */
-const emit = defineEmits(['select'])
+/** 当前展示的图标列表 */
+const iconList = ref<string[]>([])
+/** 全量图标列表，作为搜索过滤的数据源 */
+const originList: string[] = []
+/** 搜索关键词 */
+const key = ref('')
+/** 当前选中图标 */
+const active = ref('')
+
+const emit = defineEmits<{ select: [icon: string] }>()
 const value = defineModel<boolean>()
 
-/* 初始化：加载所有 Element Plus 图标 */
-for (const [key] of Object.entries(ElementPlusIconsVue)) {
-  iconList.value.push(key)
-  originList.push(key)
+// 初始化：一次性收集 Element Plus 全部图标名称
+for (const [iconName] of Object.entries(ElementPlusIconsVue)) {
+  iconList.value.push(iconName)
+  originList.push(iconName)
 }
 
-function onOpen() {}
-function onClose() {}
-
-/** 选择图标 */
+/**
+ * 选择图标：回写选中态并关闭弹窗
+ *
+ * @param icon 图标组件名
+ */
 function onSelect(icon: string) {
   active.value = icon
   emit('select', icon)
   value.value = false
 }
 
-/* 搜索过滤 */
+// 关键词变化时按名称包含关系过滤，清空则恢复全量
 watch(key, (val) => {
-  if (val) {
-    iconList.value = originList.filter((name) => name.indexOf(val) > -1)
-  } else {
-    iconList.value = originList
-  }
+  iconList.value = val ? originList.filter((name) => name.indexOf(val) > -1) : originList
 })
 </script>
 <style lang="scss" scoped>

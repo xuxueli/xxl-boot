@@ -1,6 +1,7 @@
 <!--
-  页面：Help（帮助中心）
-  功能：显示 GitHub 地址、Star 数、帮助文档链接
+  Help（帮助中心）
+  功能：展示平台简介、GitHub 地址、帮助文档与版本信息
+  @author xuxueli 2026-11-22
 -->
 <template>
   <div class="app-container help">
@@ -11,13 +12,11 @@
       </p>
 
       <p>
-        <!-- GitHub -->
+        <!-- 外部链接按钮 -->
         <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://github.com/xuxueli/xxl-boot')">{{ t('help.github') }} </el-button>
-
-        <!-- 帮助文档 -->
         <el-button icon="HomeFilled" plain @click="goTarget('https://www.xuxueli.com/xxl-boot/')">{{ t('help.docs') }} </el-button>
 
-        <!-- icon -->
+        <!-- GitHub Star 数 -->
         &nbsp;&nbsp;｜&nbsp;&nbsp;
         <iframe
           src="https://ghbtns.com/github-btn.html?user=xuxueli&repo=xxl-boot&type=star&count=true"
@@ -45,16 +44,27 @@
 </template>
 
 <script setup lang="ts">
-// 引入
+defineOptions({ name: 'Help' })
 import defaultSettings from '@/default-settings'
 import { t } from '@/i18n'
 
-const title = t('app.title')
+// ---------------------- 响应式数据 ----------------------
+
+// 平台名称、版本与页脚文案，均来自全局默认配置
 const brandName = defaultSettings.brandName
 const version = defaultSettings.version
 const footerContent = defaultSettings.footerContent
 
-/** 跳转外部链接 */
+// 平台标题
+const title = t('app.title')
+
+// ---------------------- 页面交互 ----------------------
+
+/**
+ * 在新窗口打开外部链接
+ *
+ * @param url 目标地址
+ */
 function goTarget(url: string) {
   window.open(url, '_blank')
 }

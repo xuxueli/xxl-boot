@@ -1,68 +1,92 @@
-import type { ListQuery } from '@/types'
 /**
- * 数据字典类型定义（system/dict 模块）
- * 对应后端 Dict.java、DictItem.java
+ * @fileoverview Dict 类型定义
+ * @description 字典类型、字典项、查询与表单类型，对应后端 Dict.java、DictItem.java
+ * @author xuxueli 2026-11-21
  */
+import type { ListQuery } from '@/types'
 
-/** 字典类型实体（对应 Dict.java） */
+/** 字典类型实体（对应后端 Dict.java / DictDTO.java） */
 export interface Dict {
+  /** 主键 */
   id?: number
+  /** 字典名称 */
   name?: string
-  /** 字典标识 */
+  /** 字典标识，业务唯一且创建后不可修改 */
   type?: string
   /** 状态：0-正常、1-停用 */
   status?: number
+  /** 添加时间 */
   addTime?: string
+  /** 更新时间 */
   updateTime?: string
+  /** 备注 */
   remark?: string
-  [key: string]: unknown
 }
 
-/** 字典项实体（对应 DictItem.java） */
-export interface DictItem {
-  id?: number
-  /** 所属字典ID */
-  dictId?: number
+/** 字典类型搜索栏查询参数（前端表单形态） */
+export interface DictQuery {
+  /** 当前页码 */
+  pageNum: number
+  /** 每页条数 */
+  pageSize: number
+  /** 字典名称，模糊匹配 */
   name?: string
+  /** 字典标识，模糊匹配 */
+  type?: string
+  /** 状态筛选，-1 表示全部 */
+  status?: number
+}
+
+/** 字典类型列表接口请求参数（offset/pagesize 形态） */
+export type DictListQuery = ListQuery<DictQuery>
+
+/** 字典类型新增/修改表单：复用实体中的可编辑字段 */
+export type DictForm = Pick<Dict, 'id' | 'name' | 'type' | 'status' | 'remark'>
+
+/** 字典项实体（对应后端 DictItem.java / DictItemDTO.java） */
+export interface DictItem {
+  /** 主键 */
+  id?: number
+  /** 所属字典主键 */
+  dictId?: number
+  /** 字典项名称 */
+  name?: string
+  /** 字典项编码 */
   code?: number
   /** 状态：0-正常、1-停用 */
   status?: number
+  /** 展示顺序 */
   order?: number
+  /** 添加时间 */
   addTime?: string
+  /** 更新时间 */
   updateTime?: string
+  /** 备注 */
   remark?: string
-  [key: string]: unknown
 }
 
-/** 字典类型分页查询参数（搜索栏表单形态） */
-export interface DictQuery {
+/** 字典项搜索栏查询参数（前端表单形态） */
+export interface DictItemQuery {
+  /** 当前页码 */
   pageNum: number
+  /** 每页条数 */
   pageSize: number
-  /** 名称关键词 */
-  name?: string
-  /** 字典标识 */
-  type?: string
-  /** 状态：-1 全部 */
-  status?: number
-}
-
-/** 字典项分页查询参数（搜索栏表单形态） */
-export interface DataQuery {
-  pageNum: number
-  pageSize: number
-  /** 所属字典ID */
+  /** 所属字典主键，-1 表示不按字典过滤 */
   dictId?: number
 }
 
-/** 字典类型列表请求参数（请求形态：offset/pagesize，供 api 使用） */
-export type DictListQuery = ListQuery<DictQuery>
+/** 字典项列表接口请求参数（offset/pagesize 形态） */
+export type DictItemListQuery = ListQuery<DictItemQuery>
 
-/** 字典项列表请求参数（请求形态：offset/pagesize，供 api 使用） */
-export type DataListQuery = ListQuery<DataQuery>
+/** 字典项新增/修改表单：复用实体中的可编辑字段 */
+export type DictItemForm = Pick<DictItem, 'id' | 'dictId' | 'name' | 'code' | 'status' | 'order' | 'remark'>
 
-/** 字典下拉选项（queryDictList 返回结构） */
+/** 字典下拉选项（queryDictList 返回结构，由后端 Dict 映射而来） */
 export interface DictSelectOption {
-  dictId: number
-  dictName: string
-  dictType: string
+  /** 字典主键 */
+  dictId?: number
+  /** 字典名称 */
+  dictName?: string
+  /** 字典标识 */
+  dictType?: string
 }

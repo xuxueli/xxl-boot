@@ -1,9 +1,10 @@
 <!--
-  页面：LogDetail（日志详情弹窗）
-  功能：展示单条日志的详细信息
+  LogDetail（日志详情弹窗）
+  功能：展示单条日志的基本信息、操作人信息与日志内容
+  @author xuxueli 2026-11-22
 -->
 <template>
-  <el-dialog :title="t('system.log.detailTitle')" v-model="visible" width="700px" append-to-body>
+  <el-dialog :title="t('system.log.detailTitle')" v-model="visible" width="700px" append-to-body :close-on-click-modal="false">
     <div class="detail-wrap">
       <!-- 基本信息 -->
       <div class="detail-card">
@@ -19,7 +20,8 @@
           </el-col>
           <el-col :span="12">
             <div class="detail-item">
-              <span class="detail-label">{{ t('system.log.logModule') }}</span><span class="detail-value">{{ moduleMap[row.module] || row.module }}</span>
+              <span class="detail-label">{{ t('system.log.logModule') }}</span
+              ><span class="detail-value">{{ moduleMap[row.module ?? ''] ?? row.module }}</span>
             </div>
           </el-col>
         </el-row>
@@ -87,58 +89,58 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ name: 'LogDetail' })
 import { t } from '@/i18n'
 import modal from '@/utils/modal'
+import type { Log } from '../types'
 
-/**
- * 弹窗显隐：v-model:xxx + defineModel 双向绑定
- * ---
- *
- * defineModel，读写自动与父组件 v-model:visible 同步
- *
- * 父组件用法：
- *   <LogDetail
- *     v-model:visible="detail.visible"
- *     :row="detail.row"
- *     :module-map="moduleDict.map"
- *   />
- *
- *   - visible：defineModel，读=父传值，写=自动发 update:visible 给父
- *   - row / moduleMap：普通 props，只读传入
- */
+/** 弹窗显隐：与父组件 v-model:visible 双向绑定 */
 const visible = defineModel('visible', { type: Boolean, default: false })
 
-/** 组件入参类型 */
+/** 组件入参 */
 interface DetailProps {
-  row?: any
+  /** 当前查看的日志行 */
+  row?: Log
+  /** 系统模块编码 → 名称映射 */
   moduleMap?: Record<number | string, string | undefined>
 }
 
-/**
- * 组件入参: 通过 :xxx + defineProps 单项数据同步
- */
-const props = withDefaults(defineProps<DetailProps>(), {
-  row: () => ({}) /* 当前行数据 */,
-  moduleMap: () => ({}) /* 系统模块编码 → 名称映射 */
+withDefaults(defineProps<DetailProps>(), {
+  row: () => ({}),
+  moduleMap: () => ({})
 })
 
 /**
  * 复制文本到剪贴板
+ *
+ * @param text 待复制内容，为空时复制空串
  */
-function copyText(str: string | undefined) {
-  const text = str || ''
-  // 优先使用 Clipboard API，不支持时降级为 execCommand
+function copyText(text?: string) {
+  const content = text || ''
+  // 优先使用 Clipboard API，不可用或失败时降级为 execCommand
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => modal.msgSuccess(t('system.log.copied')))
+    navigator.clipboard
+      .writeText(content)
+      .then(() => modal.msgSuccess(t('system.log.copied')))
+      .catch(() => copyByExecCommand(content))
   } else {
-    const ta = document.createElement('textarea')
-    ta.value = text
-    document.body.appendChild(ta)
-    ta.select()
-    document.execCommand('copy')
-    document.body.removeChild(ta)
-    modal.msgSuccess(t('system.log.copied'))
+    copyByExecCommand(content)
   }
+}
+
+/**
+ * 兼容旧浏览器的复制实现
+ *
+ * @param content 待复制内容
+ */
+function copyByExecCommand(content: string) {
+  const textarea = document.createElement('textarea')
+  textarea.value = content
+  document.body.appendChild(textarea)
+  textarea.select()
+  document.execCommand('copy')
+  document.body.removeChild(textarea)
+  modal.msgSuccess(t('system.log.copied'))
 }
 </script>
 

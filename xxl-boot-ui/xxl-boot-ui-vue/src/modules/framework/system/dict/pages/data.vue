@@ -1,6 +1,7 @@
 <!--
-  页面：DictData（字典项管理）
-  功能：查询、新增、修改、删除指定字典下的字典项
+  DictData（字典项管理）
+  功能：指定字典下字典项的分页查询 + 新增/修改/删除
+  @author xuxueli 2026-11-22
 -->
 <template>
   <div class="app-container">
@@ -12,25 +13,25 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeDictItem()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Close" @click="handleClose">{{ t('common.close') }}</el-button>
       </el-col>
     </el-row>
 
-    <!-- 字典项列表 -->
-    <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
+    <!-- 数据列表 -->
+    <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column :label="t('common.serialNo')" prop="id" align="center" width="80" />
-      <el-table-column :label="t('system.dict.itemName')" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
-      <el-table-column :label="t('system.dict.itemCode')" align="center" prop="code" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('system.dict.itemName')" align="center" prop="name" width="180" show-overflow-tooltip />
+      <el-table-column :label="t('system.dict.itemCode')" align="center" prop="code" show-overflow-tooltip />
       <el-table-column :label="t('common.status')" align="center" width="80">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
@@ -39,12 +40,12 @@
         </template>
       </el-table-column>
       <el-table-column :label="t('system.dict.order')" align="center" prop="order" width="80" />
-      <el-table-column :label="t('common.remark')" align="center" prop="remark" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('common.remark')" align="center" prop="remark" show-overflow-tooltip />
       <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
       <el-table-column :label="t('common.operation')" align="center" width="160" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Delete" @click="removeDictItem(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -58,14 +59,14 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改字典项对话框 -->
-    <el-dialog :title="formState.title" v-model="formState.visible" width="500px" append-to-body>
+    <!-- 新增或修改对话框 -->
+    <el-dialog :title="formState.title" v-model="formState.visible" width="500px" append-to-body :close-on-click-modal="false" @closed="resetForm">
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="100px">
         <el-form-item :label="t('system.dict.itemName')" prop="name">
-          <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('system.dict.itemName')])" />
+          <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('system.dict.itemName')])" clearable />
         </el-form-item>
         <el-form-item :label="t('system.dict.itemCode')" prop="code">
-          <el-input v-model="formState.form.code" :placeholder="t('common.inputPlaceholder', [t('system.dict.itemCode')])" :disabled="formState.form.id != undefined" />
+          <el-input v-model="formState.form.code" :placeholder="t('common.inputPlaceholder', [t('system.dict.itemCode')])" clearable :disabled="formState.form.id != null" />
         </el-form-item>
         <el-form-item :label="t('common.status')">
           <el-radio-group v-model="formState.form.status">
@@ -75,14 +76,14 @@
         <el-form-item :label="t('system.dict.order')" prop="order">
           <el-input-number v-model="formState.form.order" controls-position="right" :min="0" />
         </el-form-item>
-        <el-form-item :label="t('common.remark')" prop="remark">
-          <el-input v-model="formState.form.remark" type="textarea" :placeholder="t('common.inputPlaceholder', [t('common.remark')])"></el-input>
+        <el-form-item :label="t('common.remark')">
+          <el-input v-model="formState.form.remark" type="textarea" :placeholder="t('common.inputPlaceholder', [t('common.remark')])" clearable />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">{{ t('modal.confirmButton') }}</el-button>
-          <el-button @click="cancel">{{ t('modal.cancelButton') }}</el-button>
+          <el-button type="primary" @click="saveForm">{{ t('modal.confirmButton') }}</el-button>
+          <el-button @click="closeForm">{{ t('modal.cancelButton') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -90,54 +91,72 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ name: 'Data' })
+defineOptions({ name: 'DictData' })
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import type { FormInstance } from 'element-plus'
 import { t } from '@/i18n'
-import { dictApi } from '../api'
+import { Pagination } from '@/components'
 import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
-import type { DictItem, DataQuery, DataListQuery } from '../types'
-import type { EnumOption, TableState, FormState } from '@/types'
-import type { FormInstance, FormRules } from 'element-plus'
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { Pagination } from '@/components'
+import { dictApi } from '../api'
+import type { DictItem, DictItemForm, DictItemQuery } from '../types'
+import type { FormState, TableState } from '@/types'
 
-/* --------------------------------- ref data --------------------------------- */
+// ---------------------- 响应式数据 ----------------------
 
-// 路由参数
 const route = useRoute()
-const dictId = ref<number | undefined>(Number(route.query.dictId) || undefined) /* 当前字典ID（来自路由） */
 
-// 表单引用
-const formRef = ref<FormInstance>() /* 编辑表单实例引用 */
+// 当前字典主键（由列表页跳转时通过路由参数传入）
+const dictId = ref<number | undefined>(Number(route.query.dictId) || undefined)
 
-// 页面标题：字典名称
-const dictName = ref<string | undefined>('') /* 字典名称 */
+// 当前字典名称，用于页面标题
+const dictName = ref<string>('')
 
-// 搜索栏：查询参数
-const queryParams = ref<DataQuery>({
+const formRef = ref<FormInstance>() /* 编辑表单 */
+
+// 状态选项，由后端枚举接口加载
+const { DictStatusEnum: statusOptions } = useEnumOption('DictStatusEnum')
+
+// 搜索栏筛选条件与分页参数
+const queryParams = ref<DictItemQuery>({
   pageNum: 1 /* 当前页码 */,
   pageSize: 10 /* 每页条数 */,
-  dictId: dictId.value /* 字典ID */
+  dictId: dictId.value /* 所属字典主键 */
 })
 
-// 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
-const formState = ref<FormState<DictItem>>({
-  visible: false /* 对话框显隐 */,
-  title: '' /* 对话框标题 */,
-  form: {} /* 表单数据 */,
+// 列表数据与勾选状态，勾选结果决定顶部按钮是否可用
+const table = ref<TableState<DictItem>>({
+  list: [], // 字典项列表
+  total: 0, // 总条数
+  loading: true, // 加载状态
+  showSearch: true, // 是否显示搜索栏
+  ids: [], // 勾选行主键
+  single: true, // 修改按钮是否禁用
+  multiple: true // 删除按钮是否禁用
+})
+
+// 编辑表单默认值：新增初始值与每次重置共用
+const FORM_DEFAULTS: Readonly<DictItemForm> = { dictId: dictId.value, status: 0, order: 0 }
+
+// 编辑弹窗状态
+const formState = ref<FormState<DictItemForm>>({
+  visible: false, // 弹窗显隐
+  title: '', // 弹窗标题
+  form: { ...FORM_DEFAULTS }, // 表单数据
   rules: {
-    /* 校验规则 */
+    // 校验规则
     name: [{ required: true, message: t('common.requiredMsg', [t('system.dict.itemName')]), trigger: 'blur' }],
     code: [
       { required: true, message: t('common.requiredMsg', [t('system.dict.itemCode')]), trigger: 'blur' },
       { pattern: /^[0-9]+$/, message: t('system.dict.itemCodePattern'), trigger: 'blur' },
       {
-        validator: (rule, value, callback) => {
-          const n = Number(value)
-          if (value == null || value === '' || (n >= 1 && n <= 10000000)) {
+        validator: (_rule, value, callback) => {
+          const code = Number(value)
+          // 允许留空，非空时要求落在 1-10000000 区间
+          if (value == null || value === '' || (code >= 1 && code <= 10000000)) {
             callback()
           } else {
             callback(new Error(t('system.dict.itemCodeRange')))
@@ -146,150 +165,155 @@ const formState = ref<FormState<DictItem>>({
         trigger: 'blur'
       }
     ],
-    order: [{ required: true, message: t('common.requiredMsg', [t('authz.org.order')]), trigger: 'blur' }]
+    order: [{ required: true, message: t('common.requiredMsg', [t('system.dict.order')]), trigger: 'blur' }]
   }
 })
 
-// 表格：UI数据
-const table = ref<TableState<DictItem>>({
-  list: [] /* 字典项列表 */,
-  total: 0 /* 总条数 */,
-  loading: true /* 加载状态 */,
-  ids: [] /* 选中行 ID 数组 */,
-  single: true /* 是否单选 */,
-  multiple: true /* 是否多选 */
-})
+// ---------------------- 分页检索 ----------------------
 
-// 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
-const { DictStatusEnum: statusOptions } = useEnumOption('DictStatusEnum')
-
-/* --------------------------------- fun --------------------------------- */
-
-/** 从后端枚举接口加载状态选项 */
-
-/** 查询当前字典名称 */
-function getDictName() {
-  if (dictId.value == null) {
-    return
-  }
-  dictApi.load(dictId.value).then((response) => {
-    dictName.value = response.data ? response.data.name : ''
-  })
-}
-
-/** 查询字典项列表 */
+/**
+ * 查询字典项分页数据
+ *
+ * 失败提示由请求层统一处理，此处只负责复位 loading
+ */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 → 后端分页参数（offset/pagesize）
+  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
   const params = usePageParams(queryParams)()
-  // 字典ID为空（无路由来源进入）时不携带该参数，避免后端可选 long 参数收到空值
+  // 无路由来源进入时字典主键为空，不携带该参数，避免后端可选 long 参数收到空值
   if (dictId.value != null) {
     params.dictId = dictId.value
   }
-  dictApi.itemPageList(params).then((response) => {
-    table.value.list = response.data.data
-    table.value.total = response.data.total
-    table.value.loading = false
-  })
+  dictApi.itemPageList(params)
+    .then((response) => {
+      table.value.list = response.data.data
+      table.value.total = response.data.total
+    })
+    .catch(() => {
+      // 错误已由请求层提示，继续走到 finally 复位 loading
+    })
+    .finally(() => {
+      table.value.loading = false
+    })
 }
 
-/** 取消按钮 */
-function cancel() {
-  formState.value.visible = false
-  reset()
-}
+// ---------------------- 数据操作（增删改） ----------------------
 
-/** 表单重置 */
-function reset() {
-  formState.value.form = {
-    id: undefined,
-    dictId: dictId.value,
-    name: undefined,
-    code: undefined,
-    status: 0,
-    order: 0,
-    remark: undefined
-  }
-  formRef.value?.resetFields()
-}
-
-/** 返回按钮操作 */
-function handleClose() {
-  const obj = { path: '/system/dict' }
-  tab.closeOpenPage(obj)
-}
-
-/** 新增按钮操作 */
-function handleAdd() {
-  reset()
-  formState.value.visible = true
-  formState.value.title = t('common.titleAdd', [t('common.noun.dictItem')])
-}
-
-/** 多选框选中数据 */
-function handleSelectionChange(selection: DictItem[]) {
+/**
+ * 同步表格勾选结果，驱动批量修改/删除按钮状态
+ *
+ * @param selection 当前勾选行
+ */
+function syncSelection(selection: DictItem[]) {
   table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
 
-/** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
-function handleUpdate(row: any) {
-  reset()
-  // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
-  const id = row?.id ?? table.value.ids[0]
-  if (id == null) {
-    return
-  }
-  dictApi.itemLoad(id).then((response) => {
-    formState.value.form = response.data
-    formState.value.visible = true
-    formState.value.title = t('common.titleEdit', [t('common.noun.dictItem')])
-  })
+/** 重置编辑表单：重置表单数据为默认值 + 清除表单校验状态 */
+function resetForm() {
+  formState.value.form = { ...FORM_DEFAULTS }
+  formRef.value?.clearValidate()
 }
 
-/** 提交按钮 */
-function submitForm() {
-  formRef.value!.validate((valid) => {
-    if (valid) {
-      // 已有 id 走更新，否则走新增
-      if (formState.value.form.id != undefined) {
-        dictApi.itemUpdate(formState.value.form).then((response) => {
-          modal.msgSuccess(t('common.updateSuccess'))
-          formState.value.visible = false
-          getList()
-        })
-      } else {
-        dictApi.itemInsert(formState.value.form).then((response) => {
-          modal.msgSuccess(t('common.addSuccess'))
-          formState.value.visible = false
-          getList()
-        })
-      }
-    }
-  })
+/** 打开新增弹窗 */
+function openCreateForm() {
+  resetForm()
+  formState.value.visible = true
+  formState.value.title = t('common.titleAdd', [t('common.noun.dictItem')])
 }
 
-/** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
-function handleDelete(row: any) {
-  const itemIds = row?.id ?? table.value.ids
-  if (itemIds == null || (Array.isArray(itemIds) && itemIds.length === 0)) {
-    return
-  }
-  modal
-    .confirm(t('system.dict.confirmDeleteItem', [itemIds]))
-    .then(function () {
-      return dictApi.itemDelete(itemIds)
+/**
+ * 打开修改弹窗并回填详情
+ *
+ * @param row 行数据；顶部按钮调用时为空，此时回退到勾选行
+ */
+function openEditForm(row?: DictItem) {
+  // 行按钮传行数据；顶部按钮取勾选的第一行
+  const id = row ? row.id : table.value.ids[0]
+  // 缺少 id 时直接返回，避免无效请求或误用勾选行
+  if (id == null) return
+  resetForm()
+  dictApi.itemLoad(id)
+    .then((response) => {
+      // 记录已被删除时不打开弹窗
+      if (!response.data) return
+      formState.value.form = response.data
+      formState.value.visible = true
+      formState.value.title = t('common.titleEdit', [t('common.noun.dictItem')])
     })
+    .catch(() => {})
+}
+
+/** 校验通过后保存：有 id 走修改，否则新增 */
+function saveForm() {
+  formRef.value?.validate((valid) => {
+    // 校验失败时保持弹窗打开，等待用户修正
+    if (!valid) return
+    const isEdit = formState.value.form.id != null
+    const request = isEdit ? dictApi.itemUpdate(formState.value.form) : dictApi.itemInsert(formState.value.form)
+    request
+      .then(() => {
+        modal.msgSuccess(t(isEdit ? 'common.updateSuccess' : 'common.addSuccess'))
+        closeForm()
+        getList()
+      })
+      .catch(() => {})
+  })
+}
+
+/** 关闭弹窗：重置统一交给 @closed，保证 X / ESC / 按钮三条路径一致 */
+function closeForm() {
+  formState.value.visible = false
+}
+
+/**
+ * 删除字典项（单条或批量），成功后刷新列表
+ *
+ * @param row 行数据；顶部按钮调用时为空，此时删除勾选行
+ */
+function removeDictItem(row?: DictItem) {
+  // 行按钮只删当前行；顶部按钮删除勾选行
+  const ids = row ? (row.id != null ? [row.id] : []) : table.value.ids
+  // 无记录可删时直接返回，避免弹出空删除确认框
+  if (ids.length === 0) return
+  const confirmText = row
+    ? t('system.dict.confirmDeleteItem', [row.name ?? String(row.id)])
+    : t('system.dict.confirmDeleteItem', [String(ids.length)])
+  modal
+    .confirm(confirmText)
+    .then(() => dictApi.itemDelete(ids))
     .then(() => {
+      // 删除当前页最后一条时回退一页，避免停留在空页
+      if (table.value.list.length === ids.length && queryParams.value.pageNum > 1) {
+        queryParams.value.pageNum -= 1
+      }
       getList()
       modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
 }
 
-/* --------------------------------- page init --------------------------------- */
-// 页面初始化：加载字典名称、状态选项 + 字典项列表
+/** 关闭当前子页并返回字典类型列表 */
+function handleClose() {
+  tab.closeOpenPage({ path: '/system/dict' })
+}
+
+// ---------------------- 页面初始化 ----------------------
+
+/**
+ * 查询当前字典名称，用于页面标题展示
+ */
+function getDictName() {
+  // 无字典主键时无需查询
+  if (dictId.value == null) return
+  dictApi.load(dictId.value)
+    .then((response) => {
+      dictName.value = response.data ? response.data.name ?? '' : ''
+    })
+    .catch(() => {})
+}
+
 getDictName()
 getList()
 </script>
