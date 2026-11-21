@@ -42,7 +42,7 @@ const UserInfo = ({
 
   /** 提交保存 */
   const handleSubmit = async (values: UserInfoForm) => {
-    await userApi.updateProfile(values as API.User);
+    await userApi.updateProfile(values);
     message.success(t('common.updateSuccess'));
     onSuccess?.();
   };

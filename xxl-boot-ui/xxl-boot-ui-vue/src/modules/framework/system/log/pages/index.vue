@@ -65,7 +65,7 @@
       <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="180" />
       <el-table-column :label="t('common.operation')" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="View" @click="openDetail(scope.row)">{{ t('system.log.detail') }}</el-button>
+          <el-button link type="primary" icon="View" @click="openDetail(scope.row)" v-hasPermi="['system:log']">{{ t('system.log.detail') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -90,7 +90,7 @@ import { computed, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
-import LogDetail from './detail.vue'
+import LogDetail from './LogDetailDialog.vue'
 import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import modal from '@/utils/modal'
 import { download } from '@/utils/download'

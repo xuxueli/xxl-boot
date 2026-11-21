@@ -22,6 +22,7 @@ import { orgApi } from '@/modules/framework/authz/org/api';
 import { handleTree } from '@/utils/common';
 import FormModal from './FormModal';
 
+/** 组织管理列表页 */
 const OrgList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
@@ -240,13 +241,15 @@ const OrgList = () => {
               {t('common.add')}
             </Button>
           ),
-          <Button
-            key="saveSort"
-            icon={<SaveOutlined />}
-            onClick={handleSaveSort}
-          >
-            {t('common.saveSort')}
-          </Button>,
+          hasPermi('authz:org') && (
+            <Button
+              key="saveSort"
+              icon={<SaveOutlined />}
+              onClick={handleSaveSort}
+            >
+              {t('common.saveSort')}
+            </Button>
+          ),
           <Button
             key="expand"
             icon={<NodeExpandOutlined />}

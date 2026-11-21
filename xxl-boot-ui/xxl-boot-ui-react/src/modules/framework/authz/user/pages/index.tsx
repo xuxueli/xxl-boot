@@ -26,11 +26,24 @@ import { deepClone, handleTree } from '@/utils/common';
 import FormModal from './FormModal';
 import UserView from './UserView';
 
-/*
- * 用户管理页面
+/**
+ * 将用户行数据收敛为可提交的表单字段，排除时间与联查回显字段
  *
- * 功能：左侧组织树 + 用户分页表格，支持新增/修改/删除/重置密码/状态切换/详情
+ * @param row 用户行数据
+ * @returns 用户表单数据
  */
+const toUserForm = (row: API.User): API.UserForm => ({
+  id: row.id,
+  orgId: row.orgId,
+  username: row.username,
+  realName: row.realName,
+  status: row.status,
+  phone: row.phone,
+  email: row.email,
+  roleIds: row.roleIds,
+});
+
+/** 用户管理页面：左侧组织树 + 用户分页表格 */
 const UserList = () => {
   // antd 提供的全局提示和弹窗
   const { message, modal } = App.useApp();
@@ -155,11 +168,7 @@ const UserList = () => {
    * 状态切换
    */
   const handleStatusChange = async (row: API.User, status: number) => {
-    const data = { ...row, status };
-    delete data.addTime;
-    delete data.updateTime;
-    delete data.orgName;
-    delete data.roleNames;
+    const data = toUserForm({ ...row, status });
     try {
       await userApi.update(data);
       message.success(t('common.operationSuccess'));
@@ -184,11 +193,7 @@ const UserList = () => {
       return;
     }
     resetPwdLoading.current = true;
-    const data = { ...resetRow, password: resetPassword };
-    delete data.addTime;
-    delete data.updateTime;
-    delete data.orgName;
-    delete data.roleNames;
+    const data = toUserForm({ ...resetRow, password: resetPassword });
     userApi
       .update(data)
       .then(() => {

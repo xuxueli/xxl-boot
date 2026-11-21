@@ -9,11 +9,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { t } from '@/i18n';
 import { messageApi } from '@/modules/framework/system/message/api';
 
-/* 组件入参 */
+/** 组件入参 */
 interface ReadUsersDialogProps {
-  open: boolean;         /* 是否显示 */
-  message?: API.Message; /* 当前消息 */
-  onClose: () => void;   /* 关闭回调 */
+  /** 是否显示 */
+  open: boolean;
+  /** 当前消息 */
+  message?: API.Message;
+  /** 关闭回调 */
+  onClose: () => void;
 }
 
 const columns: ColumnsType<API.MessageRead> = [

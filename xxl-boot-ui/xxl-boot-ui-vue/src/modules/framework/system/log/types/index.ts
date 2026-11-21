@@ -35,9 +35,9 @@ export interface LogQuery {
   /** 每页条数 */
   pageSize: number
   /** 日志类型筛选，-1 表示全部 */
-  type: number
+  type?: number
   /** 系统模块筛选，0 表示全部 */
-  module: number
+  module?: number
   /** 日志标题，模糊匹配 */
   title?: string
 }

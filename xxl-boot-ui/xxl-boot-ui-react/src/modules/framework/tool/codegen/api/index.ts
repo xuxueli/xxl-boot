@@ -13,12 +13,7 @@ export const codegenApi = {
    * @param params 分页与查询条件（current/pageSize/tableName/tableComment）
    * @returns 生成表分页结果
    */
-  pageList(params: {
-    current?: number;
-    pageSize?: number;
-    tableName?: string;
-    tableComment?: string;
-  }) {
+  pageList(params: API.CodegenQuery) {
     const { current = 1, pageSize = 10, ...rest } = params || {};
     // codegen 分页参数名固定为 pageSize，不对齐通用 pagesize
     return request<API.Response<API.PageModel<API.Codegen>>>(
@@ -53,7 +48,7 @@ export const codegenApi = {
    * @param data 生成表数据（含 fieldList）
    * @returns 保存结果
    */
-  update(data: API.Codegen) {
+  update(data: API.CodegenForm) {
     return request<API.Response<unknown>>('/tool/codegen/update', {
       method: 'POST',
       data,

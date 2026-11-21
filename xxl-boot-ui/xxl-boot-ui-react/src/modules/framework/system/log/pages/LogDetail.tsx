@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { App, Button, Col, Modal, Row } from 'antd';
 import { createStyles } from 'antd-style';
+import { useEnumOption } from '@/hooks/useEnumOption';
 import { t } from '@/i18n';
 import { copyToClipboard } from '@/utils/common';
 
@@ -94,17 +95,23 @@ const useStyles = createStyles(({ css }) => ({
   `,
 }));
 
-/* 组件入参 */
+/** 组件入参 */
 interface LogDetailProps {
-  open: boolean;                     /* 是否显示 */
-  row: API.Log | null;               /* 当前日志 */
-  moduleMap: Record<number, string>; /* 模块名称映射 */
-  onClose: () => void;               /* 关闭回调 */
+  /** 是否显示 */
+  open: boolean;
+  /** 当前日志 */
+  row: API.Log | null;
+  /** 模块名称映射 */
+  moduleMap: Record<number, string>;
+  /** 关闭回调 */
+  onClose: () => void;
 }
 
 function LogDetail({ open, row, moduleMap, onClose }: LogDetailProps) {
   const { message } = App.useApp();
   const { styles } = useStyles();
+  // 日志类型文案取后端枚举，避免详情页与列表页各写一套映射
+  const logTypeOptions = useEnumOption('LogTypeEnum');
 
   /** 复制内容 */
   const copyText = async (text: string) => {
@@ -137,11 +144,8 @@ function LogDetail({ open, row, moduleMap, onClose }: LogDetailProps) {
                     {t('system.log.logType')}
                   </span>
                   <span className={styles.detailValue}>
-                    {row.type === 0
-                      ? t('system.log.operLog')
-                      : row.type === 1
-                        ? t('system.log.loginLog')
-                        : row.type}
+                    {logTypeOptions.find((o) => o.code === row.type)?.title ||
+                      row.type}
                   </span>
                 </div>
               </Col>

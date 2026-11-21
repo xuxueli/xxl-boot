@@ -14,10 +14,7 @@ import { t } from '@/i18n';
 import { roleApi } from '@/modules/framework/authz/role/api';
 import FormModal from './FormModal';
 
-/*
- * 管理页面
- * 功能：角色分页表格 + 新增/修改（含菜单权限树）/删除
- */
+/** 角色管理列表页：角色分页表格 + 新增/修改（含菜单权限树）/删除 */
 const RoleList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
@@ -102,18 +99,22 @@ const RoleList = () => {
       width: 140,
       /* 操作列：修改/删除 */
       render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setFormCurrent(record);
-            setFormOpen(true);
-          }}
-        >
-          <EditOutlined /> {t('common.modify')}
-        </a>,
-        <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> {t('common.delete')}
-        </a>,
+        hasPermi('authz:role') && (
+          <a
+            key="edit"
+            onClick={() => {
+              setFormCurrent(record);
+              setFormOpen(true);
+            }}
+          >
+            <EditOutlined /> {t('common.modify')}
+          </a>
+        ),
+        hasPermi('authz:role') && (
+          <a key="delete" onClick={() => handleDelete(record)}>
+            <DeleteOutlined /> {t('common.delete')}
+          </a>
+        ),
       ],
     },
   ];

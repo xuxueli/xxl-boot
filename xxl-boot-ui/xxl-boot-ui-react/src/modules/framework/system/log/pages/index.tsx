@@ -19,6 +19,7 @@ import { logApi } from '@/modules/framework/system/log/api';
 import { download } from '@/utils/download';
 import LogDetail from './LogDetail';
 
+/** 日志列表页 */
 const LogList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
@@ -44,6 +45,15 @@ const LogList = () => {
     });
     return map;
   }, [logModuleOptions]);
+
+  // 日志类型：code → title 映射，文案取后端枚举
+  const typeMap = useMemo(() => {
+    const map: Record<number, string> = {};
+    logTypeOptions.forEach((o) => {
+      map[o.code] = o.title || '';
+    });
+    return map;
+  }, [logTypeOptions]);
 
   // ---------------------- 数据操作 ----------------------
 
@@ -87,9 +97,7 @@ const LogList = () => {
       valueEnum: toValueEnum(logTypeOptions),
       render: (_, record) => (
         <Tag color={record.type === 0 ? 'geekblue' : 'warning'}>
-          {record.type === 0
-            ? t('system.log.operLog')
-            : t('system.log.loginLog')}
+          {typeMap[record.type ?? -1] || record.type}
         </Tag>
       ),
     },

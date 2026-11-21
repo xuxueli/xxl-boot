@@ -21,6 +21,7 @@ import { dictApi } from '@/modules/framework/system/dict/api';
 import DictDataDrawer from './DictDataDrawer';
 import FormModal from './FormModal';
 
+/** 字典类型列表页 */
 const DictList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);

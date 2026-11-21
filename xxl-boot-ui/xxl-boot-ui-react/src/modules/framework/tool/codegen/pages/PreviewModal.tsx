@@ -9,11 +9,14 @@ import { codegenApi } from '@/modules/framework/tool/codegen/api';
 import { t } from '@/i18n';
 import { copyToClipboard } from '@/utils/common';
 
-/* 组件入参 */
+/** 组件入参 */
 interface PreviewModalProps {
-  open: boolean;       /* 是否显示 */
-  id?: number;         /* 待预览的表 ID */
-  onClose: () => void; /* 关闭回调 */
+  /** 是否显示 */
+  open: boolean;
+  /** 待预览的表 ID */
+  id?: number;
+  /** 关闭回调 */
+  onClose: () => void;
 }
 
 /** 模板文件名 → 标签（去掉目录与 .ftl 后缀） */
@@ -22,6 +25,7 @@ const fileNameToLabel = (fileName: string): string => {
   return base.replace(/\.ftl$/, '');
 };
 
+/** 代码预览弹窗 */
 function PreviewModal({ open, id, onClose }: PreviewModalProps) {
   const { message } = App.useApp();
   const [loading, setLoading] = useState(false);

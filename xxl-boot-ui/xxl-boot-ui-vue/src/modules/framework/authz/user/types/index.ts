@@ -43,9 +43,9 @@ export interface UserQuery {
   /** 账号，模糊匹配 */
   username?: string
   /** 状态筛选，-1 表示全部 */
-  status: number
+  status?: number
   /** 选中组织及其全部子组织的 ID 集合 */
-  orgIds: number[]
+  orgIds?: number[]
 }
 
 /** 新增/修改表单：复用实体中的可编辑字段，排除后端维护的时间与联查字段 */

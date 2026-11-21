@@ -5,11 +5,12 @@
  */
 import type { FormConfig, FormWidget } from './config';
 import { toCascaderOptions } from './config';
+import { t } from '@/i18n';
 
 /** 渲染单个表单项 TSX */
 function renderField(widget: FormWidget): string {
   const rules = widget.required
-    ? ` rules={[{ required: true, message: '请输入${widget.label}' }]}`
+    ? ` rules={[{ required: true, message: '${t('tool.pagegen.inputRequired', [widget.label])}' }]}`
     : '';
   switch (widget.type) {
     case 'textarea':
@@ -51,7 +52,7 @@ function renderField(widget: FormWidget): string {
     case 'color':
       return `<ProFormColorPicker name="${widget.vModel}" label="${widget.label}"${rules} />`;
     case 'upload':
-      return `<ProFormUploadButton name="${widget.vModel}" label="${widget.label}"${rules} buttonText="${widget.uploadText || '点击上传'}" />`;
+      return `<ProFormUploadButton name="${widget.vModel}" label="${widget.label}"${rules} buttonText="${widget.uploadText || t('tool.pagegen.clickUpload')}" />`;
     case 'button':
       return `<Button type="${widget.buttonType || 'primary'}" onClick={() => console.log('${widget.label}')}>${widget.label}</Button>`;
     default:
@@ -134,10 +135,10 @@ const DemoDialog = () => {
   return (
     <>
       <Button type="primary" onClick={() => setOpen(true)}>
-        打开弹窗
+        ${t('tool.pagegen.openDialog')}
       </Button>
       <Modal
-        title="弹窗表单"
+        title="${t('tool.pagegen.dialogTitle')}"
         open={open}
         onCancel={() => setOpen(false)}
         footer={null}

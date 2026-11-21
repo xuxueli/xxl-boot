@@ -1,3 +1,8 @@
+/**
+ * @fileoverview 操作权限指令 v-hasPermi
+ * @description 根据当前登录用户的权限列表，控制元素是否显示
+ * @author xuxueli 2026-11-22
+ */
 import type { Directive, DirectiveBinding } from 'vue'
 import { useUserStore } from '@/store'
 import { t } from '@/i18n'

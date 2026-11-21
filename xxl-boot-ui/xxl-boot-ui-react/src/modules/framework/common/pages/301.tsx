@@ -7,12 +7,13 @@ import { Button, Card, Result } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { t } from '@/i18n';
 
+/** 无权限提示页 */
 const Exception301 = () => {
   const navigate = useNavigate();
 
-  /** 返回上一页或首页 */
+  /** 返回上一页；无浏览历史时回首页 */
   const back = () => {
-    if (navigate(-1)) {
+    if (window.history.length > 1) {
       navigate(-1);
     } else {
       navigate('/');

@@ -387,7 +387,9 @@ function openEditForm(row?: Resource) {
     .then((response) => {
       // 记录已被删除时不打开弹窗
       if (!response.data) return
-      formState.value.form = response.data
+      // 表单只保留可编辑字段，避免把时间与子节点等只读字段回传到后端
+      const { addTime, updateTime, children, ...form } = response.data
+      formState.value.form = form
       formState.value.visible = true
       formState.value.title = t('common.titleEdit', [t('common.noun.resource')])
     })

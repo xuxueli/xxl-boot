@@ -131,7 +131,6 @@ const table = ref<TableState<DictItem>>({
   list: [], // 字典项列表
   total: 0, // 总条数
   loading: true, // 加载状态
-  showSearch: true, // 是否显示搜索栏
   ids: [], // 勾选行主键
   single: true, // 修改按钮是否禁用
   multiple: true // 删除按钮是否禁用

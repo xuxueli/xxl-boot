@@ -25,6 +25,7 @@ import MessageDetail from './MessageDetail';
 import FormModal from './FormModal';
 import ReadUsersDialog from './ReadUsersDialog';
 
+/** 站内消息列表页 */
 const MessageList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);

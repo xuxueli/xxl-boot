@@ -62,7 +62,7 @@
           <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="80" />
           <el-table-column :label="t('authz.user.username')" align="center" prop="username" width="110" show-overflow-tooltip>
             <template #default="scope">
-              <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{ scope.row.username }}</a>
+              <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)" v-hasPermi="['authz:user']">{{ scope.row.username }}</a>
             </template>
           </el-table-column>
           <el-table-column :label="t('common.realName')" align="center" prop="realName" width="110" show-overflow-tooltip />
@@ -439,7 +439,9 @@ function openEditForm(row?: User) {
   const current = table.value.list.find((item) => item.id === id)
   // 列表中已找不到该记录时直接返回，避免打开空表单
   if (!current) return
-  formState.value.form = { ...current }
+  // 表单只保留可编辑字段，避免把时间与联查字段回传到后端
+  const { addTime, updateTime, orgName, roleNames, ...form } = current
+  formState.value.form = form
   formState.value.visible = true
   formState.value.title = t('common.titleEdit', [t('common.noun.user')])
 }

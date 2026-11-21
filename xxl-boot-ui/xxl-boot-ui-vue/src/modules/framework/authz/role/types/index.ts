@@ -31,7 +31,7 @@ export interface RoleQuery {
   /** 角色名称，模糊匹配 */
   name?: string
   /** 状态筛选，-1 表示全部 */
-  status: number
+  status?: number
 }
 
 /** 新增/修改表单：复用实体中的可编辑字段，排除后端维护的时间字段 */

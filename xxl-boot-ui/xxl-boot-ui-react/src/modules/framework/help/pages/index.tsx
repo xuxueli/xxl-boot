@@ -9,6 +9,7 @@ import { Button, Divider, Typography } from 'antd';
 import { t } from '@/i18n';
 import defaultSettings from '@/default-settings';
 
+/** 帮助中心页面 */
 const HelpCenter = () => {
   return (
     <PageContainer ghost title={false}>

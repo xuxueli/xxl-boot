@@ -7,6 +7,7 @@ import { BellOutlined, MessageOutlined } from '@ant-design/icons';
 import { Drawer, Spin, Tag } from 'antd';
 import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
+import { useEnumOption } from '@/hooks/useEnumOption';
 import { messageApi } from '@/modules/framework/system/message/api';
 
 /* 组件入参 */
@@ -16,32 +17,22 @@ interface MessageDetailProps {
   onClose: () => void;            /* 关闭回调 */
 }
 
-/** 分类标签映射：0-通知 1-公告 */
-const categoryTag = (category?: number) => {
+/** 分类标签样式：图标与颜色按枚举编码区分，文案统一取后端枚举 */
+const categoryMeta = (category?: number) => {
   if (category === 0) {
-    return {
-      icon: <BellOutlined />,
-      text: t('system.message.notice'),
-      color: 'success',
-    };
+    return { icon: <BellOutlined />, color: 'success' };
   }
   if (category === 1) {
-    return {
-      icon: <MessageOutlined />,
-      text: t('system.message.announcement'),
-      color: 'warning',
-    };
+    return { icon: <MessageOutlined />, color: 'warning' };
   }
-  return {
-    icon: <MessageOutlined />,
-    text: t('system.message.message'),
-    color: 'default',
-  };
+  return { icon: <MessageOutlined />, color: 'default' };
 };
 
 function MessageDetail({ open, payload, onClose }: MessageDetailProps) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<API.Message | null>(null);
+  // 分类文案由后端枚举提供，避免与列表页各写一套映射
+  const categoryOptions = useEnumOption('MessageCategoryEnum');
 
   /* 打开抽屉时加载消息：支持直接传消息对象或消息 ID */
   useEffect(() => {
@@ -68,7 +59,13 @@ function MessageDetail({ open, payload, onClose }: MessageDetailProps) {
     onClose();
   };
 
-  const tag = categoryTag(message?.category);
+  /* 构建分类标签 */
+  const tag = {
+    ...categoryMeta(message?.category),
+    text:
+      categoryOptions.find((o) => o.code === message?.category)?.title ||
+      t('system.message.message'),
+  };
 
   return (
     <Drawer

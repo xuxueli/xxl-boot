@@ -1,7 +1,9 @@
 /**
- * 通用基础结构（types/index.ts）
- * 覆盖项目通用类型：后端统一返回、分页、枚举数据、字典数据、登录认证、动态路由、页面 UI 状态等
- * 对应后端 com.xxl.tool.response.Response、com.xxl.sso.core.model.LoginInfo 等
+ * @fileoverview 通用基础结构
+ * @description
+ *    覆盖项目通用类型：后端统一返回、分页、枚举数据、字典数据、登录认证、动态路由、页面 UI 状态等；
+ *    对应后端 com.xxl.tool.response.Response、com.xxl.sso.core.model.LoginInfo 等
+ * @author xuxueli 2026-11-22
  */
 import type { FormRules } from 'element-plus'
 

@@ -15,6 +15,7 @@ import { t } from '@/i18n';
 import { dictApi } from '@/modules/framework/system/dict/api';
 import FormModal from './FormModal';
 
+/** 字典数据列表页 */
 const DictData = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);

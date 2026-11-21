@@ -1,13 +1,15 @@
 /**
- * useEnumOption - 批量加载枚举选项
- *
- * 封装 loadEnumItem 接口，为页面下拉/单选等选项提供响应式数据，
- * 避免各页面重复编写 "dictApi.loadEnum(...).then(res => options.value = res.data)"。
+ * @fileoverview useEnumOption - 批量加载枚举选项
+ * @description
+ *    封装 loadEnumItem 接口，为页面下拉/单选等选项提供响应式数据，
+ *    避免各页面重复编写 "dictApi.loadEnum(...).then(res => options.value = res.data)"。
  *
  * 用法：
  *   1、const { MessageCategoryEnum: categoryOptions, MessageStatusEnum: statusOptions } =
  *     useEnumOption('MessageCategoryEnum', 'MessageStatusEnum')
  *   2、enumTitle(statusOptions, row.status)   // 编码 → 文案
+ *
+ * @author xuxueli 2026-11-22
  */
 import { ref, unref, type Ref } from 'vue'
 import { dictApi } from '@/modules/framework/system/dict/api'

@@ -46,7 +46,9 @@ const FormModal = ({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** 当前编辑的组织数据，null 表示新增 */
   current?: API.Org | null;
+  /** 操作成功回调 */
   onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();

@@ -6,16 +6,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { dictApi } from '@/modules/framework/system/dict/api';
 
-/** 枚举选项 */
-export interface EnumOption {
-  /** 枚举值 */
-  code: number;
-  /** 枚举标题 */
-  title?: string;
-}
+/** 枚举选项（复用全局枚举项类型） */
+export type EnumOption = API.EnumItem;
 
 /**
- * 加载后端枚举项（内部使用，作为 useEnumOption 的 queryFn）
+ * 加载后端枚举项
  *
  * @param enumName 枚举类名，如 UserStatuEnum
  * @returns 枚举选项列表
@@ -33,7 +28,7 @@ function loadEnum(enumName: string): Promise<EnumOption[]> {
 }
 
 /**
- * 获取枚举选项（Hook 形式，TanStack Query 缓存）
+ * 获取枚举选项（TanStack Query 缓存）
  *
  * @param enumName 枚举类名
  * @returns 枚举选项列表

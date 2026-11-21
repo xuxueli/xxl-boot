@@ -15,10 +15,11 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, Empty, Radio, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import * as echarts from 'echarts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import MessageDetail from '@/modules/framework/system/message/pages/MessageDetail';
 import { dashboardApi } from '@/modules/framework/dashboard/api';
 import { messageApi } from '@/modules/framework/system/message/api';
+import { useEnumOption } from '@/hooks/useEnumOption';
 import { t } from '@/i18n';
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -118,12 +119,26 @@ const statConfig = [
   },
 ] as const;
 
+/** 首页：统计概览、日志趋势、最新消息 */
 const Dashboard = () => {
   const { styles } = useStyles();
   const [detailOpen, setDetailOpen] = useState(false); /* 详情抽屉显隐 */
   const [detailPayload, setDetailPayload] = useState<number>(); /* 详情消息 ID */
 
   const [chartDays, setChartDays] = useState(30);
+
+  // 消息分类映射：文案取后端枚举，颜色按枚举顺序（首项高亮）区分
+  const messageCategoryOptions = useEnumOption('MessageCategoryEnum');
+  const categoryMap = useMemo(() => {
+    const map: Record<number, { text: string; color: string }> = {};
+    messageCategoryOptions.forEach((o, index) => {
+      map[o.code] = {
+        text: o.title || '',
+        color: index === 0 ? 'success' : 'warning',
+      };
+    });
+    return map;
+  }, [messageCategoryOptions]);
 
   /** 指标卡片 - 数据加载（TanStack Query） */
   const { data: stats = {} } = useQuery({
@@ -283,12 +298,10 @@ const Dashboard = () => {
                   <div className={styles.msgTitle}>{item.title}</div>
                   <div className={styles.msgMeta}>
                     <Tag
-                      color={item.category === 0 ? 'success' : 'warning'}
+                      color={categoryMap[item.category ?? -1]?.color || 'default'}
                       style={{ marginRight: 0 }}
                     >
-                      {item.category === 0
-                        ? t('dashboard.notice')
-                        : t('dashboard.announce')}
+                      {categoryMap[item.category ?? -1]?.text || item.category}
                     </Tag>
                     <span className={styles.msgTime}>{item.addTime}</span>
                   </div>

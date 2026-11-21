@@ -291,7 +291,9 @@ function openEditForm(row?: Role) {
     .then((response) => {
       // 记录已被删除时不打开弹窗
       if (!response.data) return
-      formState.value.form = response.data
+      // 表单只保留可编辑字段，避免把时间等只读字段回传到后端
+      const { addTime, updateTime, ...form } = response.data
+      formState.value.form = form
       formState.value.visible = true
       formState.value.title = t('common.titleEdit', [t('common.noun.role')])
       // 菜单树加载完成后才能按资源 id 勾选，否则节点尚未渲染
@@ -306,12 +308,23 @@ function openEditForm(row?: Role) {
     .catch(() => {})
 }
 
-/** 菜单权限树：展开/折叠 */
+/** 菜单权限树：递归展开/折叠全部层级 */
 function handleCheckedTreeExpand(value: CheckboxValueType) {
-  menuOptions.value.forEach((item) => {
-    if (item.id == null) return
-    const node = menuRef.value?.store.nodesMap[String(item.id)]
-    if (node) node.expanded = Boolean(value)
+  setTreeExpanded(menuOptions.value, Boolean(value))
+}
+
+/**
+ * 递归设置树节点展开状态
+ *
+ * @param nodes 当前层节点
+ * @param expanded 是否展开
+ */
+function setTreeExpanded(nodes: Resource[], expanded: boolean) {
+  nodes.forEach((node) => {
+    if (node.id == null) return
+    const treeNode = menuRef.value?.store.nodesMap[String(node.id)]
+    if (treeNode) treeNode.expanded = expanded
+    if (node.children?.length) setTreeExpanded(node.children, expanded)
   })
 }
 

@@ -30,6 +30,7 @@ const demoTableSql = `CREATE TABLE \`product01\` (
   PRIMARY KEY (\`id\`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT='产品信息表';`;
 
+/** 代码生成列表页 */
 const CodegenList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);

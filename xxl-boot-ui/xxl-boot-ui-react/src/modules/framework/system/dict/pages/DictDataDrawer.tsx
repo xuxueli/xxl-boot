@@ -8,11 +8,14 @@ import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
 import { dictApi } from '@/modules/framework/system/dict/api';
 
-/* 组件入参 */
+/** 组件入参 */
 interface DictDataDrawerProps {
-  open: boolean;         /* 是否显示 */
-  dict: API.Dict | null; /* 当前字典 */
-  onClose: () => void;   /* 关闭回调 */
+  /** 是否显示 */
+  open: boolean;
+  /** 当前字典 */
+  dict: API.Dict | null;
+  /** 关闭回调 */
+  onClose: () => void;
 }
 
 function DictDataDrawer({ open, dict, onClose }: DictDataDrawerProps) {

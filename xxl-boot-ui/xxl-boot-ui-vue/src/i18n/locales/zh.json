@@ -295,7 +295,7 @@
       "statusChangeSuccess": "{0}成功",
       "oldPassword": "旧密码",
       "newPassword": "新密码",
-      "newPasswordLength": "新密码长度必须介于 6 和 20 之间",
+      "newPasswordLength": "新密码长度必须介于 4 和 20 之间",
       "newPasswordForbiddenChar": "密码不能包含非法字符：< > \" ' \\ |",
       "confirmPassword": "确认密码",
       "confirmPasswordPlaceholder": "请确认新密码",

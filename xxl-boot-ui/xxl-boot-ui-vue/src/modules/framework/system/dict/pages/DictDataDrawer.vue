@@ -64,7 +64,7 @@
             <div class="dict-cell-key">{{ t('common.status') }}</div>
             <div class="dict-cell-val">
               <el-tag :type="item.status === 0 ? 'success' : 'danger'" size="small">
-                {{ item.status === 0 ? t('common.normal') : t('common.disabled') }}
+                {{ enumTitle(statusOptions, item.status) }}
               </el-tag>
             </div>
           </div>
@@ -78,6 +78,7 @@
 defineOptions({ name: 'DictDataDrawer' })
 import { computed, ref, watch } from 'vue'
 import { t } from '@/i18n'
+import { enumTitle, useEnumOption } from '@/composables/useEnumOption'
 import { dictApi } from '../api'
 import type { Dict, DictItem } from '../types'
 
@@ -102,6 +103,9 @@ const emit = defineEmits<{
 const loading = ref(false) /* 加载状态 */
 const dataList = ref<DictItem[]>([]) /* 字典项列表 */
 
+// 状态选项，由后端枚举接口加载
+const { DictStatusEnum: statusOptions } = useEnumOption('DictStatusEnum')
+
 // 正常/停用数量，用于顶部统计卡片
 const normalCount = computed(() => dataList.value.filter((item) => item.status === 0).length)
 const disabledCount = computed(() => dataList.value.filter((item) => item.status !== 0).length)
@@ -118,15 +122,15 @@ watch(
   }
 )
 
-/** 加载当前字典下的字典项列表 */
+/** 加载当前字典下的全部字典项（按字典标识全量查询，避免分页截断） */
 function loadData() {
-  // 缺少字典主键时无法查询，直接返回
-  if (!props.row?.id) return
+  // 缺少字典标识时无法查询，直接返回
+  if (!props.row?.type) return
   loading.value = true
   dataList.value = []
-  dictApi.itemPageList({ dictId: props.row.id, pageNum: 1, pageSize: 100 })
+  dictApi.loadDictItem(props.row.type)
     .then((response) => {
-      dataList.value = response.data.data ?? []
+      dataList.value = response.data ?? []
     })
     .catch(() => {
       // 错误已由请求层提示，继续走到 finally 复位 loading

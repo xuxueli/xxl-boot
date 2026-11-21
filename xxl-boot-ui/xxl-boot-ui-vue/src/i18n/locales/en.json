@@ -295,7 +295,7 @@
       "statusChangeSuccess": "{0} succeeded",
       "oldPassword": "Old Password",
       "newPassword": "New Password",
-      "newPasswordLength": "New password length must be between 6 and 20",
+      "newPasswordLength": "New password length must be between 4 and 20",
       "newPasswordForbiddenChar": "Password must not contain illegal characters: < > \" ' \\ |",
       "confirmPassword": "Confirm Password",
       "confirmPasswordPlaceholder": "Please confirm new password",

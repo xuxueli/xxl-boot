@@ -34,6 +34,7 @@ const visibleMap: Record<number, { text: string; color: string }> = {
   1: { text: t('authz.resource.visibleHide'), color: 'default' },
 };
 
+/** 资源（菜单/按钮）管理列表页 */
 const ResourceList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
@@ -257,6 +258,8 @@ const ResourceList = () => {
       ],
     },
   ];
+
+  // ---------------------- 数据列表渲染 ----------------------
 
   return (
     <PageContainer ghost title={false}>

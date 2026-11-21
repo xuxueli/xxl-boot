@@ -167,7 +167,7 @@ const EditTableModal = ({
   const [form] = Form.useForm();
   const [activeTab, setActiveTab] = useState('info');
 
-  const [info, setInfo] = useState<API.Codegen>({});
+  const [info, setInfo] = useState<API.CodegenForm>({});
   const [fields, setFields] = useState<API.CodegenField[]>([]);
   const [dictOptions, setDictOptions] = useState<
     { value: string; label: string }[]
@@ -185,7 +185,7 @@ const EditTableModal = ({
       codegenApi.detail(id)
         .then((res) => {
           const data = res.data || {};
-          const { fieldList = [], ...rest } = data;
+          const { fieldList = [], addTime, updateTime, ...rest } = data;
           const merge = {
             formColNum: 1,
             tplWebType: tplWebTypeValues[0],

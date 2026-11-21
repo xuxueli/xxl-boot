@@ -31,9 +31,9 @@ export interface MessageQuery {
   /** 每页条数 */
   pageSize: number
   /** 分类筛选，-1 表示全部 */
-  category: number
+  category?: number
   /** 状态筛选，-1 表示全部 */
-  status: number
+  status?: number
   /** 标题/内容关键词，模糊匹配 */
   title?: string
 }

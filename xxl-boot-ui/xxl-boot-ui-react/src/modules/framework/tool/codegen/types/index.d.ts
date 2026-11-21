@@ -38,6 +38,38 @@ declare namespace API {
     fieldList?: CodegenField[];
   };
 
+  /** 代码生成列表查询条件：ProTable 分页 + 搜索栏字段 */
+  type CodegenQuery = {
+    /** 当前页码，默认 1 */
+    current?: number;
+    /** 每页条数，默认 10 */
+    pageSize?: number;
+    /** 表名，模糊匹配 */
+    tableName?: string;
+    /** 表描述，模糊匹配 */
+    tableComment?: string;
+  };
+
+  /** 代码生成新增/修改表单：排除后端维护的时间字段 */
+  type CodegenForm = Pick<
+    Codegen,
+    | 'id'
+    | 'tableName'
+    | 'tableComment'
+    | 'remark'
+    | 'packageName'
+    | 'moduleName'
+    | 'businessName'
+    | 'functionName'
+    | 'functionAuthor'
+    | 'formColNum'
+    | 'tplCategory'
+    | 'tplWebType'
+  > & {
+    /** 字段列表 */
+    fieldList?: CodegenField[];
+  };
+
   /** 代码生成字段 */
   type CodegenField = {
     /** 主键 */

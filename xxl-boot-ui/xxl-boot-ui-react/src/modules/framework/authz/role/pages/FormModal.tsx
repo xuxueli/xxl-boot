@@ -58,13 +58,13 @@ const FormModal = ({
   current,
   onSuccess,
 }: {
-  /* 是否打开弹窗 */
+  /** 是否打开弹窗 */
   open: boolean;
-  /* 弹窗打开状态变化回调 */
+  /** 弹窗打开状态变化回调 */
   onOpenChange: (open: boolean) => void;
-  /* 当前编辑的角色数据，null 表示新增 */
+  /** 当前编辑的角色数据，null 表示新增 */
   current?: API.Role | null;
-  /* 操作成功回调 */
+  /** 操作成功回调 */
   onSuccess?: () => void;
 }) => {
   // antd 提示

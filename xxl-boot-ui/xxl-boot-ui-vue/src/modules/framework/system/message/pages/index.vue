@@ -109,7 +109,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item :label="t('system.message.content')">
+            <el-form-item :label="t('system.message.content')" prop="content">
               <Editor v-model="formState.form.content" :min-height="210" />
             </el-form-item>
           </el-col>
@@ -187,7 +187,8 @@ const formState = ref<FormState<MessageForm>>({
   rules: {
     // 校验规则
     title: [{ required: true, message: t('common.requiredMsg', [t('system.message.title')]), trigger: 'blur' }],
-    category: [{ required: true, message: t('common.requiredMsg', [t('system.message.category')]), trigger: 'change' }]
+    category: [{ required: true, message: t('common.requiredMsg', [t('system.message.category')]), trigger: 'change' }],
+    content: [{ required: true, message: t('common.requiredMsg', [t('system.message.content')]), trigger: 'blur' }]
   }
 })
 

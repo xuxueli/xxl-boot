@@ -270,7 +270,7 @@ function open(id: number) {
     .detail(id)
     .then((response) => {
       if (!response.data) return
-      const { fieldList, ...rest } = response.data
+      const { fieldList, addTime, updateTime, ...rest } = response.data
       info.value = { ...FORM_DEFAULTS, ...rest }
       columns.value = fieldList || []
       // id 主键字段不参与新增/编辑，强制置 0

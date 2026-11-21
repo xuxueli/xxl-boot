@@ -9,11 +9,14 @@ import { t } from '@/i18n';
 import { useEnumOption } from '@/hooks/useEnumOption';
 import { roleApi } from '@/modules/framework/authz/role/api';
 
-/* 组件入参 */
+/** 组件入参 */
 interface UserViewProps {
-  open: boolean;         /* 是否显示 */
-  user: API.User | null; /* 当前用户 */
-  onClose: () => void;   /* 关闭回调 */
+  /** 是否显示 */
+  open: boolean;
+  /** 当前用户 */
+  user: API.User | null;
+  /** 关闭回调 */
+  onClose: () => void;
 }
 
 /*

@@ -42,14 +42,13 @@ interface PwdForm {
 }
 
 /**
- * 新密码校验规则：必填 + 长度 6-20 + 任意字符（禁止 < > " ' \ |）
+ * 新密码校验规则：必填 + 长度 4-20 + 任意字符（禁止 < > " ' \ |）
  *
- * 原设计按后端 chrtype（0-4）动态切换密码策略，但全项目无任何写入方，
- * 实际恒为默认策略 0（任意字符），故直接固定为一条规则。
+ * 与后端 UserServiceImpl 的密码策略保持一致（4-20 位）。
  */
 const newPasswordRules: FormItemRule[] = [
   { required: true, message: t('common.requiredMsg', [t('authz.user.newPassword')]), trigger: 'blur' },
-  { min: 6, max: 20, message: t('authz.user.newPasswordLength'), trigger: 'blur' },
+  { min: 4, max: 20, message: t('authz.user.newPasswordLength'), trigger: 'blur' },
   { pattern: /^[^<>"'|\\]+$/, message: t('authz.user.newPasswordForbiddenChar'), trigger: 'blur' }
 ]
 
