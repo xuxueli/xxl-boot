@@ -164,7 +164,7 @@ mysql -h127.0.0.1 -uroot -proot_pwd --default-character-set=utf8mb4 xxl_boot \
 - 分层职责：Controller 只做参数接收/校验与响应，Service 承载业务，Mapper 只做数据访问，不跨层越权。
 - 平台能力放 `framework`，业务代码放 `business`；业务代码禁止塞入 `framework`。具体包路径与 Mapper XML 落位见对应 SKILL。
 - 接口路径：`/{module}/{business}/{pageList|load|insert|delete|update}`；业务 Controller 统一 `@RequestMapping("/{module}/{business}")`，全部方法 `@XxlSso`。
-- 模块/业务命名：`{module}` 为业务域（父），`{business}` 为业务页/实体（子）；文档示例中的 `{module}`、`{business}`、`Xxx` 均为占位符，落地时替换为实际命名。
+- 模块/业务命名：`{module}` 为业务域（父），`{business}` 为业务页/实体（子）；文档示例中的 `{module}`、`{business}`、`{businessName}`、`Xxx`/`xxx` 均为占位符，落地时替换为实际命名。
 - CRUD 参数通道：
   - 分页、查询条件与简单标量走 URL（`@RequestParam`，前端 `params`）；
   - `insert`/`update` 走 JSON 实体（`@RequestBody`，前端 `data`）；
