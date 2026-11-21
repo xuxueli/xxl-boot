@@ -118,10 +118,11 @@ import type { FormState, TableState } from '@/types'
 
 // ---------------------- 响应式数据 ----------------------
 
+// 表单实例 ref
 const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
 
-// 配置状态选项，由后端枚举接口加载
+// 配置状态选项
 const { ConfigStatusEnum: statusOptions } = useEnumOption('ConfigStatusEnum')
 
 // 搜索栏筛选条件与分页参数
@@ -234,6 +235,7 @@ function openEditForm(row?: Config) {
   const id = row ? row.id : table.value.ids[0]
   // 缺少 id 时直接返回，避免无效请求或误用勾选行
   if (id == null) return
+
   resetForm()
   configApi.load(id)
     .then((response) => {
