@@ -57,8 +57,10 @@ xxl-boot-ui/xxl-boot-ui-react/src
 
 ```tsx
 interface XxxProps {
-  id: number;          /* 主键 */
-  onClose: () => void; /* 关闭回调 */
+  /** 主键 */
+  id: number;
+  /** 关闭回调 */
+  onClose: () => void;
 }
 
 export default function Xxx({ id, onClose }: XxxProps) {
@@ -111,8 +113,9 @@ export default function Xxx({ id, onClose }: XxxProps) {
 
 ```ts
 /**
- * 类型定义：Xxx
- * 对应后端 Xxx 实体。
+ * @file Xxx 类型定义
+ * @description 对应后端 Xxx 实体
+ * @author xuxueli 2026-11-21
  */
 declare namespace API {
   /** Xxx 实体 */
@@ -130,6 +133,11 @@ declare namespace API {
 ### 7.2 api：`api/index.ts`
 
 ```ts
+/**
+ * @file Xxx API
+ * @description 接口封装
+ * @author xuxueli 2026-11-21
+ */
 import { request } from '@/utils/request';
 
 /**
@@ -190,8 +198,9 @@ export async function delXxx(ids: number[]) {
 
 ```tsx
 /**
- * 页面：Xxx 管理
- * 功能：分页表格 + 新增/修改 + 删除
+ * @file Xxx 管理
+ * @description 分页表格 + 新增/修改 + 删除
+ * @author xuxueli 2026-11-21
  */
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
@@ -339,7 +348,9 @@ export default XxxList;
 
 ```tsx
 /**
- * 组件：XxxFormModal（Xxx 新增/编辑弹窗）
+ * @file XxxFormModal（Xxx 新增/编辑弹窗）
+ * @description 新增/编辑表单
+ * @author xuxueli 2026-11-21
  */
 import { ModalForm, ProFormRadio, ProFormText } from '@ant-design/pro-components';
 import { App } from 'antd';
@@ -420,6 +431,24 @@ export default XxxFormModal;
 - 删除确认用 `App.useApp().modal.confirm`（`onOk` 内发请求），提示用 `App.useApp().message`；成功后 `actionRef.current?.reload()`。
 - 弹窗/抽屉用受控 `open` + `onClose`，展示数据通过 props 传入；不用 ref 暴露 `open()` 等命令式方法。
 
+### 7.6 注释与 JSDoc
+
+遵循 `AGENTS.md`「注释规范」。React 侧落地：
+
+- `.tsx` 文件头使用 JSDoc，必须包含 `@file`、功能描述和 `@author`：
+
+```tsx
+/**
+ * @file 站内消息页面
+ * @description 分页表格 + 新增/修改 + 删除
+ * @author xuxueli 2026-11-21
+ */
+```
+
+- 组件、Props、API 函数、Hook 使用 JSDoc；复杂函数补 `@param` / `@returns`。
+- 简单内联回调不强制 JSDoc；核心分支用 `//` 说明原因。
+- 保留现有 `PageContainer`、`ProTable` 等关键逻辑的区块注释。
+
 ## 八、菜单 / 权限
 
 与 Vue 模式一致（前端菜单同样由 `xxl_boot_resource` 的 `url` 驱动，React `loadView` 映射到 `pages/index.tsx`）：
@@ -487,6 +516,7 @@ POST /tool/codegen/createTable
 ## 十二、校验清单
 
 - [ ] 已加载 `xxl-boot-react`，且未混用 Vue/单体写法。
+- [ ] 注释符合规范：TSX 文件头含 `@author`，组件/API/核心分支注释齐全，无无意义注释和注释掉的死代码。
 - [ ] `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md` 六大块与 SQL 已落盘并同步（模板见 `AGENTS.md`「需求落盘」）。
 - [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
 - [ ] 前端 types 用 `declare namespace API`；api 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`。

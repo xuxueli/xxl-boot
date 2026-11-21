@@ -72,13 +72,75 @@ XXL-Boot 是一个快速开发平台 / 脚手架，采用 Monorepo 统一托管�
 
 - 使用中文沟通、中文注释。
 - 命名表达真实语义：类名大驼峰、变量/方法小驼峰、常量全大写下划线；避免无意义单字母与拼音；布尔属性不用 `isXxx` 前缀（避免与 getter 冲突）。
-- 注释：Java 文件顶部一行功能描述 + 空行 + `@author 作者 yyyy-mm-dd`；方法用 `/** xxx */` Javadoc；属性注释右侧 `/* xxx */` 垂直对齐；前端文件顶部一行功能注释即可，不强制 `@author`；分支逻辑需注释；无死代码、无调试残留。
 - **依赖版本一律固定**：
   - `package.json` 写精确版本（如 `"yaml": "2.9.1"`），禁止 `^`、`~`、`*`、区间；
   - `pom.xml` 的依赖与版本属性写精确版本（如 `<xxl-sso.version>2.4.1</xxl-sso.version>`），禁止 `LATEST`、`RELEASE`、区间；
   - `package-lock.json` 按仓库约定由 `.gitignore` 忽略、不入库；新增/升级依赖后仅本地重新生成用于校验，不提交。
 - 新增依赖前先确认现有依赖/工具能否覆盖；不能覆盖才新增，并在变更说明中写清用途。
 - 文档同步：公共规则改本文件，模式规则改对应 SKILL；不得在代码注释中长期保留与文档冲突的“临时约定”。
+
+### 4.1 注释规范（Java Javadoc / JS JSDoc）
+
+注释按「文件头 → 类型/方法 → 核心分支」三层，只解释“做什么/为什么”，不复述代码。
+
+| 层级 | Java | JS / TS |
+|---|---|---|
+| 文件头 | 类/接口 Javadoc：功能描述 + 空行 + `@author 作者 yyyy-MM-dd` | JSDoc：`@file` + 功能描述 + `@author 作者 yyyy-MM-dd` |
+| 类型 | class/interface/enum 使用 Javadoc | interface/type/组件使用 JSDoc |
+| 方法 | public/protected 方法使用 Javadoc；复杂方法补 `@param`、`@return`，异常补 `@throws`；简单 CRUD/重写方法可只写一行职责说明 | 导出函数、Hook/Composable、非平凡函数使用 JSDoc，含 `@param`、`@returns` |
+| 字段 | 字段统一使用 Javadoc，置于字段上方；`serialVersionUID` 可省略 | 接口属性使用 `/** ... */` 置于上方 |
+| 核心分支 | `//` 置于分支/循环/提前返回上方，说明原因 | 同左 |
+| 模板 | FTL 文件头 `<!-- ... -->`；模板逻辑 `<#-- ... -->` | Vue SFC 文件头 `<!-- ... -->`，并包含 `@author`；模板区块 `<!-- ... -->` |
+
+约束：
+
+- JS/TS（含 Vue SFC 文件头）必须包含 `@author 作者 yyyy-MM-dd`。
+- 简单 getter/setter、`@Override` 的简单实现、简单 CRUD 方法、显而易见的循环不强制补参数标签或注释。
+- 禁止无意义注释（如 `// 查询列表`）、注释掉的死代码、调试输出。
+- 文件头、公开方法/函数、核心分支注释缺失视为不合规。
+
+示例：
+
+```java
+/**
+ * 配置管理 Controller
+ *
+ * @author xuxueli 2026-11-21
+ */
+public class ConfigController {
+
+    /**
+     * 分页查询配置
+     *
+     * @param offset   偏移量
+     * @param pagesize 每页条数
+     * @return 分页结果
+     */
+    public Response<PageModel<ConfigDTO>> pageList(...) { ... }
+}
+```
+
+```ts
+/**
+ * @file 站内消息页面
+ * @description 分页表格 + 新增/修改 + 删除
+ * @author xuxueli 2026-11-21
+ */
+```
+
+```ts
+/**
+ * 查询消息列表
+ * @param params 查询参数
+ * @returns 分页结果
+ */
+```
+
+```ts
+// 未选择记录时直接返回，避免无效请求
+if (!ids.length) return
+```
+
 
 ## 五、开发流程与需求落盘
 

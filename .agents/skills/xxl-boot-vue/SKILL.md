@@ -96,6 +96,11 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 ### 7.1 types：`types/index.ts`
 
 ```ts
+/**
+ * @file Xxx 类型定义
+ * @description 实体、查询、表单与列表查询类型
+ * @author xuxueli 2026-11-21
+ */
 import type { ListQuery } from '@/types'
 
 /** Xxx 实体 */
@@ -131,6 +136,11 @@ export type XxxListQuery = ListQuery<XxxQuery>
 ### 7.2 api：`api/index.ts`
 
 ```ts
+/**
+ * @file Xxx API
+ * @description 接口封装
+ * @author xuxueli 2026-11-21
+ */
 import { request } from '@/utils/request'
 import type { Xxx, XxxForm, XxxListQuery } from '../types'
 import type { PageModel, Response } from '@/types'
@@ -317,6 +327,33 @@ getList()
 - 组件 import 名称与模板标签统一 PascalCase；按钮权限 `v-hasPermi="['{module}:{business}:add']"`，角色权限 `v-hasRole="['admin']"`。
 - 表单弹窗推荐 `defineModel('visible')` + 模板 `v-model` 直连；通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
 
+### 7.5 注释与 JSDoc
+
+遵循 `AGENTS.md`「注释规范」。Vue 侧落地：
+
+- `.vue` 文件头用 HTML 注释，必须包含 `@author 作者 yyyy-MM-dd`：
+
+```html
+<!--
+  站内消息页面
+  功能：分页表格 + 新增/修改 + 删除
+  @author xuxueli 2026-11-21
+-->
+```
+
+- `<script setup>` 中的导出函数、事件处理、Composable 使用 JSDoc；复杂函数补 `@param` / `@returns`。
+- 保留 `// --------------------------------- ref data ---------------------------------` 等三段式结构注释。
+- 模板区块用 `<!-- 搜索栏 -->` 标注；核心分支用 `//` 说明原因，不逐行注释。
+
+```ts
+/**
+ * 查询消息列表
+ * @param params 查询参数
+ * @returns 分页结果
+ */
+function getList(params: MessageListQuery) { ... }
+```
+
 ## 八、菜单 / 权限
 
 ```sql
@@ -385,6 +422,7 @@ POST /tool/codegen/createTable
 ## 十二、校验清单
 
 - [ ] 已加载 `xxl-boot-vue`，且未混用 React/单体写法。
+- [ ] 注释符合规范：Vue 文件头含 `@author`，函数/核心分支注释齐全，无无意义注释和注释掉的死代码。
 - [ ] `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md` 六大块与 SQL 已落盘并同步（模板见 `AGENTS.md`「需求落盘」）。
 - [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
 - [ ] 前端 types 四件（实体/Query/Form/ListQuery）齐全，api 返回 `Promise<Response<PageModel<T>>>`，页面三段式 + `ref` 收敛 + `usePageParams`。

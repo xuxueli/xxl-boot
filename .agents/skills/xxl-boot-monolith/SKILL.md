@@ -211,6 +211,21 @@ $.adminTable.initUpdate({
 - 示例中的 `I18n.xxx_name` / `I18n.xxx_status_*` 需在 `message_zh_CN.properties`、`message_en.properties` 成对补齐。
 - 页面内自定义 `$.ajax` 时按同样规则选择表单或 JSON，禁止把复杂参数拼到 URL。
 
+### 7.1 注释规范（FTL / 内联 JS / Java）
+
+- Java 侧遵循 `AGENTS.md`「注释规范」：类/方法 Javadoc，字段 Javadoc 置于上方。
+- FTL 文件头使用 HTML 注释，包含功能描述与 `@author`；FreeMarker 逻辑使用 `<#-- ... -->`，避免输出到页面。
+- 内联 JS 的具名函数使用 JSDoc；`$.adminTable` 等配置块用区块注释；核心分支用 `//` 说明原因。
+- 模板区块用 `<!-- 查询区域 -->` 标注，不逐行注释。
+
+```html
+<!--
+  Xxx 管理页面
+  功能：查询 + 新增/修改/删除
+  @author xuxueli 2026-11-21
+-->
+```
+
 ## 八、菜单 / 权限
 
 ```sql
@@ -271,6 +286,7 @@ POST /tool/codegen/genCode
 ## 十二、校验清单
 
 - [ ] 已加载 `xxl-boot-monolith`，且未混用 Vue/React 写法。
+- [ ] 注释符合规范：Java 文件/方法/字段 Javadoc 齐全，FTL 文件头含 `@author`，核心分支注释清晰。
 - [ ] `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md` 六大块与 SQL 已落盘并同步（模板见 `AGENTS.md`「需求落盘」）。
 - [ ] 后端 `mvn -q compile` 通过（在 `xxl-boot-admin` 下）；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
 - [ ] 视图名 `/business/{module}/{business}` 与 FTL 文件位置一致；菜单 `url` 与 `@RequestMapping` 一致。
