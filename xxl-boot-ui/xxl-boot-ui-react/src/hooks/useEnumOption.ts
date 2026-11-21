@@ -15,12 +15,12 @@ export interface EnumOption {
 }
 
 /**
- * 加载后端枚举项（非 Hook 形式，供普通逻辑调用）
+ * 加载后端枚举项（内部使用，作为 useEnumOption 的 queryFn）
  *
  * @param enumName 枚举类名，如 UserStatuEnum
  * @returns 枚举选项列表
  */
-export function loadEnum(enumName: string): Promise<EnumOption[]> {
+function loadEnum(enumName: string): Promise<EnumOption[]> {
 
   /**
    *  API数据获取函数：
