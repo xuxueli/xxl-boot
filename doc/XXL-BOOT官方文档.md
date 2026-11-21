@@ -1151,13 +1151,10 @@ public @interface Permission {
 
 ### 版本 v2.2.1 Release Notes[ING]
 - 1、【优化】前端组件规范重构：标准化前端组件写法，类似 React.FC 等组件写法升级普通函数组件写法，提升组件可维护性；
-- 2、【规范】研发SKILL/Agent.md 规范化：标准化研发SKILL/Agent.md 规范，便于AI编程助手识别加载；
+- 2、【规范】研发SKILL/Agent.md 规范化：标准化研发SKILL/Agent.md 规范，便于AI编程助手识别加载；Agent.md 仅保留公共部分，不同开发模式具体内容下沉至 SKILL。
 - 3、【升级】升级多项依赖至较新版本。
-
-- 4、【TODO】菜单API重构：与UI库解除耦合，适配逻辑在前端处理；
+- 4、【重构】菜单API重构：与UI库解除耦合，适配逻辑在前端处理；
 - 5、【TODO】单模块代码规范化：规范并简化模块代码，包括：筛选、列表、增改删、其他操作；
-- 6、【TODO】AI辅助编程重构：Agent.md 和 SKILL 内容重构，Agent.md 近保留公共部分，不同开发模式具体内容下沉至 SKILL，便于AI编程助手识别加载；
-
 
 ### TODO LIST
 - 1、单体版本优化：
