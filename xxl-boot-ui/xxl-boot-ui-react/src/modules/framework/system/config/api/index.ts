@@ -10,15 +10,23 @@ export const configApi = {
   /**
    * 分页查询配置
    *
-   * @param query 分页与查询条件（offset/pagesize 形态）
+   * 入参为页面查询对象（current/pageSize + 筛选项），在此过滤前端分页字段，
+   * 替换为后端约定的 offset/pagesize。
+   *
+   * @param query 页面查询条件
    * @returns 配置分页结果
    */
-  pageList(query: API.ConfigListQuery) {
+  pageList(query: API.ConfigQuery) {
+    const { current = 1, pageSize = 10, ...search } = query;
     return request<API.Response<API.PageModel<API.Config>>>(
       '/system/config/pageList',
       {
         method: 'GET',
-        params: query,
+        params: {
+          offset: (current - 1) * pageSize,
+          pagesize: pageSize,
+          ...search,
+        },
       },
     );
   },

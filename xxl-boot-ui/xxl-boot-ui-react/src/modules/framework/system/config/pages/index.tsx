@@ -12,7 +12,6 @@ import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { t } from '@/i18n';
 import { configApi } from '@/modules/framework/system/config/api';
-import { buildListQuery } from '@/utils/pageQuery';
 import FormModal from './FormModal';
 
 /**
@@ -145,9 +144,9 @@ const ConfigList = () => {
           labelWidth: 80,
           optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
         }}
-        /* 列表数据查询：ProTable 的 current/pageSize 由 buildListQuery 统一转换为 offset/pagesize */
+        /* 列表数据查询 */
         request={async (params) => {
-          const res = await configApi.pageList(buildListQuery(params));
+          const res = await configApi.pageList(params);
           return {
             data: res.data?.data || [],
             total: res.data?.total || 0,

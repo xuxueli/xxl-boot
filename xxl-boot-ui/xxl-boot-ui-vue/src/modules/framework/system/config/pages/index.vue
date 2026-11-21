@@ -109,7 +109,6 @@ import { ref } from 'vue'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
 import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
-import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { configApi } from '../api'
 import type { Config, ConfigForm, ConfigQuery } from '../types'
@@ -172,8 +171,7 @@ const formState = ref<FormState<ConfigForm>>({
  */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
-  configApi.pageList(usePageParams(queryParams)())
+  configApi.pageList(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total

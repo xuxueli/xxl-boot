@@ -38,7 +38,7 @@ React 与 Vue **共用同一个后端 `xxl-boot-api`**，接口契约与后端�
 | 前端落位 | `src/modules/business/{module}/{business}/{types,api,pages}` |
 | 页面定位 | 菜单 `url` → `loadView` 只匹配 `pages/**/index.tsx`，无需改路由 |
 | 权限模型 | 业务页按钮 `hasPermi`；平台内置页可按角色 `hasRole` |
-| 数据请求 | `@/utils/request` + `buildListQuery`（分页）+ TanStack Query（仅枚举等缓存场景） |
+| 数据请求 | `@/utils/request` + TanStack Query（仅枚举等缓存场景） |
 | 数据库脚本 | `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql` |
 
 ## 三、工程结构
@@ -55,8 +55,8 @@ xxl-boot-ui/xxl-boot-ui-react/src
 ├── modules/business/{module}/{business}/                  ← 新增业务（types + api + pages）
 ├── hooks/                                                 ← useEnumOption / usePermission
 ├── components/                                            ← Editor / TreePanel / IconSelect…
-├── types/index.d.ts                                       ← 全局 API.Response / API.PageModel / API.ListQuery 等
-├── utils/                                                 ← request / pageQuery（buildListQuery）/ common
+├── types/index.d.ts                                       ← 全局 API.Response / API.PageModel / API.EnumItem 等
+├── utils/                                                 ← request / common
 ├── assets/styles/global.css                               ← 全局组件样式（含 ProTable 工具栏）
 ├── router/index.tsx                                       ← loadView（只识别 pages/**/index.tsx）
 └── i18n/locales/{zh,en}.json                              ← 文案
@@ -79,13 +79,11 @@ xxl-boot-ui/xxl-boot-ui-react/src
 
 | 范本 | 提炼出的规范 | 对应章节 |
 |---|---|---|
-| `system/config/types/index.d.ts` | `declare namespace API` 实体、查询分层（`XxxQuery` / `XxxListQuery`）与表单类型 | 4.3 |
-| `system/config/api/index.ts` | `{business}Api` 命名空间、方法顺序、分页原样透传 | 4.4 |
+| `system/config/types/index.d.ts` | `declare namespace API` 实体、查询（`XxxQuery`）与表单类型 | 4.3 |
+| `system/config/api/index.ts` | `{business}Api` 命名空间、方法顺序、分页参数在 API 内转换 | 4.4 |
 | `system/config/pages/index.tsx` | `PageContainer + ProTable`、分区注释、勾选、工具栏、删除 | 4.5 |
 | `system/config/pages/FormModal.tsx` | 受控 `ModalForm`、内联 props、提交与复位、禁止遮罩关闭 | 4.6 |
-| `src/utils/pageQuery.ts` | `buildListQuery`：`current/pageSize` → `offset/pagesize` | 4.5 |
 | `src/assets/styles/global.css` | ProTable 工具栏全局左对齐，页面不再各自维护样式 | 4.5 |
-| `src/types/index.d.ts` | 全局 `API.PageQuery` / `API.ListQuery<T>` | 4.3 |
 | `system/message/pages/{MessageDetail,ReadUsersDialog}` | 受控 Drawer / Modal + Table（进阶） | 4.7 |
 | 后端 `framework/.../system/Config*` | 文件清单、接口契约、校验、Mapper XML | 五 |
 
@@ -104,7 +102,7 @@ xxl-boot-ui/xxl-boot-ui-react/src
 
 | 文件 | 路径 | 职责 | 范本 |
 |---|---|---|---|
-| types | `src/modules/business/{module}/{business}/types/index.d.ts` | 实体、关联实体、`XxxQuery` / `XxxListQuery` / `XxxForm` | `system/config/types/index.d.ts` |
+| types | `src/modules/business/{module}/{business}/types/index.d.ts` | 实体、关联实体、`XxxQuery` / `XxxForm` | `system/config/types/index.d.ts` |
 | api | `src/modules/business/{module}/{business}/api/index.ts` | `{business}Api` 命名空间，方法名对齐后端 Controller | `system/config/api/index.ts` |
 | view | `src/modules/business/{module}/{business}/pages/index.tsx` | `PageContainer + ProTable` 列表页 | `system/config/pages/index.tsx` |
 | 表单弹窗 | `pages/FormModal.tsx` | `ModalForm` 新增/修改（独立文件） | `system/config/pages/FormModal.tsx` |
@@ -135,7 +133,7 @@ xxl-boot-ui/xxl-boot-ui-react/src
 | 命名空间 | 统一 `declare namespace API { ... }`，多文件自动合并 |
 | 实体 | `type Xxx = { ... }`，对应后端 Entity/DTO；字段可选 |
 | 关联实体 | 同一文件内追加 `type XxxItem` / `type XxxRead` |
-| 查询类型 | 拆两层：`API.XxxQuery`（`current/pageSize` + 筛选项，页面态）、`API.XxxListQuery = ListQuery<API.XxxQuery>`（`offset/pagesize` + 筛选项，接口态） |
+| 查询类型 | 只保留 `API.XxxQuery`（`current/pageSize` + 筛选项），分页字段在 `api.pageList` 内转换，不再派生 `ListQuery` 等中间类型 |
 | 表单类型 | 一律抽 `API.XxxForm = Pick<Xxx, 可编辑字段>`，避免页面回传 `addTime/updateTime` 等只读字段 |
 
 ```ts
@@ -173,9 +171,6 @@ declare namespace API {
     status?: number;
   };
 
-  /** 列表接口请求参数（offset/pagesize 形态） */
-  type XxxListQuery = ListQuery<XxxQuery>;
-
   /** Xxx 新增/修改表单：仅保留可编辑字段，避免回传只读字段 */
   type XxxForm = Pick<Xxx, 'id' | 'name' | 'status' | 'remark'>;
 }
@@ -184,7 +179,6 @@ declare namespace API {
 注意：
 
 - `types/index.d.ts` 由 `tsconfig.json` 的 `include` 自动纳入，无需在页面 import。
-- `API.PageQuery` / `API.ListQuery` 定义在全局 `src/types/index.d.ts`，模块只需声明 `API.XxxListQuery = ListQuery<API.XxxQuery>`。
 - 后端时间字段统一 `string`；前端只展示或回传，不做 Date 运算。
 - 新增关联类型时保持同一文件聚合，避免跨模块引用类型文件。
 
@@ -196,7 +190,7 @@ declare namespace API {
 | 方法命名 | 与后端 Controller 方法名一致，不二次改名 |
 | 方法顺序 | `pageList / load / [业务方法] / insert / delete / update` |
 | 返回类型 | `request<API.Response<API.PageModel<API.Xxx>>>(...)` |
-| 分页 | 入参 `API.XxxListQuery`；页面用 `buildListQuery(params)` 把 `current/pageSize` 转 `offset/pagesize`，API 原样透传（与 Vue 一致） |
+| 分页 | 入参 `API.XxxQuery`；在 `pageList` 内去掉 `current/pageSize`，替换为后端约定的 `offset/pagesize`，页面直接传 ProTable 参数 |
 | 表单 | `insert/update` 入参 `API.XxxForm` |
 | 删除 | 接收集合，`data: Array.isArray(ids) ? ids : [ids]` |
 
@@ -213,17 +207,23 @@ export const xxxApi = {
   /**
    * 分页查询 Xxx
    *
-   * 入参与 Vue 一致：页面负责把 current/pageSize 转成 offset/pagesize，此处原样透传。
+   * 入参为页面查询对象（current/pageSize + 筛选项），在此过滤前端分页字段，
+   * 替换为后端约定的 offset/pagesize。
    *
-   * @param query 分页与查询条件（offset/pagesize 形态）
+   * @param query 页面查询条件
    * @returns 分页结果
    */
-  pageList(query: API.XxxListQuery) {
+  pageList(query: API.XxxQuery) {
+    const { current = 1, pageSize = 10, ...search } = query;
     return request<API.Response<API.PageModel<API.Xxx>>>(
       '/{module}/{business}/pageList',
       {
         method: 'GET',
-        params: query,
+        params: {
+          offset: (current - 1) * pageSize,
+          pagesize: pageSize,
+          ...search,
+        },
       },
     );
   },
@@ -303,7 +303,6 @@ import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { usePermission } from '@/hooks/usePermission';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { buildListQuery } from '@/utils/pageQuery';
 import { xxxApi } from '../api';
 import FormModal from './FormModal';
 
@@ -414,9 +413,9 @@ const XxxList = () => {
           labelWidth: 80,
           optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
         }}
-        /* 列表数据查询：ProTable 的 current/pageSize 由 buildListQuery 统一转换为 offset/pagesize */
+        /* 列表数据查询：分页参数由 API 内部转换为后端约定的 offset/pagesize */
         request={async (params) => {
-          const res = await xxxApi.pageList(buildListQuery(params));
+          const res = await xxxApi.pageList(params);
           return {
             data: res.data?.data || [],
             total: res.data?.total || 0,
@@ -487,7 +486,7 @@ export default XxxList;
 |---|---|
 | 列表容器 | `PageContainer ghost title={false}` + `ProTable` |
 | 分区注释 | 按「页面状态 → 数据操作 → 表格“列”定义 → 数据列表渲染」分区，弹窗编排放页面末尾 |
-| 请求 | `request` 内用 `buildListQuery(params)` 把 `current/pageSize` 统一转成 `offset/pagesize`；返回 `{ data, total, success: true }`，数据取 `res.data?.data`，总数取 `res.data?.total` |
+| 请求 | `request` 内直接 `xxxApi.pageList(params)`，分页字段由 API 统一转换；返回 `{ data, total, success: true }`，数据取 `res.data?.data`，总数取 `res.data?.total` |
 | 搜索 | `search={{ optionRender: (_, __, dom) => [...dom.reverse()] }}` 让查询/重置靠右或按现有页面保持一致；搜索/重置由 ProTable 自动回到第 1 页 |
 | 序号 | 首列 `dataIndex: 'id'`，展示数据库主键，不用 `render` 生成页内序号 |
 | 状态列 | `valueEnum` 负责筛选下拉，`render` 负责 Tag 展示 |
@@ -642,7 +641,7 @@ export default FormModal;
 | 权限 | `usePermission().hasPermi / hasRole` |
 | 枚举 | `useEnumOption('XxxEnum')` → `toValueEnum`（表格列）/ `toSelectOptions`（Select/ProFormSelect） |
 | 字典 | 无 React 版 `useDict`；用 `loadDictItem`（`@/modules/framework/system/dict/api`）+ `useEffect/useState` 或 ProForm `request` |
-| 复用 | 优先 `@/hooks`、`@/components`、`@/utils`（请求 `request`、分页转换 `buildListQuery`）；同一逻辑第三次出现才新增 Hook |
+| 复用 | 优先 `@/hooks`、`@/components`、`@/utils`（请求 `request`）；同一逻辑第三次出现才新增 Hook |
 
 ### 4.9 注释与结构
 
@@ -668,7 +667,7 @@ export default FormModal;
 
 1. 建 `xxl-boot-spec/{yyyyMMdd}-{business}/plan.md`，确认字段、枚举、权限、页面形态。
 2. 建表并落盘 SQL；后端按第五节生成 Entity/Mapper/Service/Controller。
-3. 前端复制 `system/config` 的 `types/api/pages` + `FormModal`，替换命名、路径、字段；分页直接用 `buildListQuery`，不再新增页面级工具栏样式。
+3. 前端复制 `system/config` 的 `types/api/pages` + `FormModal`，替换命名、路径、字段；分页参数在 API 内转换，不再新增页面级工具栏样式。
 4. 补 i18n `business.{module}.{business}` 节点（zh/en 成对）。
 5. 插菜单/按钮并授权，打开页面联调。
 6. 按第十一节清单逐项复核。
@@ -846,9 +845,9 @@ cd xxl-boot-ui/xxl-boot-ui-react && npm run type-check && npm run build
 
 **前端**
 
-- [ ] `types` 使用 `declare namespace API`，实体字段与后端一致；查询类型拆 `XxxQuery` / `XxxListQuery`，表单用 `XxxForm`。
-- [ ] `api` 以 `{business}Api` 导出，返回 `request<API.Response<API.PageModel<T>>>`；`pageList` 入参 `API.XxxListQuery` 并原样透传。
-- [ ] 页面基于 `PageContainer + ProTable`；`request` 用 `buildListQuery(params)` 转换分页，返回 `{ data, total, success }`，取 `res.data?.data/total`。
+- [ ] `types` 使用 `declare namespace API`，实体字段与后端一致；查询用 `XxxQuery`，表单用 `XxxForm`。
+- [ ] `api` 以 `{business}Api` 导出，返回 `request<API.Response<API.PageModel<T>>>`；`pageList` 接收 `XxxQuery` 并在内部转换为 `offset/pagesize`。
+- [ ] 页面基于 `PageContainer + ProTable`；`request` 直接传 `params`，返回 `{ data, total, success }`，取 `res.data?.data/total`。
 - [ ] 页面按「页面状态 / 数据操作 / 表格“列”定义 / 数据列表渲染」分区；未重复写工具栏 `useStyles` 或包裹 div。
 - [ ] 表单用受控 `ModalForm`（`pages/FormModal.tsx`）；props 类型内联，`maskClosable: false`，提交不回传只读字段，成功后 `reload`。
 - [ ] 无 `ahooks` 等未安装依赖；无第二套请求/表格封装。
@@ -880,7 +879,6 @@ cd xxl-boot-ui/xxl-boot-ui-react && npm run type-check && npm run build
 | 进阶形态范本 | `.../system/message/pages/{MessageDetail,ReadUsersDialog}/index.tsx` |
 | Hooks | `xxl-boot-ui/xxl-boot-ui-react/src/hooks/{useEnumOption,usePermission}.ts` |
 | 全局类型 | `xxl-boot-ui/xxl-boot-ui-react/src/types/index.d.ts` |
-| 分页转换 | `xxl-boot-ui/xxl-boot-ui-react/src/utils/pageQuery.ts` |
 | 全局样式 | `xxl-boot-ui/xxl-boot-ui-react/src/assets/styles/global.css` |
 | 路由定位 | `xxl-boot-ui/xxl-boot-ui-react/src/router/index.tsx` |
 | i18n | `xxl-boot-ui/xxl-boot-ui-react/src/i18n/index.ts`、`i18n/locales/{zh,en}.json` |

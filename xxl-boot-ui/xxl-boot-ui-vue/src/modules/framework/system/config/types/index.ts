@@ -1,9 +1,8 @@
 /**
  * @fileoverview Config 类型定义
- * @description 实体、查询、表单与列表查询类型，对应后端 Config.java
+ * @description 实体、查询与表单类型，对应后端 Config.java
  * @author xuxueli 2026-11-21
  */
-import type { ListQuery } from '@/types'
 
 /** 系统配置实体（对应后端 Config.java） */
 export interface Config {
@@ -25,7 +24,7 @@ export interface Config {
   remark?: string
 }
 
-/** 搜索栏查询参数（前端表单形态） */
+/** 搜索栏查询参数（含分页，前端表单形态） */
 export interface ConfigQuery {
   /** 当前页码 */
   pageNum: number
@@ -38,9 +37,6 @@ export interface ConfigQuery {
   /** 状态筛选，-1 表示全部 */
   status?: number
 }
-
-/** 列表接口请求参数（offset/pagesize 形态） */
-export type ConfigListQuery = ListQuery<ConfigQuery>
 
 /** 新增/修改表单：复用实体中的可编辑字段，避免字段定义重复 */
 export type ConfigForm = Pick<Config, 'id' | 'name' | 'key' | 'value' | 'status' | 'remark'>

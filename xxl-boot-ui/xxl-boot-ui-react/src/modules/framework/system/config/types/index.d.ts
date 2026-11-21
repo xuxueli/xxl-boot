@@ -38,9 +38,6 @@ declare namespace API {
     status?: number;
   };
 
-  /** 列表接口请求参数（offset/pagesize 形态） */
-  type ConfigListQuery = ListQuery<ConfigQuery>;
-
   /** 配置新增/修改表单：仅保留可编辑字段，避免回传只读字段 */
   type ConfigForm = Pick<
     Config,

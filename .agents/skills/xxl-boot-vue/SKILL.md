@@ -1,6 +1,6 @@
 ---
 name: xxl-boot-vue
-description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-ui-vue 端口 3000，Element Plus + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-ui-vue/src/modules、编辑 .vue 页面、新增标准 CRUD 模块、使用 Element Plus/usePageParams/useEnumOption/useDict。React 任务改用 xxl-boot-react；单体任务改用 xxl-boot-monolith。
+description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-ui-vue 端口 3000，Element Plus + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-ui-vue/src/modules、编辑 .vue 页面、新增标准 CRUD 模块、使用 Element Plus/useEnumOption/useDict。React 任务改用 xxl-boot-react；单体任务改用 xxl-boot-monolith。
 ---
 
 # XXL-Boot · Vue3 分离模式开发 SKILL
@@ -50,9 +50,9 @@ xxl-boot-api/src/main
 xxl-boot-ui/xxl-boot-ui-vue/src
 ├── modules/framework/{domain}/{module}/                   ← 平台内置（types + api + pages）
 ├── modules/business/{module}/{business}/                  ← 新增业务（types + api + pages）
-├── composables/                                           ← usePageParams / useEnumOption / useDict
+├── composables/                                           ← useEnumOption / useDict
 ├── components/                                            ← Pagination / RightToolbar / Editor / DictTag…
-├── types/index.ts                                         ← Response / PageModel / ListQuery / TableState / FormState
+├── types/index.ts                                         ← Response / PageModel / TableState / FormState
 ├── directive/                                             ← v-hasPermi / v-hasRole
 └── i18n/locales/{zh,en}.json                              ← 文案
 ```
@@ -72,7 +72,7 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 
 | 范本 | 提炼出的规范 | 对应章节 |
 |---|---|---|
-| `system/config/types/index.ts` | 实体 / Query / ListQuery / Form(`Pick`) 四类导出 | 4.3 |
+| `system/config/types/index.ts` | 实体 / Query / Form(`Pick`) 三类导出 | 4.3 |
 | `system/config/api/index.ts` | `{business}Api` 命名空间、方法顺序、参数通道 | 4.4 |
 | `system/config/pages/index.vue` | 模板五区、script 四区、交互与状态约定 | 4.5 |
 | 后端 `framework/.../system/Config*` | 文件清单、接口契约、Service 校验、Mapper XML | 五 |
@@ -115,22 +115,20 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 
 ### 4.3 types：`types/index.ts`
 
-固定四类导出：
+固定三类导出：
 
 | 类型 | 用途 | 约定 |
 |---|---|---|
 | `Xxx` | 实体，对应后端 Entity/DTO | 字段全部可选；`Date` 对应 `string` |
-| `XxxQuery` | 搜索栏表单 | 必含 `pageNum`、`pageSize`；筛选项可选 |
-| `XxxListQuery` | 列表接口入参 | `ListQuery<XxxQuery>`（offset/pagesize 形态） |
+| `XxxQuery` | 搜索栏 + 列表接口入参 | 必含 `pageNum`、`pageSize`；筛选项可选；分页字段由 API 内部转换 |
 | `XxxForm` | 新增/修改入参 | `Pick<Xxx, 可编辑字段>`，避免重复定义 |
 
 ```ts
 /**
  * @fileoverview Xxx 类型定义
- * @description 实体、查询、表单与列表查询类型，对应后端 Xxx.java
+ * @description 实体、查询与表单类型，对应后端 Xxx.java
  * @author xuxueli 2026-11-22
  */
-import type { ListQuery } from '@/types'
 
 /** Xxx 实体（对应后端 Xxx.java） */
 export interface Xxx {
@@ -148,7 +146,7 @@ export interface Xxx {
   updateTime?: string
 }
 
-/** 搜索栏查询参数（前端表单形态） */
+/** 搜索栏查询参数（含分页，前端表单形态） */
 export interface XxxQuery {
   /** 当前页码 */
   pageNum: number
@@ -159,9 +157,6 @@ export interface XxxQuery {
   /** 状态筛选，-1 表示全部 */
   status?: number
 }
-
-/** 列表接口请求参数（offset/pagesize 形态） */
-export type XxxListQuery = ListQuery<XxxQuery>
 
 /** 新增/修改表单：复用实体中的可编辑字段，避免字段定义重复 */
 export type XxxForm = Pick<Xxx, 'id' | 'name' | 'status' | 'remark'>
@@ -181,7 +176,7 @@ export type XxxForm = Pick<Xxx, 'id' | 'name' | 'status' | 'remark'>
 | 方法命名 | 与后端 Controller 方法名一致，不二次改名 |
 | 方法顺序 | `pageList / load / [业务方法] / insert / delete / update` |
 | 通道 | `pageList/load` 用 `params`；`insert/update/delete` 用 `data` |
-| 分页 | 入参收 `XxxListQuery`，由页面经 `usePageParams` 转换 |
+| 分页 | 入参收 `XxxQuery`；在 `pageList` 内去掉 `pageNum/pageSize`，替换为后端约定的 `offset/pagesize` |
 | 删除 | 接收集合，`data: Array.isArray(ids) ? ids : [ids]` |
 
 ```ts
@@ -191,7 +186,7 @@ export type XxxForm = Pick<Xxx, 'id' | 'name' | 'status' | 'remark'>
  * @author xuxueli 2026-11-22
  */
 import { request } from '@/utils/request'
-import type { Xxx, XxxForm, XxxListQuery } from '../types'
+import type { Xxx, XxxForm, XxxQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
 /** Xxx API，调用方式：xxxApi.pageList(...) */
@@ -199,14 +194,22 @@ export const xxxApi = {
   /**
    * 分页查询 Xxx
    *
-   * @param query 分页与查询条件（offset/pagesize 形态）
+   * 入参为页面查询对象（pageNum/pageSize + 筛选项），在此过滤前端分页字段，
+   * 替换为后端约定的 offset/pagesize。
+   *
+   * @param query 页面查询条件
    * @returns 分页结果
    */
-  pageList(query: XxxListQuery): Promise<Response<PageModel<Xxx>>> {
+  pageList(query: XxxQuery): Promise<Response<PageModel<Xxx>>> {
+    const { pageNum, pageSize, ...search } = query
     return request({
       url: '/{module}/{business}/pageList',
       method: 'get',
-      params: query
+      params: {
+        offset: (pageNum - 1) * pageSize,
+        pagesize: pageSize,
+        ...search
+      }
     })
   },
 
@@ -385,7 +388,6 @@ import { ref } from 'vue'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
 import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
-import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { xxxApi } from '../api'
 import type { Xxx, XxxForm, XxxQuery } from '../types'
@@ -442,8 +444,8 @@ const formState = ref<FormState<XxxForm>>({
  */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
-  xxxApi.pageList(usePageParams(queryParams)())
+  // 分页参数由 API 内部转换为后端约定的 offset/pagesize
+  xxxApi.pageList(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total
@@ -578,7 +580,7 @@ getList()
 |---|---|
 | 响应式 | 一律 `ref`；禁止 `reactive`、`toRefs(data)` 解构 |
 | 状态收敛 | 搜索 `queryParams`、表格 `table`、表单 `formState` 三块，不散落 |
-| 分页 | 固定 `usePageParams(queryParams)()`；取 `response.data.data/total`；`finally` 复位 loading |
+| 分页 | 直接传 `queryParams.value`，分页字段由 API 内部转换；取 `response.data.data/total`；`finally` 复位 loading |
 | 搜索 | 查询前 `pageNum = 1`；重置用 `queryRef.value?.resetFields()` |
 | 编辑表单 | 默认值收敛为 `FORM_DEFAULTS`；重置直接替换对象 + `clearValidate()` |
 | 校验 | 前端 `rules` 与后端校验一致（必填、长度、格式）；不可变字段（如配置 Key）编辑时 `:disabled="formState.form.id != null"` |
@@ -600,7 +602,7 @@ getList()
 
 ### 4.7 禁止项
 
-- 禁止在页面内自行拼 `offset/pagesize`（统一走 `usePageParams`）。
+- 禁止在页面内自行拼 `offset/pagesize`（统一由 `api.pageList` 内部转换）。
 - 禁止用 `resetFields()` 重置编辑表单（会带回上次编辑值，且不重置未声明 `prop` 的字段）。
 - 禁止每个页面重复实现枚举文案查找、删除确认、弹窗状态等通用逻辑。
 - 禁止把标准 CRUD 弹窗拆成多份碎片文件；也禁止把详情/多页签硬塞进列表页。
@@ -889,10 +891,10 @@ cd xxl-boot-ui/xxl-boot-ui-vue && npm run type-check && npm run build
 
 **前端**
 
-- [ ] `types` 四类齐全：`Xxx`、`XxxQuery`、`XxxListQuery`、`XxxForm`（`Pick` 可编辑字段）。
+- [ ] `types` 三类齐全：`Xxx`、`XxxQuery`、`XxxForm`（`Pick` 可编辑字段）。
 - [ ] `api` 以 `{business}Api` 导出，方法顺序与后端一致，删除传裸数组。
 - [ ] 页面模板五区齐全；script 四区齐全；`ref` 收敛为 `queryParams/table/formState`。
-- [ ] 列表经 `usePageParams` 转 `offset/pagesize`；`finally` 复位 loading。
+- [ ] 列表直接传 `queryParams.value`，分页字段由 API 内部转换；`finally` 复位 loading。
 - [ ] 编辑弹窗 `@closed="resetForm"`、`:close-on-click-modal="false"`；重置用 `FORM_DEFAULTS` + `clearValidate()`。
 - [ ] `v-hasPermi` 与按钮权限一致；平台页才用 `v-hasRole`。
 - [ ] 文案走 `t()`，`business.*` zh/en 成对；无硬编码中文。
@@ -917,7 +919,7 @@ cd xxl-boot-ui/xxl-boot-ui-vue && npm run type-check && npm run build
 | 用途 | 路径 |
 |---|---|
 | 前端标准范本 | `xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/config/{types,api,pages}` |
-| 组合式函数 | `xxl-boot-ui/xxl-boot-ui-vue/src/composables/{usePageParams,useEnumOption,useDict}.ts` |
+| 组合式函数 | `xxl-boot-ui/xxl-boot-ui-vue/src/composables/{useEnumOption,useDict}.ts` |
 | 公共组件 | `xxl-boot-ui/xxl-boot-ui-vue/src/components/index.ts` |
 | 全局类型 | `xxl-boot-ui/xxl-boot-ui-vue/src/types/index.ts` |
 | 权限指令 | `xxl-boot-ui/xxl-boot-ui-vue/src/directive/modules/{hasPermi,hasRole}.ts` |

@@ -4,7 +4,7 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { Config, ConfigForm, ConfigListQuery } from '../types'
+import type { Config, ConfigForm, ConfigQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
 /** 系统配置 API，调用方式：configApi.pageList(...) */
@@ -12,14 +12,22 @@ export const configApi = {
   /**
    * 分页查询配置
    *
-   * @param query 分页与查询条件（offset/pagesize 形态）
+   * 入参为页面查询对象（pageNum/pageSize + 筛选项），在此过滤前端分页字段，
+   * 替换为后端约定的 offset/pagesize。
+   *
+   * @param query 页面查询条件
    * @returns 配置分页结果
    */
-  pageList(query: ConfigListQuery): Promise<Response<PageModel<Config>>> {
+  pageList(query: ConfigQuery): Promise<Response<PageModel<Config>>> {
+    const { pageNum, pageSize, ...search } = query
     return request({
       url: '/system/config/pageList',
       method: 'get',
-      params: query
+      params: {
+        offset: (pageNum - 1) * pageSize,
+        pagesize: pageSize,
+        ...search
+      }
     })
   },
 

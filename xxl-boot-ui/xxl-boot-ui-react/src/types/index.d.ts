@@ -28,25 +28,6 @@ declare namespace API {
     pagesize?: number;
   };
 
-  /** 分页查询入参（后端约定 offset/pagesize） */
-  type PageQuery = {
-    /** 偏移量 */
-    offset: number;
-    /** 每页条数 */
-    pagesize: number;
-  };
-
-  /**
-   * 列表请求参数工具类型：由「搜索栏表单查询类型」派生为「列表接口请求类型」：
-   *
-   * - 去除前端分页字段（current/pageSize）
-   * - 补充后端分页字段（offset/pagesize）
-   * - 筛选字段全部可选（允许只传分页或空对象）
-   *
-   * 用法：export type RoleListQuery = ListQuery<RoleQuery>
-   */
-  type ListQuery<T extends object> = PageQuery & Partial<Omit<T, 'current' | 'pageSize'>>;
-
   // --------------------------------- 登录用户信息 ----------------------
 
   /** 登录用户信息（loginCheck 返回） */
