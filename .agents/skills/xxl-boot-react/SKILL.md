@@ -38,7 +38,7 @@ React 与 Vue **共用同一个后端 `xxl-boot-api`**，接口契约与后端�
 | 前端落位 | `src/modules/business/{module}/{business}/{types,api,pages}` |
 | 页面定位 | 菜单 `url` → `loadView` 只匹配 `pages/**/index.tsx`，无需改路由 |
 | 权限模型 | 业务页按钮 `hasPermi`；平台内置页可按角色 `hasRole` |
-| 数据请求 | `@/utils/request` + TanStack Query（仅枚举等缓存场景） |
+| 数据请求 | `@/utils/request` + `buildListQuery`（分页）+ TanStack Query（仅枚举等缓存场景） |
 | 数据库脚本 | `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql` |
 
 ## 三、工程结构
@@ -55,7 +55,9 @@ xxl-boot-ui/xxl-boot-ui-react/src
 ├── modules/business/{module}/{business}/                  ← 新增业务（types + api + pages）
 ├── hooks/                                                 ← useEnumOption / usePermission
 ├── components/                                            ← Editor / TreePanel / IconSelect…
-├── types/index.d.ts                                       ← API.Response / API.PageModel / API.LoginInfo 等全局类型
+├── types/index.d.ts                                       ← 全局 API.Response / API.PageModel / API.ListQuery 等
+├── utils/                                                 ← request / pageQuery（buildListQuery）/ common
+├── assets/styles/global.css                               ← 全局组件样式（含 ProTable 工具栏）
 ├── router/index.tsx                                       ← loadView（只识别 pages/**/index.tsx）
 └── i18n/locales/{zh,en}.json                              ← 文案
 ```
@@ -68,17 +70,22 @@ xxl-boot-ui/xxl-boot-ui-react/src
 
 ## 四、标准业务模块规范（React，核心）
 
-> 本节从 `framework/system/config` 提炼，新模块把 `Config` 替换为 `Xxx`、`system/config` 替换为
-> `{module}/{business}`，并按业务增删字段。
+> **唯一范本**：`xxl-boot-ui-react/src/modules/framework/system/config`（`types` / `api` / `pages/index.tsx` /
+> `pages/FormModal.tsx`）。范本与本节冲突时，先以实际代码为准修正本节；新增规范先改范本，再回写本节。
+>
+> 新模块把 `Config` 替换为 `Xxx`、`system/config` 替换为 `{module}/{business}`，并按业务增删字段。
 
 ### 4.0 提炼基线（范本映射）
 
 | 范本 | 提炼出的规范 | 对应章节 |
 |---|---|---|
-| `system/config/types/index.d.ts` | `declare namespace API` 实体与关联类型 | 4.3 |
-| `system/config/api/index.ts` | `{business}Api` 命名空间、方法顺序、分页转换 | 4.4 |
-| `system/config/pages/index.tsx` | `PageContainer + ProTable`、勾选、工具栏、删除 | 4.5 |
-| `system/config/pages/FormModal.tsx` | 受控 `ModalForm`、提交与复位 | 4.6 |
+| `system/config/types/index.d.ts` | `declare namespace API` 实体、查询分层（`XxxQuery` / `XxxListQuery`）与表单类型 | 4.3 |
+| `system/config/api/index.ts` | `{business}Api` 命名空间、方法顺序、分页原样透传 | 4.4 |
+| `system/config/pages/index.tsx` | `PageContainer + ProTable`、分区注释、勾选、工具栏、删除 | 4.5 |
+| `system/config/pages/FormModal.tsx` | 受控 `ModalForm`、内联 props、提交与复位、禁止遮罩关闭 | 4.6 |
+| `src/utils/pageQuery.ts` | `buildListQuery`：`current/pageSize` → `offset/pagesize` | 4.5 |
+| `src/assets/styles/global.css` | ProTable 工具栏全局左对齐，页面不再各自维护样式 | 4.5 |
+| `src/types/index.d.ts` | 全局 `API.PageQuery` / `API.ListQuery<T>` | 4.3 |
 | `system/message/pages/{MessageDetail,ReadUsersDialog}` | 受控 Drawer / Modal + Table（进阶） | 4.7 |
 | 后端 `framework/.../system/Config*` | 文件清单、接口契约、校验、Mapper XML | 五 |
 
@@ -97,7 +104,7 @@ xxl-boot-ui/xxl-boot-ui-react/src
 
 | 文件 | 路径 | 职责 | 范本 |
 |---|---|---|---|
-| types | `src/modules/business/{module}/{business}/types/index.d.ts` | `declare namespace API` 实体与关联类型 | `system/config/types/index.d.ts` |
+| types | `src/modules/business/{module}/{business}/types/index.d.ts` | 实体、关联实体、`XxxQuery` / `XxxListQuery` / `XxxForm` | `system/config/types/index.d.ts` |
 | api | `src/modules/business/{module}/{business}/api/index.ts` | `{business}Api` 命名空间，方法名对齐后端 Controller | `system/config/api/index.ts` |
 | view | `src/modules/business/{module}/{business}/pages/index.tsx` | `PageContainer + ProTable` 列表页 | `system/config/pages/index.tsx` |
 | 表单弹窗 | `pages/FormModal.tsx` | `ModalForm` 新增/修改（独立文件） | `system/config/pages/FormModal.tsx` |
@@ -291,7 +298,7 @@ export const xxxApi = {
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { App, Button, Space, Tag } from 'antd';
+import { App, Button, Tag } from 'antd';
 import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { usePermission } from '@/hooks/usePermission';
@@ -304,14 +311,21 @@ import FormModal from './FormModal';
 const XxxList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
-  const { hasPermi } = usePermission();
+  const { hasRole } = usePermission();
+
+  // ---------------------- 页面状态 ----------------------
 
   const [formOpen, setFormOpen] = useState(false); /* 表单弹窗显隐 */
-  const [formCurrent, setFormCurrent] = useState<API.Xxx | null>(null); /* 当前编辑行，null 表示新增 */
+  const [formCurrent, setFormCurrent] = useState<API.Xxx | null>(
+    null,
+  ); /* 当前编辑行，null 表示新增 */
   const [selectedIds, setSelectedIds] = useState<number[]>([]); /* 勾选行主键 */
 
+  // 状态枚举：valueEnum 供搜索下拉，render 中的 Tag 文案由 common 文案兜底
   const statusOptions = useEnumOption('XxxStatusEnum');
   const statusValueEnum = toValueEnum(statusOptions);
+
+  // ---------------------- 数据操作 ----------------------
 
   /**
    * 删除 Xxx（单条或批量）
@@ -319,7 +333,9 @@ const XxxList = () => {
    * @param row 行数据，省略时删除勾选行
    */
   const handleDelete = (row?: API.Xxx) => {
+    // 行按钮只删当前行；顶部按钮删除勾选行
     const ids = row ? (row.id != null ? [row.id] : []) : selectedIds;
+    // 无可删记录时直接返回，避免弹出空确认框
     if (ids.length === 0) return;
     modal.confirm({
       title: t('modal.title'),
@@ -329,13 +345,16 @@ const XxxList = () => {
       onOk: async () => {
         await xxxApi.delete(ids);
         message.success(t('common.deleteSuccess'));
+        // 删除后清空勾选，避免批量按钮仍处于可用态
         setSelectedIds([]);
         actionRef.current?.reload();
       },
     });
   };
 
-  /** 表格列定义：序号、名称、状态、更新时间、操作 */
+  // ---------------------- 表格“列”定义 ----------------------
+
+  /** 表格列：序号、名称、状态、添加时间、操作 */
   const columns: ProColumns<API.Xxx>[] = [
     { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
     {
@@ -346,7 +365,7 @@ const XxxList = () => {
     {
       title: t('common.status'),
       dataIndex: 'status',
-      width: 120,
+      width: 90,
       valueType: 'select',
       valueEnum: statusValueEnum,
       render: (_, record) => (
@@ -359,90 +378,96 @@ const XxxList = () => {
       title: t('common.addTime'),
       dataIndex: 'addTime',
       search: false,
-      width: 180,
+      width: 160,
     },
     {
       title: t('common.operation'),
       valueType: 'option',
-      width: 160,
-      render: (_, record) => (
-        <Space size="middle">
-          {hasPermi('{module}:{business}:edit') && (
-            <a
-              key="edit"
-              onClick={() => {
-                setFormCurrent(record);
-                setFormOpen(true);
-              }}
-            >
-              <EditOutlined /> {t('common.modify')}
-            </a>
-          )}
-          {hasPermi('{module}:{business}:remove') && (
-            <a key="delete" onClick={() => handleDelete(record)}>
-              <DeleteOutlined /> {t('common.delete')}
-            </a>
-          )}
-        </Space>
-      ),
+      width: 140,
+      render: (_, record) => [
+        <a
+          key="edit"
+          onClick={() => {
+            setFormCurrent(record);
+            setFormOpen(true);
+          }}
+        >
+          <EditOutlined /> {t('common.modify')}
+        </a>,
+        <a key="delete" onClick={() => handleDelete(record)}>
+          <DeleteOutlined /> {t('common.delete')}
+        </a>,
+      ],
     },
   ];
+
+  // ---------------------- 数据列表渲染 ----------------------
 
   return (
     <PageContainer ghost title={false}>
       <ProTable<API.Xxx>
         actionRef={actionRef}
-          rowKey="id"
-          columns={columns}
-          search={{
-            labelWidth: 80,
-            optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
-          }}
-          request={async (params) => {
-            const res = await xxxApi.pageList(buildListQuery(params));
-            return {
-              data: res.data?.data || [],
-              total: res.data?.total || 0,
-              success: true,
-            };
-          }}
-          toolBarRender={() => [
-            hasPermi('{module}:{business}:add') && (
-              <Button
-                key="add"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setFormCurrent(null);
-                  setFormOpen(true);
-                }}
-              >
-                {t('common.add')}
-              </Button>
-            ),
-            hasPermi('{module}:{business}:remove') && (
-              <Button
-                key="delete"
-                danger
-                icon={<DeleteOutlined />}
-                disabled={!selectedIds.length}
-                onClick={() => handleDelete()}
-              >
-                {t('common.delete')}
-              </Button>
-            ),
-          ]}
-          rowSelection={{
-            onChange: (_keys, rows) => setSelectedIds(rows.map((r) => r.id as number)),
-          }}
-          pagination={{
-            defaultPageSize: 10,
-            pageSizeOptions: [10, 20, 50, 100],
-            showSizeChanger: true,
-            showTotal: (total) => t('common.paginationTotal', [total]),
-          }}
-          tableAlertRender={false}
-        />
+        rowKey="id"
+        columns={columns}
+        /* 搜索区：查询/重置按钮靠右 */
+        search={{
+          labelWidth: 80,
+          optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
+        }}
+        /* 列表数据查询：ProTable 的 current/pageSize 由 buildListQuery 统一转换为 offset/pagesize */
+        request={async (params) => {
+          const res = await xxxApi.pageList(buildListQuery(params));
+          return {
+            data: res.data?.data || [],
+            total: res.data?.total || 0,
+            success: true,
+          };
+        }}
+        /* 工具栏：新增、批量删除 */
+        toolBarRender={() => [
+          hasRole('admin') && (
+            <Button
+              key="add"
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setFormCurrent(null);
+                setFormOpen(true);
+              }}
+            >
+              {t('common.add')}
+            </Button>
+          ),
+          hasRole('admin') && (
+            <Button
+              key="delete"
+              danger
+              icon={<DeleteOutlined />}
+              disabled={!selectedIds.length}
+              onClick={() => handleDelete()}
+            >
+              {t('common.delete')}
+            </Button>
+          ),
+        ]}
+        /* 行勾选：同步主键，供批量删除使用 */
+        rowSelection={{
+          onChange: (_keys, rows) => {
+            setSelectedIds(rows.map((r) => r.id as number));
+          },
+        }}
+        /* 分页配置 */
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: [10, 20, 50, 100],
+          showSizeChanger: true,
+          showQuickJumper: false,
+          showTotal: (total) => t('common.paginationTotal', [total]),
+        }}
+        /* 默认批量选择提示隐藏 */
+        tableAlertRender={false}
+      />
+      {/* 新增/编辑弹窗 */}
       <FormModal
         open={formOpen}
         onOpenChange={setFormOpen}
@@ -461,6 +486,7 @@ export default XxxList;
 | 主题 | 约定 |
 |---|---|
 | 列表容器 | `PageContainer ghost title={false}` + `ProTable` |
+| 分区注释 | 按「页面状态 → 数据操作 → 表格“列”定义 → 数据列表渲染」分区，弹窗编排放页面末尾 |
 | 请求 | `request` 内用 `buildListQuery(params)` 把 `current/pageSize` 统一转成 `offset/pagesize`；返回 `{ data, total, success: true }`，数据取 `res.data?.data`，总数取 `res.data?.total` |
 | 搜索 | `search={{ optionRender: (_, __, dom) => [...dom.reverse()] }}` 让查询/重置靠右或按现有页面保持一致；搜索/重置由 ProTable 自动回到第 1 页 |
 | 序号 | 首列 `dataIndex: 'id'`，展示数据库主键，不用 `render` 生成页内序号 |
@@ -470,7 +496,8 @@ export default XxxList;
 | 分页 | `pagination` 固定 `defaultPageSize: 10` + `showSizeChanger` + `showTotal` |
 | 样式 | ProTable 工具栏「按钮靠左、设置项靠右」已由 `src/assets/styles/global.css` 全局统一，页面不要再写 `useStyles` 或包裹 div；其他页面级定制用 `antd-style` 的 `createStyles`，不要新增全局覆盖 |
 
-平台内置页面（`modules/framework/**`）按角色控制时用 `hasRole('admin')`；业务页面用 `hasPermi`，不要混用。
+范本为平台内置页：`modules/framework/**` 用 `hasRole('admin')`；业务页把工具栏、操作列的条件替换为
+`hasPermi('{module}:{business}:add|edit|remove')`，两者不要混用。
 
 ### 4.6 表单弹窗：`pages/FormModal.tsx`
 
@@ -588,7 +615,7 @@ export default FormModal;
 
 - `modalProps={{ destroyOnHidden: true, maskClosable: false }}`：关闭后销毁并复位，且禁止点击遮罩关闭，避免误触丢失已填内容。
 - 派生 `isEdit = current?.id != null`，统一驱动标题、不可变字段与提交分支，避免多处重复判断。
-- 代码按 `表单属性 / 表单组件 / 表单状态 / 数据操作 / 表单渲染` 分区注释，字段用 JSX 注释分组。
+- 代码按 `表单组件 / 表单状态 / 数据操作 / 表单渲染` 分区注释，字段用 JSX 注释分组。
 - 表单校验用 `rules`；错误提示走 `t('common.requiredMsg', [...])`。
 - 表单类型 `API.XxxForm` 已排除 `addTime/updateTime` 等只读字段，提交时无需手工删除。
 - 业务不可变字段（如编码/Key）在修改时 `disabled={isEdit}`，与后端校验保持一致。
@@ -620,8 +647,12 @@ export default FormModal;
 ### 4.9 注释与结构
 
 - 文件头用 JSDoc：`@fileoverview` + 功能 + `@description`（可选）+ `@author 作者 yyyy-MM-dd`。
-- 组件、Props、API 函数、Hook 用 JSDoc；复杂函数补 `@param` / `@returns`。
+- 组件、API 函数、Hook 用 JSDoc；props 字段用行内 `/** ... */` 注释。
 - 核心分支用 `//` 说明原因；简单内联回调不强制 JSDoc。
+- 列表页/弹窗用 `// ---------------------- 分区名 ----------------------` 分区：
+  - 列表页固定「页面状态 / 数据操作 / 表格“列”定义 / 数据列表渲染」；
+  - 弹窗固定「表单组件 / 表单状态 / 数据操作 / 表单渲染」；
+  - JSX 内用 `{/* ... */}` 给字段/区域分组。
 - 保留 `PageContainer`、`ProTable`、弹窗等关键逻辑的区块注释；禁止无意义注释与注释掉的死代码。
 
 ### 4.10 禁止项
@@ -637,7 +668,7 @@ export default FormModal;
 
 1. 建 `xxl-boot-spec/{yyyyMMdd}-{business}/plan.md`，确认字段、枚举、权限、页面形态。
 2. 建表并落盘 SQL；后端按第五节生成 Entity/Mapper/Service/Controller。
-3. 前端复制 `system/config` 三件套 + `FormModal`，替换命名、路径、字段。
+3. 前端复制 `system/config` 的 `types/api/pages` + `FormModal`，替换命名、路径、字段；分页直接用 `buildListQuery`，不再新增页面级工具栏样式。
 4. 补 i18n `business.{module}.{business}` 节点（zh/en 成对）。
 5. 插菜单/按钮并授权，打开页面联调。
 6. 按第十一节清单逐项复核。
@@ -758,7 +789,7 @@ VALUES (1, @parentId, now(), now()),
 }
 ```
 
-通用词优先复用 `common.*`（`add/edit/delete/status/requiredMsg/titleAdd/titleEdit`）与 `common.noun.*`。
+通用词优先复用 `common.*`（`add/edit/delete/status/requiredMsg/titleAdd/titleEdit/paginationTotal`）与 `common.noun.*`。
 
 ## 九、代码生成器（React）
 
@@ -788,7 +819,7 @@ POST /tool/codegen/createTable
 | 校验 | 只有空值判断；补必填、长度、格式、唯一性与友好提示 |
 | i18n | 模板硬编码中文；迁移到 `t()` 与 `business.*` |
 | 类型 | 模板只生成 `API.Xxx`；补关联实体、必要的 `API.XxxQuery` |
-| 组件声明 | 确认普通函数 + props 接口，不引入 `React.FC` |
+| 组件声明 | 确认普通函数 + 显式 props 类型（本文件内联，跨文件复用才抽 interface），不引入 `React.FC` |
 | 未用导入 | 清理模板生成的冗余 `React` / 组件导入 |
 
 ## 十、初始化与联调
@@ -815,10 +846,11 @@ cd xxl-boot-ui/xxl-boot-ui-react && npm run type-check && npm run build
 
 **前端**
 
-- [ ] `types` 使用 `declare namespace API`，实体字段与后端一致；关联类型同文件聚合。
-- [ ] `api` 以 `{business}Api` 导出，返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`。
-- [ ] 页面基于 `PageContainer + ProTable`；`request` 返回 `{ data, total, success }`，取 `res.data?.data/total`。
-- [ ] 表单用受控 `ModalForm`（独立 `FormModal` 或简单内联）；提交不回传 `addTime/updateTime` 等只读字段，成功后 `reload`。
+- [ ] `types` 使用 `declare namespace API`，实体字段与后端一致；查询类型拆 `XxxQuery` / `XxxListQuery`，表单用 `XxxForm`。
+- [ ] `api` 以 `{business}Api` 导出，返回 `request<API.Response<API.PageModel<T>>>`；`pageList` 入参 `API.XxxListQuery` 并原样透传。
+- [ ] 页面基于 `PageContainer + ProTable`；`request` 用 `buildListQuery(params)` 转换分页，返回 `{ data, total, success }`，取 `res.data?.data/total`。
+- [ ] 页面按「页面状态 / 数据操作 / 表格“列”定义 / 数据列表渲染」分区；未重复写工具栏 `useStyles` 或包裹 div。
+- [ ] 表单用受控 `ModalForm`（`pages/FormModal.tsx`）；props 类型内联，`maskClosable: false`，提交不回传只读字段，成功后 `reload`。
 - [ ] 无 `ahooks` 等未安装依赖；无第二套请求/表格封装。
 - [ ] 组件为普通函数 + 显式 props；无 `React.FC`/`forwardRef`/`propTypes`/`defaultProps`。
 - [ ] `hasPermi` 与按钮权限一致；平台页才用 `hasRole`。
@@ -848,6 +880,8 @@ cd xxl-boot-ui/xxl-boot-ui-react && npm run type-check && npm run build
 | 进阶形态范本 | `.../system/message/pages/{MessageDetail,ReadUsersDialog}/index.tsx` |
 | Hooks | `xxl-boot-ui/xxl-boot-ui-react/src/hooks/{useEnumOption,usePermission}.ts` |
 | 全局类型 | `xxl-boot-ui/xxl-boot-ui-react/src/types/index.d.ts` |
+| 分页转换 | `xxl-boot-ui/xxl-boot-ui-react/src/utils/pageQuery.ts` |
+| 全局样式 | `xxl-boot-ui/xxl-boot-ui-react/src/assets/styles/global.css` |
 | 路由定位 | `xxl-boot-ui/xxl-boot-ui-react/src/router/index.tsx` |
 | i18n | `xxl-boot-ui/xxl-boot-ui-react/src/i18n/index.ts`、`i18n/locales/{zh,en}.json` |
 | 后端范本 | `xxl-boot-api/.../framework/{controller/service/mapper/model}` 下 `Config*` |
