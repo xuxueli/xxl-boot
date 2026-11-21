@@ -45,7 +45,7 @@
       <el-table-column :label="t('system.log.logType')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.type === 0 ? 'primary' : 'warning'" size="small">
-            {{ typeText(scope.row.type) }}
+            {{ enumTitle(typeDict.options, scope.row.type) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -94,6 +94,7 @@ import LogDetail from './detail.vue'
 import { logApi } from '../api'
 import { dictApi } from '@/modules/framework/system/dict/api'
 import { parseTime } from '@/utils/common'
+import { enumTitle } from '@/composables/useEnumOption'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { download } from '@/utils/download'
@@ -167,12 +168,6 @@ function getList() {
     table.value.total = response.data.total
     table.value.loading = false
   })
-}
-
-/** 日志类型编码 → 文案 */
-function typeText(type: number) {
-  const item = typeDict.value.options.find((i) => i.code === type)
-  return item ? item.title : type
 }
 
 /** 搜索按钮操作 */

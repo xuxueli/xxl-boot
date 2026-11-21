@@ -43,7 +43,7 @@
     <!-- 消息列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="100" />
+      <el-table-column :label="t('common.serialNo')" type="index" align="center" width="60" />
       <el-table-column :label="t('system.message.messageTitle')" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
           <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)">{{ scope.row.title }}</a>
@@ -52,14 +52,14 @@
       <el-table-column :label="t('system.message.category')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.category === 0 ? 'primary' : 'warning'" size="small">
-            {{ categoryText(scope.row.category) }}
+            {{ enumTitle(categoryOptions, scope.row.category) }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column :label="t('common.status')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
-            {{ statusText(scope.row.status) }}
+            {{ enumTitle(statusOptions, scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -135,7 +135,7 @@ import { t } from '@/i18n'
 import ReadUsersDialog from './ReadUsers.vue'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
 import { messageApi } from '../api'
-import { useEnumOption } from '@/composables/useEnumOption'
+import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import type { Message, MessageQuery } from '../types'
@@ -201,18 +201,6 @@ function getList() {
     table.value.total = response.data.total
     table.value.loading = false
   })
-}
-
-/** 分类编码 → 文案 */
-function categoryText(category: number) {
-  const item = categoryOptions.value.find((i) => i.code === category)
-  return item ? item.title : category
-}
-
-/** 状态编码 → 文案 */
-function statusText(status: number) {
-  const item = statusOptions.value.find((i) => i.code === status)
-  return item ? item.title : status
 }
 
 /** 取消按钮 */

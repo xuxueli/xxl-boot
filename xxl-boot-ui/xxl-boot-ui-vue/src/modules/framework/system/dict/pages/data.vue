@@ -28,13 +28,13 @@
     <!-- 字典项列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="80" />
+      <el-table-column :label="t('common.serialNo')" type="index" align="center" width="60" />
       <el-table-column :label="t('system.dict.itemName')" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
       <el-table-column :label="t('system.dict.itemCode')" align="center" prop="code" :show-overflow-tooltip="true" />
       <el-table-column :label="t('common.status')" align="center" width="80">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
-            {{ statusText(scope.row.status) }}
+            {{ enumTitle(statusOptions, scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -93,7 +93,7 @@
 defineOptions({ name: 'Data' })
 import { t } from '@/i18n'
 import { dictApi } from '../api'
-import { useEnumOption } from '@/composables/useEnumOption'
+import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
@@ -191,12 +191,6 @@ function getList() {
     table.value.total = response.data.total
     table.value.loading = false
   })
-}
-
-/** 状态编码 → 文案 */
-function statusText(status: number) {
-  const item = statusOptions.value.find((i) => i.code === status)
-  return item ? item.title : status
 }
 
 /** 取消按钮 */

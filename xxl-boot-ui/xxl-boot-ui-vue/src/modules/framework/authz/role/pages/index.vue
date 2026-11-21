@@ -48,7 +48,7 @@
       <el-table-column :label="t('common.status')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
-            {{ statusText(scope.row.status) }}
+            {{ enumTitle(statusOptions, scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -134,7 +134,7 @@ defineOptions({ name: 'Role' })
 import { t } from '@/i18n'
 import { roleApi } from '../api'
 import { resourceApi } from '@/modules/framework/authz/resource/api'
-import { useEnumOption } from '@/composables/useEnumOption'
+import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import { usePageParams } from '@/composables/usePageParams'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
@@ -193,14 +193,6 @@ const formState = ref<FormState<Role>>({
 })
 
 // --------------------------------- fun ---------------------------------
-
-/** 从后端枚举接口加载角色状态选项 */
-
-/** 状态编码 → 文案 */
-function statusText(status: number) {
-  const item = statusOptions.value.find((i) => i.code === status)
-  return item ? item.title : status
-}
 
 /** 查询角色列表 */
 function getList() {

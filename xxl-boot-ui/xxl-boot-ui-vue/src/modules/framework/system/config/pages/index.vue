@@ -42,14 +42,14 @@
     <!-- 配置列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="50" />
+      <el-table-column :label="t('common.serialNo')" type="index" align="center" width="60" />
       <el-table-column :label="t('system.config.configName')" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
       <el-table-column :label="t('system.config.configKey')" align="center" prop="key" width="180" :show-overflow-tooltip="true" />
       <el-table-column :label="t('system.config.configValue')" align="center" prop="value" :show-overflow-tooltip="true" />
       <el-table-column :label="t('common.status')" align="center" width="80">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
-            {{ statusText(scope.row.status) }}
+            {{ enumTitle(statusOptions, scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -108,7 +108,7 @@ defineOptions({ name: 'Config' })
 import { ref } from 'vue'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
-import { useEnumOption } from '@/composables/useEnumOption'
+import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { configApi } from '../api'
@@ -130,7 +130,7 @@ const queryParams = ref<ConfigQuery>({
   pageSize: 10 /* 每页条数 */,
   name: undefined /* 配置名称 */,
   key: undefined /* 配置 Key */,
-  status: -1 /* 状态筛选，-1 表示全部 */
+  status: -1 /* 状态筛选，-1 表示全部； */
 })
 
 // 列表数据与勾选状态，勾选结果决定顶部按钮是否可用
@@ -144,7 +144,7 @@ const table = ref<TableState<Config>>({
   multiple: true // 删除按钮是否禁用
 })
 
-// 编辑表单默认值：新增初始值与每次重置共用，状态默认 0-正常
+// 编辑表单默认值：新增初始值与每次重置共用
 const FORM_DEFAULTS: Readonly<ConfigForm> = { status: 0 }
 
 // 编辑弹窗状态
@@ -230,15 +230,21 @@ function openCreateForm() {
  * @param row 行数据；顶部按钮调用时为空，此时回退到勾选行
  */
 function openEditForm(row?: Config) {
-  const id = row?.id ?? table.value.ids[0]
-  // 顶部按钮未勾选或行数据缺少 id 时直接返回，避免无效请求
+  // 行按钮传行数据；顶部按钮取勾选的第一行
+  const id = row ? row.id : table.value.ids[0]
+  // 缺少 id 时直接返回，避免无效请求或误用勾选行
   if (id == null) return
   resetForm()
-  configApi.load(id).then((response) => {
-    formState.value.form = response.data
-    formState.value.visible = true
-    formState.value.title = t('common.titleEdit', [t('common.noun.config')])
-  })
+  configApi.load(id)
+    .then((response) => {
+      // 记录已被删除时不打开弹窗
+      if (!response.data) return
+
+      formState.value.form = response.data
+      formState.value.visible = true
+      formState.value.title = t('common.titleEdit', [t('common.noun.config')])
+    })
+    .catch(() => {})
 }
 
 /** 校验通过后保存：有 id 走修改，否则新增 */
@@ -248,11 +254,13 @@ function saveForm() {
     if (!valid) return
     const isEdit = formState.value.form.id != null
     const request = isEdit ? configApi.update(formState.value.form) : configApi.insert(formState.value.form)
-    request.then(() => {
-      modal.msgSuccess(t(isEdit ? 'common.updateSuccess' : 'common.addSuccess'))
-      closeForm()
-      getList()
-    })
+    request
+      .then(() => {
+        modal.msgSuccess(t(isEdit ? 'common.updateSuccess' : 'common.addSuccess'))
+        closeForm()
+        getList()
+      })
+      .catch(() => {})
   })
 }
 
@@ -268,29 +276,26 @@ function closeForm() {
  * @param row 行数据；顶部按钮调用时为空，此时删除勾选行
  */
 function removeConfig(row?: Config) {
-  const ids = row?.id ?? table.value.ids
-  // 无勾选记录时直接返回，避免弹出空删除确认框
-  if (ids == null || (Array.isArray(ids) && ids.length === 0)) return
+  // 行按钮只删当前行；顶部按钮删除勾选行
+  const ids = row ? (row.id != null ? [row.id] : []) : table.value.ids
+  // 无记录可删时直接返回，避免弹出空删除确认框
+  if (ids.length === 0) return
+
+  const confirmText = row
+    ? t('system.config.confirmDelete', [row.name ?? String(row.id)])
+    : t('system.config.confirmBatchDelete', [ids.length])
   modal
-    .confirm(t('system.config.confirmDeleteConfig', [Array.isArray(ids) ? ids.join(',') : ids]))
+    .confirm(confirmText)
     .then(() => configApi.delete(ids))
     .then(() => {
+      // 删除当前页最后一条时回退一页，避免停留在空页
+      if (table.value.list.length === ids.length && queryParams.value.pageNum > 1) {
+        queryParams.value.pageNum -= 1
+      }
       getList()
       modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
-}
-
-// ---------------------- 辅助支撑 ----------------------
-
-/**
- * 状态编码转枚举文案
- *
- * @param status 状态编码
- * @returns 状态文案；未匹配到枚举项时回退显示编码
- */
-function statusText(status: number) {
-  return statusOptions.value.find((item) => item.code === status)?.title ?? String(status)
 }
 
 // ---------------------- 页面初始化 ----------------------

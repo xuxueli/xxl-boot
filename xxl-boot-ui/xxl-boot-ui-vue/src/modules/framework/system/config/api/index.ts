@@ -40,6 +40,8 @@ export const configApi = {
   /**
    * 按 Key 查询配置
    *
+   * 平台能力接口：供其他模块按 Key 读取配置，列表页本身不使用。
+   *
    * @param key 配置 Key
    * @returns 配置详情
    */

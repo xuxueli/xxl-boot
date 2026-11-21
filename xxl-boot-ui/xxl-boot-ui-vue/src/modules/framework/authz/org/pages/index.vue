@@ -53,7 +53,7 @@
       <el-table-column :label="t('common.status')" width="100" align="center">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
-            {{ statusText(scope.row.status) }}
+            {{ enumTitle(statusOptions, scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -135,7 +135,7 @@
 defineOptions({ name: 'Org' })
 import { t } from '@/i18n'
 import { orgApi } from '../api'
-import { useEnumOption } from '@/composables/useEnumOption'
+import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import type { Org, OrgQuery } from '../types'
@@ -240,12 +240,6 @@ function collectNodeIds(nodes: Org[]): number[] {
     }
   })
   return ids
-}
-
-/** 状态编码 → 文案 */
-function statusText(status: number) {
-  const item = statusOptions.value.find((i) => i.code === status)
-  return item ? item.title : status
 }
 
 /** 取消按钮 */

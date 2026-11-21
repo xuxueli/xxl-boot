@@ -68,7 +68,7 @@
           <div class="info-item">
             <label class="info-label">{{ t('authz.user.statusLabel') }}：</label>
             <span class="info-value plaintext">
-              <el-tag size="small" :type="info.status === 0 ? 'success' : 'danger'">{{ statusText(info.status) }}</el-tag>
+              <el-tag size="small" :type="info.status === 0 ? 'success' : 'danger'">{{ enumTitle(statusOptions, info.status) }}</el-tag>
             </span>
           </div>
         </el-col>
@@ -108,6 +108,7 @@ defineOptions({ name: 'UserView' })
 import { t } from '@/i18n'
 import { roleApi } from '@/modules/framework/authz/role/api'
 import { dictApi } from '@/modules/framework/system/dict/api'
+import { enumTitle } from '@/composables/useEnumOption'
 import { parseTime } from '@/utils/common'
 import type { User } from '../types'
 import type { Role } from '@/modules/framework/authz/role/types'
@@ -130,12 +131,6 @@ const roleNames = computed(() => {
       .join(t('authz.user.roleJoin')) || ''
   )
 })
-
-/** 状态编码 → 文案 */
-function statusText(status?: number) {
-  const item = statusOptions.value.find((i) => i.code === status)
-  return item ? item.title : status
-}
 
 /** 打开详情抽屉 */
 function open(row: User) {

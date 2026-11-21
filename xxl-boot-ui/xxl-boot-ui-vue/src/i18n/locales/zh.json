@@ -347,11 +347,12 @@
     "config": {
       "configName": "配置名称",
       "configKey": "配置Key",
-      "configValue": "配置Value",
+      "configValue": "配置值",
       "statusPlaceholder": "配置状态",
       "keyPattern": "以小写字母开头，只能由小写字母、数字和点组成",
       "keyLength": "长度需在4-100之间",
-      "confirmDeleteConfig": "是否确认删除配置编号为\"{0}\"的数据项？"
+      "confirmDelete": "是否确认删除配置\"{0}\"？",
+      "confirmBatchDelete": "是否确认删除选中的 {0} 项配置？"
     },
     "dict": {
       "dictName": "字典名称",

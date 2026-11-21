@@ -7,7 +7,7 @@
   <el-dialog v-model="dialog.visible" :title="t('system.message.readUsersTitle', [dialog.title || ''])" width="680px" top="6vh" append-to-body @close="handleClose">
     <!-- 已读用户 table -->
     <el-table v-loading="table.loading" :data="table.list" size="small" stripe height="340px">
-      <el-table-column type="index" :label="t('common.serialNo')" width="70" align="center" />
+      <el-table-column type="index" :label="t('common.serialNo')" width="60" align="center" />
       <el-table-column :label="t('system.message.userName')" prop="userName" align="center" :show-overflow-tooltip="true" />
       <el-table-column :label="t('common.realName')" prop="realName" align="center" :show-overflow-tooltip="true" />
       <el-table-column :label="t('system.message.readTime')" prop="addTime" align="center" width="180">

@@ -351,7 +351,8 @@
       "statusPlaceholder": "Config status",
       "keyPattern": "Must start with a lowercase letter and contain only lowercase letters, digits and dots",
       "keyLength": "Length must be between 4 and 100",
-      "confirmDeleteConfig": "Are you sure to delete the config item with ID \"{0}\"?"
+      "confirmDelete": "Are you sure to delete config \"{0}\"?",
+      "confirmBatchDelete": "Are you sure to delete the {0} selected config item(s)?"
     },
     "dict": {
       "dictName": "Dict Name",
