@@ -75,6 +75,11 @@
   padding: 15px 20px 20px 20px !important;
 }
 
+/* 菜单目录展开/收起提速：EP 折叠过渡读取该变量（默认 0.3s），0.12s 缩短等待感 */
+.el-menu {
+  --el-transition-duration: 0.2s;
+}
+
 .el-menu--horizontal .el-menu-item .svg-icon + span,
 .el-menu--horizontal .el-sub-menu__title .svg-icon + span {
   margin-left: 3px;
