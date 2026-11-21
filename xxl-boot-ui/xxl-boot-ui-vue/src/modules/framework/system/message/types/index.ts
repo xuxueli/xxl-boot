@@ -1,9 +1,8 @@
 /**
  * @fileoverview Message 类型定义
- * @description 实体、查询、表单与列表查询类型，对应后端 Message.java、MessageRead.java
+ * @description 实体、查询与表单类型，对应后端 Message.java、MessageRead.java
  * @author xuxueli 2026-11-21
  */
-import type { ListQuery } from '@/types'
 
 /** 站内消息实体（对应后端 Message.java） */
 export interface Message {
@@ -25,7 +24,7 @@ export interface Message {
   updateTime?: string
 }
 
-/** 搜索栏查询参数（前端表单形态） */
+/** 搜索栏查询参数（含分页，前端表单形态） */
 export interface MessageQuery {
   /** 当前页码 */
   pageNum: number
@@ -38,9 +37,6 @@ export interface MessageQuery {
   /** 标题/内容关键词，模糊匹配 */
   title?: string
 }
-
-/** 列表接口请求参数（offset/pagesize 形态） */
-export type MessageListQuery = ListQuery<MessageQuery>
 
 /** 新增/修改表单：复用实体中的可编辑字段，发送人由后端取当前登录用户 */
 export type MessageForm = Pick<Message, 'id' | 'category' | 'title' | 'content' | 'status'>
@@ -61,12 +57,12 @@ export interface MessageRead {
   addTime?: string
 }
 
-/** 已读用户列表请求参数（offset/pagesize 形态） */
-export interface MessageReadListQuery {
-  /** 分页偏移量 */
-  offset: number
+/** 已读用户列表查询参数（含分页） */
+export interface MessageReadQuery {
+  /** 当前页码 */
+  pageNum: number
   /** 每页条数 */
-  pagesize: number
+  pageSize: number
   /** 消息主键 */
   messageId?: number
 }

@@ -130,7 +130,6 @@ import type { CheckboxValueType, FormInstance } from 'element-plus'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
 import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
-import { usePageParams } from '@/composables/usePageParams'
 import { handleTree } from '@/utils/common'
 import modal from '@/utils/modal'
 import { resourceApi } from '@/modules/framework/authz/resource/api'
@@ -209,8 +208,8 @@ const formState = ref<FormState<RoleForm>>({
  */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
-  roleApi.pageList(usePageParams(queryParams)())
+  // 分页参数由 API 内部转换为后端约定的 offset/pagesize
+  roleApi.pageList(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total

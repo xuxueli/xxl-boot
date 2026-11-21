@@ -4,7 +4,7 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { Role, RoleForm, RoleListQuery } from '../types'
+import type { Role, RoleForm, RoleQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
 /** 角色 API，调用方式：roleApi.pageList(...) */
@@ -12,14 +12,20 @@ export const roleApi = {
   /**
    * 分页查询角色
    *
-   * @param query 分页与查询条件（offset/pagesize 形态）
+   * @param query 页面查询条件
    * @returns 角色分页结果
    */
-  pageList(query: RoleListQuery): Promise<Response<PageModel<Role>>> {
+  pageList(query: RoleQuery): Promise<Response<PageModel<Role>>> {
+    // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
+    const { pageNum, pageSize, ...search } = query
     return request({
       url: '/authz/role/pageList',
       method: 'get',
-      params: query
+      params: {
+        offset: (pageNum - 1) * pageSize,
+        pagesize: pageSize,
+        ...search
+      }
     })
   },
 

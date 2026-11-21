@@ -3,7 +3,6 @@
  * @description 字典类型、字典项、查询与表单类型，对应后端 Dict.java、DictItem.java
  * @author xuxueli 2026-11-21
  */
-import type { ListQuery } from '@/types'
 
 /** 字典类型实体（对应后端 Dict.java / DictDTO.java） */
 export interface Dict {
@@ -23,7 +22,7 @@ export interface Dict {
   remark?: string
 }
 
-/** 字典类型搜索栏查询参数（前端表单形态） */
+/** 字典类型搜索栏查询参数（含分页，前端表单形态） */
 export interface DictQuery {
   /** 当前页码 */
   pageNum: number
@@ -36,9 +35,6 @@ export interface DictQuery {
   /** 状态筛选，-1 表示全部 */
   status?: number
 }
-
-/** 字典类型列表接口请求参数（offset/pagesize 形态） */
-export type DictListQuery = ListQuery<DictQuery>
 
 /** 字典类型新增/修改表单：复用实体中的可编辑字段 */
 export type DictForm = Pick<Dict, 'id' | 'name' | 'type' | 'status' | 'remark'>
@@ -65,7 +61,7 @@ export interface DictItem {
   remark?: string
 }
 
-/** 字典项搜索栏查询参数（前端表单形态） */
+/** 字典项搜索栏查询参数（含分页，前端表单形态） */
 export interface DictItemQuery {
   /** 当前页码 */
   pageNum: number
@@ -74,9 +70,6 @@ export interface DictItemQuery {
   /** 所属字典主键，-1 表示不按字典过滤 */
   dictId?: number
 }
-
-/** 字典项列表接口请求参数（offset/pagesize 形态） */
-export type DictItemListQuery = ListQuery<DictItemQuery>
 
 /** 字典项新增/修改表单：复用实体中的可编辑字段 */
 export type DictItemForm = Pick<DictItem, 'id' | 'dictId' | 'name' | 'code' | 'status' | 'order' | 'remark'>

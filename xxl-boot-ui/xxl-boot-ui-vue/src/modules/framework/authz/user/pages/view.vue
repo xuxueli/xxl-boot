@@ -144,7 +144,7 @@ function open(row: User) {
   loading.value = true
   info.value = { ...row }
   roleApi
-    .pageList({ offset: 0, pagesize: 999 })
+    .pageList({ pageNum: 1, pageSize: 999, status: -1 })
     .then((response) => {
       roleOptions.value = response.data.data
     })

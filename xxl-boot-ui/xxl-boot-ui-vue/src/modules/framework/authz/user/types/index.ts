@@ -1,9 +1,8 @@
 /**
  * @fileoverview User 类型定义
- * @description 实体、查询、表单与列表查询类型，对应后端 UserDTO.java
+ * @description 实体、查询与表单类型，对应后端 UserDTO.java
  * @author xuxueli 2026-11-22
  */
-import type { ListQuery } from '@/types'
 
 /** 用户实体（对应后端 UserDTO.java） */
 export interface User {
@@ -35,7 +34,7 @@ export interface User {
   updateTime?: string
 }
 
-/** 搜索栏查询参数（前端表单形态） */
+/** 搜索栏查询参数（含分页，前端表单形态） */
 export interface UserQuery {
   /** 当前页码 */
   pageNum: number
@@ -47,16 +46,6 @@ export interface UserQuery {
   status: number
   /** 选中组织及其全部子组织的 ID 集合 */
   orgIds: number[]
-}
-
-/**
- * 列表接口请求参数（offset/pagesize 形态）
- *
- * 后端 pageList 以 List<Integer> 接收 orgIds，故请求时需把前端数组转换为逗号分隔字符串。
- */
-export type UserListQuery = Omit<ListQuery<UserQuery>, 'orgIds'> & {
-  /** 组织 ID 集合（逗号分隔字符串，如 "1,2,3"） */
-  orgIds?: string
 }
 
 /** 新增/修改表单：复用实体中的可编辑字段，排除后端维护的时间与联查字段 */

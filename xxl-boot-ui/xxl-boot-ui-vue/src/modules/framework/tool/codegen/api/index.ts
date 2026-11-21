@@ -4,7 +4,7 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { CodegenDetail, CodegenForm, CodegenListQuery, CodegenTable, CreateTableRequest } from '../types'
+import type { CodegenDetail, CodegenForm, CodegenQuery, CodegenTable, CreateTableRequest } from '../types'
 import type { PageModel, Response } from '@/types'
 
 /** 代码生成 API，调用方式：codegenApi.pageList(...) */
@@ -12,18 +12,19 @@ export const codegenApi = {
   /**
    * 分页查询生成表
    *
-   * @param query 分页与查询条件（offset/pagesize 形态）
+   * @param query 页面查询条件
    * @returns 生成表分页结果
    */
-  pageList(query: CodegenListQuery): Promise<Response<PageModel<CodegenTable>>> {
-    // 后端 CodegenController 该接口分页字段为 pageSize，这里完成 pagesize → pageSize 的适配
-    const { pagesize, ...rest } = query
+  pageList(query: CodegenQuery): Promise<Response<PageModel<CodegenTable>>> {
+    // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
+    const { pageNum, pageSize, ...search } = query
     return request({
       url: '/tool/codegen/pageList',
       method: 'get',
       params: {
-        ...rest,
-        pageSize: pagesize
+        offset: (pageNum - 1) * pageSize,
+        pageSize,
+        ...search
       }
     })
   },

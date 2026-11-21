@@ -4,7 +4,7 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { Message, MessageForm, MessageListQuery, MessageRead, MessageReadListQuery } from '../types'
+import type { Message, MessageForm, MessageQuery, MessageRead, MessageReadQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
 /** 站内消息 API，调用方式：messageApi.pageList(...) */
@@ -12,14 +12,20 @@ export const messageApi = {
   /**
    * 分页查询消息
    *
-   * @param query 分页与查询条件（offset/pagesize 形态）
+   * @param query 页面查询条件
    * @returns 消息分页结果
    */
-  pageList(query: MessageListQuery): Promise<Response<PageModel<Message>>> {
+  pageList(query: MessageQuery): Promise<Response<PageModel<Message>>> {
+    // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
+    const { pageNum, pageSize, ...search } = query
     return request({
       url: '/system/message/pageList',
       method: 'get',
-      params: query
+      params: {
+        offset: (pageNum - 1) * pageSize,
+        pagesize: pageSize,
+        ...search
+      }
     })
   },
 
@@ -83,11 +89,16 @@ export const messageApi = {
    * @param query 查询参数（messageId/offset/pagesize）
    * @returns 已读用户分页结果
    */
-  readUsers(query: MessageReadListQuery): Promise<Response<PageModel<MessageRead>>> {
+  readUsers(query: MessageReadQuery): Promise<Response<PageModel<MessageRead>>> {
+    const { pageNum, pageSize, ...search } = query
     return request({
       url: '/system/message/readUsers',
       method: 'get',
-      params: query
+      params: {
+        offset: (pageNum - 1) * pageSize,
+        pagesize: pageSize,
+        ...search
+      }
     })
   },
 

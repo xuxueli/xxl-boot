@@ -3,7 +3,6 @@
  * @description 代码生成表、字段实体与查询/表单类型，对应后端 Codegen.java、CodegenField.java、CodegenDTO.java
  * @author xuxueli 2026-11-21
  */
-import type { ListQuery } from '@/types'
 
 /** 代码生成表实体（对应后端 CodegenDTO.java） */
 export interface CodegenTable {
@@ -81,7 +80,7 @@ export interface CodegenDetail extends CodegenTable {
   fieldList?: CodegenField[]
 }
 
-/** 搜索栏查询参数（前端表单形态） */
+/** 搜索栏查询参数（含分页，前端表单形态） */
 export interface CodegenQuery {
   /** 当前页码 */
   pageNum: number
@@ -92,9 +91,6 @@ export interface CodegenQuery {
   /** 表描述，模糊匹配 */
   tableComment?: string
 }
-
-/** 列表接口请求参数（offset/pagesize 形态） */
-export type CodegenListQuery = ListQuery<CodegenQuery>
 
 /**
  * 更新生成配置表单

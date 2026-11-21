@@ -4,7 +4,7 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { User, UserForm, UserListQuery } from '../types'
+import type { User, UserForm, UserQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
 /** 用户 API，调用方式：userApi.pageList(...) */
@@ -12,14 +12,21 @@ export const userApi = {
   /**
    * 分页查询用户
    *
-   * @param query 分页与查询条件（offset/pagesize 形态，orgIds 为逗号分隔字符串）
+   * @param query 页面查询条件
    * @returns 用户分页结果
    */
-  pageList(query: UserListQuery): Promise<Response<PageModel<User>>> {
+  pageList(query: UserQuery): Promise<Response<PageModel<User>>> {
+    // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
+    const { pageNum, pageSize, orgIds, ...search } = query
     return request({
       url: '/authz/user/pageList',
       method: 'get',
-      params: query
+      params: {
+        offset: (pageNum - 1) * pageSize,
+        pagesize: pageSize,
+        orgIds: orgIds?.length ? orgIds.join(',') : undefined,
+        ...search
+      }
     })
   },
 

@@ -1,9 +1,8 @@
 /**
  * @fileoverview Role 类型定义
- * @description 实体、查询、表单与列表查询类型，对应后端 Role.java
+ * @description 实体、查询与表单类型，对应后端 Role.java
  * @author xuxueli 2026-11-22
  */
-import type { ListQuery } from '@/types'
 
 /** 角色实体（对应后端 Role.java） */
 export interface Role {
@@ -23,7 +22,7 @@ export interface Role {
   updateTime?: string
 }
 
-/** 搜索栏查询参数（前端表单形态） */
+/** 搜索栏查询参数（含分页，前端表单形态） */
 export interface RoleQuery {
   /** 当前页码 */
   pageNum: number
@@ -34,9 +33,6 @@ export interface RoleQuery {
   /** 状态筛选，-1 表示全部 */
   status: number
 }
-
-/** 列表接口请求参数（offset/pagesize 形态） */
-export type RoleListQuery = ListQuery<RoleQuery>
 
 /** 新增/修改表单：复用实体中的可编辑字段，排除后端维护的时间字段 */
 export type RoleForm = Pick<Role, 'id' | 'name' | 'code' | 'status' | 'order'>

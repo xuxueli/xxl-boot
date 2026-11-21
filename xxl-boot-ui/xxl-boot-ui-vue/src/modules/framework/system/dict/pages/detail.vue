@@ -124,7 +124,7 @@ function loadData() {
   if (!props.row?.id) return
   loading.value = true
   dataList.value = []
-  dictApi.itemPageList({ dictId: props.row.id, offset: 0, pagesize: 100 })
+  dictApi.itemPageList({ dictId: props.row.id, pageNum: 1, pageSize: 100 })
     .then((response) => {
       dataList.value = response.data.data ?? []
     })

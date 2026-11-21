@@ -116,7 +116,6 @@ import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
 import DictDataDrawer from './detail.vue'
 import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
-import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import { dictApi } from '../api'
@@ -193,8 +192,8 @@ const drawer = ref<DrawerState>({
  */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
-  dictApi.pageList(usePageParams(queryParams)())
+  // 分页参数由 API 内部转换为后端约定的 offset/pagesize
+  dictApi.pageList(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total

@@ -135,7 +135,6 @@ import { ref } from 'vue'
 import { t } from '@/i18n'
 import { Editor, Pagination, RightToolbar } from '@/components'
 import { enumTitle, useEnumOption } from '@/composables/useEnumOption'
-import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { messageApi } from '../api'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
@@ -201,8 +200,8 @@ const formState = ref<FormState<MessageForm>>({
  */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
-  messageApi.pageList(usePageParams(queryParams)())
+  // 分页参数由 API 内部转换为后端约定的 offset/pagesize
+  messageApi.pageList(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total

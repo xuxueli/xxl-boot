@@ -98,7 +98,6 @@ import type { FormInstance } from 'element-plus'
 import { t } from '@/i18n'
 import { Pagination } from '@/components'
 import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
-import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
 import { dictApi } from '../api'
@@ -178,13 +177,8 @@ const formState = ref<FormState<DictItemForm>>({
  */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
-  const params = usePageParams(queryParams)()
-  // 无路由来源进入时字典主键为空，不携带该参数，避免后端可选 long 参数收到空值
-  if (dictId.value != null) {
-    params.dictId = dictId.value
-  }
-  dictApi.itemPageList(params)
+  // 分页与 dictId 参数由 API 内部统一处理
+  dictApi.itemPageList(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total

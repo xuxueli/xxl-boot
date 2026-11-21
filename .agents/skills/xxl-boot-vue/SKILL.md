@@ -65,15 +65,17 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 
 ## 四、标准业务模块规范（Vue，核心）
 
-> 本节从 `framework/system/config` 提炼，新模块把 `Config` 替换为 `Xxx`、`system/config` 替换为
-> `{module}/{business}`，并按业务增删字段。
+> **唯一范本**：`xxl-boot-ui-vue/src/modules/framework/system/config`（`types` / `api` / `pages/index.vue`）。
+> 范本与本节冲突时，先以实际代码为准修正本节；新增规范先改范本，再回写本节。
+>
+> 新模块把 `Config` 替换为 `Xxx`、`system/config` 替换为 `{module}/{business}`，并按业务增删字段。
 
 ### 4.0 提炼基线（范本映射）
 
 | 范本 | 提炼出的规范 | 对应章节 |
 |---|---|---|
 | `system/config/types/index.ts` | 实体 / Query / Form(`Pick`) 三类导出 | 4.3 |
-| `system/config/api/index.ts` | `{business}Api` 命名空间、方法顺序、参数通道 | 4.4 |
+| `system/config/api/index.ts` | `{business}Api` 命名空间、方法顺序、分页在 API 内转换 | 4.4 |
 | `system/config/pages/index.vue` | 模板五区、script 四区、交互与状态约定 | 4.5 |
 | 后端 `framework/.../system/Config*` | 文件清单、接口契约、Service 校验、Mapper XML | 五 |
 

@@ -4,7 +4,7 @@
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
-import type { Dict, DictItem, DictForm, DictItemForm, DictSelectOption, DictItemListQuery, DictListQuery } from '../types'
+import type { Dict, DictItem, DictForm, DictItemForm, DictSelectOption, DictItemQuery, DictQuery } from '../types'
 import type { EnumOption, PageModel, Response } from '@/types'
 
 /** 字典 API，调用方式：dictApi.pageList(...) */
@@ -12,14 +12,20 @@ export const dictApi = {
   /**
    * 分页查询字典类型
    *
-   * @param query 分页与查询条件（offset/pagesize 形态）
+   * @param query 页面查询条件
    * @returns 字典类型分页结果
    */
-  pageList(query: DictListQuery): Promise<Response<PageModel<Dict>>> {
+  pageList(query: DictQuery): Promise<Response<PageModel<Dict>>> {
+    // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
+    const { pageNum, pageSize, ...search } = query
     return request({
       url: '/system/dict/pageList',
       method: 'get',
-      params: query
+      params: {
+        offset: (pageNum - 1) * pageSize,
+        pagesize: pageSize,
+        ...search
+      }
     })
   },
 
@@ -43,11 +49,16 @@ export const dictApi = {
    * @param query 分页与查询条件（dictId/offset/pagesize）
    * @returns 字典项分页结果
    */
-  itemPageList(query: DictItemListQuery): Promise<Response<PageModel<DictItem>>> {
+  itemPageList(query: DictItemQuery): Promise<Response<PageModel<DictItem>>> {
+    const { pageNum, pageSize, ...search } = query
     return request({
       url: '/system/dict/itemPageList',
       method: 'get',
-      params: query
+      params: {
+        offset: (pageNum - 1) * pageSize,
+        pagesize: pageSize,
+        ...search
+      }
     })
   },
 

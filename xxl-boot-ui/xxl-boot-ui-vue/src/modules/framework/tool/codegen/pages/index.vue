@@ -105,7 +105,6 @@ import { useRoute } from 'vue-router'
 import type { FormInstance } from 'element-plus'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
-import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import downloadPlugin from '@/utils/download'
 import { codegenApi } from '../api'
@@ -171,9 +170,9 @@ const DEMO_TABLE_SQL = `CREATE TABLE \`product01\` (
  */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
+  // 分页参数由 API 内部转换为后端约定的 offset/pagesize
   codegenApi
-    .pageList(usePageParams(queryParams)())
+    .pageList(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total

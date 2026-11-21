@@ -3,7 +3,6 @@
  * @description 日志实体与查询类型，对应后端 Log.java、LogDTO.java
  * @author xuxueli 2026-11-21
  */
-import type { ListQuery } from '@/types'
 
 /** 日志实体（对应后端 Log.java / LogDTO.java） */
 export interface Log {
@@ -29,7 +28,7 @@ export interface Log {
   updateTime?: string
 }
 
-/** 日志搜索栏查询参数（前端表单形态） */
+/** 日志搜索栏查询参数（含分页，前端表单形态） */
 export interface LogQuery {
   /** 当前页码 */
   pageNum: number
@@ -42,9 +41,6 @@ export interface LogQuery {
   /** 日志标题，模糊匹配 */
   title?: string
 }
-
-/** 日志列表接口请求参数（offset/pagesize 形态） */
-export type LogListQuery = ListQuery<LogQuery>
 
 /**
  * 日志新增/修改表单：复用实体中的可编辑字段

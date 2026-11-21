@@ -92,7 +92,6 @@ import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
 import LogDetail from './detail.vue'
 import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
-import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { download } from '@/utils/download'
 import { logApi } from '../api'
@@ -157,8 +156,8 @@ const detail = ref<DetailState>({
  */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
-  logApi.pageList(usePageParams(queryParams)())
+  // 分页参数由 API 内部转换为后端约定的 offset/pagesize
+  logApi.pageList(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total
@@ -232,9 +231,10 @@ function openDetail(row: Log) {
   detail.value = { visible: true, row }
 }
 
-/** 导出日志（条件与当前查询一致） */
+/** 导出日志（条件与当前查询一致，分页字段不参与导出） */
 function handleExport() {
-  download('system/log/export', { ...usePageParams(queryParams)() }, `log_${new Date().getTime()}.xlsx`)
+  const { pageNum: _pageNum, pageSize: _pageSize, ...search } = queryParams.value
+  download('system/log/export', search, `log_${new Date().getTime()}.xlsx`)
 }
 
 // ---------------------- 页面初始化 ----------------------

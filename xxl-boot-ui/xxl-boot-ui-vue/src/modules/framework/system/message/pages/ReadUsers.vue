@@ -42,7 +42,6 @@ defineOptions({ name: 'ReadUsers' })
 import { ref } from 'vue'
 import { t } from '@/i18n'
 import { Pagination } from '@/components'
-import { usePageParams } from '@/composables/usePageParams'
 import { parseTime } from '@/utils/common'
 import { messageApi } from '../api'
 import type { Message, MessageRead } from '../types'
@@ -102,8 +101,8 @@ const queryParams = ref<ReadUserQuery>({
 /** 查询已读用户列表 */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
-  messageApi.readUsers(usePageParams(queryParams)())
+  // 分页参数由 API 内部转换为后端约定的 offset/pagesize
+  messageApi.readUsers(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total

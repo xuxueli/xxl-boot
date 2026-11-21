@@ -192,7 +192,6 @@ import type { FormInstance, FormItemRule } from 'element-plus'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar, TreePanel } from '@/components'
 import { useEnumOption } from '@/composables/useEnumOption'
-import { usePageParams } from '@/composables/usePageParams'
 import { handleTree } from '@/utils/common'
 import modal from '@/utils/modal'
 import { roleApi } from '@/modules/framework/authz/role/api'
@@ -291,12 +290,9 @@ const passwordRules: FormItemRule[] = [
  */
 function getList() {
   table.value.loading = true
-  const params = usePageParams(queryParams)()
-  // 组织筛选集合转逗号分隔字符串，匹配后端 pageList 的 List<Integer> 参数形态
-  const { orgIds } = queryParams.value
-  const orgIdParam = orgIds?.length ? orgIds.join(',') : undefined
+  // 分页与 orgIds 数组由 API 内部统一转换
   userApi
-    .pageList({ ...params, orgIds: orgIdParam })
+    .pageList(queryParams.value)
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total
@@ -350,7 +346,7 @@ function resetForm() {
  */
 function loadRoleOptions() {
   roleApi
-    .pageList({ offset: 0, pagesize: 999 })
+    .pageList({ pageNum: 1, pageSize: 999, status: -1 })
     .then((response) => {
       roleOptions.value = response.data.data
     })
