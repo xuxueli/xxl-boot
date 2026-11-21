@@ -1,13 +1,31 @@
 ---
 name: xxl-boot-react
-description: 在 XXL-Boot 前后端分离的 React 模式（xxl-boot-ui-react 端口 4000，Ant Design ProTable + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-ui-react/src/modules、编辑 .tsx 页面、使用 ProTable/usePermission/useEnumOption，或用户明确选择 React 分离模式。Vue 任务改用 xxl-boot-vue；单体任务改用 xxl-boot-monolith。
+description: 在 XXL-Boot 前后端分离的 React 模式（xxl-boot-ui-react 端口 4000，Ant Design ProTable + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-ui-react/src/modules、编辑 .tsx 页面、新增标准 CRUD 模块、使用 ProTable/usePermission/useEnumOption。Vue 任务改用 xxl-boot-vue；单体任务改用 xxl-boot-monolith。
 ---
 
 # XXL-Boot · React 分离模式开发 SKILL
 
-> 适用范围：`xxl-boot-api` + `xxl-boot-ui-react` 的前后端分离业务开发。公共契约（设计原则、通用约定、需求落盘、接口通道、数据库/菜单模型、验收）见仓库根 `AGENTS.md`；本文件只维护 React 模式差异。
+> 适用范围：`xxl-boot-api` + `xxl-boot-ui/xxl-boot-ui-react` 的前后端分离业务开发。
+>
+> 公共契约（设计原则、通用约定、需求落盘、接口通道、数据库/菜单模型、验收）见仓库根 `AGENTS.md`；本文件只维护 React 模式差异与业务模块落地模板。
+>
+> **标准范本**：平台内置 `system/config` 是当前 React 侧最新、最完整的标准 CRUD 实现。新增业务模块时，前端以
+> `xxl-boot-ui-react/src/modules/framework/system/config/{types,api,pages}` 为基线，后端与 Vue 模式共用同一套
+> `xxl-boot-api` 规范，参考 `framework/.../system/Config*`；详情抽屉、关联列表等进阶形态参考 `system/message`。
 
-## 一、模式概览
+## 一、何时使用
+
+| 场景 | 动作 |
+|---|---|
+| 前端为 React（Ant Design ProTable + TS），新增带列表页的标准 CRUD 模块 | 按本文件第四、五节完整落地 |
+| 改造现有 `xxl-boot-ui-react/src/modules/**` 页面 | 按第四节的 ProTable/弹窗约定对齐，不做无关重构 |
+| 只新增/修改 `xxl-boot-api` 接口，不涉及前端 | 取第五节；仍需确认前端形态后再加载对应模式 |
+| 前端为 Vue | 改用 `xxl-boot-vue` |
+| 改动 `xxl-boot-admin`（FreeMarker） | 改用 `xxl-boot-monolith` |
+
+React 与 Vue **共用同一个后端 `xxl-boot-api`**，接口契约与后端落位一致。
+
+## 二、模式概览
 
 | 项 | 内容 |
 |---|---|
@@ -18,106 +36,105 @@ description: 在 XXL-Boot 前后端分离的 React 模式（xxl-boot-ui-react �
 | 登录态 | XXL-SSO，登录态存 Redis（需先启动 Redis） |
 | 后端落位 | Java `business/{module}/{business}`；Mapper XML `resources/mapper/business/{module}/{business}` |
 | 前端落位 | `src/modules/business/{module}/{business}/{types,api,pages}` |
+| 页面定位 | 菜单 `url` → `loadView` 只匹配 `pages/**/index.tsx`，无需改路由 |
+| 权限模型 | 业务页按钮 `hasPermi`；平台内置页可按角色 `hasRole` |
+| 数据请求 | `@/utils/request` + TanStack Query（仅枚举等缓存场景） |
 | 数据库脚本 | `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql` |
 
-## 二、何时使用
+## 三、工程结构
 
-- 前后端分离，前端是 React（Ant Design ProTable + TS）。
-- 新增带列表页的标准 CRUD 业务模块。
-- 只改后端接口、不动前端时同样适用（取「后端落位」一节）。
-- 不适用：前端是 Vue 用 `xxl-boot-vue`；改 `xxl-boot-admin` 用 `xxl-boot-monolith`。
-
-React 与 Vue 模式**共用同一个后端 `xxl-boot-api`**，后端落位完全一致。
-
-## 三、工程结构速览
-
-```
+```text
 xxl-boot-api/src/main
 ├── java/com/xxl/boot/api/framework/…                      ← 平台内置
 ├── java/com/xxl/boot/api/business/{module}/{business}/    ← 新增业务（与前端双层镜像）
-└── resources/mapper/framework/{module}/                   ← 平台内置 Mapper XML
+├── resources/mapper/framework/{module}/                   ← 平台内置 Mapper XML
 └── resources/mapper/business/{module}/{business}/         ← 业务 Mapper XML
 
 xxl-boot-ui/xxl-boot-ui-react/src
-├── modules/framework/{domain}/{module}/                   ← 平台内置（pages + api + types）
-├── modules/business/{module}/{business}/                  ← 业务模块（pages + api + types）
+├── modules/framework/{domain}/{module}/                   ← 平台内置（types + api + pages）
+├── modules/business/{module}/{business}/                  ← 新增业务（types + api + pages）
 ├── hooks/                                                 ← useEnumOption / usePermission
-├── components/                                            ← Editor 等公共组件
-└── types/index.d.ts                                       ← API.Response / API.PageModel 等全局类型
+├── components/                                            ← Editor / TreePanel / IconSelect…
+├── types/index.d.ts                                       ← API.Response / API.PageModel / API.LoginInfo 等全局类型
+├── router/index.tsx                                       ← loadView（只识别 pages/**/index.tsx）
+└── i18n/locales/{zh,en}.json                              ← 文案
 ```
 
-## 四、实现原则（React）
+规则：
 
-遵循 `AGENTS.md`「设计原则」与「通用约定」，React 侧落地：
+- `{module}` 为业务域（父目录），`{business}` 为业务页/实体（子目录），均使用小写；避免父子同名。
+- 后端包路径、Mapper XML 路径、前端模块目录三者保持 `{module}/{business}` 镜像。
+- 业务代码只落 `business`，不落 `framework`。
 
-- 优先复用 `@/hooks`、`@/components`、`@/utils/request`；同一逻辑第三次出现才新增 Hook，不提前封装。
-- 列表页用 `ProTable` 直接编排；复杂表单/详情拆到 `pages/` 下独立组件，避免请求、表格、弹窗状态混在一个文件。
-- 状态保持局部 `useState` + `App.useApp()`；不引入额外状态库或第二套请求封装。
-- 组件声明统一为普通函数 + 显式 props 类型，不叠加 React 的包装类型、运行时校验与兼容写法：
+## 四、标准业务模块规范（React，核心）
 
-```tsx
-/** Xxx 组件属性 */
-interface XxxProps {
-  /** 主键 */
-  id: number;
-  /** 关闭回调 */
-  onClose: () => void;
-}
+> 本节从 `framework/system/config` 提炼，新模块把 `Config` 替换为 `Xxx`、`system/config` 替换为
+> `{module}/{business}`，并按业务增删字段。
 
-/** Xxx 组件 */
-export default function Xxx({ id, onClose }: XxxProps) {
-  return <div>{id}</div>;
-}
-```
+### 4.0 提炼基线（范本映射）
 
-  同类写法一并排除：`React.FC`/`FunctionComponent`（类型别名，表达不了泛型）、`forwardRef`（React 19 起 `ref` 可直接作为 props，已无必要）、`propTypes` 与函数组件的 `defaultProps`（React 19 已移除，改用 TS 类型与解构默认值）；类组件仅用于错误边界等无 Hook 等价物的场景。`React.ReactNode`/`ComponentType` 等命名空间类型用于 props 与类型约束属正常，`React.memo`/`lazy` 属运行时优化，不受此限。
-
-## 五、初始化与启动
-
-- 数据库：按 `AGENTS.md`「SQL 执行规范」依次执行 `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql`。
-- 环境：Node 20+。
-- 数据源：`xxl-boot-api/src/main/resources/application.properties`（默认 `127.0.0.1:3306/xxl_boot`，`root/root_pwd`）；默认账号 `admin`。
-- 后端：`cd xxl-boot-api && mvn spring-boot:run`（8090，Redis 需先启动）。
-- 前端：`cd xxl-boot-ui/xxl-boot-ui-react && npm i && npm run dev`（4000）。
-- 编译/类型检查/构建：`mvn -q compile`（`xxl-boot-api` 下）/ `npm run type-check` / `npm run build`（前端目录下）。
-
-## 六、后端落位（与 Vue 共用）
-
-> 命名约定：`{module}` 是业务域（父目录），`{business}` 是业务页/实体（子目录）。本示例 module=`{module}`、business=`{business}`，对应 `business/{module}/{business}`；避免父子同名。代码与 SQL 中的 `{module}`、`{business}`、`{businessName}`、`Xxx`/`xxx` 均为占位符，落地时替换为实际命名。
-
-以业务 `Xxx`、模块 `{module}`、接口路径 `/{module}/{business}` 为例，包名 `com.xxl.boot.api.business.{module}.{business}`：
-
-| 文件 | 位置 | 说明 |
+| 范本 | 提炼出的规范 | 对应章节 |
 |---|---|---|
-| `Xxx.java` | `java/.../business/{module}/{business}/model/Xxx.java` | 实体，字段驼峰；`Date` 字段加 `@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")` |
-| `XxxMapper.java` | `java/.../business/{module}/{business}/mapper/XxxMapper.java` | `insert/delete/update/load/pageList/pageListCount` |
-| `XxxMapper.xml` | `resources/mapper/business/{module}/{business}/XxxMapper.xml` | `resultMap` 显式映射；`add_time/update_time` 用 `NOW()`；查询用 `<if>` 动态拼条件 |
-| `XxxService.java` / `XxxServiceImpl.java` | `java/.../business/{module}/{business}/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
-| `XxxController.java` | `java/.../business/{module}/{business}/controller/XxxController.java` | `@RestController @RequestMapping("/{module}/{business}")`，全部方法 `@XxlSso` |
+| `system/config/types/index.d.ts` | `declare namespace API` 实体与关联类型 | 4.3 |
+| `system/config/api/index.ts` | `{business}Api` 命名空间、方法顺序、分页转换 | 4.4 |
+| `system/config/pages/index.tsx` | `PageContainer + ProTable`、勾选、工具栏、删除 | 4.5 |
+| `system/config/pages/ConfigFormModal.tsx` | 受控 `ModalForm`、提交与复位 | 4.6 |
+| `system/message/pages/{MessageDetail,ReadUsersDialog}` | 受控 Drawer / Modal + Table（进阶） | 4.7 |
+| 后端 `framework/.../system/Config*` | 文件清单、接口契约、校验、Mapper XML | 五 |
 
-接口契约（路径、参数通道、返回结构、校验、方法顺序）按 `AGENTS.md`「后端通用规范」；本模式只需保证包路径与 Mapper XML 双层镜像。
-- 用户可见错误文案统一 `I18nUtil.getString("key")`，禁止硬编码中文；键维护在 `xxl-boot-api/src/main/resources/i18n/message_zh.properties` / `message_en.properties`（存量代码逐步迁移，新增/修改代码必须遵守）。
+复制范本后的替换清单：
 
-## 七、前端落位（3 文件 + 页内组件）
+| 范本符号 | 新模块替换为 |
+|---|---|
+| `Config` / `API.Config` | `Xxx` / `API.Xxx` |
+| `configApi` | `{business}Api`（如 `customerApi`） |
+| `ConfigStatusEnum` | `XxxStatusEnum` |
+| `system/config` | `{module}/{business}` |
+| `system.config.*` | `business.{module}.{business}.*` |
+| `hasRole('admin')`（平台页） | `hasPermi('{module}:{business}:add\|edit\|remove')`（业务页） |
 
-以 `/{module}/{business}` 为例：
+### 4.1 文件清单与职责
 
-| 文件 | 位置 | 说明 |
+| 文件 | 路径 | 职责 | 范本 |
+|---|---|---|---|
+| types | `src/modules/business/{module}/{business}/types/index.d.ts` | `declare namespace API` 实体与关联类型 | `system/config/types/index.d.ts` |
+| api | `src/modules/business/{module}/{business}/api/index.ts` | `{business}Api` 命名空间，方法名对齐后端 Controller | `system/config/api/index.ts` |
+| view | `src/modules/business/{module}/{business}/pages/index.tsx` | `PageContainer + ProTable` 列表页 | `system/config/pages/index.tsx` |
+| 表单弹窗 | `pages/XxxFormModal.tsx` | `ModalForm` 新增/修改（独立文件） | `system/config/pages/ConfigFormModal.tsx` |
+| 子页面 | `pages/{Sub}/index.tsx` | 详情抽屉、已读列表等可路由子页 | `system/message/pages/{MessageDetail,ReadUsersDialog}/index.tsx` |
+
+- 列表页只负责查询、勾选、顶部操作和弹窗编排；表单放 `XxxFormModal`，详情/关联列表放独立组件。
+- 与路由无关的局部组件（如 `XxxFormModal.tsx`）可以平铺在 `pages/` 下；**需要菜单直达的子页必须是
+  `pages/{Sub}/index.tsx`**。
+- 页面、接口、类型同模块聚合；全局基础类型从 `API` 命名空间直接使用，无需 import。
+
+### 4.2 命名与路由
+
+| 项 | 规则 | 示例 |
 |---|---|---|
-| types | `src/modules/business/{module}/{business}/types/index.d.ts` | `declare namespace API { type Xxx = {...} }` |
-| api | `src/modules/business/{module}/{business}/api/index.ts` | `{business}Api` 命名空间封装，方法名对齐后端 Controller；`current/pageSize` 转 `offset/pagesize` |
-| view | `src/modules/business/{module}/{business}/pages/index.tsx` | `PageContainer + ProTable` |
-| 页内组件 | 同 `pages/` 下，如 `XxxFormModal.tsx` | 表单弹窗独立文件时使用 |
+| 目录 | `{module}/{business}` 小写 | `demo/customer` |
+| 接口路径 | `/{module}/{business}` | `/demo/customer` |
+| 菜单 url | `/{module}/{business}` | `/demo/customer` |
+| API 命名空间 | `{business}Api` 小驼峰 | `customerApi` |
+| 组件名 | 普通函数 + PascalCase | `CustomerList` / `CustomerFormModal` |
+| 权限标识 | `{module}:{business}:add\|edit\|remove` | `demo:customer:add` |
+| i18n 节点 | `business.{module}.{business}` | `business.demo.customer` |
 
-页面、接口、类型同模块聚合；**React `loadView` 只识别 `pages/index.tsx`**，即业务菜单 `url='/{module}/{business}'` 必须对应 `pages/index.tsx`（子页面可放 `pages/xxx/index.tsx`，菜单 `url` 写成 `/{module}/{business}/xxx`）。
+### 4.3 types：`types/index.d.ts`
 
-### 7.1 types：`types/index.d.ts`
+| 规则 | 说明 |
+|---|---|
+| 命名空间 | 统一 `declare namespace API { ... }`，多文件自动合并 |
+| 实体 | `type Xxx = { ... }`，对应后端 Entity/DTO；字段可选 |
+| 关联实体 | 同一文件内追加 `type XxxItem` / `type XxxRead` |
+| 查询类型 | 筛选项 ≤ 3 个时在 `api.pageList` 内联；跨页面/字段多时抽 `API.XxxQuery` |
+| 表单类型 | 默认复用 `API.Xxx`；字段差异大时再抽 `API.XxxForm` |
 
 ```ts
 /**
  * @fileoverview Xxx 类型定义
  * @description 对应后端 Xxx 实体
- * @author xuxueli 2026-11-21
+ * @author xuxueli 2026-11-22
  */
 declare namespace API {
   /** Xxx 实体 */
@@ -128,7 +145,9 @@ declare namespace API {
     name?: string;
     /** 状态：0-正常、1-停用 */
     status?: number;
-    /** 新增时间 */
+    /** 备注 */
+    remark?: string;
+    /** 添加时间 */
     addTime?: string;
     /** 更新时间 */
     updateTime?: string;
@@ -136,15 +155,28 @@ declare namespace API {
 }
 ```
 
-### 7.2 api：`api/index.ts`
+注意：
 
-每个模块只导出一个命名空间对象，命名 `{business}Api`；对象内方法名直接复用后端 Controller 方法名（`pageList/load/insert/delete/update` 及业务方法），方法顺序尽量与后端保持一致。页面引入多个模块的 API 时通过命名空间区分，不再使用 import alias 规避重名。
+- `types/index.d.ts` 由 `tsconfig.json` 的 `include` 自动纳入，无需在页面 import。
+- 后端时间字段统一 `string`；前端只展示或回传，不做 Date 运算。
+- 新增关联类型时保持同一文件聚合，避免跨模块引用类型文件。
+
+### 4.4 api：`api/index.ts`
+
+| 规则 | 说明 |
+|---|---|
+| 导出形态 | 只导出一个 `{business}Api` 对象，页面按 `xxxApi.method(...)` 调用 |
+| 方法命名 | 与后端 Controller 方法名一致，不二次改名 |
+| 方法顺序 | `pageList / load / [业务方法] / insert / delete / update` |
+| 返回类型 | `request<API.Response<API.PageModel<API.Xxx>>>(...)` |
+| 分页 | 入参 `current/pageSize`，函数内转 `offset/pagesize` |
+| 删除 | 接收集合，`data: Array.isArray(ids) ? ids : [ids]` |
 
 ```ts
 /**
  * @fileoverview Xxx API
  * @description Xxx 接口，方法名与后端 XxxController 对齐
- * @author xuxueli 2026-11-21
+ * @author xuxueli 2026-11-22
  */
 import { request } from '@/utils/request';
 
@@ -153,7 +185,7 @@ export const xxxApi = {
   /**
    * 分页查询 Xxx
    *
-   * @param params 分页与查询条件（current/pageSize + 查询字段）
+   * @param params 分页与查询条件（current/pageSize + 筛选项）
    * @returns 分页结果
    */
   pageList(params: {
@@ -230,21 +262,25 @@ export const xxxApi = {
 };
 ```
 
-> 后端方法名不是标准 CRUD 时同样保持一致，例如 `loadByKey`、`markRead`、`updateSort`、`loadRoleRes`；前端只在命名空间内暴露同名方法，不做二次改名。列表接口仍由 API 内部把 ProTable 的 `current/pageSize` 转为后端 `offset/pagesize`。
+业务方法（如 `loadByKey`、`markRead`、`getReadUsers`）插在 `load` 之后、`insert` 之前，命名与后端一致；
+页面引入多个模块 API 时用命名空间区分，禁止 `import as` 改名。
 
-### 7.3 页面：`pages/index.tsx`
+### 4.5 页面：`pages/index.tsx`
+
+`PageContainer + ProTable` 是唯一列表方案；不引入 `ahooks/useRequest`，也不另写表格封装。
 
 ```tsx
 /**
  * @fileoverview Xxx 管理
- * @description 分页表格 + 新增/修改 + 删除
- * @author xuxueli 2026-11-21
+ * @description 分页表格 + 新增/修改 + 单条/批量删除
+ * @author xuxueli 2026-11-22
  */
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { App, Button, Space, Tag } from 'antd';
-import React, { useRef, useState } from 'react';
+import { App, Button, Space, Tag, Tooltip } from 'antd';
+import { createStyles } from 'antd-style';
+import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { usePermission } from '@/hooks/usePermission';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
@@ -252,13 +288,33 @@ import { xxxApi } from '../api';
 import XxxFormModal from './XxxFormModal';
 
 /**
- * Xxx 列表页
- * 功能：分页表格 + 新增/修改弹窗 + 单条/批量删除
+ * Xxx 表格样式
+ * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
  */
+const useStyles = createStyles(({ css }) => ({
+  xxxTable: css`
+    .ant-pro-table-list-toolbar-container {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
+      justify-content: flex-start;
+    }
+
+    .ant-pro-table-list-toolbar-container
+      .ant-pro-table-list-toolbar-right
+      .ant-pro-table-list-toolbar-setting-items {
+      margin-left: auto;
+    }
+  `,
+}));
+
+/** Xxx 列表页 */
 const XxxList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();
+  const { styles } = useStyles();
 
   const [formOpen, setFormOpen] = useState(false); /* 表单弹窗显隐 */
   const [formCurrent, setFormCurrent] = useState<API.Xxx | null>(null); /* 当前编辑行，null 表示新增 */
@@ -273,11 +329,13 @@ const XxxList = () => {
    * @param row 行数据，省略时删除勾选行
    */
   const handleDelete = (row?: API.Xxx) => {
-    const ids = row ? [row.id as number] : selectedIds;
+    const ids = row ? (row.id != null ? [row.id] : []) : selectedIds;
     if (ids.length === 0) return;
     modal.confirm({
       title: t('modal.title'),
-      content: t('business.xxx.confirmDelete', [ids.join(',')]),
+      content: row
+        ? t('business.xxx.confirmDelete', [row.name ?? String(row.id)])
+        : t('business.xxx.confirmBatchDelete', [ids.length]),
       onOk: async () => {
         await xxxApi.delete(ids);
         message.success(t('common.deleteSuccess'));
@@ -290,7 +348,12 @@ const XxxList = () => {
   /** 表格列定义：序号、名称、状态、更新时间、操作 */
   const columns: ProColumns<API.Xxx>[] = [
     { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
-    { title: t('business.xxx.name'), dataIndex: 'name', ellipsis: true },
+    {
+      title: t('business.xxx.name'),
+      dataIndex: 'name',
+      ellipsis: true,
+      render: (_, record) => <Tooltip title={record.name}>{record.name}</Tooltip>,
+    },
     {
       title: t('common.status'),
       dataIndex: 'status',
@@ -303,7 +366,12 @@ const XxxList = () => {
         </Tag>
       ),
     },
-    { title: t('business.xxx.updateTime'), dataIndex: 'updateTime', search: false, width: 180 },
+    {
+      title: t('common.addTime'),
+      dataIndex: 'addTime',
+      search: false,
+      width: 180,
+    },
     {
       title: t('common.operation'),
       valueType: 'option',
@@ -333,51 +401,60 @@ const XxxList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <ProTable<API.Xxx>
-        actionRef={actionRef}
-        rowKey="id"
-        columns={columns}
-        search={{ labelWidth: 80, optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()] }}
-        request={async (params) => {
-          const res = await xxxApi.pageList(params);
-          return {
-            data: res.data?.data || [],
-            total: res.data?.total || 0,
-            success: true,
-          };
-        }}
-        toolBarRender={() => [
-          hasPermi('{module}:{business}:add') && (
-            <Button
-              key="add"
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setFormCurrent(null);
-                setFormOpen(true);
-              }}
-            >
-              {t('common.add')}
-            </Button>
-          ),
-          hasPermi('{module}:{business}:remove') && (
-            <Button
-              key="delete"
-              danger
-              icon={<DeleteOutlined />}
-              disabled={!selectedIds.length}
-              onClick={() => handleDelete()}
-            >
-              {t('common.delete')}
-            </Button>
-          ),
-        ]}
-        rowSelection={{
-          onChange: (_keys, rows) => setSelectedIds(rows.map((r) => r.id as number)),
-        }}
-        pagination={{ defaultPageSize: 10, pageSizeOptions: [10, 20, 50, 100], showSizeChanger: true }}
-        tableAlertRender={false}
-      />
+      <div className={styles.xxxTable}>
+        <ProTable<API.Xxx>
+          actionRef={actionRef}
+          rowKey="id"
+          columns={columns}
+          search={{
+            labelWidth: 80,
+            optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
+          }}
+          request={async (params) => {
+            const res = await xxxApi.pageList(params);
+            return {
+              data: res.data?.data || [],
+              total: res.data?.total || 0,
+              success: true,
+            };
+          }}
+          toolBarRender={() => [
+            hasPermi('{module}:{business}:add') && (
+              <Button
+                key="add"
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setFormCurrent(null);
+                  setFormOpen(true);
+                }}
+              >
+                {t('common.add')}
+              </Button>
+            ),
+            hasPermi('{module}:{business}:remove') && (
+              <Button
+                key="delete"
+                danger
+                icon={<DeleteOutlined />}
+                disabled={!selectedIds.length}
+                onClick={() => handleDelete()}
+              >
+                {t('common.delete')}
+              </Button>
+            ),
+          ]}
+          rowSelection={{
+            onChange: (_keys, rows) => setSelectedIds(rows.map((r) => r.id as number)),
+          }}
+          pagination={{
+            defaultPageSize: 10,
+            pageSizeOptions: [10, 20, 50, 100],
+            showSizeChanger: true,
+          }}
+          tableAlertRender={false}
+        />
+      </div>
       <XxxFormModal
         open={formOpen}
         onOpenChange={setFormOpen}
@@ -391,26 +468,44 @@ const XxxList = () => {
 export default XxxList;
 ```
 
-### 7.4 表单弹窗：`pages/XxxFormModal.tsx`（推荐）
+约定：
+
+| 主题 | 约定 |
+|---|---|
+| 列表容器 | `PageContainer ghost title={false}` + `ProTable` |
+| 请求 | `request` 内调 API，返回 `{ data, total, success: true }`；数据取 `res.data?.data`，总数取 `res.data?.total` |
+| 搜索 | `search={{ optionRender: (_, __, dom) => [...dom.reverse()] }}` 让查询/重置靠右或按现有页面保持一致 |
+| 序号 | 首列 `dataIndex: 'id'`，展示数据库主键，不用 `render` 生成页内序号 |
+| 状态列 | `valueEnum` 负责筛选下拉，`render` 负责 Tag 展示 |
+| 刷新 | 新增/修改/删除成功后 `actionRef.current?.reload()` |
+| 勾选 | `rowSelection.onChange` 同步 `selectedIds`；删除后清空 |
+| 分页 | `pagination` 固定 `defaultPageSize: 10`，`showSizeChanger` |
+| 样式 | 需要调整工具栏布局时用 `antd-style` 的 `createStyles`，不要写全局覆盖 |
+
+平台内置页面（`modules/framework/**`）按角色控制时用 `hasRole('admin')`；业务页面用 `hasPermi`，不要混用。
+
+### 4.6 表单弹窗：`pages/XxxFormModal.tsx`
+
+新增/修改统一用受控 `ModalForm`，通过 props 传入当前行与成功回调，不在父页面用 ref 暴露 `open()`：
 
 ```tsx
 /**
  * @fileoverview XxxFormModal（Xxx 新增/编辑弹窗）
  * @description 新增/编辑表单
- * @author xuxueli 2026-11-21
+ * @author xuxueli 2026-11-22
  */
-import { ModalForm, ProFormRadio, ProFormText } from '@ant-design/pro-components';
+import {
+  ModalForm,
+  ProFormRadio,
+  ProFormText,
+  ProFormTextArea,
+} from '@ant-design/pro-components';
 import { App } from 'antd';
-import React from 'react';
 import { t } from '@/i18n';
 import { xxxApi } from '../api';
 
-const XxxFormModal = ({
-  open,
-  onOpenChange,
-  current,
-  onSuccess,
-}: {
+/** 表单弹窗属性 */
+interface XxxFormModalProps {
   /** 弹窗显隐 */
   open: boolean;
   /** 显隐变更回调 */
@@ -419,7 +514,10 @@ const XxxFormModal = ({
   current?: API.Xxx | null;
   /** 保存成功回调 */
   onSuccess?: () => void;
-}) => {
+}
+
+/** Xxx 新增/编辑弹窗 */
+function XxxFormModal({ open, onOpenChange, current, onSuccess }: XxxFormModalProps) {
   const { message } = App.useApp();
 
   /**
@@ -430,6 +528,7 @@ const XxxFormModal = ({
    */
   const handleFinish = async (values: API.Xxx) => {
     const data = { ...values };
+    // 后端维护时间字段，前端不回传
     delete data.addTime;
     delete data.updateTime;
     if (current?.id) {
@@ -453,6 +552,8 @@ const XxxFormModal = ({
       open={open}
       onOpenChange={onOpenChange}
       modalProps={{ destroyOnHidden: true }}
+      layout="horizontal"
+      labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
       initialValues={{ status: 0, ...current }}
     >
@@ -470,63 +571,140 @@ const XxxFormModal = ({
           { value: 1, label: t('common.disabled') },
         ]}
       />
+      <ProFormTextArea
+        name="remark"
+        label={t('common.remark')}
+        placeholder={t('common.inputPlaceholder', [t('common.remark')])}
+        fieldProps={{ rows: 2 }}
+      />
     </ModalForm>
   );
-};
+}
 
 export default XxxFormModal;
 ```
 
-### 7.5 React 页面约定
+约定：
 
-- 列表页基于 `ProTable + PageContainer`；`request` 直接调用 API 并返回 `{ data, total, success }`，**不要引入 `ahooks/useRequest`**（项目未安装该依赖）。
-- 类型统一 `declare namespace API { type Xxx = {...} }`；全局类型 `API.Response/API.PageModel` 已由 `types/index.d.ts` 合并。
-- API 统一按 `{business}Api.method(...)` 调用，方法名与后端 Controller 保持一致；一个页面引入多个模块 API 时直接用命名空间区分，禁止用 import alias 改名。
-- API 入参用 `current/pageSize`，函数内转 `offset/pagesize`；其余接口通道遵循 `AGENTS.md`「前端通用规范」。
-- 权限用 `usePermission().hasPermi('{module}:{business}:add')`；角色控制用 `hasRole('admin')`（平台 message 示例即用角色控制）。
-- 枚举：`useEnumOption('XxxEnum')` 返回 `EnumOption[]`（不是按枚举名分组），配合 `toValueEnum`（表格列）/`toSelectOptions`（Select/ProFormSelect）。
-- 字典：平台没有 React 版 `useDict` hook；使用 `loadDictItem`（`@/modules/framework/system/dict/api`）配合 `useEffect/useState` 或 ProForm 的 `request` 加载 options。
-- 删除确认用 `App.useApp().modal.confirm`（`onOk` 内发请求），提示用 `App.useApp().message`；成功后 `actionRef.current?.reload()`。
-- 弹窗/抽屉用受控 `open` + `onClose`，展示数据通过 props 传入；不用 ref 暴露 `open()` 等命令式方法。
+- `modalProps={{ destroyOnHidden: true }}` 保证关闭后销毁，配合 `initialValues` 自动复位。
+- 修改时以 `current.id` 判定；提交前删除 `addTime/updateTime`。
+- 表单校验用 `rules`；错误提示走 `t('common.requiredMsg', [...])`。
+- 业务不可变字段（如编码/Key）在修改时 `disabled={!!current?.id}`，与后端校验保持一致。
+- 无权限的提交按钮由父页面控制入口；弹窗本身不重复做权限判断。
+- 字段多、需要分组时用 `ProForm.Group` / `Row + Col`；富文本用 `@/components` 的 `Editor`。
 
-### 7.6 注释与 JSDoc
+### 4.7 子页面：详情 / 关联列表
 
-遵循 `AGENTS.md`「注释规范」。React 侧落地：
+- 详情优先用 `Drawer`，关联列表用 `Modal + Table`，均为受控 `open` + `onClose`。
+- 打开时按 `open`/`payload` 触发 `useEffect` 加载；关闭时清空本地数据。
+- 参考 `system/message/pages/MessageDetail/index.tsx`（Drawer + `useEffect` + `destroyOnHidden`）与
+  `pages/ReadUsersDialog/index.tsx`（Modal + Table 分页）。
+- 需要菜单直达的子页才放 `pages/{Sub}/index.tsx`；仅局部复用的弹窗/抽屉放 `pages/{Sub}.tsx`。
 
-- 遵循 `AGENTS.md`「注释规范」，文件头与导出成员统一 JSDoc：
+### 4.8 组件与 Hooks 约定
 
-```ts
-/**
- * @fileoverview 站内消息页面
- * @description 分页表格 + 新增/修改 + 删除
- * @author xuxueli 2026-11-21
- */
-```
+| 主题 | 约定 |
+|---|---|
+| 组件声明 | 普通函数 + 显式 props 接口；禁止 `React.FC`/`forwardRef`/`propTypes`/函数组件 `defaultProps` |
+| React 导入 | `jsx: react-jsx`，无需为 JSX 引入 React；用到 `React.ReactNode` 等类型时按需导入 |
+| 状态 | 局部 `useState`；派生数据用 `useMemo`；不引入额外状态库 |
+| 提示 | `App.useApp().message` / `App.useApp().modal`；不用静态 `message.xxx` |
+| 异常 | 请求失败由 `@/utils/request` 统一提示；页面 `await` 失败时保留弹窗，不重复弹错 |
+| 权限 | `usePermission().hasPermi / hasRole` |
+| 枚举 | `useEnumOption('XxxEnum')` → `toValueEnum`（表格列）/ `toSelectOptions`（Select/ProFormSelect） |
+| 字典 | 无 React 版 `useDict`；用 `loadDictItem`（`@/modules/framework/system/dict/api`）+ `useEffect/useState` 或 ProForm `request` |
+| 复用 | 优先 `@/hooks`、`@/components`、`@/utils/request`；同一逻辑第三次出现才新增 Hook |
 
-- 类型文件同样补 `@fileoverview` / `@description` / `@author`，实体字段用 `/** ... */` 说明含义。
-- 组件、Props、API 函数、Hook 使用 JSDoc；复杂函数补 `@param` / `@returns`。
-- 简单内联回调不强制 JSDoc；核心分支用 `//` 说明原因。
-- 保留现有 `PageContainer`、`ProTable` 等关键逻辑的区块注释。
+### 4.9 注释与结构
 
-## 八、菜单 / 权限
+- 文件头用 JSDoc：`@fileoverview` + 功能 + `@description`（可选）+ `@author 作者 yyyy-MM-dd`。
+- 组件、Props、API 函数、Hook 用 JSDoc；复杂函数补 `@param` / `@returns`。
+- 核心分支用 `//` 说明原因；简单内联回调不强制 JSDoc。
+- 保留 `PageContainer`、`ProTable`、弹窗等关键逻辑的区块注释；禁止无意义注释与注释掉的死代码。
 
-与 Vue 模式一致（前端菜单同样由 `xxl_boot_resource` 的 `url` 驱动，React `loadView` 映射到 `pages/index.tsx`）：
+### 4.10 禁止项
+
+- 禁止使用项目未安装的依赖（如 `ahooks`）。
+- 禁止另写 `fetch/axios` 封装或第二套表格组件。
+- 禁止 `React.FC`、`forwardRef`、`propTypes`、函数组件 `defaultProps`。
+- 禁止在页面内直接操作 `res.data` 之外的原始响应；统一 `res.data?.data` / `res.data?.total`。
+- 禁止用 ref 暴露 `open()` 等命令式弹窗方法；一律受控 `open`。
+- 禁止硬编码中文文案；统一 `t()`。
+
+### 4.11 新模块落地顺序
+
+1. 建 `xxl-boot-spec/{yyyyMMdd}-{business}/plan.md`，确认字段、枚举、权限、页面形态。
+2. 建表并落盘 SQL；后端按第五节生成 Entity/Mapper/Service/Controller。
+3. 前端复制 `system/config` 三件套 + `ConfigFormModal`，替换命名、路径、字段。
+4. 补 i18n `business.{module}.{business}` 节点（zh/en 成对）。
+5. 插菜单/按钮并授权，打开页面联调。
+6. 按第十一节清单逐项复核。
+
+## 五、后端落位（React / Vue 共用）
+
+> 后端与 Vue 模式完全一致（前端形态不影响后端契约），权威契约见 `AGENTS.md`「后端通用规范」；
+> 完整骨架直接对照 `framework/.../system/Config*` 实现。本节只列 React 任务必须核对的要点。
+
+### 5.1 文件清单
+
+| 文件 | 位置 |
+|---|---|
+| `Xxx.java` | `java/.../business/{module}/{business}/model/Xxx.java` |
+| `XxxDTO.java` / `XxxAdaptor.java` | 同目录 `model/dto/`、`model/adaptor/`（可选，列表展示用） |
+| `XxxMapper.java` | 同目录 `mapper/XxxMapper.java` |
+| `XxxMapper.xml` | `resources/mapper/business/{module}/{business}/XxxMapper.xml` |
+| `XxxService.java` / `XxxServiceImpl.java` | 同目录 `service/(impl/)` |
+| `XxxController.java` | 同目录 `controller/XxxController.java` |
+
+### 5.2 接口契约
+
+| 方法 | 通道 | 入参 | 返回 |
+|---|---|---|---|
+| `pageList` | GET/POST 均可 | `offset`（默认 0）、`pagesize`（默认 10）、筛选项（状态默认 `-1`） | `Response<PageModel<XxxDTO>>` |
+| `load` | GET | `id` | `Response<Xxx>` |
+| `insert` | JSON Body | `Xxx` | `Response<String>` |
+| `delete` | JSON 裸数组 | `List<Integer> ids` | `Response<String>` |
+| `update` | JSON Body | `Xxx`（含 id） | `Response<String>` |
+
+### 5.3 核对要点
+
+- 全部方法 `@XxlSso`；方法顺序 `pageList / load / insert / delete / update`；Controller 不写业务规则。
+- Entity 字段与表一致；`Date` 加 `@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")`。
+- Mapper XML 显式 `resultMap` + `Base_Column_List`；`add_time/update_time` 用 `NOW()`；查询条件用 `<if>`。
+- 校验（必填、格式、唯一性）与错误文案走 `I18nUtil`；键维护在 `xxl-boot-api/src/main/resources/i18n/message_{zh,en}.properties`。
+- 列表需要格式化时间或裁剪字段时加 DTO + Adaptor（参考 `ConfigDTO` / `ConfigAdaptor`）。
+
+后端范本：
+
+- `xxl-boot-api/src/main/java/com/xxl/boot/api/framework/controller/system/ConfigController.java`
+- `.../framework/service/impl/ConfigServiceImpl.java`
+- `.../framework/mapper/system/ConfigMapper.java`
+- `xxl-boot-api/src/main/resources/mapper/framework/system/ConfigMapper.xml`
+- `.../framework/model/entity/Config.java`、`model/dto/ConfigDTO.java`、`model/adaptor/ConfigAdaptor.java`
+
+## 六、菜单、权限与页面定位
+
+### 6.1 菜单 / 按钮 SQL
 
 ```sql
 SET NAMES utf8mb4;
 
+-- 菜单（type=1；url 同时充当路由 path 与页面定位 key）
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
 VALUES (0, '{businessName}管理', 1, '{module}:{business}', '/{module}/{business}', '', 999, 0, 0, now(), now());
 SELECT @parentId := LAST_INSERT_ID();
 
+-- 按钮（type=2）
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
 VALUES (@parentId, '{businessName}新增', 2, '{module}:{business}:add', '', '', 1, 0, 0, now(), now()),
        (@parentId, '{businessName}修改', 2, '{module}:{business}:edit', '', '', 2, 0, 0, now(), now()),
        (@parentId, '{businessName}删除', 2, '{module}:{business}:remove', '', '', 3, 0, 0, now(), now());
 
+-- 按钮 ID（多值插入 LAST_INSERT_ID 返回首行，自增连续）
 SELECT @btnAddId := LAST_INSERT_ID();
 SET @btnEditId = @btnAddId + 1, @btnDelId = @btnAddId + 2;
 
+-- 授权（默认管理员 role_id=1）
 INSERT INTO `xxl_boot_role_res` (`role_id`,`res_id`,`add_time`,`update_time`)
 VALUES (1, @parentId, now(), now()),
        (1, @btnAddId, now(), now()),
@@ -534,23 +712,53 @@ VALUES (1, @parentId, now(), now()),
        (1, @btnDelId, now(), now());
 ```
 
-- 权限标识统一 `{module}:{business}:add|edit|remove`，与 `hasPermi` 保持一致；新菜单必须在 `xxl_boot_role_res` 授权。
-- 页面必须是 `pages/index.tsx`（`loadView` 只识别该路径）；子页面放 `pages/xxx/index.tsx`，菜单 `url` 写 `/{module}/{business}/xxx`。**无需改路由代码。**
+### 6.2 页面定位
 
-## 九、枚举 / 字典
+- `loadView` 的模块 glob 为 `@/modules/**/index.tsx`，且只匹配 `{url}/index`：
+  - 菜单 `url='/{module}/{business}'` → `pages/index.tsx`；
+  - 子菜单 `url='/{module}/{business}/{sub}'` → `pages/{sub}/index.tsx`。
+- 局部组件（如 `pages/XxxFormModal.tsx`）不会注册为路由，只能被页面 import。
+- 页面定位只认 `modules/framework|business/**`，**无需改前端路由代码**。
 
-- 业务枚举放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
-- 枚举下拉：`useEnumOption('XxxEnum')` 返回 `EnumOption[]`，配合 `toValueEnum`（表格列）/`toSelectOptions`（Select/ProFormSelect）。
-- 数据字典：平台无 React 版 `useDict`，用 `loadDictItem` + `useEffect/useState` 或 ProForm 的 `request` 加载 options。
+原则：业务页面按钮用 `hasPermi('{module}:{business}:add|edit|remove')`，与资源表 `permission` 一致；
+平台内置页面（如 `system/config`）继续用 `hasRole('admin')`。新菜单必须在 `xxl_boot_role_res` 授权。
 
-## 十、i18n（React）
+## 七、枚举与字典
 
-- 文案文件：`src/i18n/locales/{zh,en}.json`（单一文件，按域名节点分区，`business.*` 放最后）。
-- 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 受 `MessageKey` 类型约束，先补文案再引用。
-- 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`，antd 语言随当前语言切换。
+| 能力 | 用法 | 说明 |
+|---|---|---|
+| 枚举选项 | `const statusOptions = useEnumOption('XxxStatusEnum')` | 每次加载一个枚举，TanStack Query 永久缓存 |
+| 表格筛选/展示 | `toValueEnum(statusOptions)` | 供 `ProColumns.valueEnum` |
+| 下拉选项 | `toSelectOptions(statusOptions)` | 供 `Select` / `ProFormSelect.options` |
+| 数据字典 | `loadDictItem(type)` + `useEffect/useState` | 平台无 React 版 `useDict` |
+
+- 后端业务枚举放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
+- 状态筛选需要“全部”时，由 ProTable 的空值语义处理，不要额外造 `-1` 选项；后端用默认值 `-1` 兜底。
+- 业务字段能落枚举/字典就不要硬编码数字与文案。
+
+## 八、i18n（React）
+
+- 文案文件：`src/i18n/locales/{zh,en}.json`；平台文案按 `system.*`，业务文案按 `business.{module}.{business}.*` 分区。
+- 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 由 `zh.json` 推导为 `MessageKey`，先补文案再引用。
+- 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`。
 - 新增业务文案 zh/en 成对提交，页面禁止硬编码中文（注释除外）。
 
-## 十一、代码生成器（React）
+```json
+{
+  "business": {
+    "xxx": {
+      "title": "Xxx",
+      "name": "名称",
+      "confirmDelete": "是否确认删除\"{0}\"？",
+      "confirmBatchDelete": "是否确认删除选中的 {0} 项？"
+    }
+  }
+}
+```
+
+通用词优先复用 `common.*`（`add/edit/delete/status/requiredMsg/titleAdd/titleEdit`）与 `common.noun.*`。
+
+## 九、代码生成器（React）
 
 后台「工具-代码生成」或接口：
 
@@ -559,39 +767,89 @@ POST /tool/codegen/createTable
 { "tableSql": "CREATE TABLE xxl_boot_xxx (...)", "tplWebType": "antd-typescript" }
 ```
 
-流程：`createTable` 建记录 → `update` 编辑字段 → `preview` 预览 / `batchGenCode?ids=...` 下载 zip。
+流程：`createTable` 建记录 → `update` 编辑字段（`queryType/htmlType/dictType/isQuery/isList/isInsert/isEdit/isRequired`）
+→ `preview` 预览 / `batchGenCode?ids=...` 下载 zip。
 
 产物：
 
-- 后端与 Vue 模式相同：`main/java/.../business/{module}/{business}/...` + `main/resources/mapper/business/{module}/{business}/...` + `{Business}-init.sql`；
+- 后端与 Vue 模式相同：`main/java/.../business/{module}/{business}/...` +
+  `main/resources/mapper/business/{module}/{business}/...` + `{Business}-init.sql`；
 - 前端：`react/business/{module}/{business}/{types,api,pages}`，页面为 `pages/index.tsx`；
-- `tplCategory=tree` 时前端出 `index-tree.tsx`。
+- `tplCategory=tree` 时出 `index-tree.tsx`。
 
-> 解压后按项目目录合并，并做 React 专属修正：
-> - 模板把新增/修改弹窗直接写在 `pages/index.tsx` 内的 `Modal + Form`；如需独立弹窗，拆为 `pages/XxxFormModal.tsx`（推荐 `ModalForm`）；
-> - 生成代码默认硬编码中文，需迁移到 i18n；查询条件与组件写法按本 SKILL 复核；
-> - 其余固定缺口（查询条件、校验、树表）按 `AGENTS.md`「代码生成器」逐项补齐。
+解压合并后必须修正（生成器只是基线）：
 
-## 十二、校验清单
+| 缺口 | 修正 |
+|---|---|
+| 查询条件 | `pageList` 只生成 `offset/pagesize`，按 `isQuery` 补 API 参数、后端 Controller/Service/Mapper |
+| 弹窗形态 | 模板把 `Modal + Form` 写在 `index.tsx`；字段多或需复用时拆为 `pages/XxxFormModal.tsx`（`ModalForm`） |
+| 校验 | 只有空值判断；补必填、长度、格式、唯一性与友好提示 |
+| i18n | 模板硬编码中文；迁移到 `t()` 与 `business.*` |
+| 类型 | 模板只生成 `API.Xxx`；补关联实体、必要的 `API.XxxQuery` |
+| 组件声明 | 确认普通函数 + props 接口，不引入 `React.FC` |
+| 未用导入 | 清理模板生成的冗余 `React` / 组件导入 |
 
-- [ ] 已加载 `xxl-boot-react`，且未混用 Vue/单体写法。
-- [ ] 注释符合规范：TSX 文件头含 `@author`，组件/API/核心分支注释齐全，无无意义注释和注释掉的死代码。
-- [ ] `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md` 六大块与 SQL 已落盘并同步（模板见 `AGENTS.md`「需求落盘」）。
-- [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
-- [ ] 前端 types 用 `declare namespace API`；api 以 `{business}Api` 命名空间导出且方法名与后端 Controller 对齐，返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`。
-- [ ] 页面为 `pages/index.tsx`，`ProTable.request` 取 `res.data?.data/total`；未引入项目不存在的依赖（如 `ahooks`）。
-- [ ] 组件声明符合规范：普通函数 + 显式 props，无 `React.FC`/`forwardRef`/`propTypes`/函数组件 `defaultProps`；弹窗用受控 `open`。
-- [ ] 按钮 `hasPermi`；资源表菜单+按钮已插且已授权；菜单可见、页面能打开。
-- [ ] i18n：后端错误文案走 `I18nUtil`，前端页面无硬编码中文（注释除外），语言由后端 `system.i18n.language` 控制，前端已由 `/loadBaseConfig` 同步。
-- [ ] SQL 按 `AGENTS.md`「SQL 执行规范」执行，中文无乱码。
-- [ ] 联调：列表/新增/修改/删除/搜索可用，无权限按钮隐藏，空参数后端友好提示。
+## 十、初始化与联调
 
-## 十三、参考文件
+- 数据库：按 `AGENTS.md`「SQL 执行规范」依次执行 `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql`。
+- 环境：Node 20+、JDK 17+、Maven 3.6+、Redis。
+- 数据源：`xxl-boot-api/src/main/resources/application.properties`（默认 `127.0.0.1:3306/xxl_boot`，`root/root_pwd`）；默认账号 `admin`。
+- 后端：`cd xxl-boot-api && mvn spring-boot:run`（8090）。
+- 前端：`cd xxl-boot-ui/xxl-boot-ui-react && npm i && npm run dev`（4000）。
+- 校验命令：
 
-- 后端直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/java/*.ftl`
-- React 直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/react/*.ftl`
-- 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-react/src/modules/framework/system/message/pages/index.tsx`
-- 表单弹窗样例：`xxl-boot-ui/xxl-boot-ui-react/src/modules/framework/system/message/pages/MessageFormModal.tsx`
-- API / 类型样例：`xxl-boot-ui/xxl-boot-ui-react/src/modules/framework/system/message/{api,types}/index.{ts,d.ts}`
-- Hooks：`xxl-boot-ui/xxl-boot-ui-react/src/hooks/{useEnumOption,usePermission}.ts`
-- 菜单 SQL 模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl`
+```bash
+cd xxl-boot-api && mvn -q compile
+cd xxl-boot-ui/xxl-boot-ui-react && npm run type-check && npm run build
+```
+
+## 十一、校验清单
+
+**结构与命名**
+
+- [ ] 已加载 `xxl-boot-react`，未混用 Vue/单体写法。
+- [ ] 目录为 `business/{module}/{business}`，接口路径、菜单 url、权限标识一致。
+- [ ] 主页面为 `pages/index.tsx`；子页为 `pages/{Sub}/index.tsx`；局部弹窗平铺 `pages/*.tsx`。
+
+**前端**
+
+- [ ] `types` 使用 `declare namespace API`，实体字段与后端一致；关联类型同文件聚合。
+- [ ] `api` 以 `{business}Api` 导出，返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`。
+- [ ] 页面基于 `PageContainer + ProTable`；`request` 返回 `{ data, total, success }`，取 `res.data?.data/total`。
+- [ ] 表单用受控 `ModalForm`（独立 `XxxFormModal` 或简单内联）；提交删除时间字段，成功后 `reload`。
+- [ ] 无 `ahooks` 等未安装依赖；无第二套请求/表格封装。
+- [ ] 组件为普通函数 + 显式 props；无 `React.FC`/`forwardRef`/`propTypes`/`defaultProps`。
+- [ ] `hasPermi` 与按钮权限一致；平台页才用 `hasRole`。
+- [ ] 文案走 `t()`，`business.*` zh/en 成对；无硬编码中文。
+- [ ] `npm run type-check` 与 `npm run build` 通过。
+
+**后端**
+
+- [ ] `mvn -q compile` 通过；方法顺序 `pageList/load/insert/delete/update`；全部 `@XxlSso`。
+- [ ] `pageList` 支持 `isQuery` 字段；Mapper XML 条件与 `pageListCount` 一致。
+- [ ] 校验、唯一性、友好提示齐全；错误文案走 `I18nUtil`。
+- [ ] Entity/DTO/Adaptor 与表字段一致；时间字段格式统一。
+
+**数据与联调**
+
+- [ ] `plan.md` 六大块与 SQL 已落盘；SQL 含 `SET NAMES utf8mb4;` 且中文无乱码。
+- [ ] 菜单/按钮已插库并在 `xxl_boot_role_res` 授权；菜单可见、页面能打开。
+- [ ] 列表/新增/修改/删除/搜索可用；无权限按钮隐藏；空参数后端友好提示。
+- [ ] 注释符合 `AGENTS.md`：文件头含 `@author`，组件/API/核心分支注释齐全，无死代码。
+
+## 十二、参考文件
+
+| 用途 | 路径 |
+|---|---|
+| 前端标准范本 | `xxl-boot-ui/xxl-boot-ui-react/src/modules/framework/system/config/{types,api,pages}` |
+| 表单弹窗范本 | `.../system/config/pages/ConfigFormModal.tsx` |
+| 进阶形态范本 | `.../system/message/pages/{MessageDetail,ReadUsersDialog}/index.tsx` |
+| Hooks | `xxl-boot-ui/xxl-boot-ui-react/src/hooks/{useEnumOption,usePermission}.ts` |
+| 全局类型 | `xxl-boot-ui/xxl-boot-ui-react/src/types/index.d.ts` |
+| 路由定位 | `xxl-boot-ui/xxl-boot-ui-react/src/router/index.tsx` |
+| i18n | `xxl-boot-ui/xxl-boot-ui-react/src/i18n/index.ts`、`i18n/locales/{zh,en}.json` |
+| 后端范本 | `xxl-boot-api/.../framework/{controller/service/mapper/model}` 下 `Config*` |
+| 后端代码生成模板 | `xxl-boot-api/src/main/resources/templates/tool/codegen/java/*.ftl` |
+| React 代码生成模板 | `xxl-boot-api/src/main/resources/templates/tool/codegen/react/*.ftl` |
+| 菜单 SQL 模板 | `xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl` |
+| 代码生成前端页 | `xxl-boot-ui/xxl-boot-ui-react/src/modules/framework/tool/codegen/` |
