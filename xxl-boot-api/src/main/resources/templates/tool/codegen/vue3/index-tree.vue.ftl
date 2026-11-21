@@ -30,26 +30,26 @@
 <template>
   <div class="app-container">
     <!-- 搜索栏 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch" label-width="auto">
       <el-form-item label="名称" prop="name">
         <el-input v-model="queryParams.name" placeholder="请输入名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">{{ t('common.search') }}</el-button>
+        <el-button icon="Refresh" @click="resetQuery">{{ t('common.reset') }}</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:add']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:add']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:edit']">修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:edit']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:remove']">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:remove']">{{ t('common.delete') }}</el-button>
       </el-col>
     </el-row>
 
@@ -65,14 +65,14 @@
 </#if>
       <el-table-column label="操作" align="center" width="200">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:edit']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['${codegen.moduleName}:${codegen.businessName?lower_case}:remove']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <!-- 添加或修改${codegen.functionName}对话框 -->
-    <el-dialog :title="formState.title" v-model="formState.visible" width="600px" append-to-body>
+    <el-dialog :title="formState.title" v-model="formState.visible" width="600px" append-to-body :close-on-click-modal="false" @closed="reset">
 <#assign formColNum = codegen.formColNum!1 />
 <#if formColNum lt 1><#assign formColNum = 1 /></#if>
 <#assign colSpan = (24 / formColNum)?int />
@@ -108,13 +108,13 @@
 <#elseif field.htmlType == "radio">
         <el-form-item label="${comment}" prop="${field.javaField}">
           <el-radio-group v-model="formState.form.${field.javaField}">
-            <el-radio v-for="dict in <#if field.dictType?has_content>(dicts.${field.dictType} || [])<#else>[]</#if>" :key="dict.value" :label="dict.value">{{ dict.label }}</el-radio>
+            <el-radio v-for="dict in <#if field.dictType?has_content>(dicts.${field.dictType} || [])<#else>[]</#if>" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
 <#elseif field.htmlType == "checkbox">
         <el-form-item label="${comment}" prop="${field.javaField}">
           <el-checkbox-group v-model="formState.form.${field.javaField}">
-            <el-checkbox v-for="dict in <#if field.dictType?has_content>(dicts.${field.dictType} || [])<#else>[]</#if>" :key="dict.value" :label="dict.value">{{ dict.label }}</el-checkbox>
+            <el-checkbox v-for="dict in <#if field.dictType?has_content>(dicts.${field.dictType} || [])<#else>[]</#if>" :key="dict.value" :value="dict.value">{{ dict.label }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
 <#elseif field.htmlType == "datetime">
@@ -141,8 +141,8 @@
       </el-row>
     </el-form>
       <template #footer>
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button type="primary" @click="submitForm">{{ t('modal.confirmButton') }}</el-button>
+        <el-button @click="cancel">{{ t('modal.cancelButton') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -150,10 +150,10 @@
 
 <script setup lang="ts">
 defineOptions({ name: '${codegen.businessName}Tree' })
-import type { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance } from 'element-plus'
 import { ${codegen.businessName?uncap_first}Api } from '../api'
 import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}Query } from '../types'
-import { usePageParams } from '@/composables/usePageParams'
+import { t } from '@/i18n'
 import modal from '@/utils/modal'
 import type { FormState, TableState } from '@/types'
 import { ref } from 'vue'
@@ -205,11 +205,24 @@ const table = ref<${codegen.businessName}TableState>({
   multiple: true /* 是否多选 */
 })
 
+// 编辑表单默认值：新增初始值与每次重置共用
+const FORM_DEFAULTS: Readonly<${codegen.businessName}Form> = {
+  id: undefined, /* 编号 */
+  parentId: 0, /* 上级 */
+<#if fields?? && fields?size gt 0>
+<#list fields as field>
+<#if (field.isInsert == "1" || field.isEdit == "1") && field.javaField != "id" && field.javaField != "parentId" && field.javaField != "addTime" && field.javaField != "updateTime">
+  ${field.javaField}: undefined, /* ${field.columnComment!field.javaField} */
+</#if>
+</#list>
+</#if>
+}
+
 // 编辑表单：数据状态
 const formState = ref<FormState<${codegen.businessName}Form>>({
   visible: false, /* 对话框显隐 */
   title: '', /* 对话框标题 */
-  form: {}, /* 表单数据 */
+  form: { ...FORM_DEFAULTS }, /* 表单数据 */
   rules: {
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
@@ -224,13 +237,18 @@ const formState = ref<FormState<${codegen.businessName}Form>>({
 /** 查询${codegen.functionName}树表列表 */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 → 后端请求参数（offset/pagesize）
-  const params = usePageParams(queryParams)()
-  ${codegen.businessName?uncap_first}Api.pageList(params).then((res) => {
-    // 树表接口返回树数组（非分页结构），此处断言处理
-    table.value.list = res.data as unknown as ${codegen.businessName}[]
-    table.value.loading = false
-  })
+  // 分页与筛选参数由 API 内部转换为 offset/pagesize
+  ${codegen.businessName?uncap_first}Api.pageList(queryParams.value)
+    .then((res) => {
+      // 树表接口返回树数组（非分页结构），此处断言处理
+      table.value.list = res.data as unknown as ${codegen.businessName}[]
+    })
+    .catch(() => {
+      // 错误已由请求层提示，继续走到 finally 复位 loading
+    })
+    .finally(() => {
+      table.value.loading = false
+    })
 }
 
 
@@ -238,7 +256,7 @@ function getList() {
 
 /** 查询上级树选项 */
 function get${codegen.businessName}Treeselect() {
-  ${codegen.businessName?uncap_first}Api.pageList({ offset: 0, pagesize: 999 }).then((res) => {
+  ${codegen.businessName?uncap_first}Api.pageList({ pageNum: 1, pageSize: 999 }).then((res) => {
     table.value.options = res.data as unknown as ${codegen.businessName}[]
   })
 }
@@ -249,20 +267,10 @@ function cancel() {
   reset()
 }
 
-/** 表单重置 */
+/** 表单重置：恢复默认值并清除校验状态 */
 function reset() {
-  formState.value.form = {
-    id: undefined,
-    parentId: 0,
-<#if fields?? && fields?size gt 0>
-<#list fields as field>
-<#if (field.isInsert == "1" || field.isEdit == "1") && field.javaField != "id" && field.javaField != "parentId" && field.javaField != "addTime" && field.javaField != "updateTime">
-    ${field.javaField}: undefined, /* ${field.columnComment!field.javaField} */
-</#if>
-</#list>
-</#if>
-  }
-  ${codegen.businessName?uncap_first}Ref.value?.resetFields()
+  formState.value.form = { ...FORM_DEFAULTS }
+  ${codegen.businessName?uncap_first}Ref.value?.clearValidate()
 }
 
 /** 数字输入过滤：仅允许数字并同步表单（空值置 undefined） */
@@ -299,7 +307,7 @@ function handleAdd(row: any) {
     formState.value.form.parentId = row.id
   }
   formState.value.visible = true
-  formState.value.title = '新增${codegen.functionName}'
+  formState.value.title = t('common.titleAdd', ['${codegen.functionName}'])
 }
 
 /** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
@@ -312,9 +320,11 @@ function handleUpdate(row: any) {
     return
   }
   ${codegen.businessName?uncap_first}Api.load(id).then((res) => {
-    formState.value.form = res.data
+    // 表单只保留可编辑字段，避免把时间/联查字段回传到后端
+    const { addTime, updateTime, ...form } = res.data
+    formState.value.form = form
     formState.value.visible = true
-    formState.value.title = '修改${codegen.functionName}'
+    formState.value.title = t('common.titleEdit', ['${codegen.functionName}'])
   })
 }
 
@@ -325,13 +335,13 @@ function submitForm() {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != null) {
         ${codegen.businessName?uncap_first}Api.update(formState.value.form).then(() => {
-          modal.msgSuccess('修改成功')
+          modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
         ${codegen.businessName?uncap_first}Api.insert(formState.value.form).then(() => {
-          modal.msgSuccess('新增成功')
+          modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
         })
@@ -346,11 +356,11 @@ function handleDelete(row: any) {
   if (${codegen.businessName?uncap_first}Ids == null || (Array.isArray(${codegen.businessName?uncap_first}Ids) && ${codegen.businessName?uncap_first}Ids.length === 0)) {
     return
   }
-  modal.confirm('是否确认删除${codegen.functionName}编号为"' + ${codegen.businessName?uncap_first}Ids + '"的数据项？').then(() => {
+  modal.confirm(t('common.confirmDelete', [${codegen.businessName?uncap_first}Ids])).then(() => {
     return ${codegen.businessName?uncap_first}Api.delete(${codegen.businessName?uncap_first}Ids)
   }).then(() => {
     getList()
-    modal.msgSuccess('删除成功')
+    modal.msgSuccess(t('common.deleteSuccess'))
   }).catch(() => {})
 }
 

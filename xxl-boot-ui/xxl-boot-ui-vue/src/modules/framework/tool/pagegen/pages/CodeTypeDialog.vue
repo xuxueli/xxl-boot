@@ -17,7 +17,7 @@
       <!-- 生成类型选择 -->
       <el-form-item :label="t('tool.pagegen.genType')" prop="type">
         <el-radio-group v-model="formData.type">
-          <el-radio-button v-for="item in typeOptions" :key="item.value" :label="item.value">
+          <el-radio-button v-for="item in typeOptions" :key="item.value" :value="item.value">
             {{ item.label }}
           </el-radio-button>
         </el-radio-group>

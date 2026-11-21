@@ -9,7 +9,6 @@ import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
 import { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { t } from '@/i18n';
 import { dictApi } from '@/modules/framework/system/dict/api';
@@ -25,15 +24,12 @@ const DictData = () => {
 
   // ---------------------- 页面状态 ----------------------
 
-  // 从 URL 读取 dictId
-  const rawDictId = Number(new URLSearchParams(location.search).get('dictId'));
-  const dictId = Number.isNaN(rawDictId) ? undefined : rawDictId;
+  // 从 URL 读取 dictId；缺省时保持 undefined，避免 Number(null) 产生 0
+  const raw = new URLSearchParams(location.search).get('dictId');
+  const dictId = raw ? Number(raw) : undefined;
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.DictItem | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-
-  const dictStatusOptions = useEnumOption('DictStatusEnum');
-  const statusValueEnum = toValueEnum(dictStatusOptions);
 
   // ---------------------- 数据操作 ----------------------
 
@@ -60,13 +56,13 @@ const DictData = () => {
   /** 表格列：序号、名称、编码、状态、排序、备注、添加时间、操作 */
   const columns: ProColumns<API.DictItem>[] = [
     { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
-    { title: t('system.dict.itemName'), dataIndex: 'name' },
+    { title: t('system.dict.itemName'), dataIndex: 'name', search: false },
     { title: t('system.dict.itemCode'), dataIndex: 'code', search: false },
     {
       title: t('common.status'),
       dataIndex: 'status',
       width: 90,
-      valueEnum: statusValueEnum,
+      search: false,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
           {record.status === 0 ? t('common.normal') : t('common.disabled')}

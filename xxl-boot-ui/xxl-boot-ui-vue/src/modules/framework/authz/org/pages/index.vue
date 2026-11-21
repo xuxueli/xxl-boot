@@ -42,7 +42,7 @@
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
-    <!-- 数据列表 -->
+    <!-- 数据列表：名称与负责人列用 min-width 参与剩余宽度分配，窗口变化时随容器自适应 -->
     <el-table
       v-if="table.refreshTable"
       v-loading="table.loading"
@@ -52,7 +52,7 @@
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
       <!-- 树表首列保持名称，保证层级缩进与展开箭头落在名称列 -->
-      <el-table-column prop="name" :label="t('authz.org.name')" width="260" show-overflow-tooltip />
+      <el-table-column prop="name" :label="t('authz.org.name')" min-width="260" show-overflow-tooltip />
       <el-table-column :label="t('authz.org.order')" width="130" align="center">
         <template #default="scope">
           <el-input-number v-model="scope.row.order" controls-position="right" :min="0" style="width: 88px" />
@@ -65,7 +65,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="manager" :label="t('authz.org.manager')" width="120" align="center" />
+      <el-table-column prop="manager" :label="t('authz.org.manager')" min-width="120" align="center" />
       <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
       <el-table-column :label="t('common.operation')" align="left" width="220" class-name="small-padding fixed-width">
         <template #default="scope">

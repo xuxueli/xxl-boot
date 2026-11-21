@@ -16,6 +16,7 @@ import { App, Col, Row } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
 import { IconSelect } from '@/components';
+import { toSelectOptions, useEnumOption } from '@/hooks/useEnumOption';
 import { resourceApi } from '@/modules/framework/authz/resource/api';
 import { handleTree } from '@/utils/common';
 
@@ -31,6 +32,32 @@ const mapToSelect = (resources: API.Resource[]): any[] =>
 const toTreeSelectData = (resources: API.Resource[]): any[] => [
   { title: t('authz.resource.rootNode'), value: 0, children: mapToSelect(resources) },
 ];
+
+/** 在资源树中查找指定节点 */
+const findResourceNode = (
+  list: API.Resource[],
+  id: number,
+): API.Resource | undefined => {
+  for (const item of list) {
+    if (item.id === id) return item;
+    const found = findResourceNode(item.children || [], id);
+    if (found) return found;
+  }
+  return undefined;
+};
+
+/** 判断上级是否位于当前节点的子孙中，避免形成环 */
+const isParentInDescendants = (
+  list: API.Resource[],
+  id?: number,
+  parentId?: number,
+): boolean => {
+  if (id == null || parentId == null) return false;
+  if (id === parentId) return true;
+  const current = findResourceNode(list, id);
+  if (!current) return false;
+  return findResourceNode(current.children || [], parentId) != null;
+};
 
 // ---------------------- 表单组件 ----------------------
 
@@ -52,6 +79,8 @@ const FormModal = ({
   // 有主键即编辑态：驱动弹窗标题与提交分支
   const isEdit = current?.id != null;
   const [parentOptions, setParentOptions] = useState<API.Resource[]>([]);
+  const resourceTypeOptions = useEnumOption('ResourceTypeEnum');
+  const resourceVisibleOptions = useEnumOption('ResourceVisibleEnum');
 
   const parentTreeSelectData = useMemo(
     () => toTreeSelectData(parentOptions),
@@ -73,6 +102,10 @@ const FormModal = ({
 
   /** 提交表单：有主键走修改，否则新增 */
   const handleFinish = async (values: API.ResourceForm) => {
+    if (isParentInDescendants(parentOptions, current?.id, values.parentId)) {
+      message.error(t('authz.resource.parentInvalid'));
+      return false;
+    }
     if (isEdit) {
       await resourceApi.update({ ...values, id: current?.id });
     } else {
@@ -125,11 +158,7 @@ const FormModal = ({
           <ProFormRadio.Group
             name="type"
             label={t('authz.resource.type')}
-            options={[
-              { value: 0, label: t('authz.resource.typeDir') },
-              { value: 1, label: t('authz.resource.typeMenu') },
-              { value: 2, label: t('authz.resource.typeBtn') },
-            ]}
+            options={toSelectOptions(resourceTypeOptions)}
           />
         </Col>
         <Col span={12}>
@@ -184,10 +213,7 @@ const FormModal = ({
           <ProFormRadio.Group
             name="visible"
             label={t('authz.resource.visible')}
-            options={[
-              { value: 0, label: t('authz.resource.visibleShow') },
-              { value: 1, label: t('authz.resource.visibleHide') },
-            ]}
+            options={toSelectOptions(resourceVisibleOptions)}
           />
         </Col>
         <Col span={12}>

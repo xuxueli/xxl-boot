@@ -80,7 +80,7 @@ const UserList = () => {
   const [resetRow, setResetRow] = useState<API.User | null>(null);
   // 重置密码输入框
   const [resetPassword, setResetPassword] = useState('');
-  const resetPwdLoading = useRef(false);
+  const [resetPwdLoading, setResetPwdLoading] = useState(false);
 
   // 用户状态枚举
   const userStatusOptions = useEnumOption('UserStatuEnum');
@@ -183,16 +183,16 @@ const UserList = () => {
    */
   const handleResetPwd = () => {
     if (!resetRow) return;
-    if (resetPwdLoading.current) return;
+    if (resetPwdLoading) return;
     if (
       !resetPassword ||
-      resetPassword.length < 4 ||
+      resetPassword.length < 6 ||
       resetPassword.length > 20
     ) {
       message.warning(t('authz.user.resetPwdLength'));
       return;
     }
-    resetPwdLoading.current = true;
+    setResetPwdLoading(true);
     const data = toUserForm({ ...resetRow, password: resetPassword });
     userApi
       .update(data)
@@ -202,8 +202,11 @@ const UserList = () => {
         setResetPassword('');
         actionRef.current?.reload();
       })
+      .catch(() => {
+        // 错误已由请求层提示，失败时保留弹窗以便重试
+      })
       .finally(() => {
-        resetPwdLoading.current = false;
+        setResetPwdLoading(false);
       });
   };
 
@@ -449,8 +452,8 @@ const UserList = () => {
           setResetRow(null);
           setResetPassword('');
         }}
-        confirmLoading={resetPwdLoading.current}
-        okButtonProps={{ loading: resetPwdLoading.current }}
+        confirmLoading={resetPwdLoading}
+        okButtonProps={{ loading: resetPwdLoading }}
       >
         <p style={{ marginBottom: 8 }}>
           {t('authz.user.resetPwdPrompt', [resetRow?.username ?? ''])}

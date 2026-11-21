@@ -8,10 +8,9 @@
 </#function>
 /**
  * @fileoverview ${codegen.functionName} 类型定义
- * @description 实体、查询、表单与列表查询类型
+ * @description 实体、查询与表单类型，对应后端 ${codegen.businessName}.java
  * @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
  */
-import type { ListQuery } from '@/types'
 
 /** ${codegen.functionName}实体 */
 export interface ${codegen.businessName} {
@@ -23,9 +22,11 @@ export interface ${codegen.businessName} {
 </#if>
 }
 
-/** ${codegen.functionName}分页查询参数（搜索栏表单形态） */
+/** ${codegen.functionName}搜索栏查询参数（含分页，前端表单形态） */
 export interface ${codegen.businessName}Query {
+  /** 当前页码 */
   pageNum: number
+  /** 每页条数 */
   pageSize: number
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
@@ -37,19 +38,15 @@ export interface ${codegen.businessName}Query {
 </#if>
 }
 
-/** ${codegen.functionName}表单（新增/修改入参） */
-export interface ${codegen.businessName}Form {
-  /** 编号 */
-  id?: number
+/** ${codegen.functionName}新增/修改表单：复用实体的可编辑字段 */
+export type ${codegen.businessName}Form = Pick<
+  ${codegen.businessName},
+  | 'id'
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if (field.isInsert == "1" || field.isEdit == "1") && field.javaField != "id">
-  /** ${field.columnComment!field.javaField} */
-  ${field.javaField}?: ${tsType(field.javaType)}
+  | '${field.javaField}'
 </#if>
 </#list>
 </#if>
-}
-
-/** ${codegen.functionName}列表请求参数（请求形态：offset/pagesize，供 api 使用） */
-export type ${codegen.businessName}ListQuery = ListQuery<${codegen.businessName}Query>
+>

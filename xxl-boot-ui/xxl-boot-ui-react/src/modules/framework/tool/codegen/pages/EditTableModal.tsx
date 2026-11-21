@@ -54,18 +54,6 @@ const queryTypeOptions = [
   { value: 'LIKE', label: 'LIKE' },
   { value: 'BETWEEN', label: 'BETWEEN' },
 ];
-const htmlTypeOptions = [
-  { value: 'input', label: t('tool.codegen.htmlTypeInput') },
-  { value: 'textarea', label: t('tool.codegen.htmlTypeTextarea') },
-  { value: 'select', label: t('tool.codegen.htmlTypeSelect') },
-  { value: 'radio', label: t('tool.codegen.htmlTypeRadio') },
-  { value: 'checkbox', label: t('tool.codegen.htmlTypeCheckbox') },
-  { value: 'datetime', label: t('tool.codegen.htmlTypeDatetime') },
-  { value: 'imageUpload', label: t('tool.codegen.htmlTypeImageUpload') },
-  { value: 'fileUpload', label: t('tool.codegen.htmlTypeFileUpload') },
-  { value: 'editor', label: t('tool.codegen.htmlTypeEditor') },
-];
-
 /** 拖拽行上下文：向行内单元格的拖拽手柄传递激活节点与事件 */
 const RowContext = React.createContext<{
   setActivatorNodeRef: (ref: HTMLElement | null) => void;
@@ -173,6 +161,19 @@ const EditTableModal = ({
     { value: string; label: string }[]
   >([]);
   const [saving, setSaving] = useState(false);
+
+  /* 控件类型选项在渲染期求值，避免模块加载时固化当前语言 */
+  const htmlTypeOptions = [
+    { value: 'input', label: t('tool.codegen.htmlTypeInput') },
+    { value: 'textarea', label: t('tool.codegen.htmlTypeTextarea') },
+    { value: 'select', label: t('tool.codegen.htmlTypeSelect') },
+    { value: 'radio', label: t('tool.codegen.htmlTypeRadio') },
+    { value: 'checkbox', label: t('tool.codegen.htmlTypeCheckbox') },
+    { value: 'datetime', label: t('tool.codegen.htmlTypeDatetime') },
+    { value: 'imageUpload', label: t('tool.codegen.htmlTypeImageUpload') },
+    { value: 'fileUpload', label: t('tool.codegen.htmlTypeFileUpload') },
+    { value: 'editor', label: t('tool.codegen.htmlTypeEditor') },
+  ];
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),

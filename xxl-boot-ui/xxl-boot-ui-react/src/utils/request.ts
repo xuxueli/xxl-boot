@@ -48,13 +48,20 @@ const REPEAT_SUBMIT_STORAGE_KEY = 'sessionObj';
 // 跳过大文件防重复提交阈值（5MB）
 const REPEAT_SUBMIT_MAX_SIZE = 5 * 1024 * 1024;
 
-// 错误码映射表：后端业务码 → 前端展示文案
-export const errorCode: Record<string, string> = {
-  301: t('request.err301'),
-  403: t('request.err403'),
-  404: t('request.err404'),
-  default: t('request.errDefault'),
-};
+/**
+ * 获取错误码文案映射
+ * 在调用时求值，避免模块加载时固化当前语言
+ *
+ * @returns 后端业务码 → 前端展示文案
+ */
+export function getErrorCode(): Record<string, string> {
+  return {
+    301: t('request.err301'),
+    403: t('request.err403'),
+    404: t('request.err404'),
+    default: t('request.errDefault'),
+  };
+}
 
 // ==================== 创建 axios 实例（拦截器） ====================
 
@@ -183,11 +190,12 @@ service.interceptors.response.use(
           },
         });
       }
-      return Promise.reject(new Error(errorCode[301]));
+      return Promise.reject(new Error(getErrorCode()[301]));
     }
 
     // 3. 其他非成功码（非200）
     if (code !== 200) {
+      const errorCode = getErrorCode();
       const msg = res?.msg || errorCode[String(code)] || errorCode.default;
       if (!skipErrorHandler) message.error(msg);
       return Promise.reject(new Error(msg));

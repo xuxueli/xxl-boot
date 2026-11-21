@@ -136,7 +136,7 @@ const FormModal = ({
               placeholder={t('common.inputPlaceholder', [t('authz.user.password')])}
               rules={[
                 { required: true, message: t('common.requiredMsg', [t('authz.user.password')]) },
-                { min: 4, max: 20, message: t('authz.user.passwordLength') },
+                { min: 6, max: 20, message: t('authz.user.passwordLength') },
               ]}
             />
           </Col>

@@ -56,17 +56,17 @@
           <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
         </el-row>
 
-        <!-- 数据列表 -->
+        <!-- 数据列表：文本列用 min-width 参与剩余宽度分配，侧栏展开/收起时随容器自适应 -->
         <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
           <el-table-column type="selection" width="45" align="center" />
           <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="80" />
-          <el-table-column :label="t('authz.user.username')" align="center" prop="username" width="110" show-overflow-tooltip>
+          <el-table-column :label="t('authz.user.username')" align="center" prop="username" min-width="110" show-overflow-tooltip>
             <template #default="scope">
               <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)" v-hasPermi="['authz:user']">{{ scope.row.username }}</a>
             </template>
           </el-table-column>
-          <el-table-column :label="t('common.realName')" align="center" prop="realName" width="110" show-overflow-tooltip />
-          <el-table-column :label="t('authz.user.orgName')" align="center" prop="orgName" width="120" show-overflow-tooltip />
+          <el-table-column :label="t('common.realName')" align="center" prop="realName" min-width="110" show-overflow-tooltip />
+          <el-table-column :label="t('authz.user.orgName')" align="center" prop="orgName" min-width="120" show-overflow-tooltip />
           <el-table-column :label="t('common.status')" align="center" width="100">
             <template #default="scope">
               <!-- 状态列使用开关支持列表内快速启停，变更失败时回滚 -->
@@ -277,7 +277,7 @@ const formState = ref<FormState<UserForm>>({
 // 密码校验规则：仅新增时生效，编辑时密码只读不校验
 const passwordRules: FormItemRule[] = [
   { required: true, message: t('common.requiredMsg', [t('auth.login.password')]), trigger: 'blur' },
-  { min: 4, max: 20, message: t('authz.user.passwordLength'), trigger: 'blur' }
+  { min: 6, max: 20, message: t('authz.user.passwordLength'), trigger: 'blur' }
 ]
 
 // ---------------------- 分页检索 ----------------------
@@ -512,7 +512,7 @@ function handleResetPwd(row: User) {
   modal
     .prompt(t('authz.user.resetPwdPrompt', [row.username ?? String(row.id)]), (value) => {
       if (!value) return t('common.requiredMsg', [t('auth.login.password')])
-      if (value.length < 4 || value.length > 20) return t('authz.user.passwordLength')
+      if (value.length < 6 || value.length > 20) return t('authz.user.passwordLength')
       return true
     })
     .then(({ value }) => {

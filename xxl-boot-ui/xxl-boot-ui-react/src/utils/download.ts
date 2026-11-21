@@ -9,7 +9,7 @@
 import { message } from 'antd';
 import { t } from '@/i18n';
 import { blobValidate } from './common';
-import service, { errorCode } from './request';
+import service, { getErrorCode } from './request';
 
 /**
  * 构建下载查询串（下载类接口契约）：
@@ -63,6 +63,7 @@ async function handleBlob(
   try {
     const resText = await blob.text();
     const rspObj = JSON.parse(resText) as { code?: number; msg?: string };
+    const errorCode = getErrorCode();
     message.error(
       rspObj.msg ||
         errorCode[String(rspObj.code)] ||

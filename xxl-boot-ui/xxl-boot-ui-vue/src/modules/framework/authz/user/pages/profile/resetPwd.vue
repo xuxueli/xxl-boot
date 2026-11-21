@@ -48,7 +48,7 @@ interface PwdForm {
  */
 const newPasswordRules: FormItemRule[] = [
   { required: true, message: t('common.requiredMsg', [t('authz.user.newPassword')]), trigger: 'blur' },
-  { min: 4, max: 20, message: t('authz.user.newPasswordLength'), trigger: 'blur' },
+  { min: 6, max: 20, message: t('authz.user.newPasswordLength'), trigger: 'blur' },
   { pattern: /^[^<>"'|\\]+$/, message: t('authz.user.newPasswordForbiddenChar'), trigger: 'blur' }
 ]
 

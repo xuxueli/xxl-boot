@@ -793,6 +793,7 @@ VALUES (1, @parentId, now(), now()),
 - 文案文件：`src/i18n/locales/{zh,en}.json`；平台文案按业务域分区（`system.*`、`authz.*`、`tool.*`、`dashboard.*` 等），业务文案按 `business.{module}.{business}.*` 分区。
 - 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 由 `zh.json` 推导为 `MessageKey`，先补文案再引用。
 - 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`。
+- 禁止在模块顶层（`const/let` 初始化、静态配置对象）直接调用 `t()`：React 的 `t()` 非响应式，语言切换依赖根组件 `key={language}` 重挂载，模块顶层求值不会被重新执行。应在组件渲染期或函数内求值（必要时 `useMemo`）。
 - 新增业务文案 zh/en 成对提交，页面禁止硬编码中文（注释除外）。
 
 ```json

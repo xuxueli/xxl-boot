@@ -23,15 +23,15 @@ import { handleTree } from '@/utils/common';
 import { getIconComponent } from '@/utils/icon';
 import FormModal from './FormModal';
 
-const typeMap: Record<number, { text: string; color: string }> = {
-  0: { text: t('authz.resource.typeDir'), color: 'geekblue' },
-  1: { text: t('authz.resource.typeMenu'), color: 'success' },
-  2: { text: t('authz.resource.typeBtn'), color: 'warning' },
+/* 资源类型标签颜色：仅视觉映射，文案统一走枚举 */
+const typeColors: Record<number, string> = {
+  0: 'geekblue',
+  1: 'success',
+  2: 'warning',
 };
-
-const visibleMap: Record<number, { text: string; color: string }> = {
-  0: { text: t('authz.resource.visibleShow'), color: 'geekblue' },
-  1: { text: t('authz.resource.visibleHide'), color: 'default' },
+const visibleColors: Record<number, string> = {
+  0: 'geekblue',
+  1: 'default',
 };
 
 /** 资源（菜单/按钮）管理列表页 */
@@ -55,7 +55,11 @@ const ResourceList = () => {
   );
 
   const resourceStatusOptions = useEnumOption('ResourceStatuEnum');
+  const resourceTypeOptions = useEnumOption('ResourceTypeEnum');
+  const resourceVisibleOptions = useEnumOption('ResourceVisibleEnum');
   const statusValueEnum = toValueEnum(resourceStatusOptions);
+  const typeValueEnum = toValueEnum(resourceTypeOptions);
+  const visibleValueEnum = toValueEnum(resourceVisibleOptions);
 
   // ---------------------- 数据操作 ----------------------
 
@@ -161,8 +165,12 @@ const ResourceList = () => {
       search: false,
       width: 90,
       render: (_, record) => {
-        const tType = typeMap[record.type ?? -1];
-        return tType ? <Tag color={tType.color}>{tType.text}</Tag> : '-';
+        const text = typeValueEnum[record.type ?? -1]?.text;
+        return text ? (
+          <Tag color={typeColors[record.type ?? -1]}>{text}</Tag>
+        ) : (
+          '-'
+        );
       },
     },
     {
@@ -207,8 +215,12 @@ const ResourceList = () => {
       search: false,
       width: 90,
       render: (_, record) => {
-        const v = visibleMap[record.visible ?? -1];
-        return v ? <Tag color={v.color}>{v.text}</Tag> : '-';
+        const text = visibleValueEnum[record.visible ?? -1]?.text;
+        return text ? (
+          <Tag color={visibleColors[record.visible ?? -1]}>{text}</Tag>
+        ) : (
+          '-'
+        );
       },
     },
     {

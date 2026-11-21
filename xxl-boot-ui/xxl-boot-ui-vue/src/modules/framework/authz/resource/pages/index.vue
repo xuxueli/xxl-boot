@@ -396,11 +396,39 @@ function openEditForm(row?: Resource) {
     .catch(() => {})
 }
 
+/** 校验上级资源：不能选择自己或自己的下级资源，避免形成环 */
+function validParentId() {
+  const form = formState.value.form
+  // 新增时不存在成环风险
+  if (form.id == null) return true
+  if (form.parentId === form.id) return false
+  // 依次查找当前节点，判断其子孙中是否包含选中的上级
+  const findInChildren = (children: Resource[]): boolean => {
+    for (const child of children) {
+      if (child.id === form.parentId) return true
+      if (findInChildren(child.children || [])) return true
+    }
+    return false
+  }
+  const isParentInDescendants = (list: Resource[]): boolean => {
+    for (const item of list) {
+      if (item.id === form.id) return findInChildren(item.children || [])
+      if (item.children && isParentInDescendants(item.children)) return true
+    }
+    return false
+  }
+  return !isParentInDescendants(table.value.list)
+}
+
 /** 校验通过后保存：有 id 走修改，否则新增 */
 function saveForm() {
   formRef.value?.validate((valid) => {
     // 校验失败时保持弹窗打开，等待用户修正
     if (!valid) return
+    if (!validParentId()) {
+      modal.msgError(t('authz.resource.parentInvalid'))
+      return
+    }
     const form = formState.value.form
     // 只回传可编辑字段：后端自动维护时间，回传 addTime/updateTime 会导致日期绑定失败
     const submitData: ResourceForm = {

@@ -75,9 +75,9 @@ import type { FormConfig, FormWidget, WidgetType } from './config';
 import {
   createWidget,
   defaultFormConfig,
-  paletteGroups,
+  getPaletteGroups,
+  getWidgetTitles,
   toCascaderOptions,
-  widgetTitles,
 } from './config';
 import { generateTsx } from './generator';
 import RightPanel from './RightPanel';
@@ -393,6 +393,7 @@ const PaletteItem = ({
   type: WidgetType;
   onAdd: (type: WidgetType) => void;
 }) => {
+  const widgetTitles = getWidgetTitles();
   const { styles } = useStyles();
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `palette-${type}`,
@@ -604,6 +605,10 @@ const PageGen = () => {
   const [activeType, setActiveType] = useState<WidgetType>();
   /* 是否正在拖拽左侧组件库组件（拖拽期间画布不实时让位） */
   const [draggingFromPalette, setDraggingFromPalette] = useState(false);
+
+  /* 组件文案与分组在渲染期求值，避免模块加载时固化当前语言 */
+  const widgetTitles = getWidgetTitles();
+  const paletteGroups = getPaletteGroups();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),

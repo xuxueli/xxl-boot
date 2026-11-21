@@ -80,9 +80,9 @@
           </el-form-item>
           <el-form-item v-if="activeData.align !== undefined" :label="t('tool.pagegen.verticalLayout')">
             <el-radio-group v-model="activeData.align">
-              <el-radio-button label="top" />
-              <el-radio-button label="middle" />
-              <el-radio-button label="bottom" />
+              <el-radio-button value="top">{{ t('tool.pagegen.top') }}</el-radio-button>
+              <el-radio-button value="middle">{{ t('tool.pagegen.middle') }}</el-radio-button>
+              <el-radio-button value="bottom">{{ t('tool.pagegen.bottom') }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
 
@@ -174,8 +174,8 @@
           <!-- 按钮位置 -->
           <el-form-item v-if="activeData.tag === 'el-input-number'" :label="t('tool.pagegen.controlsPosition')">
             <el-radio-group v-model="activeData['controls-position']">
-              <el-radio-button label=""> {{ t('tool.pagegen.default') }} </el-radio-button>
-              <el-radio-button label="right"> {{ t('tool.pagegen.right') }} </el-radio-button>
+              <el-radio-button value=""> {{ t('tool.pagegen.default') }} </el-radio-button>
+              <el-radio-button value="right"> {{ t('tool.pagegen.right') }} </el-radio-button>
             </el-radio-group>
           </el-form-item>
 
@@ -249,9 +249,9 @@
 
           <el-form-item v-if="activeData['list-type'] !== undefined" :label="t('tool.pagegen.listType')">
             <el-radio-group v-model="activeData['list-type']" size="small">
-              <el-radio-button label="text"> text </el-radio-button>
-              <el-radio-button label="picture"> picture </el-radio-button>
-              <el-radio-button label="picture-card"> picture-card </el-radio-button>
+              <el-radio-button value="text"> {{ t('tool.pagegen.text') }} </el-radio-button>
+              <el-radio-button value="picture"> {{ t('tool.pagegen.picture') }} </el-radio-button>
+              <el-radio-button value="picture-card"> {{ t('tool.pagegen.pictureCard') }} </el-radio-button>
             </el-radio-group>
           </el-form-item>
 
@@ -303,8 +303,8 @@
             <el-divider>{{ t('tool.pagegen.options') }}</el-divider>
             <el-form-item :label="t('tool.pagegen.dataType')">
               <el-radio-group v-model="activeData.dataType" size="small">
-                <el-radio-button label="dynamic"> {{ t('tool.pagegen.dynamicData') }} </el-radio-button>
-                <el-radio-button label="static"> {{ t('tool.pagegen.staticData') }} </el-radio-button>
+                <el-radio-button value="dynamic"> {{ t('tool.pagegen.dynamicData') }} </el-radio-button>
+                <el-radio-button value="static"> {{ t('tool.pagegen.staticData') }} </el-radio-button>
               </el-radio-group>
             </el-form-item>
 
@@ -338,8 +338,8 @@
 
           <el-form-item v-if="activeData.optionType !== undefined" :label="t('tool.pagegen.optionStyle')">
             <el-radio-group v-model="activeData.optionType">
-              <el-radio-button label="default"> {{ t('tool.pagegen.default') }} </el-radio-button>
-              <el-radio-button label="button"> {{ t('tool.pagegen.button') }} </el-radio-button>
+              <el-radio-button value="default"> {{ t('tool.pagegen.default') }} </el-radio-button>
+              <el-radio-button value="button"> {{ t('tool.pagegen.button') }} </el-radio-button>
             </el-radio-group>
           </el-form-item>
 
@@ -394,9 +394,9 @@
             :label="t('tool.pagegen.optionSize')"
           >
             <el-radio-group v-model="activeData.size">
-              <el-radio-button label="large"> {{ t('tool.pagegen.large') }} </el-radio-button>
-              <el-radio-button label="default"> {{ t('tool.pagegen.default') }} </el-radio-button>
-              <el-radio-button label="small"> {{ t('tool.pagegen.small') }} </el-radio-button>
+              <el-radio-button value="large"> {{ t('tool.pagegen.large') }} </el-radio-button>
+              <el-radio-button value="default"> {{ t('tool.pagegen.default') }} </el-radio-button>
+              <el-radio-button value="small"> {{ t('tool.pagegen.small') }} </el-radio-button>
             </el-radio-group>
           </el-form-item>
 
@@ -498,16 +498,16 @@
           </el-form-item>
           <el-form-item :label="t('tool.pagegen.formSize')">
             <el-radio-group v-model="formConf.size">
-              <el-radio-button label="large" :value="t('tool.pagegen.large')" />
-              <el-radio-button label="default" :value="t('tool.pagegen.default')" />
-              <el-radio-button label="small" :value="t('tool.pagegen.small')" />
+              <el-radio-button value="large">{{ t('tool.pagegen.large') }}</el-radio-button>
+              <el-radio-button value="default">{{ t('tool.pagegen.default') }}</el-radio-button>
+              <el-radio-button value="small">{{ t('tool.pagegen.small') }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item :label="t('tool.pagegen.labelAlign')">
             <el-radio-group v-model="formConf.labelPosition">
-              <el-radio-button label="left" :value="t('tool.pagegen.leftAlign')" />
-              <el-radio-button label="right" :value="t('tool.pagegen.rightAlign')" />
-              <el-radio-button label="top" :value="t('tool.pagegen.topAlign')" />
+              <el-radio-button value="left">{{ t('tool.pagegen.leftAlign') }}</el-radio-button>
+              <el-radio-button value="right">{{ t('tool.pagegen.rightAlign') }}</el-radio-button>
+              <el-radio-button value="top">{{ t('tool.pagegen.topAlign') }}</el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item :label="t('tool.pagegen.labelWidth')">

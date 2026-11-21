@@ -26,6 +26,7 @@
     "@vueuse/core": "15.0.0",
     "axios": "1.21.1",
     "clipboard": "2.0.11",
+    "dompurify": "3.4.17",
     "echarts": "6.1.0",
     "element-plus": "2.14.8",
     "file-saver": "2.0.5",

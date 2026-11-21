@@ -30,7 +30,7 @@ public class RoleController {
      * 分页查询
      */
     @RequestMapping("/pageList")
-    @XxlSso(permission = "authz:role")
+    @XxlSso
     public Response<PageModel<Role>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                               @RequestParam(required = false, defaultValue = "10") int pagesize,
                                               String name,

@@ -21,16 +21,17 @@ interface PwdForm {
  * 新密码校验规则：必填 + 长度 6-20 + 任意字符（禁止 < > " ' \ |）
  * 说明：原设计按后端 chrtype（0-4）动态切换密码策略，但全项目无任何写入方，
  *       实际恒为默认策略 0（任意字符），故直接固定为一条规则。
+ *       规则在渲染期求值，避免模块加载时固化当前语言。
  */
-const INFO_PWD_RULES: Rule[] = [
-  { required: true, message: t('common.requiredMsg', [t('authz.user.newPassword')]) },
-  { min: 6, max: 20, message: t('authz.user.newPasswordLength') },
-  { pattern: /^[^<>"'|\\]+$/, message: t('authz.user.newPasswordForbiddenChar') },
-];
-
 const ResetPwd = () => {
   const { message } = App.useApp();
   const [form] = ProForm.useForm();
+
+  const INFO_PWD_RULES: Rule[] = [
+    { required: true, message: t('common.requiredMsg', [t('authz.user.newPassword')]) },
+    { min: 6, max: 20, message: t('authz.user.newPasswordLength') },
+    { pattern: /^[^<>"'|\\]+$/, message: t('authz.user.newPasswordForbiddenChar') },
+  ];
 
   /** 提交保存 */
   const handleSubmit = async (values: PwdForm) => {

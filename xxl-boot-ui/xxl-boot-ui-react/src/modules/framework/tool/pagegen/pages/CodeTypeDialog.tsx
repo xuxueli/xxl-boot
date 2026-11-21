@@ -7,14 +7,7 @@ import { App, Form, Input, Modal, Radio } from 'antd';
 import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
 
-/** 生成类型配置 */
-const typeOptions = [
-  { label: t('tool.pagegen.typeFile'), value: 'file' },
-  { label: t('tool.pagegen.typeDialog'), value: 'dialog' },
-];
-
-/**
- * 生成类型选择弹窗
+/** 生成类型选择弹窗
  * @param props.open        弹窗是否打开
  * @param props.onOpenChange 弹窗开关变化回调
  * @param props.showFileName 是否显示文件名输入（导出场景）
@@ -32,6 +25,12 @@ const CodeTypeDialog = ({
   onConfirm: (data: { type: string; fileName?: string }) => void;
 }) => {
   const { message } = App.useApp();
+
+  /* 生成类型选项在渲染期求值，避免模块加载时固化当前语言 */
+  const typeOptions = [
+    { label: t('tool.pagegen.typeFile'), value: 'file' },
+    { label: t('tool.pagegen.typeDialog'), value: 'dialog' },
+  ];
 
   /* 生成类型选中值 */
   const [type, setType] = useState('file');

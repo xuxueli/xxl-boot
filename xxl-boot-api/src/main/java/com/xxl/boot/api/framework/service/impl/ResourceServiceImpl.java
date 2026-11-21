@@ -89,8 +89,43 @@ public class ResourceServiceImpl implements ResourceService {
 			return Response.ofFail("操作失败，父资源不能设置为自己");
 		}
 
+		// valid：父资源不能位于当前资源的子孙中，避免形成环
+		List<Resource> allResourceList = resourceMapper.queryResource(null, -1);
+		if (isDescendant(allResourceList, xxlBootResource.getId(), xxlBootResource.getParentId())) {
+			return Response.ofFail("操作失败，父资源不能选择自己或其下级资源");
+		}
+
 		int ret = resourceMapper.update(xxlBootResource);
 		return ret>0? Response.ofSuccess() : Response.ofFail();
+	}
+
+	/**
+	 * 判断 parentId 是否位于 id 的子孙链路上
+	 *
+	 * @param list     全量资源列表
+	 * @param id       当前资源 ID
+	 * @param parentId 待设置的父资源 ID
+	 * @return true 表示会形成环
+	 */
+	private boolean isDescendant(List<Resource> list, int id, int parentId) {
+		Map<Integer, Integer> parentMap = new HashMap<>();
+		for (Resource resource : list) {
+			parentMap.put(resource.getId(), resource.getParentId());
+		}
+		// 从待设置的父节点向上回溯，命中当前节点即成环
+		Integer cursor = parentId;
+		while (cursor != null && cursor != 0) {
+			if (cursor == id) {
+				return true;
+			}
+			Integer next = parentMap.get(cursor);
+			// 已到达根节点或遇到脏数据时终止，避免死循环
+			if (next == null || next.equals(cursor)) {
+				break;
+			}
+			cursor = next;
+		}
+		return false;
 	}
 
 	/**

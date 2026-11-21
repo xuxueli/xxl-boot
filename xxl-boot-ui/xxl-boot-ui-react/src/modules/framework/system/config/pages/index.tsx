@@ -78,7 +78,8 @@ const ConfigList = () => {
     {
       title: t('system.config.configKey'),
       dataIndex: 'key',
-      search: false,
+      /* 启用搜索：与后端 pageList 的 key 条件对齐 */
+      search: true,
       ellipsis: true,
     },
     {

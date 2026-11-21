@@ -24,28 +24,6 @@ type GlobalHeaderRightProps = {
   children?: React.ReactNode;
 };
 
-/** 下拉菜单项：个人中心 / 主题设置 / 退出登录 */
-const menuItems: MenuProps['items'] = [
-  {
-    key: 'profile',
-    icon: <IdcardOutlined />,
-    label: t('layout.header.profile'),
-  },
-  {
-    key: 'theme',
-    icon: <SkinOutlined />,
-    label: t('layout.header.theme'),
-  },
-  {
-    type: 'divider' as const,
-  },
-  {
-    key: 'logout',
-    icon: <LogoutOutlined />,
-    label: t('layout.header.logout'),
-  },
-];
-
 /**
  * 头像下拉菜单组件
  */
@@ -53,6 +31,28 @@ const HeaderAvatar = ({ children }: GlobalHeaderRightProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const currentUser = useUserStore((s) => s.currentUser);
+
+  /* 下拉菜单项在渲染期求值，避免模块加载时固化当前语言 */
+  const menuItems: MenuProps['items'] = [
+    {
+      key: 'profile',
+      icon: <IdcardOutlined />,
+      label: t('layout.header.profile'),
+    },
+    {
+      key: 'theme',
+      icon: <SkinOutlined />,
+      label: t('layout.header.theme'),
+    },
+    {
+      type: 'divider' as const,
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: t('layout.header.logout'),
+    },
+  ];
 
   /**
    * 菜单项点击处理：根据 key 分流到退出登录 / 主题设置 / 个人中心

@@ -68,28 +68,30 @@ export interface FormConfig {
   formBtns: boolean /* 是否显示表单按钮 */;
 }
 
-/** 组件标题（界面显示名） */
-export const widgetTitles: Record<WidgetType, string> = {
-  input: t('tool.pagegen.widgetInput'),
-  textarea: t('tool.pagegen.widgetTextarea'),
-  password: t('tool.pagegen.widgetPassword'),
-  number: t('tool.pagegen.widgetNumber'),
-  select: t('tool.pagegen.widgetSelect'),
-  cascader: t('tool.pagegen.widgetCascader'),
-  radio: t('tool.pagegen.widgetRadio'),
-  checkbox: t('tool.pagegen.widgetCheckbox'),
-  switch: t('tool.pagegen.widgetSwitch'),
-  slider: t('tool.pagegen.widgetSlider'),
-  time: t('tool.pagegen.widgetTime'),
-  'time-range': t('tool.pagegen.widgetTimeRange'),
-  date: t('tool.pagegen.widgetDate'),
-  'date-range': t('tool.pagegen.widgetDateRange'),
-  rate: t('tool.pagegen.widgetRate'),
-  color: t('tool.pagegen.widgetColor'),
-  upload: t('tool.pagegen.widgetUpload'),
-  row: t('tool.pagegen.widgetRow'),
-  button: t('tool.pagegen.widgetButton'),
-};
+/** 组件标题（界面显示名，渲染期求值，避免固化语言） */
+export function getWidgetTitles(): Record<WidgetType, string> {
+  return {
+    input: t('tool.pagegen.widgetInput'),
+    textarea: t('tool.pagegen.widgetTextarea'),
+    password: t('tool.pagegen.widgetPassword'),
+    number: t('tool.pagegen.widgetNumber'),
+    select: t('tool.pagegen.widgetSelect'),
+    cascader: t('tool.pagegen.widgetCascader'),
+    radio: t('tool.pagegen.widgetRadio'),
+    checkbox: t('tool.pagegen.widgetCheckbox'),
+    switch: t('tool.pagegen.widgetSwitch'),
+    slider: t('tool.pagegen.widgetSlider'),
+    time: t('tool.pagegen.widgetTime'),
+    'time-range': t('tool.pagegen.widgetTimeRange'),
+    date: t('tool.pagegen.widgetDate'),
+    'date-range': t('tool.pagegen.widgetDateRange'),
+    rate: t('tool.pagegen.widgetRate'),
+    color: t('tool.pagegen.widgetColor'),
+    upload: t('tool.pagegen.widgetUpload'),
+    row: t('tool.pagegen.widgetRow'),
+    button: t('tool.pagegen.widgetButton'),
+  };
+}
 
 /** 组件库分组（选择型） */
 export const selectGroups: WidgetType[] = [
@@ -119,12 +121,14 @@ export const inputGroups: WidgetType[] = [
 /** 组件库分组（布局型） */
 export const layoutGroups: WidgetType[] = ['row', 'button'];
 
-/** 组件库类型列表 */
-export const paletteGroups: { title: string; types: WidgetType[] }[] = [
-  { title: t('tool.pagegen.groupInput'), types: inputGroups },
-  { title: t('tool.pagegen.groupSelect'), types: selectGroups },
-  { title: t('tool.pagegen.groupLayout'), types: layoutGroups },
-];
+/** 组件库分组（渲染期求值，避免固化语言） */
+export function getPaletteGroups(): { title: string; types: WidgetType[] }[] {
+  return [
+    { title: t('tool.pagegen.groupInput'), types: inputGroups },
+    { title: t('tool.pagegen.groupSelect'), types: selectGroups },
+    { title: t('tool.pagegen.groupLayout'), types: layoutGroups },
+  ];
+}
 
 /** 表单全局配置默认值 */
 export const defaultFormConfig: FormConfig = {
@@ -146,6 +150,7 @@ export const defaultFormConfig: FormConfig = {
  * @returns 默认组件配置
  */
 export function createWidget(type: WidgetType, id: number): FormWidget {
+  const widgetTitles = getWidgetTitles();
   if (type === 'row') {
     return {
       id,

@@ -48,7 +48,7 @@ public class ResourceController {
      *  </pre>
      */
     @RequestMapping("/treeList")
-    @XxlSso(permission = "authz:resource")
+    @XxlSso
     public Response<List<ResourceDTO>> treeList(@RequestParam(required = false) String name,
                                                        @RequestParam(required = false, defaultValue = "-1") int status) {
 

@@ -5,6 +5,7 @@
  */
 import { BellOutlined, MessageOutlined } from '@ant-design/icons';
 import { Drawer, Spin, Tag } from 'antd';
+import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
 import { useEnumOption } from '@/hooks/useEnumOption';
@@ -102,10 +103,12 @@ function MessageDetail({ open, payload, onClose }: MessageDetailProps) {
             </div>
             <div
               style={{ minHeight: 120 }}
-              // 富文本消息内容渲染，与 Vue 版 v-html 保持一致
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: 富文本内容为后端管理，信任渲染
+              // 富文本内容先经 DOMPurify 白名单消毒，再渲染
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: 内容已消毒
               dangerouslySetInnerHTML={{
-                __html: message.content || t('system.message.noContent'),
+                __html: DOMPurify.sanitize(
+                  message.content || t('system.message.noContent'),
+                ),
               }}
             />
           </div>

@@ -35,7 +35,7 @@ public class OrgController {
      *  </pre>
      */
     @RequestMapping("/treeList")
-    @XxlSso(permission = "authz:org")
+    @XxlSso
     public Response<List<Org>> treeList(@RequestParam(required = false) String name,
                                         @RequestParam(required = false, defaultValue = "-1") int status) {
 

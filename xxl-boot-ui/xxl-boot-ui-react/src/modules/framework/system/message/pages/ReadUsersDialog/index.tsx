@@ -19,24 +19,25 @@ interface ReadUsersDialogProps {
   onClose: () => void;
 }
 
-const columns: ColumnsType<API.MessageRead> = [
-  {
-    title: t('common.serialNo'),
-    width: 70,
-    align: 'center',
-    render: (_v, _r, i) => i + 1,
-  },
-  { title: t('system.message.userName'), dataIndex: 'userName', align: 'center' },
-  { title: t('common.realName'), dataIndex: 'realName', align: 'center' },
-  { title: t('system.message.readTime'), dataIndex: 'addTime', align: 'center' },
-];
-
 function ReadUsersDialog({ open, message, onClose }: ReadUsersDialogProps) {
   const [list, setList] = useState<API.MessageRead[]>([]);
   const [total, setTotal] = useState(0);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [loading, setLoading] = useState(false);
+
+  /* 列定义在渲染期求值，避免模块加载时固化当前语言 */
+  const columns: ColumnsType<API.MessageRead> = [
+    {
+      title: t('common.serialNo'),
+      width: 70,
+      align: 'center',
+      render: (_v, _r, i) => i + 1,
+    },
+    { title: t('system.message.userName'), dataIndex: 'userName', align: 'center' },
+    { title: t('common.realName'), dataIndex: 'realName', align: 'center' },
+    { title: t('system.message.readTime'), dataIndex: 'addTime', align: 'center' },
+  ];
 
   /** 加载已读用户列表（id 为必传，避免依赖 state 回调产生陈旧值） */
   const loadData = useCallback((id: number, page: number, size: number) => {

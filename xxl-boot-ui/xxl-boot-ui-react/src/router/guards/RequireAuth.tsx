@@ -9,6 +9,7 @@ import { message, Spin } from 'antd';
 import type React from 'react';
 import { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { t } from '@/i18n';
 import { useUserStore } from '@/stores/userStore';
 import { getToken } from '@/utils/auth';
 
@@ -44,7 +45,7 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
         .getState()
         .logout()
         .catch(() => {});
-      message.error('登录状态已失效，请重新登录');
+      message.error(t('router.sessionExpired'));
       window.location.href = buildLoginPath();
     });
   }, [token, currentUser, location.pathname, location.search]);
@@ -66,7 +67,7 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
           height: '100vh',
         }}
       >
-        <Spin size="large" description="加载中..." />
+        <Spin size="large" description={t('common.loading')} />
       </div>
     );
   }

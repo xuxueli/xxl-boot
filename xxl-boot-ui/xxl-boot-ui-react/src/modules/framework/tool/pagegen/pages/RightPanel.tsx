@@ -20,7 +20,7 @@ import {
   isChoiceType,
   supportsPlaceholder,
   supportsRequired,
-  widgetTitles,
+  getWidgetTitles,
 } from './config';
 
 /**
@@ -41,6 +41,9 @@ const RightPanel = ({
   onWidgetChange: (patch: Partial<FormWidget>) => void;
   onFormChange: (patch: Partial<FormConfig>) => void;
 }) => {
+  /* 组件标题在渲染期求值，避免模块加载时固化当前语言 */
+  const widgetTitles = getWidgetTitles();
+
   const renderComponentProps = () => {
     if (!activeData) {
       return (

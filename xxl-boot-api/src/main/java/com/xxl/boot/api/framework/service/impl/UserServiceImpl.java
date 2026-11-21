@@ -71,8 +71,8 @@ public class UserServiceImpl implements UserService {
             return Response.ofFail( I18nUtil.getString("system_please_input")+I18nUtil.getString("user_password") );
         }
         user.setPassword(user.getPassword().trim());
-        if (!(user.getPassword().length()>=4 && user.getPassword().length()<=20)) {
-            return Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
+        if (!(user.getPassword().length()>=6 && user.getPassword().length()<=20)) {
+            return Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[6-20]" );
         }
         // hash password
         String passwordHash = Sha256Tool.sha256(user.getPassword());
@@ -161,8 +161,8 @@ public class UserServiceImpl implements UserService {
         // valid password
         if (StringTool.isNotBlank(user.getPassword())) {
             user.setPassword(user.getPassword().trim());
-            if (!(user.getPassword().length()>=4 && user.getPassword().length()<=20)) {
-                return Response.ofFail(  I18nUtil.getString("system_lengh_limit")+"[4-20]" );
+            if (!(user.getPassword().length()>=6 && user.getPassword().length()<=20)) {
+                return Response.ofFail(  I18nUtil.getString("system_lengh_limit")+"[6-20]" );
             }
             // hash password
             String passwordHash = Sha256Tool.sha256(user.getPassword());
@@ -201,14 +201,14 @@ public class UserServiceImpl implements UserService {
     public Response<String> updatePwd(String loginUserName, String oldPassword, String password){
         // valid password
         if (StringTool.isBlank(oldPassword)){
-            Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_oldpwd") );
+            return Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_oldpwd") );
         }
         if (StringTool.isBlank(password)){
-            Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_newpwd") );
+            return Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_newpwd") );
         }
         password = password.trim();
-        if (!(password.length()>=4 && password.length()<=20)) {
-            Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
+        if (!(password.length()>=6 && password.length()<=20)) {
+            return Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[6-20]" );
         }
 
         // md5 password

@@ -87,38 +87,6 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 
-/** 指标卡片配置 */
-const statConfig = [
-  {
-    key: 'userCount',
-    label: t('dashboard.statCard.user'),
-    icon: <UserOutlined />,
-    color: '#5b6abf',
-    bg: '#eef0fb',
-  },
-  {
-    key: 'roleCount',
-    label: t('dashboard.statCard.role'),
-    icon: <TeamOutlined />,
-    color: '#319c8a',
-    bg: '#e8f6f3',
-  },
-  {
-    key: 'logCount',
-    label: t('dashboard.statCard.log'),
-    icon: <FileTextOutlined />,
-    color: '#d4943c',
-    bg: '#fcf4e8',
-  },
-  {
-    key: 'messageCount',
-    label: t('dashboard.statCard.message'),
-    icon: <MessageOutlined />,
-    color: '#c5566a',
-    bg: '#fbeef1',
-  },
-] as const;
-
 /** 首页：统计概览、日志趋势、最新消息 */
 const Dashboard = () => {
   const { styles } = useStyles();
@@ -126,6 +94,38 @@ const Dashboard = () => {
   const [detailPayload, setDetailPayload] = useState<number>(); /* 详情消息 ID */
 
   const [chartDays, setChartDays] = useState(30);
+
+  /* 指标卡片配置在渲染期求值，避免模块加载时固化当前语言 */
+  const statConfig = [
+    {
+      key: 'userCount',
+      label: t('dashboard.statCard.user'),
+      icon: <UserOutlined />,
+      color: '#5b6abf',
+      bg: '#eef0fb',
+    },
+    {
+      key: 'roleCount',
+      label: t('dashboard.statCard.role'),
+      icon: <TeamOutlined />,
+      color: '#319c8a',
+      bg: '#e8f6f3',
+    },
+    {
+      key: 'logCount',
+      label: t('dashboard.statCard.log'),
+      icon: <FileTextOutlined />,
+      color: '#d4943c',
+      bg: '#fcf4e8',
+    },
+    {
+      key: 'messageCount',
+      label: t('dashboard.statCard.message'),
+      icon: <MessageOutlined />,
+      color: '#c5566a',
+      bg: '#fbeef1',
+    },
+  ] as const;
 
   // 消息分类映射：文案取后端枚举，颜色按枚举顺序（首项高亮）区分
   const messageCategoryOptions = useEnumOption('MessageCategoryEnum');

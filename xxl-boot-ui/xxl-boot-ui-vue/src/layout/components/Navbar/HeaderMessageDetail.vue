@@ -63,7 +63,7 @@
 
         <!-- 公告正文 -->
         <div class="message-body">
-          <div v-if="hasContent" class="message-content" v-html="detail.content" />
+          <div v-if="hasContent" class="message-content" v-html="safeContent" />
           <div v-else class="message-empty message-empty--inner">
             <el-icon><Document /></el-icon> {{ t('common.emptyContent') }}
           </div>
@@ -75,6 +75,7 @@
 
 <script setup lang="ts">
 import { messageApi } from '@/modules/framework/system/message/api'
+import DOMPurify from 'dompurify'
 import { computed, ref } from 'vue'
 import { t } from '@/i18n'
 
@@ -114,6 +115,9 @@ const hasContent = computed(() => {
   const content = detail.value && detail.value.content
   return content != null && String(content).trim() !== ''
 })
+
+/* 富文本正文白名单消毒，避免存储型 XSS */
+const safeContent = computed(() => DOMPurify.sanitize(String(detail.value?.content ?? '')))
 
 /*
  * 打开详情：支持传入完整公告对象（直接展示）或 messageId（请求接口加载）
