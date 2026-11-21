@@ -69,7 +69,7 @@
 <script setup lang="ts">
 // 导入依赖
 import { t } from '@/i18n'
-import { getCodeImg } from '../api'
+import { authApi } from '../api'
 import { useUserStore, useSettingsStore } from '@/store'
 import defaultSettings from '@/default-settings'
 import type { LoginParams } from '@/modules/framework/auth/types'
@@ -153,7 +153,7 @@ function handleLogin() {
 
 /** 获取验证码图片，根据开关控制显示 */
 function getCode() {
-  getCodeImg().then((res) => {
+  authApi.captcha().then((res) => {
     codeUrl.value = res.data.image
     loginForm.value.captchaUuid = res.data.uuid
   })

@@ -134,9 +134,8 @@ defineOptions({ name: 'Message' })
 import { t } from '@/i18n'
 import ReadUsersDialog from './ReadUsers.vue'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
-import { listMessage, getMessage, delMessage, addMessage, updateMessage } from '../api'
+import { messageApi } from '../api'
 import { useEnumOption } from '@/composables/useEnumOption'
-import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import type { Message, MessageQuery } from '../types'
@@ -145,11 +144,10 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ref } from 'vue'
 import { RightToolbar, Pagination, Editor } from '@/components'
 
-const resetForm = useFormReset()
-
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
 const messageViewRef = ref<InstanceType<typeof MessageDetailView> | null>(null) /* 消息详情弹框 ref： */
 const readUsersRef = ref<InstanceType<typeof ReadUsersDialog> | null>(null) /* 已读弹框 ref */
@@ -198,7 +196,7 @@ function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
   const params = usePageParams(queryParams)()
-  listMessage(params).then((response) => {
+  messageApi.pageList(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -232,7 +230,7 @@ function reset() {
     content: undefined,
     status: 0
   }
-  resetForm('formRef')
+  formRef.value?.resetFields()
 }
 
 /** 搜索按钮操作 */
@@ -243,7 +241,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   handleQuery()
 }
 
@@ -269,7 +267,7 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  getMessage(id).then((response) => {
+  messageApi.load(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = t('common.titleEdit', [t('layout.nav.messageTitle')])
@@ -282,13 +280,13 @@ function submitForm() {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateMessage(formState.value.form).then((response) => {
+        messageApi.update(formState.value.form).then((response) => {
           modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
-        addMessage(formState.value.form).then((response) => {
+        messageApi.insert(formState.value.form).then((response) => {
           modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
@@ -317,7 +315,7 @@ function handleDelete(row: any) {
   modal
     .confirm(t('system.message.confirmDeleteMessage', [messageIds]))
     .then(function () {
-      return delMessage(messageIds)
+      return messageApi.delete(messageIds)
     })
     .then(() => {
       getList()

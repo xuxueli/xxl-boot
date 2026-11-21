@@ -1,100 +1,110 @@
+/**
+ * @fileoverview Role API
+ * @description 角色管理接口，方法名与后端 RoleController 对齐
+ * @author xuxueli 2026-11-21
+ */
 import { request } from '@/utils/request'
 import type { Role, RoleListQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
-/**
- * 名称：角色管理 API
- * 能力：提供角色维护、角色资源授权与角色用户授权管理接口。
- */
+/** 角色 API，调用方式：roleApi.pageList(...) */
+export const roleApi = {
+  /**
+   * 分页查询角色
+   *
+   * @param query 分页与查询条件（offset/pagesize 形态）
+   * @returns 角色分页结果
+   */
+  pageList(query: RoleListQuery): Promise<Response<PageModel<Role>>> {
+    return request({
+      url: '/authz/role/pageList',
+      method: 'get',
+      params: query
+    })
+  },
 
-/**
- * 分页查询角色列表（URL 查询参数）。
- * @param query 查询参数（offset/pagesize/name/status）。
- * @returns 角色分页列表（response.data.data / response.data.total）。
- */
-export function listRole(query: RoleListQuery): Promise<Response<PageModel<Role>>> {
-  return request({
-    url: '/authz/role/pageList',
-    method: 'get',
-    params: query
-  })
-}
+  /**
+   * 新增角色
+   *
+   * @param data 角色数据
+   * @returns 保存结果
+   */
+  insert(data: Role): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/role/insert',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 查询角色详情。
- * @param id 角色 ID。
- * @returns 角色详细信息。
- */
-export function getRole(id: number): Promise<Response<Role>> {
-  return request({
-    url: '/authz/role/load',
-    method: 'get',
-    params: { id }
-  })
-}
+  /**
+   * 删除角色（支持单条/批量）
+   *
+   * @param ids 角色主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/role/delete',
+      method: 'post',
+      data: Array.isArray(ids) ? ids : [ids]
+    })
+  },
 
-/**
- * 新增角色。
- * @param data 角色数据。
- * @returns 新增结果。
- */
-export function addRole(data: Role): Promise<Response<unknown>> {
-  return request({
-    url: '/authz/role/insert',
-    method: 'post',
-    data: data
-  })
-}
+  /**
+   * 更新角色
+   *
+   * @param data 角色数据
+   * @returns 保存结果
+   */
+  update(data: Role): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/role/update',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 修改角色。
- * @param data 角色数据。
- * @returns 修改结果。
- */
-export function updateRole(data: Role): Promise<Response<unknown>> {
-  return request({
-    url: '/authz/role/update',
-    method: 'post',
-    data: data
-  })
-}
+  /**
+   * 查询角色详情
+   *
+   * @param id 角色主键
+   * @returns 角色详情
+   */
+  load(id: number): Promise<Response<Role>> {
+    return request({
+      url: '/authz/role/load',
+      method: 'get',
+      params: { id }
+    })
+  },
 
-/**
- * 删除角色。
- * @param ids 角色 ID 或角色 ID 数组。
- * @returns 删除结果。
- */
-export function delRole(ids: number | number[]): Promise<Response<unknown>> {
-  return request({
-    url: '/authz/role/delete',
-    method: 'post',
-    data: Array.isArray(ids) ? ids : [ids]
-  })
-}
+  /**
+   * 查询角色已授权的资源
+   *
+   * @param roleId 角色主键
+   * @returns 资源主键列表
+   */
+  loadRoleRes(roleId: number): Promise<Response<number[]>> {
+    return request({
+      url: '/authz/role/loadRoleRes',
+      method: 'get',
+      params: { roleId }
+    })
+  },
 
-/**
- * 根据角色 ID 查询角色资源。
- * @param roleId 角色 ID。
- * @returns 角色资源 ID 列表（response.data）。
- */
-export function roleMenuTreeselect(roleId: number): Promise<Response<number[]>> {
-  return request({
-    url: '/authz/role/loadRoleRes',
-    method: 'get',
-    params: { roleId }
-  })
-}
-
-/**
- * 更新角色资源授权。
- * @param roleId      角色 ID。
- * @param resourceIds 资源 ID 列表。
- * @returns 保存结果。
- */
-export function updateRoleRes(roleId: number, resourceIds: number[]): Promise<Response<unknown>> {
-  return request({
-    url: '/authz/role/updateRoleRes',
-    method: 'post',
-    data: { roleId, resourceIds }
-  })
+  /**
+   * 更新角色资源授权
+   *
+   * @param roleId 角色主键
+   * @param resourceIds 资源主键列表
+   * @returns 保存结果
+   */
+  updateRoleRes(roleId: number, resourceIds: number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/role/updateRoleRes',
+      method: 'post',
+      data: { roleId, resourceIds }
+    })
+  }
 }

@@ -151,9 +151,8 @@
 <script setup lang="ts">
 defineOptions({ name: '${codegen.businessName}Tree' })
 import type { FormInstance, FormRules } from 'element-plus'
-import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName} } from '../api'
+import { ${codegen.businessName?uncap_first}Api } from '../api'
 import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}Query } from '../types'
-import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import type { FormState, TableState } from '@/types'
@@ -167,8 +166,6 @@ import { FileUpload } from '@/components'
 <#if hasEditor>
 import { Editor } from '@/components'
 </#if>
-
-const resetForm = useFormReset()
 
 // 字典选项兜底映射：dictType 字段在此注册空数组，如需字典数据用 useDict 加载替换
 const dicts: Record<string, Array<{ value: any; label: string }>> = {}
@@ -229,7 +226,7 @@ function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
   const params = usePageParams(queryParams)()
-  list${codegen.businessName}(params).then((res) => {
+  ${codegen.businessName?uncap_first}Api.pageList(params).then((res) => {
     // 树表接口返回树数组（非分页结构），此处断言处理
     table.value.list = res.data as unknown as ${codegen.businessName}[]
     table.value.loading = false
@@ -241,7 +238,7 @@ function getList() {
 
 /** 查询上级树选项 */
 function get${codegen.businessName}Treeselect() {
-  list${codegen.businessName}({ offset: 0, pagesize: 999 }).then((res) => {
+  ${codegen.businessName?uncap_first}Api.pageList({ offset: 0, pagesize: 999 }).then((res) => {
     table.value.options = res.data as unknown as ${codegen.businessName}[]
   })
 }
@@ -265,7 +262,7 @@ function reset() {
 </#list>
 </#if>
   }
-  resetForm('${codegen.businessName?uncap_first}Ref')
+  ${codegen.businessName?uncap_first}Ref.value?.resetFields()
 }
 
 /** 数字输入过滤：仅允许数字并同步表单（空值置 undefined） */
@@ -282,7 +279,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   handleQuery()
 }
 
@@ -314,7 +311,7 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  get${codegen.businessName}(id).then((res) => {
+  ${codegen.businessName?uncap_first}Api.load(id).then((res) => {
     formState.value.form = res.data
     formState.value.visible = true
     formState.value.title = '修改${codegen.functionName}'
@@ -327,13 +324,13 @@ function submitForm() {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != null) {
-        update${codegen.businessName}(formState.value.form).then(() => {
+        ${codegen.businessName?uncap_first}Api.update(formState.value.form).then(() => {
           modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
-        add${codegen.businessName}(formState.value.form).then(() => {
+        ${codegen.businessName?uncap_first}Api.insert(formState.value.form).then(() => {
           modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
@@ -350,7 +347,7 @@ function handleDelete(row: any) {
     return
   }
   modal.confirm('是否确认删除${codegen.functionName}编号为"' + ${codegen.businessName?uncap_first}Ids + '"的数据项？').then(() => {
-    return del${codegen.businessName}(${codegen.businessName?uncap_first}Ids)
+    return ${codegen.businessName?uncap_first}Api.delete(${codegen.businessName?uncap_first}Ids)
   }).then(() => {
     getList()
     modal.msgSuccess('删除成功')

@@ -106,8 +106,8 @@
 <script setup lang="ts">
 defineOptions({ name: 'UserView' })
 import { t } from '@/i18n'
-import { listRole } from '@/modules/framework/authz/role/api'
-import { loadEnumItem } from '@/modules/framework/system/dict/api'
+import { roleApi } from '@/modules/framework/authz/role/api'
+import { dictApi } from '@/modules/framework/system/dict/api'
 import { parseTime } from '@/utils/common'
 import type { User } from '../types'
 import type { Role } from '@/modules/framework/authz/role/types'
@@ -142,10 +142,10 @@ function open(row: User) {
   visible.value = true
   loading.value = true
   info.value = { ...row }
-  listRole({ offset: 0, pagesize: 999 }).then((response) => {
+  roleApi.pageList({ offset: 0, pagesize: 999 }).then((response) => {
     roleOptions.value = response.data.data
   })
-  loadEnumItem('UserStatuEnum')
+  dictApi.loadEnum('UserStatuEnum')
     .then((res) => {
       statusOptions.value = res.data
     })

@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { getMessage } from '@/modules/framework/system/message/api'
+import { messageApi } from '@/modules/framework/system/message/api'
 import { computed, ref } from 'vue'
 import { t } from '@/i18n'
 
@@ -148,7 +148,7 @@ function open(payload: MessageDetail | number | string | null) {
   /* 传入 messageId：调接口获取详情 */
   loading.value = true
   detail.value = null
-  getMessage(id as number)
+  messageApi.load(id as number)
     .then((res) => {
       detail.value = res.data as MessageDetail
     })

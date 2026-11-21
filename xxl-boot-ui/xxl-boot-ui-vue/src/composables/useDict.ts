@@ -8,7 +8,7 @@
  */
 import { ref, toRefs } from 'vue'
 import { useDictStore } from '@/store'
-import { loadDictItem } from '@/modules/framework/system/dict/api'
+import { dictApi } from '@/modules/framework/system/dict/api'
 import type { DictTagOption } from '@/types'
 
 const dictStore = useDictStore()
@@ -32,7 +32,7 @@ export function useDict(...args: string[]): Record<string, import('vue').Ref<Dic
         res.value[dictType] = dicts
       } else {
         // 缓存未命中，请求接口并写入缓存
-        loadDictItem(dictType).then((resp) => {
+        dictApi.loadDictItem(dictType).then((resp) => {
           // 后端字段 → 前端通用字段名
           res.value[dictType] = resp.data.map((p) => ({
             label: p.name,

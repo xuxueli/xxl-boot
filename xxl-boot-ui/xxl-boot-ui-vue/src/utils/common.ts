@@ -28,12 +28,11 @@
  *  25. param2Obj          - URL 查询字符串解析为对象
  *  26. tansParams         - 参数序列化（支持嵌套对象展开）
  *  27. getNormalPath      - 规范化路径（去除重复/末尾斜杠）
- *  28. resetForm          - 重置 el-form 表单（Options API）
- *  29. addDateRange       - 添加日期范围到查询参数
- *  30. selectDictLabel    - 字典回显单值
- *  31. selectDictLabels   - 字典回显多值
- *  32. handleTree         - 扁平数组转树形结构
- *  33. blobValidate       - 验证 blob 是否为合法文件数据
+ *  28. addDateRange       - 添加日期范围到查询参数
+ *  29. selectDictLabel    - 字典回显单值
+ *  30. selectDictLabels   - 字典回显多值
+ *  31. handleTree         - 扁平数组转树形结构
+ *  32. blobValidate       - 验证 blob 是否为合法文件数据
  *
  * 用法：
  *   import { parseTime, handleTree } from '@/utils/common'
@@ -637,19 +636,6 @@ export function getNormalPath(p: string): string {
 }
 
 // ==================== 表单 ====================
-
-/**
- * 重置表单（Options API 下使用，依赖 this.$refs）
- *
- * @param refName - el-form 的 ref 名称
- *
- * 用法：resetForm.call(this, 'formRef')
- */
-export function resetForm(this: { $refs: Record<string, any> }, refName: string): void {
-  if (this.$refs[refName]) {
-    this.$refs[refName].resetFields()
-  }
-}
 
 /**
  * 添加日期范围到查询参数

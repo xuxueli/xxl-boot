@@ -1,6 +1,7 @@
 <!--
-  页面：Config（配置管理）
-  功能：查询、新增、修改、删除系统配置
+  Config（配置管理）
+  功能：配置的分页查询 + 新增/修改/删除
+  @author xuxueli 2026-11-21
 -->
 <template>
   <div class="app-container">
@@ -30,10 +31,10 @@
         <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate()" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -104,41 +105,52 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Config' })
+import { ref } from 'vue'
 import { t } from '@/i18n'
-import { listConfig, getConfig, delConfig, addConfig, updateConfig } from '../api'
+import { Pagination, RightToolbar } from '@/components'
 import { useEnumOption } from '@/composables/useEnumOption'
-import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
-import type { Config, ConfigQuery } from '../types'
-import type { EnumOption, TableState, FormState } from '@/types'
-import type { FormInstance, FormRules } from 'element-plus'
-import { ref } from 'vue'
-import { RightToolbar, Pagination } from '@/components'
-
-const resetForm = useFormReset()
+import { configApi } from '../api'
+import type { Config, ConfigForm, ConfigQuery } from '../types'
+import type { FormInstance } from 'element-plus'
+import type { FormState, TableState } from '@/types'
 
 // --------------------------------- ref data ---------------------------------
 
-// 组件实例引用：模板 ref
-const formRef = ref<FormInstance>() /* 编辑表单实例引用 */
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
+const formRef = ref<FormInstance>() /* 编辑表单 ref */
 
-// 搜索栏：查询参数
+// 配置状态选项，由后端枚举接口加载
+const { ConfigStatusEnum: statusOptions } = useEnumOption('ConfigStatusEnum')
+
+// 搜索栏筛选条件与分页参数
 const queryParams = ref<ConfigQuery>({
   pageNum: 1 /* 当前页码 */,
   pageSize: 10 /* 每页条数 */,
   name: undefined /* 配置名称 */,
-  key: undefined /* 配置Key */,
-  status: -1 /* 状态（-1 全部、0 正常、1 停用） */
+  key: undefined /* 配置 Key */,
+  status: -1 /* 状态筛选，-1 表示全部 */
 })
 
-// 编辑弹窗：表单状态（表单数据 + 校验规则 + 弹窗显隐/标题）
-const formState = ref<FormState<Config>>({
-  visible: false /* 对话框显隐 */,
-  title: '' /* 对话框标题 */,
-  form: {} /* 表单数据 */,
+// 列表数据与勾选状态，勾选结果决定顶部按钮是否可用
+const table = ref<TableState<Config>>({
+  list: [], // 配置列表
+  total: 0, // 总条数
+  loading: true, // 加载状态
+  showSearch: true, // 是否显示搜索栏
+  ids: [], // 勾选行主键
+  single: true, // 修改按钮是否禁用
+  multiple: true // 删除按钮是否禁用
+})
+
+// 编辑弹窗状态
+const formState = ref<FormState<ConfigForm>>({
+  visible: false, // 弹窗显隐
+  title: '', // 弹窗标题
+  form: {}, // 表单数据
   rules: {
-    /* 校验规则 */
+    // 校验规则
     name: [{ required: true, message: t('common.requiredMsg', [t('system.config.configName')]), trigger: 'blur' }],
     key: [
       { required: true, message: t('common.requiredMsg', [t('system.config.configKey')]), trigger: 'blur' },
@@ -149,49 +161,123 @@ const formState = ref<FormState<Config>>({
   }
 })
 
-// 表格：UI数据
-const table = ref<TableState<Config>>({
-  list: [] /* 配置列表 */,
-  total: 0 /* 总条数 */,
-  loading: true /* 加载状态 */,
-  showSearch: true /* 是否显示搜索栏 */,
-  ids: [] /* 选中行 ID 数组 */,
-  single: true /* 是否单选 */,
-  multiple: true /* 是否多选 */
-})
-
-// 状态选项（从后端枚举接口加载，枚举项属性为 code、title）
-const { ConfigStatusEnum: statusOptions } = useEnumOption('ConfigStatusEnum')
-
 // --------------------------------- fun ---------------------------------
 
-/** 从后端枚举接口加载状态选项 */
+/** 搜索：回到第一页后查询 */
+function handleQuery() {
+  // 筛选条件已变化，回到第一页可避免停留在超出结果范围的页码
+  queryParams.value.pageNum = 1
+  getList()
+}
 
-/** 查询配置列表 */
+/** 重置搜索条件后重新查询 */
+function resetQuery() {
+  queryRef.value?.resetFields()
+  handleQuery()
+}
+
+/**
+ * 查询配置分页数据
+ *
+ * 失败提示由请求层统一处理，此处只负责复位 loading
+ */
 function getList() {
   table.value.loading = true
-  // 前端分页参数 → 后端请求参数（offset/pagesize）
-  const params = usePageParams(queryParams)()
-  listConfig(params).then((response) => {
-    table.value.list = response.data.data
-    table.value.total = response.data.total
-    table.value.loading = false
+  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
+  configApi.pageList(usePageParams(queryParams)())
+    .then((response) => {
+      table.value.list = response.data.data
+      table.value.total = response.data.total
+    })
+    .catch(() => {
+      // 错误已由请求层提示，继续走到 finally 复位 loading
+    })
+    .finally(() => {
+      table.value.loading = false
+    })
+}
+
+/**
+ * 状态编码转枚举文案
+ *
+ * @param status 状态编码
+ * @returns 状态文案；未匹配到枚举项时回退显示编码
+ */
+function statusText(status: number) {
+  const item = statusOptions.value.find((i) => i.code === status)
+  return item?.title ?? String(status)
+}
+
+/**
+ * 同步表格勾选结果与顶部按钮可用状态
+ *
+ * @param selection 当前勾选行
+ */
+function handleSelectionChange(selection: Config[]) {
+  table.value.ids = selection.map((item) => item.id as number)
+  table.value.single = selection.length !== 1
+  table.value.multiple = !selection.length
+}
+
+/** 打开新增弹窗，表单恢复为新增默认值 */
+function handleAdd() {
+  reset()
+  formState.value.visible = true
+  formState.value.title = t('common.titleAdd', [t('common.noun.config')])
+}
+
+/**
+ * 打开修改弹窗并回填详情
+ *
+ * @param row 行数据；顶部按钮调用时为空，此时回退到勾选行
+ */
+function handleUpdate(row?: Config) {
+  const id = row?.id ?? table.value.ids[0]
+  // 顶部按钮未勾选或行数据缺少 id 时直接返回，避免无效请求
+  if (id == null) return
+  reset()
+  configApi.load(id).then((response) => {
+    formState.value.form = response.data
+    formState.value.visible = true
+    formState.value.title = t('common.titleEdit', [t('common.noun.config')])
   })
 }
 
-/** 状态编码 → 文案 */
-function statusText(status: number) {
-  const item = statusOptions.value.find((i) => i.code === status)
-  return item ? item.title : status
+/** 校验通过后提交：有 id 走修改，否则新增 */
+function submitForm() {
+  formRef.value?.validate((valid) => {
+    // 校验失败时保持弹窗打开，等待用户修正
+    if (!valid) return
+    const isEdit = formState.value.form.id != null
+    const request = isEdit ? configApi.update(formState.value.form) : configApi.insert(formState.value.form)
+    request.then(() => {
+      modal.msgSuccess(t(isEdit ? 'common.updateSuccess' : 'common.addSuccess'))
+      formState.value.visible = false
+      getList()
+    })
+  })
 }
 
-/** 取消按钮 */
-function cancel() {
-  formState.value.visible = false
-  reset()
+/**
+ * 删除配置（单条或批量），成功后刷新列表
+ *
+ * @param row 行数据；顶部按钮调用时为空，此时删除勾选行
+ */
+function handleDelete(row?: Config) {
+  const ids = row?.id ?? table.value.ids
+  // 无勾选记录时直接返回，避免弹出空删除确认框
+  if (ids == null || (Array.isArray(ids) && ids.length === 0)) return
+  modal
+    .confirm(t('system.config.confirmDeleteConfig', [Array.isArray(ids) ? ids.join(',') : ids]))
+    .then(() => configApi.delete(ids))
+    .then(() => {
+      getList()
+      modal.msgSuccess(t('common.deleteSuccess'))
+    })
+    .catch(() => {})
 }
 
-/** 表单重置 */
+/** 重置编辑表单数据与校验状态 */
 function reset() {
   formState.value.form = {
     id: undefined,
@@ -201,92 +287,16 @@ function reset() {
     status: 0,
     remark: undefined
   }
-  resetForm('formRef')
+  formRef.value?.resetFields()
 }
 
-/** 搜索按钮操作 */
-function handleQuery() {
-  queryParams.value.pageNum = 1
-  getList()
-}
-
-/** 重置按钮操作 */
-function resetQuery() {
-  resetForm('queryRef')
-  handleQuery()
-}
-
-/** 多选框选中数据 */
-function handleSelectionChange(selection: Config[]) {
-  table.value.ids = selection.map((item) => item.id as number)
-  table.value.single = selection.length !== 1
-  table.value.multiple = !selection.length
-}
-
-/** 新增按钮操作 */
-function handleAdd() {
+/** 关闭弹窗，丢弃未提交的编辑内容 */
+function cancel() {
+  formState.value.visible = false
   reset()
-  formState.value.visible = true
-  formState.value.title = t('common.titleAdd', [t('common.noun.config')])
-}
-
-/** 修改按钮操作（顶部按钮 @click 传事件对象，需取勾选 id） */
-function handleUpdate(row: any) {
-  reset()
-  // 顶部按钮点击传入的是事件对象而非行数据，此时取勾选 id
-  const id = row?.id ?? table.value.ids[0]
-  if (id == null) {
-    return
-  }
-  getConfig(id).then((response) => {
-    formState.value.form = response.data
-    formState.value.visible = true
-    formState.value.title = t('common.titleEdit', [t('common.noun.config')])
-  })
-}
-
-/** 提交按钮 */
-function submitForm() {
-  formRef.value!.validate((valid) => {
-    if (valid) {
-      // 已有 id 走更新，否则走新增
-      if (formState.value.form.id != undefined) {
-        updateConfig(formState.value.form).then((response) => {
-          modal.msgSuccess(t('common.updateSuccess'))
-          formState.value.visible = false
-          getList()
-        })
-      } else {
-        addConfig(formState.value.form).then((response) => {
-          modal.msgSuccess(t('common.addSuccess'))
-          formState.value.visible = false
-          getList()
-        })
-      }
-    }
-  })
-}
-
-/** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
-function handleDelete(row: any) {
-  const configIds = row?.id ?? table.value.ids
-  if (configIds == null || (Array.isArray(configIds) && configIds.length === 0)) {
-    return
-  }
-  modal
-    .confirm(t('system.config.confirmDeleteConfig', [configIds]))
-    .then(function () {
-      return delConfig(configIds)
-    })
-    .then(() => {
-      getList()
-      modal.msgSuccess(t('common.deleteSuccess'))
-    })
-    .catch(() => {})
 }
 
 // --------------------------------- page init ---------------------------------
 
-// 页面初始化：加载状态选项 + 配置列表
 getList()
 </script>

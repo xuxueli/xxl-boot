@@ -7,7 +7,7 @@
  *   actions — login / getInfo / logout
  */
 import { defineStore } from 'pinia'
-import { login, logout, getInfo } from '@/modules/framework/auth/api'
+import { authApi } from '@/modules/framework/auth/api'
 import { getToken, removeToken, setTokenWithAge } from '@/utils/auth'
 import type { LoginInfo, Response } from '@/types'
 import type { LoginParams } from '@/modules/framework/auth/types'
@@ -60,7 +60,7 @@ const useUserStore = defineStore('user', {
 
       // 异步操作：
       return new Promise<void>((resolve, reject) => {
-        login(username, password, captchaUuid, captchaResult)
+        authApi.login(username, password, captchaUuid, captchaResult)
           .then((res) => {
             this.token = res.data
             const age = rememberMe ? 365 : 2 / 24 // 记住我：365天；默认，2H过期；
@@ -82,7 +82,7 @@ const useUserStore = defineStore('user', {
      */
     getInfo() {
       return new Promise<Response<LoginInfo>>((resolve, reject) => {
-        getInfo()
+        authApi.loginCheck()
           .then((res) => {
             const data = res.data
 
@@ -113,7 +113,7 @@ const useUserStore = defineStore('user', {
      */
     logout() {
       return new Promise<void>((resolve, reject) => {
-        logout()
+        authApi.logout()
           .then(() => {
             this.token = ''
             this.roles = []

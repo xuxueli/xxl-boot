@@ -31,7 +31,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'ReadUsers' })
 import { t } from '@/i18n'
-import { listMessageReadUsers } from '../api'
+import { messageApi } from '../api'
 import { parseTime } from '@/utils/common'
 import { usePageParams } from '@/composables/usePageParams'
 import type { Message } from '../types'
@@ -98,7 +98,7 @@ function getList() {
     offset: (pageNum - 1) * pageSize,
     pagesize: pageSize
   }
-  listMessageReadUsers(params)
+  messageApi.readUsers(params)
     .then((res) => {
       table.value.list = res.data.data
       table.value.total = res.data.total

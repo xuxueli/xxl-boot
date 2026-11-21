@@ -205,11 +205,10 @@
 defineOptions({ name: 'User' })
 import { t } from '@/i18n'
 import UserViewDrawer from './view.vue'
-import { listUser, addUser, updateUser, delUser } from '../api'
-import { listRole } from '@/modules/framework/authz/role/api'
-import { listOrg } from '@/modules/framework/authz/org/api'
+import { userApi } from '../api'
+import { roleApi } from '@/modules/framework/authz/role/api'
+import { orgApi } from '@/modules/framework/authz/org/api'
 import { useEnumOption } from '@/composables/useEnumOption'
-import { useFormReset } from '@/composables/useFormReset'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
 import { ElMessageBox } from 'element-plus'
@@ -221,8 +220,6 @@ import type { FormInstance, FormItemRule, FormRules } from 'element-plus'
 import { ref } from 'vue'
 import { RightToolbar, Pagination, TreePanel } from '@/components'
 
-const resetForm = useFormReset()
-
 /** 编辑表单数据（User 基础上补充表单用到的附加字段） */
 interface UserFormData extends User {
   phone?: string
@@ -233,6 +230,7 @@ interface UserFormData extends User {
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
 const deptTreeRef = ref<any>() /* 左侧组织树 ref */
 const userViewRef = ref<any>() /* 用户详情抽屉 ref */
@@ -295,14 +293,14 @@ const passwordRules: FormItemRule[] = [
 
 /** 加载角色选项（用于编辑表单角色多选） */
 function loadRoleOptions() {
-  listRole({ offset: 0, pagesize: 999 }).then((response) => {
+  roleApi.pageList({ offset: 0, pagesize: 999 }).then((response) => {
     roleOptions.value = response.data.data
   })
 }
 
 /** 查询组织树列表 */
 function getDeptTree() {
-  listOrg({}).then((response) => {
+  orgApi.treeList({}).then((response) => {
     // handleTree 会就地修改数组并填充 children，需对原始数据分别深拷贝，避免相互污染导致子节点重复
     deptOptions.value = handleTree(JSON.parse(JSON.stringify(response.data)), 'id')
     // 归属组织下拉树：默认追加「未选择」节点（id=0），对齐后端 org_id 默认值 0
@@ -347,7 +345,7 @@ function getList() {
     offset: (pageNum - 1) * pageSize,
     pagesize: pageSize
   }
-  listUser(params).then((response) => {
+  userApi.pageList(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -362,7 +360,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   queryParams.value.orgIds = []
   deptTreeRef.value.setCurrentKey(null)
   handleQuery()
@@ -394,7 +392,7 @@ function reset() {
     status: 0,
     roleIds: []
   }
-  resetForm('formRef')
+  formRef.value?.resetFields()
 }
 
 /** 新增按钮操作 */
@@ -439,13 +437,13 @@ function submitForm() {
 
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateUser(submitData).then(() => {
+        userApi.update(submitData).then(() => {
           modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
-        addUser(submitData).then(() => {
+        userApi.add(submitData).then(() => {
           modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
@@ -464,7 +462,7 @@ function handleDelete(row: any) {
   modal
     .confirm(t('authz.user.confirmDelete', [userIds]))
     .then(function () {
-      return delUser(userIds)
+      return userApi.delete(userIds)
     })
     .then(() => {
       getList()
@@ -491,7 +489,7 @@ function handleResetPwd(row: User) {
       delete submitData.updateTime
       delete submitData.orgName
       delete submitData.roleNames
-      updateUser(submitData).then(() => {
+      userApi.update(submitData).then(() => {
         modal.msgSuccess(t('authz.user.updatePwdSuccess', [value]))
       })
     })
@@ -506,7 +504,7 @@ function handleStatusChange(row: User) {
   delete submitData.updateTime
   delete submitData.orgName
   delete submitData.roleNames
-  updateUser(submitData)
+  userApi.update(submitData)
     .then(() => {
       modal.msgSuccess(t('authz.user.statusChangeSuccess', [text]))
     })

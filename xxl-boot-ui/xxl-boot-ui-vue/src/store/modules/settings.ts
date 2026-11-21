@@ -11,7 +11,7 @@ import defaultSettings from '@/default-settings'
 import { t, setLang, getLang } from '@/i18n'
 import { useDark, useToggle } from '@vueuse/core'
 import { handleThemeStyle } from '@/utils/theme'
-import { loadBaseConfig as fetchBaseConfig } from '@/modules/framework/auth/api'
+import { authApi } from '@/modules/framework/auth/api'
 
 // 初始化暗黑模式：跟随系统
 const isDark = useDark({
@@ -212,7 +212,7 @@ const useSettingsStore = defineStore('settings', {
      */
     async loadBaseConfig() {
       try {
-        const response = await fetchBaseConfig()
+        const response = await authApi.loadBaseConfig()
         const config = response.data
         if (!config) {
           return

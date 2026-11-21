@@ -83,7 +83,7 @@ defineOptions({ name: 'Profile' })
 import { t } from '@/i18n'
 import userInfo from './userInfo.vue'
 import resetPwd from './resetPwd.vue'
-import { getUserProfile } from '../../api'
+import { userApi } from '../../api'
 import type { User } from '../../types'
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -102,7 +102,7 @@ const state = reactive<{
 
 /** 获取当前登录用户个人信息 */
 function getUser() {
-  getUserProfile().then((res) => {
+  userApi.loadProfile().then((res) => {
     state.user = res.data
     state.roleNames = ((state.user.roleNames as string[]) || []).join(', ')
   })

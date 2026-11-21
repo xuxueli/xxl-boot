@@ -134,18 +134,15 @@
 <script setup lang="ts">
 defineOptions({ name: 'Org' })
 import { t } from '@/i18n'
-import { listOrg, getOrg, delOrg, addOrg, updateOrg, updateOrgSort } from '../api'
+import { orgApi } from '../api'
 import { useEnumOption } from '@/composables/useEnumOption'
 import { handleTree, parseTime } from '@/utils/common'
-import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import type { Org, OrgQuery } from '../types'
 import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 import { nextTick, ref } from 'vue'
 import { RightToolbar } from '@/components'
-
-const resetForm = useFormReset()
 
 /** 表格状态 */
 interface TableState {
@@ -166,7 +163,8 @@ interface FormState {
 
 // --------------------------------- ref data ---------------------------------
 
-// 组件实例引用：编辑表单 ref
+// 组件实例引用：搜索栏与编辑表单 ref
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
 
 // 搜索栏：查询参数
@@ -214,7 +212,7 @@ const { OrgStatuEnum: statusOptions } = useEnumOption('OrgStatuEnum')
 /** 查询组织树列表 */
 function getList() {
   table.value.loading = true
-  listOrg(queryParams.value).then((response) => {
+  orgApi.treeList(queryParams.value).then((response) => {
     table.value.list = handleTree(response.data, 'id')
     recordOriginalOrders(table.value.list)
     table.value.loading = false
@@ -223,7 +221,7 @@ function getList() {
 
 /** 查询上级组织树选项（保留完整树，保存时再校验不能选自己或其子孙） */
 function loadOrgOptions() {
-  listOrg({}).then((response) => {
+  orgApi.treeList({}).then((response) => {
     orgOptions.value = handleTree(response.data, 'id')
     // 默认展开全部节点
     expandedKeys.value = collectNodeIds(orgOptions.value)
@@ -266,7 +264,7 @@ function reset() {
     status: 0,
     manager: undefined
   }
-  resetForm('formRef')
+  formRef.value?.resetFields()
 }
 
 /** 搜索按钮操作 */
@@ -276,7 +274,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   handleQuery()
 }
 
@@ -304,7 +302,7 @@ function handleAdd(row: any) {
 function handleUpdate(row: Org) {
   reset()
   loadOrgOptions()
-  getOrg(row.id as number).then((response) => {
+  orgApi.load(row.id as number).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = t('common.titleEdit', [t('common.noun.org')])
@@ -357,13 +355,13 @@ function submitForm() {
       }
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateOrg(formState.value.form).then((response) => {
+        orgApi.update(formState.value.form).then((response) => {
           modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
-        addOrg(formState.value.form).then((response) => {
+        orgApi.insert(formState.value.form).then((response) => {
           modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
@@ -403,7 +401,7 @@ function handleSaveSort() {
     modal.msgWarning(t('common.noSortChange'))
     return
   }
-  updateOrgSort({ ids: changedIds, orders: changedOrders }).then(() => {
+  orgApi.updateSort({ ids: changedIds, orders: changedOrders }).then(() => {
     modal.msgSuccess(t('common.saveSortSuccess'))
     recordOriginalOrders(table.value.list)
   })
@@ -414,7 +412,7 @@ function handleDelete(row: Org) {
   modal
     .confirm(t('authz.org.confirmDelete', [row.name as string]))
     .then(function () {
-      return delOrg([row.id as number])
+      return orgApi.delete([row.id as number])
     })
     .then(() => {
       getList()

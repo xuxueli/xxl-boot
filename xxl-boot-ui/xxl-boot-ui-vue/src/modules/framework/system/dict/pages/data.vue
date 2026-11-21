@@ -92,10 +92,8 @@
 <script setup lang="ts">
 defineOptions({ name: 'Data' })
 import { t } from '@/i18n'
-import { getType } from '../api'
-import { listData, getData, delData, addData, updateData } from '../api'
+import { dictApi } from '../api'
 import { useEnumOption } from '@/composables/useEnumOption'
-import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
@@ -105,8 +103,6 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { Pagination } from '@/components'
-
-const resetForm = useFormReset()
 
 /* --------------------------------- ref data --------------------------------- */
 
@@ -176,7 +172,7 @@ function getDictName() {
   if (dictId.value == null) {
     return
   }
-  getType(dictId.value).then((response) => {
+  dictApi.load(dictId.value).then((response) => {
     dictName.value = response.data ? response.data.name : ''
   })
 }
@@ -190,7 +186,7 @@ function getList() {
   if (dictId.value != null) {
     params.dictId = dictId.value
   }
-  listData(params).then((response) => {
+  dictApi.itemPageList(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -220,7 +216,7 @@ function reset() {
     order: 0,
     remark: undefined
   }
-  resetForm('formRef')
+  formRef.value?.resetFields()
 }
 
 /** 返回按钮操作 */
@@ -251,7 +247,7 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  getData(id).then((response) => {
+  dictApi.itemLoad(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = t('common.titleEdit', [t('common.noun.dictItem')])
@@ -264,13 +260,13 @@ function submitForm() {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
-        updateData(formState.value.form).then((response) => {
+        dictApi.itemUpdate(formState.value.form).then((response) => {
           modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
-        addData(formState.value.form).then((response) => {
+        dictApi.itemInsert(formState.value.form).then((response) => {
           modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
@@ -289,7 +285,7 @@ function handleDelete(row: any) {
   modal
     .confirm(t('system.dict.confirmDeleteItem', [itemIds]))
     .then(function () {
-      return delData(itemIds)
+      return dictApi.itemDelete(itemIds)
     })
     .then(() => {
       getList()

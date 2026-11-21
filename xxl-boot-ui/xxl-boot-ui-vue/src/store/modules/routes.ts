@@ -5,7 +5,7 @@
 import { defineStore } from 'pinia'
 import { markRaw } from 'vue'
 import { constantRoutes } from '@/router'
-import { getMenus } from '@/modules/framework/auth/api'
+import { authApi } from '@/modules/framework/auth/api'
 import type { MenuNode } from '@/types'
 import { isHttp } from '@/utils/validate'
 import Layout from '@/layout/index.vue'
@@ -66,7 +66,7 @@ const useRoutesStore = defineStore('routes', {
      * 初始化：请求后端菜单 → 适配为前端路由 → 转换组件映射 → 写入 dynamicRoutes，同时缓存拍平路由
      */
     initRoutes(roles?: string[]) {
-      return getMenus().then((res) => {
+      return authApi.getMenus().then((res) => {
         // 后端纯菜单数据 → 前端内部路由结构
         const raw = adaptMenusToRoutes(res.data || [])
 

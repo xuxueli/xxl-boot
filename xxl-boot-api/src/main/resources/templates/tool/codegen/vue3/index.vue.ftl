@@ -184,10 +184,9 @@
 <script setup lang="ts">
 defineOptions({ name: '${codegen.businessName}' })
 import type { FormInstance, FormRules } from 'element-plus'
-import { list${codegen.businessName}, get${codegen.businessName}, add${codegen.businessName}, update${codegen.businessName}, del${codegen.businessName}, export${codegen.businessName} } from '../api'
+import { ${codegen.businessName?uncap_first}Api } from '../api'
 import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}Query } from '../types'
 import { addDateRange } from '@/utils/common'
-import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import { download } from '@/utils/request'
 import modal from '@/utils/modal'
@@ -202,8 +201,6 @@ import { FileUpload } from '@/components'
 <#if hasEditor>
 import { Editor } from '@/components'
 </#if>
-
-const resetForm = useFormReset()
 
 // 字典选项兜底映射：dictType 字段在此注册空数组，如需字典数据用 useDict 加载替换
 const dicts: Record<string, Array<{ value: any; label: string }>> = {}
@@ -273,7 +270,7 @@ function getList() {
 </#if>
 </#list>
 </#if>
-  list${codegen.businessName}(params).then((response) => {
+  ${codegen.businessName?uncap_first}Api.pageList(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -298,7 +295,7 @@ function reset() {
 </#list>
 </#if>
   }
-  resetForm('${codegen.businessName?uncap_first}Ref')
+  ${codegen.businessName?uncap_first}Ref.value?.resetFields()
 }
 
 /** 数字输入过滤：仅允许数字并同步表单（空值置 undefined） */
@@ -322,7 +319,7 @@ function resetQuery() {
 </#if>
 </#list>
 </#if>
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   handleQuery()
 }
 
@@ -348,7 +345,7 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  get${codegen.businessName}(id).then((response) => {
+  ${codegen.businessName?uncap_first}Api.load(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = '修改${codegen.functionName}'
@@ -361,13 +358,13 @@ function submitForm() {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != null) {
-        update${codegen.businessName}(formState.value.form).then(() => {
+        ${codegen.businessName?uncap_first}Api.update(formState.value.form).then(() => {
           modal.msgSuccess('修改成功')
           formState.value.visible = false
           getList()
         })
       } else {
-        add${codegen.businessName}(formState.value.form).then(() => {
+        ${codegen.businessName?uncap_first}Api.insert(formState.value.form).then(() => {
           modal.msgSuccess('新增成功')
           formState.value.visible = false
           getList()
@@ -384,7 +381,7 @@ function handleDelete(row: any) {
     return
   }
   modal.confirm('是否确认删除${codegen.functionName}编号为"' + ${codegen.businessName?uncap_first}Ids + '"的数据项？').then(() => {
-    return del${codegen.businessName}(${codegen.businessName?uncap_first}Ids)
+    return ${codegen.businessName?uncap_first}Api.delete(${codegen.businessName?uncap_first}Ids)
   }).then(() => {
     getList()
     modal.msgSuccess('删除成功')

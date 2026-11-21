@@ -1,98 +1,108 @@
+/**
+ * @fileoverview User API
+ * @description 用户管理接口，方法名与后端 UserController 对齐
+ * @author xuxueli 2026-11-21
+ */
 import { request } from '@/utils/request'
 import type { User, UserForm, UserListQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
-/**
- * 名称：用户管理 API
- * 能力：提供用户列表、增删改、状态与个人中心相关接口。
- */
+/** 用户 API，调用方式：userApi.pageList(...) */
+export const userApi = {
+  /**
+   * 分页查询用户
+   *
+   * @param query 分页与查询条件（offset/pagesize 形态）
+   * @returns 用户分页结果
+   */
+  pageList(query: UserListQuery): Promise<Response<PageModel<User>>> {
+    return request({
+      url: '/authz/user/pageList',
+      method: 'get',
+      params: query
+    })
+  },
 
-/**
- * 分页查询用户列表（URL 查询参数）。
- * @param query 查询参数（offset/pagesize/username/status/orgIds）。
- * @returns 用户分页列表（response.data.data / response.data.total）。
- */
-export function listUser(query: UserListQuery): Promise<Response<PageModel<User>>> {
-  return request({
-    url: '/authz/user/pageList',
-    method: 'get',
-    params: query
-  })
-}
+  /**
+   * 新增用户
+   *
+   * @param data 用户数据
+   * @returns 保存结果
+   */
+  add(data: UserForm): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/user/add',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 新增用户。
- * @param data 用户数据。
- * @returns 新增结果。
- */
-export function addUser(data: UserForm): Promise<Response<unknown>> {
-  return request({
-    url: '/authz/user/add',
-    method: 'post',
-    data: data
-  })
-}
+  /**
+   * 更新用户
+   *
+   * @param data 用户数据
+   * @returns 保存结果
+   */
+  update(data: UserForm): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/user/update',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 修改用户。
- * @param data 用户数据。
- * @returns 修改结果。
- */
-export function updateUser(data: UserForm): Promise<Response<unknown>> {
-  return request({
-    url: '/authz/user/update',
-    method: 'post',
-    data: data
-  })
-}
+  /**
+   * 删除用户（支持单条/批量）
+   *
+   * @param ids 用户主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/user/delete',
+      method: 'post',
+      data: Array.isArray(ids) ? ids : [ids]
+    })
+  },
 
-/**
- * 删除用户。
- * @param ids 用户 ID 或用户 ID 数组。
- * @returns 删除结果。
- */
-export function delUser(ids: number | number[]): Promise<Response<unknown>> {
-  return request({
-    url: '/authz/user/delete',
-    method: 'post',
-    data: Array.isArray(ids) ? ids : [ids]
-  })
-}
+  /**
+   * 修改当前登录用户密码
+   *
+   * @param oldPassword 旧密码
+   * @param newPassword 新密码
+   * @returns 修改结果
+   */
+  updatePwd(oldPassword: string, newPassword: string): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/user/updatePwd',
+      method: 'post',
+      params: { oldPassword, newPassword }
+    })
+  },
 
-/**
- * 加载个人中心信息。
- * @returns 当前登录用户信息。
- */
-export function getUserProfile(): Promise<Response<User>> {
-  return request({
-    url: '/authz/user/loadProfile',
-    method: 'get'
-  })
-}
+  /**
+   * 查询个人中心信息
+   *
+   * @returns 当前登录用户信息
+   */
+  loadProfile(): Promise<Response<User>> {
+    return request({
+      url: '/authz/user/loadProfile',
+      method: 'get'
+    })
+  },
 
-/**
- * 更新个人中心信息。
- * @param data 用户资料数据。
- * @returns 更新结果。
- */
-export function updateUserProfile(data: User): Promise<Response<unknown>> {
-  return request({
-    url: '/authz/user/updateProfile',
-    method: 'post',
-    data: data
-  })
-}
-
-/**
- * 修改当前登录用户密码。
- * @param oldPassword 旧密码。
- * @param newPassword 新密码。
- * @returns 修改结果。
- */
-export function updateUserPwd(oldPassword: string, newPassword: string): Promise<Response<unknown>> {
-  return request({
-    url: '/authz/user/updatePwd',
-    method: 'post',
-    params: { oldPassword, newPassword }
-  })
+  /**
+   * 更新个人中心信息
+   *
+   * @param data 用户资料数据
+   * @returns 保存结果
+   */
+  updateProfile(data: User): Promise<Response<unknown>> {
+    return request({
+      url: '/authz/user/updateProfile',
+      method: 'post',
+      data
+    })
+  }
 }

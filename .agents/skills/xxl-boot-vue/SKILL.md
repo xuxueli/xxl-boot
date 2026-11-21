@@ -39,7 +39,7 @@ xxl-boot-api/src/main
 xxl-boot-ui/xxl-boot-ui-vue/src
 ├── modules/framework/{domain}/{module}/                   ← 平台内置（pages + api + types）
 ├── modules/business/{module}/{business}/                  ← 业务模块（pages + api + types）
-├── composables/                                           ← usePageParams / useEnumOption / useDict / useFormReset
+├── composables/                                           ← usePageParams / useEnumOption / useDict
 ├── components/                                            ← Editor / ImageUpload / Pagination / RightToolbar…
 └── types/index.ts                                         ← Response / PageModel / ListQuery / TableState / FormState…
 ```
@@ -87,7 +87,7 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 | 文件 | 位置 | 说明 |
 |---|---|---|
 | types | `src/modules/business/{module}/{business}/types/index.ts` | 实体 + Query + Form + ListQuery |
-| api | `src/modules/business/{module}/{business}/api/index.ts` | `request` 封装，`Promise<Response<PageModel<T>>>` |
+| api | `src/modules/business/{module}/{business}/api/index.ts` | `{business}Api` 命名空间封装，方法名对齐后端 Controller |
 | view | `src/modules/business/{module}/{business}/pages/index.vue` | 三段式列表页 |
 | 页内组件 | 同 `pages/` 下，如 `XxxFormModal.vue` | 弹窗独立文件时使用 |
 
@@ -145,86 +145,93 @@ export type XxxListQuery = ListQuery<XxxQuery>
 
 ### 7.2 api：`api/index.ts`
 
+每个模块只导出一个命名空间对象，命名 `{business}Api`；对象内方法名直接复用后端 Controller 方法名（`pageList/load/insert/delete/update` 及业务方法），方法顺序尽量与后端保持一致。页面引入多个模块的 API 时通过命名空间区分，不再使用 import alias 规避重名。
+
 ```ts
 /**
  * @fileoverview Xxx API
- * @description 接口封装
+ * @description Xxx 接口，方法名与后端 XxxController 对齐
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request'
 import type { Xxx, XxxForm, XxxListQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
-/**
- * 分页查询 Xxx
- *
- * @param query 分页与查询条件（offset/pagesize 形态）
- * @returns 分页结果
- */
-export function listXxx(query: XxxListQuery): Promise<Response<PageModel<Xxx>>> {
-  return request({
-    url: '/{module}/{business}/pageList',
-    method: 'get',
-    params: query
-  })
-}
+/** Xxx API，调用方式：xxxApi.pageList(...) */
+export const xxxApi = {
+  /**
+   * 分页查询 Xxx
+   *
+   * @param query 分页与查询条件（offset/pagesize 形态）
+   * @returns 分页结果
+   */
+  pageList(query: XxxListQuery): Promise<Response<PageModel<Xxx>>> {
+    return request({
+      url: '/{module}/{business}/pageList',
+      method: 'get',
+      params: query
+    })
+  },
 
-/**
- * 查询 Xxx 详情
- *
- * @param id 主键
- * @returns 详情数据
- */
-export function getXxx(id: number): Promise<Response<Xxx>> {
-  return request({
-    url: '/{module}/{business}/load',
-    method: 'get',
-    params: { id }
-  })
-}
+  /**
+   * 查询 Xxx 详情
+   *
+   * @param id 主键
+   * @returns 详情数据
+   */
+  load(id: number): Promise<Response<Xxx>> {
+    return request({
+      url: '/{module}/{business}/load',
+      method: 'get',
+      params: { id }
+    })
+  },
 
-/**
- * 新增 Xxx
- *
- * @param data 表单数据
- * @returns 保存结果
- */
-export function addXxx(data: XxxForm): Promise<Response<unknown>> {
-  return request({
-    url: '/{module}/{business}/insert',
-    method: 'post',
-    data
-  })
-}
+  /**
+   * 新增 Xxx
+   *
+   * @param data 表单数据
+   * @returns 保存结果
+   */
+  insert(data: XxxForm): Promise<Response<unknown>> {
+    return request({
+      url: '/{module}/{business}/insert',
+      method: 'post',
+      data
+    })
+  },
 
-/**
- * 修改 Xxx
- *
- * @param data 表单数据（含主键）
- * @returns 保存结果
- */
-export function updateXxx(data: XxxForm): Promise<Response<unknown>> {
-  return request({
-    url: '/{module}/{business}/update',
-    method: 'post',
-    data
-  })
-}
+  /**
+   * 删除 Xxx（支持单条/批量）
+   *
+   * @param ids 单个主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/{module}/{business}/delete',
+      method: 'post',
+      data: Array.isArray(ids) ? ids : [ids]
+    })
+  },
 
-/**
- * 删除 Xxx（支持单条/批量）
- *
- * @param id 单个主键或主键数组
- * @returns 删除结果
- */
-export function delXxx(id: number | number[]): Promise<Response<unknown>> {
-  return request({
-    url: '/{module}/{business}/delete',
-    method: 'post',
-    data: Array.isArray(id) ? id : [id]
-  })
+  /**
+   * 更新 Xxx
+   *
+   * @param data 表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: XxxForm): Promise<Response<unknown>> {
+    return request({
+      url: '/{module}/{business}/update',
+      method: 'post',
+      data
+    })
+  }
 }
 ```
+
+> 后端方法名不是标准 CRUD 时同样保持一致，例如 `loadByKey`、`markRead`、`updateSort`、`loadRoleRes`；前端只在命名空间内暴露同名方法，不做二次改名。
 
 ### 7.3 页面：`pages/index.vue`（script 骨架）
 
@@ -235,16 +242,13 @@ export function delXxx(id: number | number[]): Promise<Response<unknown>> {
 defineOptions({ name: 'Xxx' })
 import { t } from '@/i18n'
 import { ref } from 'vue'
-import { listXxx, getXxx, addXxx, updateXxx, delXxx } from '../api'
+import { xxxApi } from '../api'
 import { usePageParams } from '@/composables/usePageParams'
 import { useEnumOption } from '@/composables/useEnumOption'
-import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import type { Xxx, XxxForm, XxxQuery } from '../types'
 import type { FormState, TableState } from '@/types'
 import type { FormInstance } from 'element-plus'
-
-const resetForm = useFormReset()
 
 // --------------------------------- ref data ---------------------------------
 const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
@@ -277,7 +281,7 @@ const formState = ref<FormState<XxxForm>>({
 function getList() {
   table.value.loading = true
   const params = usePageParams(queryParams)()
-  listXxx(params).then((response) => {
+  xxxApi.pageList(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -287,7 +291,7 @@ function getList() {
 /** 重置表单数据与校验状态 */
 function reset() {
   formState.value.form = { id: undefined, name: undefined, status: 0 }
-  resetForm('formRef')
+  formRef.value?.resetFields()
 }
 
 /** 重置到第一页并查询 */
@@ -298,7 +302,7 @@ function handleQuery() {
 
 /** 重置搜索条件后重新查询 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   handleQuery()
 }
 
@@ -329,7 +333,7 @@ function handleUpdate(row: any) {
   reset()
   const id = row?.id ?? table.value.ids[0]
   if (id == null) return
-  getXxx(id).then((response) => {
+  xxxApi.load(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = t('common.titleEdit', [t('business.xxx.title')])
@@ -341,7 +345,7 @@ function submitForm() {
   formRef.value?.validate((valid) => {
     if (!valid) return
     const isEdit = formState.value.form.id != null
-    const request = isEdit ? updateXxx(formState.value.form) : addXxx(formState.value.form)
+    const request = isEdit ? xxxApi.update(formState.value.form) : xxxApi.insert(formState.value.form)
     request.then(() => {
       modal.msgSuccess(isEdit ? t('common.updateSuccess') : t('common.addSuccess'))
       formState.value.visible = false
@@ -360,7 +364,7 @@ function handleDelete(row: any) {
   if (ids == null || (Array.isArray(ids) && ids.length === 0)) return
   modal
     .confirm(t('business.xxx.confirmDelete', [ids]))
-    .then(() => delXxx(ids))
+    .then(() => xxxApi.delete(ids))
     .then(() => {
       getList()
       modal.msgSuccess(t('common.deleteSuccess'))
@@ -379,7 +383,9 @@ getList()
 - 响应式数据一律 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；搜索栏、表格状态、表单状态分别收敛为 `queryParams`、`table`、`formState`。
 - 列表固定经 `usePageParams(queryParams)()` 把 `pageNum/pageSize` 转 `offset/pagesize`；取 `response.data.data` 与 `response.data.total`。
 - 组件 import 名称与模板标签统一 PascalCase；按钮权限 `v-hasPermi="['{module}:{business}:add']"`，角色权限 `v-hasRole="['admin']"`。
+- API 统一按 `{business}Api.method(...)` 调用，方法名与后端 Controller 保持一致；一个页面引入多个模块 API 时直接用命名空间区分，禁止用 import alias 改名。
 - 表单弹窗推荐 `defineModel('visible')` + 模板 `v-model` 直连；通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
+- 表单重置直接用已声明的模板 ref：`queryRef.value?.resetFields()` / `formRef.value?.resetFields()`；搜索栏与编辑表单都要声明 `const xxxRef = ref<FormInstance>()`，不要再包一层按字符串名取 `$refs` 的工具。编辑弹窗的重置仍需手动把 `formState.value.form` 置回默认值，`resetFields()` 只负责回到表单项首次挂载时的值。
 
 ### 7.5 注释与 JSDoc
 
@@ -479,7 +485,7 @@ POST /tool/codegen/createTable
 - [ ] 注释符合规范：Vue 文件头含 `@author`，函数/核心分支注释齐全，无无意义注释和注释掉的死代码。
 - [ ] `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md` 六大块与 SQL 已落盘并同步（模板见 `AGENTS.md`「需求落盘」）。
 - [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
-- [ ] 前端 types 四件（实体/Query/Form/ListQuery）齐全，api 返回 `Promise<Response<PageModel<T>>>`，页面三段式 + `ref` 收敛 + `usePageParams`。
+- [ ] 前端 types 四件（实体/Query/Form/ListQuery）齐全，api 以 `{business}Api` 命名空间导出且方法名与后端 Controller 对齐，页面三段式 + `ref` 收敛 + `usePageParams`。
 - [ ] 按钮 `v-hasPermi`；资源表菜单+按钮已插且已授权；菜单可见、页面能打开。
 - [ ] i18n：后端错误文案走 `I18nUtil`，前端页面无硬编码中文（注释除外），语言由后端 `system.i18n.language` 控制，前端已由 `/loadBaseConfig` 同步。
 - [ ] SQL 按 `AGENTS.md`「SQL 执行规范」执行，中文无乱码。
@@ -491,6 +497,6 @@ POST /tool/codegen/createTable
 - Vue 直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/vue3/*.ftl`
 - 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/message/pages/index.vue`
 - API / 类型样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/message/{api,types}/index.ts`
-- 组合式函数：`xxl-boot-ui/xxl-boot-ui-vue/src/composables/{usePageParams,useEnumOption,useDict,useFormReset}.ts`
+- 组合式函数：`xxl-boot-ui/xxl-boot-ui-vue/src/composables/{usePageParams,useEnumOption,useDict}.ts`
 - 菜单 SQL 模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl`
 - 代码生成前端页：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/tool/codegen/`

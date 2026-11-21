@@ -416,7 +416,7 @@ function generateCode() {
   return beautifier.html(html + script + css, beautifierConf.html)
 }
 
-// --------------------------------- init ---------------------------------
+// --------------------------------- page init ---------------------------------
 
 /* 监听标题变化，同步更新占位提示 */
 watch(

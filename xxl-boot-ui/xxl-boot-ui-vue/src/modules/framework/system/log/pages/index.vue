@@ -91,19 +91,17 @@
 defineOptions({ name: 'Log' })
 import { t } from '@/i18n'
 import LogDetail from './detail.vue'
-import { pageList, delOperlog } from '../api'
-import { loadEnumItem } from '@/modules/framework/system/dict/api'
+import { logApi } from '../api'
+import { dictApi } from '@/modules/framework/system/dict/api'
 import { parseTime } from '@/utils/common'
-import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { download } from '@/utils/download'
 import type { Log, LogQuery } from '../types'
 import type { EnumOption, TableState } from '@/types'
+import type { FormInstance } from 'element-plus'
 import { ref } from 'vue'
 import { RightToolbar, Pagination } from '@/components'
-
-const resetForm = useFormReset()
 
 /** 详情弹窗状态 */
 interface DetailState {
@@ -118,6 +116,9 @@ interface DictState {
 }
 
 // --------------------------------- ref data ---------------------------------
+
+// 组件实例引用：搜索栏表单 ref
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 
 // 筛选：表单数据
 const queryParams = ref<LogQuery>({
@@ -161,7 +162,7 @@ function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
   const params = usePageParams(queryParams)()
-  pageList(params).then((response) => {
+  logApi.pageList(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -182,7 +183,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   queryParams.value.pageNum = 1
   getList()
 }
@@ -198,9 +199,7 @@ function handleDetail(row: Log) {
   detail.value = { visible: true, row }
 }
 
-/** 删除日志（顶部按钮 @click 传事件对象，取勾选 ids） */
-
-/** 导出按钮操作 */
+/** 导出日志 */
 function handleExport() {
   download(
     'system/log/export',
@@ -211,7 +210,7 @@ function handleExport() {
   )
 }
 
-/** 删除按钮操作（顶部按钮 @click 传事件对象，需取勾选 ids） */
+/** 删除日志（顶部按钮 @click 传事件对象，取勾选 ids） */
 function handleDelete(row: any) {
   const logIds = row?.id ?? table.value.ids
   if (logIds == null || (Array.isArray(logIds) && logIds.length === 0)) {
@@ -220,7 +219,7 @@ function handleDelete(row: any) {
   modal
     .confirm(t('system.log.confirmDeleteLog', [logIds]))
     .then(function () {
-      return delOperlog(logIds)
+      return logApi.delete(logIds)
     })
     .then(() => {
       getList()
@@ -229,17 +228,17 @@ function handleDelete(row: any) {
     .catch(() => {})
 }
 
-// --------------------------------- init page ---------------------------------
+// --------------------------------- page init ---------------------------------
 
 // 加载日志类型、系统模块枚举（下拉选项）
-loadEnumItem('LogTypeEnum').then((res) => {
+dictApi.loadEnum('LogTypeEnum').then((res) => {
   typeDict.value.options = res.data
   typeDict.value.map = {}
   typeDict.value.options.forEach((item) => {
     typeDict.value.map[item.code] = item.title
   })
 })
-loadEnumItem('LogModuleEnum').then((res) => {
+dictApi.loadEnum('LogModuleEnum').then((res) => {
   moduleDict.value.options = res.data
   moduleDict.value.map = {}
   moduleDict.value.options.forEach((item) => {

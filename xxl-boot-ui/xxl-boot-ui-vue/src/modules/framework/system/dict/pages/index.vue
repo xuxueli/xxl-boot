@@ -109,9 +109,8 @@
 defineOptions({ name: 'Dict' })
 import { t } from '@/i18n'
 import DictDataDrawer from './detail.vue'
-import { listType, getType, delType, addType, updateType } from '../api'
+import { dictApi } from '../api'
 import { useEnumOption } from '@/composables/useEnumOption'
-import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
@@ -120,8 +119,6 @@ import type { EnumOption, TableState, FormState } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ref } from 'vue'
 import { RightToolbar, Pagination } from '@/components'
-
-const resetForm = useFormReset()
 
 /** 字典项抽屉状态 */
 interface DrawerState {
@@ -132,6 +129,7 @@ interface DrawerState {
 /* --------------------------------- ref data --------------------------------- */
 
 // 表单引用
+const queryRef = ref<FormInstance>() /* 搜索栏表单实例引用 */
 const formRef = ref<FormInstance>() /* 编辑表单实例引用 */
 
 // 搜索栏：查询参数
@@ -188,7 +186,7 @@ function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
   const params = usePageParams(queryParams)()
-  listType(params).then((response) => {
+  dictApi.pageList(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -216,7 +214,7 @@ function reset() {
     status: 0,
     remark: undefined
   }
-  resetForm('formRef')
+  formRef.value?.resetFields()
 }
 
 /** 搜索按钮操作 */
@@ -227,7 +225,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   handleQuery()
 }
 
@@ -263,7 +261,7 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  getType(id).then((response) => {
+  dictApi.load(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = t('common.titleEdit', [t('common.noun.dict')])
@@ -276,13 +274,13 @@ function submitForm() {
     if (valid) {
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id != undefined) {
-        updateType(formState.value.form).then((response) => {
+        dictApi.update(formState.value.form).then((response) => {
           modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
-        addType(formState.value.form).then((response) => {
+        dictApi.insert(formState.value.form).then((response) => {
           modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
@@ -301,7 +299,7 @@ function handleDelete(row: any) {
   modal
     .confirm(t('system.dict.confirmDeleteDict', [dictIds]))
     .then(function () {
-      return delType(dictIds)
+      return dictApi.delete(dictIds)
     })
     .then(() => {
       getList()

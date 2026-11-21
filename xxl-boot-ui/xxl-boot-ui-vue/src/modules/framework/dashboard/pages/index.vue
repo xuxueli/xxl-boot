@@ -77,8 +77,8 @@
 
 <script setup lang="ts">
 defineOptions({ name: 'Index' })
-import { getStats, getLogTrend } from '../api'
-import { listMessageTop, markMessageRead } from '@/modules/framework/system/message/api'
+import { dashboardApi } from '../api'
+import { messageApi } from '@/modules/framework/system/message/api'
 import { parseTime } from '@/utils/common'
 import * as echarts from 'echarts'
 import MessageDetailView from '@/layout/components/Navbar/HeaderMessageDetail.vue'
@@ -138,7 +138,7 @@ onUnmounted(() => {
  * 指标卡片 - 数据加载
  */
 function loadStats() {
-  getStats().then((res) => {
+  dashboardApi.stats().then((res) => {
     const data = res.data
     stats.value[0].value = data.userCount
     stats.value[1].value = data.roleCount
@@ -151,7 +151,7 @@ function loadStats() {
  * 消息列表 - 数据加载
  */
 function loadMessages() {
-  listMessageTop().then((res) => {
+  messageApi.listTop().then((res) => {
     messages.value = res.data || []
   })
 }
@@ -161,7 +161,7 @@ function loadMessages() {
  */
 function handleMsgClick(item: Message) {
   messageDetailRef.value!.open(item.id as number)
-  markMessageRead(item.id as number)
+  messageApi.markRead(item.id as number)
 }
 
 /**
@@ -175,7 +175,7 @@ function handleMsgClick(item: Message) {
  */
 function loadChart() {
   const days = chartDays.value
-  getLogTrend(days).then((res) => {
+  dashboardApi.logTrend(days).then((res) => {
     // 后端返回 [{date: '2026-07-11', count: 3}, ...]
     const list = res.data || []
 

@@ -206,8 +206,8 @@
 <script setup lang="ts">
 defineOptions({ name: 'GenEdit' })
 import { t } from '@/i18n'
-import { getGenTable, updateGenTable } from '../api'
-import { queryDictList } from '@/modules/framework/system/dict/api'
+import { codegenApi } from '../api'
+import { dictApi } from '@/modules/framework/system/dict/api'
 import type { FormInstance } from 'element-plus'
 import modal from '@/utils/modal'
 import Sortable from 'sortablejs'
@@ -253,7 +253,7 @@ function open(id: number) {
   visible.value = true
 
   /* 加载表配置 + 字段列表 */
-  getGenTable(id).then((res) => {
+  codegenApi.detail(id).then((res) => {
     const { fieldList, ...rest } = (res.data || {}) as { fieldList?: any[]; [key: string]: any }
     info.value = { formColNum: 1, tplWebType: 'element-plus-typescript', ...rest }
     columns.value = fieldList || []
@@ -270,7 +270,7 @@ function open(id: number) {
   })
 
   /* 加载字典类型下拉 */
-  queryDictList().then((response) => {
+  dictApi.queryDictList().then((response) => {
     dictOptions.value = response.data || []
   })
 }
@@ -282,7 +282,7 @@ function submitForm() {
     if (res.every(Boolean)) {
       const genTable = Object.assign({}, info.value)
       genTable.fieldList = columns.value
-      updateGenTable(genTable).then((res) => {
+      codegenApi.update(genTable).then((res) => {
         if (res.code === 200) {
           modal.msgSuccess(res.msg)
           visible.value = false

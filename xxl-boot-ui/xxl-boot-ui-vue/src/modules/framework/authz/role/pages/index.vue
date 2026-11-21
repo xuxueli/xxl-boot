@@ -132,10 +132,9 @@
 <script setup lang="ts">
 defineOptions({ name: 'Role' })
 import { t } from '@/i18n'
-import { listRole, getRole, addRole, updateRole, delRole, roleMenuTreeselect, updateRoleRes } from '../api'
-import { listResource as menuTreeselect } from '@/modules/framework/authz/resource/api'
+import { roleApi } from '../api'
+import { resourceApi } from '@/modules/framework/authz/resource/api'
 import { useEnumOption } from '@/composables/useEnumOption'
-import { useFormReset } from '@/composables/useFormReset'
 import { usePageParams } from '@/composables/usePageParams'
 import { handleTree, parseTime } from '@/utils/common'
 import modal from '@/utils/modal'
@@ -146,11 +145,10 @@ import type { CheckboxValueType, FormInstance, FormRules } from 'element-plus'
 import { nextTick, ref } from 'vue'
 import { RightToolbar, Pagination } from '@/components'
 
-const resetForm = useFormReset()
-
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
 const menuRef = ref<any>() /* 菜单权限树 ref */
 
@@ -209,7 +207,7 @@ function getList() {
   table.value.loading = true
   // 前端分页参数 → 后端请求参数（offset/pagesize）
   const params = usePageParams(queryParams)()
-  listRole(params).then((response) => {
+  roleApi.pageList(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -224,7 +222,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   handleQuery()
 }
 
@@ -255,12 +253,12 @@ function reset() {
   }
   menuExpand.value = false
   menuNodeAll.value = false
-  resetForm('formRef')
+  formRef.value?.resetFields()
 }
 
 /** 查询菜单权限树结构 */
 function getMenuTreeselect() {
-  return menuTreeselect({}).then((response) => {
+  return resourceApi.treeList({}).then((response) => {
     menuOptions.value = handleTree(response.data, 'id')
   })
 }
@@ -281,14 +279,14 @@ function handleUpdate(row: any) {
   if (id == null) {
     return
   }
-  getRole(id).then((response) => {
+  roleApi.load(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = t('common.titleEdit', [t('authz.user.role')])
     // 加载菜单权限树后，再勾选角色已授权资源
     getMenuTreeselect()
       .then(() => {
-        return roleMenuTreeselect(id)
+        return roleApi.loadRoleRes(id)
       })
       .then((res) => {
         nextTick(() => {
@@ -342,9 +340,9 @@ function submitForm() {
 
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateRole(submitData)
+        roleApi.update(submitData)
           .then(() => {
-            return updateRoleRes(submitData.id as number, resourceIds)
+            return roleApi.updateRoleRes(submitData.id as number, resourceIds)
           })
           .then(() => {
             modal.msgSuccess(t('common.updateSuccess'))
@@ -352,10 +350,10 @@ function submitForm() {
             getList()
           })
       } else {
-        addRole(submitData)
+        roleApi.insert(submitData)
           .then((response) => {
             // 新增返回新角色ID，用于保存菜单权限
-            return updateRoleRes(response.data as number, resourceIds)
+            return roleApi.updateRoleRes(response.data as number, resourceIds)
           })
           .then(() => {
             modal.msgSuccess(t('common.addSuccess'))
@@ -376,7 +374,7 @@ function handleDelete(row: any) {
   modal
     .confirm(t('authz.role.confirmDelete', [roleIds]))
     .then(function () {
-      return delRole(roleIds)
+      return roleApi.delete(roleIds)
     })
     .then(() => {
       getList()

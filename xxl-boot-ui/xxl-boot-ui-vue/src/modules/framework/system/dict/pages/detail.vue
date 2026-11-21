@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { t } from '@/i18n'
-import { listData } from '../api'
+import { dictApi } from '../api'
 import type { Dict, DictItem } from '../types'
 import { computed, ref, watch } from 'vue'
 
@@ -115,7 +115,7 @@ function loadData() {
   if (!props.row?.id) return
   loading.value = true
   dataList.value = []
-  listData({ dictId: props.row.id, offset: 0, pagesize: 100 })
+  dictApi.itemPageList({ dictId: props.row.id, offset: 0, pagesize: 100 })
     .then((response) => {
       dataList.value = response.data.data || []
     })

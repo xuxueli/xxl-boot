@@ -202,9 +202,8 @@
 <script setup lang="ts">
 defineOptions({ name: 'Resource' })
 import { t } from '@/i18n'
-import { listResource, getResource, addResource, updateResource, delResource, updateResourceSort } from '../api'
+import { resourceApi } from '../api'
 import { useEnumOption } from '@/composables/useEnumOption'
-import { useFormReset } from '@/composables/useFormReset'
 import { handleTree } from '@/utils/common'
 import modal from '@/utils/modal'
 import type { Resource, ResourceQuery } from '../types'
@@ -212,8 +211,6 @@ import type { EnumOption } from '@/types'
 import type { FormInstance, FormRules } from 'element-plus'
 import { nextTick, ref } from 'vue'
 import { SvgIcon, RightToolbar, IconSelect } from '@/components'
-
-const resetForm = useFormReset()
 
 /** 表格状态 */
 interface TableState {
@@ -235,6 +232,7 @@ interface FormState {
 // --------------------------------- ref data ---------------------------------
 
 // 组件实例引用：模板 ref
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
 const iconSelectRef = ref<any>() /* 图标选择器 ref */
 
@@ -285,7 +283,7 @@ const originalOrders = ref<Record<number, number | undefined>>({})
 /** 查询资源树列表（后端返回扁平数据，前端转树） */
 function getList() {
   table.value.loading = true
-  listResource(queryParams.value).then((response) => {
+  resourceApi.treeList(queryParams.value).then((response) => {
     table.value.list = handleTree(response.data, 'id')
     recordOriginalOrders(table.value.list)
     table.value.loading = false
@@ -294,7 +292,7 @@ function getList() {
 
 /** 查询上级资源下拉树结构 */
 function getTreeOptions() {
-  listResource({}).then((response) => {
+  resourceApi.treeList({}).then((response) => {
     // 后端以 parentId=0 表示顶级节点，补一个"顶级"根节点供选择
     const topNode: Resource = { id: 0, parentId: -1, name: t('authz.resource.rootNode'), children: [] }
     topNode.children = handleTree(response.data, 'id')
@@ -334,7 +332,7 @@ function reset() {
     status: 0,
     visible: 0
   }
-  resetForm('formRef')
+  formRef.value?.resetFields()
 }
 
 /** 展示下拉图标 */
@@ -354,7 +352,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   handleQuery()
 }
 
@@ -372,7 +370,7 @@ function handleAdd(row: any) {
 function handleUpdate(row: Resource) {
   reset()
   getTreeOptions()
-  getResource(row.id as number).then((response) => {
+  resourceApi.load(row.id as number).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
     formState.value.title = t('common.titleEdit', [t('common.noun.resource')])
@@ -398,13 +396,13 @@ function submitForm() {
       delete submitData.updateTime
       // 已有 id 走更新，否则走新增
       if (formState.value.form.id !== undefined) {
-        updateResource(submitData).then((response) => {
+        resourceApi.update(submitData).then((response) => {
           modal.msgSuccess(t('common.updateSuccess'))
           formState.value.visible = false
           getList()
         })
       } else {
-        addResource(submitData).then((response) => {
+        resourceApi.insert(submitData).then((response) => {
           modal.msgSuccess(t('common.addSuccess'))
           formState.value.visible = false
           getList()
@@ -442,7 +440,7 @@ function handleSaveSort() {
     modal.msgWarning(t('common.noSortChange'))
     return
   }
-  updateResourceSort(
+  resourceApi.updateSort(
     changedList.map((item) => item.id as number),
     changedList.map((item) => item.order as number)
   ).then(() => {
@@ -456,7 +454,7 @@ function handleDelete(row: Resource) {
   modal
     .confirm(t('authz.resource.confirmDelete', [row.name as string]))
     .then(function () {
-      return delResource(row.id as number)
+      return resourceApi.delete(row.id as number)
     })
     .then(() => {
       getList()

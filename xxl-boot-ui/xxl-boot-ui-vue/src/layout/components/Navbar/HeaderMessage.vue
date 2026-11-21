@@ -65,7 +65,7 @@
 
 <script setup lang="ts">
 import HeaderMessageDetail from './HeaderMessageDetail.vue'
-import { listMessageTop, markMessageRead, markMessageReadAll } from '@/modules/framework/system/message/api'
+import { messageApi } from '@/modules/framework/system/message/api'
 import type { Message } from '@/modules/framework/system/message/types'
 import { onMounted, ref } from 'vue'
 import { t } from '@/i18n'
@@ -86,7 +86,7 @@ const messageViewRef = ref<InstanceType<typeof HeaderMessageDetail> | null>(null
  */
 function loadMessageTop() {
   messageLoading.value = true
-  listMessageTop()
+  messageApi.listTop()
     .then((res) => {
       messageList.value = res.data || []
       unreadCount.value = messageList.value.filter((n) => !n.isRead).length
@@ -104,7 +104,7 @@ onMounted(() => loadMessageTop())
 function previewMessage(item: MessageItem) {
   if (!item.isRead) {
     // 已读标记
-    markMessageRead(item.id as number).catch(() => {})
+    messageApi.markRead(item.id as number).catch(() => {})
 
     // 更新已读列表
     const idx = messageList.value.indexOf(item)
@@ -125,7 +125,7 @@ function markAllRead() {
   // 标记全部已读
   const ids = messageList.value.map((n) => n.id).join(',')
   if (!ids) return
-  markMessageReadAll(ids).catch(() => {})
+  messageApi.markReadAll(ids).catch(() => {})
 
   // 本地处理：数据 + 计数
   messageList.value = messageList.value.map((n) => ({ ...n, isRead: true }))

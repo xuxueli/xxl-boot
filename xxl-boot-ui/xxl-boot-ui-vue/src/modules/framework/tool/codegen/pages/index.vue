@@ -111,17 +111,15 @@
 <script setup lang="ts">
 defineOptions({ name: 'Gen' })
 import { t } from '@/i18n'
-import { listTable, previewTable, delTable, createTable } from '../api'
+import { codegenApi } from '../api'
 import type { CodegenTable } from '../types'
-import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
 import downloadPlugin from '@/utils/download'
 import EditTable from './editTable.vue'
 import { onActivated, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { RightToolbar, Pagination } from '@/components'
-
-const resetForm = useFormReset()
+import type { FormInstance } from 'element-plus'
 
 /* --------------------------------- ref data --------------------------------- */
 
@@ -131,6 +129,7 @@ const uniqueId = ref('') /* 页面路由唯一标识 */
 
 // 组件实例引用
 const editRef = ref<InstanceType<typeof EditTable> | null>(null) /* 编辑弹窗 ref */
+const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 
 // 搜索栏：查询参数
 const queryParams = ref({
@@ -173,7 +172,7 @@ onActivated(() => {
   if (time != null && time !== uniqueId.value) {
     uniqueId.value = time as string
     queryParams.value.pageNum = Number(route.query.pageNum)
-    resetForm('queryForm')
+    queryRef.value?.resetFields()
     getList()
   }
 })
@@ -181,7 +180,7 @@ onActivated(() => {
 /** 查询表集合 */
 function getList() {
   table.value.loading = true
-  listTable(queryParams.value).then((response) => {
+  codegenApi.pageList(queryParams.value).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -196,7 +195,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  resetForm('queryRef')
+  queryRef.value?.resetFields()
   queryParams.value.pageNum = 1
   getList()
 }
@@ -243,7 +242,7 @@ function handleCreateTable() {
     return
   }
   // 新建时携带前端模板类型，与后端 createTable 入参匹配
-  createTable({ tableSql: createDialog.value.content, tplWebType: 'element-plus-typescript' }).then(() => {
+  codegenApi.createTable({ tableSql: createDialog.value.content, tplWebType: 'element-plus-typescript' }).then(() => {
     modal.msgSuccess(t('tool.codegen.createSuccess'))
     createDialog.value.visible = false
     handleQuery()
@@ -252,7 +251,7 @@ function handleCreateTable() {
 
 /** 预览按钮 */
 function handlePreview(row: any) {
-  previewTable(row.id).then((response) => {
+  codegenApi.preview(row.id).then((response) => {
     preview.value.data = response.data
     preview.value.open = true
     const keys = Object.keys(response.data)
@@ -284,7 +283,7 @@ function handleDelete(row: any) {
   modal
     .confirm(t('tool.codegen.deleteTableConfirm', [tableIds]))
     .then(function () {
-      return delTable(tableIds)
+      return codegenApi.delete(tableIds)
     })
     .then(() => {
       getList()
