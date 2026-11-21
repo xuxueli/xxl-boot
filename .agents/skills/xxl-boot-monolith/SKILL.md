@@ -60,82 +60,84 @@ xxl-boot-admin/src
 
 ## 六、后端落位（单体）
 
-以模块/业务 `Demo`、接口路径 `/demo/demo` 为例，包前缀 `com.xxl.boot.admin.business.demo`：
+> 命名约定：单体包路径按模块落位 `business/{module}`；本示例 module=`{module}`、business=`{business}`，页面为 `templates/business/{module}/{business}.ftl`。代码与 SQL 中的 `{module}`、`{business}`、`{businessName}`、`Xxx`/`xxx` 均为占位符，落地时替换为实际命名。
+
+以业务 `Xxx`、模块 `{module}`、接口路径 `/{module}/{business}` 为例，包前缀 `com.xxl.boot.admin.business.{module}`：
 
 | 文件 | 位置 |
 |---|---|
-| `Demo.java` | `business/demo/model/Demo.java` |
-| `DemoDTO.java` | `business/demo/model/dto/DemoDTO.java`（可选，列表展示用） |
-| `DemoAdaptor.java` | `business/demo/model/adaptor/DemoAdaptor.java`（可选） |
-| `DemoMapper.java` | `business/demo/mapper/DemoMapper.java` |
-| `DemoMapper.xml` | `resources/mapper/business/demo/DemoMapper.xml` |
-| `DemoService.java` | `business/demo/service/DemoService.java` |
-| `DemoServiceImpl.java` | `business/demo/service/impl/DemoServiceImpl.java` |
-| `DemoController.java` | `business/demo/controller/DemoController.java` |
-| `demo.ftl` | `templates/business/demo/demo.ftl` |
+| `Xxx.java` | `business/{module}/model/Xxx.java` |
+| `XxxDTO.java` | `business/{module}/model/dto/XxxDTO.java`（可选，列表展示用） |
+| `XxxAdaptor.java` | `business/{module}/model/adaptor/XxxAdaptor.java`（可选） |
+| `XxxMapper.java` | `business/{module}/mapper/XxxMapper.java` |
+| `XxxMapper.xml` | `resources/mapper/business/{module}/XxxMapper.xml` |
+| `XxxService.java` | `business/{module}/service/XxxService.java` |
+| `XxxServiceImpl.java` | `business/{module}/service/impl/XxxServiceImpl.java` |
+| `XxxController.java` | `business/{module}/controller/XxxController.java` |
+| `xxx.ftl` | `templates/business/{module}/{business}.ftl` |
 
 ### Controller 骨架（视图 + 数据接口共存）
 
-- 页面入口：`@RequestMapping` + `@XxlSso`，向 `Model` 注入页面所需枚举，返回视图名 `/business/demo/demo`。
-- 数据接口：`pageList/load/insert/delete/update` 加 `@ResponseBody`、`@XxlSso`，返回 `Response` / `Response<PageModel<DemoDTO>>`；参数通道与返回结构遵循 `AGENTS.md`「后端通用规范」。
+- 页面入口：`@RequestMapping` + `@XxlSso`，向 `Model` 注入页面所需枚举，返回视图名 `/business/{module}/{business}`。
+- 数据接口：`pageList/load/insert/delete/update` 加 `@ResponseBody`、`@XxlSso`，返回 `Response` / `Response<PageModel<XxxDTO>>`；参数通道与返回结构遵循 `AGENTS.md`「后端通用规范」。
 - 参考实现：`framework/controller/system/ConfigController.java`。
 
 ```java
 @Controller
-@RequestMapping("/demo/demo")
-public class DemoController {
+@RequestMapping("/{module}/{business}")
+public class XxxController {
 
     @Resource
-    private DemoService demoService;
+    private XxxService xxxService;
 
     @RequestMapping
     @XxlSso
     public String index(Model model) {
-        model.addAttribute("DemoStatusEnum", DemoStatusEnum.values());
-        return "/business/demo/demo";
+        model.addAttribute("XxxStatusEnum", XxxStatusEnum.values());
+        return "/business/{module}/{business}";
     }
 
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
-    public Response<PageModel<DemoDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
+    public Response<PageModel<XxxDTO>> pageList(@RequestParam(required = false, defaultValue = "0") int offset,
                                                  @RequestParam(required = false, defaultValue = "10") int pagesize,
                                                  int status,
                                                  String name) {
-        return Response.ofSuccess(demoService.pageList(status, name, offset, pagesize));
+        return Response.ofSuccess(xxxService.pageList(status, name, offset, pagesize));
     }
 
     @RequestMapping("/load") @ResponseBody @XxlSso
-    public Response<Demo> load(int id) { return demoService.load(id); }
+    public Response<Xxx> load(int id) { return xxxService.load(id); }
 
     @RequestMapping("/insert") @ResponseBody @XxlSso
-    public Response<String> insert(@RequestBody Demo demo) { return demoService.insert(demo); }
+    public Response<String> insert(@RequestBody Xxx xxx) { return xxxService.insert(xxx); }
 
     @RequestMapping("/delete") @ResponseBody @XxlSso
-    public Response<String> delete(@RequestBody List<Integer> ids) { return demoService.delete(ids); }
+    public Response<String> delete(@RequestBody List<Integer> ids) { return xxxService.delete(ids); }
 
     @RequestMapping("/update") @ResponseBody @XxlSso
-    public Response<String> update(@RequestBody Demo demo) { return demoService.update(demo); }
+    public Response<String> update(@RequestBody Xxx xxx) { return xxxService.update(xxx); }
 }
 ```
 
 ### Service / Mapper
 
 - Service 接口 + `impl`（`@Service`）；`pageList` 返回 `PageModel`，entity 列表经 Adaptor 转 DTO。
-- 校验失败提示走 `I18nUtil.getString("xxx")`，键维护在 `resources/i18n/message_zh_CN.properties` / `message_en.properties`。
+- 所有用户可见错误统一走 `I18nUtil.getString("xxx")`，禁止硬编码中文；键维护在 `resources/i18n/message_zh_CN.properties` / `message_en.properties`（存量代码逐步迁移，新增/修改代码必须遵守）。
 - Mapper 接口与 XML 按 `AGENTS.md`「后端通用规范」；分页参数为 `offset/pagesize`。
 
 ### 页面与视图路径
 
-- FTL 文件放 `templates/business/{module}/{business}.ftl`；`DemoController.index()` 返回 `/business/demo/demo`。
-- 菜单 `url` 写 `/demo/demo`，`framework/base/index.ftl` 会自动拼上 `${request.contextPath}`，不要手写上下文路径。
+- FTL 文件放 `templates/business/{module}/{business}.ftl`；`XxxController.index()` 返回 `/business/{module}/{business}`。
+- 菜单 `url` 写 `/{module}/{business}`，`framework/base/index.ftl` 会自动拼上 `${request.contextPath}`，不要手写上下文路径。
 
 ## 七、页面落位与 FreeMarker 骨架
 
 先通读 `templates/framework/system/config.ftl`，再按 5 块组织：
 
 1. 头：`<#import "/framework/common/common.macro.ftl" as netCommon>` + `<@netCommon.commonStyle />`（按需加 bootstrap-table / iCheck css）。
-2. 查询区 `#data_filter`：`.searchBtn` / `.resetBtn` + 输入控件；select 用 `<#list DemoStatusEnum as item>` 渲染。
+2. 查询区 `#data_filter`：`.searchBtn` / `.resetBtn` + 输入控件；select 用 `<#list XxxStatusEnum as item>` 渲染。
 3. 按钮区 `#data_operation`：`.add`、`.update`（`selectOnlyOne` 单选）、`.delete`（`selectAny` 多选）。
    - ⚠️ 单体页面按钮**不按权限显隐**（平台暂未做按钮级权限），不要照搬 Vue/React 的 `v-hasPermi` / `hasPermi`。
 4. 表格 `#data_list`（`table table-bordered table-striped`，thead 留空） + `#addModal` / `#updateModal` 两个 Bootstrap modal；更新 modal 末尾放 `<input type="hidden" name="id">`。
@@ -145,7 +147,7 @@ public class DemoController {
 <#-- 查询区示例：状态枚举由 Controller.index() 注入 -->
 <select class="form-control status">
     <option value="-1">${I18n.system_all}</option>
-    <#list DemoStatusEnum as item>
+    <#list XxxStatusEnum as item>
         <option value="${item.code}">${item.title}</option>
     </#list>
 </select>
@@ -155,7 +157,7 @@ public class DemoController {
 // 列表：分页/查询按表单参数提交（Controller 用 @RequestParam）
 $.adminTable.initTable({
     table: '#data_list',
-    url: base_url + '/demo/demo/pageList',
+    url: base_url + '/{module}/{business}/pageList',
     queryParams: function (params) {
         return {
             status: $('#data_filter .status').val(),
@@ -166,19 +168,19 @@ $.adminTable.initTable({
     },
     columns: [
         { checkbox: true, field: 'state', width: '5', widthUnit: '%' },
-        { title: I18n.demo_name, field: 'name' },
-        { title: I18n.system_status, field: 'status', formatter: function (value) { return value === 0 ? I18n.demo_status_normal : I18n.demo_status_disabled; } }
+        { title: I18n.xxx_name, field: 'name' },
+        { title: I18n.system_status, field: 'status', formatter: function (value) { return value === 0 ? I18n.xxx_status_normal : I18n.xxx_status_disabled; } }
     ]
 });
 
 // 删除：JSON 裸数组提交（@RequestBody List<Integer>）
-$.adminTable.initDelete({ url: base_url + '/demo/demo/delete' });
+$.adminTable.initDelete({ url: base_url + '/{module}/{business}/delete' });
 
-// 新增：JSON 提交（@RequestBody Demo）
+// 新增：JSON 提交（@RequestBody Xxx）
 $.adminTable.initAdd({
-    url: base_url + '/demo/demo/insert',
+    url: base_url + '/{module}/{business}/insert',
     rules: { name: { required: true, rangelength: [2, 50] } },
-    messages: { name: { required: I18n.system_please_input + I18n.demo_name } },
+    messages: { name: { required: I18n.system_please_input + I18n.xxx_name } },
     readFormData: function () {
         return {
             name: $("#addModal .form input[name=name]").val(),
@@ -187,9 +189,9 @@ $.adminTable.initAdd({
     }
 });
 
-// 修改：JSON 提交（@RequestBody Demo）
+// 修改：JSON 提交（@RequestBody Xxx）
 $.adminTable.initUpdate({
-    url: base_url + '/demo/demo/update',
+    url: base_url + '/{module}/{business}/update',
     writeFormData: function (row) {
         $("#updateModal .form input[name='id']").val(row.id);
         $("#updateModal .form input[name='name']").val(row.name);
@@ -206,7 +208,7 @@ $.adminTable.initUpdate({
 ```
 
 - `admin.table.js` 的列表请求默认 `POST` + `application/x-www-form-urlencoded`，与 Controller `@RequestParam` 匹配；新增/更新/删除是 `POST` + JSON。
-- 示例中的 `I18n.demo_name` / `I18n.demo_status_*` 需在 `message_zh_CN.properties`、`message_en.properties` 成对补齐。
+- 示例中的 `I18n.xxx_name` / `I18n.xxx_status_*` 需在 `message_zh_CN.properties`、`message_en.properties` 成对补齐。
 - 页面内自定义 `$.ajax` 时按同样规则选择表单或 JSON，禁止把复杂参数拼到 URL。
 
 ## 八、菜单 / 权限
@@ -221,7 +223,7 @@ SELECT @catId := LAST_INSERT_ID();
 
 -- 菜单：type=1，url 为上下文路径下的相对地址
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
-VALUES (@catId, 'Demo管理', 1, 'demo:demo', '/demo/demo', 'fa-table', 1, 0, 0, now(), now());
+VALUES (@catId, '{businessName}管理', 1, '{module}:{business}', '/{module}/{business}', 'fa-table', 1, 0, 0, now(), now());
 SELECT @menuId := LAST_INSERT_ID();
 
 -- 授权（默认管理员 role_id=1）
@@ -238,7 +240,7 @@ VALUES (1, @catId, now(), now()),
 ## 九、枚举
 
 - 业务枚举统一放 `business/{module}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
-- 页面下拉在 `Controller.index()` 用 `model.addAttribute("DemoStatusEnum", DemoStatusEnum.values())` 注入，FTL 用 `<#list DemoStatusEnum as item>` 渲染。
+- 页面下拉在 `Controller.index()` 用 `model.addAttribute("XxxStatusEnum", XxxStatusEnum.values())` 注入，FTL 用 `<#list XxxStatusEnum as item>` 渲染。
 - 前端若需经 `loadEnumItem` 拉取：`DictController.loadEnum` 已支持动态扫描 `com.xxl.boot` 下实现 `IEnum` 的枚举包。
 
 ## 十、i18n（单体）
@@ -254,8 +256,8 @@ VALUES (1, @catId, now(), now()),
 
 ```json
 POST /tool/codegen/genCode
-{ "tableSql": "CREATE TABLE xxl_boot_demo (...)", "author": "you",
-  "packagePath": "com.xxl.boot.admin.business.demo", "businessName": "Demo" }
+{ "tableSql": "CREATE TABLE xxl_boot_xxx (...)", "author": "you",
+  "packagePath": "com.xxl.boot.admin.business.{module}", "businessName": "Xxx" }
 ```
 
 返回 7 段代码：`controller_code` / `service_code` / `service_impl_code` / `mapper_code` / `mapper_xml_code` / `entity_code` / `page_code`。模板在 `templates/framework/tool/codegen-module/*.ftl`。
@@ -275,7 +277,7 @@ POST /tool/codegen/genCode
 - [ ] FTL：`commonStyle/commonScript`、`admin.table.js` 引入完整；`#data_filter/#data_operation/#data_list/#addModal/#updateModal` id 规范。
 - [ ] 按钮未硬套权限指令（单体无按钮级权限）；表单校验、唯一性与空参数提示符合业务规则。
 - [ ] 菜单已插资源表并授权；启动后侧边栏可见、点击可打开页面、CRUD/搜索可用。
-- [ ] i18n：新增文案 zh/en 成对，页面无硬编码中文（注释除外）。
+- [ ] i18n：后端错误文案走 `I18nUtil`，新增文案 zh/en 成对，页面无硬编码中文（注释除外）。
 - [ ] SQL 按 `AGENTS.md`「SQL 执行规范」执行，中文无乱码。
 
 ## 十三、参考文件

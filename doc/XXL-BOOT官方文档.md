@@ -17,7 +17,7 @@
 XXL-BOOT 是一个快速开发平台，易学易用、AI驱动、开箱即用，内置安全登录、RBAC 权限管控、端到端代码生成、AI+SKILL加速开发、响应式 UI 等能力，重点包括三类能力：
 
 - **一套仓库，三种模式**：采用 Monorepo 统一托管三种工程形态 —— 单体（xxl-boot-admin）、前后端分离 Vue（xxl-boot-api + xxl-boot-ui-vue）、前后端分离 React（xxl-boot-api + xxl-boot-ui-react）。按业务诉求三选一，统一版本管理、一键构建、按需部署，切换成本极低。
-- **一行 SQL，全栈生成**：内置端到端代码生成器，只需提供建表 SQL，即可自动生成 后端 "controller/service/mapper/xml/entity" 与 前端 "types/api/view" 全套代码，并附带 菜单 + 按钮 + 授权 初始化 SQL，从数据库到可运行页面一键打通。
+- **一行 SQL，全栈生成**：内置端到端代码生成器，只需提供建表 SQL，即可自动生成 后端 "controller/service/mapper/xml/entity" 与 前端 "types/api/pages" 全套代码，并附带 菜单 + 按钮 + 授权 初始化 SQL，从数据库到可运行页面一键打通。
 - **AI + SKILL，开发再提速**：仓库内置 `xxl-boot-monolith / xxl-boot-vue / xxl-boot-react` 三大开发 SKILL，AI 编程助手（如 opencode）可自动识别并加载，按平台既定规范直生等价代码、自动落位并附校验清单，进一步拉高业务落地效率。
 
 整合前后端流行技术，致力为 中小企业、个人开发者 打造开箱即用的中后台解决方案。
@@ -28,7 +28,7 @@ XXL-BOOT 是一个快速开发平台，易学易用、AI驱动、开箱即用，
 
 - 1、Monorepo + 三种模式：Monorepo 一套仓库统一托管 单体模式、前后端分离 Vue 模式、前后端分离 React 模式，支持按业务需要自由选型、一键构建、按需部署；
 - 2、AI + SKILL 驱动：内置 单体 / Vue / React 三大开发 SKILL，AI 编程助手一键加载，按平台规范直生业务代码并落位，显著加速业务开发；
-- 3、代码生成：内置代码生成器，提供建表 SQL 即可自动生成前后端全流程代码，覆盖 "controller/service/mapper&xml/entity/types/api/view…"，并自动生成菜单权限 SQL，加速研发效率；
+- 3、代码生成：内置代码生成器，提供建表 SQL 即可自动生成前后端全流程代码，覆盖 "controller/service/mapper&xml/entity/types/api/pages…"，并自动生成菜单权限 SQL，加速研发效率；
 - 4、表单生成：内置表单/页面生成器，支持组件拖拽方式生成表单/页面，支持多种组件、布局和样式，支持响应式布局，保障用户体验及交互；
 
 - **账号与安全**
@@ -106,7 +106,7 @@ XXL-BOOT 提供三种运行模式，请先明确业务选型，再按对应方�
 ### 2.1 环境准备
 
 - JDK 17+、Maven 3+、MySQL 8.0+；
-- 前后端分离模式额外需要：Redis 7.0+、Node.js 18+；
+- 前后端分离模式额外需要：Redis 7.0+、Node.js 20+；
 
 ### 2.2 初始化数据库
 
@@ -499,7 +499,7 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 
 ### 3.5 代码生成
 
-内置端到端代码生成器，只需提供建表 SQL 即可自动生成全部代码，覆盖 "controller/service/mapper&xml/entity" 后端多层，以及 "types/api/view" 前端多层，并自动生成 菜单 + 按钮 + 授权 初始化 SQL。三种模式均内置同类生成器，操作路径为后台「工具-代码生成」。
+内置端到端代码生成器，只需提供建表 SQL 即可自动生成全部代码，覆盖 "controller/service/mapper&xml/entity" 后端多层，以及 "types/api/pages" 前端多层，并自动生成 菜单 + 按钮 + 授权 初始化 SQL。三种模式均内置同类生成器，操作路径为后台「工具-代码生成」。
 
 #### 第一步：准备 SQL 并生成
 
@@ -526,7 +526,7 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
 
 #### 第四步：落位与上线
 
-按生成产物目录结构，将代码落位到对应工程（后端 `business/{module}`、前端 `views|api|types/{module}/{page}`），执行 `-init.sql` 完成菜单与权限注册，重启服务后即可在菜单中看到该业务模块。详细操作见 “四、新增业务模块”。
+按生成产物目录结构，将代码落位到对应工程（后端 `business/{module}`、前端 `src/modules/business/{module}/{business}/{pages,api,types}`），执行 `-init.sql` 完成菜单与权限注册，重启服务后即可在菜单中看到该业务模块。详细操作见 “四、新增业务模块”。
 
 ### 3.6 表单构建
 
@@ -607,7 +607,7 @@ Skill 强制 AI 动手前先完成需求澄清，就模块/业务命名、核心
 
 #### 第三步：开发编排与自动执行
 
-AI 按 SKILL 标准流程输出开发 TODO 列表，依次启动“代码现状分析 → 业务模型与菜单/授权 SQL 生成 → 后端 7 件套与状态枚举开发 → 前端 3 文件生成与页面落位 → 前后端工程编辑 → 启动 api 与前端项目，使用脚本本地自动联调”：
+AI 按 SKILL 标准流程输出开发 TODO 列表，依次启动“代码现状分析 → 业务模型与菜单/授权 SQL 生成 → 后端 6 件套与状态枚举开发 → 前端 3 文件生成与页面落位 → 前后端工程编辑 → 启动 api 与前端项目，使用脚本本地自动联调”：
 
 <p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_4.png" width="900"/></p>
 
@@ -665,27 +665,27 @@ AI 生成的代码经 review 确认后，形成代码 PR 并提交到仓库：
 
 #### 第四步：落位与上线
 
-1. 按产物目录结构将代码复制到对应工程（后端 `business/{module}`、业务资源文件 `resources/mapper/business/{module}/{business}/`；前端 `views|api|types/{module}/{page}`），并在 `src/types/api.ts` barrel 补一行导出；
+1. 按产物目录结构将代码复制到对应工程（后端 `business/{module}`、业务资源文件 `resources/mapper/business/{module}/{business}/`；前端 `src/modules/business/{module}/{business}/{pages,api,types}`，同模块聚合、无 barrel 登记）；
 2. 执行 `-init.sql` 完成菜单与权限注册；
 3. 重启后端、刷新前端，菜单自动出现，模块即可联调使用。
 
 ### 4.3 方式三：传统手工开发
 
-适合字段特殊、交互复杂、需要深度定制的模块。以下以 前后端分离（Vue）模式、业务 `Demo`（模块 `demo`）为例；单体模式与 React 模式落位路径大同小异，详见对应工程规范。
+适合字段特殊、交互复杂、需要深度定制的模块。以下以 前后端分离（Vue）模式为例；`{module}` 是业务域（父），`{business}` 是业务页/实体（子），实体示例用 `Xxx`。真实开发时将占位符替换为实际命名。单体模式与 React 模式落位路径大同小异，详见对应工程规范。
 
 #### 第一步：建表
 
 按 `xxl_boot_` 前缀规范创建业务表，公共字段 `id / add_time / update_time`，状态字段使用 `TINYINT`，字段一律 `COMMENT` 注释：
 
 ```sql
-CREATE TABLE `Demo` (
+CREATE TABLE `xxl_boot_xxx` (
     `id`          int(11) NOT NULL AUTO_INCREMENT COMMENT '序号',
     `name`        varchar(100) NOT NULL COMMENT '产品名称',
     `status`      tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态：0-正常/1-停用',
     `add_time`    datetime NOT NULL COMMENT '创建时间',
     `update_time` datetime NOT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Demo业务表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Xxx业务表';
 ```
 
 #### 第二步：后端代码
@@ -693,35 +693,35 @@ CREATE TABLE `Demo` (
 在 `xxl-boot-api` 工程 `business` 扩展包中落位 6 件套：
 
 ```
-src/main/java/com/xxl/boot/api/business/demo/
-├── model/Demo.java                  # 实体，字段驼峰
-├── mapper/DemoMapper.java           # insert/delete/update/load/pageList/pageListCount
-├── service/DemoService.java         # 业务接口
-├── service/impl/DemoServiceImpl.java# 业务实现（方法顺序 pageList/load/insert/delete/update）
-└── controller/DemoController.java   # @RestController + @RequestMapping("/demo/demo") + @XxlSso
+src/main/java/com/xxl/boot/api/business/{module}/{business}/
+├── model/Xxx.java                  # 实体，字段驼峰
+├── mapper/XxxMapper.java           # insert/delete/update/load/pageList/pageListCount
+├── service/XxxService.java         # 业务接口
+├── service/impl/XxxServiceImpl.java# 业务实现（方法顺序 pageList/load/insert/delete/update）
+└── controller/XxxController.java   # @RestController + @RequestMapping("/{module}/{business}") + @XxlSso
 
-src/main/resources/mapper/business/demo/demo/DemoMapper.xml   # 业务 Mapper XML，resultMap 显式映射，add_time/update_time 用 NOW()
+src/main/resources/mapper/business/{module}/{business}/XxxMapper.xml   # 业务 Mapper XML，resultMap 显式映射，add_time/update_time 用 NOW()
 ```
 
 要点：
 - Controller 全部接口加 `@XxlSso` 鉴权，统一 `@RequestMapping`（不限定 HTTP 方法）；分页/查询走 URL 参数（`@RequestParam`，前端 `params`），`insert`/`update` 走 `@RequestBody` 实体、`delete` 走 `@RequestBody List<Integer> ids`（JSON，前端 `data`）；分页入参统一 `offset`、`pagesize`；
-- 参数校验使用 `StringTool / RegexTool / CollectionTool`，失败返回 `Response.ofFail("提示")`；
+- 参数校验使用 `StringTool / RegexTool / CollectionTool`；用户可见错误文案统一 `I18nUtil.getString("key")`，失败返回 `Response.ofFail(...)`；
 - 统一返回 `Response{code,msg,data}`，分页返回 `Response<PageModel>`。
 
 #### 第三步：前端代码
 
-在 `xxl-boot-ui-vue` 工程落位 3 文件，并在 `src/types/api.ts` barrel 中补一行导出：
+在 `xxl-boot-ui-vue` 工程落位 3 文件（同模块聚合，无 barrel 登记）：
 
 ```
-src/
-├── types/demo/demo.ts               # Demo 实体 + DemoQuery + DemoListQuery
-├── api/demo/demo.ts                 # listDemo/getDemo/addDemo/delDemo/updateDemo 接口封装
-└── views/demo/demo/index.vue        # 三段式列表页（搜索区 + 表格区 + 表单弹窗）
+src/modules/business/{module}/{business}/
+├── types/index.ts                   # Xxx 实体 + XxxQuery + XxxForm + XxxListQuery
+├── api/index.ts                     # listXxx/getXxx/addXxx/delXxx/updateXxx 接口封装
+└── pages/index.vue                  # 三段式列表页（搜索区 + 表格区 + 表单弹窗）
 ```
 
 要点：
 - 列表页使用 `ref` 收敛数据（`queryParams / table / formState`），`getList()` 经 `usePageParams(queryParams)()` 转 `offset/pagesize`，从 `response.data.data / response.data.total` 取值；
-- 操作列按钮使用 `v-hasPermi="['demo:demo:add|edit|remove']"` 控制按钮级权限；
+- 操作列按钮使用 `v-hasPermi="['{module}:{business}:add|edit|remove']"` 控制按钮级权限；
 - 页面导航完全由数据库资源菜单驱动，建好页面文件后无需改动任何路由代码。
 
 #### 第四步：注册菜单与权限
@@ -730,13 +730,13 @@ src/
 
 ```sql
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
-VALUES (0, 'Demo管理', 1, 'demo:demo', '/demo/demo', '', 999, 0, 0, now(), now());
+VALUES (0, '{businessName}管理', 1, '{module}:{business}', '/{module}/{business}', '', 999, 0, 0, now(), now());
 SELECT @parentId := LAST_INSERT_ID();
 
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
-VALUES (@parentId, 'Demo新增', 2, 'demo:demo:add', '', '', 1, 0, 0, now(), now()),
-       (@parentId, 'Demo修改', 2, 'demo:demo:edit', '', '', 2, 0, 0, now(), now()),
-       (@parentId, 'Demo删除', 2, 'demo:demo:remove', '', '', 3, 0, 0, now(), now());
+VALUES (@parentId, '{businessName}新增', 2, '{module}:{business}:add', '', '', 1, 0, 0, now(), now()),
+       (@parentId, '{businessName}修改', 2, '{module}:{business}:edit', '', '', 2, 0, 0, now(), now()),
+       (@parentId, '{businessName}删除', 2, '{module}:{business}:remove', '', '', 3, 0, 0, now(), now());
 
 INSERT INTO `xxl_boot_role_res` (`role_id`,`res_id`,`add_time`,`update_time`)
 VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parentId+2, now(), now()), (1, @parentId+3, now(), now());
@@ -825,14 +825,16 @@ xxl-boot/
     │   ├── vite.config.ts                     # Vite构建配置
     │   └── src/
     │       ├── main.ts                        # 入口文件
-    │       ├── views/                         # 页面组件（DB 菜单 url 驱动，零路由改动）
-    │       ├── api/                           # 接口封装
-    │       ├── types/                         # 类型定义（barrel 集中导出）
+    │       ├── modules/                       # 业务/平台模块（页面 + 接口 + 类型同模块聚合）
+    │       │   ├── framework/{domain}/{module}/   # 平台内置（pages/api/types）
+    │       │   └── business/{module}/{business}/  # 业务模块（pages/api/types）
     │       ├── composables/                   # 组合式函数（usePageParams/useEnumOption 等）
     │       ├── components/                    # 通用组件（RightToolbar/Pagination/Editor 等）
     │       ├── directive/                     # 自定义指令（v-hasPermi/v-hasRole）
     │       ├── layout/ · router/              # 布局与路由
     │       ├── store/                         # 状态管理
+    │       ├── i18n/                          # 国际化资源（locales/{zh,en}.json）
+    │       ├── types/                         # 全局基础类型
     │       ├── utils/                         # 工具类
     │       └── default-settings.ts            # 全局配置
     │
@@ -841,14 +843,16 @@ xxl-boot/
         ├── vite.config.ts                     # Vite构建配置
         └── src/
             ├── main.tsx                       # 入口文件
-            ├── pages/                         # 页面组件（DB 菜单 url 驱动，零路由改动）
-            ├── services/                      # 接口封装
-            ├── types/                         # 类型定义（declare namespace API）
+            ├── modules/                       # 业务/平台模块（页面 + 接口 + 类型同模块聚合）
+            │   ├── framework/{domain}/{module}/   # 平台内置（pages/api/types）
+            │   └── business/{module}/{business}/  # 业务模块（pages/api/types）
             ├── hooks/                         # 自定义hooks（usePermission/useEnumOption）
             ├── components/                    # 通用组件
             ├── layouts/                       # 布局组件
             ├── stores/                        # 状态管理
             ├── router/                        # 路由配置
+            ├── i18n/                          # 国际化资源（locales/{zh,en}.json）
+            ├── types/                         # 全局基础类型（declare namespace API）
             └── utils/                         # 工具类
 ```
 
@@ -899,7 +903,7 @@ xxl_boot_role_res       : 角色-资源关系表
 资源定义与授权链路：
 - 资源分三级：目录（type=0）、菜单（type=1）、按钮（type=2）；菜单 `url` 同时充当前端路由 path 与页面组件定位 key，新增页面无需改动路由代码；
 - 授权链路：菜单/按钮资源 → `xxl_boot_role_res` 授权给角色 → `xxl_boot_user_role` 将角色分配给用户；
-- 前端通过权限标识渲染控制：Vue 使用 `v-hasPermi="['demo:demo:add']"`、React 使用 `hasPermi('demo:demo:add')`，后端接口通过 `@XxlSso` + 权限标识双重校验。
+- 前端通过权限标识渲染控制：Vue 使用 `v-hasPermi="['{module}:{business}:add']"`、React 使用 `hasPermi('{module}:{business}:add')`，后端接口通过 `@XxlSso` + 权限标识双重校验。
 
 ### 5.4、安全登录验证
 
@@ -958,9 +962,9 @@ public @interface Permission {
                    单体模式              前后端分离（Vue）         前后端分离（React）
 后端   Controller  business/{module}    business/{module}        business/{module}
 后端   Mapper XML  mapper/business/{m}  mapper/business/{m}/{b} mapper/business/{m}/{b}
-前端   页面        templates/business/{m}/xxx.ftl   views/{m}/{p}/index.vue   pages/{m}/{p}/index.tsx
-前端   接口封装    （服务端渲染）          api/{m}/{p}.ts          services/{m}/{p}.ts
-前端   类型        （服务端渲染）          types/{m}/{p}.ts        types/{m}/{p}.d.ts
+前端   页面        templates/business/{m}/xxx.ftl   modules/business/{m}/{p}/pages/index.vue   modules/business/{m}/{p}/pages/index.tsx
+前端   接口封装    （服务端渲染）          modules/business/{m}/{p}/api/index.ts          modules/business/{m}/{p}/api/index.ts
+前端   类型        （服务端渲染）          modules/business/{m}/{p}/types/index.ts        modules/business/{m}/{p}/types/index.d.ts
 菜单   xxl_boot_resource(type=0/1/2) + xxl_boot_role_res 授权，url 驱动零路由改动
 ```
 
@@ -1118,7 +1122,7 @@ public @interface Permission {
 - 2、【新增】Vue 前端版本升级 TypeScript：Vue3 与 React 前端模块全面升级 TypeScript，类型约束更严谨、IDE 提示更完善；
 - 3、【新增】AI + SKILL 驱动开发：仓库内置 `xxl-boot-monolith / xxl-boot-vue / xxl-boot-react` 三大开发 SKILL，AI 编程助手可自动识别并加载，按平台规范直生业务代码、自动落位并附校验清单，加速业务开发；
 - 4、【新增】前端规范增强：Vue 模块引入 ESLint + Prettier，React 模块引入 Biome，提升代码规范性与可维护性；
-- 5、【新增】代码生成器兼容 TypeScript：生成器支持 前端 type/types 文件，并内置 vue3/react 前端模板（types/api/view），前后端分离（Vue/React）模式可一键生成前端代码；
+- 5、【新增】代码生成器兼容 TypeScript：生成器支持 前端 type/types 文件，并内置 vue3/react 前端模板（types/api/pages），前后端分离（Vue/React）模式可一键生成前端代码；
 - 6、【新增】“新增业务模块”支持三方式：传统手工、内置代码生成器、AI + SKILL 驱动，均输出等价代码与菜单权限 SQL，可混合切换；
 - 7、【文档】官方文档重构：快速入门按 单体 / Vue / React 三种模式分述；操作指南改为“能力总览 + 分章节详解”总分结构；新增“新增业务模块”三方式详解；总体设计完善（新增 三种运行模式、统一响应规范、业务扩展与菜单零路由、AI + Skill 辅助开发设计）等章节；
 - 8、【升级】升级多项依赖至较新版本。
@@ -1156,7 +1160,8 @@ public @interface Permission {
 - 2、【规范】AI辅助编程规范化：标准化 AGENTS.md/研发 SKILL，便于AI编程助手识别加载；AGENTS.md 仅保留公共部分，不同开发模式具体内容下沉至 SKILL。
 - 3、【升级】升级多项依赖至较新版本。
 - 4、【重构】菜单API重构：与UI库解除耦合，适配逻辑在前端处理；
-- 5、【TODO】单模块代码规范化：规范并简化模块代码，包括：筛选、列表、增改删、其他操作；
+- 5、【交互】菜单交互优化：菜单点击后展示/折叠加速，提升操作灵敏度；
+- 6、【TODO】单模块代码规范化：规范并简化模块代码，包括：筛选、列表、增改删、其他操作；
 
 ### TODO LIST
 - 1、单体版本优化：

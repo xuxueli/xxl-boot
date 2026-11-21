@@ -1,6 +1,6 @@
 ---
 name: xxl-boot-react
-description: 在 XXL-Boot 前后端分离的 React 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-react 端口 4000，Ant Design ProTable + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-api/.../business、修改 xxl-boot-ui-react/src/modules、编辑 .tsx 页面、使用 ProTable/usePermission/useEnumOption。Vue 任务改用 xxl-boot-vue；单体任务改用 xxl-boot-monolith。
+description: 在 XXL-Boot 前后端分离的 React 模式（xxl-boot-ui-react 端口 4000，Ant Design ProTable + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-ui-react/src/modules、编辑 .tsx 页面、使用 ProTable/usePermission/useEnumOption，或用户明确选择 React 分离模式。Vue 任务改用 xxl-boot-vue；单体任务改用 xxl-boot-monolith。
 ---
 
 # XXL-Boot · React 分离模式开发 SKILL
@@ -56,12 +56,12 @@ xxl-boot-ui/xxl-boot-ui-react/src
 - 组件声明统一为普通函数 + 显式 props 类型，不叠加 React 的包装类型、运行时校验与兼容写法：
 
 ```tsx
-interface DemoProps {
+interface XxxProps {
   id: number;          /* 主键 */
   onClose: () => void; /* 关闭回调 */
 }
 
-export default function Demo({ id, onClose }: DemoProps) {
+export default function Xxx({ id, onClose }: XxxProps) {
   return <div>{id}</div>;
 }
 ```
@@ -71,6 +71,7 @@ export default function Demo({ id, onClose }: DemoProps) {
 ## 五、初始化与启动
 
 - 数据库：按 `AGENTS.md`「SQL 执行规范」依次执行 `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql`。
+- 环境：Node 20+。
 - 数据源：`xxl-boot-api/src/main/resources/application.properties`（默认 `127.0.0.1:3306/xxl_boot`，`root/root_pwd`）；默认账号 `admin`。
 - 后端：`cd xxl-boot-api && mvn spring-boot:run`（8090，Redis 需先启动）。
 - 前端：`cd xxl-boot-ui/xxl-boot-ui-react && npm i && npm run dev`（4000）。
@@ -78,41 +79,44 @@ export default function Demo({ id, onClose }: DemoProps) {
 
 ## 六、后端落位（与 Vue 共用）
 
-以业务 `Demo`、模块 `demo`、接口路径 `/demo/demo` 为例，包名 `com.xxl.boot.api.business.demo.demo`：
+> 命名约定：`{module}` 是业务域（父目录），`{business}` 是业务页/实体（子目录）。本示例 module=`{module}`、business=`{business}`，对应 `business/{module}/{business}`；避免父子同名。代码与 SQL 中的 `{module}`、`{business}`、`{businessName}`、`Xxx`/`xxx` 均为占位符，落地时替换为实际命名。
+
+以业务 `Xxx`、模块 `{module}`、接口路径 `/{module}/{business}` 为例，包名 `com.xxl.boot.api.business.{module}.{business}`：
 
 | 文件 | 位置 | 说明 |
 |---|---|---|
-| `Demo.java` | `java/.../business/demo/demo/model/Demo.java` | 实体，字段驼峰；`Date` 字段加 `@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")` |
-| `DemoMapper.java` | `java/.../business/demo/demo/mapper/DemoMapper.java` | `insert/delete/update/load/pageList/pageListCount` |
-| `DemoMapper.xml` | `resources/mapper/business/demo/demo/DemoMapper.xml` | `resultMap` 显式映射；`add_time/update_time` 用 `NOW()`；查询用 `<if>` 动态拼条件 |
-| `DemoService.java` / `DemoServiceImpl.java` | `java/.../business/demo/demo/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
-| `DemoController.java` | `java/.../business/demo/demo/controller/DemoController.java` | `@RestController @RequestMapping("/demo/demo")`，全部方法 `@XxlSso` |
+| `Xxx.java` | `java/.../business/{module}/{business}/model/Xxx.java` | 实体，字段驼峰；`Date` 字段加 `@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")` |
+| `XxxMapper.java` | `java/.../business/{module}/{business}/mapper/XxxMapper.java` | `insert/delete/update/load/pageList/pageListCount` |
+| `XxxMapper.xml` | `resources/mapper/business/{module}/{business}/XxxMapper.xml` | `resultMap` 显式映射；`add_time/update_time` 用 `NOW()`；查询用 `<if>` 动态拼条件 |
+| `XxxService.java` / `XxxServiceImpl.java` | `java/.../business/{module}/{business}/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
+| `XxxController.java` | `java/.../business/{module}/{business}/controller/XxxController.java` | `@RestController @RequestMapping("/{module}/{business}")`，全部方法 `@XxlSso` |
 
 接口契约（路径、参数通道、返回结构、校验、方法顺序）按 `AGENTS.md`「后端通用规范」；本模式只需保证包路径与 Mapper XML 双层镜像。
+- 用户可见错误文案统一 `I18nUtil.getString("key")`，禁止硬编码中文；键维护在 `xxl-boot-api/src/main/resources/i18n/message_zh.properties` / `message_en.properties`（存量代码逐步迁移，新增/修改代码必须遵守）。
 
 ## 七、前端落位（3 文件 + 页内组件）
 
-以 `/demo/demo` 为例：
+以 `/{module}/{business}` 为例：
 
 | 文件 | 位置 | 说明 |
 |---|---|---|
-| types | `src/modules/business/demo/demo/types/index.d.ts` | `declare namespace API { type Demo = {...} }` |
-| api | `src/modules/business/demo/demo/api/index.ts` | `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 转 `offset/pagesize` |
-| view | `src/modules/business/demo/demo/pages/index.tsx` | `PageContainer + ProTable` |
-| 页内组件 | 同 `pages/` 下，如 `DemoFormModal.tsx` | 表单弹窗独立文件时使用 |
+| types | `src/modules/business/{module}/{business}/types/index.d.ts` | `declare namespace API { type Xxx = {...} }` |
+| api | `src/modules/business/{module}/{business}/api/index.ts` | `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 转 `offset/pagesize` |
+| view | `src/modules/business/{module}/{business}/pages/index.tsx` | `PageContainer + ProTable` |
+| 页内组件 | 同 `pages/` 下，如 `XxxFormModal.tsx` | 表单弹窗独立文件时使用 |
 
-页面、接口、类型同模块聚合；**React `loadView` 只识别 `pages/index.tsx`**，即业务菜单 `url='/demo/demo'` 必须对应 `pages/index.tsx`（子页面可放 `pages/xxx/index.tsx`，菜单 `url` 写成 `/demo/demo/xxx`）。
+页面、接口、类型同模块聚合；**React `loadView` 只识别 `pages/index.tsx`**，即业务菜单 `url='/{module}/{business}'` 必须对应 `pages/index.tsx`（子页面可放 `pages/xxx/index.tsx`，菜单 `url` 写成 `/{module}/{business}/xxx`）。
 
 ### 7.1 types：`types/index.d.ts`
 
 ```ts
 /**
- * 类型定义：Demo
- * 对应后端 Demo 实体。
+ * 类型定义：Xxx
+ * 对应后端 Xxx 实体。
  */
 declare namespace API {
-  /** Demo 实体 */
-  type Demo = {
+  /** Xxx 实体 */
+  type Xxx = {
     id?: number;
     name?: string;
     /** 状态：0-正常、1-停用 */
@@ -129,17 +133,17 @@ declare namespace API {
 import { request } from '@/utils/request';
 
 /**
- * 分页查询 Demo。
+ * 分页查询 Xxx。
  * @param params ProTable 查询参数（current/pageSize + 查询字段）
  */
-export async function listDemo(params: {
+export async function listXxx(params: {
   current?: number;
   pageSize?: number;
   name?: string;
   status?: number;
 }) {
   const { current = 1, pageSize = 10, ...rest } = params || {};
-  return request<API.Response<API.PageModel<API.Demo>>>('/demo/demo/pageList', {
+  return request<API.Response<API.PageModel<API.Xxx>>>('/{module}/{business}/pageList', {
     method: 'GET',
     params: {
       offset: (current - 1) * pageSize,
@@ -149,33 +153,33 @@ export async function listDemo(params: {
   });
 }
 
-/** 查询 Demo 详情 */
-export async function getDemo(id: number) {
-  return request<API.Response<API.Demo>>('/demo/demo/load', {
+/** 查询 Xxx 详情 */
+export async function getXxx(id: number) {
+  return request<API.Response<API.Xxx>>('/{module}/{business}/load', {
     method: 'GET',
     params: { id },
   });
 }
 
-/** 新增 Demo */
-export async function addDemo(data: API.Demo) {
-  return request<API.Response<unknown>>('/demo/demo/insert', {
+/** 新增 Xxx */
+export async function addXxx(data: API.Xxx) {
+  return request<API.Response<unknown>>('/{module}/{business}/insert', {
     method: 'POST',
     data,
   });
 }
 
-/** 修改 Demo */
-export async function updateDemo(data: API.Demo) {
-  return request<API.Response<unknown>>('/demo/demo/update', {
+/** 修改 Xxx */
+export async function updateXxx(data: API.Xxx) {
+  return request<API.Response<unknown>>('/{module}/{business}/update', {
     method: 'POST',
     data,
   });
 }
 
-/** 删除 Demo（后端接收裸数组） */
-export async function delDemo(ids: number[]) {
-  return request<API.Response<unknown>>('/demo/demo/delete', {
+/** 删除 Xxx（后端接收裸数组） */
+export async function delXxx(ids: number[]) {
+  return request<API.Response<unknown>>('/{module}/{business}/delete', {
     method: 'POST',
     data: ids,
   });
@@ -186,7 +190,7 @@ export async function delDemo(ids: number[]) {
 
 ```tsx
 /**
- * 页面：Demo 管理
+ * 页面：Xxx 管理
  * 功能：分页表格 + 新增/修改 + 删除
  */
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
@@ -197,30 +201,30 @@ import React, { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { usePermission } from '@/hooks/usePermission';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { delDemo, listDemo } from '../api';
-import DemoFormModal from './DemoFormModal';
+import { delXxx, listXxx } from '../api';
+import XxxFormModal from './XxxFormModal';
 
-const DemoList = () => {
+const XxxList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();
 
   const [formOpen, setFormOpen] = useState(false);
-  const [formCurrent, setFormCurrent] = useState<API.Demo | null>(null);
+  const [formCurrent, setFormCurrent] = useState<API.Xxx | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const statusOptions = useEnumOption('DemoStatusEnum');
+  const statusOptions = useEnumOption('XxxStatusEnum');
   const statusValueEnum = toValueEnum(statusOptions);
 
-  /** 删除 Demo（单条或批量） */
-  const handleDelete = (row?: API.Demo) => {
+  /** 删除 Xxx（单条或批量） */
+  const handleDelete = (row?: API.Xxx) => {
     const ids = row ? [row.id as number] : selectedIds;
     if (ids.length === 0) return;
     modal.confirm({
       title: t('modal.title'),
-      content: t('business.demo.confirmDelete', [ids.join(',')]),
+      content: t('business.xxx.confirmDelete', [ids.join(',')]),
       onOk: async () => {
-        await delDemo(ids);
+        await delXxx(ids);
         message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -228,9 +232,9 @@ const DemoList = () => {
     });
   };
 
-  const columns: ProColumns<API.Demo>[] = [
+  const columns: ProColumns<API.Xxx>[] = [
     { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
-    { title: t('business.demo.name'), dataIndex: 'name', ellipsis: true },
+    { title: t('business.xxx.name'), dataIndex: 'name', ellipsis: true },
     {
       title: t('common.status'),
       dataIndex: 'status',
@@ -243,14 +247,14 @@ const DemoList = () => {
         </Tag>
       ),
     },
-    { title: t('business.demo.updateTime'), dataIndex: 'updateTime', search: false, width: 180 },
+    { title: t('business.xxx.updateTime'), dataIndex: 'updateTime', search: false, width: 180 },
     {
       title: t('common.operation'),
       valueType: 'option',
       width: 160,
       render: (_, record) => (
         <Space size="middle">
-          {hasPermi('demo:demo:edit') && (
+          {hasPermi('{module}:{business}:edit') && (
             <a
               key="edit"
               onClick={() => {
@@ -261,7 +265,7 @@ const DemoList = () => {
               <EditOutlined /> {t('common.modify')}
             </a>
           )}
-          {hasPermi('demo:demo:remove') && (
+          {hasPermi('{module}:{business}:remove') && (
             <a key="delete" onClick={() => handleDelete(record)}>
               <DeleteOutlined /> {t('common.delete')}
             </a>
@@ -273,13 +277,13 @@ const DemoList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <ProTable<API.Demo>
+      <ProTable<API.Xxx>
         actionRef={actionRef}
         rowKey="id"
         columns={columns}
         search={{ labelWidth: 80, optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()] }}
         request={async (params) => {
-          const res = await listDemo(params);
+          const res = await listXxx(params);
           return {
             data: res.data?.data || [],
             total: res.data?.total || 0,
@@ -287,7 +291,7 @@ const DemoList = () => {
           };
         }}
         toolBarRender={() => [
-          hasPermi('demo:demo:add') && (
+          hasPermi('{module}:{business}:add') && (
             <Button
               key="add"
               type="primary"
@@ -300,7 +304,7 @@ const DemoList = () => {
               {t('common.add')}
             </Button>
           ),
-          hasPermi('demo:demo:remove') && (
+          hasPermi('{module}:{business}:remove') && (
             <Button
               key="delete"
               danger
@@ -318,7 +322,7 @@ const DemoList = () => {
         pagination={{ defaultPageSize: 10, pageSizeOptions: [10, 20, 50, 100], showSizeChanger: true }}
         tableAlertRender={false}
       />
-      <DemoFormModal
+      <XxxFormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}
@@ -328,22 +332,22 @@ const DemoList = () => {
   );
 };
 
-export default DemoList;
+export default XxxList;
 ```
 
-### 7.4 表单弹窗：`pages/DemoFormModal.tsx`（推荐）
+### 7.4 表单弹窗：`pages/XxxFormModal.tsx`（推荐）
 
 ```tsx
 /**
- * 组件：DemoFormModal（Demo 新增/编辑弹窗）
+ * 组件：XxxFormModal（Xxx 新增/编辑弹窗）
  */
 import { ModalForm, ProFormRadio, ProFormText } from '@ant-design/pro-components';
 import { App } from 'antd';
 import React from 'react';
 import { t } from '@/i18n';
-import { addDemo, updateDemo } from '../api';
+import { addXxx, updateXxx } from '../api';
 
-const DemoFormModal = ({
+const XxxFormModal = ({
   open,
   onOpenChange,
   current,
@@ -351,19 +355,19 @@ const DemoFormModal = ({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  current?: API.Demo | null;
+  current?: API.Xxx | null;
   onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();
 
-  const handleFinish = async (values: API.Demo) => {
+  const handleFinish = async (values: API.Xxx) => {
     const data = { ...values };
     delete data.addTime;
     delete data.updateTime;
     if (current?.id) {
-      await updateDemo({ ...data, id: current.id });
+      await updateXxx({ ...data, id: current.id });
     } else {
-      await addDemo(data);
+      await addXxx(data);
     }
     message.success(t('common.saveSuccess'));
     onSuccess?.();
@@ -371,11 +375,11 @@ const DemoFormModal = ({
   };
 
   return (
-    <ModalForm<API.Demo>
+    <ModalForm<API.Xxx>
       title={
         current?.id
-          ? t('common.titleEdit', [t('business.demo.title')])
-          : t('common.titleAdd', [t('business.demo.title')])
+          ? t('common.titleEdit', [t('business.xxx.title')])
+          : t('common.titleAdd', [t('business.xxx.title')])
       }
       width={640}
       open={open}
@@ -386,9 +390,9 @@ const DemoFormModal = ({
     >
       <ProFormText
         name="name"
-        label={t('business.demo.name')}
-        placeholder={t('common.inputPlaceholder', [t('business.demo.name')])}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('business.demo.name')]) }]}
+        label={t('business.xxx.name')}
+        placeholder={t('common.inputPlaceholder', [t('business.xxx.name')])}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('business.xxx.name')]) }]}
       />
       <ProFormRadio.Group
         name="status"
@@ -402,7 +406,7 @@ const DemoFormModal = ({
   );
 };
 
-export default DemoFormModal;
+export default XxxFormModal;
 ```
 
 ### 7.5 React 页面约定
@@ -424,13 +428,13 @@ export default DemoFormModal;
 SET NAMES utf8mb4;
 
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
-VALUES (0, 'Demo管理', 1, 'demo:demo', '/demo/demo', '', 999, 0, 0, now(), now());
+VALUES (0, '{businessName}管理', 1, '{module}:{business}', '/{module}/{business}', '', 999, 0, 0, now(), now());
 SELECT @parentId := LAST_INSERT_ID();
 
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
-VALUES (@parentId, 'Demo新增', 2, 'demo:demo:add', '', '', 1, 0, 0, now(), now()),
-       (@parentId, 'Demo修改', 2, 'demo:demo:edit', '', '', 2, 0, 0, now(), now()),
-       (@parentId, 'Demo删除', 2, 'demo:demo:remove', '', '', 3, 0, 0, now(), now());
+VALUES (@parentId, '{businessName}新增', 2, '{module}:{business}:add', '', '', 1, 0, 0, now(), now()),
+       (@parentId, '{businessName}修改', 2, '{module}:{business}:edit', '', '', 2, 0, 0, now(), now()),
+       (@parentId, '{businessName}删除', 2, '{module}:{business}:remove', '', '', 3, 0, 0, now(), now());
 
 SELECT @btnAddId := LAST_INSERT_ID();
 SET @btnEditId = @btnAddId + 1, @btnDelId = @btnAddId + 2;
@@ -443,7 +447,7 @@ VALUES (1, @parentId, now(), now()),
 ```
 
 - 权限标识统一 `{module}:{business}:add|edit|remove`，与 `hasPermi` 保持一致；新菜单必须在 `xxl_boot_role_res` 授权。
-- 页面必须是 `pages/index.tsx`（`loadView` 只识别该路径）；子页面放 `pages/xxx/index.tsx`，菜单 `url` 写 `/demo/demo/xxx`。**无需改路由代码。**
+- 页面必须是 `pages/index.tsx`（`loadView` 只识别该路径）；子页面放 `pages/xxx/index.tsx`，菜单 `url` 写 `/{module}/{business}/xxx`。**无需改路由代码。**
 
 ## 九、枚举 / 字典
 
@@ -464,7 +468,7 @@ VALUES (1, @parentId, now(), now()),
 
 ```json
 POST /tool/codegen/createTable
-{ "tableSql": "CREATE TABLE xxl_boot_demo (...)", "tplWebType": "antd-typescript" }
+{ "tableSql": "CREATE TABLE xxl_boot_xxx (...)", "tplWebType": "antd-typescript" }
 ```
 
 流程：`createTable` 建记录 → `update` 编辑字段 → `preview` 预览 / `batchGenCode?ids=...` 下载 zip。
@@ -476,7 +480,7 @@ POST /tool/codegen/createTable
 - `tplCategory=tree` 时前端出 `index-tree.tsx`。
 
 > 解压后按项目目录合并，并做 React 专属修正：
-> - 模板把新增/修改弹窗直接写在 `pages/index.tsx` 内的 `Modal + Form`；如需独立弹窗，拆为 `pages/DemoFormModal.tsx`（推荐 `ModalForm`）；
+> - 模板把新增/修改弹窗直接写在 `pages/index.tsx` 内的 `Modal + Form`；如需独立弹窗，拆为 `pages/XxxFormModal.tsx`（推荐 `ModalForm`）；
 > - 生成代码默认硬编码中文，需迁移到 i18n；查询条件与组件写法按本 SKILL 复核；
 > - 其余固定缺口（查询条件、校验、树表）按 `AGENTS.md`「代码生成器」逐项补齐。
 
@@ -489,7 +493,7 @@ POST /tool/codegen/createTable
 - [ ] 页面为 `pages/index.tsx`，`ProTable.request` 取 `res.data?.data/total`；未引入项目不存在的依赖（如 `ahooks`）。
 - [ ] 组件声明符合规范：普通函数 + 显式 props，无 `React.FC`/`forwardRef`/`propTypes`/函数组件 `defaultProps`；弹窗用受控 `open`。
 - [ ] 按钮 `hasPermi`；资源表菜单+按钮已插且已授权；菜单可见、页面能打开。
-- [ ] i18n：页面无硬编码中文（注释除外），语言由后端 `system.i18n.language` 控制，前端已由 `/loadBaseConfig` 同步。
+- [ ] i18n：后端错误文案走 `I18nUtil`，前端页面无硬编码中文（注释除外），语言由后端 `system.i18n.language` 控制，前端已由 `/loadBaseConfig` 同步。
 - [ ] SQL 按 `AGENTS.md`「SQL 执行规范」执行，中文无乱码。
 - [ ] 联调：列表/新增/修改/删除/搜索可用，无权限按钮隐藏，空参数后端友好提示。
 

@@ -47,7 +47,7 @@ XXL-BOOT 是一个快速开发平台，易学易用、AI驱动、开箱即用。
 
 - 1、Monorepo + 三种模式：Monorepo 一套仓库统一托管 单体模式、前后端分离 Vue 模式、前后端分离 React 模式，支持按业务需要自由选型、一键构建、按需部署；
 - 2、AI + SKILL 驱动：内置 单体 / Vue / React 三大开发 SKILL，AI 编程助手一键加载，按平台规范直生业务代码并落位，显著加速业务开发；
-- 3、代码生成：内置代码生成器，提供建表 SQL 即可自动生成前后端全流程代码，覆盖 "controller/service/mapper&xml/entity/types/api/view…"，并自动生成菜单权限 SQL，加速研发效率；
+- 3、代码生成：内置代码生成器，提供建表 SQL 即可自动生成前后端全流程代码，覆盖 "controller/service/mapper&xml/entity/types/api/pages…"，并自动生成菜单权限 SQL，加速研发效率；
 - 4、表单生成：内置表单/页面生成器，支持组件拖拽方式生成表单/页面，支持多种组件、布局和样式，支持响应式布局，保障用户体验及交互；
 
 - **账号与安全**

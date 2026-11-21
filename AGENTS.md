@@ -1,6 +1,6 @@
 # XXL-Boot 开发规范（公共契约）
 
-> 本文件**只维护跨模式公共契约**。三种运行模式的作业细则（工程结构、代码落位、页面骨架、启动/构建命令、菜单 SQL、i18n、代码生成器修正、校验清单）统一维护在 `.agents/skills/xxl-boot-{monolith|vue|react}/SKILL.md`。
+> 本文件维护跨模式公共契约与研发流程（需求落盘、标准流程、SQL 规范、验收）。三种运行模式的作业细则（工程结构、代码落位、页面骨架、启动/构建命令、菜单 SQL、i18n、代码生成器修正、校验清单）统一维护在 `.agents/skills/xxl-boot-{monolith|vue|react}/SKILL.md`。
 >
 > AI 编程助手进入仓库后，先按「一、AI 助手加载约定」选择并加载对应 SKILL，再按本文件 + SKILL 执行；未加载 SKILL 不得直接生成业务代码。
 
@@ -13,6 +13,8 @@
 | 单体 Monolith | `xxl-boot-admin` | 改动 `xxl-boot-admin`；FreeMarker / `.ftl`；`$.adminTable`；AdminLTE 页面 | `xxl-boot-monolith` |
 | Vue 分离 | `xxl-boot-api` + `xxl-boot-ui/xxl-boot-ui-vue` | 改动 `xxl-boot-ui-vue/src/modules`；`.vue`；Element Plus | `xxl-boot-vue` |
 | React 分离 | `xxl-boot-api` + `xxl-boot-ui/xxl-boot-ui-react` | 改动 `xxl-boot-ui-react/src/modules`；`.tsx`；ProTable | `xxl-boot-react` |
+
+> 仅涉及 `xxl-boot-api` 业务代码、未触及任一前端时，先与用户确认前端形态（Vue / React），再加载对应 SKILL；不预设默认前端。
 
 ### 1.2 加载与执行顺序
 
@@ -27,7 +29,7 @@
 
 - **公共契约**（设计原则、通用约定、接口通道、数据库/菜单模型、验收）以本文件为准。
 - **模式细节**（路径、骨架、命令、菜单 SQL、i18n、生成器修正）以对应 SKILL + 当前代码为准。
-- 文档与代码不一致时，以代码为准，并在本次变更中回写 `AGENTS.md` / SKILL。
+- 文档与代码不一致时：本次改动涉及该处，以本文件 / SKILL 的规范为准修正代码；未涉及的存量实现保持现状，不做无关重构，也不得新增同类偏差。
 - 新增或调整模式专属内容只写进对应 SKILL；本文件不得新增模式专属实现细节。
 - 两处不得重复维护同一内容；发现重复时，保留单一权威位置，另一处改为引用。
 
@@ -42,7 +44,7 @@ XXL-Boot 是一个快速开发平台 / 脚手架，采用 Monorepo 统一托管�
 | `xxl-boot-ui/xxl-boot-ui-vue` | 前后端分离模式：Vue3 前端 |
 | `xxl-boot-ui/xxl-boot-ui-react` | 前后端分离模式：React 前端 |
 
-- 环境：JDK 17+、Maven 3.6+、Node 18+、MySQL 8、Redis（前后端分离模式必需）。
+- 环境：JDK 17+、Maven 3.6+、Node 20+、MySQL 8、Redis（前后端分离模式必需）。
 - 通用依赖：`xxl-tool`（工具与统一响应）、`xxl-sso`（登录鉴权，`@XxlSso`）、MyBatis（Mapper + XML）、MySQL、Redis。
 - 各模式技术栈、端口、登录态存储、数据库初始化脚本、启动与构建命令，见对应 SKILL「模式概览」「初始化与启动」。
 - 推荐交付形态：`xxl-boot-api` + `xxl-boot-ui-vue`（或 `-react`）的前后端分离模式，业务扩展最顺滑。
@@ -70,11 +72,11 @@ XXL-Boot 是一个快速开发平台 / 脚手架，采用 Monorepo 统一托管�
 
 - 使用中文沟通、中文注释。
 - 命名表达真实语义：类名大驼峰、变量/方法小驼峰、常量全大写下划线；避免无意义单字母与拼音；布尔属性不用 `isXxx` 前缀（避免与 getter 冲突）。
-- 注释：文件顶部一行功能描述 + 空行 + `@author 作者 yyyy-mm-dd`；方法用 `/* xxx */` 多行注释；属性注释右侧 `/* xxx */` 垂直对齐；分支逻辑需注释；无死代码、无调试残留。
+- 注释：Java 文件顶部一行功能描述 + 空行 + `@author 作者 yyyy-mm-dd`；方法用 `/** xxx */` Javadoc；属性注释右侧 `/* xxx */` 垂直对齐；前端文件顶部一行功能注释即可，不强制 `@author`；分支逻辑需注释；无死代码、无调试残留。
 - **依赖版本一律固定**：
   - `package.json` 写精确版本（如 `"yaml": "2.9.1"`），禁止 `^`、`~`、`*`、区间；
   - `pom.xml` 的依赖与版本属性写精确版本（如 `<xxl-sso.version>2.4.1</xxl-sso.version>`），禁止 `LATEST`、`RELEASE`、区间；
-  - 新增或升级依赖必须同步 `package-lock.json`，根 `packages[""]` 与依赖项同样精确；上游传递依赖由 lock 固化。
+  - `package-lock.json` 按仓库约定由 `.gitignore` 忽略、不入库；新增/升级依赖后仅本地重新生成用于校验，不提交。
 - 新增依赖前先确认现有依赖/工具能否覆盖；不能覆盖才新增，并在变更说明中写清用途。
 - 文档同步：公共规则改本文件，模式规则改对应 SKILL；不得在代码注释中长期保留与文档冲突的“临时约定”。
 
@@ -142,7 +144,7 @@ XXL-Boot 是一个快速开发平台 / 脚手架，采用 Monorepo 统一托管�
 
 含中文的 SQL（建表、菜单/权限初始化、测试数据）必须：
 
-1. `.sql` 文件首行加 `SET NAMES utf8mb4;`；
+1. `.sql` 文件在注释头之后、任何含中文的 DDL/DML 之前加 `SET NAMES utf8mb4;`（有 `USE` 时紧跟 `USE`）；
 2. 执行时显式指定客户端字符集 `--default-character-set=utf8mb4`；
 3. 不依赖 MySQL CLI 默认字符集（可能为 latin1）。
 
@@ -162,12 +164,15 @@ mysql -h127.0.0.1 -uroot -proot_pwd --default-character-set=utf8mb4 xxl_boot \
 - 分层职责：Controller 只做参数接收/校验与响应，Service 承载业务，Mapper 只做数据访问，不跨层越权。
 - 平台能力放 `framework`，业务代码放 `business`；业务代码禁止塞入 `framework`。具体包路径与 Mapper XML 落位见对应 SKILL。
 - 接口路径：`/{module}/{business}/{pageList|load|insert|delete|update}`；业务 Controller 统一 `@RequestMapping("/{module}/{business}")`，全部方法 `@XxlSso`。
+- 模块/业务命名：`{module}` 为业务域（父），`{business}` 为业务页/实体（子）；文档示例中的 `{module}`、`{business}`、`Xxx` 均为占位符，落地时替换为实际命名。
 - CRUD 参数通道：
   - 分页、查询条件与简单标量走 URL（`@RequestParam`，前端 `params`）；
   - `insert`/`update` 走 JSON 实体（`@RequestBody`，前端 `data`）；
   - `delete` 走 JSON 集合（`@RequestBody List<Integer> ids`，前端 `data` 裸数组），不再包一层 `IdsRequest`。
 - 返回结构：统一 `Response{ code, msg, data }`，code 200 成功；分页 `Response<PageModel>`，入参统一 `offset`、`pagesize`。
-- 参数校验用 `StringTool`、`RegexTool`、`CollectionTool` 等，失败返回 `Response.ofFail("提示")`；唯一性字段先查再插/改。
+- 参数校验用 `StringTool`、`RegexTool`、`CollectionTool` 等；用户可见错误文案统一走 `I18nUtil.getString("key")`，禁止硬编码中文，失败返回 `Response.ofFail(...)`（存量代码可逐步迁移，新增/修改代码必须遵守）；唯一性字段先查再插/改。
+  - 单体文案：`xxl-boot-admin/src/main/resources/i18n/message_zh_CN.properties` / `message_en.properties`。
+  - 分离文案：`xxl-boot-api/src/main/resources/i18n/message_zh.properties` / `message_en.properties`。
 - 业务方法顺序固定：`pageList / load / insert / delete / update`。
 - Mapper XML 显式 `resultMap`；`add_time`/`update_time` 写入用 `NOW()`；查询条件用 `<if>` 动态拼接。
 - Java set/get 不折叠，使用正常方法体。
@@ -198,7 +203,7 @@ mysql -h127.0.0.1 -uroot -proot_pwd --default-character-set=utf8mb4 xxl_boot \
 ## 八、前端通用规范
 
 - 前端按「模块自包含」组织：同一模块的页面、接口、类型放在同一模块目录下；业务模块与平台 `framework` 模块隔离。
-- 接口通道：遵循第六节，前端请求参数/请求体形态与后端保持一致。
+- 接口通道：遵循「后端通用规范」，前端请求参数/请求体形态与后端保持一致。
 - 列表数据从 `response.data.data` 取，总数从 `response.data.total` 取；不直接操作原始响应。
 - 用户可见文案统一走 i18n，禁止硬编码中文（注释除外）；通用词优先复用 `common.*`，新增文案 zh/en 成对提交。
 - 组件、Hook/Composable、工具优先复用平台已有实现；重复第三次才抽公共能力。
@@ -211,7 +216,7 @@ mysql -h127.0.0.1 -uroot -proot_pwd --default-character-set=utf8mb4 xxl_boot \
 - 所有模式共有的固定缺口：
   - `pageList` 默认只生成 `offset/pagesize`，`isQuery` 字段不会自动生成查询条件；需补 Controller 参数、Service 方法、Mapper 参数与 XML `<if>`；
   - 校验通常只有空值判断，需补必填、长度/格式、唯一性与友好提示；
-  - 前端模板可能生成硬编码中文，需迁移到 i18n；
+  - 后端生成代码的错误文案为硬编码中文，需迁移到 `I18nUtil`；前端模板可能生成硬编码中文，需迁移到 i18n；
   - 树表模板依赖树形接口与字段，需按实际业务补齐。
 - 生成器入口、模板类型、产物路径与模式专属修正项，见对应 SKILL「代码生成器」。
 
@@ -219,7 +224,7 @@ mysql -h127.0.0.1 -uroot -proot_pwd --default-character-set=utf8mb4 xxl_boot \
 
 - 后端：编译通过；`pageList/load/insert/delete/update`、权限、空参数提示自测通过。
 - 前端/单体：按对应 SKILL 的类型检查或构建命令通过；菜单可见、CRUD/搜索正常、无权限项隐藏、页面无模板/运行错误。
-- SQL：脚本首行含 `SET NAMES utf8mb4;`，执行后中文无乱码。
+- SQL：脚本含 `SET NAMES utf8mb4;`，执行后中文无乱码。
 - 质量：符合设计原则与通用约定；无死代码、无调试残留、无多余依赖、版本已固定。
 - 文档：新增/调整模式规则已回写对应 SKILL，公共规则已回写本文件，未产生重复维护。
 - 提交：只提交任务相关文件，不提交 `target/dist/node_modules` 等产物；提交信息简洁并符合仓库风格。

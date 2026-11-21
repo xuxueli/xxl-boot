@@ -1,6 +1,6 @@
 ---
 name: xxl-boot-vue
-description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-vue 端口 3000，Element Plus + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-api/.../business、修改 xxl-boot-ui-vue/src/modules、编辑 .vue 页面、使用 usePageParams/useEnumOption/useDict。React 任务改用 xxl-boot-react；单体任务改用 xxl-boot-monolith。
+description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-ui-vue 端口 3000，Element Plus + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-ui-vue/src/modules、编辑 .vue 页面、使用 Element Plus/usePageParams/useEnumOption/useDict，或用户明确选择 Vue 分离模式。React 任务改用 xxl-boot-react；单体任务改用 xxl-boot-monolith。
 ---
 
 # XXL-Boot · Vue3 分离模式开发 SKILL
@@ -57,6 +57,7 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 ## 五、初始化与启动
 
 - 数据库：按 `AGENTS.md`「SQL 执行规范」依次执行 `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_vue.sql`。
+- 环境：Node 20+。
 - 数据源：`xxl-boot-api/src/main/resources/application.properties`（默认 `127.0.0.1:3306/xxl_boot`，`root/root_pwd`）；默认账号 `admin`。
 - 后端：`cd xxl-boot-api && mvn spring-boot:run`（8090，Redis 需先启动）。
 - 前端：`cd xxl-boot-ui/xxl-boot-ui-vue && npm i && npm run dev`（3000）。
@@ -64,28 +65,31 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 
 ## 六、后端落位（与 React 共用）
 
-以业务 `Demo`、模块 `demo`、接口路径 `/demo/demo` 为例，包名 `com.xxl.boot.api.business.demo.demo`：
+> 命名约定：`{module}` 是业务域（父目录），`{business}` 是业务页/实体（子目录）。本示例 module=`{module}`、business=`{business}`，对应 `business/{module}/{business}`；避免父子同名。代码与 SQL 中的 `{module}`、`{business}`、`{businessName}`、`Xxx`/`xxx` 均为占位符，落地时替换为实际命名。
+
+以业务 `Xxx`、模块 `{module}`、接口路径 `/{module}/{business}` 为例，包名 `com.xxl.boot.api.business.{module}.{business}`：
 
 | 文件 | 位置 | 说明 |
 |---|---|---|
-| `Demo.java` | `java/.../business/demo/demo/model/Demo.java` | 实体，字段驼峰；`Date` 字段加 `@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")` |
-| `DemoMapper.java` | `java/.../business/demo/demo/mapper/DemoMapper.java` | `insert/delete/update/load/pageList/pageListCount` |
-| `DemoMapper.xml` | `resources/mapper/business/demo/demo/DemoMapper.xml` | `resultMap` 显式映射；`add_time/update_time` 用 `NOW()`；查询用 `<if>` 动态拼条件 |
-| `DemoService.java` / `DemoServiceImpl.java` | `java/.../business/demo/demo/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
-| `DemoController.java` | `java/.../business/demo/demo/controller/DemoController.java` | `@RestController @RequestMapping("/demo/demo")`，全部方法 `@XxlSso` |
+| `Xxx.java` | `java/.../business/{module}/{business}/model/Xxx.java` | 实体，字段驼峰；`Date` 字段加 `@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="GMT+8")` |
+| `XxxMapper.java` | `java/.../business/{module}/{business}/mapper/XxxMapper.java` | `insert/delete/update/load/pageList/pageListCount` |
+| `XxxMapper.xml` | `resources/mapper/business/{module}/{business}/XxxMapper.xml` | `resultMap` 显式映射；`add_time/update_time` 用 `NOW()`；查询用 `<if>` 动态拼条件 |
+| `XxxService.java` / `XxxServiceImpl.java` | `java/.../business/{module}/{business}/service/(impl/)` | 方法顺序 `pageList/load/insert/delete/update` |
+| `XxxController.java` | `java/.../business/{module}/{business}/controller/XxxController.java` | `@RestController @RequestMapping("/{module}/{business}")`，全部方法 `@XxlSso` |
 
 接口契约（路径、参数通道、返回结构、校验、方法顺序）按 `AGENTS.md`「后端通用规范」；本模式只需保证包路径与 Mapper XML 双层镜像。
+- 用户可见错误文案统一 `I18nUtil.getString("key")`，禁止硬编码中文；键维护在 `xxl-boot-api/src/main/resources/i18n/message_zh.properties` / `message_en.properties`（存量代码逐步迁移，新增/修改代码必须遵守）。
 
 ## 七、前端落位（3 文件 + 页内组件）
 
-以 `/demo/demo` 为例：
+以 `/{module}/{business}` 为例：
 
 | 文件 | 位置 | 说明 |
 |---|---|---|
-| types | `src/modules/business/demo/demo/types/index.ts` | 实体 + Query + Form + ListQuery |
-| api | `src/modules/business/demo/demo/api/index.ts` | `request` 封装，`Promise<Response<PageModel<T>>>` |
-| view | `src/modules/business/demo/demo/pages/index.vue` | 三段式列表页 |
-| 页内组件 | 同 `pages/` 下，如 `DemoFormModal.vue` | 弹窗独立文件时使用 |
+| types | `src/modules/business/{module}/{business}/types/index.ts` | 实体 + Query + Form + ListQuery |
+| api | `src/modules/business/{module}/{business}/api/index.ts` | `request` 封装，`Promise<Response<PageModel<T>>>` |
+| view | `src/modules/business/{module}/{business}/pages/index.vue` | 三段式列表页 |
+| 页内组件 | 同 `pages/` 下，如 `XxxFormModal.vue` | 弹窗独立文件时使用 |
 
 页面、接口、类型同模块聚合，**没有 barrel 登记**；全局基础类型统一从 `@/types` 引用。
 
@@ -94,8 +98,8 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 ```ts
 import type { ListQuery } from '@/types'
 
-/** Demo 实体 */
-export interface Demo {
+/** Xxx 实体 */
+export interface Xxx {
   id?: number
   /** 名称 */
   name?: string
@@ -106,7 +110,7 @@ export interface Demo {
 }
 
 /** 搜索栏查询参数（前端表单形态） */
-export interface DemoQuery {
+export interface XxxQuery {
   pageNum: number
   pageSize: number
   name?: string
@@ -114,63 +118,63 @@ export interface DemoQuery {
 }
 
 /** 新增/修改表单 */
-export interface DemoForm {
+export interface XxxForm {
   id?: number
   name?: string
   status?: number
 }
 
 /** 列表接口请求参数（offset/pagesize 形态） */
-export type DemoListQuery = ListQuery<DemoQuery>
+export type XxxListQuery = ListQuery<XxxQuery>
 ```
 
 ### 7.2 api：`api/index.ts`
 
 ```ts
 import { request } from '@/utils/request'
-import type { Demo, DemoForm, DemoListQuery } from '../types'
+import type { Xxx, XxxForm, XxxListQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
-/** 分页查询 Demo */
-export function listDemo(query: DemoListQuery): Promise<Response<PageModel<Demo>>> {
+/** 分页查询 Xxx */
+export function listXxx(query: XxxListQuery): Promise<Response<PageModel<Xxx>>> {
   return request({
-    url: '/demo/demo/pageList',
+    url: '/{module}/{business}/pageList',
     method: 'get',
     params: query
   })
 }
 
-/** 查询 Demo 详情 */
-export function getDemo(id: number): Promise<Response<Demo>> {
+/** 查询 Xxx 详情 */
+export function getXxx(id: number): Promise<Response<Xxx>> {
   return request({
-    url: '/demo/demo/load',
+    url: '/{module}/{business}/load',
     method: 'get',
     params: { id }
   })
 }
 
-/** 新增 Demo */
-export function addDemo(data: DemoForm): Promise<Response<unknown>> {
+/** 新增 Xxx */
+export function addXxx(data: XxxForm): Promise<Response<unknown>> {
   return request({
-    url: '/demo/demo/insert',
+    url: '/{module}/{business}/insert',
     method: 'post',
     data
   })
 }
 
-/** 修改 Demo */
-export function updateDemo(data: DemoForm): Promise<Response<unknown>> {
+/** 修改 Xxx */
+export function updateXxx(data: XxxForm): Promise<Response<unknown>> {
   return request({
-    url: '/demo/demo/update',
+    url: '/{module}/{business}/update',
     method: 'post',
     data
   })
 }
 
-/** 删除 Demo（支持单条/批量） */
-export function delDemo(id: number | number[]): Promise<Response<unknown>> {
+/** 删除 Xxx（支持单条/批量） */
+export function delXxx(id: number | number[]): Promise<Response<unknown>> {
   return request({
-    url: '/demo/demo/delete',
+    url: '/{module}/{business}/delete',
     method: 'post',
     data: Array.isArray(id) ? id : [id]
   })
@@ -183,15 +187,15 @@ export function delDemo(id: number | number[]): Promise<Response<unknown>> {
 
 ```ts
 <script setup lang="ts">
-defineOptions({ name: 'Demo' })
+defineOptions({ name: 'Xxx' })
 import { t } from '@/i18n'
 import { ref } from 'vue'
-import { listDemo, getDemo, addDemo, updateDemo, delDemo } from '../api'
+import { listXxx, getXxx, addXxx, updateXxx, delXxx } from '../api'
 import { usePageParams } from '@/composables/usePageParams'
 import { useEnumOption } from '@/composables/useEnumOption'
 import { useFormReset } from '@/composables/useFormReset'
 import modal from '@/utils/modal'
-import type { Demo, DemoForm, DemoQuery } from '../types'
+import type { Xxx, XxxForm, XxxQuery } from '../types'
 import type { FormState, TableState } from '@/types'
 import type { FormInstance } from 'element-plus'
 
@@ -200,11 +204,11 @@ const resetForm = useFormReset()
 // --------------------------------- ref data ---------------------------------
 const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
-const { DemoStatusEnum: statusOptions } = useEnumOption('DemoStatusEnum')
+const { XxxStatusEnum: statusOptions } = useEnumOption('XxxStatusEnum')
 
-const queryParams = ref<DemoQuery>({ pageNum: 1, pageSize: 10, name: undefined, status: -1 })
+const queryParams = ref<XxxQuery>({ pageNum: 1, pageSize: 10, name: undefined, status: -1 })
 
-const table = ref<TableState<Demo>>({
+const table = ref<TableState<Xxx>>({
   list: [],
   total: 0,
   loading: true,
@@ -214,12 +218,12 @@ const table = ref<TableState<Demo>>({
   multiple: true
 })
 
-const formState = ref<FormState<DemoForm>>({
+const formState = ref<FormState<XxxForm>>({
   visible: false,
   title: '',
   form: {},
   rules: {
-    name: [{ required: true, message: t('common.requiredMsg', [t('business.demo.name')]), trigger: 'blur' }]
+    name: [{ required: true, message: t('common.requiredMsg', [t('business.xxx.name')]), trigger: 'blur' }]
   }
 })
 
@@ -227,7 +231,7 @@ const formState = ref<FormState<DemoForm>>({
 function getList() {
   table.value.loading = true
   const params = usePageParams(queryParams)()
-  listDemo(params).then((response) => {
+  listXxx(params).then((response) => {
     table.value.list = response.data.data
     table.value.total = response.data.total
     table.value.loading = false
@@ -249,7 +253,7 @@ function resetQuery() {
   handleQuery()
 }
 
-function handleSelectionChange(selection: Demo[]) {
+function handleSelectionChange(selection: Xxx[]) {
   table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
@@ -258,7 +262,7 @@ function handleSelectionChange(selection: Demo[]) {
 function handleAdd() {
   reset()
   formState.value.visible = true
-  formState.value.title = t('common.titleAdd', [t('business.demo.title')])
+  formState.value.title = t('common.titleAdd', [t('business.xxx.title')])
 }
 
 /** 顶部按钮点击传入的是事件对象，需回退到勾选 id */
@@ -266,10 +270,10 @@ function handleUpdate(row: any) {
   reset()
   const id = row?.id ?? table.value.ids[0]
   if (id == null) return
-  getDemo(id).then((response) => {
+  getXxx(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
-    formState.value.title = t('common.titleEdit', [t('business.demo.title')])
+    formState.value.title = t('common.titleEdit', [t('business.xxx.title')])
   })
 }
 
@@ -277,7 +281,7 @@ function submitForm() {
   formRef.value?.validate((valid) => {
     if (!valid) return
     const isEdit = formState.value.form.id != null
-    const request = isEdit ? updateDemo(formState.value.form) : addDemo(formState.value.form)
+    const request = isEdit ? updateXxx(formState.value.form) : addXxx(formState.value.form)
     request.then(() => {
       modal.msgSuccess(isEdit ? t('common.updateSuccess') : t('common.addSuccess'))
       formState.value.visible = false
@@ -291,8 +295,8 @@ function handleDelete(row: any) {
   const ids = row?.id ?? table.value.ids
   if (ids == null || (Array.isArray(ids) && ids.length === 0)) return
   modal
-    .confirm(t('business.demo.confirmDelete', [ids]))
-    .then(() => delDemo(ids))
+    .confirm(t('business.xxx.confirmDelete', [ids]))
+    .then(() => delXxx(ids))
     .then(() => {
       getList()
       modal.msgSuccess(t('common.deleteSuccess'))
@@ -310,7 +314,7 @@ getList()
 - `script` 除基础 import 外按「ref data → fun → page init」三节组织，节顶注释为 `/* --- {功能，前后33个-} --- */`。
 - 响应式数据一律 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；搜索栏、表格状态、表单状态分别收敛为 `queryParams`、`table`、`formState`。
 - 列表固定经 `usePageParams(queryParams)()` 把 `pageNum/pageSize` 转 `offset/pagesize`；取 `response.data.data` 与 `response.data.total`。
-- 组件 import 名称与模板标签统一 PascalCase；按钮权限 `v-hasPermi="['demo:demo:add']"`，角色权限 `v-hasRole="['admin']"`。
+- 组件 import 名称与模板标签统一 PascalCase；按钮权限 `v-hasPermi="['{module}:{business}:add']"`，角色权限 `v-hasRole="['admin']"`。
 - 表单弹窗推荐 `defineModel('visible')` + 模板 `v-model` 直连；通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
 
 ## 八、菜单 / 权限
@@ -320,14 +324,14 @@ SET NAMES utf8mb4;
 
 -- 菜单（type=1；url 同时充当路由 path 与 modules/ 组件定位 key）
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
-VALUES (0, 'Demo管理', 1, 'demo:demo', '/demo/demo', '', 999, 0, 0, now(), now());
+VALUES (0, '{businessName}管理', 1, '{module}:{business}', '/{module}/{business}', '', 999, 0, 0, now(), now());
 SELECT @parentId := LAST_INSERT_ID();
 
 -- 按钮（type=2）
 INSERT INTO `xxl_boot_resource` (`parent_id`,`name`,`type`,`permission`,`url`,`icon`,`order`,`status`,`visible`,`add_time`,`update_time`)
-VALUES (@parentId, 'Demo新增', 2, 'demo:demo:add', '', '', 1, 0, 0, now(), now()),
-       (@parentId, 'Demo修改', 2, 'demo:demo:edit', '', '', 2, 0, 0, now(), now()),
-       (@parentId, 'Demo删除', 2, 'demo:demo:remove', '', '', 3, 0, 0, now(), now());
+VALUES (@parentId, '{businessName}新增', 2, '{module}:{business}:add', '', '', 1, 0, 0, now(), now()),
+       (@parentId, '{businessName}修改', 2, '{module}:{business}:edit', '', '', 2, 0, 0, now(), now()),
+       (@parentId, '{businessName}删除', 2, '{module}:{business}:remove', '', '', 3, 0, 0, now(), now());
 
 -- 按钮ID（多值插入 LAST_INSERT_ID 返回首行，自增连续）
 SELECT @btnAddId := LAST_INSERT_ID();
@@ -347,7 +351,7 @@ VALUES (1, @parentId, now(), now()),
 ## 九、枚举 / 字典
 
 - 业务枚举放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
-- 枚举下拉：`const { DemoStatusEnum: statusOptions } = useEnumOption('DemoStatusEnum')`，返回 `Record<string, Ref<EnumOption[]>>`，模板用 `statusOptions`，提交用 `item.code`。
+- 枚举下拉：`const { XxxStatusEnum: statusOptions } = useEnumOption('XxxStatusEnum')`，返回 `Record<string, Ref<EnumOption[]>>`，模板用 `statusOptions`，提交用 `item.code`。
 - 数据字典：`const { sys_user_sex } = useDict('sys_user_sex')`；字段映射为 `{ label, value }`。
 
 ## 十、i18n（Vue）
@@ -363,7 +367,7 @@ VALUES (1, @parentId, now(), now()),
 
 ```json
 POST /tool/codegen/createTable
-{ "tableSql": "CREATE TABLE xxl_boot_demo (...)", "tplWebType": "element-plus-typescript" }
+{ "tableSql": "CREATE TABLE xxl_boot_xxx (...)", "tplWebType": "element-plus-typescript" }
 ```
 
 流程：`createTable` 建记录 → `update` 编辑字段（`queryType/htmlType/dictType/isQuery/isList/isInsert/isEdit/isRequired`）→ `preview` 逐文件预览 / `batchGenCode?ids=...` 下载 zip。
@@ -375,7 +379,7 @@ POST /tool/codegen/createTable
 - 字段 `id` 是强依赖；`tplCategory=tree` 时前端出 `index-tree.vue`。
 
 > 解压后按项目目录合并，并做 Vue 专属修正：
-> - 模板会生成「导出」按钮与 `exportDemo` 接口，但后端默认没有 `export` 接口：要么补实现，要么删按钮/API；
+> - 模板会生成「导出」按钮与 `exportXxx` 接口，但后端默认没有 `export` 接口：要么补实现，要么删按钮/API；
 > - 其余固定缺口（查询条件、校验、i18n、树表）按 `AGENTS.md`「代码生成器」逐项补齐。
 
 ## 十二、校验清单
@@ -385,7 +389,7 @@ POST /tool/codegen/createTable
 - [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
 - [ ] 前端 types 四件（实体/Query/Form/ListQuery）齐全，api 返回 `Promise<Response<PageModel<T>>>`，页面三段式 + `ref` 收敛 + `usePageParams`。
 - [ ] 按钮 `v-hasPermi`；资源表菜单+按钮已插且已授权；菜单可见、页面能打开。
-- [ ] i18n：页面无硬编码中文（注释除外），语言由后端 `system.i18n.language` 控制，前端已由 `/loadBaseConfig` 同步。
+- [ ] i18n：后端错误文案走 `I18nUtil`，前端页面无硬编码中文（注释除外），语言由后端 `system.i18n.language` 控制，前端已由 `/loadBaseConfig` 同步。
 - [ ] SQL 按 `AGENTS.md`「SQL 执行规范」执行，中文无乱码。
 - [ ] 联调：列表/新增/修改/删除/搜索可用，无权限按钮隐藏，空参数后端友好提示。
 
