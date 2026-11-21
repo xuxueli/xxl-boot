@@ -78,7 +78,7 @@ xxl-boot-ui/xxl-boot-ui-react/src
 | `system/config/types/index.d.ts` | `declare namespace API` 实体与关联类型 | 4.3 |
 | `system/config/api/index.ts` | `{business}Api` 命名空间、方法顺序、分页转换 | 4.4 |
 | `system/config/pages/index.tsx` | `PageContainer + ProTable`、勾选、工具栏、删除 | 4.5 |
-| `system/config/pages/ConfigFormModal.tsx` | 受控 `ModalForm`、提交与复位 | 4.6 |
+| `system/config/pages/FormModal.tsx` | 受控 `ModalForm`、提交与复位 | 4.6 |
 | `system/message/pages/{MessageDetail,ReadUsersDialog}` | 受控 Drawer / Modal + Table（进阶） | 4.7 |
 | 后端 `framework/.../system/Config*` | 文件清单、接口契约、校验、Mapper XML | 五 |
 
@@ -100,11 +100,11 @@ xxl-boot-ui/xxl-boot-ui-react/src
 | types | `src/modules/business/{module}/{business}/types/index.d.ts` | `declare namespace API` 实体与关联类型 | `system/config/types/index.d.ts` |
 | api | `src/modules/business/{module}/{business}/api/index.ts` | `{business}Api` 命名空间，方法名对齐后端 Controller | `system/config/api/index.ts` |
 | view | `src/modules/business/{module}/{business}/pages/index.tsx` | `PageContainer + ProTable` 列表页 | `system/config/pages/index.tsx` |
-| 表单弹窗 | `pages/XxxFormModal.tsx` | `ModalForm` 新增/修改（独立文件） | `system/config/pages/ConfigFormModal.tsx` |
+| 表单弹窗 | `pages/FormModal.tsx` | `ModalForm` 新增/修改（独立文件） | `system/config/pages/FormModal.tsx` |
 | 子页面 | `pages/{Sub}/index.tsx` | 详情抽屉、已读列表等可路由子页 | `system/message/pages/{MessageDetail,ReadUsersDialog}/index.tsx` |
 
-- 列表页只负责查询、勾选、顶部操作和弹窗编排；表单放 `XxxFormModal`，详情/关联列表放独立组件。
-- 与路由无关的局部组件（如 `XxxFormModal.tsx`）可以平铺在 `pages/` 下；**需要菜单直达的子页必须是
+- 列表页只负责查询、勾选、顶部操作和弹窗编排；表单放 `FormModal`，详情/关联列表放独立组件。
+- 与路由无关的局部组件（如 `FormModal.tsx`）可以平铺在 `pages/` 下；**需要菜单直达的子页必须是
   `pages/{Sub}/index.tsx`**。
 - 页面、接口、类型同模块聚合；全局基础类型从 `API` 命名空间直接使用，无需 import。
 
@@ -116,7 +116,8 @@ xxl-boot-ui/xxl-boot-ui-react/src
 | 接口路径 | `/{module}/{business}` | `/demo/customer` |
 | 菜单 url | `/{module}/{business}` | `/demo/customer` |
 | API 命名空间 | `{business}Api` 小驼峰 | `customerApi` |
-| 组件名 | 普通函数 + PascalCase | `CustomerList` / `CustomerFormModal` |
+| 组件名 | 普通函数 + PascalCase；模块内局部组件省略模块前缀 | `CustomerList` / `FormModal` |
+| 局部组件文件 | 模块目录内不重复模块名 | `pages/FormModal.tsx`（非 `CustomerFormModal.tsx`） |
 | 权限标识 | `{module}:{business}:add\|edit\|remove` | `demo:customer:add` |
 | i18n 节点 | `business.{module}.{business}` | `business.demo.customer` |
 
@@ -127,8 +128,8 @@ xxl-boot-ui/xxl-boot-ui-react/src
 | 命名空间 | 统一 `declare namespace API { ... }`，多文件自动合并 |
 | 实体 | `type Xxx = { ... }`，对应后端 Entity/DTO；字段可选 |
 | 关联实体 | 同一文件内追加 `type XxxItem` / `type XxxRead` |
-| 查询类型 | 筛选项 ≤ 3 个时在 `api.pageList` 内联；跨页面/字段多时抽 `API.XxxQuery` |
-| 表单类型 | 默认复用 `API.Xxx`；字段差异大时再抽 `API.XxxForm` |
+| 查询类型 | 拆两层：`API.XxxQuery`（`current/pageSize` + 筛选项，页面态）、`API.XxxListQuery = ListQuery<API.XxxQuery>`（`offset/pagesize` + 筛选项，接口态） |
+| 表单类型 | 一律抽 `API.XxxForm = Pick<Xxx, 可编辑字段>`，避免页面回传 `addTime/updateTime` 等只读字段 |
 
 ```ts
 /**
@@ -152,12 +153,31 @@ declare namespace API {
     /** 更新时间 */
     updateTime?: string;
   };
+
+  /** Xxx 列表查询条件：ProTable 分页 + 搜索栏字段 */
+  type XxxQuery = {
+    /** 当前页码，默认 1 */
+    current?: number;
+    /** 每页条数，默认 10 */
+    pageSize?: number;
+    /** 名称，模糊匹配 */
+    name?: string;
+    /** 状态筛选：不传或 -1 表示全部 */
+    status?: number;
+  };
+
+  /** 列表接口请求参数（offset/pagesize 形态） */
+  type XxxListQuery = ListQuery<XxxQuery>;
+
+  /** Xxx 新增/修改表单：仅保留可编辑字段，避免回传只读字段 */
+  type XxxForm = Pick<Xxx, 'id' | 'name' | 'status' | 'remark'>;
 }
 ```
 
 注意：
 
 - `types/index.d.ts` 由 `tsconfig.json` 的 `include` 自动纳入，无需在页面 import。
+- `API.PageQuery` / `API.ListQuery` 定义在全局 `src/types/index.d.ts`，模块只需声明 `API.XxxListQuery = ListQuery<API.XxxQuery>`。
 - 后端时间字段统一 `string`；前端只展示或回传，不做 Date 运算。
 - 新增关联类型时保持同一文件聚合，避免跨模块引用类型文件。
 
@@ -169,7 +189,8 @@ declare namespace API {
 | 方法命名 | 与后端 Controller 方法名一致，不二次改名 |
 | 方法顺序 | `pageList / load / [业务方法] / insert / delete / update` |
 | 返回类型 | `request<API.Response<API.PageModel<API.Xxx>>>(...)` |
-| 分页 | 入参 `current/pageSize`，函数内转 `offset/pagesize` |
+| 分页 | 入参 `API.XxxListQuery`；页面用 `buildListQuery(params)` 把 `current/pageSize` 转 `offset/pagesize`，API 原样透传（与 Vue 一致） |
+| 表单 | `insert/update` 入参 `API.XxxForm` |
 | 删除 | 接收集合，`data: Array.isArray(ids) ? ids : [ids]` |
 
 ```ts
@@ -185,25 +206,17 @@ export const xxxApi = {
   /**
    * 分页查询 Xxx
    *
-   * @param params 分页与查询条件（current/pageSize + 筛选项）
+   * 入参与 Vue 一致：页面负责把 current/pageSize 转成 offset/pagesize，此处原样透传。
+   *
+   * @param query 分页与查询条件（offset/pagesize 形态）
    * @returns 分页结果
    */
-  pageList(params: {
-    current?: number;
-    pageSize?: number;
-    name?: string;
-    status?: number;
-  }) {
-    const { current = 1, pageSize = 10, ...rest } = params || {};
+  pageList(query: API.XxxListQuery) {
     return request<API.Response<API.PageModel<API.Xxx>>>(
       '/{module}/{business}/pageList',
       {
         method: 'GET',
-        params: {
-          offset: (current - 1) * pageSize,
-          pagesize: pageSize,
-          ...rest,
-        },
+        params: query,
       },
     );
   },
@@ -224,10 +237,10 @@ export const xxxApi = {
   /**
    * 新增 Xxx
    *
-   * @param data 表单数据
+   * @param data 表单数据（仅可编辑字段）
    * @returns 保存结果
    */
-  insert(data: API.Xxx) {
+  insert(data: API.XxxForm) {
     return request<API.Response<unknown>>('/{module}/{business}/insert', {
       method: 'POST',
       data,
@@ -250,10 +263,10 @@ export const xxxApi = {
   /**
    * 更新 Xxx
    *
-   * @param data 表单数据（含主键）
+   * @param data 表单数据（仅可编辑字段，含主键）
    * @returns 保存结果
    */
-  update(data: API.Xxx) {
+  update(data: API.XxxForm) {
     return request<API.Response<unknown>>('/{module}/{business}/update', {
       method: 'POST',
       data,
@@ -278,43 +291,20 @@ export const xxxApi = {
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { App, Button, Space, Tag, Tooltip } from 'antd';
-import { createStyles } from 'antd-style';
+import { App, Button, Space, Tag } from 'antd';
 import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { usePermission } from '@/hooks/usePermission';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
+import { buildListQuery } from '@/utils/pageQuery';
 import { xxxApi } from '../api';
-import XxxFormModal from './XxxFormModal';
-
-/**
- * Xxx 表格样式
- * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
- */
-const useStyles = createStyles(({ css }) => ({
-  xxxTable: css`
-    .ant-pro-table-list-toolbar-container {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container
-      .ant-pro-table-list-toolbar-right
-      .ant-pro-table-list-toolbar-setting-items {
-      margin-left: auto;
-    }
-  `,
-}));
+import FormModal from './FormModal';
 
 /** Xxx 列表页 */
 const XxxList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();
-  const { styles } = useStyles();
 
   const [formOpen, setFormOpen] = useState(false); /* 表单弹窗显隐 */
   const [formCurrent, setFormCurrent] = useState<API.Xxx | null>(null); /* 当前编辑行，null 表示新增 */
@@ -352,7 +342,6 @@ const XxxList = () => {
       title: t('business.xxx.name'),
       dataIndex: 'name',
       ellipsis: true,
-      render: (_, record) => <Tooltip title={record.name}>{record.name}</Tooltip>,
     },
     {
       title: t('common.status'),
@@ -401,9 +390,8 @@ const XxxList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <div className={styles.xxxTable}>
-        <ProTable<API.Xxx>
-          actionRef={actionRef}
+      <ProTable<API.Xxx>
+        actionRef={actionRef}
           rowKey="id"
           columns={columns}
           search={{
@@ -411,7 +399,7 @@ const XxxList = () => {
             optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
           }}
           request={async (params) => {
-            const res = await xxxApi.pageList(params);
+            const res = await xxxApi.pageList(buildListQuery(params));
             return {
               data: res.data?.data || [],
               total: res.data?.total || 0,
@@ -451,11 +439,11 @@ const XxxList = () => {
             defaultPageSize: 10,
             pageSizeOptions: [10, 20, 50, 100],
             showSizeChanger: true,
+            showTotal: (total) => t('common.paginationTotal', [total]),
           }}
           tableAlertRender={false}
         />
-      </div>
-      <XxxFormModal
+      <FormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}
@@ -473,24 +461,24 @@ export default XxxList;
 | 主题 | 约定 |
 |---|---|
 | 列表容器 | `PageContainer ghost title={false}` + `ProTable` |
-| 请求 | `request` 内调 API，返回 `{ data, total, success: true }`；数据取 `res.data?.data`，总数取 `res.data?.total` |
-| 搜索 | `search={{ optionRender: (_, __, dom) => [...dom.reverse()] }}` 让查询/重置靠右或按现有页面保持一致 |
+| 请求 | `request` 内用 `buildListQuery(params)` 把 `current/pageSize` 统一转成 `offset/pagesize`；返回 `{ data, total, success: true }`，数据取 `res.data?.data`，总数取 `res.data?.total` |
+| 搜索 | `search={{ optionRender: (_, __, dom) => [...dom.reverse()] }}` 让查询/重置靠右或按现有页面保持一致；搜索/重置由 ProTable 自动回到第 1 页 |
 | 序号 | 首列 `dataIndex: 'id'`，展示数据库主键，不用 `render` 生成页内序号 |
 | 状态列 | `valueEnum` 负责筛选下拉，`render` 负责 Tag 展示 |
-| 刷新 | 新增/修改/删除成功后 `actionRef.current?.reload()` |
+| 刷新 | 新增/修改/删除成功后统一 `actionRef.current?.reload()` |
 | 勾选 | `rowSelection.onChange` 同步 `selectedIds`；删除后清空 |
-| 分页 | `pagination` 固定 `defaultPageSize: 10`，`showSizeChanger` |
-| 样式 | 需要调整工具栏布局时用 `antd-style` 的 `createStyles`，不要写全局覆盖 |
+| 分页 | `pagination` 固定 `defaultPageSize: 10` + `showSizeChanger` + `showTotal` |
+| 样式 | ProTable 工具栏「按钮靠左、设置项靠右」已由 `src/assets/styles/global.css` 全局统一，页面不要再写 `useStyles` 或包裹 div；其他页面级定制用 `antd-style` 的 `createStyles`，不要新增全局覆盖 |
 
 平台内置页面（`modules/framework/**`）按角色控制时用 `hasRole('admin')`；业务页面用 `hasPermi`，不要混用。
 
-### 4.6 表单弹窗：`pages/XxxFormModal.tsx`
+### 4.6 表单弹窗：`pages/FormModal.tsx`
 
 新增/修改统一用受控 `ModalForm`，通过 props 传入当前行与成功回调，不在父页面用 ref 暴露 `open()`：
 
 ```tsx
 /**
- * @fileoverview XxxFormModal（Xxx 新增/编辑弹窗）
+ * @fileoverview FormModal（Xxx 新增/编辑弹窗）
  * @description 新增/编辑表单
  * @author xuxueli 2026-11-22
  */
@@ -504,8 +492,15 @@ import { App } from 'antd';
 import { t } from '@/i18n';
 import { xxxApi } from '../api';
 
-/** 表单弹窗属性 */
-interface XxxFormModalProps {
+// ---------------------- 表单组件 ----------------------
+
+/** Xxx 新增/编辑弹窗 */
+function FormModal({
+  open,
+  onOpenChange,
+  current,
+  onSuccess,
+}: {
   /** 弹窗显隐 */
   open: boolean;
   /** 显隐变更回调 */
@@ -514,55 +509,60 @@ interface XxxFormModalProps {
   current?: API.Xxx | null;
   /** 保存成功回调 */
   onSuccess?: () => void;
-}
-
-/** Xxx 新增/编辑弹窗 */
-function XxxFormModal({ open, onOpenChange, current, onSuccess }: XxxFormModalProps) {
+}) {
   const { message } = App.useApp();
+
+  // ---------------------- 表单状态 ----------------------
+
+  // 有主键即编辑态：决定弹窗标题、不可变字段与提交分支
+  const isEdit = current?.id != null;
+
+  // ---------------------- 数据操作 ----------------------
 
   /**
    * 提交表单：有主键走修改，否则新增
    *
-   * @param values 表单值
+   * @param values 表单值，仅包含可编辑字段
    * @returns 是否提交成功
    */
-  const handleFinish = async (values: API.Xxx) => {
-    const data = { ...values };
-    // 后端维护时间字段，前端不回传
-    delete data.addTime;
-    delete data.updateTime;
-    if (current?.id) {
-      await xxxApi.update({ ...data, id: current.id });
+  const handleFinish = async (values: API.XxxForm) => {
+    if (isEdit) {
+      await xxxApi.update({ ...values, id: current?.id });
     } else {
-      await xxxApi.insert(data);
+      await xxxApi.insert(values);
     }
     message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
+  // ---------------------- 表单渲染 ----------------------
+
   return (
-    <ModalForm<API.Xxx>
+    <ModalForm<API.XxxForm>
       title={
-        current?.id
+        isEdit
           ? t('common.titleEdit', [t('business.xxx.title')])
           : t('common.titleAdd', [t('business.xxx.title')])
       }
       width={640}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnHidden: true }}
+      modalProps={{ destroyOnHidden: true, maskClosable: false }}
       layout="horizontal"
       labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
       initialValues={{ status: 0, ...current }}
     >
+      {/* 基础信息：名称 */}
       <ProFormText
         name="name"
         label={t('business.xxx.name')}
         placeholder={t('common.inputPlaceholder', [t('business.xxx.name')])}
         rules={[{ required: true, message: t('common.requiredMsg', [t('business.xxx.name')]) }]}
       />
+
+      {/* 状态与备注 */}
       <ProFormRadio.Group
         name="status"
         label={t('common.status')}
@@ -581,15 +581,17 @@ function XxxFormModal({ open, onOpenChange, current, onSuccess }: XxxFormModalPr
   );
 }
 
-export default XxxFormModal;
+export default FormModal;
 ```
 
 约定：
 
-- `modalProps={{ destroyOnHidden: true }}` 保证关闭后销毁，配合 `initialValues` 自动复位。
-- 修改时以 `current.id` 判定；提交前删除 `addTime/updateTime`。
+- `modalProps={{ destroyOnHidden: true, maskClosable: false }}`：关闭后销毁并复位，且禁止点击遮罩关闭，避免误触丢失已填内容。
+- 派生 `isEdit = current?.id != null`，统一驱动标题、不可变字段与提交分支，避免多处重复判断。
+- 代码按 `表单属性 / 表单组件 / 表单状态 / 数据操作 / 表单渲染` 分区注释，字段用 JSX 注释分组。
 - 表单校验用 `rules`；错误提示走 `t('common.requiredMsg', [...])`。
-- 业务不可变字段（如编码/Key）在修改时 `disabled={!!current?.id}`，与后端校验保持一致。
+- 表单类型 `API.XxxForm` 已排除 `addTime/updateTime` 等只读字段，提交时无需手工删除。
+- 业务不可变字段（如编码/Key）在修改时 `disabled={isEdit}`，与后端校验保持一致。
 - 无权限的提交按钮由父页面控制入口；弹窗本身不重复做权限判断。
 - 字段多、需要分组时用 `ProForm.Group` / `Row + Col`；富文本用 `@/components` 的 `Editor`。
 
@@ -605,7 +607,7 @@ export default XxxFormModal;
 
 | 主题 | 约定 |
 |---|---|
-| 组件声明 | 普通函数 + 显式 props 接口；禁止 `React.FC`/`forwardRef`/`propTypes`/函数组件 `defaultProps` |
+| 组件声明 | 普通函数 + 显式 props 类型；仅本文件使用时直接内联，跨文件复用或对外导出时才抽 `interface`；禁止 `React.FC`/`forwardRef`/`propTypes`/函数组件 `defaultProps` |
 | React 导入 | `jsx: react-jsx`，无需为 JSX 引入 React；用到 `React.ReactNode` 等类型时按需导入 |
 | 状态 | 局部 `useState`；派生数据用 `useMemo`；不引入额外状态库 |
 | 提示 | `App.useApp().message` / `App.useApp().modal`；不用静态 `message.xxx` |
@@ -613,7 +615,7 @@ export default XxxFormModal;
 | 权限 | `usePermission().hasPermi / hasRole` |
 | 枚举 | `useEnumOption('XxxEnum')` → `toValueEnum`（表格列）/ `toSelectOptions`（Select/ProFormSelect） |
 | 字典 | 无 React 版 `useDict`；用 `loadDictItem`（`@/modules/framework/system/dict/api`）+ `useEffect/useState` 或 ProForm `request` |
-| 复用 | 优先 `@/hooks`、`@/components`、`@/utils/request`；同一逻辑第三次出现才新增 Hook |
+| 复用 | 优先 `@/hooks`、`@/components`、`@/utils`（请求 `request`、分页转换 `buildListQuery`）；同一逻辑第三次出现才新增 Hook |
 
 ### 4.9 注释与结构
 
@@ -635,7 +637,7 @@ export default XxxFormModal;
 
 1. 建 `xxl-boot-spec/{yyyyMMdd}-{business}/plan.md`，确认字段、枚举、权限、页面形态。
 2. 建表并落盘 SQL；后端按第五节生成 Entity/Mapper/Service/Controller。
-3. 前端复制 `system/config` 三件套 + `ConfigFormModal`，替换命名、路径、字段。
+3. 前端复制 `system/config` 三件套 + `FormModal`，替换命名、路径、字段。
 4. 补 i18n `business.{module}.{business}` 节点（zh/en 成对）。
 5. 插菜单/按钮并授权，打开页面联调。
 6. 按第十一节清单逐项复核。
@@ -717,7 +719,7 @@ VALUES (1, @parentId, now(), now()),
 - `loadView` 的模块 glob 为 `@/modules/**/index.tsx`，且只匹配 `{url}/index`：
   - 菜单 `url='/{module}/{business}'` → `pages/index.tsx`；
   - 子菜单 `url='/{module}/{business}/{sub}'` → `pages/{sub}/index.tsx`。
-- 局部组件（如 `pages/XxxFormModal.tsx`）不会注册为路由，只能被页面 import。
+- 局部组件（如 `pages/FormModal.tsx`）不会注册为路由，只能被页面 import。
 - 页面定位只认 `modules/framework|business/**`，**无需改前端路由代码**。
 
 原则：业务页面按钮用 `hasPermi('{module}:{business}:add|edit|remove')`，与资源表 `permission` 一致；
@@ -782,7 +784,7 @@ POST /tool/codegen/createTable
 | 缺口 | 修正 |
 |---|---|
 | 查询条件 | `pageList` 只生成 `offset/pagesize`，按 `isQuery` 补 API 参数、后端 Controller/Service/Mapper |
-| 弹窗形态 | 模板把 `Modal + Form` 写在 `index.tsx`；字段多或需复用时拆为 `pages/XxxFormModal.tsx`（`ModalForm`） |
+| 弹窗形态 | 模板把 `Modal + Form` 写在 `index.tsx`；字段多或需复用时拆为 `pages/FormModal.tsx`（`ModalForm`） |
 | 校验 | 只有空值判断；补必填、长度、格式、唯一性与友好提示 |
 | i18n | 模板硬编码中文；迁移到 `t()` 与 `business.*` |
 | 类型 | 模板只生成 `API.Xxx`；补关联实体、必要的 `API.XxxQuery` |
@@ -816,7 +818,7 @@ cd xxl-boot-ui/xxl-boot-ui-react && npm run type-check && npm run build
 - [ ] `types` 使用 `declare namespace API`，实体字段与后端一致；关联类型同文件聚合。
 - [ ] `api` 以 `{business}Api` 导出，返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`。
 - [ ] 页面基于 `PageContainer + ProTable`；`request` 返回 `{ data, total, success }`，取 `res.data?.data/total`。
-- [ ] 表单用受控 `ModalForm`（独立 `XxxFormModal` 或简单内联）；提交删除时间字段，成功后 `reload`。
+- [ ] 表单用受控 `ModalForm`（独立 `FormModal` 或简单内联）；提交不回传 `addTime/updateTime` 等只读字段，成功后 `reload`。
 - [ ] 无 `ahooks` 等未安装依赖；无第二套请求/表格封装。
 - [ ] 组件为普通函数 + 显式 props；无 `React.FC`/`forwardRef`/`propTypes`/`defaultProps`。
 - [ ] `hasPermi` 与按钮权限一致；平台页才用 `hasRole`。
@@ -842,7 +844,7 @@ cd xxl-boot-ui/xxl-boot-ui-react && npm run type-check && npm run build
 | 用途 | 路径 |
 |---|---|
 | 前端标准范本 | `xxl-boot-ui/xxl-boot-ui-react/src/modules/framework/system/config/{types,api,pages}` |
-| 表单弹窗范本 | `.../system/config/pages/ConfigFormModal.tsx` |
+| 表单弹窗范本 | `.../system/config/pages/FormModal.tsx` |
 | 进阶形态范本 | `.../system/message/pages/{MessageDetail,ReadUsersDialog}/index.tsx` |
 | Hooks | `xxl-boot-ui/xxl-boot-ui-react/src/hooks/{useEnumOption,usePermission}.ts` |
 | 全局类型 | `xxl-boot-ui/xxl-boot-ui-react/src/types/index.d.ts` |
