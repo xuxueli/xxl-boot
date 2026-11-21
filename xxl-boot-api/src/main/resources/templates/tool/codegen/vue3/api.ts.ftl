@@ -1,6 +1,7 @@
 /**
- * ${codegen.functionName} API
- * Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+ * @file ${codegen.functionName} API
+ * @description 接口封装
+ * @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
  */
 import { request } from '@/utils/request'
 import type { ${codegen.businessName}, ${codegen.businessName}Form, ${codegen.businessName}ListQuery } from '../types'

@@ -23,7 +23,7 @@ import java.util.List;
 /**
 * ${classInfo.className} Controller
 *
-* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* @author ${classInfo.author} ${.now?string('yyyy-MM-dd')}
 */
 @Controller
 @RequestMapping("/${classNameLower}")

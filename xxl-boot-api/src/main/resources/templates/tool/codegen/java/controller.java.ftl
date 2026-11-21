@@ -22,7 +22,7 @@ import java.util.List;
 /**
 * ${codegen.functionName} Controller
 *
-* Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
 */
 @RestController
 @RequestMapping("/${codegen.moduleName}/${cnLower}")

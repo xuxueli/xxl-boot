@@ -7,8 +7,9 @@
   <#return "any" />
 </#function>
 /**
- * ${codegen.functionName} 类型定义
- * Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+ * @file ${codegen.functionName} 类型定义
+ * @description 实体、查询、表单与列表查询类型
+ * @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
  */
 import type { ListQuery } from '@/types'
 

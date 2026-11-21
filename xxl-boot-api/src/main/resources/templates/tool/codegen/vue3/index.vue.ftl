@@ -24,7 +24,8 @@
 </#if>
 <!--
   ${codegen.functionName}（列表页）
-  Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+  功能：列表查询、新增、修改、删除
+  @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
 -->
 <template>
   <div class="app-container">

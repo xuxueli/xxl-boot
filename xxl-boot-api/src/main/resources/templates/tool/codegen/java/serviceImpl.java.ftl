@@ -18,7 +18,7 @@ import ${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower
 /**
 * ${codegen.functionName} Service Impl
 *
-* Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
 */
 @Service
 public class ${cn}ServiceImpl implements ${cn}Service {

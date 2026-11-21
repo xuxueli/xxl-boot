@@ -12,7 +12,7 @@ import ${classInfo.packageName}.model.${classInfo.className};
 /**
 * ${classInfo.className} Mapper
 *
-* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* @author ${classInfo.author} ${.now?string('yyyy-MM-dd')}
 */
 @Mapper
 public interface ${classInfo.className}Mapper {

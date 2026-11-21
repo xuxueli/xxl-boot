@@ -18,7 +18,7 @@ import ${classInfo.packageName}.mapper.${classInfo.className}Mapper;
 /**
 * ${classInfo.className} Service Impl
 *
-* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* @author ${classInfo.author} ${.now?string('yyyy-MM-dd')}
 */
 @Service
 public class ${classInfo.className}ServiceImpl implements ${classInfo.className}Service {

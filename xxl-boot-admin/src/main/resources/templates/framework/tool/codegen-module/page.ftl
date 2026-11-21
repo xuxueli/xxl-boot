@@ -1,3 +1,8 @@
+<!--
+  ${classInfo.className}（页面）
+  功能：列表查询、新增、修改、删除
+  @author ${classInfo.author} ${.now?string('yyyy-MM-dd')}
+-->
 <!DOCTYPE html>
 <html>
 <head>

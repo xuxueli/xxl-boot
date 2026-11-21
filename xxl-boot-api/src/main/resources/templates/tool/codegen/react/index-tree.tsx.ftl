@@ -30,8 +30,9 @@
 </#list>
 </#if>
 /**
- * ${codegen.functionName}（树表列表页）
- * Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+ * @file ${codegen.functionName}（树表列表页）
+ * @description 树表查询、新增、修改、删除
+ * @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
  * 放置路径：src/modules/business/${codegen.moduleName}/${codegen.businessName?lower_case}/pages/index.tsx
  */
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';

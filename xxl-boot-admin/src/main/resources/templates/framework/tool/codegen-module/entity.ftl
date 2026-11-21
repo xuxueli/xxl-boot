@@ -15,7 +15,7 @@ import java.util.Date;
 /**
 *  ${classInfo.className} Entity
 *
-*  Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* @author ${classInfo.author} ${.now?string('yyyy-MM-dd')}
 */
 public class ${classInfo.className} implements Serializable {
     private static final long serialVersionUID = 42L;

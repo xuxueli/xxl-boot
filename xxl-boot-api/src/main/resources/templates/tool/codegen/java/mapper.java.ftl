@@ -13,7 +13,7 @@ import ${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower
 /**
 * ${codegen.functionName} Mapper
 *
-* Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
 */
 @Mapper
 public interface ${cn}Mapper {

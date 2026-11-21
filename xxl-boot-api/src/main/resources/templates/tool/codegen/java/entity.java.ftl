@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 /**
 * ${codegen.functionName} Entity
 *
-* Created by ${codegen.functionAuthor} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
 */
 public class ${codegen.businessName} implements Serializable {
     private static final long serialVersionUID = 42L;

@@ -13,7 +13,7 @@ import ${classInfo.packageName}.model.${classInfo.className};
 /**
 * ${classInfo.className} Service
 *
-* Created by ${classInfo.author} on '${.now?string('yyyy-MM-dd HH:mm:ss')}'.
+* @author ${classInfo.author} ${.now?string('yyyy-MM-dd')}
 */
 public interface ${classInfo.className}Service {
 
