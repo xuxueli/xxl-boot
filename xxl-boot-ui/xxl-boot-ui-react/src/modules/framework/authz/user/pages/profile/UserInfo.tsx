@@ -1,12 +1,13 @@
 /**
- * 页面：UserInfo（基本资料编辑）
- * 功能：编辑用户名称、手机号、邮箱
+ * @fileoverview UserInfo（基本资料编辑）
+ * @description 编辑用户名称、手机号、邮箱
+ * @author xuxueli 2026-11-21
  */
 
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import { t } from '@/i18n';
-import { updateUserProfile } from '@/modules/framework/authz/user/api';
+import { userApi } from '@/modules/framework/authz/user/api';
 import { closePage } from '@/utils/common';
 
 /** 基本资料表单数据 */
@@ -41,7 +42,7 @@ const UserInfo = ({
 
   /** 提交保存 */
   const handleSubmit = async (values: UserInfoForm) => {
-    await updateUserProfile(values as API.User);
+    await userApi.updateProfile(values as API.User);
     message.success(t('common.updateSuccess'));
     onSuccess?.();
   };

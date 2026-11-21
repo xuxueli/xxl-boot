@@ -1,13 +1,13 @@
 /**
- * 组件：Dropdown（下拉容器）
- * 功能：封装 antd Dropdown，统一顶部导航栏下拉菜单的样式与交互
+ * @fileoverview Dropdown（下拉容器）
+ * @description 封装 antd Dropdown，统一顶部导航栏下拉菜单的样式与交互
  *
  * 说明：
  *   - 组件名与 antd 的 Dropdown 同名，内部以 AntdDropdown 别名引入 antd 组件，JSX 中 <AntdDropdown> 指向 antd 组件；
  *   - 通过 classNames.root 注入统一下拉样式，外部可传 overlayClassName 追加自定义类名；
  *   - 移除了 antd 已废弃的 overlay 属性（对应新版 popupRender / menu），避免误用。
  *
- * @author xuxueli 2026-08-15
+ * @author xuxueli 2026-11-21
  */
 import { Dropdown as AntdDropdown } from 'antd';
 import type { DropDownProps } from 'antd/es/dropdown';

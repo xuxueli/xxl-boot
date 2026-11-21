@@ -1,6 +1,7 @@
 /**
- * 页面：字典管理
- * 功能：字典类型分页表格 + 新增/修改/删除 + 字典数据抽屉
+ * @fileoverview 字典管理
+ * @description 字典类型分页表格 + 新增/修改/删除 + 字典数据抽屉
+ * @author xuxueli 2026-11-21
  */
 import {
   DeleteOutlined,
@@ -17,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
-import { delType, listType } from '@/modules/framework/system/dict/api';
+import { dictApi } from '@/modules/framework/system/dict/api';
 import DictDataDrawer from './DictDataDrawer';
 import DictFormModal from './DictFormModal';
 
@@ -69,7 +70,7 @@ const DictList = () => {
         row?.name || t('system.dict.batchDeleteName'),
       ]),
       onOk: async () => {
-        await delType(ids);
+        await dictApi.delete(ids);
         message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -151,7 +152,7 @@ const DictList = () => {
             ],
           }}
           request={async (params) => {
-            const res = await listType(params);
+            const res = await dictApi.pageList(params);
             return {
               data: res.data?.data || [],
               total: res.data?.total || 0,

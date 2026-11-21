@@ -1,6 +1,7 @@
 /**
- * 组件：ConfigFormModal（配置新增/编辑弹窗）
- * 功能：配置名称、Key、Value、状态、备注
+ * @fileoverview ConfigFormModal（配置新增/编辑弹窗）
+ * @description 配置名称、Key、Value、状态、备注
+ * @author xuxueli 2026-11-21
  */
 import {
   ModalForm,
@@ -10,7 +11,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import { t } from '@/i18n';
-import { addConfig, updateConfig } from '@/modules/framework/system/config/api';
+import { configApi } from '@/modules/framework/system/config/api';
 
 const ConfigFormModal = ({
   open,
@@ -30,9 +31,9 @@ const ConfigFormModal = ({
     delete data.addTime;
     delete data.updateTime;
     if (current?.id) {
-      await updateConfig({ ...data, id: current.id });
+      await configApi.update({ ...data, id: current.id });
     } else {
-      await addConfig(data);
+      await configApi.insert(data);
     }
     message.success(t('common.saveSuccess'));
     onSuccess?.();

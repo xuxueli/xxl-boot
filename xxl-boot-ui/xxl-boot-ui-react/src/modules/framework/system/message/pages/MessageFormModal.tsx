@@ -1,6 +1,7 @@
 /**
- * 组件：MessageFormModal（消息新增/编辑弹窗）
- * 功能：标题、分类、状态、富文本内容
+ * @fileoverview MessageFormModal（消息新增/编辑弹窗）
+ * @description 标题、分类、状态、富文本内容
+ * @author xuxueli 2026-11-21
  */
 import {
   ModalForm,
@@ -12,7 +13,7 @@ import {
 import { App, Col, Row } from 'antd';
 import { t } from '@/i18n';
 import { Editor } from '@/components';
-import { addMessage, updateMessage } from '@/modules/framework/system/message/api';
+import { messageApi } from '@/modules/framework/system/message/api';
 
 const MessageFormModal = ({
   open,
@@ -34,9 +35,9 @@ const MessageFormModal = ({
     delete data.addTime;
     delete data.updateTime;
     if (current?.id) {
-      await updateMessage({ ...data, id: current.id });
+      await messageApi.update({ ...data, id: current.id });
     } else {
-      await addMessage(data);
+      await messageApi.insert(data);
     }
     message.success(t('common.saveSuccess'));
     onSuccess?.();

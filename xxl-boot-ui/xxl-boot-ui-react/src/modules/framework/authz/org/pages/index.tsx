@@ -1,6 +1,7 @@
 /**
- * 页面：组织管理
- * 功能：组织树表格 + 新增/修改/删除 + 内联排序 + 展开/折叠
+ * @fileoverview 组织管理
+ * @description 组织树表格 + 新增/修改/删除 + 内联排序 + 展开/折叠
+ * @author xuxueli 2026-11-21
  */
 import {
   DeleteOutlined,
@@ -18,7 +19,7 @@ import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
-import { delOrg, listOrg, updateOrgSort } from '@/modules/framework/authz/org/api';
+import { orgApi } from '@/modules/framework/authz/org/api';
 import { handleTree } from '@/utils/common';
 import OrgFormModal from './OrgFormModal';
 
@@ -79,7 +80,7 @@ const OrgList = () => {
 
   /** 加载数据：转树形结构并记录排序快照 */
   const handleRequest = async (params: Record<string, any>) => {
-    const res = await listOrg(params);
+    const res = await orgApi.treeList(params);
     const tree = handleTree(res.data || []);
     setTableData(tree);
     const orders: Record<number, number> = {};
@@ -116,7 +117,7 @@ const OrgList = () => {
       message.warning(t('common.noSortChange'));
       return;
     }
-    await updateOrgSort(ids, orders);
+    await orgApi.updateSort(ids, orders);
     message.success(t('common.saveSortSuccess'));
     actionRef.current?.reload();
   };
@@ -134,7 +135,7 @@ const OrgList = () => {
       title: t('modal.title'),
       content: t('authz.org.confirmDelete', [row.name ?? '']),
       onOk: async () => {
-        await delOrg([row.id as number]);
+        await orgApi.delete([row.id as number]);
         message.success(t('common.deleteSuccess'));
         actionRef.current?.reload();
       },

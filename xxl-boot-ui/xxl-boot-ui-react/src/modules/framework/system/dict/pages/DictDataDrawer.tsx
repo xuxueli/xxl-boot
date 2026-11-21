@@ -1,11 +1,12 @@
 /**
- * 组件：DictDataDrawer（字典数据抽屉）
- * 功能：展示某字典类型的字典项列表与统计
+ * @fileoverview DictDataDrawer（字典数据抽屉）
+ * @description 展示某字典类型的字典项列表与统计
+ * @author xuxueli 2026-11-21
  */
 import { Drawer, Empty, Spin, Statistic, Tag } from 'antd';
 import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
-import { listData } from '@/modules/framework/system/dict/api';
+import { dictApi } from '@/modules/framework/system/dict/api';
 
 /* 组件入参 */
 interface DictDataDrawerProps {
@@ -23,7 +24,7 @@ function DictDataDrawer({ open, dict, onClose }: DictDataDrawerProps) {
     if (!open || !dict) return;
     setLoading(true);
     setItems([]);
-    listData({ dictId: dict.id, current: 1, pageSize: 100 })
+    dictApi.itemPageList({ dictId: dict.id, current: 1, pageSize: 100 })
       .then((res) => {
         setItems(res.data?.data || []);
       })

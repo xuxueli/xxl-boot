@@ -1,6 +1,7 @@
 /**
- * 布局组件：FullscreenButton（全屏切换）
- * 功能：顶部导航栏右侧全屏/退出全屏切换按钮，浏览器不支持时自动隐藏
+ * @fileoverview FullscreenButton（全屏切换）
+ * @description 顶部导航栏右侧全屏/退出全屏切换按钮，浏览器不支持时自动隐藏
+ * @author xuxueli 2026-11-21
  */
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { createStyles } from 'antd-style';

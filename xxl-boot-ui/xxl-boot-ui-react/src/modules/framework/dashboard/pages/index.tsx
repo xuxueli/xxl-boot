@@ -1,6 +1,7 @@
 /**
- * 页面：Dashboard（首页）
- * 功能：统计概览、日志趋势、最新消息
+ * @fileoverview Dashboard（首页）
+ * @description 统计概览、日志趋势、最新消息
+ * @author xuxueli 2026-11-21
  */
 
 import {
@@ -16,8 +17,8 @@ import { createStyles } from 'antd-style';
 import * as echarts from 'echarts';
 import { useEffect, useRef, useState } from 'react';
 import MessageDetail from '@/modules/framework/system/message/pages/MessageDetail';
-import { getLogTrend, getStats } from '@/modules/framework/dashboard/api';
-import { listMessageTop, markMessageRead } from '@/modules/framework/system/message/api';
+import { dashboardApi } from '@/modules/framework/dashboard/api';
+import { messageApi } from '@/modules/framework/system/message/api';
 import { t } from '@/i18n';
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -127,20 +128,20 @@ const Dashboard = () => {
   /** 指标卡片 - 数据加载（TanStack Query） */
   const { data: stats = {} } = useQuery({
     queryKey: ['dashboard', 'stats'],
-    queryFn: () => getStats().then((res) => res.data || {}),
+    queryFn: () => dashboardApi.stats().then((res) => res.data || {}),
   });
 
   /** 消息列表 - 数据加载（TanStack Query） */
   const { data: messages = [] } = useQuery({
     queryKey: ['dashboard', 'messageTop'],
-    queryFn: () => listMessageTop().then((res) => res.data || []),
+    queryFn: () => messageApi.listTop().then((res) => res.data || []),
   });
 
   /** 日志趋势折线图：补全连续日期，无数据补 0（TanStack Query） */
   const { data: trendData = [] } = useQuery({
     queryKey: ['dashboard', 'logTrend', chartDays],
     queryFn: async () => {
-      const res = await getLogTrend(chartDays);
+      const res = await dashboardApi.logTrend(chartDays);
       const list = res.data || [];
       const dateMap: Record<string, number> = {};
       list.forEach((i) => {
@@ -162,7 +163,7 @@ const Dashboard = () => {
   const handleMsgClick = (item: API.Message) => {
     setDetailPayload(item.id as number);
     setDetailOpen(true);
-    markMessageRead(item.id as number).catch(() => {});
+    messageApi.markRead(item.id as number).catch(() => {});
   };
 
   const chartRef = useRef<HTMLDivElement>(null);

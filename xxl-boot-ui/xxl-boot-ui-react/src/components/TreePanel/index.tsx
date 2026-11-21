@@ -1,6 +1,7 @@
 /**
- * 组件：TreePanel（树形侧栏面板）
- * 功能：可搜索过滤、展开/收起全部、刷新、可折叠的树形侧栏，用于用户管理等页面左侧组织树。
+ * @fileoverview TreePanel（树形侧栏面板）
+ * @description 可搜索过滤、展开/收起全部、刷新、可折叠的树形侧栏，用于用户管理等页面左侧组织树。
+ * @author xuxueli 2026-11-21
  */
 import {
   ApartmentOutlined,

@@ -1,5 +1,7 @@
 /**
- * 图标工具：将 antd 图标名称（如 TeamOutlined）映射为图标组件
+ * @fileoverview 图标工具：将 antd 图标名称（如 TeamOutlined）映射为图标组件
+ * @description 图标工具：将 antd 图标名称（如 TeamOutlined）映射为图标组件
+ * @author xuxueli 2026-11-21
  */
 import * as Icons from '@ant-design/icons';
 import type { ComponentType } from 'react';

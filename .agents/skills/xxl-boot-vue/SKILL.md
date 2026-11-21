@@ -235,67 +235,106 @@ export const xxxApi = {
 
 ### 7.3 页面：`pages/index.vue`（script 骨架）
 
-模板部分：搜索表单 + 操作按钮（`v-hasPermi`） + `<el-table>` + `<Pagination>` + `<el-dialog>`；完整范例先看 `modules/framework/system/message/pages/index.vue`。文件头注释按「7.5 注释与 JSDoc」补齐。
+模板部分：搜索表单 + 操作按钮（`v-hasPermi`） + `<el-table>` + `<Pagination>` + `<el-dialog>`；完整范例见 `modules/framework/system/config/pages/index.vue`（平台页面按钮用 `v-hasRole="['admin']"` 控制）。文件头注释按「7.5 注释与 JSDoc」补齐。
 
 ```ts
 <script setup lang="ts">
 defineOptions({ name: 'Xxx' })
-import { t } from '@/i18n'
 import { ref } from 'vue'
-import { xxxApi } from '../api'
-import { usePageParams } from '@/composables/usePageParams'
+import { t } from '@/i18n'
+import { Pagination, RightToolbar } from '@/components'
 import { useEnumOption } from '@/composables/useEnumOption'
+import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
+import { xxxApi } from '../api'
 import type { Xxx, XxxForm, XxxQuery } from '../types'
-import type { FormState, TableState } from '@/types'
 import type { FormInstance } from 'element-plus'
+import type { FormState, TableState } from '@/types'
 
-// --------------------------------- ref data ---------------------------------
+// ---------------------- ref data ----------------------
+
 const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
+
+// 状态选项，由后端枚举接口加载
 const { XxxStatusEnum: statusOptions } = useEnumOption('XxxStatusEnum')
 
-const queryParams = ref<XxxQuery>({ pageNum: 1, pageSize: 10, name: undefined, status: -1 })
-
-const table = ref<TableState<Xxx>>({
-  list: [],
-  total: 0,
-  loading: true,
-  showSearch: true,
-  ids: [],
-  single: true,
-  multiple: true
+// 搜索栏筛选条件与分页参数
+const queryParams = ref<XxxQuery>({
+  pageNum: 1 /* 当前页码 */,
+  pageSize: 10 /* 每页条数 */,
+  name: undefined /* 名称，模糊匹配 */,
+  status: -1 /* 状态筛选，-1 表示全部 */
 })
 
+// 列表数据与勾选状态，勾选结果决定顶部按钮是否可用
+const table = ref<TableState<Xxx>>({
+  list: [], // 数据列表
+  total: 0, // 总条数
+  loading: true, // 加载状态
+  showSearch: true, // 是否显示搜索栏
+  ids: [], // 勾选行主键
+  single: true, // 修改按钮是否禁用
+  multiple: true // 删除按钮是否禁用
+})
+
+// 编辑弹窗状态
 const formState = ref<FormState<XxxForm>>({
-  visible: false,
-  title: '',
-  form: {},
+  visible: false, // 弹窗显隐
+  title: '', // 弹窗标题
+  form: {}, // 表单数据
   rules: {
+    // 校验规则
     name: [{ required: true, message: t('common.requiredMsg', [t('business.xxx.name')]), trigger: 'blur' }]
   }
 })
 
-// --------------------------------- fun ---------------------------------
-/** 查询列表并按分页回填表格状态 */
+// ---------------------- fun ----------------------
+
+/**
+ * 查询 Xxx 分页数据
+ *
+ * 失败提示由请求层统一处理，此处只负责复位 loading
+ */
 function getList() {
   table.value.loading = true
-  const params = usePageParams(queryParams)()
-  xxxApi.pageList(params).then((response) => {
-    table.value.list = response.data.data
-    table.value.total = response.data.total
-    table.value.loading = false
-  })
+  // 前端分页参数 pageNum/pageSize 转换为后端约定的 offset/pagesize
+  xxxApi.pageList(usePageParams(queryParams)())
+    .then((response) => {
+      table.value.list = response.data.data
+      table.value.total = response.data.total
+    })
+    .catch(() => {
+      // 错误已由请求层提示，继续走到 finally 复位 loading
+    })
+    .finally(() => {
+      table.value.loading = false
+    })
 }
 
-/** 重置表单数据与校验状态 */
+/**
+ * 重置编辑表单
+ *
+ * resetFields 只会回到表单项首次挂载时的值，因此先复位校验，再覆盖为新增默认值
+ */
 function reset() {
-  formState.value.form = { id: undefined, name: undefined, status: 0 }
   formRef.value?.resetFields()
+  formState.value.form = {
+    id: undefined,
+    name: undefined,
+    status: 0
+  }
 }
 
-/** 重置到第一页并查询 */
+/** 关闭弹窗，丢弃未提交的编辑内容 */
+function cancel() {
+  formState.value.visible = false
+  reset()
+}
+
+/** 搜索：回到第一页后查询 */
 function handleQuery() {
+  // 筛选条件已变化，回到第一页可避免停留在超出结果范围的页码
   queryParams.value.pageNum = 1
   getList()
 }
@@ -304,6 +343,16 @@ function handleQuery() {
 function resetQuery() {
   queryRef.value?.resetFields()
   handleQuery()
+}
+
+/**
+ * 状态编码转枚举文案
+ *
+ * @param status 状态编码
+ * @returns 状态文案；未匹配到枚举项时回退显示编码
+ */
+function statusText(status: number) {
+  return statusOptions.value.find((item) => item.code === status)?.title ?? String(status)
 }
 
 /**
@@ -317,7 +366,7 @@ function handleSelectionChange(selection: Xxx[]) {
   table.value.multiple = !selection.length
 }
 
-/** 打开新增弹窗 */
+/** 打开新增弹窗，表单恢复为新增默认值 */
 function handleAdd() {
   reset()
   formState.value.visible = true
@@ -325,14 +374,15 @@ function handleAdd() {
 }
 
 /**
- * 打开修改弹窗：优先使用行内数据，顶部按钮触发时回退到勾选 id
+ * 打开修改弹窗并回填详情
  *
- * @param row 行数据，顶部按钮触发时为事件对象
+ * @param row 行数据；顶部按钮调用时为空，此时回退到勾选行
  */
-function handleUpdate(row: any) {
-  reset()
+function handleUpdate(row?: Xxx) {
   const id = row?.id ?? table.value.ids[0]
+  // 顶部按钮未勾选或行数据缺少 id 时直接返回，避免无效请求
   if (id == null) return
+  reset()
   xxxApi.load(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
@@ -340,14 +390,15 @@ function handleUpdate(row: any) {
   })
 }
 
-/** 校验并提交表单：有 id 走修改，否则新增 */
+/** 校验通过后提交：有 id 走修改，否则新增 */
 function submitForm() {
   formRef.value?.validate((valid) => {
+    // 校验失败时保持弹窗打开，等待用户修正
     if (!valid) return
     const isEdit = formState.value.form.id != null
     const request = isEdit ? xxxApi.update(formState.value.form) : xxxApi.insert(formState.value.form)
     request.then(() => {
-      modal.msgSuccess(isEdit ? t('common.updateSuccess') : t('common.addSuccess'))
+      modal.msgSuccess(t(isEdit ? 'common.updateSuccess' : 'common.addSuccess'))
       formState.value.visible = false
       getList()
     })
@@ -355,15 +406,16 @@ function submitForm() {
 }
 
 /**
- * 删除 Xxx（单条或批量）：行内删除取当前行，顶部按钮取勾选 id
+ * 删除 Xxx（单条或批量），成功后刷新列表
  *
- * @param row 行数据，顶部按钮触发时为事件对象
+ * @param row 行数据；顶部按钮调用时为空，此时删除勾选行
  */
-function handleDelete(row: any) {
+function handleDelete(row?: Xxx) {
   const ids = row?.id ?? table.value.ids
+  // 无勾选记录时直接返回，避免弹出空删除确认框
   if (ids == null || (Array.isArray(ids) && ids.length === 0)) return
   modal
-    .confirm(t('business.xxx.confirmDelete', [ids]))
+    .confirm(t('business.xxx.confirmDelete', [Array.isArray(ids) ? ids.join(',') : ids]))
     .then(() => xxxApi.delete(ids))
     .then(() => {
       getList()
@@ -372,20 +424,24 @@ function handleDelete(row: any) {
     .catch(() => {})
 }
 
-// --------------------------------- page init ---------------------------------
+// ---------------------- page init ----------------------
+
 getList()
 </script>
 ```
 
+> 表单字段较多或含独立校验、提交逻辑时，拆到同目录 `pages/XxxFormDialog.vue`：需要按主键加载详情再打开的弹窗，用 `defineExpose({ open })` 暴露打开方法（父组件 `formDialogRef.value?.open(id)`）；仅展示父级已有数据的弹窗，用 `defineModel('visible')` + 父组件 `v-model:visible`。两种方式都由子组件提交成功后 `emit('success')`，列表页监听后刷新。完整示例见 `modules/framework/system/config/pages/ConfigFormDialog.vue`。
+
 ### 7.4 Vue 页面约定
 
-- `script` 除基础 import 外按「ref data → fun → page init」三节组织，节顶注释统一为 `// --------------------------------- {功能} ---------------------------------`（与 `pages/index.vue` 样例一致）。
+- `script` 除基础 import 外按「ref data → fun → page init」三节组织，节顶注释统一为 `// ---------------------- {功能} ----------------------`；`fun` 内按「列表查询 → 重置 → 搜索 → 勾选 → 新增/修改/提交/删除」排列，与样例保持一致。
 - 响应式数据一律 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；搜索栏、表格状态、表单状态分别收敛为 `queryParams`、`table`、`formState`。
-- 列表固定经 `usePageParams(queryParams)()` 把 `pageNum/pageSize` 转 `offset/pagesize`；取 `response.data.data` 与 `response.data.total`。
-- 组件 import 名称与模板标签统一 PascalCase；按钮权限 `v-hasPermi="['{module}:{business}:add']"`，角色权限 `v-hasRole="['admin']"`。
+- 列表固定经 `usePageParams(queryParams)()` 把 `pageNum/pageSize` 转 `offset/pagesize`；取 `response.data.data` 与 `response.data.total`，并在 `finally` 中复位 `loading`，避免请求失败后表格一直处于加载态。
+- 组件 import 名称与模板标签统一 PascalCase；业务页面按钮权限用 `v-hasPermi="['{module}:{business}:add']"`，平台内置页面按角色用 `v-hasRole="['admin']"`。
 - API 统一按 `{business}Api.method(...)` 调用，方法名与后端 Controller 保持一致；一个页面引入多个模块 API 时直接用命名空间区分，禁止用 import alias 改名。
-- 表单弹窗推荐 `defineModel('visible')` + 模板 `v-model` 直连；通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
-- 表单重置直接用已声明的模板 ref：`queryRef.value?.resetFields()` / `formRef.value?.resetFields()`；搜索栏与编辑表单都要声明 `const xxxRef = ref<FormInstance>()`，不要再包一层按字符串名取 `$refs` 的工具。编辑弹窗的重置仍需手动把 `formState.value.form` 置回默认值，`resetFields()` 只负责回到表单项首次挂载时的值。
+- 页内直接写 `<el-dialog>` 时用 `formState.visible` 控制显隐；拆成独立弹窗组件时，需要按主键加载详情的用 `defineExpose({ open })`，仅展示父级已有数据的用 `defineModel('visible')` + `v-model:visible`；提交成功统一 `emit('success')` 通知列表页刷新。通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
+- 表单重置直接用已声明的模板 ref：`queryRef.value?.resetFields()` / `formRef.value?.resetFields()`；搜索栏与编辑表单都要声明 `const xxxRef = ref<FormInstance>()`，不要再包一层按字符串名取 `$refs` 的工具。
+- 编辑弹窗重置时**先** `formRef.value?.resetFields()`，**再**把表单数据（页内弹窗的 `formState.value.form` 或独立弹窗内的 `form.value`）覆盖为新增默认值：`resetFields()` 只会回到表单项首次挂载时的值，先赋值会被它覆盖回上一次编辑的数据。
 
 ### 7.5 注释与 JSDoc
 
@@ -395,14 +451,14 @@ getList()
 
 ```html
 <!--
-  站内消息页面
-  功能：分页表格 + 新增/修改 + 删除
+  配置管理页面
+  功能：分页表格 + 搜索 + 新增/修改/删除
   @author xuxueli 2026-11-21
 -->
 ```
 
 - `<script setup>` 中的导出函数、事件处理、Composable 使用 JSDoc；复杂函数补 `@param` / `@returns`。
-- 保留 `// --------------------------------- ref data ---------------------------------` 等三段式结构注释。
+- 保留 `// ---------------------- ref data ----------------------` 等三段式结构注释。
 - 模板区块用 `<!-- 搜索栏 -->` 标注；核心分支用 `//` 说明原因，不逐行注释。
 
 ```ts
@@ -495,8 +551,9 @@ POST /tool/codegen/createTable
 
 - 后端直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/java/*.ftl`
 - Vue 直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/vue3/*.ftl`
-- 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/message/pages/index.vue`
-- API / 类型样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/message/{api,types}/index.ts`
+- 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/config/pages/index.vue`
+- 页内弹窗样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/config/pages/ConfigFormDialog.vue`
+- API / 类型样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/config/{api,types}/index.ts`
 - 组合式函数：`xxl-boot-ui/xxl-boot-ui-vue/src/composables/{usePageParams,useEnumOption,useDict}.ts`
 - 菜单 SQL 模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl`
 - 代码生成前端页：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/tool/codegen/`

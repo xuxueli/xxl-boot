@@ -1,6 +1,7 @@
 /**
- * 组件：RightPanel（右侧属性面板）
- * 功能：组件属性 / 表单属性 双 Tab，选中画布组件时联动展示并支持编辑
+ * @fileoverview RightPanel（右侧属性面板）
+ * @description 组件属性 / 表单属性 双 Tab，选中画布组件时联动展示并支持编辑
+ * @author xuxueli 2026-11-21
  */
 import {
   Form,

@@ -1,6 +1,7 @@
 /**
- * 页面：角色管理
- * 功能：角色分页表格 + 新增/修改（含菜单权限树）/删除
+ * @fileoverview 角色管理
+ * @description 角色分页表格 + 新增/修改（含菜单权限树）/删除
+ * @author xuxueli 2026-11-21
  */
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
@@ -11,7 +12,7 @@ import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
-import { delRole, listRole } from '@/modules/framework/authz/role/api';
+import { roleApi } from '@/modules/framework/authz/role/api';
 import RoleFormModal from './RoleFormModal';
 
 /**
@@ -72,7 +73,7 @@ const RoleList = () => {
         : t('authz.role.confirmDeleteBatch'),
       onOk: async () => {
         // 调用删除接口
-        await delRole(ids);
+        await roleApi.delete(ids);
         message.success(t('common.deleteSuccess'));
 
         // 删除成功后，清空选中项，并刷新表格
@@ -166,7 +167,7 @@ const RoleList = () => {
           }}
           /* 表格API请求 */
           request={async (params) => {
-            const res = await listRole(params);
+            const res = await roleApi.pageList(params);
             return {
               data: res.data?.data || [],
               total: res.data?.total || 0,

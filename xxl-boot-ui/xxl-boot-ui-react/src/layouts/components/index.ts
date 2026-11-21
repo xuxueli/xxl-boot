@@ -1,8 +1,7 @@
 /**
- * 布局组件统一出口
- * 说明：集中导出主布局使用的子组件（页脚、消息铃铛、头像下拉）。
- *
- * @author xuxueli 2026-08-15
+ * @fileoverview 布局组件统一出口
+ * @description 集中导出主布局使用的子组件（页脚、消息铃铛、头像下拉）。
+ * @author xuxueli 2026-11-21
  */
 export { default as Footer } from './Footer';
 export { default as FullscreenButton } from './FullscreenButton';

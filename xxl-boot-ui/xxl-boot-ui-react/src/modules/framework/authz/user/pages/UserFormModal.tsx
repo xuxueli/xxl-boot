@@ -1,6 +1,7 @@
 /**
- * 组件：UserFormModal（用户新增/编辑弹窗）
- * 功能：新增/编辑用户表单，含角色多选、组织树选择、状态等字段
+ * @fileoverview UserFormModal（用户新增/编辑弹窗）
+ * @description 新增/编辑用户表单，含角色多选、组织树选择、状态等字段
+ * @author xuxueli 2026-11-21
  */
 import {
   ModalForm,
@@ -12,7 +13,7 @@ import {
 import { App, Col, Row } from 'antd';
 import { useEffect, useMemo } from 'react';
 import { t } from '@/i18n';
-import { addUser, updateUser } from '@/modules/framework/authz/user/api';
+import { userApi } from '@/modules/framework/authz/user/api';
 
 /**
  * 组织树转 TreeSelect 数据
@@ -74,9 +75,9 @@ const UserFormModal = ({
 
     // 新增或更新
     if (current?.id) {
-      await updateUser({ ...data, id: current.id });
+      await userApi.update({ ...data, id: current.id });
     } else {
-      await addUser(data);
+      await userApi.add(data);
     }
 
     message.success(t('common.operationSuccess'));

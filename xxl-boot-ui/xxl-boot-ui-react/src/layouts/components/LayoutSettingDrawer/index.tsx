@@ -1,6 +1,7 @@
 /**
- * 布局组件：LayoutSettingDrawer（主题设置面板）
- * 功能：可视化调整布局/主题，设置变更实时写入 settingsStore；底部为自定义"保存/重置"操作区
+ * @fileoverview LayoutSettingDrawer（主题设置面板）
+ * @description 可视化调整布局/主题，设置变更实时写入 settingsStore；底部为自定义"保存/重置"操作区
+ * @author xuxueli 2026-11-21
  */
 import type { SettingDrawerProps } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';

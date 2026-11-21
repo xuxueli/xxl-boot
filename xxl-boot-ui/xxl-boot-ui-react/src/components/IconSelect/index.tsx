@@ -1,6 +1,7 @@
 /**
- * 组件：IconSelect（图标选择）
- * 功能：从 antd 图标清单中选取图标，用于资源管理菜单图标字段。
+ * @fileoverview IconSelect（图标选择）
+ * @description 从 antd 图标清单中选取图标，用于资源管理菜单图标字段。
+ * @author xuxueli 2026-11-21
  */
 import { DownOutlined } from '@ant-design/icons';
 import { Empty, Input, Popover } from 'antd';

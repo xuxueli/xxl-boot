@@ -1,6 +1,7 @@
 /**
- * 组件：ErrorBoundary（错误边界）
- * 功能：捕获渲染/动态导入错误，展示友好提示并支持重试/刷新
+ * @fileoverview ErrorBoundary（错误边界）
+ * @description 捕获渲染/动态导入错误，展示友好提示并支持重试/刷新
+ * @author xuxueli 2026-11-21
  */
 import { Button, Card, Result } from 'antd';
 import React from 'react';

@@ -1,49 +1,49 @@
 /**
- * 名称：审计日志 API
- * 能力：提供日志分页、删除、导出相关接口。
+ * @fileoverview Log API
+ * @description 审计日志接口，方法名与后端 LogController 对齐
+ * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request';
 
-/**
- * 分页查询日志列表。
- * @param params 查询参数（current/pageSize/type/module/title）
- */
-export async function pageList(params: {
-  current?: number;
-  pageSize?: number;
-  type?: number;
-  module?: number;
-  title?: string;
-}) {
-  const { current = 1, pageSize = 10, ...rest } = params || {};
-  return request<API.Response<API.PageModel<API.Log>>>('/system/log/pageList', {
-    method: 'GET',
-    params: {
-      offset: (current - 1) * pageSize,
-      pagesize: pageSize,
-      ...rest,
-    },
-  });
-}
+/** 日志 API，调用方式：logApi.pageList(...) */
+export const logApi = {
+  /**
+   * 分页查询日志
+   *
+   * @param params 分页与查询条件（current/pageSize/type/module/title）
+   * @returns 日志分页结果
+   */
+  pageList(params: {
+    current?: number;
+    pageSize?: number;
+    type?: number;
+    module?: number;
+    title?: string;
+  }) {
+    const { current = 1, pageSize = 10, ...rest } = params || {};
+    return request<API.Response<API.PageModel<API.Log>>>(
+      '/system/log/pageList',
+      {
+        method: 'GET',
+        params: {
+          offset: (current - 1) * pageSize,
+          pagesize: pageSize,
+          ...rest,
+        },
+      },
+    );
+  },
 
-/**
- * 加载日志详情。
- * @param id 日志 ID
- */
-export async function getLog(id: number) {
-  return request<API.Response<API.Log>>('/system/log/load', {
-    method: 'GET',
-    params: { id },
-  });
-}
-
-/**
- * 删除日志。
- * @param ids 日志 ID 数组
- */
-export async function delOperlog(ids: number[]) {
-  return request<API.Response<unknown>>('/system/log/delete', {
-    method: 'POST',
-    data: ids,
-  });
-}
+  /**
+   * 删除日志（支持单条/批量）
+   *
+   * @param ids 日志主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]) {
+    return request<API.Response<unknown>>('/system/log/delete', {
+      method: 'POST',
+      data: Array.isArray(ids) ? ids : [ids],
+    });
+  },
+};

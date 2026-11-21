@@ -1,6 +1,7 @@
 /**
- * 组件：DictDataFormModal（字典项新增/编辑弹窗）
- * 功能：字典项名称、编码、状态、排序、备注
+ * @fileoverview DictDataFormModal（字典项新增/编辑弹窗）
+ * @description 字典项名称、编码、状态、排序、备注
+ * @author xuxueli 2026-11-21
  */
 import {
   ModalForm,
@@ -11,7 +12,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import { t } from '@/i18n';
-import { addData, updateData } from '@/modules/framework/system/dict/api';
+import { dictApi } from '@/modules/framework/system/dict/api';
 
 const DictDataFormModal = ({
   open,
@@ -33,9 +34,9 @@ const DictDataFormModal = ({
     delete data.addTime;
     delete data.updateTime;
     if (current?.id) {
-      await updateData({ ...data, id: current.id });
+      await dictApi.itemUpdate({ ...data, id: current.id });
     } else {
-      await addData({ ...data, dictId });
+      await dictApi.itemInsert({ ...data, dictId });
     }
     message.success(t('common.saveSuccess'));
     onSuccess?.();

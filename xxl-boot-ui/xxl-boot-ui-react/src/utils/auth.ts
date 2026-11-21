@@ -1,5 +1,6 @@
 /**
- * 认证令牌工具模块（auth.ts）
+ * @fileoverview 认证令牌工具模块（auth.ts）
+ * @description 以 Cookie 为载体统一管理前端认证令牌（Token）的读、写、删操作，业务层不直接操作 Cookie
  *
  * 职责：
  *   - 以 Cookie 为载体，统一管理前端认证令牌（Token）的读、写、删操作。
@@ -7,6 +8,8 @@
  *
  * 依赖：
  *   - js-cookie：轻量级 Cookie 读写库。
+ *
+ * @author xuxueli 2026-11-21
  */
 import Cookies from 'js-cookie';
 

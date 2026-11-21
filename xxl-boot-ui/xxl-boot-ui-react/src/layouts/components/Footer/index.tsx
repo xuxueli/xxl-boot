@@ -1,6 +1,7 @@
 /**
- * 布局组件：Footer（页脚）
- * 功能：展示版权与 GitHub 链接
+ * @fileoverview Footer（页脚）
+ * @description 展示版权与 GitHub 链接
+ * @author xuxueli 2026-11-21
  */
 import { GithubOutlined } from '@ant-design/icons';
 import { createStyles } from 'antd-style';

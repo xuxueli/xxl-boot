@@ -1,6 +1,7 @@
 /**
- * 页面：配置管理
- * 功能：配置分页表格 + 新增/修改/删除
+ * @fileoverview 配置管理
+ * @description 配置分页表格 + 新增/修改/删除
+ * @author xuxueli 2026-11-21
  */
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
@@ -11,7 +12,7 @@ import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
-import { delConfig, listConfig } from '@/modules/framework/system/config/api';
+import { configApi } from '@/modules/framework/system/config/api';
 import ConfigFormModal from './ConfigFormModal';
 
 /**
@@ -59,7 +60,7 @@ const ConfigList = () => {
         row?.name || t('system.config.batchDeleteName'),
       ]),
       onOk: async () => {
-        await delConfig(ids);
+        await configApi.delete(ids);
         message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -158,7 +159,7 @@ const ConfigList = () => {
             ],
           }}
           request={async (params) => {
-            const res = await listConfig(params);
+            const res = await configApi.pageList(params);
             return {
               data: res.data?.data || [],
               total: res.data?.total || 0,

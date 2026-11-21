@@ -49,13 +49,7 @@ import { Select } from 'antd';
 </#if>
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePermission } from '@/hooks/usePermission';
-import {
-  add${codegen.businessName},
-  del${codegen.businessName},
-  get${codegen.businessName},
-  list${codegen.businessName},
-  update${codegen.businessName},
-} from '../api';
+import { ${codegen.businessName?uncap_first}Api } from '../api';
 
 const ${codegen.businessName}List = () => {
   const { message, modal } = App.useApp();
@@ -72,7 +66,7 @@ const ${codegen.businessName}List = () => {
   const getList = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await list${codegen.businessName}({ offset: 0, pagesize: 999 });
+      const res = await ${codegen.businessName?uncap_first}Api.pageList({ current: 1, pageSize: 999 });
       setList((res.data as unknown as API.${codegen.businessName}[]) || []);
     } finally {
       setLoading(false);
@@ -114,9 +108,9 @@ const ${codegen.businessName}List = () => {
     try {
       const data = formCurrent?.id ? { ...values, id: formCurrent.id } : values;
       if (formCurrent?.id) {
-        await update${codegen.businessName}(data);
+        await ${codegen.businessName?uncap_first}Api.update(data);
       } else {
-        await add${codegen.businessName}(data);
+        await ${codegen.businessName?uncap_first}Api.insert(data);
       }
       message.success('操作成功');
       setFormOpen(false);
@@ -135,7 +129,7 @@ const ${codegen.businessName}List = () => {
       content:
         '是否确认删除' + '${codegen.functionName}' + '编号为"' + row?.id + '"的数据项？',
       onOk: async () => {
-        await del${codegen.businessName}(ids);
+        await ${codegen.businessName?uncap_first}Api.delete(ids);
         message.success('删除成功');
         getList();
       },

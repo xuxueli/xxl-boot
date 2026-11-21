@@ -1,6 +1,7 @@
 /**
- * 组件：OrgFormModal（组织新增/编辑弹窗）
- * 功能：上级组织、名称、排序、负责人、状态
+ * @fileoverview OrgFormModal（组织新增/编辑弹窗）
+ * @description 上级组织、名称、排序、负责人、状态
+ * @author xuxueli 2026-11-21
  */
 import {
   ModalForm,
@@ -12,7 +13,7 @@ import {
 import { App } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
-import { addOrg, listOrg, updateOrg } from '@/modules/framework/authz/org/api';
+import { orgApi } from '@/modules/framework/authz/org/api';
 import { handleTree } from '@/utils/common';
 
 /** 组织树转 TreeSelect 数据（含根节点） */
@@ -57,7 +58,7 @@ const OrgFormModal = ({
   /** 加载组织树 */
   useEffect(() => {
     if (open) {
-      listOrg({})
+      orgApi.treeList({})
         .then((res) => {
           setOrgOptions(handleTree(res.data || []));
         })
@@ -77,9 +78,9 @@ const OrgFormModal = ({
         message.warning(t('authz.org.parentInvalid'));
         return false;
       }
-      await updateOrg({ ...data, id: current.id });
+      await orgApi.update({ ...data, id: current.id });
     } else {
-      await addOrg(data);
+      await orgApi.insert(data);
     }
     message.success(t('common.operationSuccess'));
     onSuccess?.();

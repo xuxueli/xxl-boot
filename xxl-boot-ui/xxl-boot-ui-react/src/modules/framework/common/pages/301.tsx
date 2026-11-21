@@ -1,6 +1,7 @@
 /**
- * 页面：301（无权限）
- * 功能：提示用户无访问权限，提供返回上一页或回首页入口
+ * @fileoverview 301（无权限）
+ * @description 提示用户无访问权限，提供返回上一页或回首页入口
+ * @author xuxueli 2026-11-21
  */
 import { Button, Card, Result } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';

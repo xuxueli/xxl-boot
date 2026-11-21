@@ -1,11 +1,7 @@
 /**
- * i18n - 前端国际化文案中心
- *
- * 功能：文案维护于 src/i18n/locales/{zh,en}.json；语言默认 zh，由后端基础配置经 setLang 同步；
- *       新增语言仅在 bundles 追加一行即可（I18nLang 类型与文案表随之自动派生）；
- *       语言变更后由根组件整树重挂载刷新文案。
- *
- * @author xuxueli 2026-09-05
+ * @fileoverview i18n - 前端国际化文案中心
+ * @description 文案维护于 src/i18n/locales/{zh,en}.json；语言默认 zh，由后端基础配置经 setLang 同步；语言变更后由根组件整树重挂载刷新文案
+ * @author xuxueli 2026-11-21
  */
 import en from './locales/en.json';
 import zh from './locales/zh.json';

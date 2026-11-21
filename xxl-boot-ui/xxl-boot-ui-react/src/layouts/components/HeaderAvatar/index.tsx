@@ -1,6 +1,7 @@
 /**
- * 布局组件：HeaderAvatar（头像下拉菜单）
- * 功能：顶部导航栏右侧头像，下拉提供个人中心、主题设置、退出登录
+ * @fileoverview HeaderAvatar（头像下拉菜单）
+ * @description 顶部导航栏右侧头像，下拉提供个人中心、主题设置、退出登录
+ * @author xuxueli 2026-11-21
  */
 import {
   IdcardOutlined,

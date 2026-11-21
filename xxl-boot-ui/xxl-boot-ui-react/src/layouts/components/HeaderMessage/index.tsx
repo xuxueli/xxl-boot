@@ -1,6 +1,7 @@
 /**
- * 布局组件：HeaderMessage（站内消息）
- * 功能：顶部导航栏铃铛图标，hover 弹出未读消息列表，支持标记已读、全部已读、预览详情
+ * @fileoverview HeaderMessage（站内消息）
+ * @description 顶部导航栏铃铛图标，hover 弹出未读消息列表，支持标记已读、全部已读、预览详情
+ * @author xuxueli 2026-11-21
  */
 import {
   BellOutlined,
@@ -14,11 +15,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Dropdown } from '@/components';
 import { t } from '@/i18n';
 import MessageDetail from '@/modules/framework/system/message/pages/MessageDetail';
-import {
-  listMessageTop,
-  markMessageRead,
-  markMessageReadAll,
-} from '@/modules/framework/system/message/api';
+import { messageApi } from '@/modules/framework/system/message/api';
 
 /** 消息面板及铃铛触发区样式 */
 const useStyles = createStyles(({ token, css }) => ({
@@ -146,7 +143,7 @@ const HeaderMessage = () => {
    */
   const loadMessageTop = useCallback(() => {
     setLoading(true);
-    listMessageTop()
+    messageApi.listTop()
       .then((res) => {
         setMessageList(res.data || []);
         /* 未读数 = 列表中 isRead 为 false 的条数 */
@@ -168,7 +165,7 @@ const HeaderMessage = () => {
   const previewMessage = (item: API.Message) => {
     /* 未读消息：调用接口标记已读，并更新本地列表与未读数 */
     if (!item.isRead) {
-      markMessageRead(item.id as number).catch(() => {});
+      messageApi.markRead(item.id as number).catch(() => {});
       setMessageList((list) =>
         list.map((n) => (n.id === item.id ? { ...n, isRead: true } : n)),
       );
@@ -186,7 +183,7 @@ const HeaderMessage = () => {
     const ids = messageList.map((n) => n.id).join(',');
     /* 无消息时无需处理 */
     if (!ids) return;
-    markMessageReadAll(ids).catch(() => {});
+    messageApi.markReadAll(ids).catch(() => {});
     setMessageList((list) => list.map((n) => ({ ...n, isRead: true })));
     setUnreadCount(0);
   };

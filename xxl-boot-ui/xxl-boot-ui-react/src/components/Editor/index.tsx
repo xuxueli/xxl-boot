@@ -1,7 +1,7 @@
 /**
- * 组件：Editor（富文本编辑器）
- * 功能：基于 Quill 的富文本编辑器，支持工具栏、图片上传（url/base64）、粘贴图片、
- *       自定义高度/只读模式。
+ * @fileoverview Editor（富文本编辑器）
+ * @description 基于 Quill 的富文本编辑器，支持工具栏、图片上传（url/base64）、粘贴图片、 自定义高度/只读模式。
+ * @author xuxueli 2026-11-21
  */
 import { message } from 'antd';
 import { createStyles } from 'antd-style';

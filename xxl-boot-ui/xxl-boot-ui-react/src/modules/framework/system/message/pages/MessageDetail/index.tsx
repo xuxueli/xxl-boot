@@ -1,13 +1,13 @@
 /**
- * 组件：MessageDetail（消息详情抽屉）
- * 功能：展示消息标题、分类、发送人、时间、状态与富文本内容；
- *       供顶部铃铛、首页、消息管理页复用，通过 open 属性控制显示。
+ * @fileoverview MessageDetail（消息详情抽屉）
+ * @description 展示消息标题、分类、发送人、时间、状态与富文本内容； 供顶部铃铛、首页、消息管理页复用，通过 open 属性控制显示。
+ * @author xuxueli 2026-11-21
  */
 import { BellOutlined, MessageOutlined } from '@ant-design/icons';
 import { Drawer, Spin, Tag } from 'antd';
 import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
-import { getMessage } from '@/modules/framework/system/message/api';
+import { messageApi } from '@/modules/framework/system/message/api';
 
 /* 组件入参 */
 interface MessageDetailProps {
@@ -53,7 +53,7 @@ function MessageDetail({ open, payload, onClose }: MessageDetailProps) {
     }
     setLoading(true);
     setMessage(null);
-    getMessage(payload)
+    messageApi.load(payload)
       .then((res) => {
         setMessage(res.data || null);
       })

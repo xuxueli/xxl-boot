@@ -1,12 +1,13 @@
 /**
- * 组件：ReadUsersDialog（已读用户弹窗）
- * 功能：展示某条消息的已读用户列表，分页加载。
+ * @fileoverview ReadUsersDialog（已读用户弹窗）
+ * @description 展示某条消息的已读用户列表，分页加载。
+ * @author xuxueli 2026-11-21
  */
 import { Modal, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useCallback, useEffect, useState } from 'react';
 import { t } from '@/i18n';
-import { listMessageReadUsers } from '@/modules/framework/system/message/api';
+import { messageApi } from '@/modules/framework/system/message/api';
 
 /* 组件入参 */
 interface ReadUsersDialogProps {
@@ -37,7 +38,7 @@ function ReadUsersDialog({ open, message, onClose }: ReadUsersDialogProps) {
   /** 加载已读用户列表（id 为必传，避免依赖 state 回调产生陈旧值） */
   const loadData = useCallback((id: number, page: number, size: number) => {
     setLoading(true);
-    listMessageReadUsers({ messageId: id, current: page, pageSize: size })
+    messageApi.readUsers({ messageId: id, current: page, pageSize: size })
       .then((res) => {
         const data = res.data;
         setList(data?.data || []);

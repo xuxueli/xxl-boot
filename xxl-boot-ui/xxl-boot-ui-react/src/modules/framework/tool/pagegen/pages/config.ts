@@ -1,6 +1,7 @@
 /**
- * 表单生成器配置（pagegen/config）
- * 提供组件类型定义、左侧组件库分组、默认组件工厂与表单全局配置。
+ * @fileoverview 表单生成器配置（pagegen/config）
+ * @description 提供组件类型定义、左侧组件库分组、默认组件工厂与表单全局配置。
+ * @author xuxueli 2026-11-21
  */
 import { t } from '@/i18n';
 

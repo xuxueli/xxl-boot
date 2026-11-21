@@ -105,7 +105,7 @@ export default function Xxx({ id, onClose }: XxxProps) {
 | 文件 | 位置 | 说明 |
 |---|---|---|
 | types | `src/modules/business/{module}/{business}/types/index.d.ts` | `declare namespace API { type Xxx = {...} }` |
-| api | `src/modules/business/{module}/{business}/api/index.ts` | `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 转 `offset/pagesize` |
+| api | `src/modules/business/{module}/{business}/api/index.ts` | `{business}Api` 命名空间封装，方法名对齐后端 Controller；`current/pageSize` 转 `offset/pagesize` |
 | view | `src/modules/business/{module}/{business}/pages/index.tsx` | `PageContainer + ProTable` |
 | 页内组件 | 同 `pages/` 下，如 `XxxFormModal.tsx` | 表单弹窗独立文件时使用 |
 
@@ -138,89 +138,99 @@ declare namespace API {
 
 ### 7.2 api：`api/index.ts`
 
+每个模块只导出一个命名空间对象，命名 `{business}Api`；对象内方法名直接复用后端 Controller 方法名（`pageList/load/insert/delete/update` 及业务方法），方法顺序尽量与后端保持一致。页面引入多个模块的 API 时通过命名空间区分，不再使用 import alias 规避重名。
+
 ```ts
 /**
  * @fileoverview Xxx API
- * @description 接口封装
+ * @description Xxx 接口，方法名与后端 XxxController 对齐
  * @author xuxueli 2026-11-21
  */
 import { request } from '@/utils/request';
 
-/**
- * 分页查询 Xxx
- *
- * @param params ProTable 查询参数（current/pageSize + 查询字段）
- * @returns 分页结果
- */
-export async function listXxx(params: {
-  current?: number;
-  pageSize?: number;
-  name?: string;
-  status?: number;
-}) {
-  const { current = 1, pageSize = 10, ...rest } = params || {};
-  return request<API.Response<API.PageModel<API.Xxx>>>('/{module}/{business}/pageList', {
-    method: 'GET',
-    params: {
-      offset: (current - 1) * pageSize,
-      pagesize: pageSize,
-      ...rest,
-    },
-  });
-}
+/** Xxx API，调用方式：xxxApi.pageList(...) */
+export const xxxApi = {
+  /**
+   * 分页查询 Xxx
+   *
+   * @param params 分页与查询条件（current/pageSize + 查询字段）
+   * @returns 分页结果
+   */
+  pageList(params: {
+    current?: number;
+    pageSize?: number;
+    name?: string;
+    status?: number;
+  }) {
+    const { current = 1, pageSize = 10, ...rest } = params || {};
+    return request<API.Response<API.PageModel<API.Xxx>>>(
+      '/{module}/{business}/pageList',
+      {
+        method: 'GET',
+        params: {
+          offset: (current - 1) * pageSize,
+          pagesize: pageSize,
+          ...rest,
+        },
+      },
+    );
+  },
 
-/**
- * 查询 Xxx 详情
- *
- * @param id 主键
- * @returns 详情数据
- */
-export async function getXxx(id: number) {
-  return request<API.Response<API.Xxx>>('/{module}/{business}/load', {
-    method: 'GET',
-    params: { id },
-  });
-}
+  /**
+   * 查询 Xxx 详情
+   *
+   * @param id 主键
+   * @returns 详情数据
+   */
+  load(id: number) {
+    return request<API.Response<API.Xxx>>('/{module}/{business}/load', {
+      method: 'GET',
+      params: { id },
+    });
+  },
 
-/**
- * 新增 Xxx
- *
- * @param data 表单数据
- * @returns 保存结果
- */
-export async function addXxx(data: API.Xxx) {
-  return request<API.Response<unknown>>('/{module}/{business}/insert', {
-    method: 'POST',
-    data,
-  });
-}
+  /**
+   * 新增 Xxx
+   *
+   * @param data 表单数据
+   * @returns 保存结果
+   */
+  insert(data: API.Xxx) {
+    return request<API.Response<unknown>>('/{module}/{business}/insert', {
+      method: 'POST',
+      data,
+    });
+  },
 
-/**
- * 修改 Xxx
- *
- * @param data 表单数据（含主键）
- * @returns 保存结果
- */
-export async function updateXxx(data: API.Xxx) {
-  return request<API.Response<unknown>>('/{module}/{business}/update', {
-    method: 'POST',
-    data,
-  });
-}
+  /**
+   * 删除 Xxx（支持单条/批量）
+   *
+   * @param ids 单个主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]) {
+    return request<API.Response<unknown>>('/{module}/{business}/delete', {
+      method: 'POST',
+      data: Array.isArray(ids) ? ids : [ids],
+    });
+  },
 
-/**
- * 删除 Xxx（后端接收裸数组）
- *
- * @param ids 待删除主键集合
- * @returns 删除结果
- */
-export async function delXxx(ids: number[]) {
-  return request<API.Response<unknown>>('/{module}/{business}/delete', {
-    method: 'POST',
-    data: ids,
-  });
-}
+  /**
+   * 更新 Xxx
+   *
+   * @param data 表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: API.Xxx) {
+    return request<API.Response<unknown>>('/{module}/{business}/update', {
+      method: 'POST',
+      data,
+    });
+  },
+};
 ```
+
+> 后端方法名不是标准 CRUD 时同样保持一致，例如 `loadByKey`、`markRead`、`updateSort`、`loadRoleRes`；前端只在命名空间内暴露同名方法，不做二次改名。列表接口仍由 API 内部把 ProTable 的 `current/pageSize` 转为后端 `offset/pagesize`。
 
 ### 7.3 页面：`pages/index.tsx`
 
@@ -238,7 +248,7 @@ import React, { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { usePermission } from '@/hooks/usePermission';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { delXxx, listXxx } from '../api';
+import { xxxApi } from '../api';
 import XxxFormModal from './XxxFormModal';
 
 /**
@@ -269,7 +279,7 @@ const XxxList = () => {
       title: t('modal.title'),
       content: t('business.xxx.confirmDelete', [ids.join(',')]),
       onOk: async () => {
-        await delXxx(ids);
+        await xxxApi.delete(ids);
         message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -329,7 +339,7 @@ const XxxList = () => {
         columns={columns}
         search={{ labelWidth: 80, optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()] }}
         request={async (params) => {
-          const res = await listXxx(params);
+          const res = await xxxApi.pageList(params);
           return {
             data: res.data?.data || [],
             total: res.data?.total || 0,
@@ -393,7 +403,7 @@ import { ModalForm, ProFormRadio, ProFormText } from '@ant-design/pro-components
 import { App } from 'antd';
 import React from 'react';
 import { t } from '@/i18n';
-import { addXxx, updateXxx } from '../api';
+import { xxxApi } from '../api';
 
 const XxxFormModal = ({
   open,
@@ -423,9 +433,9 @@ const XxxFormModal = ({
     delete data.addTime;
     delete data.updateTime;
     if (current?.id) {
-      await updateXxx({ ...data, id: current.id });
+      await xxxApi.update({ ...data, id: current.id });
     } else {
-      await addXxx(data);
+      await xxxApi.insert(data);
     }
     message.success(t('common.saveSuccess'));
     onSuccess?.();
@@ -471,6 +481,7 @@ export default XxxFormModal;
 
 - 列表页基于 `ProTable + PageContainer`；`request` 直接调用 API 并返回 `{ data, total, success }`，**不要引入 `ahooks/useRequest`**（项目未安装该依赖）。
 - 类型统一 `declare namespace API { type Xxx = {...} }`；全局类型 `API.Response/API.PageModel` 已由 `types/index.d.ts` 合并。
+- API 统一按 `{business}Api.method(...)` 调用，方法名与后端 Controller 保持一致；一个页面引入多个模块 API 时直接用命名空间区分，禁止用 import alias 改名。
 - API 入参用 `current/pageSize`，函数内转 `offset/pagesize`；其余接口通道遵循 `AGENTS.md`「前端通用规范」。
 - 权限用 `usePermission().hasPermi('{module}:{business}:add')`；角色控制用 `hasRole('admin')`（平台 message 示例即用角色控制）。
 - 枚举：`useEnumOption('XxxEnum')` 返回 `EnumOption[]`（不是按枚举名分组），配合 `toValueEnum`（表格列）/`toSelectOptions`（Select/ProFormSelect）。
@@ -482,9 +493,9 @@ export default XxxFormModal;
 
 遵循 `AGENTS.md`「注释规范」。React 侧落地：
 
-- `.tsx` 文件头使用 JSDoc，必须包含 `@fileoverview`、功能描述和 `@author`：
+- 遵循 `AGENTS.md`「注释规范」，文件头与导出成员统一 JSDoc：
 
-```tsx
+```ts
 /**
  * @fileoverview 站内消息页面
  * @description 分页表格 + 新增/修改 + 删除
@@ -492,6 +503,7 @@ export default XxxFormModal;
  */
 ```
 
+- 类型文件同样补 `@fileoverview` / `@description` / `@author`，实体字段用 `/** ... */` 说明含义。
 - 组件、Props、API 函数、Hook 使用 JSDoc；复杂函数补 `@param` / `@returns`。
 - 简单内联回调不强制 JSDoc；核心分支用 `//` 说明原因。
 - 保留现有 `PageContainer`、`ProTable` 等关键逻辑的区块注释。
@@ -566,7 +578,7 @@ POST /tool/codegen/createTable
 - [ ] 注释符合规范：TSX 文件头含 `@author`，组件/API/核心分支注释齐全，无无意义注释和注释掉的死代码。
 - [ ] `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md` 六大块与 SQL 已落盘并同步（模板见 `AGENTS.md`「需求落盘」）。
 - [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
-- [ ] 前端 types 用 `declare namespace API`；api 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`。
+- [ ] 前端 types 用 `declare namespace API`；api 以 `{business}Api` 命名空间导出且方法名与后端 Controller 对齐，返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`。
 - [ ] 页面为 `pages/index.tsx`，`ProTable.request` 取 `res.data?.data/total`；未引入项目不存在的依赖（如 `ahooks`）。
 - [ ] 组件声明符合规范：普通函数 + 显式 props，无 `React.FC`/`forwardRef`/`propTypes`/函数组件 `defaultProps`；弹窗用受控 `open`。
 - [ ] 按钮 `hasPermi`；资源表菜单+按钮已插且已授权；菜单可见、页面能打开。

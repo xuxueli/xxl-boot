@@ -1,14 +1,15 @@
 /**
- * common - 通用工具函数
+ * @fileoverview common - 通用工具函数
+ * @description 工具列表：
+ *  parseTime（日期格式化）
+ *  formatDate（表格列日期格式化）
+ *  handleTree（扁平数组转树）
+ *  tansParams（参数序列化）
+ *  blobValidate（blob 校验）
+ *  deepClone（深克隆）
+ *  copyToClipboard（复制文本）
  *
- * 工具列表：
- *   1. parseTime   - 日期格式化（支持多种输入和自定义模板）
- *   2. formatDate  - 表格列日期格式化（YYYY-MM-DD HH:mm:ss）
- *   3. handleTree  - 扁平数组转树形结构
- *   4. tansParams  - 参数序列化（支持嵌套对象展开）
- *   5. blobValidate - 验证 blob 是否为合法文件数据
- *   6. deepClone   - 简易深克隆
- *   7. copyToClipboard - 复制文本到剪贴板（含降级兜底）
+ * @author xuxueli 2026-11-21
  */
 
 // ==================== 日期 / 时间 ====================

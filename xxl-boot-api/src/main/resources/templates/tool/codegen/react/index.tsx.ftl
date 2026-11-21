@@ -42,13 +42,7 @@ import { Select } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
 import { usePermission } from '@/hooks/usePermission';
-import {
-  add${codegen.businessName},
-  del${codegen.businessName},
-  get${codegen.businessName},
-  list${codegen.businessName},
-  update${codegen.businessName},
-} from '../api';
+import { ${codegen.businessName?uncap_first}Api } from '../api';
 
 /**
  * 表格样式
@@ -101,9 +95,9 @@ const ${codegen.businessName}List = () => {
     try {
       const data = formCurrent?.id ? { ...values, id: formCurrent.id } : values;
       if (formCurrent?.id) {
-        await update${codegen.businessName}(data);
+        await ${codegen.businessName?uncap_first}Api.update(data);
       } else {
-        await add${codegen.businessName}(data);
+        await ${codegen.businessName?uncap_first}Api.insert(data);
       }
       message.success('操作成功');
       setFormOpen(false);
@@ -124,7 +118,7 @@ const ${codegen.businessName}List = () => {
         (row ? row.id : ids.join(',')) +
         '"的数据项？',
       onOk: async () => {
-        await del${codegen.businessName}(ids);
+        await ${codegen.businessName?uncap_first}Api.delete(ids);
         message.success('删除成功');
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -181,7 +175,7 @@ const ${codegen.businessName}List = () => {
             optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
           }}
           request={async (params) => {
-            const res = await list${codegen.businessName}(params);
+            const res = await ${codegen.businessName?uncap_first}Api.pageList(params);
             return {
               data: res.data?.data || [],
               total: res.data?.total || 0,

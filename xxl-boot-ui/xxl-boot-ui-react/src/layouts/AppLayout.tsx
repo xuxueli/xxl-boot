@@ -1,14 +1,7 @@
 /**
- * 布局：AppLayout（ProLayout 主布局）
- * 功能：
- *      - 菜单（from后端）：ProLayout#menuDataRender 支持多种菜单模式，后端返回的路由树可直接渲染为菜单
- *      - 消息铃铛：ProLayout#actionsRender
- *      - 头像下拉：ProLayout#avatarProps
- *     - 主题设置面板：LayoutSettingDrawer
- *      - 页脚：ProLayout#footerRender
- *      - 内容区：LayoutContent；
- *
- * @author xuxueli 2026-08-15
+ * @fileoverview AppLayout（ProLayout 主布局）
+ * @description 基于 ProLayout 组装主布局：后端菜单、消息铃铛、头像下拉、主题设置面板、页脚与内容区
+ * @author xuxueli 2026-11-21
  */
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuDataItem } from '@ant-design/pro-components';

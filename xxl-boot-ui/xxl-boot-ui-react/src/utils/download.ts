@@ -1,12 +1,10 @@
 /**
- * download - 通用文件下载工具（复用 request 的 axios service）
+ * @fileoverview download - 通用文件下载工具（复用 request 的 axios service）
+ * @description
+ *  download 以 POST + form-urlencoded 提交下载请求
+ *  downloadGet 以 GET + query 下载；统一走 request 拦截器
  *
- * 能力：
- *   - download：POST + form-urlencoded 提交下载请求，响应为 blob，触发浏览器下载
- *   - downloadGet：GET + query 参数下载（代码生成 zip 等）
- *
- * 说明：统一走 request service 拦截器（token 注入、超时、blob 透传），
- *       序列化采用扁平重复 key（下载类后端接口契约，如 ids=1&ids=2）。
+ * @author xuxueli 2026-11-21
  */
 import { message } from 'antd';
 import { t } from '@/i18n';

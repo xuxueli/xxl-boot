@@ -1,10 +1,9 @@
 /**
- * 路由守卫：RequireAuth（全局登录守卫，对齐 Vue router.beforeEach）
- * 功能：
- *   - 未登录访问登录页（白名单）：放行；
- *   - 未登录访问其他路径：重定向登录页并回传原路径供登录后重定向；
- *   - 已登录访问登录页：由登录页自身处理（跳转 redirect 或首页），避免与登录成功后跳转竞争；
- *   - 已登录但会话未加载：拉取用户信息与菜单，加载完成后再渲染（避免路由未注册时先命中 404）。
+ * @fileoverview 路由守卫：RequireAuth（全局登录守卫，对齐 Vue router.beforeEach）
+ * @description 功能：
+ *    - 未登录访问白名单放行，其余路径重定向登录页；
+ *    - 已登录但会话未加载时先拉取用户信息与菜单，避免命中 404
+ * @author xuxueli 2026-11-21
  */
 import { message, Spin } from 'antd';
 import type React from 'react';

@@ -8,81 +8,95 @@
 </#function>
 /**
  * @fileoverview ${codegen.functionName} API
- * @description 接口封装
+ * @description ${codegen.functionName}接口，方法名与后端 ${codegen.businessName}Controller 对齐
  * @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
  * 放置路径：src/modules/business/${codegen.moduleName}/${codegen.businessName?lower_case}/api/index.ts
  */
 import { request } from '@/utils/request';
 
-/**
- * 分页查询${codegen.functionName}列表。
- * @param params 查询参数（current/pageSize/查询字段）
- */
-export async function list${codegen.businessName}(params: {
-  current?: number;
-  pageSize?: number;
+/** ${codegen.functionName} API，调用方式：${codegen.businessName?uncap_first}Api.pageList(...) */
+export const ${codegen.businessName?uncap_first}Api = {
+  /**
+   * 分页查询${codegen.functionName}
+   *
+   * @param params 分页与查询条件（current/pageSize<#if fields?? && fields?size gt 0><#list fields as field><#if field.isQuery == "1">/${field.javaField}</#if></#list></#if>）
+   * @returns ${codegen.functionName}分页结果
+   */
+  pageList(params: {
+    current?: number;
+    pageSize?: number;
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isQuery == "1">
-  ${field.javaField}?: ${tsType(field.javaType)};
+    /** ${field.columnComment!field.javaField} */
+    ${field.javaField}?: ${tsType(field.javaType)};
 </#if>
 </#list>
 </#if>
-}) {
-  const { current = 1, pageSize = 10, ...rest } = params || {};
-  return request<API.Response<API.PageModel<API.${codegen.businessName}>>>(
-    '/${codegen.moduleName}/${codegen.businessName?lower_case}/pageList',
-    {
-      method: 'GET',
-      params: {
-        offset: (current - 1) * pageSize,
-        pagesize: pageSize,
-        ...rest,
+  }) {
+    const { current = 1, pageSize = 10, ...rest } = params || {};
+    return request<API.Response<API.PageModel<API.${codegen.businessName}>>>(
+      '/${codegen.moduleName}/${codegen.businessName?lower_case}/pageList',
+      {
+        method: 'GET',
+        params: {
+          offset: (current - 1) * pageSize,
+          pagesize: pageSize,
+          ...rest,
+        },
       },
-    },
-  );
-}
+    );
+  },
 
-/**
- * 加载${codegen.functionName}详情。
- * @param id 记录 ID
- */
-export async function get${codegen.businessName}(id: number) {
-  return request<API.Response<API.${codegen.businessName}>>(
-    '/${codegen.moduleName}/${codegen.businessName?lower_case}/load',
-    { method: 'GET', params: { id } },
-  );
-}
+  /**
+   * 查询${codegen.functionName}详情
+   *
+   * @param id 主键
+   * @returns 详情数据
+   */
+  load(id: number) {
+    return request<API.Response<API.${codegen.businessName}>>(
+      '/${codegen.moduleName}/${codegen.businessName?lower_case}/load',
+      { method: 'GET', params: { id } },
+    );
+  },
 
-/**
- * 新增${codegen.functionName}。
- * @param data 表单数据
- */
-export async function add${codegen.businessName}(data: API.${codegen.businessName}) {
-  return request<API.Response<unknown>>(
-    '/${codegen.moduleName}/${codegen.businessName?lower_case}/insert',
-    { method: 'POST', data },
-  );
-}
+  /**
+   * 新增${codegen.functionName}
+   *
+   * @param data 表单数据
+   * @returns 保存结果
+   */
+  insert(data: API.${codegen.businessName}) {
+    return request<API.Response<unknown>>(
+      '/${codegen.moduleName}/${codegen.businessName?lower_case}/insert',
+      { method: 'POST', data },
+    );
+  },
 
-/**
- * 修改${codegen.functionName}。
- * @param data 表单数据
- */
-export async function update${codegen.businessName}(data: API.${codegen.businessName}) {
-  return request<API.Response<unknown>>(
-    '/${codegen.moduleName}/${codegen.businessName?lower_case}/update',
-    { method: 'POST', data },
-  );
-}
+  /**
+   * 删除${codegen.functionName}（支持单条/批量）
+   *
+   * @param ids 主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]) {
+    return request<API.Response<unknown>>(
+      '/${codegen.moduleName}/${codegen.businessName?lower_case}/delete',
+      { method: 'POST', data: Array.isArray(ids) ? ids : [ids] },
+    );
+  },
 
-/**
- * 删除${codegen.functionName}。
- * @param ids 记录 ID 数组
- */
-export async function del${codegen.businessName}(ids: number[]) {
-  return request<API.Response<unknown>>(
-    '/${codegen.moduleName}/${codegen.businessName?lower_case}/delete',
-    { method: 'POST', data: ids },
-  );
-}
+  /**
+   * 更新${codegen.functionName}
+   *
+   * @param data 表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: API.${codegen.businessName}) {
+    return request<API.Response<unknown>>(
+      '/${codegen.moduleName}/${codegen.businessName?lower_case}/update',
+      { method: 'POST', data },
+    );
+  },
+};

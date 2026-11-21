@@ -1,6 +1,7 @@
 /**
- * 组件：LogDetail（日志详情弹窗）
- * 功能：按卡片分组展示日志基本信息、操作人信息与日志内容（支持复制）
+ * @fileoverview LogDetail（日志详情弹窗）
+ * @description 按卡片分组展示日志基本信息、操作人信息与日志内容（支持复制）
+ * @author xuxueli 2026-11-21
  */
 import {
   FileTextOutlined,

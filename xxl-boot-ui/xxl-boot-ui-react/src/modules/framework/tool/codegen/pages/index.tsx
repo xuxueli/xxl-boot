@@ -1,6 +1,7 @@
 /**
- * 页面：代码生成
- * 功能：代码生成表分页 + 创建表/修改/删除/预览/生成代码
+ * @fileoverview 代码生成
+ * @description 代码生成表分页 + 创建表/修改/删除/预览/生成代码
+ * @author xuxueli 2026-11-21
  */
 import {
   DeleteOutlined,
@@ -15,7 +16,7 @@ import { App, Button, Input, Modal } from 'antd';
 import { createStyles } from 'antd-style';
 import { useRef, useState } from 'react';
 import { usePermission } from '@/hooks/usePermission';
-import { delTable, listTable } from '@/modules/framework/tool/codegen/api';
+import { codegenApi } from '@/modules/framework/tool/codegen/api';
 import { downloadGet } from '@/utils/download';
 import { t } from '@/i18n';
 import EditTableModal from './EditTableModal';
@@ -77,7 +78,7 @@ const CodegenList = () => {
         row ? String(row.id) : ids.join(','),
       ]),
       onOk: async () => {
-        await delTable(ids);
+        await codegenApi.delete(ids);
         message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -110,9 +111,8 @@ const CodegenList = () => {
     }
     setCreating(true);
     try {
-      const { createTable } = await import('@/modules/framework/tool/codegen/api');
       // 新建时携带前端模板类型（默认第一个选项 antd-typescript），与后端 createTable 入参匹配
-      await createTable(tableSql, 'antd-typescript');
+      await codegenApi.createTable(tableSql, 'antd-typescript');
       message.success(t('tool.codegen.createSuccess'));
       setCreateOpen(false);
       actionRef.current?.reload();
@@ -197,7 +197,7 @@ const CodegenList = () => {
             ],
           }}
           request={async (params) => {
-            const res = await listTable(params);
+            const res = await codegenApi.pageList(params);
             return {
               data: res.data?.data || [],
               total: res.data?.total || 0,

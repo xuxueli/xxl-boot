@@ -1,6 +1,7 @@
 /**
- * 页面：Profile（个人中心）
- * 功能：展示个人信息与基本资料/修改密码 tab 切换
+ * @fileoverview Profile（个人中心）
+ * @description 展示个人信息与基本资料/修改密码 tab 切换
+ * @author xuxueli 2026-11-21
  */
 import {
   CalendarOutlined,
@@ -13,7 +14,7 @@ import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { App, Card, Descriptions, Spin, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
 import { t } from '@/i18n';
-import { getUserProfile } from '@/modules/framework/authz/user/api';
+import { userApi } from '@/modules/framework/authz/user/api';
 import ResetPwd from './ResetPwd';
 import UserInfo from './UserInfo';
 
@@ -42,7 +43,7 @@ const Profile = () => {
   /** 获取当前登录用户个人信息 */
   const loadUser = () => {
     setLoading(true);
-    getUserProfile()
+    userApi.loadProfile()
       .then((res) => {
         setUser(res.data || {});
         setRoleNames(((res.data?.roleNames as string[]) || []).join(', '));

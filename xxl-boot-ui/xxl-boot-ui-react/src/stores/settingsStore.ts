@@ -1,16 +1,14 @@
 /**
- * settingsStore - 全局设置状态（Zustand）
- * 功能：管理布局设置与设置面板开关（SettingDrawer），并支持设置持久化（localStorage）
- *    - 布局设置默认取自 default-settings.ts；通过 SettingDrawer 修改后实时生效，
- *    - 点击"保存设置"写入 localStorage，刷新后自动恢复；"重置设置"恢复默认并清除缓存；
- *    - 侧边栏折叠状态：点击折叠开关即时持久化，刷新后保持。
+ * @fileoverview settingsStore - 全局设置状态（Zustand）
+ * @description 管理布局设置与设置面板开关，支持 localStorage 持久化；布局默认值取自 default-settings.ts，修改后实时生效
+ * @author xuxueli 2026-11-21
  */
 
 import type { ProLayoutProps } from '@ant-design/pro-components';
 import { create } from 'zustand';
 import defaultSettings from '@/default-settings';
 import { getLang, setLang, type I18nLang } from '@/i18n';
-import { loadBaseConfig as fetchBaseConfig } from '@/modules/framework/auth/api';
+import { authApi } from '@/modules/framework/auth/api';
 
 /** 主题设置持久化：localStorage 键名 */
 const SETTINGS_KEY = 'boot-layout-setting';
@@ -126,7 +124,7 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
    */
   loadBaseConfig: async () => {
     try {
-      const res = await fetchBaseConfig();
+      const res = await authApi.loadBaseConfig();
       const config = res.data;
       if (!config) {
         return;

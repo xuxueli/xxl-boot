@@ -1,28 +1,28 @@
 /**
- * 类型定义：组织管理
- * 对应后端组织实体（Org）。
- *
- *
- *  Typescript 类型定义：
- *    - 命名空间（declare namespace API）: 将类型定义包裹在 “API 命名空间” 中，避免全局污染。
- *    - 类型定义（type XX）: 定义一个类型 XX，用于描述指定 业务实体 的数据结构。
- *    - 说明：
- *      - 全局脚本文件：.d.ts 天然是声明文件，declare namespace API 默认就是全局；
- *      - 模块文件：.ts 有顶层 import/export 是模块。
- *        - declare namespace API 只会挂在模块内部，外部访问不到。
- *        - 必须用 declare global { namespace API {} } 才能把它「提升」到全局作用域。
+ * @fileoverview Org 类型定义
+ * @description 组织实体，对应后端 Org.java
+ * @author xuxueli 2026-11-21
  */
 declare namespace API {
   /** 组织 */
   type Org = {
+    /** 主键 */
     id?: number;
+    /** 上级组织主键，0 表示根节点 */
     parentId?: number;
+    /** 组织名称 */
     name?: string;
+    /** 排序值 */
     order?: number;
+    /** 状态：0-正常、1-停用 */
     status?: number;
+    /** 负责人 */
     manager?: string;
+    /** 添加时间 */
     addTime?: string;
+    /** 更新时间 */
     updateTime?: string;
+    /** 子组织 */
     children?: Org[];
   };
 }

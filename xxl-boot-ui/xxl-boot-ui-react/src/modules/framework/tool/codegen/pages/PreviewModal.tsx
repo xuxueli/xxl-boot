@@ -1,10 +1,11 @@
 /**
- * 组件：PreviewModal（代码生成预览弹窗）
- * 功能：按模板文件 Tabs 预览生成代码，支持复制
+ * @fileoverview PreviewModal（代码生成预览弹窗）
+ * @description 按模板文件 Tabs 预览生成代码，支持复制
+ * @author xuxueli 2026-11-21
  */
 import { App, Button, Modal, Spin, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
-import { previewTable } from '@/modules/framework/tool/codegen/api';
+import { codegenApi } from '@/modules/framework/tool/codegen/api';
 import { t } from '@/i18n';
 import { copyToClipboard } from '@/utils/common';
 
@@ -33,7 +34,7 @@ function PreviewModal({ open, id, onClose }: PreviewModalProps) {
     setLoading(true);
     setActiveKey('');
     setCodeMap({});
-    previewTable(id)
+    codegenApi.preview(id)
       .then((res) => {
         const data = res.data || {};
         setCodeMap(data);

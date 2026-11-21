@@ -1,11 +1,7 @@
 /**
- * 路由定义与核心路由逻辑（React Router，对齐 Vue router/index.ts）
- *
- * 职责：
- *   1. 组件加载方法 lazyLoad：所有页面统一懒加载入口；
- *   2. 声明静态路由（constantRoutes）——登录、错误页、个人中心等，启动即注册；
- *   3. 动态业务路由：后端菜单（/getMenus）→ 前端路由，拍平注入（对齐 Vue addRoute）；
- *   4. 构建应用路由配置 buildAppRoutes，供 AppRouter（useRoutes）渲染，为唯一数据源。
+ * @fileoverview 路由定义与核心路由逻辑（React Router，对齐 Vue router/index.ts）
+ * @description 提供 lazyLoad 懒加载入口、静态路由 constantRoutes、后端菜单动态路由注入与 buildAppRoutes 路由配置构建
+ * @author xuxueli 2026-11-21
  */
 
 import { Skeleton } from 'antd';

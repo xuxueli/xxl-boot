@@ -1,6 +1,7 @@
 /**
- * 组件：RoleFormModal（角色新增/编辑弹窗）
- * 功能：角色基本信息 + 菜单权限树（支持展开/折叠、全选、父子联动）
+ * @fileoverview RoleFormModal（角色新增/编辑弹窗）
+ * @description 角色基本信息 + 菜单权限树（支持展开/折叠、全选、父子联动）
+ * @author xuxueli 2026-11-21
  */
 import {
   ModalForm,
@@ -13,13 +14,8 @@ import type { DataNode } from 'antd/es/tree';
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
-import { listResource } from '@/modules/framework/authz/resource/api';
-import {
-  addRole,
-  roleMenuTreeselect,
-  updateRole,
-  updateRoleRes,
-} from '@/modules/framework/authz/role/api';
+import { resourceApi } from '@/modules/framework/authz/resource/api';
+import { roleApi } from '@/modules/framework/authz/role/api';
 import { handleTree } from '@/utils/common';
 
 /**
@@ -121,7 +117,7 @@ const RoleFormModal = ({
    * 加载资源树与已授权集合
    */
   const loadTree = (roleId?: number) => {
-    listResource({}).then((res) => {
+    resourceApi.treeList({}).then((res) => {
       // 数据查询并处理：API查询资源树数据 -> antd Tree 数据
       const tree = toTreeData(handleTree(res.data || []));
       // 设置资源树数据
@@ -133,7 +129,7 @@ const RoleFormModal = ({
 
       // 表单编辑场景：回显表单数据，初始化已授权节点
       if (roleId) {
-        roleMenuTreeselect(roleId)
+        roleApi.loadRoleRes(roleId)
           .then((roleRes) => {
             applyApprovedKeys(tree, roleRes.data || []);
           })
@@ -186,12 +182,12 @@ const RoleFormModal = ({
 
     // 新增/编辑角色 + 授权资源
     if (current?.id) {
-      await updateRole({ ...data, id: current.id });
-      await updateRoleRes(current.id, resourceIds);
+      await roleApi.update({ ...data, id: current.id });
+      await roleApi.updateRoleRes(current.id, resourceIds);
     } else {
-      const res = await addRole(data);
+      const res = await roleApi.insert(data);
       const newId = Number(res.data);
-      await updateRoleRes(newId, resourceIds);
+      await roleApi.updateRoleRes(newId, resourceIds);
     }
     message.success(t('common.operationSuccess'));
     onSuccess?.();

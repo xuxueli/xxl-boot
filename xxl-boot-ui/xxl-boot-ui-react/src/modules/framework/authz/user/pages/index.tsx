@@ -1,6 +1,7 @@
 /**
- * 页面：用户管理
- * 功能：左侧组织树 + 用户分页表格，支持新增/修改/删除/重置密码/状态切换/详情
+ * @fileoverview 用户管理
+ * @description 左侧组织树 + 用户分页表格，支持新增/修改/删除/重置密码/状态切换/详情
+ * @author xuxueli 2026-11-21
  */
 import {
   DeleteOutlined,
@@ -19,9 +20,9 @@ import { t } from '@/i18n';
 import { TreePanel } from '@/components';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
-import { listOrg } from '@/modules/framework/authz/org/api';
-import { listRole } from '@/modules/framework/authz/role/api';
-import { delUser, listUser, updateUser } from '@/modules/framework/authz/user/api';
+import { orgApi } from '@/modules/framework/authz/org/api';
+import { roleApi } from '@/modules/framework/authz/role/api';
+import { userApi } from '@/modules/framework/authz/user/api';
 import { deepClone, handleTree } from '@/utils/common';
 import UserFormModal from './UserFormModal';
 import UserView from './UserView';
@@ -97,7 +98,7 @@ const Dashboard = () => {
    * 加载组织树与角色下拉
    */
   const loadOptions = () => {
-    listOrg({})
+    orgApi.treeList({})
       .then((res) => {
         const list = res.data || [];
         // 左侧组织树：深拷贝转树，避免互相污染
@@ -113,7 +114,7 @@ const Dashboard = () => {
         ]);
       })
       .catch(() => {});
-    listRole({ current: 1, pageSize: 999 })
+    roleApi.pageList({ current: 1, pageSize: 999 })
       .then((res) => {
         setRoleOptions(res.data?.data || []);
       })
@@ -159,7 +160,7 @@ const Dashboard = () => {
         ? t('authz.user.confirmDelete', [row.username])
         : t('authz.user.confirmDeleteBatch'),
       onOk: async () => {
-        await delUser(ids);
+        await userApi.delete(ids);
         message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -177,7 +178,7 @@ const Dashboard = () => {
     delete data.orgName;
     delete data.roleNames;
     try {
-      await updateUser(data);
+      await userApi.update(data);
       message.success(t('common.operationSuccess'));
       actionRef.current?.reload();
     } catch {
@@ -205,7 +206,7 @@ const Dashboard = () => {
     delete data.updateTime;
     delete data.orgName;
     delete data.roleNames;
-    updateUser(data)
+    userApi.update(data)
       .then(() => {
         message.success(t('authz.user.resetPwdSuccess'));
         setResetRow(null);
@@ -369,7 +370,7 @@ const Dashboard = () => {
               params={queryParams}
               /* 表格API请求 */
               request={async (params) => {
-                const res = await listUser(params);
+                const res = await userApi.pageList(params);
                 return {
                   data: res.data?.data || [],
                   total: res.data?.total || 0,

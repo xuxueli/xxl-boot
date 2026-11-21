@@ -1,6 +1,7 @@
 /**
- * 页面：站内消息
- * 功能：消息分页表格 + 新增/修改（富文本）/删除 + 详情抽屉 + 已读用户弹窗
+ * @fileoverview 站内消息
+ * @description 消息分页表格 + 新增/修改（富文本）/删除 + 详情抽屉 + 已读用户弹窗
+ * @author xuxueli 2026-11-21
  */
 import {
   DeleteOutlined,
@@ -20,7 +21,7 @@ import {
   useEnumOption,
 } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
-import { delMessage, listMessage } from '@/modules/framework/system/message/api';
+import { messageApi } from '@/modules/framework/system/message/api';
 import MessageDetail from './MessageDetail';
 import MessageFormModal from './MessageFormModal';
 import ReadUsersDialog from './ReadUsersDialog';
@@ -87,7 +88,7 @@ const MessageList = () => {
         row?.title || t('system.message.batchDeleteName'),
       ]),
       onOk: async () => {
-        await delMessage(ids);
+        await messageApi.delete(ids);
         message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -184,7 +185,7 @@ const MessageList = () => {
             ],
           }}
           request={async (params) => {
-            const res = await listMessage(params);
+            const res = await messageApi.pageList(params);
             return {
               data: res.data?.data || [],
               total: res.data?.total || 0,

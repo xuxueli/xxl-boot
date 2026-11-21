@@ -1,6 +1,7 @@
 /**
- * 页面：资源管理
- * 功能：资源树表格 + 新增/修改（含图标选择）/删除 + 内联排序 + 展开/折叠
+ * @fileoverview 资源管理
+ * @description 资源树表格 + 新增/修改（含图标选择）/删除 + 内联排序 + 展开/折叠
+ * @author xuxueli 2026-11-21
  */
 import {
   DeleteOutlined,
@@ -18,11 +19,7 @@ import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
-import {
-  delResource,
-  listResource,
-  updateResourceSort,
-} from '@/modules/framework/authz/resource/api';
+import { resourceApi } from '@/modules/framework/authz/resource/api';
 import { handleTree } from '@/utils/common';
 import { getIconComponent } from '@/utils/icon';
 import ResourceFormModal from './ResourceFormModal';
@@ -96,7 +93,7 @@ const ResourceList = () => {
 
   /** 加载数据：转树形结构并记录排序快照 */
   const handleRequest = async (params: Record<string, any>) => {
-    const res = await listResource(params);
+    const res = await resourceApi.treeList(params);
     const tree = handleTree(res.data || []);
     setTableData(tree);
     const orders: Record<number, number> = {};
@@ -133,7 +130,7 @@ const ResourceList = () => {
       message.warning(t('common.noSortChange'));
       return;
     }
-    await updateResourceSort(ids, orders);
+    await resourceApi.updateSort(ids, orders);
     message.success(t('common.saveSortSuccess'));
     actionRef.current?.reload();
   };
@@ -151,7 +148,7 @@ const ResourceList = () => {
       title: t('modal.title'),
       content: t('authz.resource.confirmDelete', [row.name ?? '']),
       onOk: async () => {
-        await delResource([row.id as number]);
+        await resourceApi.delete([row.id as number]);
         message.success(t('common.deleteSuccess'));
         actionRef.current?.reload();
       },

@@ -1,20 +1,10 @@
 /**
- * 名称：用户会话 Store
- * 功能：管理登录态、用户资料、菜单、角色权限、退出登录
- *
- * 分支说明：
- *   state   — currentUser 用户信息、menuData 动态菜单
- *   actions — login / fetchUserInfo / fetchMenuData / logout / hasPermi / hasRole
- *
- * @author xuxueli 2026-08-15
+ * @fileoverview 用户会话 Store
+ * @description 管理登录态、用户资料、菜单、角色权限与退出登录；actions 包含 login / fetchUserInfo / fetchMenuData / logout / hasPermi / hasRole
+ * @author xuxueli 2026-11-21
  */
 import { create } from 'zustand';
-import {
-  getInfo,
-  getMenus,
-  login as loginApi,
-  logout as logoutApi,
-} from '@/modules/framework/auth/api';
+import { authApi } from '@/modules/framework/auth/api';
 import { removeToken, setTokenWithAge } from '@/utils/auth';
 
 /**
@@ -55,7 +45,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
 
   /** 登录：提交凭证，保存 token（记住密码 365 天，否则 2 小时） */
   login: async (params) => {
-    const res = await loginApi(params);
+    const res = await authApi.login(params);
     const token = res.data;
     // 接口成功但未返回 token：视为登录失败，抛出错误交由调用方处理
     if (!token) {
@@ -68,7 +58,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
 
   /** 获取当前登录用户信息，失败时抛出异常（由 RequireAuth 统一处理） */
   fetchUserInfo: async () => {
-    const res = await getInfo();
+    const res = await authApi.loginCheck();
     // 写入当前用户信息（含角色、权限集合）
     set({ currentUser: res.data });
     return res.data;
@@ -76,7 +66,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
 
   /** 获取当前用户菜单，失败时抛出异常（由 RequireAuth 统一处理） */
   fetchMenuData: async () => {
-    const res = await getMenus();
+    const res = await authApi.getMenus();
     // 写入动态菜单树
     set({ menuData: res.data || [] });
     return res.data || [];
@@ -85,7 +75,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
   /** 退出登录：服务端登出失败也继续清理本地状态 */
   logout: async () => {
     try {
-      await logoutApi();
+      await authApi.logout();
     } catch {
       // 忽略服务端登出异常，继续清理本地状态
     }

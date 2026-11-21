@@ -1,6 +1,7 @@
 /**
- * 组件：ResourceFormModal（资源新增/编辑弹窗）
- * 功能：资源类型、父级、名称、图标、地址、权限标识、可见/状态
+ * @fileoverview ResourceFormModal（资源新增/编辑弹窗）
+ * @description 资源类型、父级、名称、图标、地址、权限标识、可见/状态
+ * @author xuxueli 2026-11-21
  */
 import {
   ModalForm,
@@ -15,11 +16,7 @@ import { App, Col, Row } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
 import { IconSelect } from '@/components';
-import {
-  addResource,
-  listResource,
-  updateResource,
-} from '@/modules/framework/authz/resource/api';
+import { resourceApi } from '@/modules/framework/authz/resource/api';
 import { handleTree } from '@/utils/common';
 
 /** 资源树转 TreeSelect 数据 */
@@ -57,7 +54,7 @@ const ResourceFormModal = ({
   /** 加载父级资源树 */
   useEffect(() => {
     if (open) {
-      listResource({})
+      resourceApi.treeList({})
         .then((res) => {
           setParentOptions(handleTree(res.data || []));
         })
@@ -71,9 +68,9 @@ const ResourceFormModal = ({
     delete data.addTime;
     delete data.updateTime;
     if (current?.id) {
-      await updateResource({ ...data, id: current.id });
+      await resourceApi.update({ ...data, id: current.id });
     } else {
-      await addResource(data);
+      await resourceApi.insert(data);
     }
     message.success(t('common.operationSuccess'));
     onSuccess?.();

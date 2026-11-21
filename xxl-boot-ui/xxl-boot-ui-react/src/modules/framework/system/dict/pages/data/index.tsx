@@ -1,6 +1,7 @@
 /**
- * 页面：字典数据
- * 功能：某字典类型下的字典项分页管理（隐藏路由，从字典管理进入）
+ * @fileoverview 字典数据
+ * @description 某字典类型下的字典项分页管理（隐藏路由，从字典管理进入）
+ * @author xuxueli 2026-11-21
  */
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
@@ -12,7 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
-import { delData, listData } from '@/modules/framework/system/dict/api';
+import { dictApi } from '@/modules/framework/system/dict/api';
 import DictDataFormModal from './DictDataFormModal';
 
 /**
@@ -65,7 +66,7 @@ const DictData = () => {
         row?.name || t('system.dict.batchDeleteItemName'),
       ]),
       onOk: async () => {
-        await delData(ids);
+        await dictApi.itemDelete(ids);
         message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -127,7 +128,7 @@ const DictData = () => {
           }}
           params={{ dictId }}
           request={async (params) => {
-            const res = await listData(params);
+            const res = await dictApi.itemPageList(params);
             return {
               data: res.data?.data || [],
               total: res.data?.total || 0,

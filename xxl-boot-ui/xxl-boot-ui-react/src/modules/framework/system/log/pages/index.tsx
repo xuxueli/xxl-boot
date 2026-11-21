@@ -1,6 +1,7 @@
 /**
- * 页面：审计日志
- * 功能：日志分页表格 + 筛选/导出/详情/删除
+ * @fileoverview 审计日志
+ * @description 日志分页表格 + 筛选/导出/详情/删除
+ * @author xuxueli 2026-11-21
  */
 import {
   DeleteOutlined,
@@ -15,7 +16,7 @@ import React, { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { loadEnum, toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
-import { delOperlog, pageList } from '@/modules/framework/system/log/api';
+import { logApi } from '@/modules/framework/system/log/api';
 import { download } from '@/utils/download';
 import LogDetail from './LogDetail';
 
@@ -75,7 +76,7 @@ const LogList = () => {
       title: t('modal.title'),
       content: t('system.log.confirmDelete'),
       onOk: async () => {
-        await delOperlog(ids);
+        await logApi.delete(ids);
         message.success(t('common.deleteSuccess'));
         setSelectedIds([]);
         actionRef.current?.reload();
@@ -167,7 +168,7 @@ const LogList = () => {
           }}
           request={async (params) => {
             searchParamsRef.current = params;
-            const res = await pageList(params);
+            const res = await logApi.pageList(params);
             return {
               data: res.data?.data || [],
               total: res.data?.total || 0,

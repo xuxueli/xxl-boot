@@ -1,12 +1,13 @@
 /**
- * 组件：UserView（用户详情抽屉）
- * 功能：展示用户基本信息、角色、状态与时间
+ * @fileoverview UserView（用户详情抽屉）
+ * @description 展示用户基本信息、角色、状态与时间
+ * @author xuxueli 2026-11-21
  */
 import { Descriptions, Drawer, Tag } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
 import { useEnumOption } from '@/hooks/useEnumOption';
-import { listRole } from '@/modules/framework/authz/role/api';
+import { roleApi } from '@/modules/framework/authz/role/api';
 
 /* 组件入参 */
 interface UserViewProps {
@@ -69,7 +70,7 @@ function UserView({ open, user, onClose }: UserViewProps) {
       return;
     }
     try {
-      const res = await listRole({ current: 1, pageSize: 999 });
+      const res = await roleApi.pageList({ current: 1, pageSize: 999 });
       const all = res.data?.data || [];
       const names = all
         .filter((r) => roleIds.includes(r.id as number))

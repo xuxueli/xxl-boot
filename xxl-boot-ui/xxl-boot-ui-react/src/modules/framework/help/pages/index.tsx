@@ -1,6 +1,7 @@
 /**
- * 页面：帮助中心
- * 功能：展示系统信息、版本、GitHub 与官方文档入口
+ * @fileoverview 帮助中心
+ * @description 展示系统信息、版本、GitHub 与官方文档入口
+ * @author xuxueli 2026-11-21
  */
 import { BookOutlined, GithubOutlined } from '@ant-design/icons';
 import { PageContainer, ProCard } from '@ant-design/pro-components';

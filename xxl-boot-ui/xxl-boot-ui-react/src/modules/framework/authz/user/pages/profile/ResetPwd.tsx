@@ -1,13 +1,14 @@
 /**
- * 页面：ResetPwd（修改密码）
- * 功能：旧密码、新密码、确认密码表单提交，修改当前登录用户密码
+ * @fileoverview ResetPwd（修改密码）
+ * @description 旧密码、新密码、确认密码表单提交，修改当前登录用户密码
+ * @author xuxueli 2026-11-21
  */
 
 import { ProForm, ProFormText } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
 import type { Rule } from 'antd/es/form';
 import { t } from '@/i18n';
-import { updateUserPwd } from '@/modules/framework/authz/user/api';
+import { userApi } from '@/modules/framework/authz/user/api';
 
 /** 密码表单数据 */
 interface PwdForm {
@@ -33,7 +34,7 @@ const ResetPwd = () => {
 
   /** 提交保存 */
   const handleSubmit = async (values: PwdForm) => {
-    await updateUserPwd(
+    await userApi.updatePwd(
       values.oldPassword as string,
       values.newPassword as string,
     );

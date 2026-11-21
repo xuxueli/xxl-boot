@@ -1,8 +1,7 @@
 /**
- * 组件：AppRouter（动态路由入口）
- * 功能：订阅后端菜单（userStore.menuData）→ 构建业务路由与完整路由配置，
- *       经 useRoutes 渲染；菜单变化（登录/刷新）时实时重新匹配，
- *       实现「后端菜单唯一数据源」的动态路由（对齐 Vue router.addRoute）。
+ * @fileoverview AppRouter（动态路由入口）
+ * @description 订阅后端菜单构建业务路由并渲染；菜单变化时实时重新匹配，实现后端菜单唯一数据源的动态路由
+ * @author xuxueli 2026-11-21
  */
 import { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';

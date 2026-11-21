@@ -1,6 +1,7 @@
 /**
- * TSX 代码生成器（pagegen/generator）
- * 根据画布组件与全局配置生成可运行的 ProForm TSX 代码（页面/弹窗两种生成类型）。
+ * @fileoverview TSX 代码生成器（pagegen/generator）
+ * @description 根据画布组件与全局配置生成可运行的 ProForm TSX 代码（页面/弹窗两种生成类型）。
+ * @author xuxueli 2026-11-21
  */
 import type { FormConfig, FormWidget } from './config';
 import { toCascaderOptions } from './config';

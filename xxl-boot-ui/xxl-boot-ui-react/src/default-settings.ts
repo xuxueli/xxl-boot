@@ -1,12 +1,10 @@
+/**
+ * @fileoverview 系统默认设置
+ * @description 提供系统标题、品牌、版本、首页路径等全局默认配置，以及 ProLayout 布局默认配置
+ * @author xuxueli 2026-11-21
+ */
 import type { ProLayoutProps } from '@ant-design/pro-components';
 
-/**
- * 系统默认设置（default-settings.ts）
- *    - 提供系统标题、品牌、版本、首页路径等全局默认配置，以及 ProLayout 布局默认配置；
- *    - 由 stores/settingsStore.ts 读取，供登录页、帮助页、主布局等消费；
- *
- * @author xuxueli 2026-08-15
- */
 const Settings: ProLayoutProps & {
   // 扩展属性
   brandName?: string;

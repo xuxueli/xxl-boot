@@ -1,8 +1,7 @@
 /**
- * 组件：ThemeColorPicker（主题色选择器）
- * 功能：在 SettingDrawer 的「主题色」标签行内注入颜色选择器触发器，点击弹出自定义选色面板
- *    - 面板布局：顶部取色区 → 8 个流行色按钮 → hex 输入框 + 确认按钮；确认后应用并关闭
- *    - SettingDrawer 为第三方组件无插槽，采用 portal 注入到主题色区块内，由全局 CSS 将该区块变为「标签 + 选择器」水平一行的布局
+ * @fileoverview ThemeColorPicker（主题色选择器）
+ * @description 在 SettingDrawer 的主题色区块内注入颜色选择器，提供流行色与 hex 输入
+ * @author xuxueli 2026-11-21
  */
 import { Button, ColorPicker, Input } from 'antd';
 import { createGlobalStyle, createStyles } from 'antd-style';

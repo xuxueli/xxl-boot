@@ -1,6 +1,7 @@
 /**
- * 组件：EditTableModal（代码生成编辑弹窗）
- * 功能：Tab1 配置信息表单 + Tab2 字段信息可拖拽排序表格
+ * @fileoverview EditTableModal（代码生成编辑弹窗）
+ * @description Tab1 配置信息表单 + Tab2 字段信息可拖拽排序表格
+ * @author xuxueli 2026-11-21
  */
 
 import { HolderOutlined } from '@ant-design/icons';
@@ -24,8 +25,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { App, Checkbox, Form, Input, Modal, Select, Table, Tabs } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { queryDictList } from '@/modules/framework/system/dict/api';
-import { getGenTable, updateGenTable } from '@/modules/framework/tool/codegen/api';
+import { dictApi } from '@/modules/framework/system/dict/api';
+import { codegenApi } from '@/modules/framework/tool/codegen/api';
 import { t } from '@/i18n';
 
 const javaTypeOptions = [
@@ -181,7 +182,7 @@ const EditTableModal = ({
   useEffect(() => {
     if (open && id) {
       setActiveTab('info');
-      getGenTable(id)
+      codegenApi.detail(id)
         .then((res) => {
           const data = res.data || {};
           const { fieldList = [], ...rest } = data;
@@ -200,7 +201,7 @@ const EditTableModal = ({
           form.setFieldsValue(merge);
         })
         .catch(() => {});
-      queryDictList()
+      dictApi.queryDictList()
         .then((res) => {
           setDictOptions(
             (res.data || []).map((d) => ({
@@ -245,7 +246,7 @@ const EditTableModal = ({
     }
     setSaving(true);
     try {
-      await updateGenTable({ ...info, ...values, fieldList: fields });
+      await codegenApi.update({ ...info, ...values, fieldList: fields });
       message.success(t('common.saveSuccess'));
       onSuccess?.();
       onOpenChange(false);

@@ -1,9 +1,10 @@
 /**
- * request - HTTP 请求工具（axios 封装）
+ * @fileoverview request - HTTP 请求工具（axios 封装）
+ * @description
+ *  请求拦截：token 注入、参数序列化、POST/PUT 防重复提交；
+ *  响应拦截：301 重新登录、业务码提示、HTTP 异常提示
  *
- * 能力：
- *   - 请求拦截：token 注入 / 参数序列化（数组 key[]=、嵌套对象展开）/ POST/PUT 防重复提交
- *   - 响应拦截：301 重新登录弹窗 / 业务码统一提示 / HTTP 异常中文提示
+ * @author xuxueli 2026-11-21
  */
 import { Modal, message } from 'antd';
 import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';

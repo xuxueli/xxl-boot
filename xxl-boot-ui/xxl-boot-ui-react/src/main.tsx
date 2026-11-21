@@ -1,6 +1,7 @@
 /**
- * 应用入口（Vite）
- * 能力：挂载 React、配置 antd 主题/国际化、TanStack Query、React Router 与错误边界
+ * @fileoverview 应用入口（Vite）
+ * @description 挂载 React、配置 antd 主题/国际化、TanStack Query、React Router 与错误边界
+ * @author xuxueli 2026-11-21
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App as AntdApp, ConfigProvider } from 'antd';

@@ -1,6 +1,7 @@
 /**
- * 页面：Login（登录）
- * 功能：账号密码登录（支持记住密码、验证码），登录成功后拉取用户信息与菜单并跳转目标页
+ * @fileoverview Login（登录）
+ * @description 账号密码登录（支持记住密码、验证码），登录成功后拉取用户信息与菜单并跳转目标页
+ * @author xuxueli 2026-11-21
  */
 import { LockOutlined, SafetyOutlined, UserOutlined } from '@ant-design/icons';
 import {
@@ -15,7 +16,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import defaultSettings from '@/default-settings';
 import { t } from '@/i18n';
 import { Footer } from '@/layouts/components';
-import { getCodeImg } from '@/modules/framework/auth/api';
+import { authApi } from '@/modules/framework/auth/api';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
 import { getToken } from '@/utils/auth';
@@ -109,12 +110,12 @@ const Login = () => {
   /** 获取验证码图片，根据后端开关控制显示 */
   const getCode = async () => {
     try {
-      const res = await getCodeImg();
+      const res = await authApi.captcha();
       setCodeUrl(res.data?.image || '');
       setCaptchaUuid(res.data?.uuid || '');
     } catch (error) {
       // 验证码获取失败不阻塞登录
-      console.error('getCodeImg failed', error);
+      console.error('authApi.captcha failed', error);
     }
   };
 

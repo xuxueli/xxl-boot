@@ -1,7 +1,6 @@
 /**
- * 名称：菜单适配工具
- * 功能：后端纯菜单树 → ProLayout 菜单数据，并生成目录跳转映射
- *
+ * @fileoverview 菜单适配工具
+ * @description 后端纯菜单树 → ProLayout 菜单数据，并生成目录跳转映射
  * @author xuxueli 2026-11-21
  */
 import type { MenuDataItem } from '@ant-design/pro-components';

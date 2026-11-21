@@ -1,6 +1,7 @@
 /**
- * 页面：404（未找到）
- * 功能：提示用户页面不存在，提供返回首页入口
+ * @fileoverview 404（未找到）
+ * @description 提示用户页面不存在，提供返回首页入口
+ * @author xuxueli 2026-11-21
  */
 import { Button, Card, Result } from 'antd';
 import { Link } from 'react-router-dom';
