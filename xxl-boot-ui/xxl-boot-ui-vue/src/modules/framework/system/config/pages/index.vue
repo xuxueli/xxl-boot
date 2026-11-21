@@ -6,7 +6,7 @@
 <template>
   <div class="app-container">
     <!-- 搜索栏 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="table.showSearch">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="auto" v-show="table.showSearch">
       <el-form-item :label="t('system.config.configName')" prop="name">
         <el-input v-model="queryParams.name" :placeholder="t('common.inputPlaceholder', [t('system.config.configName')])" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
@@ -42,10 +42,10 @@
     <!-- 配置列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="t('common.serialNo')" type="index" align="center" width="60" />
-      <el-table-column :label="t('system.config.configName')" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
-      <el-table-column :label="t('system.config.configKey')" align="center" prop="key" width="180" :show-overflow-tooltip="true" />
-      <el-table-column :label="t('system.config.configValue')" align="center" prop="value" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('common.serialNo')" prop="id" align="center" width="80" />
+      <el-table-column :label="t('system.config.configName')" align="center" prop="name" width="180" show-overflow-tooltip />
+      <el-table-column :label="t('system.config.configKey')" align="center" prop="key" width="180" show-overflow-tooltip />
+      <el-table-column :label="t('system.config.configValue')" align="center" prop="value" show-overflow-tooltip />
       <el-table-column :label="t('common.status')" align="center" width="80">
         <template #default="scope">
           <el-tag :type="scope.row.status === 0 ? 'success' : 'danger'" size="small">
@@ -53,9 +53,9 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column :label="t('common.remark')" align="center" prop="remark" :show-overflow-tooltip="true" />
+      <el-table-column :label="t('common.remark')" align="center" prop="remark" show-overflow-tooltip />
       <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
-      <el-table-column :label="t('common.operation')" align="center" width="150" class-name="small-padding fixed-width">
+      <el-table-column :label="t('common.operation')" align="center" width="160" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
           <el-button link type="primary" icon="Delete" @click="removeConfig(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
@@ -73,24 +73,24 @@
     />
 
     <!-- 添加或修改配置对话框 -->
-    <el-dialog :title="formState.title" v-model="formState.visible" width="500px" append-to-body :close-on-click-modal="false">
+    <el-dialog :title="formState.title" v-model="formState.visible" width="500px" append-to-body :close-on-click-modal="false" @closed="resetForm">
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="100px">
         <el-form-item :label="t('system.config.configName')" prop="name">
-          <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('system.config.configName')])" />
+          <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('system.config.configName')])" clearable />
         </el-form-item>
         <el-form-item :label="t('system.config.configKey')" prop="key">
-          <el-input v-model="formState.form.key" :placeholder="t('common.inputPlaceholder', [t('system.config.configKey')])" :disabled="formState.form.id != null" />
+          <el-input v-model="formState.form.key" :placeholder="t('common.inputPlaceholder', [t('system.config.configKey')])" clearable :disabled="formState.form.id != null" />
         </el-form-item>
         <el-form-item :label="t('system.config.configValue')" prop="value">
-          <el-input v-model="formState.form.value" type="textarea" :placeholder="t('common.inputPlaceholder', [t('system.config.configValue')])" />
+          <el-input v-model="formState.form.value" type="textarea" :placeholder="t('common.inputPlaceholder', [t('system.config.configValue')])" clearable />
         </el-form-item>
         <el-form-item :label="t('common.status')">
           <el-radio-group v-model="formState.form.status">
             <el-radio v-for="item in statusOptions" :key="item.code" :value="item.code">{{ item.title }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item :label="t('common.remark')" prop="remark">
-          <el-input v-model="formState.form.remark" type="textarea" :placeholder="t('common.inputPlaceholder', [t('common.remark')])" />
+        <el-form-item :label="t('common.remark')">
+          <el-input v-model="formState.form.remark" type="textarea" :placeholder="t('common.inputPlaceholder', [t('common.remark')])" clearable />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -274,10 +274,9 @@ function saveForm() {
   })
 }
 
-/** 关闭弹窗并重置表单 */
+/** 关闭弹窗：重置统一交给 @closed，保证 X / ESC / 按钮三条路径一致 */
 function closeForm() {
   formState.value.visible = false
-  resetForm()
 }
 
 /**

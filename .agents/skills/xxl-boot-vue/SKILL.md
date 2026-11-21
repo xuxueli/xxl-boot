@@ -51,7 +51,7 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 遵循 `AGENTS.md`「设计原则」与「通用约定」，Vue 侧落地：
 
 - 优先复用 `@/composables`、`@/components`、`@/utils/modal`；同一逻辑第三次出现才新增 Composable，不提前封装。
-- 标准 CRUD 列表页保持单文件，脚本按「响应式数据 → 分页检索 → 数据操作（增删改）→ 其他」分区；只有详情、多页签、复杂独立交互才拆到 `pages/` 下独立组件，避免碎文件。
+- 标准 CRUD 列表页保持单文件，脚本按「响应式数据 → 分页检索 → 数据操作（增删改）→ 页面初始化」分区；只有详情、多页签、复杂独立交互才拆到 `pages/` 下独立组件，避免碎文件。
 - 状态统一 `ref` + `queryParams/table/formState` 收敛；不引入第二套状态或弹窗方案。
 
 ## 五、初始化与启动
@@ -243,7 +243,7 @@ defineOptions({ name: 'Xxx' })
 import { ref } from 'vue'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
-import { useEnumOption } from '@/composables/useEnumOption'
+import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import { usePageParams } from '@/composables/usePageParams'
 import modal from '@/utils/modal'
 import { xxxApi } from '../api'
@@ -264,7 +264,7 @@ const queryParams = ref<XxxQuery>({
   pageNum: 1 /* 当前页码 */,
   pageSize: 10 /* 每页条数 */,
   name: undefined /* 名称，模糊匹配 */,
-  status: -1 /* 状态筛选，-1 表示全部 */
+  status: -1 /* 状态筛选，-1 表示全部；清空筛选时请求层会剔除空值，后端按默认值 -1 处理 */
 })
 
 // 列表数据与勾选状态，勾选结果决定顶部按钮是否可用
@@ -278,11 +278,14 @@ const table = ref<TableState<Xxx>>({
   multiple: true // 删除按钮是否禁用
 })
 
+// 编辑表单默认值：新增初始值与每次重置共用（显式注解，拼错字段名会编译报错）
+const FORM_DEFAULTS: Readonly<XxxForm> = { status: 0 }
+
 // 编辑弹窗状态
 const formState = ref<FormState<XxxForm>>({
   visible: false, // 弹窗显隐
   title: '', // 弹窗标题
-  form: {}, // 表单数据
+  form: { ...FORM_DEFAULTS }, // 表单数据
   rules: {
     // 校验规则
     name: [{ required: true, message: t('common.requiredMsg', [t('business.xxx.name')]), trigger: 'blur' }]
@@ -303,6 +306,10 @@ function getList() {
     .then((response) => {
       table.value.list = response.data.data
       table.value.total = response.data.total
+      // 数据已刷新，勾选失效，复位顶部按钮状态
+      table.value.ids = []
+      table.value.single = true
+      table.value.multiple = true
     })
     .catch(() => {
       // 错误已由请求层提示，继续走到 finally 复位 loading
@@ -325,42 +332,30 @@ function resetQuery() {
   handleQuery()
 }
 
+// 枚举编码转文案：模板中直接用公共 enumTitle(statusOptions, code)，不在此重复实现 statusText
+
+// ---------------------- 数据操作（增删改） ----------------------
+
 /**
- * 同步表格勾选结果与顶部按钮可用状态
+ * 同步表格勾选结果，驱动批量修改/删除按钮状态
  *
  * @param selection 当前勾选行
  */
-function handleSelectionChange(selection: Xxx[]) {
+function syncSelection(selection: Xxx[]) {
   table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
 
-// ---------------------- 数据操作（增删改） ----------------------
-
-/**
- * 重置编辑表单
- *
- * resetFields 只会回到表单项首次挂载时的值，因此先复位校验，再覆盖为新增默认值
- */
-function reset() {
-  formRef.value?.resetFields()
-  formState.value.form = {
-    id: undefined,
-    name: undefined,
-    status: 0
-  }
+/** 重置编辑表单：重置表单数据为默认值 + 清除表单校验状态 */
+function resetForm() {
+  formState.value.form = { ...FORM_DEFAULTS }
+  formRef.value?.clearValidate()
 }
 
-/** 关闭弹窗，丢弃未提交的编辑内容 */
-function cancel() {
-  formState.value.visible = false
-  reset()
-}
-
-/** 打开新增弹窗，表单恢复为新增默认值 */
-function handleAdd() {
-  reset()
+/** 打开新增弹窗 */
+function openCreateForm() {
+  resetForm()
   formState.value.visible = true
   formState.value.title = t('common.titleAdd', [t('business.xxx.title')])
 }
@@ -370,31 +365,45 @@ function handleAdd() {
  *
  * @param row 行数据；顶部按钮调用时为空，此时回退到勾选行
  */
-function handleUpdate(row?: Xxx) {
-  const id = row?.id ?? table.value.ids[0]
-  // 顶部按钮未勾选或行数据缺少 id 时直接返回，避免无效请求
+function openEditForm(row?: Xxx) {
+  // 行按钮传行数据；顶部按钮取勾选的第一行
+  const id = row ? row.id : table.value.ids[0]
+  // 缺少 id 时直接返回，避免无效请求或误用勾选行
   if (id == null) return
-  reset()
-  xxxApi.load(id).then((response) => {
-    formState.value.form = response.data
-    formState.value.visible = true
-    formState.value.title = t('common.titleEdit', [t('business.xxx.title')])
-  })
+  resetForm()
+  xxxApi.load(id)
+    .then((response) => {
+      // 记录已被删除时不打开弹窗
+      if (!response.data) return
+      formState.value.form = response.data
+      formState.value.visible = true
+      formState.value.title = t('common.titleEdit', [t('business.xxx.title')])
+    })
+    .catch(() => {})
 }
 
-/** 校验通过后提交：有 id 走修改，否则新增 */
-function submitForm() {
+/** 校验通过后保存：有 id 走修改，否则新增 */
+function saveForm() {
   formRef.value?.validate((valid) => {
     // 校验失败时保持弹窗打开，等待用户修正
     if (!valid) return
     const isEdit = formState.value.form.id != null
     const request = isEdit ? xxxApi.update(formState.value.form) : xxxApi.insert(formState.value.form)
-    request.then(() => {
-      modal.msgSuccess(t(isEdit ? 'common.updateSuccess' : 'common.addSuccess'))
-      formState.value.visible = false
-      getList()
-    })
+    request
+      .then(() => {
+        modal.msgSuccess(t(isEdit ? 'common.updateSuccess' : 'common.addSuccess'))
+        closeForm()
+        // 新增后回到第一页，避免新记录不在当前页而看不到
+        if (!isEdit) queryParams.value.pageNum = 1
+        getList()
+      })
+      .catch(() => {})
   })
+}
+
+/** 关闭弹窗：重置统一交给 @closed，保证 X / ESC / 按钮三条路径一致 */
+function closeForm() {
+  formState.value.visible = false
 }
 
 /**
@@ -402,30 +411,26 @@ function submitForm() {
  *
  * @param row 行数据；顶部按钮调用时为空，此时删除勾选行
  */
-function handleDelete(row?: Xxx) {
-  const ids = row?.id ?? table.value.ids
-  // 无勾选记录时直接返回，避免弹出空删除确认框
-  if (ids == null || (Array.isArray(ids) && ids.length === 0)) return
+function removeXxx(row?: Xxx) {
+  // 行按钮只删当前行；顶部按钮删除勾选行
+  const ids = row ? (row.id != null ? [row.id] : []) : table.value.ids
+  // 无记录可删时直接返回，避免弹出空删除确认框
+  if (ids.length === 0) return
+  const confirmText = row
+    ? t('business.xxx.confirmDelete', [row.name ?? String(row.id)])
+    : t('business.xxx.confirmBatchDelete', [ids.length])
   modal
-    .confirm(t('business.xxx.confirmDelete', [Array.isArray(ids) ? ids.join(',') : ids]))
+    .confirm(confirmText)
     .then(() => xxxApi.delete(ids))
     .then(() => {
+      // 删除当前页最后一条时回退一页，避免停留在空页
+      if (table.value.list.length === ids.length && queryParams.value.pageNum > 1) {
+        queryParams.value.pageNum -= 1
+      }
       getList()
       modal.msgSuccess(t('common.deleteSuccess'))
     })
     .catch(() => {})
-}
-
-// ---------------------- 其他 ----------------------
-
-/**
- * 状态编码转枚举文案
- *
- * @param status 状态编码
- * @returns 状态文案；未匹配到枚举项时回退显示编码
- */
-function statusText(status: number) {
-  return statusOptions.value.find((item) => item.code === status)?.title ?? String(status)
 }
 
 // ---------------------- 页面初始化 ----------------------
@@ -438,14 +443,21 @@ getList()
 
 ### 7.4 Vue 页面约定
 
-- `script` 除基础 import 外按「响应式数据 → 分页检索 → 数据操作（增删改）→ 其他 → 页面初始化」分区，节顶注释统一为 `// ---------------------- {功能} ----------------------`；分页检索按「查询 → 搜索 → 重置 → 勾选」，数据操作按「重置/取消 → 新增 → 修改 → 提交 → 删除」排列，与样例保持一致。
+- `script` 除基础 import 外按「响应式数据 → 分页检索 → 数据操作（增删改）→ 页面初始化」分区，节顶注释统一为 `// ---------------------- {功能} ----------------------`；分页检索只放查询相关方法，数据操作按「勾选 → 重置 → 新增 → 修改 → 保存 → 关闭 → 删除」排列，与样例保持一致。
 - 响应式数据一律 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；搜索栏、表格状态、表单状态分别收敛为 `queryParams`、`table`、`formState`。
 - 列表固定经 `usePageParams(queryParams)()` 把 `pageNum/pageSize` 转 `offset/pagesize`；取 `response.data.data` 与 `response.data.total`，并在 `finally` 中复位 `loading`，避免请求失败后表格一直处于加载态。
 - 组件 import 名称与模板标签统一 PascalCase；业务页面按钮权限用 `v-hasPermi="['{module}:{business}:add']"`，平台内置页面按角色用 `v-hasRole="['admin']"`。
 - API 统一按 `{business}Api.method(...)` 调用，方法名与后端 Controller 保持一致；一个页面引入多个模块 API 时直接用命名空间区分，禁止用 import alias 改名。
-- 标准 CRUD 的编辑弹窗写在 `index.vue` 内，用 `formState` 管理显隐、标题、表单与校验；仅详情、多页签或复杂独立交互才拆到 `pages/` 下组件，拆出时才使用 `defineExpose({ open })` 或 `defineModel('visible')`。通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
-- 表单重置直接用已声明的模板 ref：`queryRef.value?.resetFields()` / `formRef.value?.resetFields()`；搜索栏与编辑表单都要声明 `const xxxRef = ref<FormInstance>()`，不要再包一层按字符串名取 `$refs` 的工具。
-- 编辑弹窗重置时**先** `formRef.value?.resetFields()`，**再**把 `formState.value.form` 覆盖为新增默认值：`resetFields()` 只会回到表单项首次挂载时的值，先赋值会被它覆盖回上一次编辑的数据。
+- 标准 CRUD 的编辑弹窗写在 `index.vue` 内，用 `formState` 管理显隐、标题、表单与校验；方法命名按意图：`openCreateForm` / `openEditForm` 打开、`saveForm` 保存、`closeForm` 关闭、`removeXxx` 删除，避免 `handleXxx` 与实际职责不符。通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
+- 搜索栏重置用 `queryRef.value?.resetFields()`；编辑表单重置直接替换 `formState.value.form` 为默认值，再 `formRef.value?.clearValidate()`。搜索栏与编辑表单都要声明 `const xxxRef = ref<FormInstance>()`，不要再包一层按字符串名取 `$refs` 的工具。
+- 编辑弹窗不要用 `resetFields()` 重置：它只会回到表单项首次挂载时的值（可能带回上次编辑数据），且不会重置未声明 `prop` 的字段（如状态单选）；直接替换表单对象并 `clearValidate()` 更准确。
+- 表单默认值收敛为模块内常量（如 `const FORM_DEFAULTS: Readonly<XxxForm> = { status: 0 }`），`formState.form` 初始值与 `resetForm` 共用，禁止在多处重复写默认字段；显式标注表单类型，拼错字段名会在编译期报错。
+- 枚举编码转文案统一用 `enumTitle(options, code)`（来自 `@/composables/useEnumOption`），模板中直接调用；禁止每个页面重复实现 `statusText` / `categoryText` 之类的查找函数。
+- 请求链必须闭合：`load` / `update` / `insert` 的 `then` 后补 `catch`（错误由请求层提示，不需要重复弹提示），避免未捕获 rejection。
+- 删除确认文案区分单条与批量：单条展示业务名称（回退主键），批量展示条数；删除成功后若当前页已空且非首页，先回退一页再查询。
+- 列表查询成功后显式复位勾选（`ids = []`、`single = true`、`multiple = true`），不依赖 el-table 的 `selection-change` 事件触发时机。
+- 列表首列「序号」展示数据库主键（`prop="id"`），保持与后端 ID 一致；不要用 `type="index"` 生成页内序号。
+- 编辑弹窗加 `:close-on-click-modal="false"`，避免误点遮罩丢失输入；重置统一挂 `<el-dialog @closed="resetForm">`，保证取消按钮 / X / ESC 三条关闭路径行为一致，`closeForm()` 只负责隐藏。新增成功后先把 `pageNum` 置回 1 再刷新，确保能看到新记录。
 
 ### 7.5 注释与 JSDoc
 
@@ -467,11 +479,11 @@ getList()
 
 ```ts
 /**
- * 同步表格勾选结果与顶部按钮可用状态
+ * 同步表格勾选结果，驱动批量修改/删除按钮状态
  *
  * @param selection 当前勾选行
  */
-function handleSelectionChange(selection: Xxx[]) { ... }
+function syncSelection(selection: Xxx[]) { ... }
 ```
 
 ## 八、菜单 / 权限
@@ -508,7 +520,7 @@ VALUES (1, @parentId, now(), now()),
 ## 九、枚举 / 字典
 
 - 业务枚举放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
-- 枚举下拉：`const { XxxStatusEnum: statusOptions } = useEnumOption('XxxStatusEnum')`，返回 `Record<string, Ref<EnumOption[]>>`，模板用 `statusOptions`，提交用 `item.code`。
+- 枚举下拉：`const { XxxStatusEnum: statusOptions } = useEnumOption('XxxStatusEnum')`，返回 `Record<string, Ref<EnumOption[]>>`，模板用 `statusOptions`，提交用 `item.code`；枚举编码转文案用 `enumTitle(statusOptions, code)`。
 - 数据字典：`const { sys_user_sex } = useDict('sys_user_sex')`；字段映射为 `{ label, value }`。
 
 ## 十、i18n（Vue）

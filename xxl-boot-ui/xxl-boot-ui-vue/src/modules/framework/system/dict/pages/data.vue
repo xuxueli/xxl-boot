@@ -28,7 +28,7 @@
     <!-- 字典项列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="t('common.serialNo')" type="index" align="center" width="60" />
+      <el-table-column :label="t('common.serialNo')" prop="id" align="center" width="80" />
       <el-table-column :label="t('system.dict.itemName')" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
       <el-table-column :label="t('system.dict.itemCode')" align="center" prop="code" :show-overflow-tooltip="true" />
       <el-table-column :label="t('common.status')" align="center" width="80">
