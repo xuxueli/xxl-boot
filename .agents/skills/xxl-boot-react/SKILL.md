@@ -1,22 +1,35 @@
 ---
 name: xxl-boot-react
-description: 在 XXL-Boot 前后端分离的 React 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-react 端口 4000，Ant Design ProTable + TypeScript）下新增或改造业务模块。当任务涉及修改 xxl-boot-api/src/main/java/com/xxl/boot/api/business 或 xxl-boot-ui-react/src/modules 时加载本技能。
+description: 在 XXL-Boot 前后端分离的 React 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-react 端口 4000，Ant Design ProTable + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-api/.../business、修改 xxl-boot-ui-react/src/modules、编辑 .tsx 页面、使用 ProTable/usePermission/useEnumOption。Vue 任务改用 xxl-boot-vue；单体任务改用 xxl-boot-monolith。
 ---
 
-# XXL-Boot · React 分离模式开发 Skill
+# XXL-Boot · React 分离模式开发 SKILL
 
-目标：把 `xxl-boot-api` + `xxl-boot-ui-react` 当作脚手架，规范、快速地新增/改造业务模块。本 Skill 只写 React 模式差异；跨模式共性（需求落盘、数据库、接口通道、i18n 原则、验收）见仓库根 `AGENTS.md`。
+> 适用范围：`xxl-boot-api` + `xxl-boot-ui-react` 的前后端分离业务开发。公共契约（设计原则、通用约定、需求落盘、接口通道、数据库/菜单模型、验收）见仓库根 `AGENTS.md`；本文件只维护 React 模式差异。
 
-## 何时使用
+## 一、模式概览
+
+| 项 | 内容 |
+|---|---|
+| 运行模式 | 前后端分离 · React |
+| 组成 | `xxl-boot-api` + `xxl-boot-ui/xxl-boot-ui-react` |
+| 端口 | api `8090`、react `4000`（Vite 代理 `/api` → 8090） |
+| 技术栈 | Spring Boot + MyBatis；React 19 + Ant Design ProTable + TypeScript + Vite |
+| 登录态 | XXL-SSO，登录态存 Redis（需先启动 Redis） |
+| 后端落位 | Java `business/{module}/{business}`；Mapper XML `resources/mapper/business/{module}/{business}` |
+| 前端落位 | `src/modules/business/{module}/{business}/{types,api,pages}` |
+| 数据库脚本 | `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql` |
+
+## 二、何时使用
 
 - 前后端分离，前端是 React（Ant Design ProTable + TS）。
 - 新增带列表页的标准 CRUD 业务模块。
 - 只改后端接口、不动前端时同样适用（取「后端落位」一节）。
-- 前端是 Vue 用 `xxl-boot-vue`；改 `xxl-boot-admin` 用 `xxl-boot-monolith`。
+- 不适用：前端是 Vue 用 `xxl-boot-vue`；改 `xxl-boot-admin` 用 `xxl-boot-monolith`。
 
 React 与 Vue 模式**共用同一个后端 `xxl-boot-api`**，后端落位完全一致。
 
-## 前置：工程结构速览
+## 三、工程结构速览
 
 ```
 xxl-boot-api/src/main
@@ -33,9 +46,10 @@ xxl-boot-ui/xxl-boot-ui-react/src
 └── types/index.d.ts                                       ← API.Response / API.PageModel 等全局类型
 ```
 
-## 实现原则（React）
+## 四、实现原则（React）
 
 遵循 `AGENTS.md`「设计原则」与「通用约定」，React 侧落地：
+
 - 优先复用 `@/hooks`、`@/components`、`@/utils/request`；同一逻辑第三次出现才新增 Hook，不提前封装。
 - 列表页用 `ProTable` 直接编排；复杂表单/详情拆到 `pages/` 下独立组件，避免请求、表格、弹窗状态混在一个文件。
 - 状态保持局部 `useState` + `App.useApp()`；不引入额外状态库或第二套请求封装。
@@ -54,20 +68,15 @@ export default function Demo({ id, onClose }: DemoProps) {
 
   同类写法一并排除：`React.FC`/`FunctionComponent`（类型别名，表达不了泛型）、`forwardRef`（React 19 起 `ref` 可直接作为 props，已无必要）、`propTypes` 与函数组件的 `defaultProps`（React 19 已移除，改用 TS 类型与解构默认值）；类组件仅用于错误边界等无 Hook 等价物的场景。`React.ReactNode`/`ComponentType` 等命名空间类型用于 props 与类型约束属正常，`React.memo`/`lazy` 属运行时优化，不受此限。
 
-## 初始化与启动
+## 五、初始化与启动
 
-- 数据库：按 `AGENTS.md`「SQL 执行规范」执行 `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql`。
+- 数据库：按 `AGENTS.md`「SQL 执行规范」依次执行 `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql`。
+- 数据源：`xxl-boot-api/src/main/resources/application.properties`（默认 `127.0.0.1:3306/xxl_boot`，`root/root_pwd`）；默认账号 `admin`。
 - 后端：`cd xxl-boot-api && mvn spring-boot:run`（8090，Redis 需先启动）。
-- 前端：`cd xxl-boot-ui/xxl-boot-ui-react && npm i && npm run dev`（4000，代理 `/api` → 8090）。
-- 类型检查/构建：`npm run type-check` / `npm run build`。
+- 前端：`cd xxl-boot-ui/xxl-boot-ui-react && npm i && npm run dev`（4000）。
+- 编译/类型检查/构建：`mvn -q compile`（`xxl-boot-api` 下）/ `npm run type-check` / `npm run build`（前端目录下）。
 
-## 执行要点
-
-- 本模式端口：api `8090`、react `4000`。
-- 后端落 `business/{module}/{business}`，Mapper XML 落 `resources/mapper/business/{module}/{business}/`，前端落 `modules/business/{module}/{business}/`。
-- 页面必须是 `pages/index.tsx`（`loadView` 只识别该路径）；菜单 SQL、权限写法与 i18n 按本 Skill 后续章节执行；需求落盘与标准流程按 `AGENTS.md`。
-
-## 后端落位（与 Vue 共用）
+## 六、后端落位（与 Vue 共用）
 
 以业务 `Demo`、模块 `demo`、接口路径 `/demo/demo` 为例，包名 `com.xxl.boot.api.business.demo.demo`：
 
@@ -81,12 +90,7 @@ export default function Demo({ id, onClose }: DemoProps) {
 
 接口契约（路径、参数通道、返回结构、校验、方法顺序）按 `AGENTS.md`「后端通用规范」；本模式只需保证包路径与 Mapper XML 双层镜像。
 
-### 代码生成器产物的 React 专属修正
-
-- React 模板把新增/修改弹窗直接写在 `pages/index.tsx` 内的 `Modal + Form` 中；如需独立弹窗，可拆为 `pages/DemoFormModal.tsx`（推荐 `ModalForm`）。
-- 其余固定缺口（查询条件、校验、i18n、树表）按 `AGENTS.md`「代码生成器」逐项补齐。
-
-## 前端落位（3 文件 + 页内组件）
+## 七、前端落位（3 文件 + 页内组件）
 
 以 `/demo/demo` 为例：
 
@@ -99,7 +103,7 @@ export default function Demo({ id, onClose }: DemoProps) {
 
 页面、接口、类型同模块聚合；**React `loadView` 只识别 `pages/index.tsx`**，即业务菜单 `url='/demo/demo'` 必须对应 `pages/index.tsx`（子页面可放 `pages/xxx/index.tsx`，菜单 `url` 写成 `/demo/demo/xxx`）。
 
-### 1. types：`types/index.d.ts`
+### 7.1 types：`types/index.d.ts`
 
 ```ts
 /**
@@ -119,7 +123,7 @@ declare namespace API {
 }
 ```
 
-### 2. api：`api/index.ts`
+### 7.2 api：`api/index.ts`
 
 ```ts
 import { request } from '@/utils/request';
@@ -178,7 +182,7 @@ export async function delDemo(ids: number[]) {
 }
 ```
 
-### 3. 页面：`pages/index.tsx`
+### 7.3 页面：`pages/index.tsx`
 
 ```tsx
 /**
@@ -327,7 +331,7 @@ const DemoList = () => {
 export default DemoList;
 ```
 
-### 4. 表单弹窗：`pages/DemoFormModal.tsx`（推荐）
+### 7.4 表单弹窗：`pages/DemoFormModal.tsx`（推荐）
 
 ```tsx
 /**
@@ -401,7 +405,7 @@ const DemoFormModal = ({
 export default DemoFormModal;
 ```
 
-### React 页面约定
+### 7.5 React 页面约定
 
 - 列表页基于 `ProTable + PageContainer`；`request` 直接调用 API 并返回 `{ data, total, success }`，**不要引入 `ahooks/useRequest`**（项目未安装该依赖）。
 - 类型统一 `declare namespace API { type Xxx = {...} }`；全局类型 `API.Response/API.PageModel` 已由 `types/index.d.ts` 合并。
@@ -412,15 +416,9 @@ export default DemoFormModal;
 - 删除确认用 `App.useApp().modal.confirm`（`onOk` 内发请求），提示用 `App.useApp().message`；成功后 `actionRef.current?.reload()`。
 - 弹窗/抽屉用受控 `open` + `onClose`，展示数据通过 props 传入；不用 ref 暴露 `open()` 等命令式方法。
 
-### i18n（React）
+## 八、菜单 / 权限
 
-- 文案文件：`src/i18n/locales/{zh,en}.json`（单一文件，按域名节点分区，`business.*` 放最后）。
-- 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 受 `MessageKey` 类型约束，先补文案再引用。
-- 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`，antd 语言随当前语言切换。
-
-## 菜单 / 权限注册 SQL
-
-与 Vue 模式一致（前端菜单同样由 `xxl_boot_resource` 的 `url` 驱动，React `loadView` 映射到 `pages/{url}/index.tsx`）：
+与 Vue 模式一致（前端菜单同样由 `xxl_boot_resource` 的 `url` 驱动，React `loadView` 映射到 `pages/index.tsx`）：
 
 ```sql
 SET NAMES utf8mb4;
@@ -444,7 +442,23 @@ VALUES (1, @parentId, now(), now()),
        (1, @btnDelId, now(), now());
 ```
 
-## 内置代码生成器（React）
+- 权限标识统一 `{module}:{business}:add|edit|remove`，与 `hasPermi` 保持一致；新菜单必须在 `xxl_boot_role_res` 授权。
+- 页面必须是 `pages/index.tsx`（`loadView` 只识别该路径）；子页面放 `pages/xxx/index.tsx`，菜单 `url` 写 `/demo/demo/xxx`。**无需改路由代码。**
+
+## 九、枚举 / 字典
+
+- 业务枚举放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
+- 枚举下拉：`useEnumOption('XxxEnum')` 返回 `EnumOption[]`，配合 `toValueEnum`（表格列）/`toSelectOptions`（Select/ProFormSelect）。
+- 数据字典：平台无 React 版 `useDict`，用 `loadDictItem` + `useEffect/useState` 或 ProForm 的 `request` 加载 options。
+
+## 十、i18n（React）
+
+- 文案文件：`src/i18n/locales/{zh,en}.json`（单一文件，按域名节点分区，`business.*` 放最后）。
+- 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 受 `MessageKey` 类型约束，先补文案再引用。
+- 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`，antd 语言随当前语言切换。
+- 新增业务文案 zh/en 成对提交，页面禁止硬编码中文（注释除外）。
+
+## 十一、代码生成器（React）
 
 后台「工具-代码生成」或接口：
 
@@ -461,10 +475,14 @@ POST /tool/codegen/createTable
 - 前端：`react/business/{module}/{business}/{types,api,pages}`，页面为 `pages/index.tsx`；
 - `tplCategory=tree` 时前端出 `index-tree.tsx`。
 
-> 生成代码默认硬编码中文、内联 `Modal + Form`，且没有 `FormModal` 拆分；解压后必须做 i18n 迁移、查询条件补齐与组件复核。
+> 解压后按项目目录合并，并做 React 专属修正：
+> - 模板把新增/修改弹窗直接写在 `pages/index.tsx` 内的 `Modal + Form`；如需独立弹窗，拆为 `pages/DemoFormModal.tsx`（推荐 `ModalForm`）；
+> - 生成代码默认硬编码中文，需迁移到 i18n；查询条件与组件写法按本 SKILL 复核；
+> - 其余固定缺口（查询条件、校验、树表）按 `AGENTS.md`「代码生成器」逐项补齐。
 
-## 校验清单
+## 十二、校验清单
 
+- [ ] 已加载 `xxl-boot-react`，且未混用 Vue/单体写法。
 - [ ] `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md` 六大块与 SQL 已落盘并同步（模板见 `AGENTS.md`「需求落盘」）。
 - [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
 - [ ] 前端 types 用 `declare namespace API`；api 返回 `request<API.Response<API.PageModel<T>>>`，`current/pageSize` 已转 `offset/pagesize`。
@@ -475,7 +493,7 @@ POST /tool/codegen/createTable
 - [ ] SQL 按 `AGENTS.md`「SQL 执行规范」执行，中文无乱码。
 - [ ] 联调：列表/新增/修改/删除/搜索可用，无权限按钮隐藏，空参数后端友好提示。
 
-## 参考文件
+## 十三、参考文件
 
 - 后端直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/java/*.ftl`
 - React 直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/react/*.ftl`

@@ -1,20 +1,33 @@
 ---
 name: xxl-boot-vue
-description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-vue 端口 3000，Element Plus + TypeScript）下新增或改造业务模块。当任务涉及修改 xxl-boot-api/src/main/java/com/xxl/boot/api/business 或 xxl-boot-ui-vue/src/modules 时加载本技能。
+description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-api 端口 8090 + xxl-boot-ui-vue 端口 3000，Element Plus + TypeScript）下新增或改造业务模块时加载。触发信号：修改 xxl-boot-api/.../business、修改 xxl-boot-ui-vue/src/modules、编辑 .vue 页面、使用 usePageParams/useEnumOption/useDict。React 任务改用 xxl-boot-react；单体任务改用 xxl-boot-monolith。
 ---
 
-# XXL-Boot · Vue3 分离模式开发 Skill
+# XXL-Boot · Vue3 分离模式开发 SKILL
 
-目标：把 `xxl-boot-api` + `xxl-boot-ui-vue` 当作脚手架，规范、快速地新增/改造业务模块。本 Skill 只写 Vue 模式差异；跨模式共性（需求落盘、数据库、接口通道、i18n 原则、验收）见仓库根 `AGENTS.md`。
+> 适用范围：`xxl-boot-api` + `xxl-boot-ui-vue` 的前后端分离业务开发。公共契约（设计原则、通用约定、需求落盘、接口通道、数据库/菜单模型、验收）见仓库根 `AGENTS.md`；本文件只维护 Vue 模式差异。
 
-## 何时使用
+## 一、模式概览
+
+| 项 | 内容 |
+|---|---|
+| 运行模式 | 前后端分离 · Vue3 |
+| 组成 | `xxl-boot-api` + `xxl-boot-ui/xxl-boot-ui-vue` |
+| 端口 | api `8090`、vue `3000`（Vite 代理 `/api` → 8090） |
+| 技术栈 | Spring Boot + MyBatis；Vue3 + Element Plus + TypeScript + Vite |
+| 登录态 | XXL-SSO，登录态存 Redis（需先启动 Redis） |
+| 后端落位 | Java `business/{module}/{business}`；Mapper XML `resources/mapper/business/{module}/{business}` |
+| 前端落位 | `src/modules/business/{module}/{business}/{types,api,pages}` |
+| 数据库脚本 | `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_vue.sql` |
+
+## 二、何时使用
 
 - 前后端分离，前端是 Vue3（Element Plus + TS）。
 - 新增带列表页的标准 CRUD 业务模块。
 - 只改后端接口、不动前端时同样适用（取「后端落位」一节）。
-- 前端是 React 用 `xxl-boot-react`；改 `xxl-boot-admin` 用 `xxl-boot-monolith`。
+- 不适用：前端是 React 用 `xxl-boot-react`；改 `xxl-boot-admin` 用 `xxl-boot-monolith`。
 
-## 前置：工程结构速览
+## 三、工程结构速览
 
 ```
 xxl-boot-api/src/main
@@ -31,29 +44,25 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 └── types/index.ts                                         ← Response / PageModel / ListQuery / TableState / FormState…
 ```
 
-后端与 React 模式**完全共用**，落位规则一致；前端差异见本 Skill。
+后端与 React 模式**完全共用**，落位规则一致；前端差异见本 SKILL。
 
-## 实现原则（Vue）
+## 四、实现原则（Vue）
 
 遵循 `AGENTS.md`「设计原则」与「通用约定」，Vue 侧落地：
+
 - 优先复用 `@/composables`、`@/components`、`@/utils/modal`；同一逻辑第三次出现才新增 Composable，不提前封装。
 - 列表页只负责编排；复杂表单、详情、多页签拆到 `pages/` 下独立组件，避免渲染/交互/状态混在一个文件。
 - 状态统一 `ref` + `queryParams/table/formState` 收敛；不引入第二套状态或弹窗方案。
 
-## 初始化与启动
+## 五、初始化与启动
 
-- 数据库：按 `AGENTS.md`「SQL 执行规范」执行 `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_vue.sql`。
+- 数据库：按 `AGENTS.md`「SQL 执行规范」依次执行 `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_vue.sql`。
+- 数据源：`xxl-boot-api/src/main/resources/application.properties`（默认 `127.0.0.1:3306/xxl_boot`，`root/root_pwd`）；默认账号 `admin`。
 - 后端：`cd xxl-boot-api && mvn spring-boot:run`（8090，Redis 需先启动）。
-- 前端：`cd xxl-boot-ui/xxl-boot-ui-vue && npm i && npm run dev`（3000，代理 `/api` → 8090）。
-- 类型检查/构建：`npm run type-check` / `npm run build`。
+- 前端：`cd xxl-boot-ui/xxl-boot-ui-vue && npm i && npm run dev`（3000）。
+- 编译/类型检查/构建：`mvn -q compile`（`xxl-boot-api` 下）/ `npm run type-check` / `npm run build`（前端目录下）。
 
-## 执行要点
-
-- 本模式端口：api `8090`、vue `3000`。
-- 后端落 `business/{module}/{business}`，Mapper XML 落 `resources/mapper/business/{module}/{business}/`，前端落 `modules/business/{module}/{business}/`。
-- 菜单 SQL、页面定位与权限写法按本 Skill 后续章节执行；需求落盘与标准流程按 `AGENTS.md`。
-
-## 后端落位（与 React 共用）
+## 六、后端落位（与 React 共用）
 
 以业务 `Demo`、模块 `demo`、接口路径 `/demo/demo` 为例，包名 `com.xxl.boot.api.business.demo.demo`：
 
@@ -67,12 +76,7 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 
 接口契约（路径、参数通道、返回结构、校验、方法顺序）按 `AGENTS.md`「后端通用规范」；本模式只需保证包路径与 Mapper XML 双层镜像。
 
-### 代码生成器产物的 Vue 专属修正
-
-- Vue 模板会生成「导出」按钮与 `exportDemo` 接口，但后端默认没有 `export` 接口：要么补实现，要么删按钮/API。
-- 其余固定缺口（查询条件、校验、i18n、树表）按 `AGENTS.md`「代码生成器」逐项补齐。
-
-## 前端落位（3 文件 + 页内组件）
+## 七、前端落位（3 文件 + 页内组件）
 
 以 `/demo/demo` 为例：
 
@@ -85,7 +89,7 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 
 页面、接口、类型同模块聚合，**没有 barrel 登记**；全局基础类型统一从 `@/types` 引用。
 
-### 1. types：`types/index.ts`
+### 7.1 types：`types/index.ts`
 
 ```ts
 import type { ListQuery } from '@/types'
@@ -120,7 +124,7 @@ export interface DemoForm {
 export type DemoListQuery = ListQuery<DemoQuery>
 ```
 
-### 2. api：`api/index.ts`
+### 7.2 api：`api/index.ts`
 
 ```ts
 import { request } from '@/utils/request'
@@ -173,7 +177,7 @@ export function delDemo(id: number | number[]): Promise<Response<unknown>> {
 }
 ```
 
-### 3. 页面：`pages/index.vue`（script 骨架）
+### 7.3 页面：`pages/index.vue`（script 骨架）
 
 模板部分：搜索表单 + 操作按钮（`v-hasPermi`） + `<el-table>` + `<Pagination>` + `<el-dialog>`；完整范例先看 `modules/framework/system/message/pages/index.vue`。
 
@@ -301,7 +305,7 @@ getList()
 </script>
 ```
 
-### Vue 页面约定
+### 7.4 Vue 页面约定
 
 - `script` 除基础 import 外按「ref data → fun → page init」三节组织，节顶注释为 `/* --- {功能，前后33个-} --- */`。
 - 响应式数据一律 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；搜索栏、表格状态、表单状态分别收敛为 `queryParams`、`table`、`formState`。
@@ -309,13 +313,7 @@ getList()
 - 组件 import 名称与模板标签统一 PascalCase；按钮权限 `v-hasPermi="['demo:demo:add']"`，角色权限 `v-hasRole="['admin']"`。
 - 表单弹窗推荐 `defineModel('visible')` + 模板 `v-model` 直连；通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
 
-### i18n（Vue）
-
-- 文案文件：`src/i18n/locales/{zh,en}.json`（单一文件，按域名节点分区，`business.*` 放最后）。
-- 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 受 `MessageKey` 类型约束，先补文案再引用。
-- 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`，Element Plus 语言随当前语言切换。
-
-## 菜单 / 权限注册 SQL
+## 八、菜单 / 权限
 
 ```sql
 SET NAMES utf8mb4;
@@ -343,15 +341,23 @@ VALUES (1, @parentId, now(), now()),
        (1, @btnDelId, now(), now());
 ```
 
-页面文件 `src/modules/business/{module}/{business}/pages/index.vue` 建好后，`loadView` 按 `url` 自动映射；也支持 `pages/{xxx}.vue`（此时菜单 `url` 写到 `/{module}/{business}/{xxx}`）。**无需改路由代码。**
+- 页面文件 `src/modules/business/{module}/{business}/pages/index.vue` 建好后，`loadView` 按 `url` 自动映射；也支持 `pages/{xxx}.vue`（此时菜单 `url` 写到 `/{module}/{business}/{xxx}`）。**无需改路由代码。**
+- 权限标识统一 `{module}:{business}:add|edit|remove`，与按钮 `v-hasPermi` 保持一致；新菜单必须在 `xxl_boot_role_res` 授权。
 
-## 枚举 / 字典
+## 九、枚举 / 字典
 
 - 业务枚举放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
 - 枚举下拉：`const { DemoStatusEnum: statusOptions } = useEnumOption('DemoStatusEnum')`，返回 `Record<string, Ref<EnumOption[]>>`，模板用 `statusOptions`，提交用 `item.code`。
 - 数据字典：`const { sys_user_sex } = useDict('sys_user_sex')`；字段映射为 `{ label, value }`。
 
-## 内置代码生成器（Vue）
+## 十、i18n（Vue）
+
+- 文案文件：`src/i18n/locales/{zh,en}.json`（单一文件，按域名节点分区，`business.*` 放最后）。
+- 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 受 `MessageKey` 类型约束，先补文案再引用。
+- 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`，Element Plus 语言随当前语言切换。
+- 新增业务文案 zh/en 成对提交，页面禁止硬编码中文（注释除外）。
+
+## 十一、代码生成器（Vue）
 
 后台「工具-代码生成」或接口：
 
@@ -368,10 +374,13 @@ POST /tool/codegen/createTable
 - 前端：`vue/business/{module}/{business}/{types,api,pages}`；
 - 字段 `id` 是强依赖；`tplCategory=tree` 时前端出 `index-tree.vue`。
 
-> 解压后按项目目录合并；生成代码的补齐项见「Vue 专属修正」。
+> 解压后按项目目录合并，并做 Vue 专属修正：
+> - 模板会生成「导出」按钮与 `exportDemo` 接口，但后端默认没有 `export` 接口：要么补实现，要么删按钮/API；
+> - 其余固定缺口（查询条件、校验、i18n、树表）按 `AGENTS.md`「代码生成器」逐项补齐。
 
-## 校验清单
+## 十二、校验清单
 
+- [ ] 已加载 `xxl-boot-vue`，且未混用 React/单体写法。
 - [ ] `xxl-boot-spec/{yyyyMMdd}-{business}/` 已创建，`plan.md` 六大块与 SQL 已落盘并同步（模板见 `AGENTS.md`「需求落盘」）。
 - [ ] 后端 `mvn -q compile` 通过；接口契约与代码生成补齐项符合 `AGENTS.md`「后端通用规范」「代码生成器」。
 - [ ] 前端 types 四件（实体/Query/Form/ListQuery）齐全，api 返回 `Promise<Response<PageModel<T>>>`，页面三段式 + `ref` 收敛 + `usePageParams`。
@@ -380,7 +389,7 @@ POST /tool/codegen/createTable
 - [ ] SQL 按 `AGENTS.md`「SQL 执行规范」执行，中文无乱码。
 - [ ] 联调：列表/新增/修改/删除/搜索可用，无权限按钮隐藏，空参数后端友好提示。
 
-## 参考文件
+## 十三、参考文件
 
 - 后端直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/java/*.ftl`
 - Vue 直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/vue3/*.ftl`

@@ -583,7 +583,7 @@ XXL-BOOT 三种运行模式（单体、前后端分离 Vue、前后端分离 Rea
     └── xxl-boot-monolith   # 单体模式标准作业 Skill
 ```
 
-每个 SKILL 内置：工程结构说明、后端/前端落位清单、代码骨架模板、菜单权限 SQL 模板、校验清单，以及参考样例文件，保证 AI 产物与平台规范严格一致。
+每个 SKILL 内置：模式概览与工程结构、后端/前端落位清单、代码骨架模板、菜单权限 SQL 模板、i18n/枚举/代码生成器修正、校验清单与参考样例文件，保证 AI 产物与平台规范严格一致。仓库根 `AGENTS.md` 仅保留公共契约，并提供「模式识别 → 加载对应 SKILL」的加载约定。
 
 以 opencode + `xxl-boot-vue` 为例，完整开发一个「产品信息管理」业务模块（维护产品名称、介绍、生产时间等）的实操演示如下：
 
@@ -607,7 +607,7 @@ Skill 强制 AI 动手前先完成需求澄清，就模块/业务命名、核心
 
 #### 第三步：开发编排与自动执行
 
-AI 按 SKILL 标准流程输出开发 TODO 列表，依次启动“代码现状分析 → 业务模型与菜单/授权 SQL 生成 → 后端 7 件套与状态枚举开发 → 前端 3 文件生成 + barrel 设置 → 前后端工程编辑 → 启动 api 与前端项目，使用脚本本地自动联调”：
+AI 按 SKILL 标准流程输出开发 TODO 列表，依次启动“代码现状分析 → 业务模型与菜单/授权 SQL 生成 → 后端 7 件套与状态枚举开发 → 前端 3 文件生成与页面落位 → 前后端工程编辑 → 启动 api 与前端项目，使用脚本本地自动联调”：
 
 <p align="center"><img src="https://www.xuxueli.com/project/static/xxl-boot/images/skill/img_skill_4.png" width="900"/></p>
 
@@ -765,7 +765,7 @@ VALUES (1, @parentId, now(), now()), (1, @parentId+1, now(), now()), (1, @parent
 xxl-boot/
 │
 ├── pom.xml                                    # 父工程Maven配置：统一管理模块及依赖版本
-├── AGENTS.md                                  # 开发规范与 Skill 使用指南
+├── AGENTS.md                                  # 公共开发规范与 SKILL 加载入口
 ├── .agents/skills/                            # 【AI 开发 SKILL 目录】
 │   ├── xxl-boot-monolith/                     # 单体模式开发 Skill
 │   ├── xxl-boot-vue/                          # 前后端分离（Vue）开发 Skill
@@ -986,13 +986,15 @@ public @interface Permission {
 └── xxl-boot-react/SKILL.md         # React 分离模式：xxl-boot-api + xxl-boot-ui-react 标准作业
 ```
 
-每个 SKILL 均内置如下内容，保证 AI 产物与人工/生成器产物等价：
+每个 SKILL 按统一结构组织，保证 AI 产物与人工/生成器产物等价：
 
-- 工程结构速览与通用规范引用；
+- 模式概览与工程结构速览（端口、技术栈、登录态、业务落位）；
 - 后端落位清单（实体 / Mapper / Service / Controller 件套、包路径、方法顺序、分页与校验约定）；
-- 前端落位清单（Vue：types/api/view；React：types/services/pages）与列表页代码骨架；
-- 菜单权限 SQL 模板与「校验清单」；
-- 参考样例文件绝对路径。
+- 前端落位清单（Vue：types/api/pages；React：types/api/pages）与列表页代码骨架；
+- 菜单权限 SQL 模板、i18n、枚举/字典、代码生成器专属修正与「校验清单」；
+- 参考样例文件路径。
+
+`AGENTS.md` 仅保留跨模式公共契约（设计原则、通用约定、接口通道、数据库/菜单模型、验收），并提供「模式识别 → 加载对应 SKILL」的加载约定；模式专属内容全部下沉至 SKILL，两处不重复维护。
 
 工作原理：AI 编程助手检测到任务与某运行模式匹配时自动加载对应 SKILL，按 “建表 → 后端 → 前端 → 菜单权限 → 验证” 标准流程直生代码并落位，最后按校验清单自检交付。SKILL 缺省策略为按内置代码生成模板直生等价代码，同时提示用户可到后台走生成器，两种产出完全一致、可无缝切换。详见 “4.1 方式三：AI + SKILL 驱动开发”。
 
@@ -1151,7 +1153,7 @@ public @interface Permission {
 
 ### 版本 v2.2.1 Release Notes[ING]
 - 1、【优化】前端组件规范重构：标准化前端组件写法，类似 React.FC 等组件写法升级普通函数组件写法，提升组件可维护性；
-- 2、【规范】研发SKILL/Agent.md 规范化：标准化研发SKILL/Agent.md 规范，便于AI编程助手识别加载；Agent.md 仅保留公共部分，不同开发模式具体内容下沉至 SKILL。
+- 2、【规范】AI辅助编程规范化：标准化 AGENTS.md/研发 SKILL，便于AI编程助手识别加载；AGENTS.md 仅保留公共部分，不同开发模式具体内容下沉至 SKILL。
 - 3、【升级】升级多项依赖至较新版本。
 - 4、【重构】菜单API重构：与UI库解除耦合，适配逻辑在前端处理；
 - 5、【TODO】单模块代码规范化：规范并简化模块代码，包括：筛选、列表、增改删、其他操作；
