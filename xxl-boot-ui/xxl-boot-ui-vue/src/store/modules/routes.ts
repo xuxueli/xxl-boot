@@ -5,7 +5,9 @@
 import { defineStore } from 'pinia'
 import { markRaw } from 'vue'
 import { constantRoutes } from '@/router'
-import { getRouters } from '@/modules/framework/auth/api'
+import { getMenus } from '@/modules/framework/auth/api'
+import type { MenuNode } from '@/types'
+import { isHttp } from '@/utils/validate'
 import Layout from '@/layout/index.vue'
 import { InnerLink, ParentView } from '@/layout/components'
 
@@ -61,11 +63,12 @@ const useRoutesStore = defineStore('routes', {
   },
   actions: {
     /**
-     * 初始化：请求后端菜单 → 转换组件映射 → 写入 dynamicRoutes，同时缓存拍平路由
+     * 初始化：请求后端菜单 → 适配为前端路由 → 转换组件映射 → 写入 dynamicRoutes，同时缓存拍平路由
      */
     initRoutes(roles?: string[]) {
-      return getRouters().then((res) => {
-        const raw = res.data
+      return getMenus().then((res) => {
+        // 后端纯菜单数据 → 前端内部路由结构
+        const raw = adaptMenusToRoutes(res.data || [])
 
         // 未拍平：保留树结构，供菜单渲染
         const dynamicRoutes = transformRoutes(JSON.parse(JSON.stringify(raw)))
@@ -85,6 +88,64 @@ const useRoutesStore = defineStore('routes', {
     }
   }
 })
+
+/**
+ * 适配菜单：后端纯菜单树 → 前端内部路由结构
+ *   - 目录：根级用 Layout、非根级用 ParentView，递归 children；
+ *   - 菜单：url 同时作为路由 path 与页面定位 key；
+ *   - 根级菜单：包装为 Layout + 单子节点，兼容侧栏叶子菜单逻辑；
+ *   - 外链：component 用 InnerLink 占位，注入路由时跳过；
+ *   - visible：0-显示、1-隐藏，转换为前端 hidden。
+ */
+function adaptMenusToRoutes(menuList: MenuNode[], depth = 0): RouteData[] {
+  return menuList.map((menu) => {
+    const hidden = menu.visible === 1
+    const url = menu.url || ''
+    const meta = { title: menu.name, icon: menu.icon }
+
+    // 目录：按层级选择容器组件
+    if (menu.type === 0) {
+      const route: RouteData = {
+        name: `menu_${menu.id}`,
+        path: url,
+        hidden,
+        meta,
+        component: depth === 0 ? 'Layout' : 'ParentView'
+      }
+      if (menu.children?.length) {
+        route.children = adaptMenusToRoutes(menu.children, depth + 1)
+      }
+      return route
+    }
+
+    // 根级菜单：包装为 Layout + 单子节点，供侧栏提升为叶子菜单
+    if (depth === 0) {
+      return {
+        name: `menu_${menu.id}`,
+        path: url,
+        hidden,
+        component: 'Layout',
+        children: [
+          {
+            name: `child_menu_${menu.id}`,
+            path: url,
+            component: isHttp(url) ? 'InnerLink' : url,
+            meta
+          }
+        ]
+      }
+    }
+
+    // 普通菜单：外链用 InnerLink，内部页面由 url 定位
+    return {
+      name: `menu_${menu.id}`,
+      path: url,
+      hidden,
+      component: isHttp(url) ? 'InnerLink' : url,
+      meta
+    }
+  })
+}
 
 /**
  * 首个标签 affix 固定：首个路由标记 affix，作为 TagsView 固定首页标签

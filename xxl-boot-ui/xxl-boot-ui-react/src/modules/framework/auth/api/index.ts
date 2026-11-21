@@ -58,11 +58,11 @@ export async function getCodeImg() {
 }
 
 /**
- * 获取当前用户路由配置。
- * @returns 路由树数据
+ * 获取当前用户菜单树。
+ * @returns 纯业务菜单数据
  */
-export async function getRouters() {
-  return request<API.Response<API.RouterVo[]>>('/getRouters', {
+export async function getMenus() {
+  return request<API.Response<API.MenuNode[]>>('/getMenus', {
     method: 'GET',
   });
 }

@@ -4,6 +4,7 @@ import com.xxl.boot.api.framework.constant.enums.ResourceStatuEnum;
 import com.xxl.boot.api.framework.constant.enums.ResourceTypeEnum;
 import com.xxl.boot.api.framework.mapper.authz.ResourceMapper;
 import com.xxl.boot.api.framework.mapper.authz.RoleResMapper;
+import com.xxl.boot.api.framework.model.dto.MenuVO;
 import com.xxl.boot.api.framework.model.dto.ResourceDTO;
 import com.xxl.boot.api.framework.model.entity.Resource;
 import com.xxl.boot.api.framework.service.ResourceService;
@@ -149,6 +150,40 @@ public class ResourceServiceImpl implements ResourceService {
 	@Override
 	public List<Resource> queryResourceByUserid(int userId, int visible) {
         return resourceMapper.queryResourceByUserId(userId, ResourceStatuEnum.NORMAL.getCode(), visible);
+	}
+
+	@Override
+	public List<MenuVO> queryMenuTreeByUserId(int userId) {
+		// 查询已授权资源（visible=-1 不过滤隐藏菜单，前端仍需注册对应路由）
+		List<Resource> resourceList = queryResourceByUserid(userId, -1);
+
+		// 排除按钮，按 parentId 分组
+		Map<Integer, List<Resource>> parentMap = new HashMap<>();
+		for (Resource resource : resourceList) {
+			if (resource.getType() == ResourceTypeEnum.BUTTOM.getCode()) {
+				continue;
+			}
+			parentMap.computeIfAbsent(resource.getParentId(), k -> new ArrayList<>()).add(resource);
+		}
+
+		// 从根节点开始构建菜单树
+		return buildMenuTree(parentMap.get(0), parentMap);
+	}
+
+	/**
+	 * 构建菜单树（仅映射业务字段，不涉及任何前端路由结构）
+	 */
+	private List<MenuVO> buildMenuTree(List<Resource> resourceList, Map<Integer, List<Resource>> parentMap) {
+		List<MenuVO> menuList = new ArrayList<>();
+		if (CollectionTool.isEmpty(resourceList)) {
+			return menuList;
+		}
+		for (Resource resource : resourceList) {
+			MenuVO menu = new MenuVO(resource);
+			menu.setChildren(buildMenuTree(parentMap.get(resource.getId()), parentMap));
+			menuList.add(menu);
+		}
+		return menuList;
 	}
 
 	/**

@@ -4,7 +4,7 @@
  * 职责：
  *   1. 组件加载方法 lazyLoad：所有页面统一懒加载入口；
  *   2. 声明静态路由（constantRoutes）——登录、错误页、个人中心等，启动即注册；
- *   3. 动态业务路由：后端菜单（/getRouters）→ 前端路由，拍平注入（对齐 Vue addRoute）；
+ *   3. 动态业务路由：后端菜单（/getMenus）→ 前端路由，拍平注入（对齐 Vue addRoute）；
  *   4. 构建应用路由配置 buildAppRoutes，供 AppRouter（useRoutes）渲染，为唯一数据源。
  */
 
@@ -130,75 +130,73 @@ for (const [modulePath, factory] of Object.entries(pageModules)) {
 })();
 
 /**
- * 按后端 component 字符串匹配页面组件（与 Vue loadView 一致）：
+ * 按菜单 url 匹配页面组件（与 Vue loadView 一致）：
  *      - 1) 判断 modules/{framework|business}/{path}/index.tsx 是否存在（目录格式，如 authz/user → authz/user/index）；
  *      - 2) 未命中时按原 key 再试一次（兼容顶层平铺页，如 /dashboard → dashboard/index）。
  *
- * @param component 后端路由组件地址（如 /authz/user）
+ * @param url 菜单地址（如 /authz/user）
  * @returns 页面组件懒加载工厂；未匹配到时返回 undefined
  */
 export const loadView = (
-  component?: string,
+  url?: string,
 ): (() => Promise<{ default: React.ComponentType }>) | undefined => {
-  if (!component) return undefined;
+  if (!url) return undefined;
 
   // modules 相对段（剥离 category 前缀）：去除前导斜杠，如 /authz/user → authz/user
-  const key = component.replace(/^\//, '');
+  const key = url.replace(/^\//, '');
 
   // 匹配目录格式：modules/framework/authz/user/index.tsx
   const indexModule = pageMap.get(`${key}/index`);
   if (indexModule) return indexModule;
 
-  console.error(`loadView fail, route.component：[${component}]`);
+  console.error(`loadView fail, route.url：[${url}]`);
   return undefined;
 };
 
 /** 是否为外链地址（外链菜单不注册内部路由） */
-const isHttp = (component?: string) => {
-  return component?.startsWith('http://') || component?.startsWith('https://');
+const isHttp = (url?: string) => {
+  return url?.startsWith('http://') || url?.startsWith('https://');
 };
 
 /**
  * 将后端菜单树转换为拍平后的业务路由（挂载到 AppLayout children）
  *
- * 后端结构（对齐 Vue 消费层级）：
- *   - 目录节点：component 为 Layout / ParentView，无页面组件，仅递归子节点；
- *   - 页面节点：component 为页面路径字符串（如 /authz/user），注册为叶子路由；
- *   - 根级菜单（如 /dashboard、/help）：component 为 Layout 且 meta 为空，
- *     由后端包裹一层单独子节点，实际页面在子节点中，递归时自然命中。
+ * 后端结构：纯业务菜单节点（type：0-目录、1-菜单），不含任何路由/组件语义；
+ *   - 目录节点：不注册路由，递归子节点；
+ *   - 菜单节点：url 同时作为路由 path 与页面定位 key；
+ *   - 外链菜单（http/https）：不注册内部路由，仅由布局菜单渲染。
  *
- * @param routerList 后端 /getRouters 返回的菜单树
- * @returns 拍平后的业务路由列表（外链、无页面组件的节点被跳过；隐藏节点照常注册）
+ * @param menuList 后端 /getMenus 返回的菜单树
+ * @returns 拍平后的业务路由列表（外链、无页面组件的节点被跳过；隐藏菜单照常注册）
  */
 export const buildBusinessRoutes = (
-  routerList: API.RouterVo[] = [],
+  menuList: API.MenuNode[] = [],
 ): RouteObject[] => {
   const routes: RouteObject[] = [];
 
-  const walk = (nodes: API.RouterVo[]) => {
+  const walk = (nodes: API.MenuNode[]) => {
     nodes.forEach((node) => {
-      // 隐藏路由（visible=1）：仍注册、可访问，仅侧栏渲染时过滤（AppLayout#buildMenuData），供 tab.openPage 等内部跳转
-      // 目录节点（Layout / ParentView）：无页面组件，递归子节点
-      if (node.component === 'Layout' || node.component === 'ParentView') {
+      // 目录节点：无页面组件，递归子节点
+      if (node.type === 0) {
         if (node.children?.length) walk(node.children);
         return;
       }
 
-      // 外链或缺少路径：不注册内部路由
-      if (isHttp(node.component) || !node.path) return;
+      // 外链或缺少地址：不注册内部路由
+      if (!node.url || isHttp(node.url)) return;
 
-      // 叶子页面：映射组件并注册
-      const factory = loadView(node.component);
+      // 菜单节点：映射组件并注册（隐藏菜单同样注册，供 tab.openPage 等内部跳转）
+      const factory = loadView(node.url);
       if (!factory) return;
 
       routes.push({
-        path: node.path.replace(/^\//, ''),
+        path: node.url.replace(/^\//, ''),
         element: lazyLoad(factory),
       });
     });
   };
 
-  walk(routerList);
+  walk(menuList);
   return routes;
 };
 

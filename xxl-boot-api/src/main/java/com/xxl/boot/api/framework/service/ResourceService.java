@@ -1,5 +1,6 @@
 package com.xxl.boot.api.framework.service;
 
+import com.xxl.boot.api.framework.model.dto.MenuVO;
 import com.xxl.boot.api.framework.model.dto.ResourceDTO;
 import com.xxl.boot.api.framework.model.entity.Resource;
 import com.xxl.tool.response.PageModel;
@@ -60,5 +61,11 @@ public interface ResourceService {
      * @param visible 显示状态：0-显示、1-隐藏、-1-不过滤
      */
     List<Resource> queryResourceByUserid(int userId, int visible);
+
+    /**
+     * 查询用户菜单树（已授权，含隐藏菜单，不含按钮）
+     * @param userId 用户ID
+     */
+    List<MenuVO> queryMenuTreeByUserId(int userId);
 
 }

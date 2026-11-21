@@ -20,7 +20,7 @@ import defaultSettings from '@/default-settings';
 import { t } from '@/i18n';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { useUserStore } from '@/stores/userStore';
-import { getIconComponent } from '@/utils/icon';
+import { buildMenu } from '@/utils/menu';
 import {
   Footer,
   FullscreenButton,
@@ -42,97 +42,6 @@ const BREADCRUMB_PROPS = { minLength: 1 };
 const breadcrumbItemRender = (route: { title?: React.ReactNode }) => (
   <span>{route.title}</span>
 );
-
-/**
- * 构建菜单：一次遍历同时产出「菜单数据」与「目录→第一个叶子路径」映射
- *
- * <pre>
- *     原始菜单格式：
- *     {
- *          "hidden": false,
- *          "path": "/authz/user",
- *          "component": "LAYOUT",
- *          "meta": {
- *              "title": "用户管理",
- *              "icon": "UserOutlined"
- *          },
- *          "children": [{
-                "hidden": false,
-                "path": "/authz/user/index",
-                "component": "authz/user/index",
-                "meta": {
-                "title": "用户管理",
-                    "icon": "UserOutlined"
-                }
- *          }]
- *     }
- *
- *     目标菜单格式：
- *     {
- *          "path": "/authz/user",
- *          "name": "用户管理",
- *          "icon": "<UserOutlined />",
- *          "children": [{
-                "path": "/authz/user/index",
-                "name": "用户管理",
-                "icon": "<UserOutlined />"
- *          }]
- *     }
- * </pre>
- *
- * @param routes 后端 /getRouters 返回的菜单树
- * @returns items：ProLayout 菜单数据；redirectMap：目录路径 → 第一个叶子路径
- */
-const buildMenu = (
-  routes: API.RouterVo[],
-): { items: MenuDataItem[]; redirectMap: Record<string, string> } => {
-  const redirectMap: Record<string, string> = {};
-
-  /* 查找子树中的第一个叶子路径（目录点击跳转用） */
-  const findFirstLeaf = (nodes: API.RouterVo[]): string | undefined => {
-    for (const node of nodes) {
-      /* 叶子节点：直接使用其路径 */
-      if (!node.children?.length) return node.path;
-      /* 目录节点：递归向下查找 */
-      const leafPath = findFirstLeaf(node.children);
-      if (leafPath) return leafPath;
-    }
-    return undefined;
-  };
-
-  /* 递归转换：过滤隐藏项、构造菜单项，并记录目录跳转映射 */
-  const toItems = (nodes: API.RouterVo[]): MenuDataItem[] =>
-    nodes
-      .filter((r) => !r.hidden)
-      .map((r) => {
-        /* 目录节点：记录「目录路径 → 第一个叶子路径」，供菜单点击跳转（避免目录 404） */
-        if (r.children?.length && r.path) {
-          const firstLeaf = findFirstLeaf(r.children);
-          if (firstLeaf) redirectMap[r.path] = firstLeaf;
-        }
-
-        /* 根级包装节点（meta 为空且仅 1 个可见子项）：提升子项为菜单项 */
-        if (!r.meta && r.children?.length === 1 && !r.children[0].hidden) {
-          const child = r.children[0];
-          const item: MenuDataItem = {
-            path: child.path || r.path,
-            name: child.meta?.title,
-          };
-          const Icon = getIconComponent(child.meta?.icon);
-          if (Icon) item.icon = <Icon />;
-          return item;
-        }
-
-        /* 普通节点：path、name、icon、children */
-        const item: MenuDataItem = { path: r.path, name: r.meta?.title };
-        const Icon = getIconComponent(r.meta?.icon);
-        if (Icon) item.icon = <Icon />;
-        if (r.children?.length) item.children = toItems(r.children);
-        return item;
-      });
-
-  return { items: toItems(routes), redirectMap };
-};
 
 /**
  * 菜单项标题渲染：为二级及以下菜单补充展示图标

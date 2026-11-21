@@ -103,30 +103,31 @@ export interface LoginInfo {
   [key: string]: unknown
 }
 
-// --------------------------------- 动态路由（后端菜单） ---------------------------------
+// --------------------------------- 动态菜单（后端菜单） ---------------------------------
 
 /**
- * 后端菜单数据 → 前端路由
- * 对应 store/modules/routes.ts transformRoutes 入参
+ * 后端菜单节点（/getMenus 返回）
+ * 仅业务字段，不含任何路由/组件语义，由前端适配为路由
  */
-export interface MenuRoute {
-  path?: string
-  component?: string
-  name?: string
-  redirect?: string
-  hidden?: boolean
-  alwaysShow?: boolean
-  meta?: {
-    title?: string
-    icon?: string
-    activeMenu?: string
-    affix?: boolean
-    hidden?: boolean
-    query?: Record<string, string>
-    [key: string]: unknown
-  }
-  children?: MenuRoute[]
-  [key: string]: unknown
+export interface MenuNode {
+  /** 资源 ID */
+  id: number
+  /** 父节点 ID */
+  parentId: number
+  /** 菜单名称 */
+  name: string
+  /** 类型：0-目录、1-菜单 */
+  type: number
+  /** 菜单地址：内部路径或 http(s) 外链 */
+  url?: string
+  /** 图标标识（由 UI 库解析） */
+  icon?: string
+  /** 排序 */
+  order?: number
+  /** 显示状态：0-显示、1-隐藏 */
+  visible: number
+  /** 子菜单 */
+  children?: MenuNode[]
 }
 
 // --------------------------------- 页面 UI 状态（列表页通用） ---------------------------------

@@ -1,6 +1,6 @@
 import { request } from '@/utils/request'
 import type { BaseConfig, CaptchaData } from '../types'
-import type { LoginInfo, MenuRoute, Response } from '@/types'
+import type { LoginInfo, MenuNode, Response } from '@/types'
 
 /**
  * 名称：登录认证 & 路由 API
@@ -71,12 +71,12 @@ export function getCodeImg(): Promise<Response<CaptchaData>> {
 }
 
 /**
- * 获取当前用户路由配置。
- * @returns 路由树数据。
+ * 获取当前用户菜单树。
+ * @returns 纯业务菜单数据。
  */
-export const getRouters = (): Promise<Response<MenuRoute[]>> => {
+export const getMenus = (): Promise<Response<MenuNode[]>> => {
   return request({
-    url: '/getRouters',
+    url: '/getMenus',
     method: 'get'
   })
 }

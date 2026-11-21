@@ -11,7 +11,7 @@
 import { create } from 'zustand';
 import {
   getInfo,
-  getRouters,
+  getMenus,
   login as loginApi,
   logout as logoutApi,
 } from '@/modules/framework/auth/api';
@@ -23,14 +23,14 @@ import { removeToken, setTokenWithAge } from '@/utils/auth';
 interface UserState {
   /** 当前登录用户信息（含角色、权限集合） */
   currentUser?: API.LoginInfo;
-  /** 当前用户菜单（后端 /getRouters 返回的动态菜单树） */
-  menuData: API.RouterVo[];
+  /** 当前用户菜单（后端 /getMenus 返回的菜单树） */
+  menuData: API.MenuNode[];
   /** 登录：提交账号密码与验证码，成功后保存 token（记住密码 365 天，否则 2 小时） */
   login: (params: API.LoginParams) => Promise<void>;
   /** 获取当前登录用户信息并写入状态，失败时抛出异常 */
   fetchUserInfo: () => Promise<API.LoginInfo | undefined>;
-  /** 获取当前用户动态菜单并写入状态，失败时抛出异常 */
-  fetchMenuData: () => Promise<API.RouterVo[]>;
+  /** 获取当前用户菜单并写入状态，失败时抛出异常 */
+  fetchMenuData: () => Promise<API.MenuNode[]>;
   /** 退出登录：先调服务端登出（失败忽略），再清理本地 token 与会话状态 */
   logout: () => Promise<void>;
   /** 校验单个操作权限（支持超管通配符 *:*:*） */
@@ -74,9 +74,9 @@ export const useUserStore = create<UserState>()((set, get) => ({
     return res.data;
   },
 
-  /** 获取当前用户动态菜单，失败时抛出异常（由 RequireAuth 统一处理） */
+  /** 获取当前用户菜单，失败时抛出异常（由 RequireAuth 统一处理） */
   fetchMenuData: async () => {
-    const res = await getRouters();
+    const res = await getMenus();
     // 写入动态菜单树
     set({ menuData: res.data || [] });
     return res.data || [];
