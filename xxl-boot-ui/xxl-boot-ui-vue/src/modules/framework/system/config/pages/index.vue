@@ -73,7 +73,7 @@
     />
 
     <!-- 添加或修改配置对话框 -->
-    <el-dialog :title="formState.title" v-model="formState.visible" width="500px" append-to-body>
+    <el-dialog :title="formState.title" v-model="formState.visible" width="500px" append-to-body :close-on-click-modal="false">
       <el-form ref="formRef" :model="formState.form" :rules="formState.rules" label-width="100px">
         <el-form-item :label="t('system.config.configName')" prop="name">
           <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('system.config.configName')])" />
@@ -119,19 +119,19 @@ import type { FormState, TableState } from '@/types'
 // ---------------------- 响应式数据 ----------------------
 
 // 表单实例 ref
-const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
-const formRef = ref<FormInstance>() /* 编辑表单 ref */
+const queryRef = ref<FormInstance>() /* 搜索栏表单 */
+const formRef = ref<FormInstance>() /* 编辑表单 */
 
-// 配置状态选项
+// 枚举选项项
 const { ConfigStatusEnum: statusOptions } = useEnumOption('ConfigStatusEnum')
 
-// 搜索栏筛选条件与分页参数
+// 搜索栏筛选参数
 const queryParams = ref<ConfigQuery>({
   pageNum: 1 /* 当前页码 */,
   pageSize: 10 /* 每页条数 */,
   name: undefined /* 配置名称 */,
   key: undefined /* 配置 Key */,
-  status: -1 /* 状态筛选，-1 表示全部； */
+  status: -1 /* 状态筛选，-1 表示全部 */
 })
 
 // 列表数据与勾选状态，勾选结果决定顶部按钮是否可用
@@ -186,14 +186,18 @@ function getList() {
     })
 }
 
-/** 搜索：回到第一页后查询 */
+/**
+ * 搜索：回到第一页后查询
+ */
 function handleQuery() {
   // 筛选条件已变化，回到第一页可避免停留在超出结果范围的页码
   queryParams.value.pageNum = 1
   getList()
 }
 
-/** 重置搜索条件后重新查询 */
+/**
+ * 重置搜索条件后重新查询
+ */
 function resetQuery() {
   queryRef.value?.resetFields()
   handleQuery()
@@ -212,13 +216,17 @@ function syncSelection(selection: Config[]) {
   table.value.multiple = !selection.length
 }
 
-/** 重置编辑表单：重置表单数据为默认值 + 清除表单校验状态 */
+/**
+ * 重置编辑表单：重置表单数据为默认值 + 清除表单校验状态
+ */
 function resetForm() {
   formState.value.form = { ...FORM_DEFAULTS }
   formRef.value?.clearValidate()
 }
 
-/** 打开新增弹窗 */
+/**
+ * 打开新增弹窗
+ */
 function openCreateForm() {
   resetForm()
   formState.value.visible = true
@@ -235,13 +243,12 @@ function openEditForm(row?: Config) {
   const id = row ? row.id : table.value.ids[0]
   // 缺少 id 时直接返回，避免无效请求或误用勾选行
   if (id == null) return
-
   resetForm()
   configApi.load(id)
     .then((response) => {
       // 记录已被删除时不打开弹窗
       if (!response.data) return
-
+      // show form
       formState.value.form = response.data
       formState.value.visible = true
       formState.value.title = t('common.titleEdit', [t('common.noun.config')])
@@ -254,6 +261,7 @@ function saveForm() {
   formRef.value?.validate((valid) => {
     // 校验失败时保持弹窗打开，等待用户修正
     if (!valid) return
+    // do save
     const isEdit = formState.value.form.id != null
     const request = isEdit ? configApi.update(formState.value.form) : configApi.insert(formState.value.form)
     request
@@ -282,7 +290,7 @@ function removeConfig(row?: Config) {
   const ids = row ? (row.id != null ? [row.id] : []) : table.value.ids
   // 无记录可删时直接返回，避免弹出空删除确认框
   if (ids.length === 0) return
-
+  // confirm delete
   const confirmText = row
     ? t('system.config.confirmDelete', [row.name ?? String(row.id)])
     : t('system.config.confirmBatchDelete', [ids.length])
