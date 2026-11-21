@@ -39,21 +39,8 @@ export interface ConfigQuery {
   status?: number
 }
 
-/** 新增/修改表单 */
-export interface ConfigForm {
-  /** 主键，新增时为空 */
-  id?: number
-  /** 配置名称 */
-  name?: string
-  /** 配置 Key */
-  key?: string
-  /** 配置值 */
-  value?: string
-  /** 状态：0-正常、1-停用 */
-  status?: number
-  /** 备注 */
-  remark?: string
-}
-
 /** 列表接口请求参数（offset/pagesize 形态） */
 export type ConfigListQuery = ListQuery<ConfigQuery>
+
+/** 新增/修改表单：复用实体中的可编辑字段，避免字段定义重复 */
+export type ConfigForm = Pick<Config, 'id' | 'name' | 'key' | 'value' | 'status' | 'remark'>

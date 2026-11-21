@@ -28,19 +28,19 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="handleUpdate()" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="handleDelete()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeConfig()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
 
     <!-- 配置列表 -->
-    <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
+    <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="50" />
       <el-table-column :label="t('system.config.configName')" align="center" prop="name" width="180" :show-overflow-tooltip="true" />
@@ -57,8 +57,8 @@
       <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
       <el-table-column :label="t('common.operation')" align="center" width="150" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Delete" @click="removeConfig(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -95,8 +95,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">{{ t('modal.confirmButton') }}</el-button>
-          <el-button @click="cancel">{{ t('modal.cancelButton') }}</el-button>
+          <el-button type="primary" @click="saveForm">{{ t('modal.confirmButton') }}</el-button>
+          <el-button @click="closeForm">{{ t('modal.cancelButton') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -144,11 +144,14 @@ const table = ref<TableState<Config>>({
   multiple: true // 删除按钮是否禁用
 })
 
+// 编辑表单默认值：新增初始值与每次重置共用，状态默认 0-正常
+const FORM_DEFAULTS: Readonly<ConfigForm> = { status: 0 }
+
 // 编辑弹窗状态
 const formState = ref<FormState<ConfigForm>>({
   visible: false, // 弹窗显隐
   title: '', // 弹窗标题
-  form: {}, // 表单数据
+  form: { ...FORM_DEFAULTS }, // 表单数据
   rules: {
     // 校验规则
     name: [{ required: true, message: t('common.requiredMsg', [t('system.config.configName')]), trigger: 'blur' }],
@@ -165,8 +168,6 @@ const formState = ref<FormState<ConfigForm>>({
 
 /**
  * 查询配置分页数据
- *
- * 失败提示由请求层统一处理，此处只负责复位 loading
  */
 function getList() {
   table.value.loading = true
@@ -197,45 +198,28 @@ function resetQuery() {
   handleQuery()
 }
 
+// ---------------------- 数据操作（增删改） ----------------------
+
 /**
- * 同步表格勾选结果与顶部按钮可用状态
+ * 同步表格勾选结果，驱动批量修改/删除按钮状态
  *
  * @param selection 当前勾选行
  */
-function handleSelectionChange(selection: Config[]) {
+function syncSelection(selection: Config[]) {
   table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
 
-// ---------------------- 数据操作（增删改） ----------------------
-
-/**
- * 重置编辑表单
- *
- * resetFields 只会回到表单项首次挂载时的值，因此先复位校验，再覆盖为新增默认值
- */
-function reset() {
-  formRef.value?.resetFields()
-  formState.value.form = {
-    id: undefined,
-    name: undefined,
-    key: undefined,
-    value: undefined,
-    status: 0,
-    remark: undefined
-  }
+/** 重置编辑表单：重置表单数据为默认值 + 清除表单校验状态 */
+function resetForm() {
+  formState.value.form = { ...FORM_DEFAULTS }
+  formRef.value?.clearValidate()
 }
 
-/** 关闭弹窗，丢弃未提交的编辑内容 */
-function cancel() {
-  formState.value.visible = false
-  reset()
-}
-
-/** 打开新增弹窗，表单恢复为新增默认值 */
-function handleAdd() {
-  reset()
+/** 打开新增弹窗 */
+function openCreateForm() {
+  resetForm()
   formState.value.visible = true
   formState.value.title = t('common.titleAdd', [t('common.noun.config')])
 }
@@ -245,11 +229,11 @@ function handleAdd() {
  *
  * @param row 行数据；顶部按钮调用时为空，此时回退到勾选行
  */
-function handleUpdate(row?: Config) {
+function openEditForm(row?: Config) {
   const id = row?.id ?? table.value.ids[0]
   // 顶部按钮未勾选或行数据缺少 id 时直接返回，避免无效请求
   if (id == null) return
-  reset()
+  resetForm()
   configApi.load(id).then((response) => {
     formState.value.form = response.data
     formState.value.visible = true
@@ -257,8 +241,8 @@ function handleUpdate(row?: Config) {
   })
 }
 
-/** 校验通过后提交：有 id 走修改，否则新增 */
-function submitForm() {
+/** 校验通过后保存：有 id 走修改，否则新增 */
+function saveForm() {
   formRef.value?.validate((valid) => {
     // 校验失败时保持弹窗打开，等待用户修正
     if (!valid) return
@@ -266,10 +250,16 @@ function submitForm() {
     const request = isEdit ? configApi.update(formState.value.form) : configApi.insert(formState.value.form)
     request.then(() => {
       modal.msgSuccess(t(isEdit ? 'common.updateSuccess' : 'common.addSuccess'))
-      formState.value.visible = false
+      closeForm()
       getList()
     })
   })
+}
+
+/** 关闭弹窗并重置表单 */
+function closeForm() {
+  formState.value.visible = false
+  resetForm()
 }
 
 /**
@@ -277,7 +267,7 @@ function submitForm() {
  *
  * @param row 行数据；顶部按钮调用时为空，此时删除勾选行
  */
-function handleDelete(row?: Config) {
+function removeConfig(row?: Config) {
   const ids = row?.id ?? table.value.ids
   // 无勾选记录时直接返回，避免弹出空删除确认框
   if (ids == null || (Array.isArray(ids) && ids.length === 0)) return
@@ -291,7 +281,7 @@ function handleDelete(row?: Config) {
     .catch(() => {})
 }
 
-// ---------------------- 其他 ----------------------
+// ---------------------- 辅助支撑 ----------------------
 
 /**
  * 状态编码转枚举文案
@@ -305,5 +295,9 @@ function statusText(status: number) {
 
 // ---------------------- 页面初始化 ----------------------
 
+/**
+ * 页面加载时查询列表
+ */
 getList()
+
 </script>
