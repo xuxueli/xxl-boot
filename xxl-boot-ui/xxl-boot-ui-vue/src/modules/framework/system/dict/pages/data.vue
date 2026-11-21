@@ -299,8 +299,6 @@ function handleClose() {
   tab.closeOpenPage({ path: '/system/dict' })
 }
 
-// ---------------------- 页面初始化 ----------------------
-
 /**
  * 查询当前字典名称，用于页面标题展示
  */
@@ -314,6 +312,10 @@ function getDictName() {
     .catch(() => {})
 }
 
+// ---------------------- 页面初始化 ----------------------
+
+// 页面加载时查询字典名称
 getDictName()
+// 页面加载时查询字典项列表
 getList()
 </script>

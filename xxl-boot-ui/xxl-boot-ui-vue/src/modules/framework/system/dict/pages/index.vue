@@ -339,5 +339,6 @@ function openDataList(row: Dict) {
 
 // ---------------------- 页面初始化 ----------------------
 
+// 页面加载时查询字典类型列表
 getList()
 </script>

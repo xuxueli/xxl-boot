@@ -264,6 +264,7 @@ function handleMsgClick(item: Message) {
 
 // ---------------------- 页面初始化 ----------------------
 
+// 页面挂载后加载统计、消息与日志趋势图
 onMounted(() => {
   loadStats()
   loadMessages()
@@ -276,6 +277,7 @@ onMounted(() => {
   }
 })
 
+// 页面卸载时断开尺寸监听并销毁图表实例
 onUnmounted(() => {
   resizeObserver?.disconnect()
   chartInstance?.dispose()

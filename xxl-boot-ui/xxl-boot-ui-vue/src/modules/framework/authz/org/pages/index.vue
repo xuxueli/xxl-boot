@@ -359,6 +359,7 @@ function validParentId() {
     }
     return false
   }
+  /** 判断选中的上级组织是否位于当前节点的子孙中，用于阻止成环 */
   const isParentInDescendants = (list: Org[]): boolean => {
     for (const item of list) {
       if (item.id === form.id) return findInChildren(item.children || [])
@@ -436,6 +437,7 @@ function recordOriginalOrders(list: Org[]) {
 function saveSort() {
   const ids: number[] = []
   const orders: number[] = []
+  /** 递归收集排序发生变更的节点 */
   const collectChanged = (list: Org[]) => {
     list.forEach((item) => {
       if (item.id != null && String(originalOrders.value[item.id]) !== String(item.order)) {
@@ -473,5 +475,6 @@ function toggleExpandAll() {
 
 // ---------------------- 页面初始化 ----------------------
 
+// 页面加载时查询组织树
 getList()
 </script>

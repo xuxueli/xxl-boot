@@ -333,7 +333,7 @@ function removeCodegen(row?: CodegenTable) {
 
 // ---------------------- 页面初始化 ----------------------
 
-/** 页面激活时：路由携带新的时间戳则刷新列表，保持与编辑页返回后的状态同步 */
+// 页面激活时：路由携带新的时间戳则刷新列表，保持与编辑页返回后的状态同步
 onActivated(() => {
   const time = Array.isArray(route.query.t) ? route.query.t[0] : route.query.t
   if (typeof time === 'string' && time !== uniqueId.value) {
@@ -344,8 +344,6 @@ onActivated(() => {
   }
 })
 
-/**
- * 页面加载时查询列表
- */
+// 页面加载时查询列表
 getList()
 </script>

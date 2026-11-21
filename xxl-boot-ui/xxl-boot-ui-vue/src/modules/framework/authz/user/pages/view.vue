@@ -165,6 +165,7 @@ function handleClose() {
   visible.value = false
 }
 
+// 向父组件暴露打开详情抽屉方法
 defineExpose({
   open
 })

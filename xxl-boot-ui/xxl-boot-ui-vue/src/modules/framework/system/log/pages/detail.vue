@@ -105,6 +105,7 @@ interface DetailProps {
   moduleMap?: Record<number | string, string | undefined>
 }
 
+// 组件入参默认值
 withDefaults(defineProps<DetailProps>(), {
   row: () => ({}),
   moduleMap: () => ({})

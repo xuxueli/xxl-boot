@@ -241,6 +241,7 @@ const genDialog = ref<GenDialogState>({
 
 // 全局组件 ID 自增，通过 provide 供子组件分配组件 ID
 const idGlobal = ref(100)
+// 将 ID 生成器注入画布子组件
 provide('idGlobal', idGlobal)
 // 表单全局配置
 const formConf = ref(formConfData)
@@ -524,6 +525,7 @@ watch(
 // 剪切板实例，组件卸载时销毁
 let clipboard: ClipboardJS | null = null
 
+// 页面挂载后初始化剪贴板，用于复制生成的页面配置代码
 onMounted(() => {
   // 复制动作由隐藏节点触发，ClipboardJS 在回调中生成代码并写入剪贴板
   clipboard = new ClipboardJS('#copyNode', {
@@ -538,6 +540,7 @@ onMounted(() => {
   })
 })
 
+// 页面卸载时销毁剪贴板实例，避免内存泄漏
 onUnmounted(() => {
   clipboard?.destroy()
 })

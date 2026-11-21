@@ -346,5 +346,6 @@ function openReadUsers(row: Message) {
 
 // ---------------------- 页面初始化 ----------------------
 
+// 页面加载时查询消息列表
 getList()
 </script>

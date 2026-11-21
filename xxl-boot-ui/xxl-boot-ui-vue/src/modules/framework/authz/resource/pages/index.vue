@@ -484,6 +484,7 @@ function recordOriginalOrders(list: Resource[]) {
 function saveSort() {
   const ids: number[] = []
   const orders: number[] = []
+  /** 递归收集排序发生变更的节点 */
   const collectChanged = (list: Resource[]) => {
     list.forEach((item) => {
       if (item.id != null && String(originalOrders.value[item.id]) !== String(item.order)) {
@@ -521,5 +522,6 @@ function toggleExpandAll() {
 
 // ---------------------- 页面初始化 ----------------------
 
+// 页面加载时查询资源树
 getList()
 </script>

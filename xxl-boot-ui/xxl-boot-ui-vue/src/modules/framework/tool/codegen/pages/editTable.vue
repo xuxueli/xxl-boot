@@ -336,7 +336,7 @@ function closeForm() {
 
 // ---------------------- 字段拖拽排序 ----------------------
 
-/** 拖拽排序：切换到字段信息卡片时初始化，确保 DOM 已渲染 */
+// 拖拽排序：切换到字段信息卡片时初始化，确保 DOM 已渲染
 watch(activeName, (name) => {
   if (name !== 'columnInfo' || columns.value.length === 0) return
   nextTick(() => {
@@ -365,6 +365,7 @@ watch(activeName, (name) => {
 
 // ---------------------- 组件暴露 ----------------------
 
+// 向父组件暴露打开编辑弹窗方法
 defineExpose({ open })
 </script>
 

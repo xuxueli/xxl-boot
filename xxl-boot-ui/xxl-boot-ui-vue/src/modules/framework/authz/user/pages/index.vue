@@ -569,7 +569,9 @@ function handleViewData(row: User) {
 
 // ---------------------- 页面初始化 ----------------------
 
+// 页面加载时查询组织树，供左侧筛选与归属组织选择使用
 getDeptTree()
+// 页面加载时查询用户列表
 getList()
 </script>
 

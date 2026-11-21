@@ -160,7 +160,7 @@ function getCode() {
     .catch(() => {})
 }
 
-/** 初始化：获取验证码 */
+// 初始化：获取验证码
 getCode()
 </script>
 
