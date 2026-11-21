@@ -7,7 +7,7 @@
   <#return "any" />
 </#function>
 /**
- * @file ${codegen.functionName} API
+ * @fileoverview ${codegen.functionName} API
  * @description 接口封装
  * @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
  * 放置路径：src/modules/business/${codegen.moduleName}/${codegen.businessName?lower_case}/api/index.ts

@@ -1,5 +1,5 @@
 /**
- * @file ${codegen.functionName} API
+ * @fileoverview ${codegen.functionName} API
  * @description 接口封装
  * @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
  */

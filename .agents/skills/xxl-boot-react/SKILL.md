@@ -113,7 +113,7 @@ export default function Xxx({ id, onClose }: XxxProps) {
 
 ```ts
 /**
- * @file Xxx 类型定义
+ * @fileoverview Xxx 类型定义
  * @description 对应后端 Xxx 实体
  * @author xuxueli 2026-11-21
  */
@@ -134,7 +134,7 @@ declare namespace API {
 
 ```ts
 /**
- * @file Xxx API
+ * @fileoverview Xxx API
  * @description 接口封装
  * @author xuxueli 2026-11-21
  */
@@ -198,7 +198,7 @@ export async function delXxx(ids: number[]) {
 
 ```tsx
 /**
- * @file Xxx 管理
+ * @fileoverview Xxx 管理
  * @description 分页表格 + 新增/修改 + 删除
  * @author xuxueli 2026-11-21
  */
@@ -348,7 +348,7 @@ export default XxxList;
 
 ```tsx
 /**
- * @file XxxFormModal（Xxx 新增/编辑弹窗）
+ * @fileoverview XxxFormModal（Xxx 新增/编辑弹窗）
  * @description 新增/编辑表单
  * @author xuxueli 2026-11-21
  */
@@ -435,11 +435,11 @@ export default XxxFormModal;
 
 遵循 `AGENTS.md`「注释规范」。React 侧落地：
 
-- `.tsx` 文件头使用 JSDoc，必须包含 `@file`、功能描述和 `@author`：
+- `.tsx` 文件头使用 JSDoc，必须包含 `@fileoverview`、功能描述和 `@author`：
 
 ```tsx
 /**
- * @file 站内消息页面
+ * @fileoverview 站内消息页面
  * @description 分页表格 + 新增/修改 + 删除
  * @author xuxueli 2026-11-21
  */

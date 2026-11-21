@@ -7,7 +7,7 @@
   <#return "any" />
 </#function>
 /**
- * @file ${codegen.functionName} 类型定义
+ * @fileoverview ${codegen.functionName} 类型定义
  * @description 实体、查询、表单与列表查询类型
  * @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
  * 放置路径：src/modules/business/${codegen.moduleName}/${codegen.businessName?lower_case}/types/index.d.ts

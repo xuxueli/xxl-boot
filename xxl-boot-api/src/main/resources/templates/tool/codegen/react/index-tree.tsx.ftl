@@ -30,7 +30,7 @@
 </#list>
 </#if>
 /**
- * @file ${codegen.functionName}（树表列表页）
+ * @fileoverview ${codegen.functionName}（树表列表页）
  * @description 树表查询、新增、修改、删除
  * @author ${codegen.functionAuthor} ${.now?string('yyyy-MM-dd')}
  * 放置路径：src/modules/business/${codegen.moduleName}/${codegen.businessName?lower_case}/pages/index.tsx

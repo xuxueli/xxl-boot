@@ -85,7 +85,7 @@ XXL-Boot 是一个快速开发平台 / 脚手架，采用 Monorepo 统一托管�
 
 | 层级 | Java | JS / TS |
 |---|---|---|
-| 文件头 | 类/接口 Javadoc：功能描述 + 空行 + `@author 作者 yyyy-MM-dd` | JSDoc：`@file` + 功能描述 + `@author 作者 yyyy-MM-dd` |
+| 文件头 | 类/接口 Javadoc：功能描述 + 空行 + `@author 作者 yyyy-MM-dd` | JSDoc：`@fileoverview` + 功能描述 + `@author 作者 yyyy-MM-dd` |
 | 类型 | class/interface/enum 使用 Javadoc | interface/type/组件使用 JSDoc |
 | 方法 | public/protected 方法使用 Javadoc；复杂方法补 `@param`、`@return`，异常补 `@throws`；简单 CRUD/重写方法可只写一行职责说明 | 导出函数、Hook/Composable、非平凡函数使用 JSDoc，含 `@param`、`@returns` |
 | 字段 | 字段统一使用 Javadoc，置于字段上方；`serialVersionUID` 可省略 | 接口属性使用 `/** ... */` 置于上方 |
@@ -122,7 +122,7 @@ public class ConfigController {
 
 ```ts
 /**
- * @file 站内消息页面
+ * @fileoverview 站内消息页面
  * @description 分页表格 + 新增/修改 + 删除
  * @author xuxueli 2026-11-21
  */

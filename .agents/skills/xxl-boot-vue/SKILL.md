@@ -97,7 +97,7 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 
 ```ts
 /**
- * @file Xxx 类型定义
+ * @fileoverview Xxx 类型定义
  * @description 实体、查询、表单与列表查询类型
  * @author xuxueli 2026-11-21
  */
@@ -137,7 +137,7 @@ export type XxxListQuery = ListQuery<XxxQuery>
 
 ```ts
 /**
- * @file Xxx API
+ * @fileoverview Xxx API
  * @description 接口封装
  * @author xuxueli 2026-11-21
  */
