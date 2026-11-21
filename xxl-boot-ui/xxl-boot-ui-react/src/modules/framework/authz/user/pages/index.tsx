@@ -13,41 +13,18 @@ import {
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Dropdown, Input, Modal, Switch } from 'antd';
-import { createStyles } from 'antd-style';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { t } from '@/i18n';
 import { TreePanel } from '@/components';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
+import { t } from '@/i18n';
 import { orgApi } from '@/modules/framework/authz/org/api';
 import { roleApi } from '@/modules/framework/authz/role/api';
 import { userApi } from '@/modules/framework/authz/user/api';
 import { deepClone, handleTree } from '@/utils/common';
 import UserFormModal from './UserFormModal';
 import UserView from './UserView';
-
-/**
- * 用户表格样式
- * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
- */
-const useStyles = createStyles(({ css }) => ({
-  userTable: css`
-        .ant-pro-table-list-toolbar-container {
-            justify-content: flex-start;
-        }
-
-        .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
-            justify-content: flex-start;
-        }
-
-        .ant-pro-table-list-toolbar-container
-        .ant-pro-table-list-toolbar-right
-        .ant-pro-table-list-toolbar-setting-items {
-            margin-left: auto;
-        }
-    `,
-}));
 
 /*
  * 用户管理页面
@@ -64,7 +41,6 @@ const Dashboard = () => {
   // 当前查看的用户
   const [userViewData, setUserViewData] = useState<API.User | null>(null);
   const { hasPermi } = usePermission();
-  const { styles } = useStyles();
 
   // 组织树数据（左侧 + 表单）
   const [leftOrgOptions, setLeftOrgOptions] = useState<API.Org[]>([]);
@@ -98,7 +74,8 @@ const Dashboard = () => {
    * 加载组织树与角色下拉
    */
   const loadOptions = () => {
-    orgApi.treeList({})
+    orgApi
+      .treeList({})
       .then((res) => {
         const list = res.data || [];
         // 左侧组织树：深拷贝转树，避免互相污染
@@ -114,7 +91,8 @@ const Dashboard = () => {
         ]);
       })
       .catch(() => {});
-    roleApi.pageList({ current: 1, pageSize: 999 })
+    roleApi
+      .pageList({ current: 1, pageSize: 999 })
       .then((res) => {
         setRoleOptions(res.data?.data || []);
       })
@@ -206,7 +184,8 @@ const Dashboard = () => {
     delete data.updateTime;
     delete data.orgName;
     delete data.roleNames;
-    userApi.update(data)
+    userApi
+      .update(data)
       .then(() => {
         message.success(t('authz.user.resetPwdSuccess'));
         setResetRow(null);
@@ -337,90 +316,88 @@ const Dashboard = () => {
         />
         {/* 右侧：用户表格 */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className={styles.userTable}>
-            {/* 表格区域 */}
-            <ProTable<API.User>
-              /* 表格Ref */
-              actionRef={actionRef}
-              /* 行唯一标识 */
-              rowKey="id"
-              /* 表格列配置 */
-              columns={columns}
-              /* 搜索配置：搜索参数见 “列定义” */
-              search={{
-                labelWidth: 80,
-                defaultCollapsed: false,
-                optionRender: (_searchConfig, formProps, dom) => [
-                  ...dom.filter(
-                    (item) => (item as React.ReactElement)?.key !== 'rest',
-                  ),
-                  <Button
-                    key="reset-org"
-                    onClick={() => {
-                      setQueryParams({});
-                      formProps.form?.resetFields();
-                      actionRef.current?.reload();
-                    }}
-                  >
-                    {t('common.reset')}
-                  </Button>,
-                ],
-              }}
-              /* 搜索参数 */
-              params={queryParams}
-              /* 表格API请求 */
-              request={async (params) => {
-                const res = await userApi.pageList(params);
-                return {
-                  data: res.data?.data || [],
-                  total: res.data?.total || 0,
-                  success: true,
-                };
-              }}
-              /* 工具栏配置：新增 + 删除 */
-              toolBarRender={() => [
-                hasPermi('authz:user') && (
-                  <Button
-                    key="add"
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => {
-                      setFormCurrent(null);
-                      setFormOpen(true);
-                    }}
-                  >
-                    {t('common.add')}
-                  </Button>
+          {/* 表格区域 */}
+          <ProTable<API.User>
+            /* 表格Ref */
+            actionRef={actionRef}
+            /* 行唯一标识 */
+            rowKey="id"
+            /* 表格列配置 */
+            columns={columns}
+            /* 搜索配置：搜索参数见 “列定义” */
+            search={{
+              labelWidth: 80,
+              defaultCollapsed: false,
+              optionRender: (_searchConfig, formProps, dom) => [
+                ...dom.filter(
+                  (item) => (item as React.ReactElement)?.key !== 'rest',
                 ),
-                hasPermi('authz:user') && (
-                  <Button
-                    key="delete"
-                    danger
-                    icon={<DeleteOutlined />}
-                    disabled={selectedIds.length === 0}
-                    onClick={() => handleDelete()}
-                  >
-                    {t('common.delete')}
-                  </Button>
-                ),
-              ]}
-              /* 行选中：获取选中ID列表 */
-              rowSelection={{
-                onChange: (_keys, rows) => {
-                  setSelectedIds(rows.map((r) => r.id as number));
-                },
-              }}
-              /* 分页配置 */
-              pagination={{
-                defaultPageSize: 10,
-                pageSizeOptions: [10, 20, 50, 100],
-                showSizeChanger: true,
-              }}
-              /* 默认批量选择提示隐藏 */
-              tableAlertRender={false}
-              tableAlertOptionRender={false}
-            />
-          </div>
+                <Button
+                  key="reset-org"
+                  onClick={() => {
+                    setQueryParams({});
+                    formProps.form?.resetFields();
+                    actionRef.current?.reload();
+                  }}
+                >
+                  {t('common.reset')}
+                </Button>,
+              ],
+            }}
+            /* 搜索参数 */
+            params={queryParams}
+            /* 表格API请求 */
+            request={async (params) => {
+              const res = await userApi.pageList(params);
+              return {
+                data: res.data?.data || [],
+                total: res.data?.total || 0,
+                success: true,
+              };
+            }}
+            /* 工具栏配置：新增 + 删除 */
+            toolBarRender={() => [
+              hasPermi('authz:user') && (
+                <Button
+                  key="add"
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    setFormCurrent(null);
+                    setFormOpen(true);
+                  }}
+                >
+                  {t('common.add')}
+                </Button>
+              ),
+              hasPermi('authz:user') && (
+                <Button
+                  key="delete"
+                  danger
+                  icon={<DeleteOutlined />}
+                  disabled={selectedIds.length === 0}
+                  onClick={() => handleDelete()}
+                >
+                  {t('common.delete')}
+                </Button>
+              ),
+            ]}
+            /* 行选中：获取选中ID列表 */
+            rowSelection={{
+              onChange: (_keys, rows) => {
+                setSelectedIds(rows.map((r) => r.id as number));
+              },
+            }}
+            /* 分页配置 */
+            pagination={{
+              defaultPageSize: 10,
+              pageSizeOptions: [10, 20, 50, 100],
+              showSizeChanger: true,
+            }}
+            /* 默认批量选择提示隐藏 */
+            tableAlertRender={false}
+            tableAlertOptionRender={false}
+          />
         </div>
       </div>
 
@@ -457,7 +434,9 @@ const Dashboard = () => {
           {t('authz.user.resetPwdPrompt', [resetRow?.username ?? ''])}
         </p>
         <Input.Password
-          placeholder={t('common.inputPlaceholder', [t('authz.user.newPassword')])}
+          placeholder={t('common.inputPlaceholder', [
+            t('authz.user.newPassword'),
+          ])}
           value={resetPassword}
           onChange={(e) => setResetPassword(e.target.value)}
           maxLength={20}

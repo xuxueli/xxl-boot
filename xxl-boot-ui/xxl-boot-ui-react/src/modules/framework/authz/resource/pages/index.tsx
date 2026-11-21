@@ -13,12 +13,11 @@ import {
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, InputNumber, Tag, Tooltip } from 'antd';
-import { createStyles } from 'antd-style';
 import type React from 'react';
 import { useRef, useState } from 'react';
-import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
+import { t } from '@/i18n';
 import { resourceApi } from '@/modules/framework/authz/resource/api';
 import { handleTree } from '@/utils/common';
 import { getIconComponent } from '@/utils/icon';
@@ -34,28 +33,6 @@ const visibleMap: Record<number, { text: string; color: string }> = {
   0: { text: t('authz.resource.visibleShow'), color: 'geekblue' },
   1: { text: t('authz.resource.visibleHide'), color: 'default' },
 };
-
-/**
- * 资源表格样式
- * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
- */
-const useStyles = createStyles(({ css }) => ({
-  resourceTable: css`
-    .ant-pro-table-list-toolbar-container {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container
-      .ant-pro-table-list-toolbar-right
-      .ant-pro-table-list-toolbar-setting-items {
-      margin-left: auto;
-    }
-  `,
-}));
 
 const ResourceList = () => {
   const { message, modal } = App.useApp();
@@ -76,7 +53,6 @@ const ResourceList = () => {
 
   const resourceStatusOptions = useEnumOption('ResourceStatuEnum');
   const statusValueEnum = toValueEnum(resourceStatusOptions);
-  const { styles } = useStyles();
 
   /** 收集所有节点 id（展开/收起全部） */
   const collectAllKeys = (list: API.Resource[]): React.Key[] => {
@@ -272,58 +248,54 @@ const ResourceList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <div className={styles.resourceTable}>
-        <ProTable<API.Resource>
-          actionRef={actionRef}
-          rowKey="id"
-          columns={columns}
-          pagination={false}
-          /* 默认批量选择提示隐藏 */
-          tableAlertRender={false}
-          search={{
-            labelWidth: 80,
-            optionRender: (_searchConfig, _formProps, dom) => [
-              ...dom.reverse(),
-            ],
-          }}
-          expandable={{
-            expandedRowKeys: expandedKeys,
-            onExpandedRowsChange: (keys) => setExpandedKeys([...keys]),
-          }}
-          request={handleRequest}
-          toolBarRender={() => [
-            hasPermi('authz:resource') && (
-              <Button
-                key="add"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setFormCurrent(null);
-                  setFormOpen(true);
-                }}
-              >
-                {t('common.add')}
-              </Button>
-            ),
-            hasPermi('authz:resource') && (
-              <Button
-                key="saveSort"
-                icon={<SaveOutlined />}
-                onClick={handleSaveSort}
-              >
-                {t('common.saveSort')}
-              </Button>
-            ),
+      <ProTable<API.Resource>
+        actionRef={actionRef}
+        rowKey="id"
+        columns={columns}
+        pagination={false}
+        /* 默认批量选择提示隐藏 */
+        tableAlertRender={false}
+        search={{
+          labelWidth: 80,
+          optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
+        }}
+        expandable={{
+          expandedRowKeys: expandedKeys,
+          onExpandedRowsChange: (keys) => setExpandedKeys([...keys]),
+        }}
+        request={handleRequest}
+        toolBarRender={() => [
+          hasPermi('authz:resource') && (
             <Button
-              key="expand"
-              icon={<NodeExpandOutlined />}
-              onClick={handleToggleExpand}
+              key="add"
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setFormCurrent(null);
+                setFormOpen(true);
+              }}
             >
-              {t('common.expandCollapse')}
-            </Button>,
-          ]}
-        />
-      </div>
+              {t('common.add')}
+            </Button>
+          ),
+          hasPermi('authz:resource') && (
+            <Button
+              key="saveSort"
+              icon={<SaveOutlined />}
+              onClick={handleSaveSort}
+            >
+              {t('common.saveSort')}
+            </Button>
+          ),
+          <Button
+            key="expand"
+            icon={<NodeExpandOutlined />}
+            onClick={handleToggleExpand}
+          >
+            {t('common.expandCollapse')}
+          </Button>,
+        ]}
+      />
       <ResourceFormModal
         open={formOpen}
         onOpenChange={setFormOpen}

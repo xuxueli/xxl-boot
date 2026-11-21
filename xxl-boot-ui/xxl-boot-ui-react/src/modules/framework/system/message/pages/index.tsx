@@ -12,51 +12,29 @@ import {
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Space, Tag, Tooltip } from 'antd';
-import { createStyles } from 'antd-style';
 import { useMemo, useRef, useState } from 'react';
-import { t } from '@/i18n';
 import {
   toSelectOptions,
   toValueEnum,
   useEnumOption,
 } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
+import { t } from '@/i18n';
 import { messageApi } from '@/modules/framework/system/message/api';
 import MessageDetail from './MessageDetail';
 import MessageFormModal from './MessageFormModal';
 import ReadUsersDialog from './ReadUsersDialog';
 
-/**
- * 消息表格样式
- * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
- */
-const useStyles = createStyles(({ css }) => ({
-  messageTable: css`
-    .ant-pro-table-list-toolbar-container {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container
-      .ant-pro-table-list-toolbar-right
-      .ant-pro-table-list-toolbar-setting-items {
-      margin-left: auto;
-    }
-  `,
-}));
-
 const MessageList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const [detailOpen, setDetailOpen] = useState(false); /* 详情抽屉显隐 */
-  const [detailPayload, setDetailPayload] = useState<number>(); /* 详情消息 ID */
+  const [detailPayload, setDetailPayload] =
+    useState<number>(); /* 详情消息 ID */
   const [readOpen, setReadOpen] = useState(false); /* 已读弹窗显隐 */
-  const [readMessage, setReadMessage] = useState<API.Message>(); /* 已读弹窗消息 */
+  const [readMessage, setReadMessage] =
+    useState<API.Message>(); /* 已读弹窗消息 */
   const { hasRole } = usePermission();
-  const { styles } = useStyles();
 
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.Message | null>(null);
@@ -133,12 +111,24 @@ const MessageList = () => {
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
-          {record.status === 0 ? t('common.normal') : t('system.message.offline')}
+          {record.status === 0
+            ? t('common.normal')
+            : t('system.message.offline')}
         </Tag>
       ),
     },
-    { title: t('system.message.sender'), dataIndex: 'sender', search: false, width: 90 },
-    { title: t('system.message.sendTime'), dataIndex: 'addTime', search: false, width: 160 },
+    {
+      title: t('system.message.sender'),
+      dataIndex: 'sender',
+      search: false,
+      width: 90,
+    },
+    {
+      title: t('system.message.sendTime'),
+      dataIndex: 'addTime',
+      search: false,
+      width: 160,
+    },
     {
       title: t('common.operation'),
       valueType: 'option',
@@ -173,66 +163,62 @@ const MessageList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <div className={styles.messageTable}>
-        <ProTable<API.Message>
-          actionRef={actionRef}
-          rowKey="id"
-          columns={columns}
-          search={{
-            labelWidth: 80,
-            optionRender: (_searchConfig, _formProps, dom) => [
-              ...dom.reverse(),
-            ],
-          }}
-          request={async (params) => {
-            const res = await messageApi.pageList(params);
-            return {
-              data: res.data?.data || [],
-              total: res.data?.total || 0,
-              success: true,
-            };
-          }}
-          toolBarRender={() => [
-            hasRole('admin') && (
-              <Button
-                key="add"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setFormCurrent(null);
-                  setFormOpen(true);
-                }}
-              >
-                {t('common.add')}
-              </Button>
-            ),
-            hasRole('admin') && (
-              <Button
-                key="delete"
-                danger
-                icon={<DeleteOutlined />}
-                disabled={!selectedIds.length}
-                onClick={() => handleDelete()}
-              >
-                {t('common.delete')}
-              </Button>
-            ),
-          ]}
-          rowSelection={{
-            onChange: (_keys, rows) => {
-              setSelectedIds(rows.map((r) => r.id as number));
-            },
-          }}
-          /* 分页配置 */
-          pagination={{
-            defaultPageSize: 10,
-            pageSizeOptions: [10, 20, 50, 100],
-            showSizeChanger: true,
-          }}
-          /* 默认批量选择提示隐藏 */
-          tableAlertRender={false}
-        />
-      </div>
+      <ProTable<API.Message>
+        actionRef={actionRef}
+        rowKey="id"
+        columns={columns}
+        search={{
+          labelWidth: 80,
+          optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
+        }}
+        request={async (params) => {
+          const res = await messageApi.pageList(params);
+          return {
+            data: res.data?.data || [],
+            total: res.data?.total || 0,
+            success: true,
+          };
+        }}
+        toolBarRender={() => [
+          hasRole('admin') && (
+            <Button
+              key="add"
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setFormCurrent(null);
+                setFormOpen(true);
+              }}
+            >
+              {t('common.add')}
+            </Button>
+          ),
+          hasRole('admin') && (
+            <Button
+              key="delete"
+              danger
+              icon={<DeleteOutlined />}
+              disabled={!selectedIds.length}
+              onClick={() => handleDelete()}
+            >
+              {t('common.delete')}
+            </Button>
+          ),
+        ]}
+        rowSelection={{
+          onChange: (_keys, rows) => {
+            setSelectedIds(rows.map((r) => r.id as number));
+          },
+        }}
+        /* 分页配置 */
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: [10, 20, 50, 100],
+          showSizeChanger: true,
+        }}
+        /* 默认批量选择提示隐藏 */
+        tableAlertRender={false}
+      />
       <MessageFormModal
         open={formOpen}
         onOpenChange={setFormOpen}

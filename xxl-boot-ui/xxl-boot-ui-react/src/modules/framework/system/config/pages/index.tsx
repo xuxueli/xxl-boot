@@ -6,98 +6,93 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { App, Button, Tag, Tooltip } from 'antd';
-import { createStyles } from 'antd-style';
+import { App, Button, Tag } from 'antd';
 import { useRef, useState } from 'react';
-import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
+import { t } from '@/i18n';
 import { configApi } from '@/modules/framework/system/config/api';
-import ConfigFormModal from './ConfigFormModal';
+import { buildListQuery } from '@/utils/pageQuery';
+import FormModal from './FormModal';
 
 /**
- * 配置表格样式
- * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
+ * 配置列表页
+ * 功能：只负责查询、勾选、顶部操作与弹窗编排；表单细节收敛在 FormModal。
  */
-const useStyles = createStyles(({ css }) => ({
-  configTable: css`
-    .ant-pro-table-list-toolbar-container {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container
-      .ant-pro-table-list-toolbar-right
-      .ant-pro-table-list-toolbar-setting-items {
-      margin-left: auto;
-    }
-  `,
-}));
-
 const ConfigList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasRole } = usePermission();
-  const { styles } = useStyles();
 
-  const [formOpen, setFormOpen] = useState(false);
-  const [formCurrent, setFormCurrent] = useState<API.Config | null>(null);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  // ---------------------- 页面状态 ----------------------
 
+  const [formOpen, setFormOpen] = useState(false); /* 表单弹窗显隐 */
+  const [formCurrent, setFormCurrent] = useState<API.Config | null>(
+    null,
+  ); /* 当前编辑行，null 表示新增 */
+  const [selectedIds, setSelectedIds] = useState<number[]>([]); /* 勾选行主键 */
+
+  // 状态枚举：valueEnum 供搜索下拉，render 中的 Tag 文案由 common 文案兜底
   const configStatusOptions = useEnumOption('ConfigStatusEnum');
   const statusValueEnum = toValueEnum(configStatusOptions);
 
-  /** 删除配置 */
+  // ---------------------- 数据操作 ----------------------
+
+  /**
+   * 删除配置（单条或批量）
+   *
+   * @param row 行数据，省略时删除勾选行
+   */
   const handleDelete = (row?: API.Config) => {
-    const ids = row ? [row.id as number] : selectedIds;
+    // 行按钮只删当前行；顶部按钮删除勾选行
+    const ids = row ? (row.id != null ? [row.id] : []) : selectedIds;
+    // 无可删记录时直接返回，避免弹出空确认框
     if (ids.length === 0) return;
+    // confirm delete
     modal.confirm({
       title: t('modal.title'),
-      content: t('system.config.confirmDelete', [
-        row?.name || t('system.config.batchDeleteName'),
-      ]),
+      content: row
+        ? t('system.config.confirmDelete', [row.name ?? String(row.id)])
+        : t('system.config.confirmBatchDelete', [ids.length]),
       onOk: async () => {
         await configApi.delete(ids);
         message.success(t('common.deleteSuccess'));
+        // 删除后清空勾选，避免批量按钮仍处于可用态
         setSelectedIds([]);
         actionRef.current?.reload();
       },
     });
   };
 
+  // ---------------------- 表格“列”定义 ----------------------
+
+  /** 表格列：序号、名称、Key、Value、状态、备注、添加时间、操作 */
   const columns: ProColumns<API.Config>[] = [
     { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
     {
       title: t('system.config.configName'),
       dataIndex: 'name',
+      /* 启用搜索 */
+      search: true,
       ellipsis: true,
-      render: (_, record) => (
-        <Tooltip title={record.name}>{record.name}</Tooltip>
-      ),
     },
     {
       title: t('system.config.configKey'),
       dataIndex: 'key',
       search: false,
       ellipsis: true,
-      render: (_, record) => <Tooltip title={record.key}>{record.key}</Tooltip>,
     },
     {
       title: t('system.config.configValue'),
       dataIndex: 'value',
       search: false,
       ellipsis: true,
-      render: (_, record) => (
-        <Tooltip title={record.value}>{record.value}</Tooltip>
-      ),
     },
     {
       title: t('common.status'),
       dataIndex: 'status',
       width: 90,
+      valueType: 'select',
       valueEnum: statusValueEnum,
       render: (_, record) => (
         <Tag color={record.status === 0 ? 'success' : 'error'}>
@@ -109,21 +104,14 @@ const ConfigList = () => {
       title: t('common.remark'),
       dataIndex: 'remark',
       search: false,
-      render: (_, record) => (
-        <Tooltip title={record.remark}>
-          <div
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {record.remark}
-          </div>
-        </Tooltip>
-      ),
+      ellipsis: true,
     },
-    { title: t('common.addTime'), dataIndex: 'addTime', search: false, width: 160 },
+    {
+      title: t('common.addTime'),
+      dataIndex: 'addTime',
+      search: false,
+      width: 160,
+    },
     {
       title: t('common.operation'),
       valueType: 'option',
@@ -145,69 +133,73 @@ const ConfigList = () => {
     },
   ];
 
+  // ---------------------- 数据列表渲染 ----------------------
   return (
     <PageContainer ghost title={false}>
-      <div className={styles.configTable}>
-        <ProTable<API.Config>
-          actionRef={actionRef}
-          rowKey="id"
-          columns={columns}
-          search={{
-            labelWidth: 80,
-            optionRender: (_searchConfig, _formProps, dom) => [
-              ...dom.reverse(),
-            ],
-          }}
-          request={async (params) => {
-            const res = await configApi.pageList(params);
-            return {
-              data: res.data?.data || [],
-              total: res.data?.total || 0,
-              success: true,
-            };
-          }}
-          toolBarRender={() => [
-            hasRole('admin') && (
-              <Button
-                key="add"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setFormCurrent(null);
-                  setFormOpen(true);
-                }}
-              >
-                {t('common.add')}
-              </Button>
-            ),
-            hasRole('admin') && (
-              <Button
-                key="delete"
-                danger
-                icon={<DeleteOutlined />}
-                disabled={!selectedIds.length}
-                onClick={() => handleDelete()}
-              >
-                {t('common.delete')}
-              </Button>
-            ),
-          ]}
-          rowSelection={{
-            onChange: (_keys, rows) => {
-              setSelectedIds(rows.map((r) => r.id as number));
-            },
-          }}
-          /* 分页配置 */
-          pagination={{
-            defaultPageSize: 10,
-            pageSizeOptions: [10, 20, 50, 100],
-            showSizeChanger: true,
-          }}
-          /* 默认批量选择提示隐藏 */
-          tableAlertRender={false}
-        />
-      </div>
-      <ConfigFormModal
+      <ProTable<API.Config>
+        actionRef={actionRef}
+        rowKey="id"
+        columns={columns}
+        /* 搜索区：查询/重置按钮靠右 */
+        search={{
+          labelWidth: 80,
+          optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
+        }}
+        /* 列表数据查询：ProTable 的 current/pageSize 由 buildListQuery 统一转换为 offset/pagesize */
+        request={async (params) => {
+          const res = await configApi.pageList(buildListQuery(params));
+          return {
+            data: res.data?.data || [],
+            total: res.data?.total || 0,
+            success: true,
+          };
+        }}
+        /* 工具栏：新增、批量删除 */
+        toolBarRender={() => [
+          hasRole('admin') && (
+            <Button
+              key="add"
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setFormCurrent(null);
+                setFormOpen(true);
+              }}
+            >
+              {t('common.add')}
+            </Button>
+          ),
+          hasRole('admin') && (
+            <Button
+              key="delete"
+              danger
+              icon={<DeleteOutlined />}
+              disabled={!selectedIds.length}
+              onClick={() => handleDelete()}
+            >
+              {t('common.delete')}
+            </Button>
+          ),
+        ]}
+        /* 行勾选：同步主键，供批量删除使用 */
+        rowSelection={{
+          onChange: (_keys, rows) => {
+            setSelectedIds(rows.map((r) => r.id as number));
+          },
+        }}
+        /* 分页配置 */
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: [10, 20, 50, 100],
+          showSizeChanger: true,
+          showQuickJumper: false,
+          showTotal: (total) => t('common.paginationTotal', [total]),
+        }}
+        /* 默认批量选择提示隐藏 */
+        tableAlertRender={false}
+      />
+      {/* 新增/编辑弹窗 */}
+      <FormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}

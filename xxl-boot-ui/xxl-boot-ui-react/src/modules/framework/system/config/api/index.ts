@@ -10,26 +10,15 @@ export const configApi = {
   /**
    * 分页查询配置
    *
-   * @param params 分页与查询条件（current/pageSize/name/key/status）
+   * @param query 分页与查询条件（offset/pagesize 形态）
    * @returns 配置分页结果
    */
-  pageList(params: {
-    current?: number;
-    pageSize?: number;
-    name?: string;
-    key?: string;
-    status?: number;
-  }) {
-    const { current = 1, pageSize = 10, ...rest } = params || {};
+  pageList(query: API.ConfigListQuery) {
     return request<API.Response<API.PageModel<API.Config>>>(
       '/system/config/pageList',
       {
         method: 'GET',
-        params: {
-          offset: (current - 1) * pageSize,
-          pagesize: pageSize,
-          ...rest,
-        },
+        params: query,
       },
     );
   },
@@ -50,6 +39,8 @@ export const configApi = {
   /**
    * 按配置 Key 查询配置
    *
+   * 平台能力接口：供其他模块按 Key 读取配置，列表页本身不使用。
+   *
    * @param key 配置 Key
    * @returns 配置详情
    */
@@ -63,10 +54,10 @@ export const configApi = {
   /**
    * 新增配置
    *
-   * @param data 配置数据
+   * @param data 表单数据
    * @returns 保存结果
    */
-  insert(data: API.Config) {
+  insert(data: API.ConfigForm) {
     return request<API.Response<unknown>>('/system/config/insert', {
       method: 'POST',
       data,
@@ -76,7 +67,7 @@ export const configApi = {
   /**
    * 删除配置（支持单条/批量）
    *
-   * @param ids 配置主键或主键数组
+   * @param ids 单个主键或主键数组
    * @returns 删除结果
    */
   delete(ids: number | number[]) {
@@ -89,10 +80,10 @@ export const configApi = {
   /**
    * 更新配置
    *
-   * @param data 配置数据（含主键）
+   * @param data 表单数据
    * @returns 保存结果
    */
-  update(data: API.Config) {
+  update(data: API.ConfigForm) {
     return request<API.Response<unknown>>('/system/config/update', {
       method: 'POST',
       data,

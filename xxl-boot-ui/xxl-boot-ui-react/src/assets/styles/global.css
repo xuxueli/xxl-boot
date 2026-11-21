@@ -75,6 +75,24 @@ body,
   display: none;
 }
 
+/* ProTable 工具栏：操作按钮靠左，密度/刷新等设置项仍靠右（全局统一，页面不再各自维护） */
+.ant-pro-table .ant-pro-table-list-toolbar-container {
+  justify-content: flex-start;
+}
+
+.ant-pro-table
+  .ant-pro-table-list-toolbar-container
+  .ant-pro-table-list-toolbar-right {
+  justify-content: flex-start;
+}
+
+.ant-pro-table
+  .ant-pro-table-list-toolbar-container
+  .ant-pro-table-list-toolbar-right
+  .ant-pro-table-list-toolbar-setting-items {
+  margin-left: auto;
+}
+
 /* 画布元素：块级化，避免底部留白 */
 canvas {
   display: block;

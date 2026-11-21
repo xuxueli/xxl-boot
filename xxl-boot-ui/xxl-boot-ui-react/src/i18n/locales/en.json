@@ -43,6 +43,7 @@
     "inputPlaceholder": "Please enter {0}",
     "selectPlaceholderText": "Please select {0}",
     "requiredMsg": "{0} cannot be empty",
+    "paginationTotal": "Total {0} items",
     "titleAdd": "Add {0}",
     "titleEdit": "Edit {0}",
     "noun": {
@@ -222,8 +223,8 @@
       "configValue": "Config Value",
       "keyLength": "Config key length must be between 4 and 100 characters",
       "keyPattern": "Must start with a lowercase letter and contain only lowercase letters, digits and dots",
-      "batchDeleteName": "these configs",
-      "confirmDelete": "Are you sure you want to delete \"{0}\"?"
+      "confirmDelete": "Are you sure you want to delete \"{0}\"?",
+      "confirmBatchDelete": "Are you sure you want to delete the {0} selected config item(s)?"
     },
     "dict": {
       "dictName": "Dict Name",

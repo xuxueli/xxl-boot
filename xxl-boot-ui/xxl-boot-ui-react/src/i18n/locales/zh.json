@@ -43,6 +43,7 @@
     "inputPlaceholder": "请输入{0}",
     "selectPlaceholderText": "请选择{0}",
     "requiredMsg": "{0}不能为空",
+    "paginationTotal": "共 {0} 条",
     "titleAdd": "新增{0}",
     "titleEdit": "修改{0}",
     "noun": {
@@ -222,8 +223,8 @@
       "configValue": "配置Value",
       "keyLength": "配置Key长度必须在 4 到 100 个字符",
       "keyPattern": "小写字母开头，仅允许小写字母、数字和点",
-      "batchDeleteName": "这些配置",
-      "confirmDelete": "是否确认删除名称为\"{0}\"的数据项？"
+      "confirmDelete": "是否确认删除名称为\"{0}\"的数据项？",
+      "confirmBatchDelete": "是否确认删除选中的 {0} 项配置？"
     },
     "dict": {
       "dictName": "字典名称",

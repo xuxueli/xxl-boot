@@ -12,46 +12,24 @@ import {
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
-import { createStyles } from 'antd-style';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
+import { t } from '@/i18n';
 import { dictApi } from '@/modules/framework/system/dict/api';
 import DictDataDrawer from './DictDataDrawer';
 import DictFormModal from './DictFormModal';
-
-/**
- * 字典表格样式
- * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
- */
-const useStyles = createStyles(({ css }) => ({
-  dictTable: css`
-    .ant-pro-table-list-toolbar-container {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container
-      .ant-pro-table-list-toolbar-right
-      .ant-pro-table-list-toolbar-setting-items {
-      margin-left: auto;
-    }
-  `,
-}));
 
 const DictList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const [drawerOpen, setDrawerOpen] = useState(false); /* 抽屉显隐 */
-  const [drawerDict, setDrawerDict] = useState<API.Dict | null>(null); /* 当前字典 */
+  const [drawerDict, setDrawerDict] = useState<API.Dict | null>(
+    null,
+  ); /* 当前字典 */
   const navigate = useNavigate();
   const { hasRole } = usePermission();
-  const { styles } = useStyles();
 
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.Dict | null>(null);
@@ -108,7 +86,12 @@ const DictList = () => {
       ),
     },
     { title: t('common.remark'), dataIndex: 'remark', search: false },
-    { title: t('common.addTime'), dataIndex: 'addTime', search: false, width: 160 },
+    {
+      title: t('common.addTime'),
+      dataIndex: 'addTime',
+      search: false,
+      width: 160,
+    },
     {
       title: t('common.operation'),
       valueType: 'option',
@@ -140,66 +123,62 @@ const DictList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <div className={styles.dictTable}>
-        <ProTable<API.Dict>
-          actionRef={actionRef}
-          rowKey="id"
-          columns={columns}
-          search={{
-            labelWidth: 80,
-            optionRender: (_searchConfig, _formProps, dom) => [
-              ...dom.reverse(),
-            ],
-          }}
-          request={async (params) => {
-            const res = await dictApi.pageList(params);
-            return {
-              data: res.data?.data || [],
-              total: res.data?.total || 0,
-              success: true,
-            };
-          }}
-          toolBarRender={() => [
-            hasRole('admin') && (
-              <Button
-                key="add"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setFormCurrent(null);
-                  setFormOpen(true);
-                }}
-              >
-                {t('common.add')}
-              </Button>
-            ),
-            hasRole('admin') && (
-              <Button
-                key="delete"
-                danger
-                icon={<DeleteOutlined />}
-                disabled={!selectedIds.length}
-                onClick={() => handleDelete()}
-              >
-                {t('common.delete')}
-              </Button>
-            ),
-          ]}
-          rowSelection={{
-            onChange: (_keys, rows) => {
-              setSelectedIds(rows.map((r) => r.id as number));
-            },
-          }}
-          /* 分页配置 */
-          pagination={{
-            defaultPageSize: 10,
-            pageSizeOptions: [10, 20, 50, 100],
-            showSizeChanger: true,
-          }}
-          /* 默认批量选择提示隐藏 */
-          tableAlertRender={false}
-        />
-      </div>
+      <ProTable<API.Dict>
+        actionRef={actionRef}
+        rowKey="id"
+        columns={columns}
+        search={{
+          labelWidth: 80,
+          optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
+        }}
+        request={async (params) => {
+          const res = await dictApi.pageList(params);
+          return {
+            data: res.data?.data || [],
+            total: res.data?.total || 0,
+            success: true,
+          };
+        }}
+        toolBarRender={() => [
+          hasRole('admin') && (
+            <Button
+              key="add"
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setFormCurrent(null);
+                setFormOpen(true);
+              }}
+            >
+              {t('common.add')}
+            </Button>
+          ),
+          hasRole('admin') && (
+            <Button
+              key="delete"
+              danger
+              icon={<DeleteOutlined />}
+              disabled={!selectedIds.length}
+              onClick={() => handleDelete()}
+            >
+              {t('common.delete')}
+            </Button>
+          ),
+        ]}
+        rowSelection={{
+          onChange: (_keys, rows) => {
+            setSelectedIds(rows.map((r) => r.id as number));
+          },
+        }}
+        /* 分页配置 */
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: [10, 20, 50, 100],
+          showSizeChanger: true,
+        }}
+        /* 默认批量选择提示隐藏 */
+        tableAlertRender={false}
+      />
       <DictFormModal
         open={formOpen}
         onOpenChange={setFormOpen}

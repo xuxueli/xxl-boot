@@ -13,37 +13,14 @@ import {
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, InputNumber, Tag } from 'antd';
-import { createStyles } from 'antd-style';
 import type React from 'react';
 import { useRef, useState } from 'react';
-import { t } from '@/i18n';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
+import { t } from '@/i18n';
 import { orgApi } from '@/modules/framework/authz/org/api';
 import { handleTree } from '@/utils/common';
 import OrgFormModal from './OrgFormModal';
-
-/**
- * 组织表格样式
- * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
- */
-const useStyles = createStyles(({ css }) => ({
-  orgTable: css`
-    .ant-pro-table-list-toolbar-container {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container
-      .ant-pro-table-list-toolbar-right
-      .ant-pro-table-list-toolbar-setting-items {
-      margin-left: auto;
-    }
-  `,
-}));
 
 const OrgList = () => {
   const { message, modal } = App.useApp();
@@ -63,7 +40,6 @@ const OrgList = () => {
 
   const orgStatusOptions = useEnumOption('OrgStatuEnum');
   const statusValueEnum = toValueEnum(orgStatusOptions);
-  const { styles } = useStyles();
 
   /** 收集所有节点 id */
   const collectAllKeys = (list: API.Org[]): React.Key[] => {
@@ -220,56 +196,52 @@ const OrgList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <div className={styles.orgTable}>
-        <ProTable<API.Org>
-          actionRef={actionRef}
-          rowKey="id"
-          columns={columns}
-          pagination={false}
-          /* 默认批量选择提示隐藏 */
-          tableAlertRender={false}
-          search={{
-            labelWidth: 80,
-            optionRender: (_searchConfig, _formProps, dom) => [
-              ...dom.reverse(),
-            ],
-          }}
-          expandable={{
-            expandedRowKeys: expandedKeys,
-            onExpandedRowsChange: (keys) => setExpandedKeys([...keys]),
-          }}
-          request={handleRequest}
-          toolBarRender={() => [
-            hasPermi('authz:org') && (
-              <Button
-                key="add"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setFormCurrent(null);
-                  setFormOpen(true);
-                }}
-              >
-                {t('common.add')}
-              </Button>
-            ),
+      <ProTable<API.Org>
+        actionRef={actionRef}
+        rowKey="id"
+        columns={columns}
+        pagination={false}
+        /* 默认批量选择提示隐藏 */
+        tableAlertRender={false}
+        search={{
+          labelWidth: 80,
+          optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
+        }}
+        expandable={{
+          expandedRowKeys: expandedKeys,
+          onExpandedRowsChange: (keys) => setExpandedKeys([...keys]),
+        }}
+        request={handleRequest}
+        toolBarRender={() => [
+          hasPermi('authz:org') && (
             <Button
-              key="saveSort"
-              icon={<SaveOutlined />}
-              onClick={handleSaveSort}
+              key="add"
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setFormCurrent(null);
+                setFormOpen(true);
+              }}
             >
-              {t('common.saveSort')}
-            </Button>,
-            <Button
-              key="expand"
-              icon={<NodeExpandOutlined />}
-              onClick={handleToggleExpand}
-            >
-              {t('common.expandCollapse')}
-            </Button>,
-          ]}
-        />
-      </div>
+              {t('common.add')}
+            </Button>
+          ),
+          <Button
+            key="saveSort"
+            icon={<SaveOutlined />}
+            onClick={handleSaveSort}
+          >
+            {t('common.saveSort')}
+          </Button>,
+          <Button
+            key="expand"
+            icon={<NodeExpandOutlined />}
+            onClick={handleToggleExpand}
+          >
+            {t('common.expandCollapse')}
+          </Button>,
+        ]}
+      />
       <OrgFormModal
         open={formOpen}
         onOpenChange={setFormOpen}

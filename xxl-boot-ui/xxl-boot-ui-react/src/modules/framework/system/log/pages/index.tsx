@@ -11,44 +11,22 @@ import {
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
-import { createStyles } from 'antd-style';
 import React, { useRef, useState } from 'react';
-import { t } from '@/i18n';
 import { loadEnum, toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
+import { t } from '@/i18n';
 import { logApi } from '@/modules/framework/system/log/api';
 import { download } from '@/utils/download';
 import LogDetail from './LogDetail';
-
-/**
- * 日志表格样式
- * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
- */
-const useStyles = createStyles(({ css }) => ({
-  logTable: css`
-    .ant-pro-table-list-toolbar-container {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container
-      .ant-pro-table-list-toolbar-right
-      .ant-pro-table-list-toolbar-setting-items {
-      margin-left: auto;
-    }
-  `,
-}));
 
 const LogList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const [detailOpen, setDetailOpen] = useState(false); /* 详情弹窗显隐 */
-  const [detailRow, setDetailRow] = useState<API.Log | null>(null); /* 当前日志 */
+  const [detailRow, setDetailRow] = useState<API.Log | null>(
+    null,
+  ); /* 当前日志 */
   const { hasRole } = usePermission();
-  const { styles } = useStyles();
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [moduleMap, setModuleMap] = useState<Record<number, string>>({});
@@ -106,7 +84,9 @@ const LogList = () => {
       valueEnum: toValueEnum(logTypeOptions),
       render: (_, record) => (
         <Tag color={record.type === 0 ? 'geekblue' : 'warning'}>
-          {record.type === 0 ? t('system.log.operLog') : t('system.log.loginLog')}
+          {record.type === 0
+            ? t('system.log.operLog')
+            : t('system.log.loginLog')}
         </Tag>
       ),
     },
@@ -134,7 +114,12 @@ const LogList = () => {
       ellipsis: true,
       render: (_, record) => record.ipAddress || record.ip,
     },
-    { title: t('common.addTime'), dataIndex: 'addTime', search: false, width: 180 },
+    {
+      title: t('common.addTime'),
+      dataIndex: 'addTime',
+      search: false,
+      width: 180,
+    },
     {
       title: t('common.operation'),
       valueType: 'option',
@@ -155,63 +140,59 @@ const LogList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <div className={styles.logTable}>
-        <ProTable<API.Log>
-          actionRef={actionRef}
-          rowKey="id"
-          columns={columns}
-          search={{
-            labelWidth: 80,
-            optionRender: (_searchConfig, _formProps, dom) => [
-              ...dom.reverse(),
-            ],
-          }}
-          request={async (params) => {
-            searchParamsRef.current = params;
-            const res = await logApi.pageList(params);
-            return {
-              data: res.data?.data || [],
-              total: res.data?.total || 0,
-              success: true,
-            };
-          }}
-          toolBarRender={() => [
-            hasRole('admin') && (
-              <Button
-                key="delete"
-                danger
-                icon={<DeleteOutlined />}
-                disabled={!selectedIds.length}
-                onClick={() => handleDelete()}
-              >
-                {t('common.delete')}
-              </Button>
-            ),
-            hasRole('admin') && (
-              <Button
-                key="export"
-                icon={<DownloadOutlined />}
-                onClick={handleExport}
-              >
-                {t('system.log.export')}
-              </Button>
-            ),
-          ]}
-          rowSelection={{
-            onChange: (_keys, rows) => {
-              setSelectedIds(rows.map((r) => r.id as number));
-            },
-          }}
-          /* 分页配置 */
-          pagination={{
-            defaultPageSize: 10,
-            pageSizeOptions: [10, 20, 50, 100],
-            showSizeChanger: true,
-          }}
-          /* 默认批量选择提示隐藏 */
-          tableAlertRender={false}
-        />
-      </div>
+      <ProTable<API.Log>
+        actionRef={actionRef}
+        rowKey="id"
+        columns={columns}
+        search={{
+          labelWidth: 80,
+          optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
+        }}
+        request={async (params) => {
+          searchParamsRef.current = params;
+          const res = await logApi.pageList(params);
+          return {
+            data: res.data?.data || [],
+            total: res.data?.total || 0,
+            success: true,
+          };
+        }}
+        toolBarRender={() => [
+          hasRole('admin') && (
+            <Button
+              key="delete"
+              danger
+              icon={<DeleteOutlined />}
+              disabled={!selectedIds.length}
+              onClick={() => handleDelete()}
+            >
+              {t('common.delete')}
+            </Button>
+          ),
+          hasRole('admin') && (
+            <Button
+              key="export"
+              icon={<DownloadOutlined />}
+              onClick={handleExport}
+            >
+              {t('system.log.export')}
+            </Button>
+          ),
+        ]}
+        rowSelection={{
+          onChange: (_keys, rows) => {
+            setSelectedIds(rows.map((r) => r.id as number));
+          },
+        }}
+        /* 分页配置 */
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: [10, 20, 50, 100],
+          showSizeChanger: true,
+        }}
+        /* 默认批量选择提示隐藏 */
+        tableAlertRender={false}
+      />
       <LogDetail
         open={detailOpen}
         row={detailRow}

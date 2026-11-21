@@ -13,12 +13,11 @@ import {
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Input, Modal } from 'antd';
-import { createStyles } from 'antd-style';
 import { useRef, useState } from 'react';
 import { usePermission } from '@/hooks/usePermission';
+import { t } from '@/i18n';
 import { codegenApi } from '@/modules/framework/tool/codegen/api';
 import { downloadGet } from '@/utils/download';
-import { t } from '@/i18n';
 import EditTableModal from './EditTableModal';
 import PreviewModal from './PreviewModal';
 
@@ -31,35 +30,12 @@ const demoTableSql = `CREATE TABLE \`product01\` (
   PRIMARY KEY (\`id\`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT='产品信息表';`;
 
-/**
- * 代码生成表格样式
- * 功能：顶部操作按钮靠左展示，密度/刷新等设置项仍靠右
- */
-const useStyles = createStyles(({ css }) => ({
-  codegenTable: css`
-    .ant-pro-table-list-toolbar-container {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container .ant-pro-table-list-toolbar-right {
-      justify-content: flex-start;
-    }
-
-    .ant-pro-table-list-toolbar-container
-      .ant-pro-table-list-toolbar-right
-      .ant-pro-table-list-toolbar-setting-items {
-      margin-left: auto;
-    }
-  `,
-}));
-
 const CodegenList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const [previewOpen, setPreviewOpen] = useState(false); /* 预览弹窗显隐 */
   const [previewId, setPreviewId] = useState<number>(); /* 预览表 ID */
   const { hasRole } = usePermission();
-  const { styles } = useStyles();
 
   const [editOpen, setEditOpen] = useState(false);
   const [editId, setEditId] = useState<number>();
@@ -185,87 +161,83 @@ const CodegenList = () => {
 
   return (
     <PageContainer ghost title={false}>
-      <div className={styles.codegenTable}>
-        <ProTable<API.Codegen>
-          actionRef={actionRef}
-          rowKey="id"
-          columns={columns}
-          search={{
-            labelWidth: 80,
-            optionRender: (_searchConfig, _formProps, dom) => [
-              ...dom.reverse(),
-            ],
-          }}
-          request={async (params) => {
-            const res = await codegenApi.pageList(params);
-            return {
-              data: res.data?.data || [],
-              total: res.data?.total || 0,
-              success: true,
-            };
-          }}
-          toolBarRender={() => [
-            hasRole('admin') && (
-              <Button
-                key="create"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setTableSql(demoTableSql);
-                  setCreateOpen(true);
-                }}
-              >
-                {t('tool.codegen.create')}
-              </Button>
-            ),
-            hasRole('admin') && (
-              <Button
-                key="edit"
-                icon={<EditOutlined />}
-                disabled={selectedIds.length !== 1}
-                onClick={handleEdit}
-              >
-                {t('common.modify')}
-              </Button>
-            ),
-            hasRole('admin') && (
-              <Button
-                key="delete"
-                danger
-                icon={<DeleteOutlined />}
-                disabled={!selectedIds.length}
-                onClick={() => handleDelete()}
-              >
-                {t('common.delete')}
-              </Button>
-            ),
-            hasRole('admin') && (
-              <Button
-                key="gen"
-                type="primary"
-                icon={<DownloadOutlined />}
-                disabled={!selectedIds.length}
-                onClick={() => handleGenCode()}
-              >
-                {t('tool.codegen.generate')}
-              </Button>
-            ),
-          ]}
-          rowSelection={{
-            onChange: (_keys, rows) => {
-              setSelectedIds(rows.map((r) => r.id as number));
-            },
-          }}
-          /* 分页配置 */
-          pagination={{
-            defaultPageSize: 10,
-            pageSizeOptions: [10, 20, 50, 100],
-            showSizeChanger: true,
-          }}
-          /* 默认批量选择提示隐藏 */
-          tableAlertRender={false}
-        />
-      </div>
+      <ProTable<API.Codegen>
+        actionRef={actionRef}
+        rowKey="id"
+        columns={columns}
+        search={{
+          labelWidth: 80,
+          optionRender: (_searchConfig, _formProps, dom) => [...dom.reverse()],
+        }}
+        request={async (params) => {
+          const res = await codegenApi.pageList(params);
+          return {
+            data: res.data?.data || [],
+            total: res.data?.total || 0,
+            success: true,
+          };
+        }}
+        toolBarRender={() => [
+          hasRole('admin') && (
+            <Button
+              key="create"
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setTableSql(demoTableSql);
+                setCreateOpen(true);
+              }}
+            >
+              {t('tool.codegen.create')}
+            </Button>
+          ),
+          hasRole('admin') && (
+            <Button
+              key="edit"
+              icon={<EditOutlined />}
+              disabled={selectedIds.length !== 1}
+              onClick={handleEdit}
+            >
+              {t('common.modify')}
+            </Button>
+          ),
+          hasRole('admin') && (
+            <Button
+              key="delete"
+              danger
+              icon={<DeleteOutlined />}
+              disabled={!selectedIds.length}
+              onClick={() => handleDelete()}
+            >
+              {t('common.delete')}
+            </Button>
+          ),
+          hasRole('admin') && (
+            <Button
+              key="gen"
+              type="primary"
+              icon={<DownloadOutlined />}
+              disabled={!selectedIds.length}
+              onClick={() => handleGenCode()}
+            >
+              {t('tool.codegen.generate')}
+            </Button>
+          ),
+        ]}
+        rowSelection={{
+          onChange: (_keys, rows) => {
+            setSelectedIds(rows.map((r) => r.id as number));
+          },
+        }}
+        /* 分页配置 */
+        pagination={{
+          defaultPageSize: 10,
+          pageSizeOptions: [10, 20, 50, 100],
+          showSizeChanger: true,
+        }}
+        /* 默认批量选择提示隐藏 */
+        tableAlertRender={false}
+      />
 
       <EditTableModal
         open={editOpen}
@@ -294,7 +266,9 @@ const CodegenList = () => {
           value={tableSql}
           onChange={(e) => setTableSql(e.target.value)}
           style={{ fontFamily: 'monospace', fontSize: 12 }}
-          placeholder={t('common.inputPlaceholder', [t('common.noun.createTableSql')])}
+          placeholder={t('common.inputPlaceholder', [
+            t('common.noun.createTableSql'),
+          ])}
         />
       </Modal>
     </PageContainer>
