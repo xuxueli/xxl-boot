@@ -51,7 +51,7 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 遵循 `AGENTS.md`「设计原则」与「通用约定」，Vue 侧落地：
 
 - 优先复用 `@/composables`、`@/components`、`@/utils/modal`；同一逻辑第三次出现才新增 Composable，不提前封装。
-- 列表页只负责编排；复杂表单、详情、多页签拆到 `pages/` 下独立组件，避免渲染/交互/状态混在一个文件。
+- 标准 CRUD 列表页保持单文件，脚本按「响应式数据 → 分页检索 → 数据操作（增删改）→ 其他」分区；只有详情、多页签、复杂独立交互才拆到 `pages/` 下独立组件，避免碎文件。
 - 状态统一 `ref` + `queryParams/table/formState` 收敛；不引入第二套状态或弹窗方案。
 
 ## 五、初始化与启动
@@ -251,7 +251,7 @@ import type { Xxx, XxxForm, XxxQuery } from '../types'
 import type { FormInstance } from 'element-plus'
 import type { FormState, TableState } from '@/types'
 
-// ---------------------- ref data ----------------------
+// ---------------------- 响应式数据 ----------------------
 
 const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
@@ -289,7 +289,7 @@ const formState = ref<FormState<XxxForm>>({
   }
 })
 
-// ---------------------- fun ----------------------
+// ---------------------- 分页检索 ----------------------
 
 /**
  * 查询 Xxx 分页数据
@@ -312,6 +312,32 @@ function getList() {
     })
 }
 
+/** 搜索：回到第一页后查询 */
+function handleQuery() {
+  // 筛选条件已变化，回到第一页可避免停留在超出结果范围的页码
+  queryParams.value.pageNum = 1
+  getList()
+}
+
+/** 重置搜索条件后重新查询 */
+function resetQuery() {
+  queryRef.value?.resetFields()
+  handleQuery()
+}
+
+/**
+ * 同步表格勾选结果与顶部按钮可用状态
+ *
+ * @param selection 当前勾选行
+ */
+function handleSelectionChange(selection: Xxx[]) {
+  table.value.ids = selection.map((item) => item.id as number)
+  table.value.single = selection.length !== 1
+  table.value.multiple = !selection.length
+}
+
+// ---------------------- 数据操作（增删改） ----------------------
+
 /**
  * 重置编辑表单
  *
@@ -330,40 +356,6 @@ function reset() {
 function cancel() {
   formState.value.visible = false
   reset()
-}
-
-/** 搜索：回到第一页后查询 */
-function handleQuery() {
-  // 筛选条件已变化，回到第一页可避免停留在超出结果范围的页码
-  queryParams.value.pageNum = 1
-  getList()
-}
-
-/** 重置搜索条件后重新查询 */
-function resetQuery() {
-  queryRef.value?.resetFields()
-  handleQuery()
-}
-
-/**
- * 状态编码转枚举文案
- *
- * @param status 状态编码
- * @returns 状态文案；未匹配到枚举项时回退显示编码
- */
-function statusText(status: number) {
-  return statusOptions.value.find((item) => item.code === status)?.title ?? String(status)
-}
-
-/**
- * 同步表格勾选结果与顶部按钮可用状态
- *
- * @param selection 当前勾选行
- */
-function handleSelectionChange(selection: Xxx[]) {
-  table.value.ids = selection.map((item) => item.id as number)
-  table.value.single = selection.length !== 1
-  table.value.multiple = !selection.length
 }
 
 /** 打开新增弹窗，表单恢复为新增默认值 */
@@ -424,24 +416,36 @@ function handleDelete(row?: Xxx) {
     .catch(() => {})
 }
 
-// ---------------------- page init ----------------------
+// ---------------------- 其他 ----------------------
+
+/**
+ * 状态编码转枚举文案
+ *
+ * @param status 状态编码
+ * @returns 状态文案；未匹配到枚举项时回退显示编码
+ */
+function statusText(status: number) {
+  return statusOptions.value.find((item) => item.code === status)?.title ?? String(status)
+}
+
+// ---------------------- 页面初始化 ----------------------
 
 getList()
 </script>
 ```
 
-> 表单字段较多或含独立校验、提交逻辑时，拆到同目录 `pages/XxxFormDialog.vue`：需要按主键加载详情再打开的弹窗，用 `defineExpose({ open })` 暴露打开方法（父组件 `formDialogRef.value?.open(id)`）；仅展示父级已有数据的弹窗，用 `defineModel('visible')` + 父组件 `v-model:visible`。两种方式都由子组件提交成功后 `emit('success')`，列表页监听后刷新。完整示例见 `modules/framework/system/config/pages/ConfigFormDialog.vue`。
+> 标准 CRUD 的编辑弹窗保留在 `index.vue` 内，用 `formState` 管理，不单独拆文件；只有详情、多页签或复杂独立交互才拆到 `pages/` 下独立组件，避免文件碎片化。
 
 ### 7.4 Vue 页面约定
 
-- `script` 除基础 import 外按「ref data → fun → page init」三节组织，节顶注释统一为 `// ---------------------- {功能} ----------------------`；`fun` 内按「列表查询 → 重置 → 搜索 → 勾选 → 新增/修改/提交/删除」排列，与样例保持一致。
+- `script` 除基础 import 外按「响应式数据 → 分页检索 → 数据操作（增删改）→ 其他 → 页面初始化」分区，节顶注释统一为 `// ---------------------- {功能} ----------------------`；分页检索按「查询 → 搜索 → 重置 → 勾选」，数据操作按「重置/取消 → 新增 → 修改 → 提交 → 删除」排列，与样例保持一致。
 - 响应式数据一律 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；搜索栏、表格状态、表单状态分别收敛为 `queryParams`、`table`、`formState`。
 - 列表固定经 `usePageParams(queryParams)()` 把 `pageNum/pageSize` 转 `offset/pagesize`；取 `response.data.data` 与 `response.data.total`，并在 `finally` 中复位 `loading`，避免请求失败后表格一直处于加载态。
 - 组件 import 名称与模板标签统一 PascalCase；业务页面按钮权限用 `v-hasPermi="['{module}:{business}:add']"`，平台内置页面按角色用 `v-hasRole="['admin']"`。
 - API 统一按 `{business}Api.method(...)` 调用，方法名与后端 Controller 保持一致；一个页面引入多个模块 API 时直接用命名空间区分，禁止用 import alias 改名。
-- 页内直接写 `<el-dialog>` 时用 `formState.visible` 控制显隐；拆成独立弹窗组件时，需要按主键加载详情的用 `defineExpose({ open })`，仅展示父级已有数据的用 `defineModel('visible')` + `v-model:visible`；提交成功统一 `emit('success')` 通知列表页刷新。通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
+- 标准 CRUD 的编辑弹窗写在 `index.vue` 内，用 `formState` 管理显隐、标题、表单与校验；仅详情、多页签或复杂独立交互才拆到 `pages/` 下组件，拆出时才使用 `defineExpose({ open })` 或 `defineModel('visible')`。通用能力复用 `@/composables/*`、`@/components`、`@/utils/modal`。
 - 表单重置直接用已声明的模板 ref：`queryRef.value?.resetFields()` / `formRef.value?.resetFields()`；搜索栏与编辑表单都要声明 `const xxxRef = ref<FormInstance>()`，不要再包一层按字符串名取 `$refs` 的工具。
-- 编辑弹窗重置时**先** `formRef.value?.resetFields()`，**再**把表单数据（页内弹窗的 `formState.value.form` 或独立弹窗内的 `form.value`）覆盖为新增默认值：`resetFields()` 只会回到表单项首次挂载时的值，先赋值会被它覆盖回上一次编辑的数据。
+- 编辑弹窗重置时**先** `formRef.value?.resetFields()`，**再**把 `formState.value.form` 覆盖为新增默认值：`resetFields()` 只会回到表单项首次挂载时的值，先赋值会被它覆盖回上一次编辑的数据。
 
 ### 7.5 注释与 JSDoc
 
@@ -458,7 +462,7 @@ getList()
 ```
 
 - `<script setup>` 中的导出函数、事件处理、Composable 使用 JSDoc；复杂函数补 `@param` / `@returns`。
-- 保留 `// ---------------------- ref data ----------------------` 等三段式结构注释。
+- 保留 `// ---------------------- 响应式数据 ----------------------` 等分区结构注释。
 - 模板区块用 `<!-- 搜索栏 -->` 标注；核心分支用 `//` 说明原因，不逐行注释。
 
 ```ts
@@ -552,7 +556,6 @@ POST /tool/codegen/createTable
 - 后端直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/java/*.ftl`
 - Vue 直生模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/vue3/*.ftl`
 - 列表页规范样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/config/pages/index.vue`
-- 页内弹窗样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/config/pages/ConfigFormDialog.vue`
 - API / 类型样例：`xxl-boot-ui/xxl-boot-ui-vue/src/modules/framework/system/config/{api,types}/index.ts`
 - 组合式函数：`xxl-boot-ui/xxl-boot-ui-vue/src/composables/{usePageParams,useEnumOption,useDict}.ts`
 - 菜单 SQL 模板：`xxl-boot-api/src/main/resources/templates/tool/codegen/sql/sql.ftl`

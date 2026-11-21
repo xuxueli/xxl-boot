@@ -79,7 +79,7 @@
           <el-input v-model="formState.form.name" :placeholder="t('common.inputPlaceholder', [t('system.config.configName')])" />
         </el-form-item>
         <el-form-item :label="t('system.config.configKey')" prop="key">
-          <el-input v-model="formState.form.key" :placeholder="t('common.inputPlaceholder', [t('system.config.configKey')])" :disabled="formState.form.id != undefined" />
+          <el-input v-model="formState.form.key" :placeholder="t('common.inputPlaceholder', [t('system.config.configKey')])" :disabled="formState.form.id != null" />
         </el-form-item>
         <el-form-item :label="t('system.config.configValue')" prop="value">
           <el-input v-model="formState.form.value" type="textarea" :placeholder="t('common.inputPlaceholder', [t('system.config.configValue')])" />
@@ -116,7 +116,7 @@ import type { Config, ConfigForm, ConfigQuery } from '../types'
 import type { FormInstance } from 'element-plus'
 import type { FormState, TableState } from '@/types'
 
-// --------------------------------- ref data ---------------------------------
+// ---------------------- 响应式数据 ----------------------
 
 const queryRef = ref<FormInstance>() /* 搜索栏表单 ref */
 const formRef = ref<FormInstance>() /* 编辑表单 ref */
@@ -161,20 +161,7 @@ const formState = ref<FormState<ConfigForm>>({
   }
 })
 
-// --------------------------------- fun ---------------------------------
-
-/** 搜索：回到第一页后查询 */
-function handleQuery() {
-  // 筛选条件已变化，回到第一页可避免停留在超出结果范围的页码
-  queryParams.value.pageNum = 1
-  getList()
-}
-
-/** 重置搜索条件后重新查询 */
-function resetQuery() {
-  queryRef.value?.resetFields()
-  handleQuery()
-}
+// ---------------------- 分页检索 ----------------------
 
 /**
  * 查询配置分页数据
@@ -197,15 +184,17 @@ function getList() {
     })
 }
 
-/**
- * 状态编码转枚举文案
- *
- * @param status 状态编码
- * @returns 状态文案；未匹配到枚举项时回退显示编码
- */
-function statusText(status: number) {
-  const item = statusOptions.value.find((i) => i.code === status)
-  return item?.title ?? String(status)
+/** 搜索：回到第一页后查询 */
+function handleQuery() {
+  // 筛选条件已变化，回到第一页可避免停留在超出结果范围的页码
+  queryParams.value.pageNum = 1
+  getList()
+}
+
+/** 重置搜索条件后重新查询 */
+function resetQuery() {
+  queryRef.value?.resetFields()
+  handleQuery()
 }
 
 /**
@@ -217,6 +206,31 @@ function handleSelectionChange(selection: Config[]) {
   table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
+}
+
+// ---------------------- 数据操作（增删改） ----------------------
+
+/**
+ * 重置编辑表单
+ *
+ * resetFields 只会回到表单项首次挂载时的值，因此先复位校验，再覆盖为新增默认值
+ */
+function reset() {
+  formRef.value?.resetFields()
+  formState.value.form = {
+    id: undefined,
+    name: undefined,
+    key: undefined,
+    value: undefined,
+    status: 0,
+    remark: undefined
+  }
+}
+
+/** 关闭弹窗，丢弃未提交的编辑内容 */
+function cancel() {
+  formState.value.visible = false
+  reset()
 }
 
 /** 打开新增弹窗，表单恢复为新增默认值 */
@@ -277,26 +291,19 @@ function handleDelete(row?: Config) {
     .catch(() => {})
 }
 
-/** 重置编辑表单数据与校验状态 */
-function reset() {
-  formState.value.form = {
-    id: undefined,
-    name: undefined,
-    key: undefined,
-    value: undefined,
-    status: 0,
-    remark: undefined
-  }
-  formRef.value?.resetFields()
+// ---------------------- 其他 ----------------------
+
+/**
+ * 状态编码转枚举文案
+ *
+ * @param status 状态编码
+ * @returns 状态文案；未匹配到枚举项时回退显示编码
+ */
+function statusText(status: number) {
+  return statusOptions.value.find((item) => item.code === status)?.title ?? String(status)
 }
 
-/** 关闭弹窗，丢弃未提交的编辑内容 */
-function cancel() {
-  formState.value.visible = false
-  reset()
-}
-
-// --------------------------------- page init ---------------------------------
+// ---------------------- 页面初始化 ----------------------
 
 getList()
 </script>
