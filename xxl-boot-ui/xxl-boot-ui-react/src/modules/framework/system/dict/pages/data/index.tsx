@@ -13,14 +13,16 @@ import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { t } from '@/i18n';
 import { dictApi } from '@/modules/framework/system/dict/api';
-import DictDataFormModal from './DictDataFormModal';
+import FormModal from './FormModal';
 
 const DictData = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const navigate = useNavigate();
-  const { hasRole } = usePermission();
+  const { hasPermi } = usePermission();
   const location = useLocation();
+
+  // ---------------------- 页面状态 ----------------------
 
   // 从 URL 读取 dictId
   const rawDictId = Number(new URLSearchParams(location.search).get('dictId'));
@@ -31,6 +33,8 @@ const DictData = () => {
 
   const dictStatusOptions = useEnumOption('DictStatusEnum');
   const statusValueEnum = toValueEnum(dictStatusOptions);
+
+  // ---------------------- 数据操作 ----------------------
 
   /** 删除字典项 */
   const handleDelete = (row?: API.DictItem) => {
@@ -50,6 +54,9 @@ const DictData = () => {
     });
   };
 
+  // ---------------------- 表格“列”定义 ----------------------
+
+  /** 表格列：序号、名称、编码、状态、排序、备注、添加时间、操作 */
   const columns: ProColumns<API.DictItem>[] = [
     { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
     { title: t('system.dict.itemName'), dataIndex: 'name' },
@@ -83,21 +90,27 @@ const DictData = () => {
       valueType: 'option',
       width: 140,
       render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setFormCurrent(record);
-            setFormOpen(true);
-          }}
-        >
-          <EditOutlined /> {t('common.modify')}
-        </a>,
-        <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> {t('common.delete')}
-        </a>,
+        hasPermi('system:dict') && (
+          <a
+            key="edit"
+            onClick={() => {
+              setFormCurrent(record);
+              setFormOpen(true);
+            }}
+          >
+            <EditOutlined /> {t('common.modify')}
+          </a>
+        ),
+        hasPermi('system:dict') && (
+          <a key="delete" onClick={() => handleDelete(record)}>
+            <DeleteOutlined /> {t('common.delete')}
+          </a>
+        ),
       ],
     },
   ];
+
+  // ---------------------- 数据列表渲染 ----------------------
 
   return (
     <PageContainer ghost title={false}>
@@ -119,7 +132,7 @@ const DictData = () => {
           };
         }}
         toolBarRender={() => [
-          hasRole('admin') && (
+          hasPermi('system:dict') && (
             <Button
               key="add"
               type="primary"
@@ -132,7 +145,7 @@ const DictData = () => {
               {t('common.add')}
             </Button>
           ),
-          hasRole('admin') && (
+          hasPermi('system:dict') && (
             <Button
               key="delete"
               danger
@@ -162,11 +175,12 @@ const DictData = () => {
           defaultPageSize: 10,
           pageSizeOptions: [10, 20, 50, 100],
           showSizeChanger: true,
+          showTotal: (total) => t('common.paginationTotal', [total]),
         }}
         /* 默认批量选择提示隐藏 */
         tableAlertRender={false}
       />
-      <DictDataFormModal
+      <FormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}

@@ -241,15 +241,15 @@ const info = ref<CodegenDetail>({ ...FORM_DEFAULTS }) /* 表配置信息 */
 
 /** 基本信息 - 表单校验规则 */
 const basicRules: FormRules = {
-  tableName: [{ required: true, message: t('common.inputPlaceholder', [t('tool.codegen.tableName')]), trigger: 'blur' }]
+  tableName: [{ required: true, message: t('common.requiredMsg', [t('tool.codegen.tableName')]), trigger: 'blur' }]
 }
 
 /** 生成信息 - 表单校验规则 */
 const genRules: FormRules = {
-  packageName: [{ required: true, message: t('common.inputPlaceholder', [t('tool.codegen.packageName')]), trigger: 'blur' }],
-  moduleName: [{ required: true, message: t('common.inputPlaceholder', [t('tool.codegen.moduleName')]), trigger: 'blur' }],
-  businessName: [{ required: true, message: t('common.inputPlaceholder', [t('tool.codegen.businessName')]), trigger: 'blur' }],
-  functionName: [{ required: true, message: t('common.inputPlaceholder', [t('tool.codegen.functionName')]), trigger: 'blur' }]
+  packageName: [{ required: true, message: t('common.requiredMsg', [t('tool.codegen.packageName')]), trigger: 'blur' }],
+  moduleName: [{ required: true, message: t('common.requiredMsg', [t('tool.codegen.moduleName')]), trigger: 'blur' }],
+  businessName: [{ required: true, message: t('common.requiredMsg', [t('tool.codegen.businessName')]), trigger: 'blur' }],
+  functionName: [{ required: true, message: t('common.requiredMsg', [t('tool.codegen.functionName')]), trigger: 'blur' }]
 }
 
 // ---------------------- 表单操作（打开/重置/保存） ----------------------
@@ -320,7 +320,7 @@ function saveForm() {
       .then((response) => {
         // 仅成功时提示并通知父组件刷新列表
         if (response.code === 200) {
-          modal.msgSuccess(response.msg)
+          modal.msgSuccess(t('common.updateSuccess'))
           closeForm()
           emit('ok')
         }

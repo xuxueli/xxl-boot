@@ -21,7 +21,7 @@ import { t } from '@/i18n';
 import { resourceApi } from '@/modules/framework/authz/resource/api';
 import { handleTree } from '@/utils/common';
 import { getIconComponent } from '@/utils/icon';
-import ResourceFormModal from './ResourceFormModal';
+import FormModal from './FormModal';
 
 const typeMap: Record<number, { text: string; color: string }> = {
   0: { text: t('authz.resource.typeDir'), color: 'geekblue' },
@@ -39,6 +39,8 @@ const ResourceList = () => {
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();
 
+  // ---------------------- 页面状态 ----------------------
+
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.Resource | null>(null);
   const [tableData, setTableData] = useState<API.Resource[]>([]);
@@ -53,6 +55,8 @@ const ResourceList = () => {
 
   const resourceStatusOptions = useEnumOption('ResourceStatuEnum');
   const statusValueEnum = toValueEnum(resourceStatusOptions);
+
+  // ---------------------- 数据操作 ----------------------
 
   /** 收集所有节点 id（展开/收起全部） */
   const collectAllKeys = (list: API.Resource[]): React.Key[] => {
@@ -131,6 +135,9 @@ const ResourceList = () => {
     });
   };
 
+  // ---------------------- 表格“列”定义 ----------------------
+
+  /** 表格列：名称、类型、权限、地址、可见、状态、操作 */
   const columns: ProColumns<API.Resource>[] = [
     {
       title: t('authz.resource.menuName'),
@@ -219,29 +226,34 @@ const ResourceList = () => {
       valueType: 'option',
       width: 240,
       render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setFormCurrent(record);
-            setFormOpen(true);
-          }}
-        >
-          <EditOutlined /> {t('common.modify')}
-        </a>,
-        record.type !== 2 && (
+        hasPermi('authz:resource') && (
           <a
-            key="add"
+            key="edit"
             onClick={() => {
-              setFormCurrent({ parentId: record.id });
+              setFormCurrent(record);
               setFormOpen(true);
             }}
           >
-            <PlusOutlined /> {t('common.add')}
+            <EditOutlined /> {t('common.modify')}
           </a>
         ),
-        <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> {t('common.delete')}
-        </a>,
+        hasPermi('authz:resource') &&
+          record.type !== 2 && (
+            <a
+              key="add"
+              onClick={() => {
+                setFormCurrent({ parentId: record.id });
+                setFormOpen(true);
+              }}
+            >
+              <PlusOutlined /> {t('common.add')}
+            </a>
+          ),
+        hasPermi('authz:resource') && (
+          <a key="delete" onClick={() => handleDelete(record)}>
+            <DeleteOutlined /> {t('common.delete')}
+          </a>
+        ),
       ],
     },
   ];
@@ -296,7 +308,7 @@ const ResourceList = () => {
           </Button>,
         ]}
       />
-      <ResourceFormModal
+      <FormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}

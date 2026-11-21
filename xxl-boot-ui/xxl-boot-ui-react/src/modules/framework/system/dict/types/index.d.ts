@@ -57,4 +57,41 @@ declare namespace API {
     /** 状态：0-正常、1-停用 */
     status?: number;
   };
+
+  /** 字典类型列表查询条件：ProTable 分页 + 搜索栏字段 */
+  type DictQuery = {
+    /** 当前页码，默认 1 */
+    current?: number;
+    /** 每页条数，默认 10 */
+    pageSize?: number;
+    /** 字典名称，模糊匹配 */
+    name?: string;
+    /** 字典标识，模糊匹配 */
+    type?: string;
+    /** 状态筛选：不传或 -1 表示全部 */
+    status?: number;
+  };
+
+  /** 字典类型新增/修改表单 */
+  type DictForm = Pick<Dict, 'id' | 'name' | 'type' | 'status' | 'remark'>;
+
+  /** 字典项列表查询条件：ProTable 分页 + 搜索栏字段 */
+  type DictItemQuery = {
+    /** 当前页码，默认 1 */
+    current?: number;
+    /** 每页条数，默认 10 */
+    pageSize?: number;
+    /** 所属字典主键 */
+    dictId?: number;
+    /** 字典项名称，模糊匹配 */
+    name?: string;
+    /** 状态筛选：不传或 -1 表示全部 */
+    status?: number;
+  };
+
+  /** 字典项新增/修改表单 */
+  type DictItemForm = Pick<
+    DictItem,
+    'id' | 'dictId' | 'name' | 'code' | 'status' | 'order' | 'remark'
+  >;
 }

@@ -5,6 +5,7 @@ import com.xxl.boot.api.framework.model.adaptor.ConfigAdaptor;
 import com.xxl.boot.api.framework.model.dto.ConfigDTO;
 import com.xxl.boot.api.framework.model.entity.Config;
 import com.xxl.boot.api.framework.service.ConfigService;
+import com.xxl.boot.api.framework.util.I18nUtil;
 import com.xxl.tool.cache.CacheTool;
 import com.xxl.tool.cache.iface.Cache;
 import com.xxl.tool.cache.iface.CacheLoader;
@@ -44,21 +45,22 @@ public class ConfigServiceImpl implements ConfigService {
         // 参数校验：实体及必填字段不能为空
         if (xxlBootConfig == null
                 || StringTool.isBlank(xxlBootConfig.getName())
-                || StringTool.isBlank(xxlBootConfig.getKey())) {
-            return Response.ofFail("必要参数缺失");
+                || StringTool.isBlank(xxlBootConfig.getKey())
+                || StringTool.isBlank(xxlBootConfig.getValue())) {
+            return Response.ofFail(I18nUtil.getString("system_param_empty"));
         }
         // 配置Key格式校验：小写字母开头，由小写字母、数字和点组成
         if (!RegexTool.matches("^[a-z][a-z0-9.]*$", xxlBootConfig.getKey())) {
-            return Response.ofFail("配置Key格式不正确");
+            return Response.ofFail(I18nUtil.getString("config_key_valid"));
         }
         // 配置Key长度校验：4-100
         if (xxlBootConfig.getKey().length() < 4 || xxlBootConfig.getKey().length() > 100) {
-            return Response.ofFail("配置Key长度需在4-100之间");
+            return Response.ofFail(I18nUtil.getString("config_key_length"));
         }
         // 配置Key唯一性校验：数据库唯一索引，代码层友好提示
         Config existConfig = configMapper.loadByKey(xxlBootConfig.getKey());
         if (existConfig != null) {
-            return Response.ofFail("配置Key已存在");
+            return Response.ofFail(I18nUtil.getString("config_key_repeat"));
         }
 
         configMapper.insert(xxlBootConfig);
@@ -79,6 +81,23 @@ public class ConfigServiceImpl implements ConfigService {
      */
     @Override
     public Response<String> update(Config xxlBootConfig) {
+        // 参数校验：主键与必填字段不能为空
+        if (xxlBootConfig == null
+                || xxlBootConfig.getId() <= 0
+                || StringTool.isBlank(xxlBootConfig.getName())
+                || StringTool.isBlank(xxlBootConfig.getKey())
+                || StringTool.isBlank(xxlBootConfig.getValue())) {
+            return Response.ofFail(I18nUtil.getString("system_param_empty"));
+        }
+        // 配置Key创建后不可修改，避免业务按 Key 读取的配置失效
+        Config existConfig = configMapper.load((int) xxlBootConfig.getId());
+        if (existConfig == null) {
+            return Response.ofFail(I18nUtil.getString("system_param_empty"));
+        }
+        if (!existConfig.getKey().equals(xxlBootConfig.getKey())) {
+            return Response.ofFail(I18nUtil.getString("config_key_update_limit"));
+        }
+
         int ret = configMapper.update(xxlBootConfig);
         return ret>0? Response.ofSuccess() : Response.ofFail();
     }

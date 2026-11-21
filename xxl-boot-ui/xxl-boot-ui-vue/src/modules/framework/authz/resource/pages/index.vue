@@ -31,10 +31,10 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="openCreateForm()" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateForm()" v-hasPermi="['authz:resource']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Check" @click="saveSort" v-hasRole="['admin']">{{ t('common.saveSort') }}</el-button>
+        <el-button type="warning" plain icon="Check" @click="saveSort" v-hasPermi="['authz:resource']">{{ t('common.saveSort') }}</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="info" plain icon="Sort" @click="toggleExpandAll">{{ t('common.expandCollapse') }}</el-button>
@@ -60,9 +60,9 @@
       </el-table-column>
       <el-table-column :label="t('authz.resource.typeColumn')" width="100">
         <template #default="scope">
-          <el-tag v-if="scope.row.type === 0" type="primary" size="small">{{ t('authz.resource.typeDir') }}</el-tag>
-          <el-tag v-else-if="scope.row.type === 1" type="success" size="small">{{ t('authz.resource.typeMenu') }}</el-tag>
-          <el-tag v-else type="warning" size="small">{{ t('authz.resource.typeBtn') }}</el-tag>
+          <el-tag :type="scope.row.type === 0 ? 'primary' : scope.row.type === 1 ? 'success' : 'warning'" size="small">
+            {{ enumTitle(typeOptions, scope.row.type) }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="order" :label="t('authz.resource.order')" width="200">
@@ -88,14 +88,14 @@
       </el-table-column>
       <el-table-column :label="t('common.operation')" align="center" width="210" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{
+          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasPermi="['authz:resource']">{{
             t('common.modify')
           }}</el-button>
           <!-- 按钮类型资源不能再挂子节点 -->
-          <el-button link type="primary" icon="Plus" @click="openCreateForm(scope.row)" v-if="scope.row.type !== 2" v-hasRole="['admin']">{{
+          <el-button link type="primary" icon="Plus" @click="openCreateForm(scope.row)" v-if="scope.row.type !== 2" v-hasPermi="['authz:resource']">{{
             t('common.add')
           }}</el-button>
-          <el-button link type="primary" icon="Delete" @click="removeResource(scope.row)" v-hasRole="['admin']">{{
+          <el-button link type="primary" icon="Delete" @click="removeResource(scope.row)" v-hasPermi="['authz:resource']">{{
             t('common.delete')
           }}</el-button>
         </template>

@@ -28,13 +28,13 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasPermi="['system:config']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasPermi="['system:config']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeConfig()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeConfig()" v-hasPermi="['system:config']">{{ t('common.delete') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -57,8 +57,8 @@
       <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
       <el-table-column :label="t('common.operation')" align="center" width="160" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
-          <el-button link type="primary" icon="Delete" @click="removeConfig(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasPermi="['system:config']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Delete" @click="removeConfig(scope.row)" v-hasPermi="['system:config']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -246,8 +246,9 @@ function openEditForm(row?: Config) {
     .then((response) => {
       // 记录已被删除时不打开弹窗
       if (!response.data) return
-      // show form
-      formState.value.form = response.data
+      // 表单只保留可编辑字段，避免把时间字段回传到后端
+      const { addTime, updateTime, ...form } = response.data
+      formState.value.form = form
       formState.value.visible = true
       formState.value.title = t('common.titleEdit', [t('common.noun.config')])
     })

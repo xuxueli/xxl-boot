@@ -1,5 +1,5 @@
 /**
- * @fileoverview UserFormModal（用户新增/编辑弹窗）
+ * @fileoverview FormModal（用户新增/编辑弹窗）
  * @description 新增/编辑用户表单，含角色多选、组织树选择、状态等字段
  * @author xuxueli 2026-11-21
  */
@@ -11,7 +11,7 @@ import {
   ProFormTreeSelect,
 } from '@ant-design/pro-components';
 import { App, Col, Row } from 'antd';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { t } from '@/i18n';
 import { userApi } from '@/modules/framework/authz/user/api';
 
@@ -28,7 +28,10 @@ const toTreeSelectData = (orgs: API.Org[]): any[] =>
 /*
  * 用户新增/编辑弹窗
  */
-const UserFormModal = ({
+
+// ---------------------- 表单组件 ----------------------
+
+const FormModal = ({
   open,
   onOpenChange,
   current,
@@ -44,6 +47,11 @@ const UserFormModal = ({
   onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();
+
+  // ---------------------- 表单状态 ----------------------
+
+  // 有主键即编辑态：驱动弹窗标题、账号/密码字段与提交分支
+  const isEdit = current?.id != null;
 
   // 角色下拉（停用角色置灰）
   const roleSelectOptions = useMemo(
@@ -62,51 +70,45 @@ const UserFormModal = ({
     [orgOptions],
   );
 
-  /** 提交API请求 */
-  const handleFinish = async (values: API.User) => {
-    // 剥离 UI 字段后新增或更新
-    const data: API.User = { ...values };
-    delete data.addTime;
-    delete data.updateTime;
-    delete data.orgName;
-    delete data.roleNames;
-    // 后端约定：未选择组织时置 0
-    data.orgId = data.orgId || 0;
+  // ---------------------- 数据操作 ----------------------
 
-    // 新增或更新
-    if (current?.id) {
-      await userApi.update({ ...data, id: current.id });
+  /** 提交表单：有主键走修改，否则新增 */
+  const handleFinish = async (values: API.UserForm) => {
+    // 后端约定：未选择组织时置 0
+    const data = { ...values, orgId: values.orgId || 0 };
+
+    if (isEdit) {
+      await userApi.update({ ...data, id: current?.id });
     } else {
       await userApi.add(data);
     }
 
-    message.success(t('common.operationSuccess'));
+    message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
-  // 打开弹窗时，若是新增则设置默认值
-  useEffect(() => {
-    if (open && !current) {
-      // 新增默认值
-    }
-  }, [open, current]);
+  // ---------------------- 表单渲染 ----------------------
 
   return (
     /* 模态框 */
-    <ModalForm<API.User>
-      title={current?.id ? t('common.titleEdit', [t('common.noun.user')]) : t('common.titleAdd', [t('common.noun.user')])}
+    <ModalForm<API.UserForm>
+      title={
+        isEdit
+          ? t('common.titleEdit', [t('common.noun.user')])
+          : t('common.titleAdd', [t('common.noun.user')])
+      }
       width={640}
       open={open} /* 是否显示弹框 */
       onOpenChange={onOpenChange} /* 弹框显示状态变化触发 */
-      modalProps={{ destroyOnHidden: true }} /* 弹框关闭时销毁子元素 */
+      modalProps={{ destroyOnHidden: true, maskClosable: false }}
       layout="horizontal"
       labelCol={{ flex: '90px' }}
       onFinish={handleFinish} /* 提交表单触发 */
       initialValues={{
         status: 0,
         ...current,
-        password: current?.id ? undefined : '123456',
+        password: isEdit ? undefined : '123456',
         roleIds: current?.roleIds || [],
       }}
     >
@@ -116,7 +118,7 @@ const UserFormModal = ({
             name="username"
             label={t('authz.user.username')}
             placeholder={t('common.inputPlaceholder', [t('authz.user.username')])}
-            disabled={!!current?.id}
+            disabled={isEdit}
             rules={[
               { required: true, message: t('common.requiredMsg', [t('authz.user.username')]) },
               {
@@ -126,7 +128,7 @@ const UserFormModal = ({
             ]}
           />
         </Col>
-        {!current?.id && (
+        {!isEdit && (
           <Col span={12}>
             <ProFormText.Password
               name="password"
@@ -208,4 +210,4 @@ const UserFormModal = ({
   );
 };
 
-export default UserFormModal;
+export default FormModal;

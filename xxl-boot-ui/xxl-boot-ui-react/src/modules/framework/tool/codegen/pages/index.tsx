@@ -35,7 +35,7 @@ const CodegenList = () => {
   const actionRef = useRef<ActionType>(null);
   const [previewOpen, setPreviewOpen] = useState(false); /* 预览弹窗显隐 */
   const [previewId, setPreviewId] = useState<number>(); /* 预览表 ID */
-  const { hasRole } = usePermission();
+  const { hasPermi } = usePermission();
 
   const [editOpen, setEditOpen] = useState(false);
   const [editId, setEditId] = useState<number>();
@@ -100,9 +100,9 @@ const CodegenList = () => {
   const columns: ProColumns<API.Codegen>[] = [
     {
       title: t('common.serialNo'),
+      dataIndex: 'id',
       search: false,
       width: 70,
-      render: (_, _r, index) => index + 1,
     },
     { title: t('tool.codegen.tableName'), dataIndex: 'tableName' },
     { title: t('tool.codegen.tableComment'), dataIndex: 'tableComment' },
@@ -123,7 +123,7 @@ const CodegenList = () => {
       valueType: 'option',
       width: 300,
       render: (_, record) => [
-        hasRole('admin') && (
+        hasPermi('tool:codegen') && (
           <a
             key="edit"
             onClick={() => {
@@ -134,12 +134,12 @@ const CodegenList = () => {
             <EditOutlined /> {t('common.edit')}
           </a>
         ),
-        hasRole('admin') && (
+        hasPermi('tool:codegen') && (
           <a key="delete" onClick={() => handleDelete(record)}>
             <DeleteOutlined /> {t('common.delete')}
           </a>
         ),
-        hasRole('admin') && (
+        hasPermi('tool:codegen') && (
           <a
             key="preview"
             onClick={() => {
@@ -150,7 +150,7 @@ const CodegenList = () => {
             <EyeOutlined /> {t('tool.codegen.preview')}
           </a>
         ),
-        hasRole('admin') && (
+        hasPermi('tool:codegen') && (
           <a key="gen" onClick={() => handleGenCode([record])}>
             <DownloadOutlined /> {t('tool.codegen.generate')}
           </a>
@@ -178,7 +178,7 @@ const CodegenList = () => {
           };
         }}
         toolBarRender={() => [
-          hasRole('admin') && (
+          hasPermi('tool:codegen') && (
             <Button
               key="create"
               type="primary"
@@ -191,7 +191,7 @@ const CodegenList = () => {
               {t('tool.codegen.create')}
             </Button>
           ),
-          hasRole('admin') && (
+          hasPermi('tool:codegen') && (
             <Button
               key="edit"
               icon={<EditOutlined />}
@@ -201,7 +201,7 @@ const CodegenList = () => {
               {t('common.modify')}
             </Button>
           ),
-          hasRole('admin') && (
+          hasPermi('tool:codegen') && (
             <Button
               key="delete"
               danger
@@ -212,7 +212,7 @@ const CodegenList = () => {
               {t('common.delete')}
             </Button>
           ),
-          hasRole('admin') && (
+          hasPermi('tool:codegen') && (
             <Button
               key="gen"
               type="primary"
@@ -234,6 +234,7 @@ const CodegenList = () => {
           defaultPageSize: 10,
           pageSizeOptions: [10, 20, 50, 100],
           showSizeChanger: true,
+          showTotal: (total) => t('common.paginationTotal', [total]),
         }}
         /* 默认批量选择提示隐藏 */
         tableAlertRender={false}

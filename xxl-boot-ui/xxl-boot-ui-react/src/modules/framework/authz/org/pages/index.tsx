@@ -20,12 +20,14 @@ import { usePermission } from '@/hooks/usePermission';
 import { t } from '@/i18n';
 import { orgApi } from '@/modules/framework/authz/org/api';
 import { handleTree } from '@/utils/common';
-import OrgFormModal from './OrgFormModal';
+import FormModal from './FormModal';
 
 const OrgList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();
+
+  // ---------------------- 页面状态 ----------------------
 
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.Org | null>(null);
@@ -40,6 +42,8 @@ const OrgList = () => {
 
   const orgStatusOptions = useEnumOption('OrgStatuEnum');
   const statusValueEnum = toValueEnum(orgStatusOptions);
+
+  // ---------------------- 数据操作 ----------------------
 
   /** 收集所有节点 id */
   const collectAllKeys = (list: API.Org[]): React.Key[] => {
@@ -118,6 +122,9 @@ const OrgList = () => {
     });
   };
 
+  // ---------------------- 表格“列”定义 ----------------------
+
+  /** 表格列：名称、排序、状态、负责人、添加时间、操作 */
   const columns: ProColumns<API.Org>[] = [
     {
       title: t('authz.org.name'),
@@ -167,32 +174,39 @@ const OrgList = () => {
       valueType: 'option',
       width: 240,
       render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setFormCurrent(record);
-            setFormOpen(true);
-          }}
-        >
-          <EditOutlined /> {t('common.modify')}
-        </a>,
-        <a
-          key="add"
-          onClick={() => {
-            setFormCurrent({ parentId: record.id });
-            setFormOpen(true);
-          }}
-        >
-          <PlusOutlined /> {t('common.add')}
-        </a>,
-        record.parentId !== 0 && (
-          <a key="delete" onClick={() => handleDelete(record)}>
-            <DeleteOutlined /> {t('common.delete')}
+        hasPermi('authz:org') && (
+          <a
+            key="edit"
+            onClick={() => {
+              setFormCurrent(record);
+              setFormOpen(true);
+            }}
+          >
+            <EditOutlined /> {t('common.modify')}
           </a>
         ),
+        hasPermi('authz:org') && (
+          <a
+            key="add"
+            onClick={() => {
+              setFormCurrent({ parentId: record.id });
+              setFormOpen(true);
+            }}
+          >
+            <PlusOutlined /> {t('common.add')}
+          </a>
+        ),
+        hasPermi('authz:org') &&
+          record.parentId !== 0 && (
+            <a key="delete" onClick={() => handleDelete(record)}>
+              <DeleteOutlined /> {t('common.delete')}
+            </a>
+          ),
       ],
     },
   ];
+
+  // ---------------------- 数据列表渲染 ----------------------
 
   return (
     <PageContainer ghost title={false}>
@@ -242,7 +256,7 @@ const OrgList = () => {
           </Button>,
         ]}
       />
-      <OrgFormModal
+      <FormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}

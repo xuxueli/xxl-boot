@@ -12,7 +12,7 @@ import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { t } from '@/i18n';
 import { roleApi } from '@/modules/framework/authz/role/api';
-import RoleFormModal from './RoleFormModal';
+import FormModal from './FormModal';
 
 /*
  * 管理页面
@@ -23,7 +23,8 @@ const RoleList = () => {
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();
 
-  // 表单弹窗状态：是否打开 + 当前编辑的角色数据
+  // ---------------------- 页面状态 ----------------------
+
   const [formOpen, setFormOpen] = useState(false);
   // 当前编辑的角色数据，null 表示新增
   const [formCurrent, setFormCurrent] = useState<API.Role | null>(null);
@@ -33,6 +34,8 @@ const RoleList = () => {
   // 角色状态枚举选项，用于表格筛选条件和状态渲染
   const roleStatusOptions = useEnumOption('RoleStatusEnum');
   const statusValueEnum = toValueEnum(roleStatusOptions);
+
+  // ---------------------- 数据操作 ----------------------
 
   /**
    * 批量删除
@@ -59,14 +62,11 @@ const RoleList = () => {
     });
   };
 
-  /*
-   * 表格列配置：表格列 + 操作列 + 筛选条件
-   *   - 表格列表
-   *   - 筛选条件：search=true 的参数，会在表格上方生成筛选条件
-   *   - 操作列：修改/删除
-   */
+  // ---------------------- 表格“列”定义 ----------------------
+
+  /** 表格列：序号、名称、编码、排序、状态、添加时间、操作 */
   const columns: ProColumns<API.Role>[] = [
-    { title: t('authz.role.id'), dataIndex: 'id', search: false, width: 90 },
+    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
     { title: t('authz.role.name'), dataIndex: 'name' },
     {
       title: t('authz.role.roleKey'),
@@ -91,7 +91,7 @@ const RoleList = () => {
       ),
     },
     {
-      title: t('common.createTime'),
+      title: t('common.addTime'),
       dataIndex: 'addTime',
       search: false,
       width: 160,
@@ -117,6 +117,8 @@ const RoleList = () => {
       ],
     },
   ];
+
+  // ---------------------- 数据列表渲染 ----------------------
 
   return (
     /*
@@ -185,12 +187,13 @@ const RoleList = () => {
           defaultPageSize: 10,
           pageSizeOptions: [10, 20, 50, 100],
           showSizeChanger: true,
+          showTotal: (total) => t('common.paginationTotal', [total]),
         }}
         /* 默认批量选择提示隐藏 */
         tableAlertRender={false}
       />
       {/* 表单模态框：新增、编辑 */}
-      <RoleFormModal
+      <FormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}

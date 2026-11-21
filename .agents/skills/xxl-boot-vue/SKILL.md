@@ -35,7 +35,7 @@ description: 在 XXL-Boot 前后端分离的 Vue3 模式（xxl-boot-ui-vue 端�
 | 后端落位 | Java `business/{module}/{business}`；Mapper XML `resources/mapper/business/{module}/{business}` |
 | 前端落位 | `src/modules/business/{module}/{business}/{types,api,pages}` |
 | 页面定位 | 菜单 `url` → `loadView` 按 `pages/index.vue` 映射，无需改路由 |
-| 权限模型 | 业务页按钮 `v-hasPermi`；平台内置页可按角色 `v-hasRole` |
+| 权限模型 | 按钮统一 `v-hasPermi`；平台页用资源表菜单级权限（如 `system:config`），业务页用 `{module}:{business}:add\|edit\|remove`；`v-hasRole` 仅限超管专属入口 |
 | 数据库脚本 | `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_vue.sql` |
 
 ## 三、工程结构
@@ -88,7 +88,7 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 | `ConfigStatusEnum` | `XxxStatusEnum` |
 | `system/config` | `{module}/{business}` |
 | `system.config.*` | `business.{module}.{business}.*` |
-| `v-hasRole="['admin']"`（平台页） | `v-hasPermi="['{module}:{business}:add\|edit\|remove']"`（业务页） |
+| `v-hasPermi="['system:config']"`（平台页） | `v-hasPermi="['{module}:{business}:add\|edit\|remove']"`（业务页） |
 
 ### 4.1 文件清单与职责
 
@@ -122,8 +122,10 @@ xxl-boot-ui/xxl-boot-ui-vue/src
 | 类型 | 用途 | 约定 |
 |---|---|---|
 | `Xxx` | 实体，对应后端 Entity/DTO | 字段全部可选；`Date` 对应 `string` |
-| `XxxQuery` | 搜索栏 + 列表接口入参 | 必含 `pageNum`、`pageSize`；筛选项可选；分页字段由 API 内部转换 |
+| `XxxQuery` | 搜索栏 + 列表接口入参 | 分页列表必含 `pageNum`、`pageSize`；树形/不分页接口只需筛选项；筛选项可选；分页字段由 API 内部转换 |
 | `XxxForm` | 新增/修改入参 | `Pick<Xxx, 可编辑字段>`，避免重复定义 |
+
+> 多实体模块（如字典类型 + 字典项）在同一个 `types/index.ts` 内按实体分组追加 `XxxItem` / `XxxItemQuery` / `XxxItemForm`；只读模块（如日志）只保留实体与 `XxxQuery`，不要为对称而造无用的 Form。
 
 ```ts
 /**
@@ -168,6 +170,7 @@ export type XxxForm = Pick<Xxx, 'id' | 'name' | 'status' | 'remark'>
 
 - `XxxForm` 排除 `addTime`、`updateTime`；后端不依赖前端回传时间。
 - 搜索参数与表单不要复用同一个类型：搜索含分页、表单不含分页。
+- 筛选项在页面有默认值时可声明为可选（`status?: number`），避免 API 或调用方被迫补默认值；默认值只保留在页面初始状态。
 - 字段注释写清含义与枚举取值；状态字段统一 `0-正常、1-停用`（按业务可替换，但需写清）。
 
 ### 4.4 api：`api/index.ts`
@@ -180,6 +183,16 @@ export type XxxForm = Pick<Xxx, 'id' | 'name' | 'status' | 'remark'>
 | 通道 | `pageList/load` 用 `params`；`insert/update/delete` 用 `data` |
 | 分页 | 入参收 `XxxQuery`；在 `pageList` 内去掉 `pageNum/pageSize`，替换为后端约定的 `offset/pagesize` |
 | 删除 | 接收集合，`data: Array.isArray(ids) ? ids : [ids]` |
+
+平台/特殊模块例外（不得扩散到普通业务模块）：
+
+| 场景 | 例外 |
+|---|---|
+| 树形模块（组织、资源） | 用 `treeList` 代替 `pageList`，无 `load` 时保留 `load` + `updateSort`，业务方法仍放在 `insert` 之前 |
+| 用户模块 | 后端沿用 `/add`，前端方法名保持 `add`，并与后端 Controller 对齐；无 `/load` 时用列表行回填 |
+| 只读模块（日志） | 只有 `pageList / delete`，不补 `load/insert/update` |
+| 多实体模块（字典） | 先列主实体 `pageList/load`，再列子实体 `itemPageList/itemLoad/itemInsert/itemDelete/itemUpdate` 与查询辅助方法，最后主实体 `insert/delete/update` |
+| 代码生成器 | 沿用后端 `/tool/codegen` 的分页键 `pageSize`（非 `pagesize`）与 `detail/createTable/preview` 业务方法 |
 
 ```ts
 /**
@@ -377,7 +390,8 @@ export const xxxApi = {
 </template>
 ```
 
-平台内置页面（`modules/framework/**`）按钮使用 `v-hasRole="['admin']"`；业务页面使用 `v-hasPermi`，不要混用。
+平台内置页面（`modules/framework/**`）按钮使用菜单级权限，如 `v-hasPermi="['system:config']"`；业务页面使用
+`v-hasPermi="['{module}:{business}:add|edit|remove']"`。`v-hasRole="['admin']"` 只用于超管专属入口，不要作为平台页的默认写法。
 
 #### 4.5.2 script 四区
 
@@ -514,7 +528,9 @@ function openEditForm(row?: Xxx) {
     .then((response) => {
       // 记录已被删除时不打开弹窗
       if (!response.data) return
-      formState.value.form = response.data
+      // 表单只保留可编辑字段，避免把时间/联查字段回传到后端
+      const { addTime, updateTime, ...form } = response.data
+      formState.value.form = form
       formState.value.visible = true
       formState.value.title = t('common.titleEdit', [t('business.xxx.title')])
     })
@@ -584,7 +600,7 @@ getList()
 | 状态收敛 | 搜索 `queryParams`、表格 `table`、表单 `formState` 三块，不散落 |
 | 分页 | 直接传 `queryParams.value`，分页字段由 API 内部转换；取 `response.data.data/total`；`finally` 复位 loading |
 | 搜索 | 查询前 `pageNum = 1`；重置用 `queryRef.value?.resetFields()` |
-| 编辑表单 | 默认值收敛为 `FORM_DEFAULTS`；重置直接替换对象 + `clearValidate()` |
+| 编辑表单 | 默认值收敛为 `FORM_DEFAULTS`；重置直接替换对象 + `clearValidate()`；详情回填时剥离 `addTime/updateTime` 与联查字段（`const { addTime, updateTime, ...form } = response.data`） |
 | 校验 | 前端 `rules` 与后端校验一致（必填、长度、格式）；不可变字段（如配置 Key）编辑时 `:disabled="formState.form.id != null"` |
 | 弹窗 | `:close-on-click-modal="false"`，`@closed="resetForm"`，`closeForm()` 只隐藏 |
 | 修改入口 | `openEditForm(row?)`；顶部按钮取勾选行，行按钮传行数据；无 id 直接返回 |
@@ -597,7 +613,7 @@ getList()
 ### 4.6 注释与结构
 
 - `.vue` 文件头用 HTML 注释，包含页面名、功能、`@author 作者 yyyy-MM-dd`。
-- 模板区块用 `<!-- 搜索栏 -->`、`<!-- 操作按钮 -->`、`<!-- 数据列表 -->`、`<!-- 分页 -->`、`<!-- 新增或修改对话框 -->`。
+- 模板区块用 `<!-- 搜索栏 -->`、`<!-- 操作按钮 -->`、`<!-- 数据列表 -->`、`<!-- 分页 -->`、`<!-- 新增或修改对话框 -->`；树表/只读/子页可按业务命名（如 `<!-- 配置列表 -->`），但区块注释必须保留。
 - script 保留 `// ---------------------- 响应式数据 ----------------------` 等四段分区。
 - 函数用 JSDoc；复杂函数补 `@param` / `@returns`；核心分支用 `//` 说明原因。
 - 禁止无意义注释、注释掉的死代码、调试输出。
@@ -662,6 +678,7 @@ getList()
 
 - 空值与必填：`StringTool.isBlank`；集合：`CollectionTool.isEmpty`；格式：`RegexTool.matches`。
 - 唯一性字段先查再插/改，返回 `Response.ofFail(I18nUtil.getString("..."))`。
+- 更新时先按主键回查：记录不存在、必填缺失、不可变字段（如配置 Key）被修改都要拒绝。
 - `pageList` 在 Service 内完成 Entity → DTO；Controller 不写业务规则。
 - `insert/update/delete` 按影响行数返回 `Response.ofSuccess()` / `Response.ofFail()`。
 
@@ -797,10 +814,13 @@ VALUES (1, @parentId, now(), now()),
 
 - 菜单 `url='/{module}/{business}'` → `loadView` 匹配 `pages/index.vue`（`loadView` 会自动补 `/index`）。
 - 子页面支持 `pages/{sub}.vue`（菜单 `url='/{module}/{business}/{sub}'`）或 `pages/{sub}/index.vue`。
+- 页面内的局部弹窗/抽屉用语义化文件名（如 `pages/DictDataDrawer.vue`），不要命名为无意义的 `detail.vue`；它们不会被注册为路由。
+- 跨模块共享的详情抽屉/弹窗放 `src/components` 或 `layout/components`，业务模块只引用，不重复实现。
 - 页面定位只认 `modules/framework|business/**`，**无需改前端路由代码**。
 
-原则：业务页面按钮用 `v-hasPermi="['{module}:{business}:add|edit|remove']"`，与资源表 `permission` 一致；
-平台内置页面（如 `system/config`）继续用 `v-hasRole="['admin']"`。新菜单必须在 `xxl_boot_role_res` 授权。
+原则：权限校验优先走 `v-hasPermi`，与资源表 `permission` 一致：
+平台页用菜单级权限（`system:config`、`authz:user`、`tool:codegen`），业务页用 `{module}:{business}:add|edit|remove`；
+`v-hasRole="['admin']"` 仅用于超管专属入口。新菜单必须在 `xxl_boot_role_res` 授权，否则自定义角色即使有菜单也看不到操作按钮。
 
 ## 七、枚举与字典
 
@@ -811,12 +831,14 @@ VALUES (1, @parentId, now(), now()),
 | 数据字典 | `const { sys_user_sex } = useDict('sys_user_sex')` | 返回 `{ label, value }`，带 Pinia 缓存 |
 
 - 后端业务枚举放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
+- 新枚举统一命名为 `XxxStatusEnum`；平台存量 `OrgStatuEnum`、`UserStatuEnum`、`ResourceStatuEnum` 属于历史拼写，调用时按实际类名使用，不要自行改名。
 - 下拉选项统一 `:key="item.code" :label="item.title" :value="item.code"`；状态筛选额外提供 `-1` 全部。
-- 业务字段能落枚举/字典就不要硬编码数字与文案。
+- 业务字段能落枚举/字典就不要硬编码数字与文案；标签颜色可按编码映射，文案必须走 `enumTitle`。
+- 重置密码等输入弹窗优先用 `modal.prompt`（支持 `inputValidator`），不要直接调用 `ElMessageBox`。
 
 ## 八、i18n（Vue）
 
-- 文案文件：`src/i18n/locales/{zh,en}.json`；平台文案按 `system.*`，业务文案按 `business.{module}.{business}.*` 分区。
+- 文案文件：`src/i18n/locales/{zh,en}.json`；平台文案按业务域分区（`system.*`、`authz.*`、`tool.*`、`dashboard.*` 等），业务文案按 `business.{module}.{business}.*` 分区。
 - 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 由 `zh.json` 推导为 `MessageKey`，先补文案再引用。
 - 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`。
 - 新增业务文案 zh/en 成对提交，页面禁止硬编码中文（注释除外）。
@@ -849,6 +871,8 @@ POST /tool/codegen/createTable
 
 流程：`createTable` 建记录 → `update` 编辑字段（`queryType/htmlType/dictType/isQuery/isList/isInsert/isEdit/isRequired`）
 → `preview` 预览 / `batchGenCode?ids=...` 下载 zip。
+
+> 代码生成器页面本身是生成器控制台，不是标准 CRUD：分页键沿用后端 `pageSize`，弹窗状态为创建/预览，属于 4.4、4.5 的显式例外，不要套用标准模板。
 
 产物：
 
@@ -893,13 +917,15 @@ cd xxl-boot-ui/xxl-boot-ui-vue && npm run type-check && npm run build
 
 **前端**
 
-- [ ] `types` 三类齐全：`Xxx`、`XxxQuery`、`XxxForm`（`Pick` 可编辑字段）。
-- [ ] `api` 以 `{business}Api` 导出，方法顺序与后端一致，删除传裸数组。
+- [ ] `types` 三类齐全：`Xxx`、`XxxQuery`、`XxxForm`（`Pick` 可编辑字段）；只读/树形/多实体模块按 4.3 使用对应子集。
+- [ ] `api` 以 `{business}Api` 导出，方法顺序与后端一致，删除传裸数组；平台例外已按 4.4 核对。
 - [ ] 页面模板五区齐全；script 四区齐全；`ref` 收敛为 `queryParams/table/formState`。
 - [ ] 列表直接传 `queryParams.value`，分页字段由 API 内部转换；`finally` 复位 loading。
 - [ ] 编辑弹窗 `@closed="resetForm"`、`:close-on-click-modal="false"`；重置用 `FORM_DEFAULTS` + `clearValidate()`。
-- [ ] `v-hasPermi` 与按钮权限一致；平台页才用 `v-hasRole`。
-- [ ] 文案走 `t()`，`business.*` zh/en 成对；无硬编码中文。
+- [ ] 详情回填只提交可编辑字段，已剥离 `addTime/updateTime` 与联查字段。
+- [ ] 枚举文案统一走 `enumTitle`，标签颜色可按编码映射；无页面内硬编码状态文案。
+- [ ] `v-hasPermi` 与资源表 `permission` 一致（平台菜单级 / 业务按钮级）；`v-hasRole` 只用于超管专属入口；行内操作按钮同样受权限控制。
+- [ ] 文案走 `t()`，按业务域分区（`system/authz/tool/business`）zh/en 成对；无硬编码中文。
 - [ ] `npm run type-check` 与 `npm run build` 通过。
 
 **后端**

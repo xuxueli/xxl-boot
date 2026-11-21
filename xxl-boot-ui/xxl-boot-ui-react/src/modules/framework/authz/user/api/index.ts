@@ -10,17 +10,11 @@ export const userApi = {
   /**
    * 分页查询用户
    *
-   * @param params 分页与查询条件（current/pageSize/username/status/orgIds）
+   * @param query 页面查询条件（current/pageSize/username/status/orgIds）
    * @returns 用户分页结果
    */
-  pageList(params: {
-    current?: number;
-    pageSize?: number;
-    username?: string;
-    status?: number;
-    orgIds?: number[];
-  }) {
-    const { current = 1, pageSize = 10, ...rest } = params || {};
+  pageList(query: API.UserQuery) {
+    const { current = 1, pageSize = 10, orgIds, ...search } = query;
     return request<API.Response<API.PageModel<API.User>>>(
       '/authz/user/pageList',
       {
@@ -28,50 +22,11 @@ export const userApi = {
         params: {
           offset: (current - 1) * pageSize,
           pagesize: pageSize,
-          ...rest,
-          orgIds: rest.orgIds?.length ? rest.orgIds.join(',') : undefined,
+          orgIds: orgIds?.length ? orgIds.join(',') : undefined,
+          ...search,
         },
       },
     );
-  },
-
-  /**
-   * 新增用户（后端以请求参数绑定实体）
-   *
-   * @param data 用户数据
-   * @returns 保存结果
-   */
-  add(data: API.User) {
-    return request<API.Response<unknown>>('/authz/user/add', {
-      method: 'POST',
-      data,
-    });
-  },
-
-  /**
-   * 更新用户（后端以请求参数绑定实体）
-   *
-   * @param data 用户数据（含主键）
-   * @returns 保存结果
-   */
-  update(data: API.User) {
-    return request<API.Response<unknown>>('/authz/user/update', {
-      method: 'POST',
-      data,
-    });
-  },
-
-  /**
-   * 删除用户（支持单条/批量）
-   *
-   * @param ids 用户主键或主键数组
-   * @returns 删除结果
-   */
-  delete(ids: number | number[]) {
-    return request<API.Response<unknown>>('/authz/user/delete', {
-      method: 'POST',
-      data: Array.isArray(ids) ? ids : [ids],
-    });
   },
 
   /**
@@ -105,8 +60,47 @@ export const userApi = {
    * @param data 用户资料数据
    * @returns 保存结果
    */
-  updateProfile(data: API.User) {
+  updateProfile(data: API.UserForm) {
     return request<API.Response<unknown>>('/authz/user/updateProfile', {
+      method: 'POST',
+      data,
+    });
+  },
+
+  /**
+   * 新增用户
+   *
+   * @param data 用户表单数据
+   * @returns 保存结果
+   */
+  add(data: API.UserForm) {
+    return request<API.Response<unknown>>('/authz/user/add', {
+      method: 'POST',
+      data,
+    });
+  },
+
+  /**
+   * 删除用户（支持单条/批量）
+   *
+   * @param ids 用户主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]) {
+    return request<API.Response<unknown>>('/authz/user/delete', {
+      method: 'POST',
+      data: Array.isArray(ids) ? ids : [ids],
+    });
+  },
+
+  /**
+   * 更新用户
+   *
+   * @param data 用户表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: API.UserForm) {
+    return request<API.Response<unknown>>('/authz/user/update', {
       method: 'POST',
       data,
     });

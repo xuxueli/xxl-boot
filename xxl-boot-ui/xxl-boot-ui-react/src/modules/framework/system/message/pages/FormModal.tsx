@@ -1,5 +1,5 @@
 /**
- * @fileoverview MessageFormModal（消息新增/编辑弹窗）
+ * @fileoverview FormModal（消息新增/编辑弹窗）
  * @description 标题、分类、状态、富文本内容
  * @author xuxueli 2026-11-21
  */
@@ -15,7 +15,9 @@ import { t } from '@/i18n';
 import { Editor } from '@/components';
 import { messageApi } from '@/modules/framework/system/message/api';
 
-const MessageFormModal = ({
+// ---------------------- 表单组件 ----------------------
+
+const FormModal = ({
   open,
   onOpenChange,
   current,
@@ -30,31 +32,38 @@ const MessageFormModal = ({
 }) => {
   const { message } = App.useApp();
 
-  const handleFinish = async (values: API.Message) => {
-    const data = { ...values };
-    delete data.addTime;
-    delete data.updateTime;
-    if (current?.id) {
-      await messageApi.update({ ...data, id: current.id });
+  // ---------------------- 表单状态 ----------------------
+
+  // 有主键即编辑态：驱动弹窗标题与提交分支
+  const isEdit = current?.id != null;
+
+  // ---------------------- 数据操作 ----------------------
+
+  /** 提交表单：有主键走修改，否则新增 */
+  const handleFinish = async (values: API.MessageForm) => {
+    if (isEdit) {
+      await messageApi.update({ ...values, id: current?.id });
     } else {
-      await messageApi.insert(data);
+      await messageApi.insert(values);
     }
     message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
+  // ---------------------- 表单渲染 ----------------------
+
   return (
-    <ModalForm<API.Message>
+    <ModalForm<API.MessageForm>
       title={
-        current?.id
-          ? t('common.titleEdit', [t('layout.header.messageTitle')])
-          : t('common.titleAdd', [t('layout.header.messageTitle')])
+        isEdit
+          ? t('common.titleEdit', [t('common.noun.message')])
+          : t('common.titleAdd', [t('common.noun.message')])
       }
       width={780}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnHidden: true }}
+      modalProps={{ destroyOnHidden: true, maskClosable: false }}
       layout="horizontal"
       labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
@@ -102,4 +111,4 @@ const MessageFormModal = ({
   );
 };
 
-export default MessageFormModal;
+export default FormModal;

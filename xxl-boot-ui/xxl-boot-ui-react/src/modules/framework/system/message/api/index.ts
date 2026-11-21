@@ -10,17 +10,11 @@ export const messageApi = {
   /**
    * 分页查询消息
    *
-   * @param params 分页与查询条件（current/pageSize/title/category/status）
+   * @param query 页面查询条件（current/pageSize/title/category/status）
    * @returns 消息分页结果
    */
-  pageList(params: {
-    current?: number;
-    pageSize?: number;
-    title?: string;
-    category?: number;
-    status?: number;
-  }) {
-    const { current = 1, pageSize = 10, ...rest } = params || {};
+  pageList(query: API.MessageQuery) {
+    const { current = 1, pageSize = 10, ...search } = query;
     return request<API.Response<API.PageModel<API.Message>>>(
       '/system/message/pageList',
       {
@@ -28,7 +22,7 @@ export const messageApi = {
         params: {
           offset: (current - 1) * pageSize,
           pagesize: pageSize,
-          ...rest,
+          ...search,
         },
       },
     );
@@ -44,45 +38,6 @@ export const messageApi = {
     return request<API.Response<API.Message>>('/system/message/load', {
       method: 'GET',
       params: { id },
-    });
-  },
-
-  /**
-   * 新增消息
-   *
-   * @param data 消息数据
-   * @returns 保存结果
-   */
-  insert(data: API.Message) {
-    return request<API.Response<unknown>>('/system/message/insert', {
-      method: 'POST',
-      data,
-    });
-  },
-
-  /**
-   * 删除消息（支持单条/批量）
-   *
-   * @param ids 消息主键或主键数组
-   * @returns 删除结果
-   */
-  delete(ids: number | number[]) {
-    return request<API.Response<unknown>>('/system/message/delete', {
-      method: 'POST',
-      data: Array.isArray(ids) ? ids : [ids],
-    });
-  },
-
-  /**
-   * 更新消息
-   *
-   * @param data 消息数据（含主键）
-   * @returns 保存结果
-   */
-  update(data: API.Message) {
-    return request<API.Response<unknown>>('/system/message/update', {
-      method: 'POST',
-      data,
     });
   },
 
@@ -126,15 +81,11 @@ export const messageApi = {
   /**
    * 分页查询消息的已读用户
    *
-   * @param params 查询条件（messageId/current/pageSize）
+   * @param query 页面查询条件（messageId + 分页）
    * @returns 已读用户分页结果
    */
-  readUsers(params: {
-    messageId: number;
-    current?: number;
-    pageSize?: number;
-  }) {
-    const { current = 1, pageSize = 10, messageId } = params || {};
+  readUsers(query: API.MessageReadQuery) {
+    const { current = 1, pageSize = 10, messageId } = query;
     return request<API.Response<API.PageModel<API.MessageRead>>>(
       '/system/message/readUsers',
       {
@@ -146,5 +97,44 @@ export const messageApi = {
         },
       },
     );
+  },
+
+  /**
+   * 新增消息
+   *
+   * @param data 消息表单数据
+   * @returns 保存结果
+   */
+  insert(data: API.MessageForm) {
+    return request<API.Response<unknown>>('/system/message/insert', {
+      method: 'POST',
+      data,
+    });
+  },
+
+  /**
+   * 删除消息（支持单条/批量）
+   *
+   * @param ids 消息主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]) {
+    return request<API.Response<unknown>>('/system/message/delete', {
+      method: 'POST',
+      data: Array.isArray(ids) ? ids : [ids],
+    });
+  },
+
+  /**
+   * 更新消息
+   *
+   * @param data 消息表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: API.MessageForm) {
+    return request<API.Response<unknown>>('/system/message/update', {
+      method: 'POST',
+      data,
+    });
   },
 };

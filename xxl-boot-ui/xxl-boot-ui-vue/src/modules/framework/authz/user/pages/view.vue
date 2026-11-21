@@ -108,18 +108,17 @@
 defineOptions({ name: 'UserView' })
 import { computed, ref } from 'vue'
 import { t } from '@/i18n'
-import { enumTitle } from '@/composables/useEnumOption'
+import { enumTitle, useEnumOption } from '@/composables/useEnumOption'
 import { parseTime } from '@/utils/common'
 import { roleApi } from '@/modules/framework/authz/role/api'
-import { dictApi } from '@/modules/framework/system/dict/api'
 import type { User } from '../types'
 import type { Role } from '@/modules/framework/authz/role/types'
-import type { EnumOption } from '@/types'
 
 const visible = ref(false) /* 抽屉显隐 */
 const loading = ref(false) /* 加载状态 */
 const info = ref<User>({}) /* 用户详情 */
-const statusOptions = ref<EnumOption[]>([]) /* 用户状态选项 */
+// 用户状态选项，由后端枚举接口加载
+const { UserStatuEnum: statusOptions } = useEnumOption('UserStatuEnum')
 const roleOptions = ref<Role[]>([]) /* 角色选项，用于将角色 ID 翻译为名称 */
 
 // 角色名称：根据用户已分配角色 ID 匹配角色选项后拼接展示
@@ -135,7 +134,7 @@ const roleNames = computed(() => {
 })
 
 /**
- * 打开详情抽屉并加载角色、状态枚举
+ * 打开详情抽屉并加载角色列表
  *
  * @param row 用户行数据
  */
@@ -147,12 +146,6 @@ function open(row: User) {
     .pageList({ pageNum: 1, pageSize: 999, status: -1 })
     .then((response) => {
       roleOptions.value = response.data.data
-    })
-    .catch(() => {})
-  dictApi
-    .loadEnum('UserStatuEnum')
-    .then((response) => {
-      statusOptions.value = response.data
     })
     .catch(() => {})
     .finally(() => {

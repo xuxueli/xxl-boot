@@ -25,13 +25,13 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasPermi="['authz:role']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasPermi="['authz:role']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeRole()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeRole()" v-hasPermi="['authz:role']">{{ t('common.delete') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -53,8 +53,8 @@
       <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
       <el-table-column :label="t('common.operation')" align="center" width="160" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
-          <el-button link type="primary" icon="Delete" @click="removeRole(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasPermi="['authz:role']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Delete" @click="removeRole(scope.row)" v-hasPermi="['authz:role']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -272,7 +272,7 @@ function openCreateForm() {
   resetForm()
   getMenuTreeselect()
   formState.value.visible = true
-  formState.value.title = t('common.titleAdd', [t('authz.user.role')])
+  formState.value.title = t('common.titleAdd', [t('common.noun.role')])
 }
 
 /**
@@ -293,7 +293,7 @@ function openEditForm(row?: Role) {
       if (!response.data) return
       formState.value.form = response.data
       formState.value.visible = true
-      formState.value.title = t('common.titleEdit', [t('authz.user.role')])
+      formState.value.title = t('common.titleEdit', [t('common.noun.role')])
       // 菜单树加载完成后才能按资源 id 勾选，否则节点尚未渲染
       return getMenuTreeselect()
         .then(() => roleApi.loadRoleRes(id))

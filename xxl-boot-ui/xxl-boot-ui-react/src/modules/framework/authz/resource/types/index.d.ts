@@ -33,4 +33,27 @@ declare namespace API {
     /** 子资源 */
     children?: Resource[];
   };
+
+  /** 资源树查询条件：树形接口不分页 */
+  type ResourceQuery = {
+    /** 资源名称，模糊匹配 */
+    name?: string;
+    /** 状态筛选：不传或 -1 表示全部 */
+    status?: number;
+  };
+
+  /** 资源新增/修改表单：仅保留可编辑字段 */
+  type ResourceForm = Pick<
+    Resource,
+    | 'id'
+    | 'parentId'
+    | 'name'
+    | 'type'
+    | 'permission'
+    | 'url'
+    | 'icon'
+    | 'order'
+    | 'status'
+    | 'visible'
+  >;
 }

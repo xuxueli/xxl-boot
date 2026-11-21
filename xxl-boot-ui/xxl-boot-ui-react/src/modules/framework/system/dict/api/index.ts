@@ -10,17 +10,11 @@ export const dictApi = {
   /**
    * 分页查询字典类型
    *
-   * @param params 分页与查询条件（current/pageSize/name/type/status）
+   * @param query 页面查询条件（current/pageSize/name/type/status）
    * @returns 字典类型分页结果
    */
-  pageList(params: {
-    current?: number;
-    pageSize?: number;
-    name?: string;
-    type?: string;
-    status?: number;
-  }) {
-    const { current = 1, pageSize = 10, ...rest } = params || {};
+  pageList(query: API.DictQuery) {
+    const { current = 1, pageSize = 10, ...search } = query;
     return request<API.Response<API.PageModel<API.Dict>>>(
       '/system/dict/pageList',
       {
@@ -28,7 +22,7 @@ export const dictApi = {
         params: {
           offset: (current - 1) * pageSize,
           pagesize: pageSize,
-          ...rest,
+          ...search,
         },
       },
     );
@@ -48,76 +42,22 @@ export const dictApi = {
   },
 
   /**
-   * 新增字典类型
-   *
-   * @param data 字典类型数据
-   * @returns 保存结果
-   */
-  insert(data: API.Dict) {
-    return request<API.Response<unknown>>('/system/dict/insert', {
-      method: 'POST',
-      data,
-    });
-  },
-
-  /**
-   * 删除字典类型（支持单条/批量）
-   *
-   * @param ids 字典类型主键或主键数组
-   * @returns 删除结果
-   */
-  delete(ids: number | number[]) {
-    return request<API.Response<unknown>>('/system/dict/delete', {
-      method: 'POST',
-      data: Array.isArray(ids) ? ids : [ids],
-    });
-  },
-
-  /**
-   * 更新字典类型
-   *
-   * @param data 字典类型数据（含主键）
-   * @returns 保存结果
-   */
-  update(data: API.Dict) {
-    return request<API.Response<unknown>>('/system/dict/update', {
-      method: 'POST',
-      data,
-    });
-  },
-
-  /**
    * 分页查询字典项
    *
-   * @param params 分页与查询条件（current/pageSize/dictId/name/status）
+   * @param query 页面查询条件（current/pageSize/dictId/name/status）
    * @returns 字典项分页结果
    */
-  itemPageList(params: {
-    current?: number;
-    pageSize?: number;
-    dictId?: number;
-    name?: string;
-    status?: number;
-  }) {
-    const { current = 1, pageSize = 10, ...rest } = params || {};
-    const query: Record<string, unknown> = {
-      offset: (current - 1) * pageSize,
-      pagesize: pageSize,
-    };
-    if (rest.dictId != null) {
-      query.dictId = rest.dictId;
-    }
-    if (rest.name != null && rest.name !== '') {
-      query.name = rest.name;
-    }
-    if (rest.status != null && rest.status !== -1) {
-      query.status = rest.status;
-    }
+  itemPageList(query: API.DictItemQuery) {
+    const { current = 1, pageSize = 10, ...search } = query;
     return request<API.Response<API.PageModel<API.DictItem>>>(
       '/system/dict/itemPageList',
       {
         method: 'GET',
-        params: query,
+        params: {
+          offset: (current - 1) * pageSize,
+          pagesize: pageSize,
+          ...search,
+        },
       },
     );
   },
@@ -138,10 +78,10 @@ export const dictApi = {
   /**
    * 新增字典项
    *
-   * @param data 字典项数据
+   * @param data 字典项表单数据
    * @returns 保存结果
    */
-  itemInsert(data: API.DictItem) {
+  itemInsert(data: API.DictItemForm) {
     return request<API.Response<unknown>>('/system/dict/itemInsert', {
       method: 'POST',
       data,
@@ -164,10 +104,10 @@ export const dictApi = {
   /**
    * 更新字典项
    *
-   * @param data 字典项数据（含主键）
+   * @param data 字典项表单数据（含主键）
    * @returns 保存结果
    */
-  itemUpdate(data: API.DictItem) {
+  itemUpdate(data: API.DictItemForm) {
     return request<API.Response<unknown>>('/system/dict/itemUpdate', {
       method: 'POST',
       data,
@@ -211,6 +151,45 @@ export const dictApi = {
     return request<API.Response<API.EnumItem[]>>('/system/dict/loadEnumItem', {
       method: 'GET',
       params: { enumName },
+    });
+  },
+
+  /**
+   * 新增字典类型
+   *
+   * @param data 字典类型表单数据
+   * @returns 保存结果
+   */
+  insert(data: API.DictForm) {
+    return request<API.Response<unknown>>('/system/dict/insert', {
+      method: 'POST',
+      data,
+    });
+  },
+
+  /**
+   * 删除字典类型（支持单条/批量）
+   *
+   * @param ids 字典类型主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]) {
+    return request<API.Response<unknown>>('/system/dict/delete', {
+      method: 'POST',
+      data: Array.isArray(ids) ? ids : [ids],
+    });
+  },
+
+  /**
+   * 更新字典类型
+   *
+   * @param data 字典类型表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: API.DictForm) {
+    return request<API.Response<unknown>>('/system/dict/update', {
+      method: 'POST',
+      data,
     });
   },
 };

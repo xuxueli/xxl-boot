@@ -10,17 +10,11 @@ export const logApi = {
   /**
    * 分页查询日志
    *
-   * @param params 分页与查询条件（current/pageSize/type/module/title）
+   * @param query 页面查询条件（current/pageSize/type/module/title）
    * @returns 日志分页结果
    */
-  pageList(params: {
-    current?: number;
-    pageSize?: number;
-    type?: number;
-    module?: number;
-    title?: string;
-  }) {
-    const { current = 1, pageSize = 10, ...rest } = params || {};
+  pageList(query: API.LogQuery) {
+    const { current = 1, pageSize = 10, ...search } = query;
     return request<API.Response<API.PageModel<API.Log>>>(
       '/system/log/pageList',
       {
@@ -28,7 +22,7 @@ export const logApi = {
         params: {
           offset: (current - 1) * pageSize,
           pagesize: pageSize,
-          ...rest,
+          ...search,
         },
       },
     );

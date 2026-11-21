@@ -23,7 +23,7 @@ import { orgApi } from '@/modules/framework/authz/org/api';
 import { roleApi } from '@/modules/framework/authz/role/api';
 import { userApi } from '@/modules/framework/authz/user/api';
 import { deepClone, handleTree } from '@/utils/common';
-import UserFormModal from './UserFormModal';
+import FormModal from './FormModal';
 import UserView from './UserView';
 
 /*
@@ -31,16 +31,19 @@ import UserView from './UserView';
  *
  * 功能：左侧组织树 + 用户分页表格，支持新增/修改/删除/重置密码/状态切换/详情
  */
-const Dashboard = () => {
+const UserList = () => {
   // antd 提供的全局提示和弹窗
   const { message, modal } = App.useApp();
   // 表格操作引用
   const actionRef = useRef<ActionType>(null);
+  const { hasPermi } = usePermission();
+
+  // ---------------------- 页面状态 ----------------------
+
   // 用户详情抽屉显隐
   const [userViewOpen, setUserViewOpen] = useState(false);
   // 当前查看的用户
   const [userViewData, setUserViewData] = useState<API.User | null>(null);
-  const { hasPermi } = usePermission();
 
   // 组织树数据（左侧 + 表单）
   const [leftOrgOptions, setLeftOrgOptions] = useState<API.Org[]>([]);
@@ -69,6 +72,8 @@ const Dashboard = () => {
   // 用户状态枚举
   const userStatusOptions = useEnumOption('UserStatuEnum');
   const statusValueEnum = toValueEnum(userStatusOptions);
+
+  // ---------------------- 数据操作 ----------------------
 
   /**
    * 加载组织树与角色下拉
@@ -200,9 +205,11 @@ const Dashboard = () => {
   /*
    * 表格列配置：表格列 + 操作列 + 筛选条件
    */
+  // ---------------------- 表格“列”定义 ----------------------
+
   const columns: ProColumns<API.User>[] = [
     {
-      title: t('authz.user.id'),
+      title: t('common.serialNo'),
       dataIndex: 'id',
       search: false,
       width: 90,
@@ -242,12 +249,13 @@ const Dashboard = () => {
           checkedChildren={t('common.normal')}
           unCheckedChildren={t('common.disabled')}
           checked={record.status === 0}
+          disabled={!hasPermi('authz:user')}
           onChange={(checked) => handleStatusChange(record, checked ? 0 : 1)}
         />
       ),
     },
     {
-      title: t('common.createTime'),
+      title: t('common.addTime'),
       dataIndex: 'addTime',
       search: false,
       width: 160,
@@ -257,44 +265,52 @@ const Dashboard = () => {
       valueType: 'option',
       width: 180,
       render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setFormCurrent(record);
-            setFormOpen(true);
-          }}
-        >
-          <EditOutlined /> {t('common.modify')}
-        </a>,
-        <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> {t('common.delete')}
-        </a>,
-        <Dropdown
-          key="more"
-          menu={{
-            items: [
-              {
-                key: 'resetPwd',
-                label: (
-                  <>
-                    <KeyOutlined /> {t('authz.user.resetPwd')}
-                  </>
-                ),
-              },
-            ],
-            onClick: () => {
-              setResetRow(record);
-              setResetPassword('');
-            },
-          }}
-        >
-          <a onClick={(e) => e.preventDefault()}>
-            <MoreOutlined /> {t('common.more')}
+        hasPermi('authz:user') && (
+          <a
+            key="edit"
+            onClick={() => {
+              setFormCurrent(record);
+              setFormOpen(true);
+            }}
+          >
+            <EditOutlined /> {t('common.modify')}
           </a>
-        </Dropdown>,
+        ),
+        hasPermi('authz:user') && (
+          <a key="delete" onClick={() => handleDelete(record)}>
+            <DeleteOutlined /> {t('common.delete')}
+          </a>
+        ),
+        hasPermi('authz:user') && (
+          <Dropdown
+            key="more"
+            menu={{
+              items: [
+                {
+                  key: 'resetPwd',
+                  label: (
+                    <>
+                      <KeyOutlined /> {t('authz.user.resetPwd')}
+                    </>
+                  ),
+                },
+              ],
+              onClick: () => {
+                setResetRow(record);
+                setResetPassword('');
+              },
+            }}
+          >
+            <a onClick={(e) => e.preventDefault()}>
+              <MoreOutlined /> {t('common.more')}
+            </a>
+          </Dropdown>
+        ),
       ],
     },
   ];
+
+  // ---------------------- 数据列表渲染 ----------------------
 
   return (
     /*
@@ -393,6 +409,7 @@ const Dashboard = () => {
               defaultPageSize: 10,
               pageSizeOptions: [10, 20, 50, 100],
               showSizeChanger: true,
+              showTotal: (total) => t('common.paginationTotal', [total]),
             }}
             /* 默认批量选择提示隐藏 */
             tableAlertRender={false}
@@ -402,7 +419,7 @@ const Dashboard = () => {
       </div>
 
       {/* 表单模态框：新增、编辑 */}
-      <UserFormModal
+      <FormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}
@@ -446,4 +463,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default UserList;

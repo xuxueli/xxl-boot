@@ -10,13 +10,13 @@ export const resourceApi = {
   /**
    * 查询资源树列表
    *
-   * @param params 查询条件（name/status），status 默认 -1 表示全部
+   * @param query 查询条件（name/status），status 默认 -1 表示全部
    * @returns 资源树
    */
-  treeList(params: { name?: string; status?: number }) {
+  treeList(query: API.ResourceQuery) {
     return request<API.Response<API.Resource[]>>('/authz/resource/treeList', {
       method: 'GET',
-      params: { status: -1, ...params },
+      params: { status: -1, ...query },
     });
   },
 
@@ -34,12 +34,26 @@ export const resourceApi = {
   },
 
   /**
-   * 新增资源（后端以请求参数绑定实体）
+   * 更新资源排序
    *
-   * @param data 资源数据
+   * @param ids 资源主键数组
+   * @param orders 排序值数组
    * @returns 保存结果
    */
-  insert(data: API.Resource) {
+  updateSort(ids: number[], orders: number[]) {
+    return request<API.Response<unknown>>('/authz/resource/updateSort', {
+      method: 'POST',
+      data: { ids, orders },
+    });
+  },
+
+  /**
+   * 新增资源
+   *
+   * @param data 资源表单数据
+   * @returns 保存结果
+   */
+  insert(data: API.ResourceForm) {
     return request<API.Response<unknown>>('/authz/resource/insert', {
       method: 'POST',
       data,
@@ -60,29 +74,15 @@ export const resourceApi = {
   },
 
   /**
-   * 更新资源（后端以请求参数绑定实体）
+   * 更新资源
    *
-   * @param data 资源数据（含主键）
+   * @param data 资源表单数据（含主键）
    * @returns 保存结果
    */
-  update(data: API.Resource) {
+  update(data: API.ResourceForm) {
     return request<API.Response<unknown>>('/authz/resource/update', {
       method: 'POST',
       data,
-    });
-  },
-
-  /**
-   * 更新资源排序
-   *
-   * @param ids 资源主键数组
-   * @param orders 排序值数组
-   * @returns 保存结果
-   */
-  updateSort(ids: number[], orders: number[]) {
-    return request<API.Response<unknown>>('/authz/resource/updateSort', {
-      method: 'POST',
-      data: { ids, orders },
     });
   },
 };

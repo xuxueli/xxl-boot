@@ -10,16 +10,11 @@ export const roleApi = {
   /**
    * 分页查询角色
    *
-   * @param params 分页与查询条件（current/pageSize/name/status）
+   * @param query 页面查询条件（current/pageSize/name/status）
    * @returns 角色分页结果
    */
-  pageList(params: {
-    current?: number;
-    pageSize?: number;
-    name?: string;
-    status?: number;
-  }) {
-    const { current = 1, pageSize = 10, ...rest } = params || {};
+  pageList(query: API.RoleQuery) {
+    const { current = 1, pageSize = 10, ...search } = query;
     return request<API.Response<API.PageModel<API.Role>>>(
       '/authz/role/pageList',
       {
@@ -27,49 +22,10 @@ export const roleApi = {
         params: {
           offset: (current - 1) * pageSize,
           pagesize: pageSize,
-          ...rest,
+          ...search,
         },
       },
     );
-  },
-
-  /**
-   * 新增角色（后端以请求参数绑定实体）
-   *
-   * @param data 角色数据
-   * @returns 新增角色主键
-   */
-  insert(data: API.Role) {
-    return request<API.Response<number>>('/authz/role/insert', {
-      method: 'POST',
-      data,
-    });
-  },
-
-  /**
-   * 删除角色（支持单条/批量）
-   *
-   * @param ids 角色主键或主键数组
-   * @returns 删除结果
-   */
-  delete(ids: number | number[]) {
-    return request<API.Response<unknown>>('/authz/role/delete', {
-      method: 'POST',
-      data: Array.isArray(ids) ? ids : [ids],
-    });
-  },
-
-  /**
-   * 更新角色（后端以请求参数绑定实体）
-   *
-   * @param data 角色数据（含主键）
-   * @returns 保存结果
-   */
-  update(data: API.Role) {
-    return request<API.Response<unknown>>('/authz/role/update', {
-      method: 'POST',
-      data,
-    });
   },
 
   /**
@@ -109,6 +65,45 @@ export const roleApi = {
     return request<API.Response<unknown>>('/authz/role/updateRoleRes', {
       method: 'POST',
       data: { roleId, resourceIds },
+    });
+  },
+
+  /**
+   * 新增角色
+   *
+   * @param data 角色表单数据
+   * @returns 新增角色主键
+   */
+  insert(data: API.RoleForm) {
+    return request<API.Response<number>>('/authz/role/insert', {
+      method: 'POST',
+      data,
+    });
+  },
+
+  /**
+   * 删除角色（支持单条/批量）
+   *
+   * @param ids 角色主键或主键数组
+   * @returns 删除结果
+   */
+  delete(ids: number | number[]) {
+    return request<API.Response<unknown>>('/authz/role/delete', {
+      method: 'POST',
+      data: Array.isArray(ids) ? ids : [ids],
+    });
+  },
+
+  /**
+   * 更新角色
+   *
+   * @param data 角色表单数据（含主键）
+   * @returns 保存结果
+   */
+  update(data: API.RoleForm) {
+    return request<API.Response<unknown>>('/authz/role/update', {
+      method: 'POST',
+      data,
     });
   },
 };

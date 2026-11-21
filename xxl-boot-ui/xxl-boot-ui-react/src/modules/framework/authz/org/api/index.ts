@@ -10,13 +10,13 @@ export const orgApi = {
   /**
    * 查询组织树列表
    *
-   * @param params 查询条件（name/status），status 默认 -1 表示全部
+   * @param query 查询条件（name/status），status 默认 -1 表示全部
    * @returns 组织树
    */
-  treeList(params: { name?: string; status?: number }) {
+  treeList(query: API.OrgQuery) {
     return request<API.Response<API.Org[]>>('/authz/org/treeList', {
       method: 'GET',
-      params: { status: -1, ...params },
+      params: { status: -1, ...query },
     });
   },
 
@@ -34,12 +34,26 @@ export const orgApi = {
   },
 
   /**
-   * 新增组织
+   * 更新组织排序
    *
-   * @param data 组织数据
+   * @param ids 组织主键数组
+   * @param orders 排序值数组
    * @returns 保存结果
    */
-  insert(data: API.Org) {
+  updateSort(ids: number[], orders: number[]) {
+    return request<API.Response<unknown>>('/authz/org/updateSort', {
+      method: 'POST',
+      data: { ids, orders },
+    });
+  },
+
+  /**
+   * 新增组织
+   *
+   * @param data 组织表单数据
+   * @returns 保存结果
+   */
+  insert(data: API.OrgForm) {
     return request<API.Response<unknown>>('/authz/org/insert', {
       method: 'POST',
       data,
@@ -62,27 +76,13 @@ export const orgApi = {
   /**
    * 更新组织
    *
-   * @param data 组织数据（含主键）
+   * @param data 组织表单数据（含主键）
    * @returns 保存结果
    */
-  update(data: API.Org) {
+  update(data: API.OrgForm) {
     return request<API.Response<unknown>>('/authz/org/update', {
       method: 'POST',
       data,
-    });
-  },
-
-  /**
-   * 更新组织排序
-   *
-   * @param ids 组织主键数组
-   * @param orders 排序值数组
-   * @returns 保存结果
-   */
-  updateSort(ids: number[], orders: number[]) {
-    return request<API.Response<unknown>>('/authz/org/updateSort', {
-      method: 'POST',
-      data: { ids, orders },
     });
   },
 };

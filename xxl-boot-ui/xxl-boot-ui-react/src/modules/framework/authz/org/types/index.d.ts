@@ -25,4 +25,18 @@ declare namespace API {
     /** 子组织 */
     children?: Org[];
   };
+
+  /** 组织树查询条件：树形接口不分页 */
+  type OrgQuery = {
+    /** 组织名称，模糊匹配 */
+    name?: string;
+    /** 状态筛选：不传或 -1 表示全部 */
+    status?: number;
+  };
+
+  /** 组织新增/修改表单：仅保留可编辑字段 */
+  type OrgForm = Pick<
+    Org,
+    'id' | 'parentId' | 'name' | 'order' | 'status' | 'manager'
+  >;
 }

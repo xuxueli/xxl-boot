@@ -26,7 +26,9 @@ const LogList = () => {
   const [detailRow, setDetailRow] = useState<API.Log | null>(
     null,
   ); /* 当前日志 */
-  const { hasRole } = usePermission();
+  const { hasPermi } = usePermission();
+
+  // ---------------------- 页面状态 ----------------------
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const searchParamsRef = useRef<Record<string, any>>({});
@@ -42,6 +44,8 @@ const LogList = () => {
     });
     return map;
   }, [logModuleOptions]);
+
+  // ---------------------- 数据操作 ----------------------
 
   /** 删除日志 */
   const handleDelete = (row?: API.Log) => {
@@ -72,8 +76,10 @@ const LogList = () => {
     );
   };
 
+  // ---------------------- 表格“列”定义 ----------------------
+
   const columns: ProColumns<API.Log>[] = [
-    { title: t('system.log.logId'), dataIndex: 'id', search: false, width: 80 },
+    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
     {
       title: t('system.log.logType'),
       dataIndex: 'type',
@@ -135,6 +141,8 @@ const LogList = () => {
     },
   ];
 
+  // ---------------------- 数据列表渲染 ----------------------
+
   return (
     <PageContainer ghost title={false}>
       <ProTable<API.Log>
@@ -155,7 +163,7 @@ const LogList = () => {
           };
         }}
         toolBarRender={() => [
-          hasRole('admin') && (
+          hasPermi('system:log') && (
             <Button
               key="delete"
               danger
@@ -166,7 +174,7 @@ const LogList = () => {
               {t('common.delete')}
             </Button>
           ),
-          hasRole('admin') && (
+          hasPermi('system:log') && (
             <Button
               key="export"
               icon={<DownloadOutlined />}
@@ -186,6 +194,7 @@ const LogList = () => {
           defaultPageSize: 10,
           pageSizeOptions: [10, 20, 50, 100],
           showSizeChanger: true,
+          showTotal: (total) => t('common.paginationTotal', [total]),
         }}
         /* 默认批量选择提示隐藏 */
         tableAlertRender={false}

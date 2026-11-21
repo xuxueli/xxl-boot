@@ -51,8 +51,10 @@
       "createTableSql": "建表 SQL",
       "dictItem": "字典项",
       "icon": "图标",
+      "message": "消息",
       "org": "组织",
       "resource": "资源",
+      "role": "角色",
       "user": "用户"
     }
   },

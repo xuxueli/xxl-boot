@@ -27,4 +27,18 @@ declare namespace API {
     /** 更新时间 */
     updateTime?: string;
   };
+
+  /** 日志列表查询条件：ProTable 分页 + 搜索栏字段 */
+  type LogQuery = {
+    /** 当前页码，默认 1 */
+    current?: number;
+    /** 每页条数，默认 10 */
+    pageSize?: number;
+    /** 日志类型筛选：不传或 -1 表示全部 */
+    type?: number;
+    /** 系统模块筛选：不传或 0 表示全部 */
+    module?: number;
+    /** 日志标题，模糊匹配 */
+    title?: string;
+  };
 }

@@ -61,7 +61,7 @@
               <div class="msg-title">{{ item.title }}</div>
               <div class="msg-meta">
                 <el-tag size="small" :type="item.category === 0 ? 'success' : 'warning'">
-                  {{ item.category === 0 ? t('dashboard.notify') : t('dashboard.announce') }}
+                  {{ enumTitle(categoryOptions, item.category) }}
                 </el-tag>
                 <span class="msg-time">{{ item.addTime }}</span>
               </div>
@@ -82,6 +82,7 @@ import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import * as echarts from 'echarts'
 import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
+import { enumTitle, useEnumOption } from '@/composables/useEnumOption'
 import { parseTime } from '@/utils/common'
 import { dashboardApi } from '../api'
 import { messageApi } from '@/modules/framework/system/message/api'
@@ -115,6 +116,9 @@ const stats = ref<StatItem[]>([
 
 // 顶部消息列表
 const messages = ref<Message[]>([])
+
+// 消息分类选项，由后端枚举接口加载
+const { MessageCategoryEnum: categoryOptions } = useEnumOption('MessageCategoryEnum')
 
 // 折线图容器与统计天数（默认最近 30 天）
 const chartRef = ref<HTMLElement>()

@@ -45,13 +45,13 @@
         <!-- 操作按钮 -->
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
+            <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasPermi="['authz:user']">{{ t('common.add') }}</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasPermi="['authz:user']">{{ t('common.modify') }}</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeUser()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeUser()" v-hasPermi="['authz:user']">{{ t('common.delete') }}</el-button>
           </el-col>
           <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
         </el-row>
@@ -76,10 +76,10 @@
           <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
           <el-table-column :label="t('common.operation')" align="center" width="190" class-name="small-padding fixed-width">
             <template #default="scope">
-              <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
-              <el-button link type="primary" icon="Delete" @click="removeUser(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+              <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasPermi="['authz:user']">{{ t('common.modify') }}</el-button>
+              <el-button link type="primary" icon="Delete" @click="removeUser(scope.row)" v-hasPermi="['authz:user']">{{ t('common.delete') }}</el-button>
               <el-dropdown trigger="click" @command="handleResetPwd(scope.row)">
-                <el-button link type="primary" icon="DArrowRight" v-hasRole="['admin']">{{ t('common.more') }}</el-button>
+                <el-button link type="primary" icon="DArrowRight" v-hasPermi="['authz:user']">{{ t('common.more') }}</el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item icon="Key">{{ t('authz.user.resetPwd') }}</el-dropdown-item>
@@ -187,7 +187,6 @@
 <script setup lang="ts">
 defineOptions({ name: 'User' })
 import { ref } from 'vue'
-import { ElMessageBox } from 'element-plus'
 import type { FormInstance, FormItemRule } from 'element-plus'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar, TreePanel } from '@/components'
@@ -508,16 +507,12 @@ function removeUser(row?: User) {
  * @param row 用户行数据
  */
 function handleResetPwd(row: User) {
-  ElMessageBox.prompt(t('authz.user.resetPwdPrompt', [row.username ?? String(row.id)]), t('authz.user.resetPwd'), {
-    confirmButtonText: t('modal.confirmButton'),
-    cancelButtonText: t('modal.cancelButton'),
-    closeOnClickModal: false,
-    inputValidator: (value) => {
+  modal
+    .prompt(t('authz.user.resetPwdPrompt', [row.username ?? String(row.id)]), (value) => {
       if (!value) return t('common.requiredMsg', [t('auth.login.password')])
       if (value.length < 4 || value.length > 20) return t('authz.user.passwordLength')
       return true
-    }
-  })
+    })
     .then(({ value }) => {
       const submitData: User = { ...row, password: value }
       delete submitData.addTime

@@ -64,12 +64,12 @@
           <el-tabs v-model="selectedTab">
             <!-- 基本资料 -->
             <el-tab-pane :label="t('authz.user.basicInfo')" name="userinfo">
-              <userInfo :user="user" />
+              <UserInfo :user="user" />
             </el-tab-pane>
 
             <!-- 修改密码 -->
             <el-tab-pane :label="t('authz.user.modifyPassword')" name="resetPwd">
-              <resetPwd />
+              <ResetPwd />
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -84,8 +84,8 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
-import userInfo from './userInfo.vue'
-import resetPwd from './resetPwd.vue'
+import UserInfo from './userInfo.vue'
+import ResetPwd from './resetPwd.vue'
 import { userApi } from '../../api'
 import type { User } from '../../types'
 

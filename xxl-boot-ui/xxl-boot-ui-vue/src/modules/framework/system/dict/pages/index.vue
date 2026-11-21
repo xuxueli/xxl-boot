@@ -28,13 +28,13 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasPermi="['system:dict']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasPermi="['system:dict']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeDict()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeDict()" v-hasPermi="['system:dict']">{{ t('common.delete') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -61,9 +61,9 @@
       <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
       <el-table-column :label="t('common.operation')" align="center" width="220" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
-          <el-button link type="primary" icon="Operation" @click="openDataList(scope.row)" v-hasRole="['admin']">{{ t('system.dict.dataList') }}</el-button>
-          <el-button link type="primary" icon="Delete" @click="removeDict(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasPermi="['system:dict']">{{ t('common.modify') }}</el-button>
+          <el-button link type="primary" icon="Operation" @click="openDataList(scope.row)" v-hasPermi="['system:dict']">{{ t('system.dict.dataList') }}</el-button>
+          <el-button link type="primary" icon="Delete" @click="removeDict(scope.row)" v-hasPermi="['system:dict']">{{ t('common.delete') }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -114,7 +114,7 @@ import { ref } from 'vue'
 import type { FormInstance } from 'element-plus'
 import { t } from '@/i18n'
 import { Pagination, RightToolbar } from '@/components'
-import DictDataDrawer from './detail.vue'
+import DictDataDrawer from './DictDataDrawer.vue'
 import { useEnumOption, enumTitle } from '@/composables/useEnumOption'
 import modal from '@/utils/modal'
 import tab from '@/utils/tab'
@@ -260,7 +260,9 @@ function openEditForm(row?: Dict) {
     .then((response) => {
       // 记录已被删除时不打开弹窗
       if (!response.data) return
-      formState.value.form = response.data
+      // 表单只保留可编辑字段，避免把时间字段回传到后端
+      const { addTime, updateTime, ...form } = response.data
+      formState.value.form = form
       formState.value.visible = true
       formState.value.title = t('common.titleEdit', [t('common.noun.dict')])
     })

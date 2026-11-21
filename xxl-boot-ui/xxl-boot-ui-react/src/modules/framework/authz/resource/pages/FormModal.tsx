@@ -1,5 +1,5 @@
 /**
- * @fileoverview ResourceFormModal（资源新增/编辑弹窗）
+ * @fileoverview FormModal（资源新增/编辑弹窗）
  * @description 资源类型、父级、名称、图标、地址、权限标识、可见/状态
  * @author xuxueli 2026-11-21
  */
@@ -32,7 +32,9 @@ const toTreeSelectData = (resources: API.Resource[]): any[] => [
   { title: t('authz.resource.rootNode'), value: 0, children: mapToSelect(resources) },
 ];
 
-const ResourceFormModal = ({
+// ---------------------- 表单组件 ----------------------
+
+const FormModal = ({
   open,
   onOpenChange,
   current,
@@ -44,6 +46,11 @@ const ResourceFormModal = ({
   onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();
+
+  // ---------------------- 表单状态 ----------------------
+
+  // 有主键即编辑态：驱动弹窗标题与提交分支
+  const isEdit = current?.id != null;
   const [parentOptions, setParentOptions] = useState<API.Resource[]>([]);
 
   const parentTreeSelectData = useMemo(
@@ -62,28 +69,33 @@ const ResourceFormModal = ({
     }
   }, [open]);
 
-  /** 提交：剥离时间字段 */
-  const handleFinish = async (values: API.Resource) => {
-    const data = { ...values };
-    delete data.addTime;
-    delete data.updateTime;
-    if (current?.id) {
-      await resourceApi.update({ ...data, id: current.id });
+  // ---------------------- 数据操作 ----------------------
+
+  /** 提交表单：有主键走修改，否则新增 */
+  const handleFinish = async (values: API.ResourceForm) => {
+    if (isEdit) {
+      await resourceApi.update({ ...values, id: current?.id });
     } else {
-      await resourceApi.insert(data);
+      await resourceApi.insert(values);
     }
-    message.success(t('common.operationSuccess'));
+    message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
+  // ---------------------- 表单渲染 ----------------------
+
   return (
-    <ModalForm<API.Resource>
-      title={current?.id ? t('common.titleEdit', [t('common.noun.resource')]) : t('common.titleAdd', [t('common.noun.resource')])}
+    <ModalForm<API.ResourceForm>
+      title={
+        isEdit
+          ? t('common.titleEdit', [t('common.noun.resource')])
+          : t('common.titleAdd', [t('common.noun.resource')])
+      }
       width={680}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnHidden: true }}
+      modalProps={{ destroyOnHidden: true, maskClosable: false }}
       layout="horizontal"
       labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
@@ -193,4 +205,4 @@ const ResourceFormModal = ({
   );
 };
 
-export default ResourceFormModal;
+export default FormModal;

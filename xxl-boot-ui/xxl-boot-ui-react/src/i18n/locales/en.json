@@ -51,8 +51,10 @@
       "createTableSql": "the CREATE TABLE SQL",
       "dictItem": "Dict item",
       "icon": "an icon",
+      "message": "Message",
       "org": "Org",
       "resource": "Resource",
+      "role": "Role",
       "user": "User"
     }
   },

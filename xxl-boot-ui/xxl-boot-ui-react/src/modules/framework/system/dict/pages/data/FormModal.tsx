@@ -1,5 +1,5 @@
 /**
- * @fileoverview DictDataFormModal（字典项新增/编辑弹窗）
+ * @fileoverview FormModal（字典项新增/编辑弹窗）
  * @description 字典项名称、编码、状态、排序、备注
  * @author xuxueli 2026-11-21
  */
@@ -14,7 +14,9 @@ import { App } from 'antd';
 import { t } from '@/i18n';
 import { dictApi } from '@/modules/framework/system/dict/api';
 
-const DictDataFormModal = ({
+// ---------------------- 表单组件 ----------------------
+
+const FormModal = ({
   open,
   onOpenChange,
   current,
@@ -29,27 +31,38 @@ const DictDataFormModal = ({
 }) => {
   const { message } = App.useApp();
 
-  const handleFinish = async (values: API.DictItem) => {
-    const data = { ...values };
-    delete data.addTime;
-    delete data.updateTime;
-    if (current?.id) {
-      await dictApi.itemUpdate({ ...data, id: current.id });
+  // ---------------------- 表单状态 ----------------------
+
+  // 有主键即编辑态：驱动弹窗标题、编码不可改与提交分支
+  const isEdit = current?.id != null;
+
+  // ---------------------- 数据操作 ----------------------
+
+  /** 提交表单：有主键走修改，否则新增 */
+  const handleFinish = async (values: API.DictItemForm) => {
+    if (isEdit) {
+      await dictApi.itemUpdate({ ...values, id: current?.id });
     } else {
-      await dictApi.itemInsert({ ...data, dictId });
+      await dictApi.itemInsert({ ...values, dictId });
     }
     message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
+  // ---------------------- 表单渲染 ----------------------
+
   return (
-    <ModalForm<API.DictItem>
-      title={current?.id ? t('common.titleEdit', [t('common.noun.dictItem')]) : t('common.titleAdd', [t('common.noun.dictItem')])}
+    <ModalForm<API.DictItemForm>
+      title={
+        isEdit
+          ? t('common.titleEdit', [t('common.noun.dictItem')])
+          : t('common.titleAdd', [t('common.noun.dictItem')])
+      }
       width={500}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnHidden: true }}
+      modalProps={{ destroyOnHidden: true, maskClosable: false }}
       layout="horizontal"
       labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
@@ -65,7 +78,7 @@ const DictDataFormModal = ({
         name="code"
         label={t('system.dict.itemCode')}
         placeholder={t('common.inputPlaceholder', [t('system.dict.itemCode')])}
-        disabled={!!current?.id}
+        disabled={isEdit}
         rules={[
           { required: true, message: t('common.requiredMsg', [t('system.dict.itemCode')]) },
           { pattern: /^[0-9]+$/, message: t('system.dict.itemCodePattern') },
@@ -82,9 +95,9 @@ const DictDataFormModal = ({
       <ProFormDigit
         name="order"
         label={t('system.dict.order')}
-        placeholder={t('common.inputPlaceholder', [t('authz.resource.order')])}
+        placeholder={t('common.inputPlaceholder', [t('system.dict.order')])}
         min={0}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.resource.order')]) }]}
+        rules={[{ required: true, message: t('common.requiredMsg', [t('system.dict.order')]) }]}
         fieldProps={{ style: { width: '100%' } }}
       />
       <ProFormTextArea
@@ -97,4 +110,4 @@ const DictDataFormModal = ({
   );
 };
 
-export default DictDataFormModal;
+export default FormModal;

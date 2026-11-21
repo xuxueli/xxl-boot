@@ -44,7 +44,8 @@ import { t } from '@/i18n'
 import { Pagination } from '@/components'
 import { parseTime } from '@/utils/common'
 import { messageApi } from '../api'
-import type { Message, MessageRead } from '../types'
+import type { Message, MessageRead, MessageReadQuery } from '../types'
+import type { TableState } from '@/types'
 
 /** 弹窗状态 */
 interface DialogState {
@@ -55,24 +56,7 @@ interface DialogState {
 }
 
 /** 已读用户表格状态（弹窗内列表，无需勾选与搜索栏） */
-interface ReadUserTableState {
-  /** 已读用户列表 */
-  list: MessageRead[]
-  /** 已读人数 */
-  total: number
-  /** 加载状态 */
-  loading: boolean
-}
-
-/** 查询参数（前端分页形态） */
-interface ReadUserQuery {
-  /** 当前页码 */
-  pageNum: number
-  /** 每页条数 */
-  pageSize: number
-  /** 消息主键 */
-  messageId?: number
-}
+type ReadUserTableState = Pick<TableState<MessageRead>, 'list' | 'total' | 'loading'>
 
 // ---------------------- 响应式数据 ----------------------
 
@@ -90,7 +74,7 @@ const table = ref<ReadUserTableState>({
 })
 
 // 查询参数
-const queryParams = ref<ReadUserQuery>({
+const queryParams = ref<MessageReadQuery>({
   pageNum: 1,
   pageSize: 10,
   messageId: undefined

@@ -21,7 +21,7 @@ import FormModal from './FormModal';
 const ConfigList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
-  const { hasRole } = usePermission();
+  const { hasPermi } = usePermission();
 
   // ---------------------- 页面状态 ----------------------
 
@@ -155,7 +155,7 @@ const ConfigList = () => {
         }}
         /* 工具栏：新增、批量删除 */
         toolBarRender={() => [
-          hasRole('admin') && (
+          hasPermi('system:config') && (
             <Button
               key="add"
               type="primary"
@@ -168,7 +168,7 @@ const ConfigList = () => {
               {t('common.add')}
             </Button>
           ),
-          hasRole('admin') && (
+          hasPermi('system:config') && (
             <Button
               key="delete"
               danger

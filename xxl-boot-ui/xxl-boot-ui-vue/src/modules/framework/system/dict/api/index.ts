@@ -77,6 +77,48 @@ export const dictApi = {
   },
 
   /**
+   * 新增字典项
+   *
+   * @param data 表单数据
+   * @returns 保存结果
+   */
+  itemInsert(data: DictItemForm): Promise<Response<unknown>> {
+    return request({
+      url: '/system/dict/itemInsert',
+      method: 'post',
+      data
+    })
+  },
+
+  /**
+   * 删除字典项（支持单条/批量）
+   *
+   * @param ids 单个主键或主键数组
+   * @returns 删除结果
+   */
+  itemDelete(ids: number | number[]): Promise<Response<unknown>> {
+    return request({
+      url: '/system/dict/itemDelete',
+      method: 'post',
+      data: Array.isArray(ids) ? ids : [ids]
+    })
+  },
+
+  /**
+   * 更新字典项
+   *
+   * @param data 表单数据（含主键）
+   * @returns 保存结果
+   */
+  itemUpdate(data: DictItemForm): Promise<Response<unknown>> {
+    return request({
+      url: '/system/dict/itemUpdate',
+      method: 'post',
+      data
+    })
+  },
+
+  /**
    * 查询全部字典（下拉选项）
    *
    * @returns 下拉选项列表
@@ -161,48 +203,6 @@ export const dictApi = {
   update(data: DictForm): Promise<Response<unknown>> {
     return request({
       url: '/system/dict/update',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
-   * 新增字典项
-   *
-   * @param data 表单数据
-   * @returns 保存结果
-   */
-  itemInsert(data: DictItemForm): Promise<Response<unknown>> {
-    return request({
-      url: '/system/dict/itemInsert',
-      method: 'post',
-      data
-    })
-  },
-
-  /**
-   * 删除字典项（支持单条/批量）
-   *
-   * @param ids 单个主键或主键数组
-   * @returns 删除结果
-   */
-  itemDelete(ids: number | number[]): Promise<Response<unknown>> {
-    return request({
-      url: '/system/dict/itemDelete',
-      method: 'post',
-      data: Array.isArray(ids) ? ids : [ids]
-    })
-  },
-
-  /**
-   * 更新字典项
-   *
-   * @param data 表单数据（含主键）
-   * @returns 保存结果
-   */
-  itemUpdate(data: DictItemForm): Promise<Response<unknown>> {
-    return request({
-      url: '/system/dict/itemUpdate',
       method: 'post',
       data
     })

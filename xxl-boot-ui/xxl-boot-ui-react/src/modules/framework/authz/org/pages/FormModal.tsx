@@ -1,5 +1,5 @@
 /**
- * @fileoverview OrgFormModal（组织新增/编辑弹窗）
+ * @fileoverview FormModal（组织新增/编辑弹窗）
  * @description 上级组织、名称、排序、负责人、状态
  * @author xuxueli 2026-11-21
  */
@@ -36,7 +36,9 @@ const isInTree = (node: API.Org, targetId: number | undefined): boolean => {
   return (node.children || []).some((c) => isInTree(c, targetId));
 };
 
-const OrgFormModal = ({
+// ---------------------- 表单组件 ----------------------
+
+const FormModal = ({
   open,
   onOpenChange,
   current,
@@ -48,6 +50,11 @@ const OrgFormModal = ({
   onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();
+
+  // ---------------------- 表单状态 ----------------------
+
+  // 有主键即编辑态：驱动弹窗标题、父级校验与提交分支
+  const isEdit = current?.id != null;
   const [orgOptions, setOrgOptions] = useState<API.Org[]>([]);
 
   const treeSelectData = useMemo(
@@ -66,34 +73,39 @@ const OrgFormModal = ({
     }
   }, [open]);
 
+  // ---------------------- 数据操作 ----------------------
+
   /** 提交：防止选择自身或子孙作为父级 */
-  const handleFinish = async (values: API.Org) => {
-    const data = { ...values };
-    delete data.addTime;
-    delete data.updateTime;
-    if (current?.id) {
+  const handleFinish = async (values: API.OrgForm) => {
+    if (isEdit) {
       // 防环校验：选中的上级组织不能是自己或其子孙
-      const currentNode = orgOptions.find((o) => o.id === current.id);
+      const currentNode = orgOptions.find((o) => o.id === current?.id);
       if (currentNode && isInTree(currentNode, values.parentId)) {
         message.warning(t('authz.org.parentInvalid'));
         return false;
       }
-      await orgApi.update({ ...data, id: current.id });
+      await orgApi.update({ ...values, id: current?.id });
     } else {
-      await orgApi.insert(data);
+      await orgApi.insert(values);
     }
-    message.success(t('common.operationSuccess'));
+    message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
+  // ---------------------- 表单渲染 ----------------------
+
   return (
-    <ModalForm<API.Org>
-      title={current?.id ? t('common.titleEdit', [t('common.noun.org')]) : t('common.titleAdd', [t('common.noun.org')])}
+    <ModalForm<API.OrgForm>
+      title={
+        isEdit
+          ? t('common.titleEdit', [t('common.noun.org')])
+          : t('common.titleAdd', [t('common.noun.org')])
+      }
       width={600}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnHidden: true }}
+      modalProps={{ destroyOnHidden: true, maskClosable: false }}
       layout="horizontal"
       grid
       labelCol={{ flex: '85px' }}
@@ -152,4 +164,4 @@ const OrgFormModal = ({
   );
 };
 
-export default OrgFormModal;
+export default FormModal;

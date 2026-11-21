@@ -22,19 +22,22 @@ import { usePermission } from '@/hooks/usePermission';
 import { t } from '@/i18n';
 import { messageApi } from '@/modules/framework/system/message/api';
 import MessageDetail from './MessageDetail';
-import MessageFormModal from './MessageFormModal';
+import FormModal from './FormModal';
 import ReadUsersDialog from './ReadUsersDialog';
 
 const MessageList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
+  const { hasPermi } = usePermission();
+
+  // ---------------------- 页面状态 ----------------------
+
   const [detailOpen, setDetailOpen] = useState(false); /* 详情抽屉显隐 */
   const [detailPayload, setDetailPayload] =
     useState<number>(); /* 详情消息 ID */
   const [readOpen, setReadOpen] = useState(false); /* 已读弹窗显隐 */
   const [readMessage, setReadMessage] =
     useState<API.Message>(); /* 已读弹窗消息 */
-  const { hasRole } = usePermission();
 
   const [formOpen, setFormOpen] = useState(false);
   const [formCurrent, setFormCurrent] = useState<API.Message | null>(null);
@@ -56,6 +59,8 @@ const MessageList = () => {
   }, [messageCategoryOptions]);
   const categorySelectOptions = toSelectOptions(messageCategoryOptions);
 
+  // ---------------------- 数据操作 ----------------------
+
   /** 删除消息 */
   const handleDelete = (row?: API.Message) => {
     const ids = row ? [row.id as number] : selectedIds;
@@ -74,6 +79,9 @@ const MessageList = () => {
     });
   };
 
+  // ---------------------- 表格“列”定义 ----------------------
+
+  /** 表格列：序号、标题、分类、状态、发送人、发送时间、操作 */
   const columns: ProColumns<API.Message>[] = [
     { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 60 },
     {
@@ -144,22 +152,28 @@ const MessageList = () => {
           >
             <TeamOutlined /> {t('system.message.readUsers')}
           </a>
-          <a
-            key="edit"
-            onClick={() => {
-              setFormCurrent(record);
-              setFormOpen(true);
-            }}
-          >
-            <EditOutlined /> {t('common.modify')}
-          </a>
-          <a key="delete" onClick={() => handleDelete(record)}>
-            <DeleteOutlined /> {t('common.delete')}
-          </a>
+          {hasPermi('system:message') && (
+            <a
+              key="edit"
+              onClick={() => {
+                setFormCurrent(record);
+                setFormOpen(true);
+              }}
+            >
+              <EditOutlined /> {t('common.modify')}
+            </a>
+          )}
+          {hasPermi('system:message') && (
+            <a key="delete" onClick={() => handleDelete(record)}>
+              <DeleteOutlined /> {t('common.delete')}
+            </a>
+          )}
         </Space>
       ),
     },
   ];
+
+  // ---------------------- 数据列表渲染 ----------------------
 
   return (
     <PageContainer ghost title={false}>
@@ -180,7 +194,7 @@ const MessageList = () => {
           };
         }}
         toolBarRender={() => [
-          hasRole('admin') && (
+          hasPermi('system:message') && (
             <Button
               key="add"
               type="primary"
@@ -193,7 +207,7 @@ const MessageList = () => {
               {t('common.add')}
             </Button>
           ),
-          hasRole('admin') && (
+          hasPermi('system:message') && (
             <Button
               key="delete"
               danger
@@ -215,11 +229,12 @@ const MessageList = () => {
           defaultPageSize: 10,
           pageSizeOptions: [10, 20, 50, 100],
           showSizeChanger: true,
+          showTotal: (total) => t('common.paginationTotal', [total]),
         }}
         /* 默认批量选择提示隐藏 */
         tableAlertRender={false}
       />
-      <MessageFormModal
+      <FormModal
         open={formOpen}
         onOpenChange={setFormOpen}
         current={formCurrent}

@@ -88,12 +88,20 @@ export default {
   /**
    * 输入框：返回 Promise<{ value: string }>，then 中获取用户输入
    *   modal.prompt('请输入原因').then(({ value }) => { ... })
+   *
+   * @param content 提示文案
+   * @param inputValidator 可选输入校验，返回错误文案或 true
    */
-  prompt(content: string): Promise<{ value: string }> {
+  prompt(
+    content: string,
+    inputValidator?: (value: string) => string | true
+  ): Promise<{ value: string }> {
     return ElMessageBox.prompt(content, t('modal.title'), {
       confirmButtonText: t('modal.confirmButton'),
       cancelButtonText: t('modal.cancelButton'),
-      type: 'warning'
+      type: 'warning',
+      closeOnClickModal: false,
+      inputValidator
     })
   },
 

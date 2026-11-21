@@ -73,11 +73,13 @@
       "dictItem": "字典项",
       "fileFieldName": "上传文件字段名",
       "iconName": "图标名称",
+      "message": "消息",
       "name": "名称",
       "org": "组织",
       "prefixIconName": "前图标名称",
       "regex": "正则",
       "resource": "资源",
+      "role": "角色",
       "suffixIconName": "后图标名称",
       "user": "用户"
     }
@@ -374,7 +376,8 @@
       "order": "顺序",
       "itemCodePattern": "只允许输入数字",
       "itemCodeRange": "需在1-10000000之间",
-      "confirmDeleteItem": "是否确认删除字典项编号为\"{0}\"的数据项？"
+      "confirmDeleteItem": "是否确认删除字典项编号为\"{0}\"的数据项？",
+      "confirmBatchDeleteItem": "是否确认删除选中的 {0} 个字典项？"
     },
     "log": {
       "logType": "日志类型",
@@ -432,6 +435,7 @@
       "createSuccess": "创建成功",
       "copySuccess": "复制成功",
       "deleteTableConfirm": "是否确认删除表编号为\"{0}\"的数据项？",
+      "deleteTableBatchConfirm": "是否确认删除选中的 {0} 张表？",
       "editGenConfig": "修改生成配置",
       "configInfo": "配置信息",
       "baseInfo": "基本信息",

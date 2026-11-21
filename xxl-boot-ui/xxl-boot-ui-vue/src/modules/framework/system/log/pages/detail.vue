@@ -15,7 +15,7 @@
           <el-col :span="12">
             <div class="detail-item">
               <span class="detail-label">{{ t('system.log.logType') }}</span
-              ><span class="detail-value">{{ row.type === 0 ? t('system.log.operLog') : row.type === 1 ? t('system.log.loginLog') : row.type }}</span>
+              ><span class="detail-value">{{ enumTitle(typeOptions, row.type) }}</span>
             </div>
           </el-col>
           <el-col :span="12">
@@ -78,7 +78,7 @@
         <div class="code-body">
           <div class="code-wrap">
             <div class="code-action">
-              <el-button size="small" icon="CopyDocument" @click="copyText(row.content)">{{ t('common.copy') }}</el-button>
+              <el-button size="small" icon="CopyDocument" v-copyText="row.content || ''" v-copyText:callback="copyTextSuccess">{{ t('common.copy') }}</el-button>
             </div>
             <pre class="code-pre">{{ row.content || t('system.log.noData') }}</pre>
           </div>
@@ -91,6 +91,7 @@
 <script setup lang="ts">
 defineOptions({ name: 'LogDetail' })
 import { t } from '@/i18n'
+import { enumTitle, useEnumOption } from '@/composables/useEnumOption'
 import modal from '@/utils/modal'
 import type { Log } from '../types'
 
@@ -111,36 +112,11 @@ withDefaults(defineProps<DetailProps>(), {
   moduleMap: () => ({})
 })
 
-/**
- * 复制文本到剪贴板
- *
- * @param text 待复制内容，为空时复制空串
- */
-function copyText(text?: string) {
-  const content = text || ''
-  // 优先使用 Clipboard API，不可用或失败时降级为 execCommand
-  if (navigator.clipboard) {
-    navigator.clipboard
-      .writeText(content)
-      .then(() => modal.msgSuccess(t('system.log.copied')))
-      .catch(() => copyByExecCommand(content))
-  } else {
-    copyByExecCommand(content)
-  }
-}
+// 日志类型选项，由后端枚举接口加载
+const { LogTypeEnum: typeOptions } = useEnumOption('LogTypeEnum')
 
-/**
- * 兼容旧浏览器的复制实现
- *
- * @param content 待复制内容
- */
-function copyByExecCommand(content: string) {
-  const textarea = document.createElement('textarea')
-  textarea.value = content
-  document.body.appendChild(textarea)
-  textarea.select()
-  document.execCommand('copy')
-  document.body.removeChild(textarea)
+/** 复制成功提示 */
+function copyTextSuccess() {
   modal.msgSuccess(t('system.log.copied'))
 }
 </script>

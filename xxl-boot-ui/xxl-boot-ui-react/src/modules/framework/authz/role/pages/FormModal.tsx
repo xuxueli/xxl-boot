@@ -1,5 +1,5 @@
 /**
- * @fileoverview RoleFormModal（角色新增/编辑弹窗）
+ * @fileoverview FormModal（角色新增/编辑弹窗）
  * @description 角色基本信息 + 菜单权限树（支持展开/折叠、全选、父子联动）
  * @author xuxueli 2026-11-21
  */
@@ -46,10 +46,13 @@ const collectAllKeys = (nodes: DataNode[]): React.Key[] => {
 };
 
 /*
- * 组件：RoleFormModal（角色新增/编辑弹窗）
+ * 组件：FormModal（角色新增/编辑弹窗）
  * 功能：角色基本信息 + 菜单权限树（支持展开/折叠、全选、父子联动）
  */
-const RoleFormModal = ({
+
+// ---------------------- 表单组件 ----------------------
+
+const FormModal = ({
   open,
   onOpenChange,
   current,
@@ -66,6 +69,11 @@ const RoleFormModal = ({
 }) => {
   // antd 提示
   const { message } = App.useApp();
+
+  // ---------------------- 表单状态 ----------------------
+
+  // 有主键即编辑态：驱动弹窗标题与提交分支
+  const isEdit = current?.id != null;
 
   // 资源树：全部数据
   const [treeData, setTreeData] = useState<DataNode[]>([]);
@@ -170,38 +178,42 @@ const RoleFormModal = ({
       .filter((k) => !Number.isNaN(k));
   };
 
+  // ---------------------- 数据操作 ----------------------
+
   /**
    * 提交：保存角色 + 资源授权
    */
-  const handleFinish = async (values: API.Role) => {
-    // 过滤掉不需要的字段
-    const data = { ...values };
-    delete data.addTime;
-    delete data.updateTime;
+  const handleFinish = async (values: API.RoleForm) => {
     const resourceIds = getMenuAllCheckedKeys();
 
     // 新增/编辑角色 + 授权资源
-    if (current?.id) {
-      await roleApi.update({ ...data, id: current.id });
-      await roleApi.updateRoleRes(current.id, resourceIds);
+    if (isEdit) {
+      await roleApi.update({ ...values, id: current?.id });
+      await roleApi.updateRoleRes(current?.id as number, resourceIds);
     } else {
-      const res = await roleApi.insert(data);
+      const res = await roleApi.insert(values);
       const newId = Number(res.data);
       await roleApi.updateRoleRes(newId, resourceIds);
     }
-    message.success(t('common.operationSuccess'));
+    message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
+  // ---------------------- 表单渲染 ----------------------
+
   return (
     /* 表单模态框 */
-    <ModalForm<API.Role>
-      title={current?.id ? t('common.titleEdit', [t('authz.user.role')]) : t('common.titleAdd', [t('authz.user.role')])}
+    <ModalForm<API.RoleForm>
+      title={
+        isEdit
+          ? t('common.titleEdit', [t('common.noun.role')])
+          : t('common.titleAdd', [t('common.noun.role')])
+      }
       width={680}
       open={open} /* 是否打开弹窗 */
       onOpenChange={onOpenChange} /* 弹窗打开状态变化回调 */
-      modalProps={{ destroyOnHidden: true }}
+      modalProps={{ destroyOnHidden: true, maskClosable: false }}
       layout="horizontal"
       grid
       labelCol={{ flex: '100px' }}
@@ -299,4 +311,4 @@ const RoleFormModal = ({
   );
 };
 
-export default RoleFormModal;
+export default FormModal;

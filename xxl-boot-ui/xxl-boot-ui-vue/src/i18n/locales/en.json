@@ -73,11 +73,13 @@
       "dictItem": "Dict item",
       "fileFieldName": "upload file field name",
       "iconName": "icon name",
+      "message": "Message",
       "name": "a name",
       "org": "Org",
       "prefixIconName": "prefix icon name",
       "regex": "regex",
       "resource": "Resource",
+      "role": "Role",
       "suffixIconName": "suffix icon name",
       "user": "User"
     }
@@ -374,7 +376,8 @@
       "order": "Order",
       "itemCodePattern": "Digits only",
       "itemCodeRange": "Must be between 1 and 10000000",
-      "confirmDeleteItem": "Are you sure to delete the dict item with ID \"{0}\"?"
+      "confirmDeleteItem": "Are you sure to delete the dict item with ID \"{0}\"?",
+      "confirmBatchDeleteItem": "Are you sure to delete the selected {0} dict items?"
     },
     "log": {
       "logType": "Log Type",
@@ -432,6 +435,7 @@
       "createSuccess": "Created successfully",
       "copySuccess": "Copied successfully",
       "deleteTableConfirm": "Are you sure you want to delete the DATA of table ID \"{0}\"?",
+      "deleteTableBatchConfirm": "Are you sure you want to delete the selected {0} tables?",
       "editGenConfig": "Modify Generation Config",
       "configInfo": "Configuration Info",
       "baseInfo": "Basic Info",

@@ -41,10 +41,3 @@ export interface LogQuery {
   /** 日志标题，模糊匹配 */
   title?: string
 }
-
-/**
- * 日志新增/修改表单：复用实体中的可编辑字段
- *
- * 后端保留 insert/update 能力，前端日志页当前只做查询与删除，不提供编辑入口。
- */
-export type LogForm = Pick<Log, 'id' | 'type' | 'module' | 'title' | 'content' | 'operator' | 'ip'>

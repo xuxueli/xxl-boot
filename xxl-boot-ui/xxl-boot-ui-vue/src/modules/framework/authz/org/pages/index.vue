@@ -31,10 +31,10 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="openCreateForm()" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateForm()" v-hasPermi="['authz:org']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Check" @click="saveSort" v-hasRole="['admin']">{{ t('common.saveSort') }}</el-button>
+        <el-button type="warning" plain icon="Check" @click="saveSort" v-hasPermi="['authz:org']">{{ t('common.saveSort') }}</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="info" plain icon="Sort" @click="toggleExpandAll">{{ t('common.expandCollapse') }}</el-button>
@@ -69,10 +69,10 @@
       <el-table-column :label="t('common.addTime')" align="center" prop="addTime" width="170" />
       <el-table-column :label="t('common.operation')" align="left" width="220" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{
+          <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasPermi="['authz:org']">{{
             t('common.modify')
           }}</el-button>
-          <el-button link type="primary" icon="Plus" @click="openCreateForm(scope.row)" v-hasRole="['admin']">{{
+          <el-button link type="primary" icon="Plus" @click="openCreateForm(scope.row)" v-hasPermi="['authz:org']">{{
             t('common.add')
           }}</el-button>
           <el-button
@@ -81,7 +81,7 @@
             type="primary"
             icon="Delete"
             @click="removeOrg(scope.row)"
-            v-hasRole="['admin']"
+            v-hasPermi="['authz:org']"
             >{{ t('common.delete') }}</el-button
           >
         </template>
@@ -334,7 +334,9 @@ function openEditForm(row?: Org) {
     .then((response) => {
       // 记录已被删除时不打开弹窗
       if (!response.data) return
-      formState.value.form = response.data
+      // 表单只保留可编辑字段，避免把子节点与时间字段回传到后端
+      const { children, addTime, updateTime, ...form } = response.data
+      formState.value.form = form
       formState.value.visible = true
       formState.value.title = t('common.titleEdit', [t('common.noun.org')])
     })

@@ -1,5 +1,5 @@
 /**
- * @fileoverview DictFormModal（字典类型新增/编辑弹窗）
+ * @fileoverview FormModal（字典类型新增/编辑弹窗）
  * @description 字典名称、类型、状态、备注
  * @author xuxueli 2026-11-21
  */
@@ -13,7 +13,9 @@ import { App } from 'antd';
 import { t } from '@/i18n';
 import { dictApi } from '@/modules/framework/system/dict/api';
 
-const DictFormModal = ({
+// ---------------------- 表单组件 ----------------------
+
+const FormModal = ({
   open,
   onOpenChange,
   current,
@@ -26,27 +28,38 @@ const DictFormModal = ({
 }) => {
   const { message } = App.useApp();
 
-  const handleFinish = async (values: API.Dict) => {
-    const data = { ...values };
-    delete data.addTime;
-    delete data.updateTime;
-    if (current?.id) {
-      await dictApi.update({ ...data, id: current.id });
+  // ---------------------- 表单状态 ----------------------
+
+  // 有主键即编辑态：驱动弹窗标题、类型不可改与提交分支
+  const isEdit = current?.id != null;
+
+  // ---------------------- 数据操作 ----------------------
+
+  /** 提交表单：有主键走修改，否则新增 */
+  const handleFinish = async (values: API.DictForm) => {
+    if (isEdit) {
+      await dictApi.update({ ...values, id: current?.id });
     } else {
-      await dictApi.insert(data);
+      await dictApi.insert(values);
     }
     message.success(t('common.saveSuccess'));
     onSuccess?.();
     return true;
   };
 
+  // ---------------------- 表单渲染 ----------------------
+
   return (
-    <ModalForm<API.Dict>
-      title={current?.id ? t('common.titleEdit', [t('system.dict.dictType')]) : t('common.titleAdd', [t('system.dict.dictType')])}
+    <ModalForm<API.DictForm>
+      title={
+        isEdit
+          ? t('common.titleEdit', [t('system.dict.dictType')])
+          : t('common.titleAdd', [t('system.dict.dictType')])
+      }
       width={500}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnHidden: true }}
+      modalProps={{ destroyOnHidden: true, maskClosable: false }}
       layout="horizontal"
       labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
@@ -62,7 +75,7 @@ const DictFormModal = ({
         name="type"
         label={t('system.dict.dictType')}
         placeholder={t('common.inputPlaceholder', [t('system.dict.dictType')])}
-        disabled={!!current?.id}
+        disabled={isEdit}
         rules={[
           { required: true, message: t('common.requiredMsg', [t('system.dict.dictType')]) },
           { min: 2, max: 100, message: t('system.dict.typeLength') },
@@ -90,4 +103,4 @@ const DictFormModal = ({
   );
 };
 
-export default DictFormModal;
+export default FormModal;

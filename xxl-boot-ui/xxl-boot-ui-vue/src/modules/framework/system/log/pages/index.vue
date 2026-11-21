@@ -31,10 +31,10 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeLog()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeLog()" v-hasPermi="['system:log']">{{ t('common.delete') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasRole="['admin']">{{ t('system.log.export') }}</el-button>
+        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:log']">{{ t('system.log.export') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList"></RightToolbar>
     </el-row>
@@ -42,7 +42,7 @@
     <!-- 数据列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column :label="t('system.log.logId')" align="center" prop="id" width="80" />
+      <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="80" />
       <el-table-column :label="t('system.log.logType')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.type === 0 ? 'primary' : 'warning'" size="small">

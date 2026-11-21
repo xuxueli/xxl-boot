@@ -22,16 +22,16 @@
     <!-- 操作按钮 -->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasRole="['admin']">{{ t('common.add') }}</el-button>
+        <el-button type="primary" plain icon="Plus" @click="openCreateForm" v-hasPermi="['tool:codegen']">{{ t('common.add') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasRole="['admin']">{{ t('common.modify') }}</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="table.single" @click="openEditForm()" v-hasPermi="['tool:codegen']">{{ t('common.modify') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeCodegen()" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="table.multiple" @click="removeCodegen()" v-hasPermi="['tool:codegen']">{{ t('common.delete') }}</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Download" :disabled="table.multiple" @click="generateCode()" v-hasRole="['admin']">{{ t('tool.codegen.generateButton') }}</el-button>
+        <el-button type="primary" plain icon="Download" :disabled="table.multiple" @click="generateCode()" v-hasPermi="['tool:codegen']">{{ t('tool.codegen.generateButton') }}</el-button>
       </el-col>
       <RightToolbar v-model:showSearch="table.showSearch" @queryTable="getList" />
     </el-row>
@@ -47,16 +47,16 @@
       <el-table-column :label="t('common.operation')" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-tooltip :content="t('common.edit')" placement="top">
-            <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasRole="['admin']">{{ t('common.edit') }}</el-button>
+            <el-button link type="primary" icon="Edit" @click="openEditForm(scope.row)" v-hasPermi="['tool:codegen']">{{ t('common.edit') }}</el-button>
           </el-tooltip>
           <el-tooltip :content="t('common.delete')" placement="top">
-            <el-button link type="primary" icon="Delete" @click="removeCodegen(scope.row)" v-hasRole="['admin']">{{ t('common.delete') }}</el-button>
+            <el-button link type="primary" icon="Delete" @click="removeCodegen(scope.row)" v-hasPermi="['tool:codegen']">{{ t('common.delete') }}</el-button>
           </el-tooltip>
           <el-tooltip :content="t('tool.codegen.preview')" placement="top">
-            <el-button link type="primary" icon="View" @click="previewCode(scope.row)" v-hasRole="['admin']">{{ t('tool.codegen.preview') }}</el-button>
+            <el-button link type="primary" icon="View" @click="previewCode(scope.row)" v-hasPermi="['tool:codegen']">{{ t('tool.codegen.preview') }}</el-button>
           </el-tooltip>
           <el-tooltip :content="t('tool.codegen.generate')" placement="top">
-            <el-button link type="primary" icon="Download" @click="generateCode(scope.row)" v-hasRole="['admin']">{{ t('tool.codegen.generate') }}</el-button>
+            <el-button link type="primary" icon="Download" @click="generateCode(scope.row)" v-hasPermi="['tool:codegen']">{{ t('tool.codegen.generate') }}</el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -315,7 +315,7 @@ function removeCodegen(row?: CodegenTable) {
   if (ids.length === 0) return
   const confirmText = row
     ? t('tool.codegen.deleteTableConfirm', [row.tableName ?? String(row.id)])
-    : t('tool.codegen.deleteTableConfirm', [ids.join(',')])
+    : t('tool.codegen.deleteTableBatchConfirm', [ids.length])
   modal
     .confirm(confirmText)
     .then(() => codegenApi.delete(ids))

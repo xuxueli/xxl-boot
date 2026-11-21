@@ -33,4 +33,34 @@ declare namespace API {
     /** 更新时间 */
     updateTime?: string;
   };
+
+  /** 用户列表查询条件：ProTable 分页 + 搜索栏字段 */
+  type UserQuery = {
+    /** 当前页码，默认 1 */
+    current?: number;
+    /** 每页条数，默认 10 */
+    pageSize?: number;
+    /** 账号，模糊匹配 */
+    username?: string;
+    /** 状态筛选：不传或 -1 表示全部 */
+    status?: number;
+    /** 选中组织及其全部子组织的 ID 集合 */
+    orgIds?: number[];
+  };
+
+  /** 用户新增/修改表单：仅保留可编辑字段，排除时间与联查回显字段 */
+  type UserForm = Pick<
+    User,
+    | 'id'
+    | 'orgId'
+    | 'username'
+    | 'password'
+    | 'realName'
+    | 'status'
+    | 'phone'
+    | 'email'
+  > & {
+    /** 角色 ID 集合 */
+    roleIds?: number[];
+  };
 }

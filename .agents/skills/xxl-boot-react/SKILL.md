@@ -37,7 +37,7 @@ React 与 Vue **共用同一个后端 `xxl-boot-api`**，接口契约与后端�
 | 后端落位 | Java `business/{module}/{business}`；Mapper XML `resources/mapper/business/{module}/{business}` |
 | 前端落位 | `src/modules/business/{module}/{business}/{types,api,pages}` |
 | 页面定位 | 菜单 `url` → `loadView` 只匹配 `pages/**/index.tsx`，无需改路由 |
-| 权限模型 | 业务页按钮 `hasPermi`；平台内置页可按角色 `hasRole` |
+| 权限模型 | 按钮统一 `hasPermi`；平台页用资源表菜单级权限（如 `system:config`），业务页用 `{module}:{business}:add\|edit\|remove`；`hasRole` 仅限超管专属入口 |
 | 数据请求 | `@/utils/request` + TanStack Query（仅枚举等缓存场景） |
 | 数据库脚本 | `doc/db/tables_xxl_boot.sql` + `doc/db/tables_xxl_boot_modular_react.sql` |
 
@@ -96,7 +96,7 @@ xxl-boot-ui/xxl-boot-ui-react/src
 | `ConfigStatusEnum` | `XxxStatusEnum` |
 | `system/config` | `{module}/{business}` |
 | `system.config.*` | `business.{module}.{business}.*` |
-| `hasRole('admin')`（平台页） | `hasPermi('{module}:{business}:add\|edit\|remove')`（业务页） |
+| `hasPermi('system:config')`（平台页） | `hasPermi('{module}:{business}:add\|edit\|remove')`（业务页） |
 
 ### 4.1 文件清单与职责
 
@@ -130,11 +130,11 @@ xxl-boot-ui/xxl-boot-ui-react/src
 
 | 规则 | 说明 |
 |---|---|
-| 命名空间 | 统一 `declare namespace API { ... }`，多文件自动合并 |
+| 命名空间 | 优先 `declare namespace API { ... }`，多文件自动合并；文件含 `import` 时必须用 `declare global { namespace API { ... } }` 并保留 `export {}` |
 | 实体 | `type Xxx = { ... }`，对应后端 Entity/DTO；字段可选 |
 | 关联实体 | 同一文件内追加 `type XxxItem` / `type XxxRead` |
-| 查询类型 | 只保留 `API.XxxQuery`（`current/pageSize` + 筛选项），分页字段在 `api.pageList` 内转换，不再派生 `ListQuery` 等中间类型 |
-| 表单类型 | 一律抽 `API.XxxForm = Pick<Xxx, 可编辑字段>`，避免页面回传 `addTime/updateTime` 等只读字段 |
+| 查询类型 | 分页列表只保留 `API.XxxQuery`（`current/pageSize` + 筛选项），分页字段在 `api.pageList` 内转换，不再派生 `ListQuery` 等中间类型；树形/不分页接口只保留筛选项 |
+| 表单类型 | 可编辑模块一律抽 `API.XxxForm = Pick<Xxx, 可编辑字段>`，避免页面回传 `addTime/updateTime` 等只读字段；只读模块不造 Form |
 
 ```ts
 /**
@@ -180,6 +180,7 @@ declare namespace API {
 
 - `types/index.d.ts` 由 `tsconfig.json` 的 `include` 自动纳入，无需在页面 import。
 - 后端时间字段统一 `string`；前端只展示或回传，不做 Date 运算。
+- 筛选项在页面有默认值时可声明为可选，默认值只放页面/ProTable；不要为对称给只读模块补 Form。
 - 新增关联类型时保持同一文件聚合，避免跨模块引用类型文件。
 
 ### 4.4 api：`api/index.ts`
@@ -193,6 +194,16 @@ declare namespace API {
 | 分页 | 入参 `API.XxxQuery`；在 `pageList` 内去掉 `current/pageSize`，替换为后端约定的 `offset/pagesize`，页面直接传 ProTable 参数 |
 | 表单 | `insert/update` 入参 `API.XxxForm` |
 | 删除 | 接收集合，`data: Array.isArray(ids) ? ids : [ids]` |
+
+平台/特殊模块例外（不得扩散到普通业务模块）：
+
+| 场景 | 例外 |
+|---|---|
+| 树形模块（组织、资源） | 用 `treeList` 代替 `pageList`，业务方法 `updateSort` 放在 `insert` 之前，表格 `pagination={false}` 且可无序号列 |
+| 用户模块 | 后端沿用 `/add`，前端方法名保持 `add`；无 `/load` 时用列表行回填 |
+| 只读模块（日志） | 只有 `pageList / delete`，不补 `load/insert/update` |
+| 多实体模块（字典） | 先列主实体 `pageList/load`，再列子实体 `itemPageList/itemLoad/itemInsert/itemDelete/itemUpdate` 与查询辅助方法，最后主实体 `insert/delete/update` |
+| 代码生成器 | 沿用后端 `/tool/codegen` 的分页键 `pageSize`（非 `pagesize`）与 `detail/createTable/preview` 业务方法 |
 
 ```ts
 /**
@@ -303,14 +314,14 @@ import { useRef, useState } from 'react';
 import { t } from '@/i18n';
 import { usePermission } from '@/hooks/usePermission';
 import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
-import { xxxApi } from '../api';
+import { xxxApi } from '@/modules/{module}/{business}/api';
 import FormModal from './FormModal';
 
 /** Xxx 列表页 */
 const XxxList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
-  const { hasRole } = usePermission();
+  const { hasPermi } = usePermission();
 
   // ---------------------- 页面状态 ----------------------
 
@@ -424,7 +435,7 @@ const XxxList = () => {
         }}
         /* 工具栏：新增、批量删除 */
         toolBarRender={() => [
-          hasRole('admin') && (
+          hasPermi('{module}:{business}:add') && (
             <Button
               key="add"
               type="primary"
@@ -437,7 +448,7 @@ const XxxList = () => {
               {t('common.add')}
             </Button>
           ),
-          hasRole('admin') && (
+          hasPermi('{module}:{business}:remove') && (
             <Button
               key="delete"
               danger
@@ -488,15 +499,16 @@ export default XxxList;
 | 分区注释 | 按「页面状态 → 数据操作 → 表格“列”定义 → 数据列表渲染」分区，弹窗编排放页面末尾 |
 | 请求 | `request` 内直接 `xxxApi.pageList(params)`，分页字段由 API 统一转换；返回 `{ data, total, success: true }`，数据取 `res.data?.data`，总数取 `res.data?.total` |
 | 搜索 | `search={{ optionRender: (_, __, dom) => [...dom.reverse()] }}` 让查询/重置靠右或按现有页面保持一致；搜索/重置由 ProTable 自动回到第 1 页 |
-| 序号 | 首列 `dataIndex: 'id'`，展示数据库主键，不用 `render` 生成页内序号 |
-| 状态列 | `valueEnum` 负责筛选下拉，`render` 负责 Tag 展示 |
+| 序号 | 首列 `dataIndex: 'id'`，展示数据库主键，不用 `render` 生成页内序号；树表可无序号列 |
+| 状态列 | `valueEnum` 负责筛选下拉，`render` 负责 Tag 展示；需要行内快速切换时可用受控 `Switch`（如用户管理），但必须受权限控制 |
 | 刷新 | 新增/修改/删除成功后统一 `actionRef.current?.reload()` |
 | 勾选 | `rowSelection.onChange` 同步 `selectedIds`；删除后清空 |
-| 分页 | `pagination` 固定 `defaultPageSize: 10` + `showSizeChanger` + `showTotal` |
+| 分页 | `pagination` 固定 `defaultPageSize: 10` + `showSizeChanger` + `showTotal`；树表 `pagination={false}` |
+| 行内操作 | 工具栏与操作列按钮都必须按 `hasPermi` 隐藏或禁用，不能只控工具栏 |
 | 样式 | ProTable 工具栏「按钮靠左、设置项靠右」已由 `src/assets/styles/global.css` 全局统一，页面不要再写 `useStyles` 或包裹 div；其他页面级定制用 `antd-style` 的 `createStyles`，不要新增全局覆盖 |
 
-范本为平台内置页：`modules/framework/**` 用 `hasRole('admin')`；业务页把工具栏、操作列的条件替换为
-`hasPermi('{module}:{business}:add|edit|remove')`，两者不要混用。
+平台内置页（`modules/framework/**`）用菜单级权限，如 `hasPermi('system:config')`；业务页把工具栏、操作列的条件替换为
+`hasPermi('{module}:{business}:add|edit|remove')`。`hasRole('admin')` 只用于超管专属入口，不要作为平台页默认写法。
 
 ### 4.6 表单弹窗：`pages/FormModal.tsx`
 
@@ -516,7 +528,7 @@ import {
 } from '@ant-design/pro-components';
 import { App } from 'antd';
 import { t } from '@/i18n';
-import { xxxApi } from '../api';
+import { xxxApi } from '@/modules/{module}/{business}/api';
 
 // ---------------------- 表单组件 ----------------------
 
@@ -617,6 +629,8 @@ export default FormModal;
 - 代码按 `表单组件 / 表单状态 / 数据操作 / 表单渲染` 分区注释，字段用 JSX 注释分组。
 - 表单校验用 `rules`；错误提示走 `t('common.requiredMsg', [...])`。
 - 表单类型 `API.XxxForm` 已排除 `addTime/updateTime` 等只读字段，提交时无需手工删除。
+- 平台内置页标题优先复用 `common.noun.*`（如 `common.noun.config`）；业务页使用 `business.{module}.{business}.title`。
+- 保存成功统一 `message.success(t('common.saveSuccess'))`；宽度按字段数量取 500/640/780，不强制固定值。
 - 业务不可变字段（如编码/Key）在修改时 `disabled={isEdit}`，与后端校验保持一致。
 - 无权限的提交按钮由父页面控制入口；弹窗本身不重复做权限判断。
 - 字段多、需要分组时用 `ProForm.Group` / `Row + Col`；富文本用 `@/components` 的 `Editor`。
@@ -627,20 +641,22 @@ export default FormModal;
 - 打开时按 `open`/`payload` 触发 `useEffect` 加载；关闭时清空本地数据。
 - 参考 `system/message/pages/MessageDetail/index.tsx`（Drawer + `useEffect` + `destroyOnHidden`）与
   `pages/ReadUsersDialog/index.tsx`（Modal + Table 分页）。
-- 需要菜单直达的子页才放 `pages/{Sub}/index.tsx`；仅局部复用的弹窗/抽屉放 `pages/{Sub}.tsx`。
+- 需要菜单直达的子页必须是 `pages/{Sub}/index.tsx`（`loadView` 只识别 `index.tsx`）。
+- 仅局部复用的弹窗/抽屉推荐平铺为 `pages/{Sub}.tsx`，也允许按 `pages/{Sub}/index.tsx` 分组；两者都不会自动成为路由，除非菜单 `url` 指向它。
 
 ### 4.8 组件与 Hooks 约定
 
 | 主题 | 约定 |
 |---|---|
-| 组件声明 | 普通函数 + 显式 props 类型；仅本文件使用时直接内联，跨文件复用或对外导出时才抽 `interface`；禁止 `React.FC`/`forwardRef`/`propTypes`/函数组件 `defaultProps` |
+| 组件声明 | 普通函数 + 显式 props 类型；仅本文件使用时内联，复杂详情/抽屉可抽未导出的 `interface`；禁止 `React.FC`/`forwardRef`/`propTypes`/函数组件 `defaultProps` |
 | React 导入 | `jsx: react-jsx`，无需为 JSX 引入 React；用到 `React.ReactNode` 等类型时按需导入 |
 | 状态 | 局部 `useState`；派生数据用 `useMemo`；不引入额外状态库 |
+| 数据请求 | 交互类页面用 `useState + request`；只读聚合页（如 dashboard）可用 TanStack Query 的 `useQuery` 缓存 |
 | 提示 | `App.useApp().message` / `App.useApp().modal`；不用静态 `message.xxx` |
 | 异常 | 请求失败由 `@/utils/request` 统一提示；页面 `await` 失败时保留弹窗，不重复弹错 |
 | 权限 | `usePermission().hasPermi / hasRole` |
 | 枚举 | `useEnumOption('XxxEnum')` → `toValueEnum`（表格列）/ `toSelectOptions`（Select/ProFormSelect） |
-| 字典 | 无 React 版 `useDict`；用 `loadDictItem`（`@/modules/framework/system/dict/api`）+ `useEffect/useState` 或 ProForm `request` |
+| 字典 | 无 React 版 `useDict`；用 `dictApi.loadDictItem(type)` + `useEffect/useState` 或 ProForm `request` |
 | 复用 | 优先 `@/hooks`、`@/components`、`@/utils`（请求 `request`）；同一逻辑第三次出现才新增 Hook |
 
 ### 4.9 注释与结构
@@ -651,6 +667,7 @@ export default FormModal;
 - 列表页/弹窗用 `// ---------------------- 分区名 ----------------------` 分区：
   - 列表页固定「页面状态 / 数据操作 / 表格“列”定义 / 数据列表渲染」；
   - 弹窗固定「表单组件 / 表单状态 / 数据操作 / 表单渲染」；
+  - 树表、只读页、子页可省略不适用的分区，但保留的分区注释名称保持一致；
   - JSX 内用 `{/* ... */}` 给字段/区域分组。
 - 保留 `PageContainer`、`ProTable`、弹窗等关键逻辑的区块注释；禁止无意义注释与注释掉的死代码。
 
@@ -704,6 +721,7 @@ export default FormModal;
 - Entity 字段与表一致；`Date` 加 `@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")`。
 - Mapper XML 显式 `resultMap` + `Base_Column_List`；`add_time/update_time` 用 `NOW()`；查询条件用 `<if>`。
 - 校验（必填、格式、唯一性）与错误文案走 `I18nUtil`；键维护在 `xxl-boot-api/src/main/resources/i18n/message_{zh,en}.properties`。
+- 更新时先按主键回查：记录不存在、必填缺失、不可变字段（如配置 Key）被修改都要拒绝。
 - 列表需要格式化时间或裁剪字段时加 DTO + Adaptor（参考 `ConfigDTO` / `ConfigAdaptor`）。
 
 后端范本：
@@ -749,11 +767,12 @@ VALUES (1, @parentId, now(), now()),
 - `loadView` 的模块 glob 为 `@/modules/**/index.tsx`，且只匹配 `{url}/index`：
   - 菜单 `url='/{module}/{business}'` → `pages/index.tsx`；
   - 子菜单 `url='/{module}/{business}/{sub}'` → `pages/{sub}/index.tsx`。
-- 局部组件（如 `pages/FormModal.tsx`）不会注册为路由，只能被页面 import。
+- 局部组件（如 `pages/FormModal.tsx`）不会注册为路由，只能被页面 import；按 `pages/{Sub}/index.tsx` 分组的局部组件同样不会自动成为路由。
 - 页面定位只认 `modules/framework|business/**`，**无需改前端路由代码**。
 
-原则：业务页面按钮用 `hasPermi('{module}:{business}:add|edit|remove')`，与资源表 `permission` 一致；
-平台内置页面（如 `system/config`）继续用 `hasRole('admin')`。新菜单必须在 `xxl_boot_role_res` 授权。
+原则：权限校验优先走 `hasPermi`，与资源表 `permission` 一致：
+平台页用菜单级权限（`system:config`、`authz:user`、`tool:codegen`），业务页用 `{module}:{business}:add|edit|remove`；
+`hasRole('admin')` 仅用于超管专属入口。新菜单必须在 `xxl_boot_role_res` 授权，否则自定义角色即使有菜单也看不到操作按钮。
 
 ## 七、枚举与字典
 
@@ -762,15 +781,16 @@ VALUES (1, @parentId, now(), now()),
 | 枚举选项 | `const statusOptions = useEnumOption('XxxStatusEnum')` | 每次加载一个枚举，TanStack Query 永久缓存 |
 | 表格筛选/展示 | `toValueEnum(statusOptions)` | 供 `ProColumns.valueEnum` |
 | 下拉选项 | `toSelectOptions(statusOptions)` | 供 `Select` / `ProFormSelect.options` |
-| 数据字典 | `loadDictItem(type)` + `useEffect/useState` | 平台无 React 版 `useDict` |
+| 数据字典 | `dictApi.loadDictItem(type)` + `useEffect/useState` | 平台无 React 版 `useDict` |
 
 - 后端业务枚举放 `business/{module}/{business}/enums`，实现 `EnumTool.IEnum`；`framework/constant/enums` 只放平台内置枚举。
+- 新枚举统一命名为 `XxxStatusEnum`；平台存量 `OrgStatuEnum`、`UserStatuEnum`、`ResourceStatuEnum` 属于历史拼写，按实际类名使用。
 - 状态筛选需要“全部”时，由 ProTable 的空值语义处理，不要额外造 `-1` 选项；后端用默认值 `-1` 兜底。
 - 业务字段能落枚举/字典就不要硬编码数字与文案。
 
 ## 八、i18n（React）
 
-- 文案文件：`src/i18n/locales/{zh,en}.json`；平台文案按 `system.*`，业务文案按 `business.{module}.{business}.*` 分区。
+- 文案文件：`src/i18n/locales/{zh,en}.json`；平台文案按业务域分区（`system.*`、`authz.*`、`tool.*`、`dashboard.*` 等），业务文案按 `business.{module}.{business}.*` 分区。
 - 页面统一 `import { t } from '@/i18n'`；`t()` 的 key 由 `zh.json` 推导为 `MessageKey`，先补文案再引用。
 - 语言由后端 `system.i18n.language` 决定；前端启动经 `/loadBaseConfig` 调 `setLang` 同步，默认 `zh`。
 - 新增业务文案 zh/en 成对提交，页面禁止硬编码中文（注释除外）。
@@ -801,6 +821,8 @@ POST /tool/codegen/createTable
 
 流程：`createTable` 建记录 → `update` 编辑字段（`queryType/htmlType/dictType/isQuery/isList/isInsert/isEdit/isRequired`）
 → `preview` 预览 / `batchGenCode?ids=...` 下载 zip。
+
+> 代码生成器页面本身是生成器控制台，不是标准 CRUD：分页键沿用后端 `pageSize`，弹窗为创建/预览两类，属于 4.4、4.5 的显式例外，不要套用标准模板。
 
 产物：
 
@@ -845,15 +867,15 @@ cd xxl-boot-ui/xxl-boot-ui-react && npm run type-check && npm run build
 
 **前端**
 
-- [ ] `types` 使用 `declare namespace API`，实体字段与后端一致；查询用 `XxxQuery`，表单用 `XxxForm`。
-- [ ] `api` 以 `{business}Api` 导出，返回 `request<API.Response<API.PageModel<T>>>`；`pageList` 接收 `XxxQuery` 并在内部转换为 `offset/pagesize`。
+- [ ] `types` 使用 `declare namespace API`（含 import 时用 `declare global`），实体字段与后端一致；查询用 `XxxQuery`，表单用 `XxxForm`。
+- [ ] `api` 以 `{business}Api` 导出，返回 `request<API.Response<API.PageModel<T>>>`；`pageList` 接收 `XxxQuery` 并在内部转换为 `offset/pagesize`；平台例外已按 4.4 核对。
 - [ ] 页面基于 `PageContainer + ProTable`；`request` 直接传 `params`，返回 `{ data, total, success }`，取 `res.data?.data/total`。
 - [ ] 页面按「页面状态 / 数据操作 / 表格“列”定义 / 数据列表渲染」分区；未重复写工具栏 `useStyles` 或包裹 div。
 - [ ] 表单用受控 `ModalForm`（`pages/FormModal.tsx`）；props 类型内联，`maskClosable: false`，提交不回传只读字段，成功后 `reload`。
 - [ ] 无 `ahooks` 等未安装依赖；无第二套请求/表格封装。
 - [ ] 组件为普通函数 + 显式 props；无 `React.FC`/`forwardRef`/`propTypes`/`defaultProps`。
-- [ ] `hasPermi` 与按钮权限一致；平台页才用 `hasRole`。
-- [ ] 文案走 `t()`，`business.*` zh/en 成对；无硬编码中文。
+- [ ] `hasPermi` 与资源表 `permission` 一致（平台菜单级 / 业务按钮级）；`hasRole` 只用于超管专属入口；工具栏与行内操作都已控权。
+- [ ] 文案走 `t()`，按业务域分区 zh/en 成对；无硬编码中文。
 - [ ] `npm run type-check` 与 `npm run build` 通过。
 
 **后端**
