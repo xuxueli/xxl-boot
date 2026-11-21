@@ -83,13 +83,25 @@ xxl-boot-admin/src
 - 参考实现：`framework/controller/system/ConfigController.java`。
 
 ```java
+/**
+ * Xxx 管理 Controller
+ *
+ * @author xuxueli 2026-11-21
+ */
 @Controller
 @RequestMapping("/{module}/{business}")
 public class XxxController {
 
+    /** Xxx 业务服务 */
     @Resource
     private XxxService xxxService;
 
+    /**
+     * Xxx 管理页面入口
+     *
+     * @param model 视图模型，注入页面所需枚举
+     * @return 页面视图名
+     */
     @RequestMapping
     @XxlSso
     public String index(Model model) {
@@ -97,6 +109,15 @@ public class XxxController {
         return "/business/{module}/{business}";
     }
 
+    /**
+     * 分页查询 Xxx
+     *
+     * @param offset   偏移量
+     * @param pagesize 每页条数
+     * @param status   状态筛选，-1 表示全部
+     * @param name     名称，模糊匹配
+     * @return 分页结果
+     */
     @RequestMapping("/pageList")
     @ResponseBody
     @XxlSso
@@ -107,17 +128,57 @@ public class XxxController {
         return Response.ofSuccess(xxxService.pageList(status, name, offset, pagesize));
     }
 
-    @RequestMapping("/load") @ResponseBody @XxlSso
-    public Response<Xxx> load(int id) { return xxxService.load(id); }
+    /**
+     * 查询 Xxx 详情
+     *
+     * @param id 主键
+     * @return 详情数据
+     */
+    @RequestMapping("/load")
+    @ResponseBody
+    @XxlSso
+    public Response<Xxx> load(int id) {
+        return xxxService.load(id);
+    }
 
-    @RequestMapping("/insert") @ResponseBody @XxlSso
-    public Response<String> insert(@RequestBody Xxx xxx) { return xxxService.insert(xxx); }
+    /**
+     * 新增 Xxx
+     *
+     * @param xxx 表单实体
+     * @return 操作结果
+     */
+    @RequestMapping("/insert")
+    @ResponseBody
+    @XxlSso
+    public Response<String> insert(@RequestBody Xxx xxx) {
+        return xxxService.insert(xxx);
+    }
 
-    @RequestMapping("/delete") @ResponseBody @XxlSso
-    public Response<String> delete(@RequestBody List<Integer> ids) { return xxxService.delete(ids); }
+    /**
+     * 删除 Xxx（支持单条/批量）
+     *
+     * @param ids 待删除主键集合
+     * @return 操作结果
+     */
+    @RequestMapping("/delete")
+    @ResponseBody
+    @XxlSso
+    public Response<String> delete(@RequestBody List<Integer> ids) {
+        return xxxService.delete(ids);
+    }
 
-    @RequestMapping("/update") @ResponseBody @XxlSso
-    public Response<String> update(@RequestBody Xxx xxx) { return xxxService.update(xxx); }
+    /**
+     * 修改 Xxx
+     *
+     * @param xxx 表单实体（含主键）
+     * @return 操作结果
+     */
+    @RequestMapping("/update")
+    @ResponseBody
+    @XxlSso
+    public Response<String> update(@RequestBody Xxx xxx) {
+        return xxxService.update(xxx);
+    }
 }
 ```
 
@@ -154,7 +215,10 @@ public class XxxController {
 ```
 
 ```js
-// 列表：分页/查询按表单参数提交（Controller 用 @RequestParam）
+/**
+ * 列表：分页/查询按表单参数提交（Controller 用 @RequestParam）
+ * 说明：bootstrap-table 的 offset/limit 需映射为后端 offset/pagesize
+ */
 $.adminTable.initTable({
     table: '#data_list',
     url: base_url + '/{module}/{business}/pageList',
@@ -167,8 +231,10 @@ $.adminTable.initTable({
         };
     },
     columns: [
+        // 勾选列：批量删除依赖该列
         { checkbox: true, field: 'state', width: '5', widthUnit: '%' },
         { title: I18n.xxx_name, field: 'name' },
+        // 状态列：0-正常、1-停用，文案走 i18n
         { title: I18n.system_status, field: 'status', formatter: function (value) { return value === 0 ? I18n.xxx_status_normal : I18n.xxx_status_disabled; } }
     ]
 });

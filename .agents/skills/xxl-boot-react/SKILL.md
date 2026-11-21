@@ -56,6 +56,7 @@ xxl-boot-ui/xxl-boot-ui-react/src
 - 组件声明统一为普通函数 + 显式 props 类型，不叠加 React 的包装类型、运行时校验与兼容写法：
 
 ```tsx
+/** Xxx 组件属性 */
 interface XxxProps {
   /** 主键 */
   id: number;
@@ -63,6 +64,7 @@ interface XxxProps {
   onClose: () => void;
 }
 
+/** Xxx 组件 */
 export default function Xxx({ id, onClose }: XxxProps) {
   return <div>{id}</div>;
 }
@@ -120,11 +122,15 @@ export default function Xxx({ id, onClose }: XxxProps) {
 declare namespace API {
   /** Xxx 实体 */
   type Xxx = {
+    /** 主键 */
     id?: number;
+    /** 名称 */
     name?: string;
     /** 状态：0-正常、1-停用 */
     status?: number;
+    /** 新增时间 */
     addTime?: string;
+    /** 更新时间 */
     updateTime?: string;
   };
 }
@@ -141,8 +147,10 @@ declare namespace API {
 import { request } from '@/utils/request';
 
 /**
- * 分页查询 Xxx。
+ * 分页查询 Xxx
+ *
  * @param params ProTable 查询参数（current/pageSize + 查询字段）
+ * @returns 分页结果
  */
 export async function listXxx(params: {
   current?: number;
@@ -161,7 +169,12 @@ export async function listXxx(params: {
   });
 }
 
-/** 查询 Xxx 详情 */
+/**
+ * 查询 Xxx 详情
+ *
+ * @param id 主键
+ * @returns 详情数据
+ */
 export async function getXxx(id: number) {
   return request<API.Response<API.Xxx>>('/{module}/{business}/load', {
     method: 'GET',
@@ -169,7 +182,12 @@ export async function getXxx(id: number) {
   });
 }
 
-/** 新增 Xxx */
+/**
+ * 新增 Xxx
+ *
+ * @param data 表单数据
+ * @returns 保存结果
+ */
 export async function addXxx(data: API.Xxx) {
   return request<API.Response<unknown>>('/{module}/{business}/insert', {
     method: 'POST',
@@ -177,7 +195,12 @@ export async function addXxx(data: API.Xxx) {
   });
 }
 
-/** 修改 Xxx */
+/**
+ * 修改 Xxx
+ *
+ * @param data 表单数据（含主键）
+ * @returns 保存结果
+ */
 export async function updateXxx(data: API.Xxx) {
   return request<API.Response<unknown>>('/{module}/{business}/update', {
     method: 'POST',
@@ -185,7 +208,12 @@ export async function updateXxx(data: API.Xxx) {
   });
 }
 
-/** 删除 Xxx（后端接收裸数组） */
+/**
+ * 删除 Xxx（后端接收裸数组）
+ *
+ * @param ids 待删除主键集合
+ * @returns 删除结果
+ */
 export async function delXxx(ids: number[]) {
   return request<API.Response<unknown>>('/{module}/{business}/delete', {
     method: 'POST',
@@ -213,19 +241,27 @@ import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { delXxx, listXxx } from '../api';
 import XxxFormModal from './XxxFormModal';
 
+/**
+ * Xxx 列表页
+ * 功能：分页表格 + 新增/修改弹窗 + 单条/批量删除
+ */
 const XxxList = () => {
   const { message, modal } = App.useApp();
   const actionRef = useRef<ActionType>(null);
   const { hasPermi } = usePermission();
 
-  const [formOpen, setFormOpen] = useState(false);
-  const [formCurrent, setFormCurrent] = useState<API.Xxx | null>(null);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [formOpen, setFormOpen] = useState(false); /* 表单弹窗显隐 */
+  const [formCurrent, setFormCurrent] = useState<API.Xxx | null>(null); /* 当前编辑行，null 表示新增 */
+  const [selectedIds, setSelectedIds] = useState<number[]>([]); /* 勾选行主键 */
 
   const statusOptions = useEnumOption('XxxStatusEnum');
   const statusValueEnum = toValueEnum(statusOptions);
 
-  /** 删除 Xxx（单条或批量） */
+  /**
+   * 删除 Xxx（单条或批量）
+   *
+   * @param row 行数据，省略时删除勾选行
+   */
   const handleDelete = (row?: API.Xxx) => {
     const ids = row ? [row.id as number] : selectedIds;
     if (ids.length === 0) return;
@@ -241,6 +277,7 @@ const XxxList = () => {
     });
   };
 
+  /** 表格列定义：序号、名称、状态、更新时间、操作 */
   const columns: ProColumns<API.Xxx>[] = [
     { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
     { title: t('business.xxx.name'), dataIndex: 'name', ellipsis: true },
@@ -364,13 +401,23 @@ const XxxFormModal = ({
   current,
   onSuccess,
 }: {
+  /** 弹窗显隐 */
   open: boolean;
+  /** 显隐变更回调 */
   onOpenChange: (open: boolean) => void;
+  /** 当前编辑行，null 表示新增 */
   current?: API.Xxx | null;
+  /** 保存成功回调 */
   onSuccess?: () => void;
 }) => {
   const { message } = App.useApp();
 
+  /**
+   * 提交表单：有主键走修改，否则新增
+   *
+   * @param values 表单值
+   * @returns 是否提交成功
+   */
   const handleFinish = async (values: API.Xxx) => {
     const data = { ...values };
     delete data.addTime;

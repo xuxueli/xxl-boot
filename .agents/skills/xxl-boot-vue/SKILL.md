@@ -105,27 +105,37 @@ import type { ListQuery } from '@/types'
 
 /** Xxx 实体 */
 export interface Xxx {
+  /** 主键 */
   id?: number
   /** 名称 */
   name?: string
   /** 状态：0-正常、1-停用 */
   status?: number
+  /** 新增时间 */
   addTime?: string
+  /** 更新时间 */
   updateTime?: string
 }
 
 /** 搜索栏查询参数（前端表单形态） */
 export interface XxxQuery {
+  /** 当前页码 */
   pageNum: number
+  /** 每页条数 */
   pageSize: number
+  /** 名称，模糊匹配 */
   name?: string
+  /** 状态筛选，-1 表示全部 */
   status?: number
 }
 
 /** 新增/修改表单 */
 export interface XxxForm {
+  /** 主键，新增时为空 */
   id?: number
+  /** 名称 */
   name?: string
+  /** 状态：0-正常、1-停用 */
   status?: number
 }
 
@@ -145,7 +155,12 @@ import { request } from '@/utils/request'
 import type { Xxx, XxxForm, XxxListQuery } from '../types'
 import type { PageModel, Response } from '@/types'
 
-/** 分页查询 Xxx */
+/**
+ * 分页查询 Xxx
+ *
+ * @param query 分页与查询条件（offset/pagesize 形态）
+ * @returns 分页结果
+ */
 export function listXxx(query: XxxListQuery): Promise<Response<PageModel<Xxx>>> {
   return request({
     url: '/{module}/{business}/pageList',
@@ -154,7 +169,12 @@ export function listXxx(query: XxxListQuery): Promise<Response<PageModel<Xxx>>> 
   })
 }
 
-/** 查询 Xxx 详情 */
+/**
+ * 查询 Xxx 详情
+ *
+ * @param id 主键
+ * @returns 详情数据
+ */
 export function getXxx(id: number): Promise<Response<Xxx>> {
   return request({
     url: '/{module}/{business}/load',
@@ -163,7 +183,12 @@ export function getXxx(id: number): Promise<Response<Xxx>> {
   })
 }
 
-/** 新增 Xxx */
+/**
+ * 新增 Xxx
+ *
+ * @param data 表单数据
+ * @returns 保存结果
+ */
 export function addXxx(data: XxxForm): Promise<Response<unknown>> {
   return request({
     url: '/{module}/{business}/insert',
@@ -172,7 +197,12 @@ export function addXxx(data: XxxForm): Promise<Response<unknown>> {
   })
 }
 
-/** 修改 Xxx */
+/**
+ * 修改 Xxx
+ *
+ * @param data 表单数据（含主键）
+ * @returns 保存结果
+ */
 export function updateXxx(data: XxxForm): Promise<Response<unknown>> {
   return request({
     url: '/{module}/{business}/update',
@@ -181,7 +211,12 @@ export function updateXxx(data: XxxForm): Promise<Response<unknown>> {
   })
 }
 
-/** 删除 Xxx（支持单条/批量） */
+/**
+ * 删除 Xxx（支持单条/批量）
+ *
+ * @param id 单个主键或主键数组
+ * @returns 删除结果
+ */
 export function delXxx(id: number | number[]): Promise<Response<unknown>> {
   return request({
     url: '/{module}/{business}/delete',
@@ -193,7 +228,7 @@ export function delXxx(id: number | number[]): Promise<Response<unknown>> {
 
 ### 7.3 页面：`pages/index.vue`（script 骨架）
 
-模板部分：搜索表单 + 操作按钮（`v-hasPermi`） + `<el-table>` + `<Pagination>` + `<el-dialog>`；完整范例先看 `modules/framework/system/message/pages/index.vue`。
+模板部分：搜索表单 + 操作按钮（`v-hasPermi`） + `<el-table>` + `<Pagination>` + `<el-dialog>`；完整范例先看 `modules/framework/system/message/pages/index.vue`。文件头注释按「7.5 注释与 JSDoc」补齐。
 
 ```ts
 <script setup lang="ts">
@@ -238,6 +273,7 @@ const formState = ref<FormState<XxxForm>>({
 })
 
 // --------------------------------- fun ---------------------------------
+/** 查询列表并按分页回填表格状态 */
 function getList() {
   table.value.loading = true
   const params = usePageParams(queryParams)()
@@ -248,34 +284,47 @@ function getList() {
   })
 }
 
+/** 重置表单数据与校验状态 */
 function reset() {
   formState.value.form = { id: undefined, name: undefined, status: 0 }
   resetForm('formRef')
 }
 
+/** 重置到第一页并查询 */
 function handleQuery() {
   queryParams.value.pageNum = 1
   getList()
 }
 
+/** 重置搜索条件后重新查询 */
 function resetQuery() {
   resetForm('queryRef')
   handleQuery()
 }
 
+/**
+ * 同步表格勾选结果与顶部按钮可用状态
+ *
+ * @param selection 当前勾选行
+ */
 function handleSelectionChange(selection: Xxx[]) {
   table.value.ids = selection.map((item) => item.id as number)
   table.value.single = selection.length !== 1
   table.value.multiple = !selection.length
 }
 
+/** 打开新增弹窗 */
 function handleAdd() {
   reset()
   formState.value.visible = true
   formState.value.title = t('common.titleAdd', [t('business.xxx.title')])
 }
 
-/** 顶部按钮点击传入的是事件对象，需回退到勾选 id */
+/**
+ * 打开修改弹窗：优先使用行内数据，顶部按钮触发时回退到勾选 id
+ *
+ * @param row 行数据，顶部按钮触发时为事件对象
+ */
 function handleUpdate(row: any) {
   reset()
   const id = row?.id ?? table.value.ids[0]
@@ -287,6 +336,7 @@ function handleUpdate(row: any) {
   })
 }
 
+/** 校验并提交表单：有 id 走修改，否则新增 */
 function submitForm() {
   formRef.value?.validate((valid) => {
     if (!valid) return
@@ -300,7 +350,11 @@ function submitForm() {
   })
 }
 
-/** 顶部按钮点击传入的是事件对象，需回退到勾选 ids */
+/**
+ * 删除 Xxx（单条或批量）：行内删除取当前行，顶部按钮取勾选 id
+ *
+ * @param row 行数据，顶部按钮触发时为事件对象
+ */
 function handleDelete(row: any) {
   const ids = row?.id ?? table.value.ids
   if (ids == null || (Array.isArray(ids) && ids.length === 0)) return
@@ -321,7 +375,7 @@ getList()
 
 ### 7.4 Vue 页面约定
 
-- `script` 除基础 import 外按「ref data → fun → page init」三节组织，节顶注释为 `/* --- {功能，前后33个-} --- */`。
+- `script` 除基础 import 外按「ref data → fun → page init」三节组织，节顶注释统一为 `// --------------------------------- {功能} ---------------------------------`（与 `pages/index.vue` 样例一致）。
 - 响应式数据一律 `ref`，禁止 `reactive` 与 `toRefs(data)` 解构；搜索栏、表格状态、表单状态分别收敛为 `queryParams`、`table`、`formState`。
 - 列表固定经 `usePageParams(queryParams)()` 把 `pageNum/pageSize` 转 `offset/pagesize`；取 `response.data.data` 与 `response.data.total`。
 - 组件 import 名称与模板标签统一 PascalCase；按钮权限 `v-hasPermi="['{module}:{business}:add']"`，角色权限 `v-hasRole="['admin']"`。
@@ -347,11 +401,11 @@ getList()
 
 ```ts
 /**
- * 查询消息列表
- * @param params 查询参数
- * @returns 分页结果
+ * 同步表格勾选结果与顶部按钮可用状态
+ *
+ * @param selection 当前勾选行
  */
-function getList(params: MessageListQuery) { ... }
+function handleSelectionChange(selection: Xxx[]) { ... }
 ```
 
 ## 八、菜单 / 权限
