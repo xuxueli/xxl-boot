@@ -22,10 +22,6 @@ declare namespace API {
     data: T[];
     /** 总条数 */
     total: number;
-    /** 偏移量 */
-    offset?: number;
-    /** 每页条数 */
-    pagesize?: number;
   };
 
   // --------------------------------- 登录用户信息 ----------------------

@@ -11,8 +11,8 @@ import {
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
 import { App, Button, Tag } from 'antd';
-import React, { useRef, useState } from 'react';
-import { loadEnum, toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
+import { useMemo, useRef, useState } from 'react';
+import { toValueEnum, useEnumOption } from '@/hooks/useEnumOption';
 import { usePermission } from '@/hooks/usePermission';
 import { t } from '@/i18n';
 import { logApi } from '@/modules/framework/system/log/api';
@@ -29,22 +29,19 @@ const LogList = () => {
   const { hasRole } = usePermission();
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [moduleMap, setModuleMap] = useState<Record<number, string>>({});
   const searchParamsRef = useRef<Record<string, any>>({});
 
   const logTypeOptions = useEnumOption('LogTypeEnum');
   const logModuleOptions = useEnumOption('LogModuleEnum');
 
-  // 模块枚举：code → title 映射（详情展示用）
-  React.useEffect(() => {
-    loadEnum('LogModuleEnum').then((data) => {
-      const map: Record<number, string> = {};
-      data.forEach((o) => {
-        map[o.code] = o.title || '';
-      });
-      setModuleMap(map);
+  // 模块枚举：code → title 映射（详情展示用），复用 useEnumOption 已加载的选项
+  const moduleMap = useMemo(() => {
+    const map: Record<number, string> = {};
+    logModuleOptions.forEach((o) => {
+      map[o.code] = o.title || '';
     });
-  }, []);
+    return map;
+  }, [logModuleOptions]);
 
   /** 删除日志 */
   const handleDelete = (row?: API.Log) => {

@@ -86,7 +86,7 @@ export const messageApi = {
   /**
    * 分页查询消息的已读用户
    *
-   * @param query 查询参数（messageId/offset/pagesize）
+   * @param query 页面查询条件（messageId + pageNum/pageSize）
    * @returns 已读用户分页结果
    */
   readUsers(query: MessageReadQuery): Promise<Response<PageModel<MessageRead>>> {

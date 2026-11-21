@@ -46,7 +46,7 @@ export const dictApi = {
   /**
    * 分页查询字典项
    *
-   * @param query 分页与查询条件（dictId/offset/pagesize）
+   * @param query 页面查询条件（dictId + pageNum/pageSize）
    * @returns 字典项分页结果
    */
   itemPageList(query: DictItemQuery): Promise<Response<PageModel<DictItem>>> {
