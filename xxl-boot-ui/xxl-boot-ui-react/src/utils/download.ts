@@ -94,11 +94,7 @@ export function download(
     })
     .then(async (res) => {
       // 响应拦截器对 blob 已透传为 Blob，断言后处理
-      await handleBlob(
-        res as unknown as Blob,
-        filename,
-        t('download.failed'),
-      );
+      await handleBlob(res as unknown as Blob, filename, t('download.failed'));
     })
     .catch(() => {
       message.error(t('download.failed'));
@@ -124,11 +120,7 @@ export function downloadGet(
     })
     .then(async (res) => {
       // 响应拦截器对 blob 已透传为 Blob，断言后处理
-      await handleBlob(
-        res as unknown as Blob,
-        filename,
-        t('download.failed'),
-      );
+      await handleBlob(res as unknown as Blob, filename, t('download.failed'));
     })
     .catch(() => {
       message.error(t('download.failed'));

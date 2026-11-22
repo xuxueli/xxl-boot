@@ -81,12 +81,19 @@ const UserInfo = ({
         label={t('common.realName')}
         placeholder={t('common.inputPlaceholder', [t('common.realName')])}
         fieldProps={{ maxLength: 30 }}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('common.realName')]) }]}
+        rules={[
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('common.realName')]),
+          },
+        ]}
       />
       <ProFormText
         name="phone"
         label={t('authz.user.phoneNumber')}
-        placeholder={t('common.inputPlaceholder', [t('authz.user.phoneNumber')])}
+        placeholder={t('common.inputPlaceholder', [
+          t('authz.user.phoneNumber'),
+        ])}
         fieldProps={{ maxLength: 11 }}
         rules={[
           {

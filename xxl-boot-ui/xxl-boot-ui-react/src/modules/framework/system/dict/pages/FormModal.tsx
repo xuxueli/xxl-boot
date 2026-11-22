@@ -69,7 +69,12 @@ const FormModal = ({
         name="name"
         label={t('system.dict.dictName')}
         placeholder={t('common.inputPlaceholder', [t('system.dict.dictName')])}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('system.dict.dictName')]) }]}
+        rules={[
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('system.dict.dictName')]),
+          },
+        ]}
       />
       <ProFormText
         name="type"
@@ -77,7 +82,10 @@ const FormModal = ({
         placeholder={t('common.inputPlaceholder', [t('system.dict.dictType')])}
         disabled={isEdit}
         rules={[
-          { required: true, message: t('common.requiredMsg', [t('system.dict.dictType')]) },
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('system.dict.dictType')]),
+          },
           { min: 2, max: 100, message: t('system.dict.typeLength') },
           {
             pattern: /^[a-z][a-zA-Z0-9]*$/,

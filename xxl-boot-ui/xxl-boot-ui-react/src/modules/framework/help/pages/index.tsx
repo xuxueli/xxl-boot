@@ -6,8 +6,8 @@
 import { BookOutlined, GithubOutlined } from '@ant-design/icons';
 import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { Button, Divider, Typography } from 'antd';
-import { t } from '@/i18n';
 import defaultSettings from '@/default-settings';
+import { t } from '@/i18n';
 
 /** 帮助中心页面 */
 const HelpCenter = () => {

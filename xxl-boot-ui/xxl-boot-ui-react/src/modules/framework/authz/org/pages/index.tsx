@@ -197,12 +197,11 @@ const OrgList = () => {
             <PlusOutlined /> {t('common.add')}
           </a>
         ),
-        hasPermi('authz:org') &&
-          record.parentId !== 0 && (
-            <a key="delete" onClick={() => handleDelete(record)}>
-              <DeleteOutlined /> {t('common.delete')}
-            </a>
-          ),
+        hasPermi('authz:org') && record.parentId !== 0 && (
+          <a key="delete" onClick={() => handleDelete(record)}>
+            <DeleteOutlined /> {t('common.delete')}
+          </a>
+        ),
       ],
     },
   ];

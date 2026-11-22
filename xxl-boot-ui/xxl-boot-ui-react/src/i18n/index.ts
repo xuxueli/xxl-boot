@@ -29,18 +29,30 @@ export const setLang = (value?: string): void => {
 /** 文案 key 联合类型：由 zh 文案推导，提供编译期补全与拼写校验（各语言成对） */
 export type MessageKey = DeepKey<typeof zh>;
 type DeepKey<T> = T extends object
-  ? { [K in keyof T]: T[K] extends object ? `${K & string}.${DeepKey<T[K]>}` : K & string }[keyof T]
+  ? {
+      [K in keyof T]: T[K] extends object
+        ? `${K & string}.${DeepKey<T[K]>}`
+        : K & string;
+    }[keyof T]
   : never;
 
 /** 拍平嵌套文案：{ a: { b: 'x' } } → { 'a.b': 'x' } */
-const flat = (data: Record<string, unknown>, prefix = ''): Record<string, string> =>
-  Object.entries(data).reduce((out, [k, v]) => {
-    const key = prefix ? `${prefix}.${k}` : k;
-    return Object.assign(
-      out,
-      v && typeof v === 'object' ? flat(v as Record<string, unknown>, key) : { [key]: String(v) },
-    );
-  }, {} as Record<string, string>);
+const flat = (
+  data: Record<string, unknown>,
+  prefix = '',
+): Record<string, string> =>
+  Object.entries(data).reduce(
+    (out, [k, v]) => {
+      const key = prefix ? `${prefix}.${k}` : k;
+      return Object.assign(
+        out,
+        v && typeof v === 'object'
+          ? flat(v as Record<string, unknown>, key)
+          : { [key]: String(v) },
+      );
+    },
+    {} as Record<string, string>,
+  );
 
 const messages = Object.fromEntries(
   Object.entries(bundles).map(([key, value]) => [key, flat(value)]),
@@ -53,9 +65,14 @@ const messages = Object.fromEntries(
  * @param args 插值参数：数组按下标 {0}{1}、对象按 {name} 取值
  * @returns 翻译后的文案
  */
-export function t(key: MessageKey, args?: Array<string | number> | Record<string, string | number>): string {
+export function t(
+  key: MessageKey,
+  args?: Array<string | number> | Record<string, string | number>,
+): string {
   const raw = messages[lang][key] ?? messages[DEFAULT_LANG][key] ?? key;
   if (!args) return raw;
   const vars = args as Record<string, string | number>;
-  return raw.replace(/\{(\w+)\}/g, (placeholder, name) => (vars[name] == null ? placeholder : String(vars[name])));
+  return raw.replace(/\{(\w+)\}/g, (placeholder, name) =>
+    vars[name] == null ? placeholder : String(vars[name]),
+  );
 }

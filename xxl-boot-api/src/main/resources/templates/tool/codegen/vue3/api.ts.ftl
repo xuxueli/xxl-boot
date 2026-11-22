@@ -9,6 +9,22 @@ import type { PageModel, Response } from '@/types'
 
 /** ${codegen.functionName} API，调用方式：${codegen.businessName?uncap_first}Api.pageList(...) */
 export const ${codegen.businessName?uncap_first}Api = {
+<#if codegen.tplCategory == "tree">
+  /**
+   * 查询${codegen.functionName}树形列表
+   *
+   * @param name 名称模糊搜索（可选）
+   * @returns 树形结果
+   */
+  treeList(name?: string): Promise<Response<${codegen.businessName}[]>> {
+    return request({
+      url: '/${codegen.moduleName}/${codegen.businessName?uncap_first}/treeList',
+      method: 'get',
+      params: { name }
+    })
+  },
+
+</#if>
   /**
    * 分页查询${codegen.functionName}
    *

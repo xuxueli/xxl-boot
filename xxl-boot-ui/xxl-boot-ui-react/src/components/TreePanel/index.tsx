@@ -337,7 +337,9 @@ const TreePanel = ({
       )}
       <Tooltip
         title={
-          collapsed ? t('components.treePanel.expand') : t('components.treePanel.collapse')
+          collapsed
+            ? t('components.treePanel.expand')
+            : t('components.treePanel.collapse')
         }
         placement="right"
       >

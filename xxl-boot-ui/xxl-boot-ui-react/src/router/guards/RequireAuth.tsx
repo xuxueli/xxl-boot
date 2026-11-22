@@ -24,7 +24,8 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   /** 未登录跳登录页地址：回传原路径供登录后重定向；根路径无实际页面，无需回传，交由根路由默认跳首页 */
   const buildLoginPath = () => {
     const current = location.pathname + location.search;
-    const param = current === '/' ? '' : `?redirect=${encodeURIComponent(current)}`;
+    const param =
+      current === '/' ? '' : `?redirect=${encodeURIComponent(current)}`;
     return `/login${param}`;
   };
 

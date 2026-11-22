@@ -28,9 +28,15 @@ const ResetPwd = () => {
   const [form] = ProForm.useForm();
 
   const INFO_PWD_RULES: Rule[] = [
-    { required: true, message: t('common.requiredMsg', [t('authz.user.newPassword')]) },
+    {
+      required: true,
+      message: t('common.requiredMsg', [t('authz.user.newPassword')]),
+    },
     { min: 6, max: 20, message: t('authz.user.newPasswordLength') },
-    { pattern: /^[^<>"'|\\]+$/, message: t('authz.user.newPasswordForbiddenChar') },
+    {
+      pattern: /^[^<>"'|\\]+$/,
+      message: t('authz.user.newPasswordForbiddenChar'),
+    },
   ];
 
   /** 提交保存 */
@@ -67,13 +73,22 @@ const ResetPwd = () => {
       <ProFormText.Password
         name="oldPassword"
         label={t('authz.user.oldPassword')}
-        placeholder={t('common.inputPlaceholder', [t('authz.user.oldPassword')])}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.user.oldPassword')]) }]}
+        placeholder={t('common.inputPlaceholder', [
+          t('authz.user.oldPassword'),
+        ])}
+        rules={[
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('authz.user.oldPassword')]),
+          },
+        ]}
       />
       <ProFormText.Password
         name="newPassword"
         label={t('authz.user.newPassword')}
-        placeholder={t('common.inputPlaceholder', [t('authz.user.newPassword')])}
+        placeholder={t('common.inputPlaceholder', [
+          t('authz.user.newPassword'),
+        ])}
         rules={INFO_PWD_RULES}
       />
       <ProFormText.Password
@@ -82,14 +97,19 @@ const ResetPwd = () => {
         placeholder={t('authz.user.confirmPasswordPlaceholder')}
         dependencies={['newPassword']}
         rules={[
-          { required: true, message: t('common.requiredMsg', [t('authz.user.confirmPassword')]) },
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('authz.user.confirmPassword')]),
+          },
           ({ getFieldValue }) => ({
             /* 自定义规则：返回 Promise，处理异步操作； */
             validator: (_, value) => {
               if (!value || getFieldValue('newPassword') === value) {
                 return Promise.resolve();
               }
-              return Promise.reject(new Error(t('authz.user.passwordMismatch')));
+              return Promise.reject(
+                new Error(t('authz.user.passwordMismatch')),
+              );
             },
           }),
         ]}

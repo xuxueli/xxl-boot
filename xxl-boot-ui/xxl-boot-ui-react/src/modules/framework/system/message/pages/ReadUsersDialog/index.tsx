@@ -34,15 +34,24 @@ function ReadUsersDialog({ open, message, onClose }: ReadUsersDialogProps) {
       align: 'center',
       render: (_v, _r, i) => i + 1,
     },
-    { title: t('system.message.userName'), dataIndex: 'userName', align: 'center' },
+    {
+      title: t('system.message.userName'),
+      dataIndex: 'userName',
+      align: 'center',
+    },
     { title: t('common.realName'), dataIndex: 'realName', align: 'center' },
-    { title: t('system.message.readTime'), dataIndex: 'addTime', align: 'center' },
+    {
+      title: t('system.message.readTime'),
+      dataIndex: 'addTime',
+      align: 'center',
+    },
   ];
 
   /** 加载已读用户列表（id 为必传，避免依赖 state 回调产生陈旧值） */
   const loadData = useCallback((id: number, page: number, size: number) => {
     setLoading(true);
-    messageApi.readUsers({ messageId: id, current: page, pageSize: size })
+    messageApi
+      .readUsers({ messageId: id, current: page, pageSize: size })
       .then((res) => {
         const data = res.data;
         setList(data?.data || []);

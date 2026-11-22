@@ -67,7 +67,8 @@ const FormModal = ({
   /** 加载组织树 */
   useEffect(() => {
     if (open) {
-      orgApi.treeList({})
+      orgApi
+        .treeList({})
         .then((res) => {
           setOrgOptions(handleTree(res.data || []));
         })
@@ -128,14 +129,24 @@ const FormModal = ({
           treeData: treeSelectData,
           treeDefaultExpandAll: true,
         }}
-        rules={[{ required: true, message: t('common.selectPlaceholderText', [t('authz.org.parent')]) }]}
+        rules={[
+          {
+            required: true,
+            message: t('common.selectPlaceholderText', [t('authz.org.parent')]),
+          },
+        ]}
       />
       <ProFormText
         colProps={{ span: 12 }}
         name="name"
         label={t('authz.org.name')}
         placeholder={t('common.inputPlaceholder', [t('authz.org.name')])}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.org.name')]) }]}
+        rules={[
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('authz.org.name')]),
+          },
+        ]}
       />
       <ProFormDigit
         colProps={{ span: 12 }}
@@ -143,7 +154,12 @@ const FormModal = ({
         label={t('authz.org.order')}
         placeholder={t('common.inputPlaceholder', [t('authz.org.order')])}
         min={0}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.org.order')]) }]}
+        rules={[
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('authz.org.order')]),
+          },
+        ]}
         fieldProps={{ style: { width: '100%' } }}
       />
       <ProFormText

@@ -16,6 +16,16 @@ import { request } from '@/utils/request';
 
 /** ${codegen.functionName} API，调用方式：${codegen.businessName?uncap_first}Api.pageList(...) */
 export const ${codegen.businessName?uncap_first}Api = {
+<#if codegen.tplCategory == "tree">
+  /** 查询${codegen.functionName}树形列表 */
+  treeList(name?: string) {
+    return request<API.Response<API.${codegen.businessName}[]>>(
+      '/${codegen.moduleName}/${codegen.businessName?uncap_first}/treeList',
+      { method: 'GET', params: { name } },
+    );
+  },
+
+</#if>
   /**
    * 分页查询${codegen.functionName}
    *

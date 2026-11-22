@@ -5,8 +5,8 @@
  */
 import { Descriptions, Drawer, Tag } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { t } from '@/i18n';
 import { useEnumOption } from '@/hooks/useEnumOption';
+import { t } from '@/i18n';
 import { roleApi } from '@/modules/framework/authz/role/api';
 
 /** 组件入参 */
@@ -106,7 +106,9 @@ function UserView({ open, user, onClose }: UserViewProps) {
       {user && (
         /* 用户详情 */
         <Descriptions column={1} size="middle" bordered>
-          <Descriptions.Item label={t('authz.user.id')}>{user.id}</Descriptions.Item>
+          <Descriptions.Item label={t('authz.user.id')}>
+            {user.id}
+          </Descriptions.Item>
           <Descriptions.Item label={t('authz.user.account')}>
             {user.username}
           </Descriptions.Item>
@@ -125,7 +127,9 @@ function UserView({ open, user, onClose }: UserViewProps) {
           <Descriptions.Item label={t('authz.user.statusLabel')}>
             {status ? <Tag color={status.color}>{status.text}</Tag> : '-'}
           </Descriptions.Item>
-          <Descriptions.Item label={t('authz.user.roleLabel')}>{roleNames}</Descriptions.Item>
+          <Descriptions.Item label={t('authz.user.roleLabel')}>
+            {roleNames}
+          </Descriptions.Item>
           <Descriptions.Item label={t('common.createTime')}>
             {user.addTime || '-'}
           </Descriptions.Item>

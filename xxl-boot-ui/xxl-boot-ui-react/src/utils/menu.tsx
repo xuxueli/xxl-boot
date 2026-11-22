@@ -18,9 +18,10 @@ import { getIconComponent } from '@/utils/icon';
  * @param menus 后端 /getMenus 返回的菜单树
  * @returns items：ProLayout 菜单数据；redirectMap：目录路径 → 第一个叶子路径
  */
-export function buildMenu(
-  menus: API.MenuNode[],
-): { items: MenuDataItem[]; redirectMap: Record<string, string> } {
+export function buildMenu(menus: API.MenuNode[]): {
+  items: MenuDataItem[];
+  redirectMap: Record<string, string>;
+} {
   const redirectMap: Record<string, string> = {};
 
   /* 查找子树中的第一个叶子路径（目录点击跳转用） */

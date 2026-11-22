@@ -366,7 +366,7 @@ mysql -h127.0.0.1 -uroot -proot_pwd --default-character-set=utf8mb4 xxl_boot \
   - `pageList` 默认只生成 `offset/pagesize`，`isQuery` 字段不会自动生成查询条件；需补 Controller 参数、Service 方法、Mapper 参数与 XML `<if>`；
   - 校验通常只有空值判断，需补必填、长度/格式、唯一性与友好提示；
   - 后端生成代码的错误文案为硬编码中文，需迁移到 `I18nUtil`；前端模板可能生成硬编码中文，需迁移到 i18n；
-  - 树表模板依赖树形接口与字段，需按实际业务补齐。
+  - 树表模板生成 `treeList` 树形接口（后端按 `parent_id` 组装 `children`），需确认父子字段命名与实际表结构一致。
 - 生成器入口、模板类型、产物路径与模式专属修正项，见对应 SKILL「代码生成器」。
 
 ---

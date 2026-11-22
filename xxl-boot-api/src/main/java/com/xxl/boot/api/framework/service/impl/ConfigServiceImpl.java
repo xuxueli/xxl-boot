@@ -30,7 +30,7 @@ public class ConfigServiceImpl implements ConfigService {
     private ConfigMapper configMapper;
 
     /**
-     * 配置本地缓存：Key → Config，60s 过期（初始化场景专用，降低重复查询）
+     * 配置本地缓存：Key → Config，30s 过期（初始化场景专用，降低重复查询）
      */
     private final Cache<String, Config> configCache = CacheTool.<String, Config>newLRUCache(1000)
             .expireAfterWrite(30 * 1000L)
@@ -64,6 +64,10 @@ public class ConfigServiceImpl implements ConfigService {
         }
 
         configMapper.insert(xxlBootConfig);
+
+        // 新增后清理同名缓存，避免读到新增前的空结果
+        configCache.remove(xxlBootConfig.getKey());
+
         return Response.ofSuccess();
     }
 
@@ -73,7 +77,14 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Response<String> delete(List<Integer> ids) {
         int ret = configMapper.delete(ids);
-        return ret>0? Response.ofSuccess() : Response.ofFail();
+        if (ret <= 0) {
+            return Response.ofFail();
+        }
+
+        // 删除后无法按 Key 逐项清理，直接清空本地缓存（仅初始化场景缓存，代价可接受）
+        configCache.clear();
+
+        return Response.ofSuccess();
     }
 
     /**
@@ -99,7 +110,14 @@ public class ConfigServiceImpl implements ConfigService {
         }
 
         int ret = configMapper.update(xxlBootConfig);
-        return ret>0? Response.ofSuccess() : Response.ofFail();
+        if (ret <= 0) {
+            return Response.ofFail();
+        }
+
+        // 更新后清理对应 Key 缓存，避免 30s 内读到旧值
+        configCache.remove(xxlBootConfig.getKey());
+
+        return Response.ofSuccess();
     }
 
     /**
@@ -121,7 +139,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     /**
-     * 按配置Key查询（带本地缓存，60s 过期）
+     * 按配置Key查询（带本地缓存，30s 过期）
      */
     @Override
     public Response<Config> loadByKeyWithCache(String key) {

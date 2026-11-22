@@ -16,7 +16,6 @@ export type EnumOption = API.EnumItem;
  * @returns 枚举选项列表
  */
 function loadEnum(enumName: string): Promise<EnumOption[]> {
-
   /**
    *  API数据获取函数：
    *      - 职责‌：负责实际的 HTTP 请求或 API 调用。
@@ -34,7 +33,6 @@ function loadEnum(enumName: string): Promise<EnumOption[]> {
  * @returns 枚举选项列表
  */
 export function useEnumOption(enumName: string): EnumOption[] {
-
   /**
    * useQuery 缓存机制：（React Hook 封装）
    *      - 1. queryKey 唯一标识枚举项，缓存去重。

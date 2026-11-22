@@ -70,6 +70,29 @@
         WHERE t.`id` = ${r"#{id}"}
     </select>
 
+<#if codegen.tplCategory == "tree">
+<#assign parentColumn = "parent_id" />
+<#assign labelColumn = "name" />
+<#list fields as fieldItem>
+<#if fieldItem.javaField == "parentId">
+<#assign parentColumn = fieldItem.columnName />
+</#if>
+<#if fieldItem.javaField != "id" && fieldItem.javaType == "String" && fieldItem.isList == "1">
+<#assign labelColumn = fieldItem.columnName />
+</#if>
+</#list>
+    <select id="queryList" parameterType="java.util.Map" resultMap="${codegen.businessName}">
+        SELECT <include refid="Base_Column_List" />
+        FROM ${codegen.tableName} AS t
+        <trim prefix="WHERE" prefixOverrides="AND | OR" >
+            <if test="name != null and name != ''">
+                AND t.`${labelColumn}` like CONCAT('%', ${r"#{name}"}, '%')
+            </if>
+        </trim>
+        ORDER BY t.`${parentColumn}` ASC, t.`id` ASC
+    </select>
+
+</#if>
     <select id="pageList" parameterType="java.util.Map" resultMap="${codegen.businessName}">
         SELECT <include refid="Base_Column_List" />
         FROM ${codegen.tableName} AS t

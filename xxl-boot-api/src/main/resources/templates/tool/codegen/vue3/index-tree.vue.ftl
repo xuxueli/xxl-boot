@@ -237,11 +237,10 @@ const formState = ref<FormState<${codegen.businessName}Form>>({
 /** 查询${codegen.functionName}树表列表 */
 function getList() {
   table.value.loading = true
-  // 分页与筛选参数由 API 内部转换为 offset/pagesize
-  ${codegen.businessName?uncap_first}Api.pageList(queryParams.value)
+  // 树形接口直接返回树结构，搜索条件按名称过滤
+  ${codegen.businessName?uncap_first}Api.treeList(queryParams.value.name)
     .then((res) => {
-      // 分页接口统一返回 PageModel，树形数据位于 data 字段
-      table.value.list = res.data?.data || []
+      table.value.list = res.data || []
     })
     .catch(() => {
       // 错误已由请求层提示，继续走到 finally 复位 loading
@@ -256,8 +255,10 @@ function getList() {
 
 /** 查询上级树选项 */
 function get${codegen.businessName}Treeselect() {
-  ${codegen.businessName?uncap_first}Api.pageList({ pageNum: 1, pageSize: 999 }).then((res) => {
-    table.value.options = res.data?.data || []
+  ${codegen.businessName?uncap_first}Api.treeList().then((res) => {
+    table.value.options = res.data || []
+  }).catch(() => {
+    // 错误已由请求层提示，此处无需额外处理
   })
 }
 

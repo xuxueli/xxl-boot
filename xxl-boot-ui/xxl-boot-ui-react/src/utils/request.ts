@@ -9,9 +9,9 @@
 import { Modal, message } from 'antd';
 import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
+import { t } from '@/i18n';
 import { getToken, getTokenKeyHeader, removeToken } from './auth';
 import { tansParams } from './common';
-import { t } from '@/i18n';
 
 /** 请求自定义 header 属性：登录/防重提交/静默错误等接口级开关 */
 interface CustomHeaders {

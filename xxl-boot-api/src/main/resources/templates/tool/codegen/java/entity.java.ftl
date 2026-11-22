@@ -8,6 +8,10 @@
 package ${codegen.packageName}.${codegen.moduleName}.${codegen.businessName?lower_case}.model;
 
 import java.io.Serializable;
+<#if codegen.tplCategory == "tree">
+import java.util.ArrayList;
+import java.util.List;
+</#if>
 <#if importDdate?? && importDdate>
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -33,6 +37,12 @@ public class ${codegen.businessName} implements Serializable {
 
 </#list>
 </#if>
+<#if codegen.tplCategory == "tree">
+    /**
+    * 子节点（非DB字段，树形结构使用）
+    */
+    private List<${codegen.businessName}> children = new ArrayList<>();
+</#if>
 
 <#if fields?exists && fields?size gt 0>
 <#list fields as fieldItem>
@@ -45,5 +55,15 @@ public class ${codegen.businessName} implements Serializable {
     }
 
 </#list>
+</#if>
+<#if codegen.tplCategory == "tree">
+    public List<${codegen.businessName}> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<${codegen.businessName}> children) {
+        this.children = children;
+    }
+
 </#if>
 }

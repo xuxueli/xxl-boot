@@ -17,10 +17,10 @@ import {
 import { t } from '@/i18n';
 import type { FormConfig, FormWidget, WidgetType } from './config';
 import {
+  getWidgetTitles,
   isChoiceType,
   supportsPlaceholder,
   supportsRequired,
-  getWidgetTitles,
 } from './config';
 
 /**
@@ -69,7 +69,9 @@ const RightPanel = ({
             <Input
               value={activeData.vModel}
               onChange={(e) => onWidgetChange({ vModel: e.target.value })}
-              placeholder={t('common.inputPlaceholder', [t('tool.codegen.fieldColumn')])}
+              placeholder={t('common.inputPlaceholder', [
+                t('tool.codegen.fieldColumn'),
+              ])}
             />
           </Form.Item>
         )}
@@ -78,7 +80,9 @@ const RightPanel = ({
             <Input
               value={activeData.label}
               onChange={(e) => onWidgetChange({ label: e.target.value })}
-              placeholder={t('common.inputPlaceholder', [t('system.message.title')])}
+              placeholder={t('common.inputPlaceholder', [
+                t('system.message.title'),
+              ])}
             />
           </Form.Item>
         )}
@@ -87,7 +91,9 @@ const RightPanel = ({
             <Input
               value={activeData.placeholder}
               onChange={(e) => onWidgetChange({ placeholder: e.target.value })}
-              placeholder={t('common.inputPlaceholder', [t('tool.pagegen.placeholder')])}
+              placeholder={t('common.inputPlaceholder', [
+                t('tool.pagegen.placeholder'),
+              ])}
             />
           </Form.Item>
         )}
@@ -188,7 +194,9 @@ const RightPanel = ({
             <Input
               value={activeData.uploadText}
               onChange={(e) => onWidgetChange({ uploadText: e.target.value })}
-              placeholder={t('common.inputPlaceholder', [t('tool.pagegen.buttonText')])}
+              placeholder={t('common.inputPlaceholder', [
+                t('tool.pagegen.buttonText'),
+              ])}
             />
           </Form.Item>
         )}
@@ -212,7 +220,9 @@ const RightPanel = ({
               {t('tool.pagegen.children')}
             </div>
             <div style={{ color: 'rgba(0,0,0,0.65)' }}>
-              {t('tool.pagegen.childrenCount', [(activeData.children || []).length])}
+              {t('tool.pagegen.childrenCount', [
+                (activeData.children || []).length,
+              ])}
             </div>
           </>
         )}
@@ -226,21 +236,27 @@ const RightPanel = ({
         <Input
           value={formConfig.formRef}
           onChange={(e) => onFormChange({ formRef: e.target.value })}
-          placeholder={t('common.inputPlaceholder', [t('tool.pagegen.formName')])}
+          placeholder={t('common.inputPlaceholder', [
+            t('tool.pagegen.formName'),
+          ])}
         />
       </Form.Item>
       <Form.Item label={t('tool.pagegen.formModel')}>
         <Input
           value={formConfig.formModel}
           onChange={(e) => onFormChange({ formModel: e.target.value })}
-          placeholder={t('common.inputPlaceholder', [t('tool.pagegen.formModel')])}
+          placeholder={t('common.inputPlaceholder', [
+            t('tool.pagegen.formModel'),
+          ])}
         />
       </Form.Item>
       <Form.Item label={t('tool.pagegen.formRules')}>
         <Input
           value={formConfig.formRules}
           onChange={(e) => onFormChange({ formRules: e.target.value })}
-          placeholder={t('common.inputPlaceholder', [t('tool.pagegen.formRules')])}
+          placeholder={t('common.inputPlaceholder', [
+            t('tool.pagegen.formRules'),
+          ])}
         />
       </Form.Item>
       <Form.Item label={t('tool.pagegen.formSize')}>

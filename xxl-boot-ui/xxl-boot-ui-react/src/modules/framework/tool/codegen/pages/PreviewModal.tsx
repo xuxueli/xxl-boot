@@ -5,8 +5,8 @@
  */
 import { App, Button, Modal, Spin, Tabs } from 'antd';
 import { useEffect, useState } from 'react';
-import { codegenApi } from '@/modules/framework/tool/codegen/api';
 import { t } from '@/i18n';
+import { codegenApi } from '@/modules/framework/tool/codegen/api';
 import { copyToClipboard } from '@/utils/common';
 
 /** 组件入参 */
@@ -38,7 +38,8 @@ function PreviewModal({ open, id, onClose }: PreviewModalProps) {
     setLoading(true);
     setActiveKey('');
     setCodeMap({});
-    codegenApi.preview(id)
+    codegenApi
+      .preview(id)
       .then((res) => {
         const data = res.data || {};
         setCodeMap(data);

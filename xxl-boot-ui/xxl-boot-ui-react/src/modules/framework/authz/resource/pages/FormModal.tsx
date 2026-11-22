@@ -14,9 +14,9 @@ import {
 } from '@ant-design/pro-components';
 import { App, Col, Row } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
-import { t } from '@/i18n';
 import { IconSelect } from '@/components';
 import { toSelectOptions, useEnumOption } from '@/hooks/useEnumOption';
+import { t } from '@/i18n';
 import { resourceApi } from '@/modules/framework/authz/resource/api';
 import { handleTree } from '@/utils/common';
 
@@ -30,7 +30,11 @@ const mapToSelect = (resources: API.Resource[]): any[] =>
 
 /** 含根节点的 TreeSelect 数据 */
 const toTreeSelectData = (resources: API.Resource[]): any[] => [
-  { title: t('authz.resource.rootNode'), value: 0, children: mapToSelect(resources) },
+  {
+    title: t('authz.resource.rootNode'),
+    value: 0,
+    children: mapToSelect(resources),
+  },
 ];
 
 /** 在资源树中查找指定节点 */
@@ -90,7 +94,8 @@ const FormModal = ({
   /** 加载父级资源树 */
   useEffect(() => {
     if (open) {
-      resourceApi.treeList({})
+      resourceApi
+        .treeList({})
         .then((res) => {
           setParentOptions(handleTree(res.data || []));
         })
@@ -146,12 +151,21 @@ const FormModal = ({
           <ProFormTreeSelect
             name="parentId"
             label={t('authz.resource.parent')}
-            placeholder={t('common.selectPlaceholderText', [t('authz.resource.parent')])}
+            placeholder={t('common.selectPlaceholderText', [
+              t('authz.resource.parent'),
+            ])}
             fieldProps={{
               treeData: parentTreeSelectData,
               treeDefaultExpandAll: true,
             }}
-            rules={[{ required: true, message: t('common.selectPlaceholderText', [t('authz.resource.parent')]) }]}
+            rules={[
+              {
+                required: true,
+                message: t('common.selectPlaceholderText', [
+                  t('authz.resource.parent'),
+                ]),
+              },
+            ]}
           />
         </Col>
         <Col span={24}>
@@ -165,17 +179,33 @@ const FormModal = ({
           <ProFormText
             name="name"
             label={t('authz.resource.menuName')}
-            placeholder={t('common.inputPlaceholder', [t('authz.resource.menuName')])}
-            rules={[{ required: true, message: t('common.requiredMsg', [t('authz.resource.menuName')]) }]}
+            placeholder={t('common.inputPlaceholder', [
+              t('authz.resource.menuName'),
+            ])}
+            rules={[
+              {
+                required: true,
+                message: t('common.requiredMsg', [
+                  t('authz.resource.menuName'),
+                ]),
+              },
+            ]}
           />
         </Col>
         <Col span={12}>
           <ProFormDigit
             name="order"
             label={t('authz.resource.order')}
-            placeholder={t('common.inputPlaceholder', [t('authz.resource.order')])}
+            placeholder={t('common.inputPlaceholder', [
+              t('authz.resource.order'),
+            ])}
             min={0}
-            rules={[{ required: true, message: t('common.requiredMsg', [t('authz.resource.order')]) }]}
+            rules={[
+              {
+                required: true,
+                message: t('common.requiredMsg', [t('authz.resource.order')]),
+              },
+            ]}
             fieldProps={{ style: { width: '100%' } }}
           />
         </Col>
@@ -193,7 +223,9 @@ const FormModal = ({
                     <ProFormText
                       name="url"
                       label={t('authz.resource.url')}
-                      placeholder={t('common.inputPlaceholder', [t('authz.resource.url')])}
+                      placeholder={t('common.inputPlaceholder', [
+                        t('authz.resource.url'),
+                      ])}
                     />
                   </Col>
                 </Row>
@@ -205,7 +237,9 @@ const FormModal = ({
           <ProFormText
             name="permission"
             label={t('authz.resource.permission')}
-            placeholder={t('common.inputPlaceholder', [t('authz.resource.permission')])}
+            placeholder={t('common.inputPlaceholder', [
+              t('authz.resource.permission'),
+            ])}
             fieldProps={{ maxLength: 100 }}
           />
         </Col>

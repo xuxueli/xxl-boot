@@ -117,10 +117,15 @@ const FormModal = ({
           <ProFormText
             name="username"
             label={t('authz.user.username')}
-            placeholder={t('common.inputPlaceholder', [t('authz.user.username')])}
+            placeholder={t('common.inputPlaceholder', [
+              t('authz.user.username'),
+            ])}
             disabled={isEdit}
             rules={[
-              { required: true, message: t('common.requiredMsg', [t('authz.user.username')]) },
+              {
+                required: true,
+                message: t('common.requiredMsg', [t('authz.user.username')]),
+              },
               {
                 pattern: /^[a-z][a-z0-9]*$/,
                 message: t('authz.user.usernameFormat'),
@@ -133,9 +138,14 @@ const FormModal = ({
             <ProFormText.Password
               name="password"
               label={t('authz.user.password')}
-              placeholder={t('common.inputPlaceholder', [t('authz.user.password')])}
+              placeholder={t('common.inputPlaceholder', [
+                t('authz.user.password'),
+              ])}
               rules={[
-                { required: true, message: t('common.requiredMsg', [t('authz.user.password')]) },
+                {
+                  required: true,
+                  message: t('common.requiredMsg', [t('authz.user.password')]),
+                },
                 { min: 6, max: 20, message: t('authz.user.passwordLength') },
               ]}
             />
@@ -147,14 +157,21 @@ const FormModal = ({
             label={t('common.realName')}
             placeholder={t('common.inputPlaceholder', [t('common.realName')])}
             fieldProps={{ maxLength: 50 }}
-            rules={[{ required: true, message: t('common.requiredMsg', [t('common.realName')]) }]}
+            rules={[
+              {
+                required: true,
+                message: t('common.requiredMsg', [t('common.realName')]),
+              },
+            ]}
           />
         </Col>
         <Col span={12}>
           <ProFormSelect
             name="roleIds"
             label={t('authz.user.role')}
-            placeholder={t('common.selectPlaceholderText', [t('authz.user.role')])}
+            placeholder={t('common.selectPlaceholderText', [
+              t('authz.user.role'),
+            ])}
             mode="multiple"
             options={roleSelectOptions}
             fieldProps={{ optionDisabledProp: 'disabled' }}
@@ -164,7 +181,9 @@ const FormModal = ({
           <ProFormTreeSelect
             name="orgId"
             label={t('authz.user.belongOrg')}
-            placeholder={t('common.selectPlaceholderText', [t('common.noun.org')])}
+            placeholder={t('common.selectPlaceholderText', [
+              t('common.noun.org'),
+            ])}
             fieldProps={{
               treeData: orgTreeSelectData,
               treeDefaultExpandAll: true,

@@ -7,7 +7,7 @@
 import type { ProLayoutProps } from '@ant-design/pro-components';
 import { create } from 'zustand';
 import defaultSettings from '@/default-settings';
-import { getLang, setLang, type I18nLang } from '@/i18n';
+import { getLang, type I18nLang, setLang } from '@/i18n';
 import { authApi } from '@/modules/framework/auth/api';
 
 /** 主题设置持久化：localStorage 键名 */

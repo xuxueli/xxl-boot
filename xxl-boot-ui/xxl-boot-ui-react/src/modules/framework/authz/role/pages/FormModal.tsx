@@ -84,7 +84,9 @@ const FormModal = ({
   // 资源树：半选父级 key 集合（联动模式下保存时必须一并提交）
   const [halfCheckedKeys, setHalfCheckedKeys] = useState<React.Key[]>([]);
   // 资源树：仅父级被授权、子级全未授权的节点；联动模式下 antd 不会显示，需要额外保留
-  const [preservedParentKeys, setPreservedParentKeys] = useState<React.Key[]>([]);
+  const [preservedParentKeys, setPreservedParentKeys] = useState<React.Key[]>(
+    [],
+  );
   // 资源树：是否展开所有节点
   const [expandedAll, setExpandedAll] = useState(false);
   // 资源树：是否父子联动勾选
@@ -162,7 +164,8 @@ const FormModal = ({
 
       // 表单编辑场景：回显表单数据，初始化已授权节点
       if (roleId) {
-        roleApi.loadRoleRes(roleId)
+        roleApi
+          .loadRoleRes(roleId)
           .then((roleRes) => {
             applyApprovedKeys(tree, roleRes.data || []);
           })
@@ -198,9 +201,7 @@ const FormModal = ({
       setCheckedKeys(keys.checked ?? []);
     }
     // 合并“仅父级授权”的历史节点，避免联动模式无法展示时被静默清空
-    setHalfCheckedKeys([
-      ...new Set([...nextHalf, ...preservedParentKeys]),
-    ]);
+    setHalfCheckedKeys([...new Set([...nextHalf, ...preservedParentKeys])]);
   };
 
   /**
@@ -261,7 +262,12 @@ const FormModal = ({
         label={t('authz.role.name')}
         placeholder={t('common.inputPlaceholder', [t('authz.role.name')])}
         fieldProps={{ maxLength: 30 }}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.role.name')]) }]}
+        rules={[
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('authz.role.name')]),
+          },
+        ]}
       />
       <ProFormText
         colProps={{ span: 12 }}
@@ -269,7 +275,12 @@ const FormModal = ({
         label={t('authz.role.roleKey')}
         placeholder={t('common.inputPlaceholder', [t('authz.role.roleKey')])}
         fieldProps={{ maxLength: 30 }}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('authz.role.roleKey')]) }]}
+        rules={[
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('authz.role.roleKey')]),
+          },
+        ]}
       />
       <ProFormDigit
         colProps={{ span: 12 }}
@@ -299,7 +310,9 @@ const FormModal = ({
             marginBottom: 8,
           }}
         >
-          <span style={{ fontWeight: 600 }}>{t('authz.role.menuPermission')}</span>
+          <span style={{ fontWeight: 600 }}>
+            {t('authz.role.menuPermission')}
+          </span>
           <Space size={16}>
             <Checkbox
               checked={expandedAll}

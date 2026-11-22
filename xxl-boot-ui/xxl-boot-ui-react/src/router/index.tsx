@@ -71,7 +71,9 @@ export const constantRoutes: RouteObject[] = [
     children: [
       {
         path: 'profile',
-        element: lazyLoad(() => import('@/modules/framework/authz/user/pages/profile')),
+        element: lazyLoad(
+          () => import('@/modules/framework/authz/user/pages/profile'),
+        ),
       },
     ],
   },

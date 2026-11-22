@@ -199,71 +199,81 @@ const Login = () => {
               borderRadius: 6,
               boxShadow: '0 2px 12px rgba(0, 0, 0, 0.08)',
             }}
-            subTitle={
-              <div className={styles.subTitle}>{t('app.title')}</div>
-            }
+            subTitle={<div className={styles.subTitle}>{t('app.title')}</div>}
             initialValues={{
               rememberMe: false,
             }}
             onFinish={handleSubmit}
           >
-          <ProFormText
-            name="username"
-            fieldProps={{
-              size: 'large',
-              prefix: <UserOutlined />,
-            }}
-            placeholder={t('common.inputPlaceholder', [t('authz.user.username')])}
-            rules={[
-              {
-                required: true,
-                message: t('common.inputPlaceholder', [t('authz.user.username')]),
-              },
-            ]}
-          />
-          <ProFormText.Password
-            name="password"
-            fieldProps={{
-              size: 'large',
-              prefix: <LockOutlined />,
-            }}
-            placeholder={t('common.inputPlaceholder', [t('authz.user.password')])}
-            rules={[
-              {
-                required: true,
-                message: t('common.inputPlaceholder', [t('authz.user.password')]),
-              },
-            ]}
-          />
-          {captchaEnabled && (
             <ProFormText
-              name="captchaResult"
+              name="username"
               fieldProps={{
                 size: 'large',
-                prefix: <SafetyOutlined />,
-                suffix: (
-                  <img
-                    alt={t('auth.login.captcha')}
-                    className={styles.captcha}
-                    src={codeUrl}
-                    onClick={getCode}
-                  />
-                ),
+                prefix: <UserOutlined />,
               }}
-              placeholder={t('common.inputPlaceholder', [t('auth.login.captcha')])}
+              placeholder={t('common.inputPlaceholder', [
+                t('authz.user.username'),
+              ])}
               rules={[
                 {
                   required: true,
-                  message: t('common.inputPlaceholder', [t('auth.login.captcha')]),
+                  message: t('common.inputPlaceholder', [
+                    t('authz.user.username'),
+                  ]),
                 },
               ]}
             />
-          )}
-          <div style={{ marginBottom: 15 }}>
-            <ProFormCheckbox name="rememberMe" noStyle>
-              {t('auth.login.remember')}
-            </ProFormCheckbox>
-          </div>
+            <ProFormText.Password
+              name="password"
+              fieldProps={{
+                size: 'large',
+                prefix: <LockOutlined />,
+              }}
+              placeholder={t('common.inputPlaceholder', [
+                t('authz.user.password'),
+              ])}
+              rules={[
+                {
+                  required: true,
+                  message: t('common.inputPlaceholder', [
+                    t('authz.user.password'),
+                  ]),
+                },
+              ]}
+            />
+            {captchaEnabled && (
+              <ProFormText
+                name="captchaResult"
+                fieldProps={{
+                  size: 'large',
+                  prefix: <SafetyOutlined />,
+                  suffix: (
+                    <img
+                      alt={t('auth.login.captcha')}
+                      className={styles.captcha}
+                      src={codeUrl}
+                      onClick={getCode}
+                    />
+                  ),
+                }}
+                placeholder={t('common.inputPlaceholder', [
+                  t('auth.login.captcha'),
+                ])}
+                rules={[
+                  {
+                    required: true,
+                    message: t('common.inputPlaceholder', [
+                      t('auth.login.captcha'),
+                    ]),
+                  },
+                ]}
+              />
+            )}
+            <div style={{ marginBottom: 15 }}>
+              <ProFormCheckbox name="rememberMe" noStyle>
+                {t('auth.login.remember')}
+              </ProFormCheckbox>
+            </div>
           </LoginForm>
         </div>
       </div>

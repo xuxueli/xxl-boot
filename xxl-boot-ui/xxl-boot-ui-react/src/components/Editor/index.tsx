@@ -81,7 +81,13 @@ const Editor = ({
   const doUpload = useCallback(
     async (file: File): Promise<string> => {
       // 与后端上传白名单保持一致（不含 svg，避免脚本型图片风险）
-      const allowTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp'];
+      const allowTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/bmp',
+      ];
       if (!allowTypes.includes(file.type)) {
         message.error(t('components.editor.imageTypeError'));
         return '';
@@ -165,7 +171,9 @@ const Editor = ({
         value={value}
         onChange={(v) => onChange?.(v)}
         readOnly={readOnly}
-        placeholder={t('common.inputPlaceholder', [t('system.message.content')])}
+        placeholder={t('common.inputPlaceholder', [
+          t('system.message.content'),
+        ])}
         modules={{
           toolbar: [
             ['bold', 'italic', 'underline', 'strike'],

@@ -4,10 +4,10 @@
  * @author xuxueli 2026-11-21
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { App as AntdApp, ConfigProvider, theme as antdTheme } from 'antd';
+import { App as AntdApp, theme as antdTheme, ConfigProvider } from 'antd';
 import type { Locale } from 'antd/es/locale';
-import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
+import zhCN from 'antd/locale/zh_CN';
 import type React from 'react';
 import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';

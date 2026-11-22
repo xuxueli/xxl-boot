@@ -31,6 +31,17 @@ public class ${cn}Controller {
     @Resource
     private ${cn}Service ${cnLower}Service;
 
+<#if codegen.tplCategory == "tree">
+    /**
+    * 树形列表
+    */
+    @RequestMapping("/treeList")
+    @XxlSso
+    public Response<List<${cn}>> treeList(@RequestParam(required = false) String name) {
+        return Response.ofSuccess(${cnLower}Service.treeList(name));
+    }
+
+</#if>
     /**
     * 分页查询
     */

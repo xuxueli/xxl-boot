@@ -38,6 +38,15 @@ public interface ${cn}Mapper {
     */
     public ${cn} load(@Param("id") int id);
 
+<#if codegen.tplCategory == "tree">
+    /**
+    * 全量列表（树形组装使用）
+    *
+    * @param name 名称模糊搜索（为空不过滤）
+    */
+    public List<${cn}> queryList(@Param("name") String name);
+
+</#if>
     /**
     * 分页列表
     */

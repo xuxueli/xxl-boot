@@ -182,7 +182,10 @@ export function createWidget(type: WidgetType, id: number): FormWidget {
       /* 级联选择默认演示层级路径，其余选项组件用扁平选项 */
       options:
         type === 'cascader'
-          ? [t('tool.pagegen.optionProvinceCity'), t('tool.pagegen.optionProvinceCounty')]
+          ? [
+              t('tool.pagegen.optionProvinceCity'),
+              t('tool.pagegen.optionProvinceCounty'),
+            ]
           : [t('tool.pagegen.optionOne'), t('tool.pagegen.optionTwo')],
       span: 24,
     };

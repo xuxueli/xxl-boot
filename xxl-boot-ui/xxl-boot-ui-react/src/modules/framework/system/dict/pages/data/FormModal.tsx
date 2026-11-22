@@ -72,7 +72,12 @@ const FormModal = ({
         name="name"
         label={t('system.dict.itemName')}
         placeholder={t('common.inputPlaceholder', [t('system.dict.itemName')])}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('system.dict.itemName')]) }]}
+        rules={[
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('system.dict.itemName')]),
+          },
+        ]}
       />
       <ProFormText
         name="code"
@@ -80,7 +85,10 @@ const FormModal = ({
         placeholder={t('common.inputPlaceholder', [t('system.dict.itemCode')])}
         disabled={isEdit}
         rules={[
-          { required: true, message: t('common.requiredMsg', [t('system.dict.itemCode')]) },
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('system.dict.itemCode')]),
+          },
           { pattern: /^[0-9]+$/, message: t('system.dict.itemCodePattern') },
         ]}
       />
@@ -97,7 +105,12 @@ const FormModal = ({
         label={t('system.dict.order')}
         placeholder={t('common.inputPlaceholder', [t('system.dict.order')])}
         min={0}
-        rules={[{ required: true, message: t('common.requiredMsg', [t('system.dict.order')]) }]}
+        rules={[
+          {
+            required: true,
+            message: t('common.requiredMsg', [t('system.dict.order')]),
+          },
+        ]}
         fieldProps={{ style: { width: '100%' } }}
       />
       <ProFormTextArea

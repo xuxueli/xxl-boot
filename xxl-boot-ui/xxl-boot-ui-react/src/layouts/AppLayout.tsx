@@ -25,7 +25,10 @@ import {
 } from './components';
 
 /* 菜单项标题/图标样式：模块级常量，避免每次渲染新建样式对象 */
-const MENU_LABEL_STYLE = { display: 'inline-flex', alignItems: 'center' } as const;
+const MENU_LABEL_STYLE = {
+  display: 'inline-flex',
+  alignItems: 'center',
+} as const;
 const MENU_ICON_STYLE = { marginRight: 8, display: 'inline-flex' } as const;
 
 /* 面包屑：单层级页面也展示（稳定引用） */
@@ -117,9 +120,7 @@ const AppLayout = () => {
       title: (
         <>
           <UserOutlined style={{ fontSize: 18 }} />
-          <span
-            style={{ fontWeight: 'bold', paddingLeft: 2, paddingRight: 2 }}
-          >
+          <span style={{ fontWeight: 'bold', paddingLeft: 2, paddingRight: 2 }}>
             {currentUser?.realName || currentUser?.userName}
           </span>
           <DownOutlined style={{ fontSize: 14 }} />

@@ -20,6 +20,10 @@ export interface ${codegen.businessName} {
   ${field.javaField}?: ${tsType(field.javaType)}
 </#list>
 </#if>
+<#if codegen.tplCategory == "tree">
+  /** 子节点（树形结构） */
+  children?: ${codegen.businessName}[]
+</#if>
 }
 
 /** ${codegen.functionName}搜索栏查询参数（含分页，前端表单形态） */

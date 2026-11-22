@@ -37,6 +37,15 @@ public interface ${cn}Service {
     */
     public Response<${cn}> load(int id);
 
+<#if codegen.tplCategory == "tree">
+    /**
+    * 树形列表
+    *
+    * @param name 名称模糊搜索（为空不过滤）
+    */
+    public List<${cn}> treeList(String name);
+
+</#if>
     /**
     * 分页查询
     */

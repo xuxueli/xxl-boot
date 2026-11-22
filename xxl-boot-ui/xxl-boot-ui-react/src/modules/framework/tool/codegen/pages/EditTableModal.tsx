@@ -8,9 +8,9 @@ import { HolderOutlined } from '@ant-design/icons';
 import {
   closestCenter,
   DndContext,
+  type DragEndEvent,
   type DraggableAttributes,
   type DraggableSyntheticListeners,
-  type DragEndEvent,
   PointerSensor,
   useSensor,
   useSensors,
@@ -25,9 +25,9 @@ import { CSS } from '@dnd-kit/utilities';
 import { App, Checkbox, Form, Input, Modal, Select, Table, Tabs } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { t } from '@/i18n';
 import { dictApi } from '@/modules/framework/system/dict/api';
 import { codegenApi } from '@/modules/framework/tool/codegen/api';
-import { t } from '@/i18n';
 
 const javaTypeOptions = [
   'Long',
@@ -183,7 +183,8 @@ const EditTableModal = ({
   useEffect(() => {
     if (open && id) {
       setActiveTab('info');
-      codegenApi.detail(id)
+      codegenApi
+        .detail(id)
         .then((res) => {
           const data = res.data || {};
           const { fieldList = [], addTime, updateTime, ...rest } = data;
@@ -202,7 +203,8 @@ const EditTableModal = ({
           form.setFieldsValue(merge);
         })
         .catch(() => {});
-      dictApi.queryDictList()
+      dictApi
+        .queryDictList()
         .then((res) => {
           setDictOptions(
             (res.data || []).map((d) => ({
@@ -473,18 +475,26 @@ const EditTableModal = ({
                     rules={[
                       {
                         required: true,
-                        message: t('common.requiredMsg', [t('tool.codegen.tableName')]),
+                        message: t('common.requiredMsg', [
+                          t('tool.codegen.tableName'),
+                        ]),
                       },
                     ]}
                   >
-                    <Input placeholder={t('common.inputPlaceholder', [t('tool.codegen.tableName')])} />
+                    <Input
+                      placeholder={t('common.inputPlaceholder', [
+                        t('tool.codegen.tableName'),
+                      ])}
+                    />
                   </Form.Item>
                   <Form.Item
                     name="tableComment"
                     label={t('tool.codegen.tableComment')}
                   >
                     <Input
-                      placeholder={t('common.inputPlaceholder', [t('tool.codegen.tableComment')])}
+                      placeholder={t('common.inputPlaceholder', [
+                        t('tool.codegen.tableComment'),
+                      ])}
                     />
                   </Form.Item>
                 </div>
@@ -503,11 +513,15 @@ const EditTableModal = ({
                     rules={[
                       {
                         required: true,
-                        message: t('common.requiredMsg', [t('tool.codegen.packageName')]),
+                        message: t('common.requiredMsg', [
+                          t('tool.codegen.packageName'),
+                        ]),
                       },
                     ]}
                   >
-                    <Input placeholder={t('tool.codegen.packageNamePlaceholder')} />
+                    <Input
+                      placeholder={t('tool.codegen.packageNamePlaceholder')}
+                    />
                   </Form.Item>
                   <Form.Item
                     name="moduleName"
@@ -515,11 +529,15 @@ const EditTableModal = ({
                     rules={[
                       {
                         required: true,
-                        message: t('common.requiredMsg', [t('tool.codegen.moduleName')]),
+                        message: t('common.requiredMsg', [
+                          t('tool.codegen.moduleName'),
+                        ]),
                       },
                     ]}
                   >
-                    <Input placeholder={t('tool.codegen.moduleNamePlaceholder')} />
+                    <Input
+                      placeholder={t('tool.codegen.moduleNamePlaceholder')}
+                    />
                   </Form.Item>
                   <Form.Item
                     name="businessName"
@@ -527,11 +545,15 @@ const EditTableModal = ({
                     rules={[
                       {
                         required: true,
-                        message: t('common.requiredMsg', [t('tool.codegen.businessName')]),
+                        message: t('common.requiredMsg', [
+                          t('tool.codegen.businessName'),
+                        ]),
                       },
                     ]}
                   >
-                    <Input placeholder={t('tool.codegen.businessNamePlaceholder')} />
+                    <Input
+                      placeholder={t('tool.codegen.businessNamePlaceholder')}
+                    />
                   </Form.Item>
                   <Form.Item
                     name="functionName"
@@ -539,16 +561,28 @@ const EditTableModal = ({
                     rules={[
                       {
                         required: true,
-                        message: t('common.requiredMsg', [t('tool.codegen.functionName')]),
+                        message: t('common.requiredMsg', [
+                          t('tool.codegen.functionName'),
+                        ]),
                       },
                     ]}
                   >
-                    <Input placeholder={t('tool.codegen.functionNamePlaceholder')} />
+                    <Input
+                      placeholder={t('tool.codegen.functionNamePlaceholder')}
+                    />
                   </Form.Item>
-                  <Form.Item name="functionAuthor" label={t('tool.codegen.functionAuthor')}>
-                    <Input placeholder={t('tool.codegen.functionAuthorPlaceholder')} />
+                  <Form.Item
+                    name="functionAuthor"
+                    label={t('tool.codegen.functionAuthor')}
+                  >
+                    <Input
+                      placeholder={t('tool.codegen.functionAuthorPlaceholder')}
+                    />
                   </Form.Item>
-                  <Form.Item name="formColNum" label={t('tool.codegen.formLayout')}>
+                  <Form.Item
+                    name="formColNum"
+                    label={t('tool.codegen.formLayout')}
+                  >
                     <Select
                       options={[
                         { value: 1, label: t('tool.codegen.singleCol') },
@@ -557,7 +591,10 @@ const EditTableModal = ({
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item name="tplCategory" label={t('tool.codegen.tplCategory')}>
+                  <Form.Item
+                    name="tplCategory"
+                    label={t('tool.codegen.tplCategory')}
+                  >
                     <Select
                       options={[
                         { value: 'crud', label: t('tool.codegen.singleTable') },
@@ -565,7 +602,10 @@ const EditTableModal = ({
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item name="tplWebType" label={t('tool.codegen.tplWebType')}>
+                  <Form.Item
+                    name="tplWebType"
+                    label={t('tool.codegen.tplWebType')}
+                  >
                     <Select options={tplWebTypeOptions} />
                   </Form.Item>
                   <Form.Item
@@ -575,7 +615,9 @@ const EditTableModal = ({
                   >
                     <Input.TextArea
                       rows={2}
-                      placeholder={t('common.inputPlaceholder', [t('common.remark')])}
+                      placeholder={t('common.inputPlaceholder', [
+                        t('common.remark'),
+                      ])}
                     />
                   </Form.Item>
                 </div>

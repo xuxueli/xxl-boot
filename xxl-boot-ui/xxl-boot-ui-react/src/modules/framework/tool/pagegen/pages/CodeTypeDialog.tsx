@@ -53,7 +53,9 @@ const CodeTypeDialog = ({
   /** 确认生成 */
   const handleConfirm = () => {
     if (showFileName && !fileName.trim()) {
-      message.warning(t('common.inputPlaceholder', [t('tool.pagegen.fileName')]));
+      message.warning(
+        t('common.inputPlaceholder', [t('tool.pagegen.fileName')]),
+      );
       return;
     }
     onConfirm({ type, fileName: fileName.trim() });
@@ -85,7 +87,9 @@ const CodeTypeDialog = ({
             <Input
               value={fileName}
               onChange={(e) => setFileName(e.target.value)}
-              placeholder={t('common.inputPlaceholder', [t('tool.pagegen.fileName')])}
+              placeholder={t('common.inputPlaceholder', [
+                t('tool.pagegen.fileName'),
+              ])}
               allowClear
             />
           </Form.Item>

@@ -6,8 +6,8 @@
 import type { SettingDrawerProps } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import { App, Button } from 'antd';
-import { useSettingsStore } from '@/stores/settingsStore';
 import { t } from '@/i18n';
+import { useSettingsStore } from '@/stores/settingsStore';
 
 /**
  * 设置面板组件：SettingDrawer 封装

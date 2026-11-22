@@ -250,18 +250,17 @@ const ResourceList = () => {
             <EditOutlined /> {t('common.modify')}
           </a>
         ),
-        hasPermi('authz:resource') &&
-          record.type !== 2 && (
-            <a
-              key="add"
-              onClick={() => {
-                setFormCurrent({ parentId: record.id });
-                setFormOpen(true);
-              }}
-            >
-              <PlusOutlined /> {t('common.add')}
-            </a>
-          ),
+        hasPermi('authz:resource') && record.type !== 2 && (
+          <a
+            key="add"
+            onClick={() => {
+              setFormCurrent({ parentId: record.id });
+              setFormOpen(true);
+            }}
+          >
+            <PlusOutlined /> {t('common.add')}
+          </a>
+        ),
         hasPermi('authz:resource') && (
           <a key="delete" onClick={() => handleDelete(record)}>
             <DeleteOutlined /> {t('common.delete')}

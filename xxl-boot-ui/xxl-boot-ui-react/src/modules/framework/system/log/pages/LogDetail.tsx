@@ -206,7 +206,9 @@ function LogDetail({ open, row, moduleMap, onClose }: LogDetailProps) {
             <Row className={styles.detailRow}>
               <Col span={12}>
                 <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>{t('system.log.ip')}</span>
+                  <span className={styles.detailLabel}>
+                    {t('system.log.ip')}
+                  </span>
                   <span className={styles.detailValue}>{row.ip}</span>
                 </div>
               </Col>

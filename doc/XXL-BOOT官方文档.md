@@ -714,13 +714,13 @@ src/main/resources/mapper/business/{module}/{business}/XxxMapper.xml   # 业务 
 
 ```
 src/modules/business/{module}/{business}/
-├── types/index.ts                   # Xxx 实体 + XxxQuery + XxxForm + XxxListQuery
-├── api/index.ts                     # listXxx/getXxx/addXxx/delXxx/updateXxx 接口封装
+├── types/index.ts                   # Xxx 实体 + XxxQuery + XxxForm
+├── api/index.ts                     # {business}Api 命名空间（pageList/load/insert/delete/update），方法名与 Controller 对齐
 └── pages/index.vue                  # 三段式列表页（搜索区 + 表格区 + 表单弹窗）
 ```
 
 要点：
-- 列表页使用 `ref` 收敛数据（`queryParams / table / formState`），`getList()` 经 `usePageParams(queryParams)()` 转 `offset/pagesize`，从 `response.data.data / response.data.total` 取值；
+- 列表页使用 `ref` 收敛数据（`queryParams / table / formState`），`api.pageList(queryParams)` 在 API 层把 `pageNum/pageSize` 转为 `offset/pagesize`，从 `response.data.data / response.data.total` 取值；
 - 操作列按钮使用 `v-hasPermi="['{module}:{business}:add|edit|remove']"` 控制按钮级权限；
 - 页面导航完全由数据库资源菜单驱动，建好页面文件后无需改动任何路由代码。
 
@@ -828,7 +828,7 @@ xxl-boot/
     │       ├── modules/                       # 业务/平台模块（页面 + 接口 + 类型同模块聚合）
     │       │   ├── framework/{domain}/{module}/   # 平台内置（pages/api/types）
     │       │   └── business/{module}/{business}/  # 业务模块（pages/api/types）
-    │       ├── composables/                   # 组合式函数（usePageParams/useEnumOption 等）
+    │       ├── composables/                   # 组合式函数（useEnumOption/useDict 等）
     │       ├── components/                    # 通用组件（RightToolbar/Pagination/Editor 等）
     │       ├── directive/                     # 自定义指令（v-hasPermi/v-hasRole）
     │       ├── layout/ · router/              # 布局与路由

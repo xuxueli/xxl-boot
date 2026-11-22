@@ -27,7 +27,8 @@ function DictDataDrawer({ open, dict, onClose }: DictDataDrawerProps) {
     if (!open || !dict) return;
     setLoading(true);
     setItems([]);
-    dictApi.itemPageList({ dictId: dict.id, current: 1, pageSize: 100 })
+    dictApi
+      .itemPageList({ dictId: dict.id, current: 1, pageSize: 100 })
       .then((res) => {
         setItems(res.data?.data || []);
       })
@@ -101,7 +102,9 @@ function DictDataDrawer({ open, dict, onClose }: DictDataDrawerProps) {
                   </span>
                 </span>
                 <Tag color={item.status === 0 ? 'success' : 'error'}>
-                  {item.status === 0 ? t('common.normal') : t('common.disabled')}
+                  {item.status === 0
+                    ? t('common.normal')
+                    : t('common.disabled')}
                 </Tag>
               </div>
             ))}

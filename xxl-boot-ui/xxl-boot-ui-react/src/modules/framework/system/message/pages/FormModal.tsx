@@ -11,8 +11,8 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 import { App, Col, Row } from 'antd';
-import { t } from '@/i18n';
 import { Editor } from '@/components';
+import { t } from '@/i18n';
 import { messageApi } from '@/modules/framework/system/message/api';
 
 // ---------------------- 表单组件 ----------------------
@@ -74,17 +74,33 @@ const FormModal = ({
           <ProFormText
             name="title"
             label={t('system.message.title')}
-            placeholder={t('common.inputPlaceholder', [t('system.message.title')])}
-            rules={[{ required: true, message: t('common.requiredMsg', [t('system.message.title')]) }]}
+            placeholder={t('common.inputPlaceholder', [
+              t('system.message.title'),
+            ])}
+            rules={[
+              {
+                required: true,
+                message: t('common.requiredMsg', [t('system.message.title')]),
+              },
+            ]}
           />
         </Col>
         <Col span={12}>
           <ProFormSelect
             name="category"
             label={t('system.message.category')}
-            placeholder={t('common.selectPlaceholderText', [t('system.message.category')])}
+            placeholder={t('common.selectPlaceholderText', [
+              t('system.message.category'),
+            ])}
             options={categoryOptions}
-            rules={[{ required: true, message: t('common.selectPlaceholderText', [t('system.message.category')]) }]}
+            rules={[
+              {
+                required: true,
+                message: t('common.selectPlaceholderText', [
+                  t('system.message.category'),
+                ]),
+              },
+            ]}
           />
         </Col>
         <Col span={24}>
@@ -101,7 +117,12 @@ const FormModal = ({
           <ProForm.Item
             name="content"
             label={t('system.message.content')}
-            rules={[{ required: true, message: t('common.requiredMsg', [t('system.message.content')]) }]}
+            rules={[
+              {
+                required: true,
+                message: t('common.requiredMsg', [t('system.message.content')]),
+              },
+            ]}
           >
             <Editor minHeight={210} />
           </ProForm.Item>

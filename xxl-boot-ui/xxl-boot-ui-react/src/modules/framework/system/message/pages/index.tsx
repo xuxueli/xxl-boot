@@ -21,8 +21,8 @@ import {
 import { usePermission } from '@/hooks/usePermission';
 import { t } from '@/i18n';
 import { messageApi } from '@/modules/framework/system/message/api';
-import MessageDetail from './MessageDetail';
 import FormModal from './FormModal';
+import MessageDetail from './MessageDetail';
 import ReadUsersDialog from './ReadUsersDialog';
 
 /** 站内消息列表页 */

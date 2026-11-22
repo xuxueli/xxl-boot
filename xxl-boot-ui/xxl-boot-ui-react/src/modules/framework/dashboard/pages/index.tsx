@@ -16,11 +16,11 @@ import { Card, Empty, Radio, Tag } from 'antd';
 import { createStyles } from 'antd-style';
 import * as echarts from 'echarts';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import MessageDetail from '@/modules/framework/system/message/pages/MessageDetail';
-import { dashboardApi } from '@/modules/framework/dashboard/api';
-import { messageApi } from '@/modules/framework/system/message/api';
 import { useEnumOption } from '@/hooks/useEnumOption';
 import { t } from '@/i18n';
+import { dashboardApi } from '@/modules/framework/dashboard/api';
+import { messageApi } from '@/modules/framework/system/message/api';
+import MessageDetail from '@/modules/framework/system/message/pages/MessageDetail';
 
 const useStyles = createStyles(({ token, css }) => ({
   statCard: css`
@@ -91,7 +91,8 @@ const useStyles = createStyles(({ token, css }) => ({
 const Dashboard = () => {
   const { styles } = useStyles();
   const [detailOpen, setDetailOpen] = useState(false); /* 详情抽屉显隐 */
-  const [detailPayload, setDetailPayload] = useState<number>(); /* 详情消息 ID */
+  const [detailPayload, setDetailPayload] =
+    useState<number>(); /* 详情消息 ID */
 
   const [chartDays, setChartDays] = useState(30);
 
@@ -273,8 +274,12 @@ const Dashboard = () => {
               onChange={(e) => setChartDays(e.target.value)}
             >
               <Radio.Button value={7}>{t('dashboard.days', [7])}</Radio.Button>
-              <Radio.Button value={14}>{t('dashboard.days', [14])}</Radio.Button>
-              <Radio.Button value={30}>{t('dashboard.days', [30])}</Radio.Button>
+              <Radio.Button value={14}>
+                {t('dashboard.days', [14])}
+              </Radio.Button>
+              <Radio.Button value={30}>
+                {t('dashboard.days', [30])}
+              </Radio.Button>
             </Radio.Group>
           }
         >
@@ -298,7 +303,9 @@ const Dashboard = () => {
                   <div className={styles.msgTitle}>{item.title}</div>
                   <div className={styles.msgMeta}>
                     <Tag
-                      color={categoryMap[item.category ?? -1]?.color || 'default'}
+                      color={
+                        categoryMap[item.category ?? -1]?.color || 'default'
+                      }
                       style={{ marginRight: 0 }}
                     >
                       {categoryMap[item.category ?? -1]?.text || item.category}

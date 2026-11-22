@@ -43,7 +43,8 @@ const Profile = () => {
   /** 获取当前登录用户个人信息 */
   const loadUser = () => {
     setLoading(true);
-    userApi.loadProfile()
+    userApi
+      .loadProfile()
       .then((res) => {
         setUser(res.data || {});
         setRoleNames(((res.data?.roleNames as string[]) || []).join(', '));

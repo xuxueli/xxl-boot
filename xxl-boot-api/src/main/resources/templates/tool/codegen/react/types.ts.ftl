@@ -25,5 +25,9 @@ declare namespace API {
 </#if>
 </#list>
 </#if>
+<#if codegen.tplCategory == "tree">
+    /** 子节点（树形结构） */
+    children?: API.${codegen.businessName}[];
+</#if>
   };
 }

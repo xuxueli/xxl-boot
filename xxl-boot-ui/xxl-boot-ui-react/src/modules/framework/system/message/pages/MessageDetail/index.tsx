@@ -7,15 +7,15 @@ import { BellOutlined, MessageOutlined } from '@ant-design/icons';
 import { Drawer, Spin, Tag } from 'antd';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
-import { t } from '@/i18n';
 import { useEnumOption } from '@/hooks/useEnumOption';
+import { t } from '@/i18n';
 import { messageApi } from '@/modules/framework/system/message/api';
 
 /* 组件入参 */
 interface MessageDetailProps {
-  open: boolean;                  /* 是否显示 */
-  payload?: number | API.Message; /* 消息 ID 或消息对象 */
-  onClose: () => void;            /* 关闭回调 */
+  open: boolean /* 是否显示 */;
+  payload?: number | API.Message /* 消息 ID 或消息对象 */;
+  onClose: () => void /* 关闭回调 */;
 }
 
 /** 分类标签样式：图标与颜色按枚举编码区分，文案统一取后端枚举 */
@@ -45,7 +45,8 @@ function MessageDetail({ open, payload, onClose }: MessageDetailProps) {
     }
     setLoading(true);
     setMessage(null);
-    messageApi.load(payload)
+    messageApi
+      .load(payload)
       .then((res) => {
         setMessage(res.data || null);
       })

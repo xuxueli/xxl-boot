@@ -14,8 +14,8 @@ import { clsx } from 'clsx';
 import { useCallback, useEffect, useState } from 'react';
 import { Dropdown } from '@/components';
 import { t } from '@/i18n';
-import MessageDetail from '@/modules/framework/system/message/pages/MessageDetail';
 import { messageApi } from '@/modules/framework/system/message/api';
+import MessageDetail from '@/modules/framework/system/message/pages/MessageDetail';
 
 /** 消息面板及铃铛触发区样式 */
 const useStyles = createStyles(({ token, css }) => ({
@@ -131,7 +131,8 @@ const useStyles = createStyles(({ token, css }) => ({
 const HeaderMessage = () => {
   const { styles } = useStyles();
   const [detailOpen, setDetailOpen] = useState(false); /* 详情抽屉显隐 */
-  const [detailPayload, setDetailPayload] = useState<number>(); /* 详情消息 ID */
+  const [detailPayload, setDetailPayload] =
+    useState<number>(); /* 详情消息 ID */
   const [messageList, setMessageList] = useState<API.Message[]>(
     [],
   ); /* 顶部公告列表 */
@@ -143,7 +144,8 @@ const HeaderMessage = () => {
    */
   const loadMessageTop = useCallback(() => {
     setLoading(true);
-    messageApi.listTop()
+    messageApi
+      .listTop()
       .then((res) => {
         setMessageList(res.data || []);
         /* 未读数 = 列表中 isRead 为 false 的条数 */
