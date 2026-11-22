@@ -266,7 +266,14 @@ const formState = ref<FormState<UserForm>>({
     // 校验规则
     username: [
       { required: true, message: t('common.requiredMsg', [t('auth.login.username')]), trigger: 'blur' },
-      { pattern: /^[a-z][a-z0-9]{3,19}$/, message: t('authz.user.usernameFormat'), trigger: 'blur' }
+      {
+        // 编辑态账号只读，跳过格式校验，避免历史账号被拦截
+        validator: (_rule, value, callback) =>
+          formState.value.form.id != null || /^[a-z][a-z0-9]{3,19}$/.test(value ?? '')
+            ? callback()
+            : callback(new Error(t('authz.user.usernameFormat'))),
+        trigger: 'blur'
+      }
     ],
     realName: [{ required: true, message: t('common.requiredMsg', [t('common.realName')]), trigger: 'blur' }],
     phone: [{ pattern: /^1[3-9]\d{9}$/, message: t('authz.user.phoneInvalid'), trigger: 'blur' }],

@@ -380,7 +380,7 @@ $(function() {
 			},
 			password : {
 				required : true,
-				rangelength:[4, 20]
+				rangelength:[6, 20]
 			},
 			realName : {
 				required : true,
@@ -394,7 +394,7 @@ $(function() {
 			},
 			password : {
 				required : I18n.system_please_input + I18n.user_password,
-				rangelength: I18n.system_lengh_limit + "[4-20]"
+				rangelength: I18n.system_lengh_limit + "[6-20]"
 			},
 			realName : {
 				required : I18n.system_please_input + I18n.user_real_name,

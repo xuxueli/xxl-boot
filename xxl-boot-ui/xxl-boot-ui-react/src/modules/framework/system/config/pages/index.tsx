@@ -117,18 +117,22 @@ const ConfigList = () => {
       valueType: 'option',
       width: 140,
       render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setFormCurrent(record);
-            setFormOpen(true);
-          }}
-        >
-          <EditOutlined /> {t('common.modify')}
-        </a>,
-        <a key="delete" onClick={() => handleDelete(record)}>
-          <DeleteOutlined /> {t('common.delete')}
-        </a>,
+        hasPermi('system:config') && (
+          <a
+            key="edit"
+            onClick={() => {
+              setFormCurrent(record);
+              setFormOpen(true);
+            }}
+          >
+            <EditOutlined /> {t('common.modify')}
+          </a>
+        ),
+        hasPermi('system:config') && (
+          <a key="delete" onClick={() => handleDelete(record)}>
+            <DeleteOutlined /> {t('common.delete')}
+          </a>
+        ),
       ],
     },
   ];

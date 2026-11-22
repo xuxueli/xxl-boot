@@ -1,0 +1,6 @@
+# 依赖与构建产物：容器内重新安装、重新构建，避免宿主机文件覆盖
+node_modules
+dist
+.git
+*.log
+.DS_Store

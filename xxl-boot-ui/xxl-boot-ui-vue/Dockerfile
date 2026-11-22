@@ -5,9 +5,9 @@ FROM node:22-slim AS build
 # work dir
 WORKDIR /app
 
-# install deps（利用缓存：仅依赖文件变更时重新安装依赖）
-COPY package.json package-lock.json ./
-RUN npm ci
+# install deps
+COPY package.json ./
+RUN npm install
 
 # copy source & build
 COPY . .

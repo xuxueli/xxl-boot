@@ -240,8 +240,8 @@ function getList() {
   // 分页与筛选参数由 API 内部转换为 offset/pagesize
   ${codegen.businessName?uncap_first}Api.pageList(queryParams.value)
     .then((res) => {
-      // 树表接口返回树数组（非分页结构），此处断言处理
-      table.value.list = res.data as unknown as ${codegen.businessName}[]
+      // 分页接口统一返回 PageModel，树形数据位于 data 字段
+      table.value.list = res.data?.data || []
     })
     .catch(() => {
       // 错误已由请求层提示，继续走到 finally 复位 loading
@@ -257,7 +257,7 @@ function getList() {
 /** 查询上级树选项 */
 function get${codegen.businessName}Treeselect() {
   ${codegen.businessName?uncap_first}Api.pageList({ pageNum: 1, pageSize: 999 }).then((res) => {
-    table.value.options = res.data as unknown as ${codegen.businessName}[]
+    table.value.options = res.data?.data || []
   })
 }
 

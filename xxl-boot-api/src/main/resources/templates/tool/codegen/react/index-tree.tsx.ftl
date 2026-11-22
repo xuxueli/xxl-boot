@@ -66,8 +66,9 @@ const ${codegen.businessName}List = () => {
   const getList = useCallback(async () => {
     setLoading(true);
     try {
+      // 分页接口统一返回 PageModel，树形数据位于 data 字段
       const res = await ${codegen.businessName?uncap_first}Api.pageList({ current: 1, pageSize: 999 });
-      setList((res.data as unknown as API.${codegen.businessName}[]) || []);
+      setList(res.data?.data || []);
     } finally {
       setLoading(false);
     }

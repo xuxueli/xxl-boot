@@ -141,7 +141,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>配置Key</label>
-                                    <div class="col-sm-10"><input type="text" class="form-control" name="key" placeholder="" maxlength="100" ></div>
+                                    <div class="col-sm-10"><input type="text" class="form-control" name="key" placeholder="${I18n.config_key_update_limit}" maxlength="100" readonly></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="lastname" class="col-sm-2 control-label"><font color="red">*</font>配置Value</label>
@@ -280,7 +280,7 @@ $(function() {
             },
             key : {
                 required : true,
-                rangelength:[2, 100],
+                rangelength:[4, 100],
                 configKeyRule: true
             },
             value : {
@@ -295,7 +295,7 @@ $(function() {
             },
             key : {
                 required : "请输入配置Key",
-                rangelength: I18n.system_lengh_limit + "[2-100]"
+                rangelength: I18n.system_lengh_limit + "[4-100]"
             },
             value : {
                 required : "请输入配置Value",
@@ -336,7 +336,7 @@ $(function() {
             },
             key : {
                 required : true,
-                rangelength:[2, 100],
+                rangelength:[4, 100],
                 configKeyRule: true
             },
             value : {
@@ -351,7 +351,7 @@ $(function() {
             },
             key : {
                 required : "请输入配置Key",
-                rangelength: I18n.system_lengh_limit + "[2-100]"
+                rangelength: I18n.system_lengh_limit + "[4-100]"
             },
             value : {
                 required : "请输入配置Value",
