@@ -7,7 +7,8 @@ WORKDIR /app
 
 # install deps
 COPY package.json ./
-RUN npm install
+#RUN npm install
+RUN npm install --registry=https://registry.npmmirror.com
 
 # copy source & build
 COPY . .
