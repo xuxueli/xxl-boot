@@ -893,6 +893,7 @@ POST /tool/codegen/createTable
 | 表单默认值 | 模板未抽 `FORM_DEFAULTS`；按 4.5.2 收敛 |
 | 弹窗行为 | 模板缺 `:close-on-click-modal="false"` / `@closed="resetForm"`；补齐 |
 | 字段类型 | 确认 `XxxForm` 的 `Pick` 字段与 `isInsert/isEdit` 一致；排除时间字段 |
+| 树表 | `tplCategory=tree` 生成 `treeList`（后端按 `parent_id` 组 `children`）；确认父子字段命名与表结构一致 |
 
 ## 十、初始化与联调
 

@@ -843,6 +843,7 @@ POST /tool/codegen/createTable
 | 类型 | 模板只生成 `API.Xxx`；补关联实体、必要的 `API.XxxQuery` |
 | 组件声明 | 确认普通函数 + 显式 props 类型（本文件内联，跨文件复用才抽 interface），不引入 `React.FC` |
 | 未用导入 | 清理模板生成的冗余 `React` / 组件导入 |
+| 树表 | `tplCategory=tree` 生成 `treeList`（后端按 `parent_id` 组 `children`）；确认父子字段命名与表结构一致 |
 
 ## 十、初始化与联调
 
