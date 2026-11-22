@@ -1,4 +1,4 @@
-import { fileURLToPath, URL } from 'node:url';
+import path from 'node:path';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
 
@@ -41,8 +41,8 @@ export default defineConfig(({ mode, command }) => {
      */
     resolve: {
       alias: {
-        '~': fileURLToPath(new URL('./', import.meta.url)), // ~ 映射到根目录
-        '@': fileURLToPath(new URL('./src', import.meta.url)), // @ 映射到 src 目录
+        '~': path.resolve(import.meta.dirname, './'), // ~ 映射到根目录
+        '@': path.resolve(import.meta.dirname, './src'), // @ 映射到 src 目录
       },
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'], // 配置文件扩展名，允许在导入时省略扩展名
     },

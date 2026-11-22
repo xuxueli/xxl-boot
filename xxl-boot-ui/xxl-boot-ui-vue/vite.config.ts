@@ -65,8 +65,8 @@ export default defineConfig(({ mode, command }) => {
      */
     resolve: {
       alias: {
-        '~': path.resolve(__dirname, './'),         // ~ 映射到根目录
-        '@': path.resolve(__dirname, './src')       // @ 映射到 src 目录
+        '~': path.resolve(import.meta.dirname, './'),         // ~ 映射到根目录
+        '@': path.resolve(import.meta.dirname, './src')       // @ 映射到 src 目录
       },
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'] // 配置文件扩展名，允许在导入时省略扩展名
     },
