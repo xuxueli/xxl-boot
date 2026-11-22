@@ -46,6 +46,8 @@ const isExternalLink = (path: string) => /^https?:\/\//i.test(path);
  * 菜单项标题渲染：为二级及以下菜单补充展示图标
  * 说明：pro-layout 的 siderMenuType=sub 模式下，仅第一级菜单项渲染 icon，深层菜单项默认不展示，
  *       这里在自定义渲染逻辑中手动补充图标。
+ *       一级菜单不得走该方法：否则会绕过 pro-layout 默认节点上的折叠态样式（-item-text-has-icon），
+ *       导致侧边栏折叠后仍展示「图标 + 菜单名首字」。
  *
  * @param item 菜单数据项
  * @returns 菜单标题节点
@@ -77,21 +79,39 @@ const AppLayout = () => {
   /* 侧边栏折叠状态：受控于 settingsStore，点击开关即时持久化 */
   const collapsed = useSettingsStore((s) => s.collapsed);
 
-  /* 菜单数据 + 目录跳转映射：一次遍历产出，仅在 menuData 变化时重建 */
-  const { items: menuDataItems, redirectMap: dirRedirectMap } = useMemo(
-    () => buildMenu(menuData),
-    [menuData],
+  /* 菜单数据 + 目录跳转映射 + 空目录集合：一次遍历产出，仅在 menuData 变化时重建 */
+  const {
+    items: menuDataItems,
+    redirectMap: dirRedirectMap,
+    nonNavigablePaths,
+  } = useMemo(() => buildMenu(menuData), [menuData]);
+
+  /* 一级菜单路径集合：一级菜单的图标与折叠态样式由 pro-layout 默认节点处理，不再自定义 label */
+  const topLevelPaths = useMemo(
+    () =>
+      new Set(
+        menuDataItems
+          .map((item) => item.path)
+          .filter((path): path is string => !!path),
+      ),
+    [menuDataItems],
   );
 
   /* 菜单数据渲染：引用稳定，减少 ProLayout 内部菜单重渲染 */
   const menuDataRender = useCallback(() => menuDataItems, [menuDataItems]);
 
-  /* 菜单点击跳转：目录项跳转其第一个叶子子项（避免 404），其余正常跳转 */
+  /* 菜单点击跳转：空目录仅展示，目录项跳转其第一个叶子子项（避免 404），其余正常跳转 */
   const menuItemRender = useCallback(
     (item: MenuDataItem, dom: React.ReactNode) => {
       const path = item.path ?? '';
+      /* 深层菜单补充图标；一级菜单直接用默认节点，避免破坏折叠态「只显示图标」 */
+      const label =
+        item.icon && !topLevelPaths.has(path) ? renderMenuLabel(item) : dom;
+      /* 无可见子菜单的目录：不绑定链接，点击不跳转，并去掉手型光标 */
+      if (!path || nonNavigablePaths.has(path)) {
+        return <span className="menu-item-non-navigable">{label}</span>;
+      }
       const targetPath = dirRedirectMap[path] || path;
-      const label = item.icon ? renderMenuLabel(item) : dom;
       // 外链菜单交给浏览器打开，避免被 React Router 解析为站内路径
       if (targetPath && isExternalLink(targetPath)) {
         return (
@@ -102,7 +122,7 @@ const AppLayout = () => {
       }
       return targetPath ? <Link to={targetPath}>{label}</Link> : label;
     },
-    [dirRedirectMap],
+    [dirRedirectMap, nonNavigablePaths, topLevelPaths],
   );
 
   /* 顶部操作区：全屏切换 + 站内消息（引用稳定） */
@@ -155,6 +175,30 @@ const AppLayout = () => {
   /* 应用标题：语言变更会触发根组件按 key 重挂载，故只需计算一次 */
   const appTitle = useMemo(() => t('app.title'), []);
 
+  /* 侧边菜单配色：*/
+  const layoutToken = useMemo(() => {
+    /* 暗色主题沿用 ProLayout 默认 token，避免强制浅色 */
+    if (settings.navTheme === 'realDark') {
+      return undefined;
+    }
+    /* 对齐 Vue 版 theme-light（选中为主题色 10% 背景、hover 浅灰、行高 44） */
+    const colorPrimary = settings.colorPrimary ?? defaultSettings.colorPrimary;
+    return {
+      sider: {
+        /*paddingInlineLayoutMenu: 0,*/
+        colorMenuBackground: '#ffffff',
+        colorTextMenu: 'rgba(0, 0, 0, 0.65)',
+        colorTextMenuItemHover: 'rgba(0, 0, 0, 0.85)',
+        colorTextMenuSelected: colorPrimary,
+        colorTextSubMenuSelected: colorPrimary,
+        /* 主题色 10% 透明度，与 Vue 版 --current-color-light 一致 */
+        colorBgMenuItemSelected: `${colorPrimary}1A`,
+        colorBgMenuItemHover: '#f5f7fa',
+        colorBgMenuItemActive: '#f5f7fa',
+      },
+    };
+  }, [settings.colorPrimary, settings.navTheme]);
+
   return (
     // ProLayout：Ant Design Pro 提供的布局组件，支持菜单、面包屑、页脚、主题设置等功能
     <ProLayout
@@ -163,6 +207,8 @@ const AppLayout = () => {
       title={appTitle}
       logo={settings.logo}
       location={location}
+      // 侧边菜单配色：选中态、hover
+      token={layoutToken}
       // 左侧菜单：菜单以后端资源配置为准（菜单数据 + 渲染/点击回调均已记忆化）
       menuDataRender={menuDataRender}
       menuItemRender={menuItemRender}

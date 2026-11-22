@@ -6,7 +6,14 @@
   <el-menu :default-active="activeMenu" mode="horizontal" @select="handleSelect" :ellipsis="false">
     <!-- 可见的一级菜单项：前 visibleNumber 条 -->
     <template v-for="(item, index) in topMenus">
-      <el-menu-item :style="{ '--theme': theme }" :index="item.path || ''" :key="index" v-if="index < visibleNumber">
+      <el-menu-item
+        :style="{ '--theme': theme }"
+        :index="item.path || ''"
+        :key="index"
+        :disabled="isEmptyCatalog(item)"
+        class="topmenu-catalog-item"
+        v-if="index < visibleNumber"
+      >
         <SvgIcon v-if="item.meta && item.meta.icon && item.meta.icon !== '#'" :icon-class="item.meta.icon" />
         {{ item.meta?.title }}
       </el-menu-item>
@@ -16,7 +23,13 @@
     <el-sub-menu :style="{ '--theme': theme }" index="more" v-if="topMenus.length > visibleNumber">
       <template #title>{{ t('common.more') }}</template>
       <template v-for="(item, index) in topMenus">
-        <el-menu-item :index="item.path || ''" :key="index" v-if="index >= visibleNumber">
+        <el-menu-item
+          :index="item.path || ''"
+          :key="index"
+          :disabled="isEmptyCatalog(item)"
+          class="topmenu-catalog-item"
+          v-if="index >= visibleNumber"
+        >
           <!-- icon -->
           <SvgIcon v-if="item.meta && item.meta.icon && item.meta.icon !== '#'" :icon-class="item.meta.icon" />
           <!-- title -->
@@ -48,6 +61,13 @@ const theme = computed(() => settingsStore.theme)
 const routers = computed(() => routesStore.dynamicRoutes)
 const hideList = [defaultSettings.homePath] /* 路由列表中不显示侧边栏的路径 */
 const { visibleNumber } = useVisibleMenuCount(0)
+
+/*
+ * 无子菜单的目录：顶部仅展示，禁用点击与选中（避免选中态变化）
+ */
+function isEmptyCatalog(route: RouteData) {
+  return route.meta?.menuType === 0 && !route.children
+}
 
 /*
  * 顶部菜单列表
@@ -89,8 +109,8 @@ watch(
 /*
  * 顶部菜单选中：
  *   - 外部链接新窗口
- *   - 顶级菜单自身即菜单（无下级菜单）：直接跳转并折叠左侧下级菜单
- *   - 顶级菜单为目录：展开左侧菜单，供点击具体下级菜单
+ *   - 目录（含无子菜单的目录）：展开左侧菜单，不跳转自身路径
+ *   - 顶级菜单自身即菜单：直接跳转并折叠左侧下级菜单
  */
 function handleSelect(key: string) {
   const topMenu = topMenus.value.find((item) => item.path === key)
@@ -98,7 +118,12 @@ function handleSelect(key: string) {
   if (isHttp(key)) {
     /* 外部链接分支：新窗口打开 */
     window.open(key, '_blank')
-  } else if (!topMenu || !topMenu.children) {
+  } else if (topMenu && topMenu.meta?.menuType === 0) {
+    /* 目录分支：有子菜单时展开左侧联动菜单；无子菜单的目录仅展示，不跳转、不联动 */
+    if (!topMenu.children) return
+    appStore.setMixScopeForChildren(routers.value, key)
+    appStore.hideSideBar(false)
+  } else {
     /* 菜单分支：直接 router.push 跳转，携带 query，并折叠左侧下级菜单 */
     const routeMenu = findMenuByPath(routesStore.fullRoutes, key)
     if (routeMenu && routeMenu.query) {
@@ -107,10 +132,6 @@ function handleSelect(key: string) {
       router.push({ path: key })
     }
     appStore.hideSideBar(true)
-  } else {
-    /* 目录分支：展开左侧菜单展示下级子菜单 */
-    appStore.setMixScopeForChildren(routers.value, key)
-    appStore.hideSideBar(false)
   }
 }
 </script>
@@ -164,5 +185,16 @@ function handleSelect(key: string) {
   vertical-align: middle;
   margin-left: 8px;
   margin-top: 0px;
+}
+
+/* 空目录顶部菜单项：禁用后保持正常展示样式，去掉禁用透明与 pointer 光标 */
+.el-menu-item.topmenu-catalog-item.is-disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+/* hover 时保留顶部菜单背景反馈（与 React 端一致），但不响应点击 */
+.el-menu-item.topmenu-catalog-item.is-disabled:hover {
+  background-color: var(--navbar-hover, #ffffff) !important;
 }
 </style>

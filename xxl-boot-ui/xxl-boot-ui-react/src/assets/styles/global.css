@@ -138,3 +138,8 @@ ol {
   /* biome-ignore lint/complexity/noImportantStyles: 同上，覆盖 antd-pro CSS-in-JS 注入的内边距 */
   padding-inline: 4px !important;
 }
+
+/* 无子菜单的目录菜单项：不可跳转，去掉手型光标（与 Vue 端 disabled 目录项一致） */
+.ant-menu-item:has(.menu-item-non-navigable) {
+  cursor: default;
+}

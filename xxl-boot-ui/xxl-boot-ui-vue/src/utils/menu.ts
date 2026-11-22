@@ -197,8 +197,8 @@ export function resolveMenuSearchItems(routes: RouteData[], basePath = '', prefi
       data.title = [...data.title, r.meta.title]
       data.icon = r.meta.icon as string
 
-      /* 叶节点：加入搜索结果 */
-      if (!r.children || r.children.length === 0) {
+      /* 叶节点：目录无下级时不可跳转，仅菜单加入搜索结果 */
+      if ((!r.children || r.children.length === 0) && r.meta.menuType !== 0) {
         res.push(data)
       }
     }

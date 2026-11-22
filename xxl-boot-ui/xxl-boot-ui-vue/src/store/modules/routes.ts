@@ -21,6 +21,8 @@ export interface RouteMetaData {
   activeMenu?: string
   affix?: boolean
   hidden?: boolean
+  /** 菜单类型：0-目录、1-菜单（用于区分目录与可跳转页面） */
+  menuType?: number
   query?: Record<string, string>
   [key: string]: unknown
 }
@@ -101,7 +103,7 @@ function adaptMenusToRoutes(menuList: MenuNode[], depth = 0): RouteData[] {
   return menuList.map((menu) => {
     const hidden = menu.visible === 1
     const url = menu.url || ''
-    const meta = { title: menu.name, icon: menu.icon }
+    const meta = { title: menu.name, icon: menu.icon, menuType: menu.type }
 
     // 目录：按层级选择容器组件
     if (menu.type === 0) {

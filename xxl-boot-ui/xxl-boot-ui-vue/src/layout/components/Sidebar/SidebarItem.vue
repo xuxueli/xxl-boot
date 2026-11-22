@@ -1,15 +1,29 @@
 <!--
   组件：SidebarItem（递归菜单项）
-  功能：递归渲染侧边栏菜单树，单子路由时自动展开，多子路由时显示为 el-sub-menu
+  功能：递归渲染侧边栏菜单树，目录统一渲染为 el-sub-menu；根级菜单包装节点提升其唯一子路由。
 -->
 <template>
   <div v-if="!item.hidden">
     <!--
-      只有一个可见子路由：直接展开为 el-menu-item（不包裹 el-sub-menu），减少一级菜单深度。无子路由时用父级自身的 title/icon 作为叶子结点。
+      叶子节点：根级菜单包装节点提升其唯一子路由；无可见子节点的节点自身作为叶子展示。
     -->
     <template v-if="singleLeafChild">
+      <!-- 目录节点（无可见子菜单）：禁用交互，仅展示标题与图标，避免选中态变化与无效跳转 -->
+      <el-menu-item
+        v-if="leafIsCatalog"
+        :index="catalogIndex"
+        class="catalog-menu-item"
+        disabled
+        :class="{ 'submenu-title-noDropdown': !isNest }"
+      >
+        <SvgIcon :icon-class="singleLeafChild.meta?.icon || (item.meta && item.meta.icon)" />
+        <template #title
+          ><span class="menu-title" :title="hasTitle(singleLeafChild.meta?.title)">{{ singleLeafChild.meta?.title }}</span></template
+        >
+      </el-menu-item>
+
       <!-- 菜单链接：内部路由渲染 router-link，外部链接渲染 a（新窗口打开） -->
-      <component v-if="singleLeafChild.meta" :is="linkType" v-bind="linkAttrs">
+      <component v-else-if="singleLeafChild.meta" :is="linkType" v-bind="linkAttrs">
         <el-menu-item :index="resolvePath(singleLeafChild.path)" :class="{ 'submenu-title-noDropdown': !isNest }">
           <!-- 图标：优先取子菜单自身的 icon，没有则继承父级 -->
           <SvgIcon :icon-class="singleLeafChild.meta.icon || (item.meta && item.meta.icon)" />
@@ -21,7 +35,7 @@
     </template>
 
     <!--
-      多个可见子路由：渲染为 el-sub-menu 下拉菜单，递归用 SidebarItem 渲染每一级子菜单。
+      目录节点（含 1 个或多个子菜单）：渲染为 el-sub-menu 下拉菜单，递归用 SidebarItem 渲染每一级子菜单。
     -->
     <el-sub-menu v-else ref="subMenu" :index="resolvePath(item.path)" teleported>
       <!-- 父菜单 -->
@@ -81,12 +95,12 @@ const visibleChildren = computed<RouteData[]>(() => {
 
 /*
  * 渲染为叶子菜单的节点（满足时用 el-menu-item 展示，否则走 el-sub-menu）：
- *   1）恰好 1 个可见子菜单且其本身无下级 → 直接展开为该子菜单（不包 el-sub-menu），减少菜单层级；
- *   2）0 个可见子菜单 → 父级自身作为叶子菜单展示（用父级的 title/icon 填充，path='' 避免跳转无效路由）；
- *   3）其余情况（≥2 个子菜单，或唯一子菜单仍有下级）→ 返回 null，需渲染 el-sub-menu。
+ *   1）根级菜单包装节点（meta 为空）仅含 1 个模拟子路由 → 提升该子路由为叶子菜单，避免多一层无效层级；
+ *   2）0 个可见子菜单 → 父级自身作为叶子节点展示（目录仅展示不可跳转，菜单按 basePath 跳转）；
+ *   3）目录含子菜单（1 个或多个）→ 返回 null，保留目录层级渲染 el-sub-menu，与 React 端保持一致。
  */
 const singleLeafChild = computed<RouteData | null>(() => {
-  if (visibleChildren.value.length === 1 && !visibleChildren.value[0].children) {
+  if (!props.item.meta && visibleChildren.value.length === 1) {
     return visibleChildren.value[0]
   }
   if (visibleChildren.value.length === 0) {
@@ -94,6 +108,16 @@ const singleLeafChild = computed<RouteData | null>(() => {
   }
   return null
 })
+
+/*
+ * 叶子节点是否为目录：目录只做分组展示，点击不跳转；菜单才渲染路由链接。
+ */
+const leafIsCatalog = computed(() => singleLeafChild.value?.meta?.menuType === 0)
+
+/*
+ * 目录叶子节点的菜单 index：以路由名加前缀保证唯一，同时避免与真实路由路径同名而产生错误高亮。
+ */
+const catalogIndex = computed(() => `catalog:${props.item.name || singleLeafChild.value?.path || ''}`)
 
 /*
  * 解析路由路径，返回值类型可能是 string 或 { path, query }。
@@ -150,3 +174,30 @@ function hasTitle(title: string | undefined) {
   }
 }
 </script>
+
+<style scoped>
+/* 空目录叶子节点：禁用后保持正常展示样式，仅去掉禁用透明度与 pointer 光标 */
+.catalog-menu-item.is-disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+/* 顶栏（top 模式）等无 .theme-light 作用域场景：沿用 Element Plus 默认 hover 背景 */
+.catalog-menu-item.is-disabled:hover {
+  background-color: var(--el-menu-hover-bg-color, rgba(0, 0, 0, 0.06)) !important;
+}
+
+/* 亮色侧边栏：hover 背景与正常菜单项完全一致（一级 #f5f7fa、子级 #f0f5ff，见 layout/index.vue） */
+html:not(.dark) .theme-light .catalog-menu-item.is-disabled:hover {
+  background-color: #f5f7fa !important;
+}
+
+html:not(.dark) .theme-light .el-sub-menu .catalog-menu-item.is-disabled:hover {
+  background-color: #f0f5ff !important;
+}
+
+/* 暗色顶栏：与顶部菜单 hover 背景一致 */
+html.dark .topbar-menu .catalog-menu-item.is-disabled:hover {
+  background-color: var(--navbar-hover, #141414) !important;
+}
+</style>

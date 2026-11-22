@@ -1169,6 +1169,7 @@ public @interface Permission {
 - 11、【升级】升级多项依赖至较新版本。
 
 ### 版本 v2.3.1 Release Notes[ING]
+- 1、【交互】React菜单折叠渲染优化：无icon时默认展示首字；
 
 
 ### TODO LIST
