@@ -33,7 +33,7 @@ services:
       - xxl-boot-network
 
   redis:
-    image: redis:7.4
+    image: redis:8.2
     container_name: xxl-boot-redis
     environment:
       # Redis配置：访问密码
