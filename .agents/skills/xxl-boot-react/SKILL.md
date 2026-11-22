@@ -586,7 +586,7 @@ function FormModal({
       width={640}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnHidden: true, maskClosable: false }}
+      modalProps={{ destroyOnHidden: true, mask: { closable: false } }}
       layout="horizontal"
       labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
@@ -624,7 +624,7 @@ export default FormModal;
 
 约定：
 
-- `modalProps={{ destroyOnHidden: true, maskClosable: false }}`：关闭后销毁并复位，且禁止点击遮罩关闭，避免误触丢失已填内容。
+- `modalProps={{ destroyOnHidden: true, mask: { closable: false } }}`：关闭后销毁并复位，且禁止点击遮罩关闭，避免误触丢失已填内容。
 - 派生 `isEdit = current?.id != null`，统一驱动标题、不可变字段与提交分支，避免多处重复判断。
 - 代码按 `表单组件 / 表单状态 / 数据操作 / 表单渲染` 分区注释，字段用 JSX 注释分组。
 - 表单校验用 `rules`；错误提示走 `t('common.requiredMsg', [...])`。
@@ -873,7 +873,7 @@ cd xxl-boot-ui/xxl-boot-ui-react && npm run type-check && npm run build
 - [ ] `api` 以 `{business}Api` 导出，返回 `request<API.Response<API.PageModel<T>>>`；`pageList` 接收 `XxxQuery` 并在内部转换为 `offset/pagesize`；平台例外已按 4.4 核对。
 - [ ] 页面基于 `PageContainer + ProTable`；`request` 直接传 `params`，返回 `{ data, total, success }`，取 `res.data?.data/total`。
 - [ ] 页面按「页面状态 / 数据操作 / 表格“列”定义 / 数据列表渲染」分区；未重复写工具栏 `useStyles` 或包裹 div。
-- [ ] 表单用受控 `ModalForm`（`pages/FormModal.tsx`）；props 类型内联，`maskClosable: false`，提交不回传只读字段，成功后 `reload`。
+- [ ] 表单用受控 `ModalForm`（`pages/FormModal.tsx`）；props 类型内联，禁止遮罩关闭（`mask: { closable: false }`），提交不回传只读字段，成功后 `reload`。
 - [ ] 无 `ahooks` 等未安装依赖；无第二套请求/表格封装。
 - [ ] 组件为普通函数 + 显式 props；无 `React.FC`/`forwardRef`/`propTypes`/`defaultProps`。
 - [ ] `hasPermi` 与资源表 `permission` 一致（平台菜单级 / 业务按钮级）；`hasRole` 只用于超管专属入口；工具栏与行内操作都已控权。

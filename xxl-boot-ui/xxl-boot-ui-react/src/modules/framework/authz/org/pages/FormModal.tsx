@@ -108,7 +108,7 @@ const FormModal = ({
       width={600}
       open={open}
       onOpenChange={onOpenChange}
-      modalProps={{ destroyOnHidden: true, maskClosable: false }}
+      modalProps={{ destroyOnHidden: true, mask: { closable: false } }}
       layout="horizontal"
       grid
       labelCol={{ flex: '85px' }}

@@ -248,7 +248,7 @@ const FormModal = ({
       width={680}
       open={open} /* 是否打开弹窗 */
       onOpenChange={onOpenChange} /* 弹窗打开状态变化回调 */
-      modalProps={{ destroyOnHidden: true, maskClosable: false }}
+      modalProps={{ destroyOnHidden: true, mask: { closable: false } }}
       layout="horizontal"
       grid
       labelCol={{ flex: '100px' }}

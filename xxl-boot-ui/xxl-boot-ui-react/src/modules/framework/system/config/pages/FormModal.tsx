@@ -74,7 +74,7 @@ function FormModal({
       open={open}
       onOpenChange={onOpenChange}
       /* 关闭后销毁，配合 initialValues 保证每次打开都是最新数据；禁止点击遮罩关闭，避免误触丢失输入 */
-      modalProps={{ destroyOnHidden: true, maskClosable: false }}
+      modalProps={{ destroyOnHidden: true, mask: { closable: false } }}
       layout="horizontal"
       labelCol={{ flex: '100px' }}
       onFinish={handleFinish}
