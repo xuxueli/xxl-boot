@@ -1170,6 +1170,8 @@ public @interface Permission {
 
 ### 版本 v2.3.1 Release Notes[ING]
 - 1、【交互】React菜单折叠渲染优化：无icon时默认展示首字；
+- 2、【TODO】React菜单交互闪动优化；
+- 3、【TODO】Vue顶部菜单「空目录」判定与侧边栏/React一致；
 
 
 ### TODO LIST
