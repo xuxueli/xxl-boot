@@ -65,7 +65,7 @@ const DictList = () => {
 
   /** 表格列：序号、名称、类型、状态、备注、添加时间、操作 */
   const columns: ProColumns<API.Dict>[] = [
-    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
+    { title: t('common.id'), dataIndex: 'id', search: false, width: 80 },
     { title: t('system.dict.dictName'), dataIndex: 'name' },
     {
       title: t('system.dict.dictType'),

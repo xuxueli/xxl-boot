@@ -67,7 +67,7 @@ const ConfigList = () => {
 
   /** 表格列：序号、名称、Key、Value、状态、备注、添加时间、操作 */
   const columns: ProColumns<API.Config>[] = [
-    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
+    { title: t('common.id'), dataIndex: 'id', search: false, width: 80 },
     {
       title: t('system.config.configName'),
       dataIndex: 'name',

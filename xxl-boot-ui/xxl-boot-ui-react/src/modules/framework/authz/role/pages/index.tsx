@@ -63,7 +63,7 @@ const RoleList = () => {
 
   /** 表格列：序号、名称、编码、排序、状态、添加时间、操作 */
   const columns: ProColumns<API.Role>[] = [
-    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
+    { title: t('common.id'), dataIndex: 'id', search: false, width: 80 },
     { title: t('authz.role.name'), dataIndex: 'name' },
     {
       title: t('authz.role.roleKey'),

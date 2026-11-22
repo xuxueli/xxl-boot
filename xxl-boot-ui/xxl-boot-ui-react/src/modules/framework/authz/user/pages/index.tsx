@@ -221,7 +221,7 @@ const UserList = () => {
 
   const columns: ProColumns<API.User>[] = [
     {
-      title: t('common.serialNo'),
+      title: t('common.id'),
       dataIndex: 'id',
       search: false,
       width: 90,

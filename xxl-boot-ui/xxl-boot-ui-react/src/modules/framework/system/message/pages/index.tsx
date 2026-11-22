@@ -84,7 +84,7 @@ const MessageList = () => {
 
   /** 表格列：序号、标题、分类、状态、发送人、发送时间、操作 */
   const columns: ProColumns<API.Message>[] = [
-    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 60 },
+    { title: t('common.id'), dataIndex: 'id', search: false, width: 60 },
     {
       title: t('system.message.messageTitle'),
       dataIndex: 'title',

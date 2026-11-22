@@ -336,7 +336,7 @@ export const xxxApi = {
     <!-- 数据列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="t('common.serialNo')" prop="id" align="center" width="80" />
+      <el-table-column :label="t('common.id')" prop="id" align="center" width="80" />
       <el-table-column :label="t('business.xxx.name')" align="center" prop="name" width="180" show-overflow-tooltip />
       <el-table-column :label="t('common.status')" align="center" width="100">
         <template #default="scope">
@@ -607,7 +607,7 @@ getList()
 | 删除 | 单条确认展示业务名称（回退主键），批量展示条数；删完当前页最后一条先回退一页 |
 | 勾选 | `@selection-change="syncSelection"` 同步 `ids/single/multiple`；列表刷新后如出现残留，可在 `getList` 成功回调显式复位 |
 | 请求链 | `load/insert/update/delete` 的 `then` 后补 `catch(() => {})`，错误由请求层提示 |
-| 列表序号 | 首列 `prop="id"` 展示数据库主键，不用 `type="index"` |
+| 列表主键 | 首列 `prop="id"` 展示数据库主键，文案用 `common.id`（编号/ID），不用 `type="index"`；仅真实行号列（如拖拽排序的字段表）才用 `common.serialNo`（序号） |
 | 枚举 | 用 `enumTitle(statusOptions, code)`，禁止页面内重复写 `statusText` |
 
 ### 4.6 注释与结构

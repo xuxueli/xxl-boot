@@ -39,7 +39,7 @@
     <!-- 数据列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="t('common.serialNo')" prop="id" align="center" width="80" />
+      <el-table-column :label="t('common.id')" prop="id" align="center" width="80" />
       <el-table-column :label="t('authz.role.name')" align="center" prop="name" show-overflow-tooltip />
       <el-table-column :label="t('authz.role.roleKey')" align="center" prop="code" show-overflow-tooltip />
       <el-table-column :label="t('authz.role.order')" align="center" prop="order" width="100" />

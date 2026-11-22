@@ -45,7 +45,7 @@
     <!-- 数据列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="t('common.serialNo')" prop="id" align="center" width="80" />
+      <el-table-column :label="t('common.id')" prop="id" align="center" width="80" />
       <el-table-column :label="t('system.message.messageTitle')" align="center" :show-overflow-tooltip="true">
         <template #default="scope">
           <a class="link-type" style="cursor: pointer" @click="openDetail(scope.row)">{{ scope.row.title }}</a>

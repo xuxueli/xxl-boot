@@ -59,7 +59,7 @@
         <!-- 数据列表：文本列用 min-width 参与剩余宽度分配，侧栏展开/收起时随容器自适应 -->
         <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
           <el-table-column type="selection" width="45" align="center" />
-          <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="80" />
+          <el-table-column :label="t('common.id')" align="center" prop="id" width="80" />
           <el-table-column :label="t('authz.user.username')" align="center" prop="username" min-width="110" show-overflow-tooltip>
             <template #default="scope">
               <a class="link-type" style="cursor: pointer" @click="handleViewData(scope.row)" v-hasPermi="['authz:user']">{{ scope.row.username }}</a>

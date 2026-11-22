@@ -55,7 +55,7 @@ const DictData = () => {
 
   /** 表格列：序号、名称、编码、状态、排序、备注、添加时间、操作 */
   const columns: ProColumns<API.DictItem>[] = [
-    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
+    { title: t('common.id'), dataIndex: 'id', search: false, width: 80 },
     { title: t('system.dict.itemName'), dataIndex: 'name', search: false },
     { title: t('system.dict.itemCode'), dataIndex: 'code', search: false },
     {

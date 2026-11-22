@@ -42,7 +42,7 @@
     <!-- 数据列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column :label="t('common.serialNo')" align="center" prop="id" width="80" />
+      <el-table-column :label="t('common.id')" align="center" prop="id" width="80" />
       <el-table-column :label="t('system.log.logType')" align="center" width="100">
         <template #default="scope">
           <el-tag :type="scope.row.type === 0 ? 'primary' : 'warning'" size="small">

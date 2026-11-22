@@ -89,7 +89,7 @@ const LogList = () => {
   // ---------------------- 表格“列”定义 ----------------------
 
   const columns: ProColumns<API.Log>[] = [
-    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
+    { title: t('common.id'), dataIndex: 'id', search: false, width: 80 },
     {
       title: t('system.log.logType'),
       dataIndex: 'type',

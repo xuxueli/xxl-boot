@@ -364,9 +364,9 @@ const XxxList = () => {
 
   // ---------------------- 表格“列”定义 ----------------------
 
-  /** 表格列：序号、名称、状态、添加时间、操作 */
+  /** 表格列：主键、名称、状态、添加时间、操作 */
   const columns: ProColumns<API.Xxx>[] = [
-    { title: t('common.serialNo'), dataIndex: 'id', search: false, width: 80 },
+    { title: t('common.id'), dataIndex: 'id', search: false, width: 80 },
     {
       title: t('business.xxx.name'),
       dataIndex: 'name',
@@ -499,7 +499,7 @@ export default XxxList;
 | 分区注释 | 按「页面状态 → 数据操作 → 表格“列”定义 → 数据列表渲染」分区，弹窗编排放页面末尾 |
 | 请求 | `request` 内直接 `xxxApi.pageList(params)`，分页字段由 API 统一转换；返回 `{ data, total, success: true }`，数据取 `res.data?.data`，总数取 `res.data?.total` |
 | 搜索 | `search={{ optionRender: (_, __, dom) => [...dom.reverse()] }}` 让查询/重置靠右或按现有页面保持一致；搜索/重置由 ProTable 自动回到第 1 页 |
-| 序号 | 首列 `dataIndex: 'id'`，展示数据库主键，不用 `render` 生成页内序号；树表可无序号列 |
+| 主键 | 首列 `dataIndex: 'id'`，展示数据库主键，文案用 `common.id`（编号/ID），不用 `render` 生成页内序号；仅真实行号列（如已读用户弹窗 `i+1`）才用 `common.serialNo`；树表可无主键列 |
 | 状态列 | `valueEnum` 负责筛选下拉，`render` 负责 Tag 展示；需要行内快速切换时可用受控 `Switch`（如用户管理），但必须受权限控制 |
 | 刷新 | 新增/修改/删除成功后统一 `actionRef.current?.reload()` |
 | 勾选 | `rowSelection.onChange` 同步 `selectedIds`；删除后清空 |

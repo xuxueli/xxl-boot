@@ -39,7 +39,7 @@
     <!-- 数据列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" align="center" width="55" />
-      <el-table-column :label="t('common.serialNo')" prop="id" align="center" width="80" />
+      <el-table-column :label="t('common.id')" prop="id" align="center" width="80" />
       <el-table-column :label="t('tool.codegen.tableName')" align="center" prop="tableName" show-overflow-tooltip />
       <el-table-column :label="t('tool.codegen.tableComment')" align="center" prop="tableComment" show-overflow-tooltip />
       <el-table-column :label="t('common.createTime')" align="center" prop="addTime" width="160" />

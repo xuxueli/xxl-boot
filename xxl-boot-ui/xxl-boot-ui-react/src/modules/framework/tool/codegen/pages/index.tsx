@@ -100,7 +100,7 @@ const CodegenList = () => {
 
   const columns: ProColumns<API.Codegen>[] = [
     {
-      title: t('common.serialNo'),
+      title: t('common.id'),
       dataIndex: 'id',
       search: false,
       width: 70,

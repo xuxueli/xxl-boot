@@ -15,7 +15,7 @@
   >
     <!-- 已读用户列表 -->
     <el-table v-loading="table.loading" :data="table.list" size="small" stripe height="340px">
-      <el-table-column :label="t('common.serialNo')" prop="id" width="80" align="center" />
+      <el-table-column :label="t('common.id')" prop="id" width="80" align="center" />
       <el-table-column :label="t('system.message.userName')" prop="userName" align="center" :show-overflow-tooltip="true" />
       <el-table-column :label="t('common.realName')" prop="realName" align="center" :show-overflow-tooltip="true" />
       <el-table-column :label="t('system.message.readTime')" prop="addTime" align="center" width="180">

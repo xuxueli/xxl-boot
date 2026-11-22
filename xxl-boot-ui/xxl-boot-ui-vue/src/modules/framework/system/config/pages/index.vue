@@ -42,7 +42,7 @@
     <!-- 配置列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="syncSelection">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="t('common.serialNo')" prop="id" align="center" width="80" />
+      <el-table-column :label="t('common.id')" prop="id" align="center" width="80" />
       <el-table-column :label="t('system.config.configName')" align="center" prop="name" width="180" show-overflow-tooltip />
       <el-table-column :label="t('system.config.configKey')" align="center" prop="key" width="180" show-overflow-tooltip />
       <el-table-column :label="t('system.config.configValue')" align="center" prop="value" show-overflow-tooltip />
