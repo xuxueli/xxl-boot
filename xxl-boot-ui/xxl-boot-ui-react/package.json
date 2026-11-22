@@ -1,6 +1,6 @@
 {
   "name": "XXL-BOOT",
-  "version": "2.2.1-SNAPSHOT",
+  "version": "2.3.0",
   "private": true,
   "type": "module",
   "description": "XXL-BOOT | 快速开发平台",
@@ -34,7 +34,7 @@
     "axios": "1.21.1",
     "clsx": "2.1.1",
     "dayjs": "1.11.23",
-    "dompurify": "3.4.17",
+    "dompurify": "3.4.18",
     "echarts": "6.1.0",
     "js-cookie": "3.0.8",
     "react": "19.3.1",

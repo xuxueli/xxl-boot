@@ -19,7 +19,7 @@ const Settings: ProLayoutProps & {
   /**
    * 版本
    */
-  version: '2.2.1-SNAPSHOT',
+  version: '2.3.0',
 
   /**
    * 首页路径
