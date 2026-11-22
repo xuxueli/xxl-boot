@@ -679,7 +679,7 @@ AI 生成的代码经 review 确认后，形成代码 PR 并提交到仓库：
 
 ```sql
 CREATE TABLE `xxl_boot_xxx` (
-    `id`          int(11) NOT NULL AUTO_INCREMENT COMMENT '序号',
+    `id`          int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `name`        varchar(100) NOT NULL COMMENT '产品名称',
     `status`      tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态：0-正常/1-停用',
     `add_time`    datetime NOT NULL COMMENT '创建时间',
@@ -1167,6 +1167,8 @@ public @interface Permission {
 - 9、【安全】Dompurify支持，防止XSS攻击，提升系统安全性；
 - 10、【安全】登陆及安全保障：升级XXL-SSO新版，登陆组件、有效期及注销等强化保障；
 - 11、【升级】升级多项依赖至较新版本。
+
+### 版本 v2.3.1 Release Notes[ING]
 
 
 ### TODO LIST

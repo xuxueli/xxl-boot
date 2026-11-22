@@ -127,7 +127,7 @@ const ${codegen.businessName}List = () => {
   };
 
   const columns: ProColumns<API.${codegen.businessName}>[] = [
-    { title: '序号', dataIndex: 'id', search: false, width: 80 },
+    { title: '编号', dataIndex: 'id', search: false, width: 80 },
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isList == "1">

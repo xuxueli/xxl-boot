@@ -86,7 +86,7 @@
     <!-- 数据列表 -->
     <el-table v-loading="table.loading" :data="table.list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" prop="id" width="100" align="center" />
+      <el-table-column :label="t('common.id')" prop="id" width="100" align="center" />
 <#if fields?? && fields?size gt 0>
 <#list fields as field>
 <#if field.isList == "1">

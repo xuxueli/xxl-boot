@@ -82,7 +82,7 @@ const MessageList = () => {
 
   // ---------------------- 表格“列”定义 ----------------------
 
-  /** 表格列：序号、标题、分类、状态、发送人、发送时间、操作 */
+  /** 表格列：编号、标题、分类、状态、发送人、发送时间、操作 */
   const columns: ProColumns<API.Message>[] = [
     { title: t('common.id'), dataIndex: 'id', search: false, width: 60 },
     {
