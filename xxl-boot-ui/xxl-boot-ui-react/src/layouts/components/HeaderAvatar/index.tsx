@@ -9,7 +9,7 @@ import {
   SkinOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Modal, Spin } from 'antd';
+import { App, Spin } from 'antd';
 import type React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Dropdown } from '@/components';
@@ -28,6 +28,7 @@ type GlobalHeaderRightProps = {
  * 头像下拉菜单组件
  */
 const HeaderAvatar = ({ children }: GlobalHeaderRightProps) => {
+  const { modal } = App.useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const currentUser = useUserStore((s) => s.currentUser);
@@ -61,7 +62,7 @@ const HeaderAvatar = ({ children }: GlobalHeaderRightProps) => {
     const { key } = event;
     /* 退出登录：二次确认后调用 store 退出并跳转登录页 */
     if (key === 'logout') {
-      Modal.confirm({
+      modal.confirm({
         title: t('modal.title'),
         content: t('layout.header.logoutConfirm'),
         okText: t('modal.confirmButton'),
@@ -69,10 +70,9 @@ const HeaderAvatar = ({ children }: GlobalHeaderRightProps) => {
         onOk: async () => {
           // 事件回调中直接调用 store action，避免为单次调用挂载 store 订阅
           await useUserStore.getState().logout();
-          /* replace 跳转并携带来源路径，登录后可回跳 */
-          navigate('/login', {
+          /* 与路由守卫保持一致，通过 redirect 参数携带来源路径供登录后回跳 */
+          navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`, {
             replace: true,
-            state: { from: location.pathname },
           });
         },
       });

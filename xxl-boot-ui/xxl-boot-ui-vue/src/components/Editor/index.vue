@@ -107,9 +107,36 @@ const options = ref<any>({
   readOnly: props.readOnly
 })
 
+/**
+ * 将文案包装为 CSS content 可用的字符串（带引号并转义）
+ *
+ * @param text 原始文案
+ * @returns 可直接赋给 CSS 自定义属性的字符串
+ */
+function cssContent(text: string): string {
+  return `"${text.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+}
+
+// Quill 内置提示/字号下拉文案：通过 CSS 变量注入，语言切换时随计算属性更新
+const editorTextVars = computed<Record<string, string>>(() => ({
+  '--ql-link-tip': cssContent(t('components.editor.linkTip')),
+  '--ql-video-tip': cssContent(t('components.editor.videoTip')),
+  '--ql-save': cssContent(t('common.save')),
+  '--ql-text': cssContent(t('components.editor.text')),
+  '--ql-h1': cssContent(t('components.editor.heading1')),
+  '--ql-h2': cssContent(t('components.editor.heading2')),
+  '--ql-h3': cssContent(t('components.editor.heading3')),
+  '--ql-h4': cssContent(t('components.editor.heading4')),
+  '--ql-h5': cssContent(t('components.editor.heading5')),
+  '--ql-h6': cssContent(t('components.editor.heading6')),
+  '--ql-font-normal': cssContent(t('components.editor.fontNormal')),
+  '--ql-font-serif': cssContent(t('components.editor.fontSerif')),
+  '--ql-font-mono': cssContent(t('components.editor.fontMono'))
+}))
+
 // 编辑器样式：最小高度 / 高度（最小高度通过 CSS 变量作用于编辑区 .ql-editor）
 const styles = computed(() => {
-  let style: Record<string, any> = {}
+  let style: Record<string, any> = { ...editorTextVars.value }
   if (props.minHeight) {
     // 设置编辑区最小高度（CSS 变量），保证默认高度展示约 10 行
     style['--editor-min-height'] = `${props.minHeight}px`
@@ -163,7 +190,8 @@ onBeforeUnmount(() => {
 
 // 上传前校验格式和大小
 function handleBeforeUpload(file: any) {
-  const type = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg']
+  // 与后端上传白名单保持一致（不含 svg，避免脚本型图片风险）
+  const type = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp']
   const isJPG = type.includes(file.type)
   //检验文件格式
   if (!isJPG) {
@@ -224,7 +252,8 @@ function insertImage(file: any) {
     .post(uploadUrl.value, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: headers.value.Authorization
+        // 复用统一的鉴权头（键名随 XXL-SSO 约定变化，不能写死 Authorization）
+        ...getAuthHeaders()
       }
     })
     .then((res) => {
@@ -254,17 +283,17 @@ function insertImage(file: any) {
 }
 
 .ql-snow .ql-tooltip[data-mode='link']::before {
-  content: '请输入链接地址:';
+  content: var(--ql-link-tip);
 }
 
 .ql-snow .ql-tooltip.ql-editing a.ql-action::after {
   border-right: 0px;
-  content: '保存';
+  content: var(--ql-save);
   padding-right: 0px;
 }
 
 .ql-snow .ql-tooltip[data-mode='video']::before {
-  content: '请输入视频地址:';
+  content: var(--ql-video-tip);
 }
 
 .ql-snow .ql-picker.ql-size .ql-picker-label::before,
@@ -289,51 +318,51 @@ function insertImage(file: any) {
 
 .ql-snow .ql-picker.ql-header .ql-picker-label::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item::before {
-  content: '文本';
+  content: var(--ql-text);
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value='1']::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value='1']::before {
-  content: '标题1';
+  content: var(--ql-h1);
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value='2']::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value='2']::before {
-  content: '标题2';
+  content: var(--ql-h2);
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value='3']::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value='3']::before {
-  content: '标题3';
+  content: var(--ql-h3);
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value='4']::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value='4']::before {
-  content: '标题4';
+  content: var(--ql-h4);
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value='5']::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value='5']::before {
-  content: '标题5';
+  content: var(--ql-h5);
 }
 
 .ql-snow .ql-picker.ql-header .ql-picker-label[data-value='6']::before,
 .ql-snow .ql-picker.ql-header .ql-picker-item[data-value='6']::before {
-  content: '标题6';
+  content: var(--ql-h6);
 }
 
 .ql-snow .ql-picker.ql-font .ql-picker-label::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item::before {
-  content: '标准字体';
+  content: var(--ql-font-normal);
 }
 
 .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='serif']::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='serif']::before {
-  content: '衬线字体';
+  content: var(--ql-font-serif);
 }
 
 .ql-snow .ql-picker.ql-font .ql-picker-label[data-value='monospace']::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value='monospace']::before {
-  content: '等宽字体';
+  content: var(--ql-font-mono);
 }
 </style>

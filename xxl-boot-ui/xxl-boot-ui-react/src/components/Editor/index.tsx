@@ -3,7 +3,7 @@
  * @description 基于 Quill 的富文本编辑器，支持工具栏、图片上传（url/base64）、粘贴图片、 自定义高度/只读模式。
  * @author xuxueli 2026-11-21
  */
-import { message } from 'antd';
+import { App } from 'antd';
 import { createStyles } from 'antd-style';
 import type React from 'react';
 import { useCallback, useEffect, useRef } from 'react';
@@ -54,6 +54,7 @@ const Editor = ({
   type = 'url',
 }: EditorProps) => {
   const { styles } = useStyles();
+  const { message } = App.useApp();
   const quillRef = useRef<ReactQuill>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -79,7 +80,8 @@ const Editor = ({
   /** 上传图片：校验后上传服务器或转 base64，返回可插入的图片地址 */
   const doUpload = useCallback(
     async (file: File): Promise<string> => {
-      const allowTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg'];
+      // 与后端上传白名单保持一致（不含 svg，避免脚本型图片风险）
+      const allowTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp'];
       if (!allowTypes.includes(file.type)) {
         message.error(t('components.editor.imageTypeError'));
         return '';
@@ -99,7 +101,7 @@ const Editor = ({
       );
       return BASE_URL + (res?.data?.fileName || '');
     },
-    [fileSize, type],
+    [fileSize, type, message],
   );
 
   /** 粘贴图片：转为上传服务器后插入 */

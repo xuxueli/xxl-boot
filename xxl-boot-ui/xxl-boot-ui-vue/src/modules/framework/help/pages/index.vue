@@ -6,7 +6,7 @@
 <template>
   <div class="app-container help">
     <el-card>
-      <h2>{{ brandName }}｜{{ title }}</h2>
+      <h2>{{ brandName }}｜{{ t('app.title') }}</h2>
       <p>
         {{ t('help.intro') }}
       </p>
@@ -56,7 +56,7 @@ const version = defaultSettings.version
 const footerContent = defaultSettings.footerContent
 
 // 平台标题
-const title = t('app.title')
+
 
 // ---------------------- 页面交互 ----------------------
 

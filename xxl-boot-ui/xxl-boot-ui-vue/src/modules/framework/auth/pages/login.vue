@@ -7,7 +7,7 @@
   <div class="login">
     <h2 class="login-title">{{ brandName }}</h2>
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">{{ title }}</h3>
+      <h3 class="title">{{ t('app.title') }}</h3>
 
       <!-- 用户名 -->
       <el-form-item prop="username">
@@ -79,7 +79,6 @@ import defaultSettings from '@/default-settings'
 import { authApi } from '../api'
 import type { LoginParams } from '../types'
 
-const title = t('app.title') /* 系统标题 */
 const brandName = defaultSettings.brandName /* 品牌名称 */
 const footerContent = defaultSettings.footerContent /* 页脚版权信息 */
 

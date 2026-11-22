@@ -88,7 +88,12 @@ export const formConf: FormConf = {
   formBtns: true
 }
 
-export const inputComponents: FormItemConf[] = [
+/**
+ * 输入类组件配置
+ *
+ * 以函数形式返回，确保 t() 在组件挂载后按当前语言求值，避免模块加载期固化文案。
+ */
+export const getInputComponents = (): FormItemConf[] => [
   {
     label: t('tool.pagegen.cmpInput'),
     tag: 'el-input',
@@ -183,7 +188,12 @@ export const inputComponents: FormItemConf[] = [
   }
 ]
 
-export const selectComponents: FormItemConf[] = [
+/**
+ * 选择类组件配置
+ *
+ * 以函数形式返回，确保 t() 在组件挂载后按当前语言求值，避免模块加载期固化文案。
+ */
+export const getSelectComponents = (): FormItemConf[] => [
   {
     label: t('tool.pagegen.cmpSelect'),
     tag: 'el-select',
@@ -486,7 +496,12 @@ export const selectComponents: FormItemConf[] = [
   }
 ]
 
-export const layoutComponents: FormItemConf[] = [
+/**
+ * 布局类组件配置
+ *
+ * 以函数形式返回，确保 t() 在组件挂载后按当前语言求值，避免模块加载期固化文案。
+ */
+export const getLayoutComponents = (): FormItemConf[] => [
   {
     layout: 'rowFormItem',
     tagIcon: 'row',

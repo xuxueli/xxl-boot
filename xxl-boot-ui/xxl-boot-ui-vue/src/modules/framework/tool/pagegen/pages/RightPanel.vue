@@ -544,7 +544,7 @@ import draggable from 'vuedraggable'
 import { isNumberStr } from '@/utils/common'
 import IconsDialog from './IconsDialog.vue'
 import TreeNodeDialog from './TreeNodeDialog.vue'
-import { inputComponents, selectComponents } from '@/utils/generator/config'
+import { getInputComponents, getSelectComponents } from '@/utils/generator/config'
 import { computed, inject, ref, resolveComponent } from 'vue'
 import type { PropType, Ref } from 'vue'
 import type { RenderContentContext, RenderContentFunction } from 'element-plus'
@@ -653,6 +653,10 @@ const dateOptions = computed<LabelValueOption[]>(() => {
   }
   return []
 })
+
+// 组件列表：在 setup 中构建，确保文案按当前语言求值
+const inputComponents = getInputComponents()
+const selectComponents = getSelectComponents()
 
 /* 组件类型切换选项列表 */
 const tagList = ref<TagGroup[]>([

@@ -159,7 +159,7 @@ import { ElNotification } from 'element-plus'
 import { t } from '@/i18n'
 import { SvgIcon } from '@/components'
 import type { FormConf, FormItemConf } from '@/utils/generator/config'
-import { beautifierConf, formConf as formConfData, inputComponents, layoutComponents, selectComponents } from '@/utils/generator/config'
+import { beautifierConf, formConf as formConfData, getInputComponents, getLayoutComponents, getSelectComponents } from '@/utils/generator/config'
 import { cleanDrawingDefaultValue, drawingDefaultValue, initDrawingDefaultValue } from '@/utils/generator/drawingDefault'
 import { cssStyle, makeUpHtml, vueScript, vueTemplate } from '@/utils/generator/html'
 import { makeUpCss } from '@/utils/generator/css'
@@ -245,6 +245,10 @@ const idGlobal = ref(100)
 provide('idGlobal', idGlobal)
 // 表单全局配置
 const formConf = ref(formConfData)
+// 组件列表：在 setup 中构建，确保文案按当前语言求值
+const inputComponents = getInputComponents()
+const selectComponents = getSelectComponents()
+const layoutComponents = getLayoutComponents()
 
 // ---------------------- 画布操作 ----------------------
 

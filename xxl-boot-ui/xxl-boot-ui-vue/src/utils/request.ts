@@ -55,12 +55,25 @@ const REPEAT_SUBMIT_KEY = 'sessionObj'
 // 跳过大文件防重复提交阈值（5MB）
 const REPEAT_SUBMIT_MAX_SIZE = 5 * 1024 * 1024
 
-// 错误码映射表：后端业务码 → 前端展示文案
-export const errorCode: Record<string, string> = {
-  '301': t('request.err301'),
-  '403': t('request.err403'),
-  '404': t('request.err404'),
-  default: t('request.errDefault')
+// 错误码 → 文案 key 映射：延迟到函数内翻译，避免模块加载期固化语言
+const ERROR_CODE_KEYS = {
+  '301': 'request.err301',
+  '403': 'request.err403',
+  '404': 'request.err404',
+  default: 'request.errDefault'
+} as const
+
+/**
+ * 获取错误码对应的提示文案
+ *
+ * 在调用时按当前语言翻译，保证切换语言后错误提示同步更新。
+ *
+ * @param code 后端业务码
+ * @returns 命中的提示文案；未命中返回 undefined，由调用方兜底
+ */
+export function getErrorMessage(code?: string | number): string | undefined {
+  const key = ERROR_CODE_KEYS[String(code) as keyof typeof ERROR_CODE_KEYS]
+  return key ? t(key) : undefined
 }
 
 // ==================== 创建 axios 实例（拦截器） ====================
@@ -178,7 +191,7 @@ service.interceptors.response.use(
 
     // 3. 其他非成功码（非200）
     if (code !== 200) {
-      const msg = data.msg || errorCode[String(code)] || errorCode.default
+      const msg = data.msg || getErrorMessage(code) || t(ERROR_CODE_KEYS.default)
       modal.msgError(msg)
       return Promise.reject(new Error(msg))
     }

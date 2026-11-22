@@ -13,7 +13,7 @@
 import { ElLoading, ElMessage } from 'element-plus'
 import { saveAs } from 'file-saver'
 import type FileSaver from 'file-saver'
-import service, { errorCode, type RequestConfig } from '@/utils/request'
+import service, { getErrorMessage, type RequestConfig } from '@/utils/request'
 import { tansParams, blobValidate } from '@/utils/common'
 import modal from '@/utils/modal'
 import { t } from '@/i18n'
@@ -90,8 +90,8 @@ export default {
    *
    * 说明：
    * - 当服务端返回非 Blob 数据（如错误 JSON）时，调用此方法解析错误内容
-   * - 优先使用错误码映射表（errorCode）中的描述，其次使用响应体中的 msg 字段
-   * - 若两者均无，则使用 errorCode['default'] 作为兜底提示
+   * - 优先使用错误码映射表中的描述，其次使用响应体中的 msg 字段
+   * - 若两者均无，则使用默认错误提示兜底
    *
    * @param data 响应体 Blob 数据（包含错误信息的 JSON 字符串）
    */
@@ -101,7 +101,7 @@ export default {
     // 解析为 JSON 对象，获取错误码和错误信息
     const rspObj = JSON.parse(resText) as { code?: number; msg?: string }
     // 优先使用错误码映射，其次使用响应 msg，最后降级到默认错误提示
-    const errMsg = errorCode[String(rspObj.code)] || rspObj.msg || errorCode['default']
+    const errMsg = getErrorMessage(rspObj.code) || rspObj.msg || t('request.errDefault')
     ElMessage.error(errMsg)
   }
 }
@@ -137,7 +137,7 @@ export function download(url: string, params: object, filename: string, config?:
         // 服务端以 blob 格式返回了 JSON 错误报文
         const resText = await blobData.text()
         const rspObj = JSON.parse(resText) as { code?: number; msg?: string }
-        const errMsg = errorCode[String(rspObj.code)] || rspObj.msg || errorCode.default
+        const errMsg = getErrorMessage(rspObj.code) || rspObj.msg || t('request.errDefault')
         modal.msgError(errMsg)
       }
       modal.closeLoading()

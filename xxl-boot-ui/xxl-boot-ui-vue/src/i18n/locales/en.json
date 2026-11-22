@@ -258,7 +258,7 @@
   "authz": {
     "user": {
       "username": "Username",
-      "usernameFormat": "Format: start with a lowercase letter, letters/digits",
+      "usernameFormat": "Format: start with a lowercase letter, letters/digits, 4-20 characters",
       "password": "Password",
       "passwordLength": "Password length must be 6-20",
       "role": "Role",

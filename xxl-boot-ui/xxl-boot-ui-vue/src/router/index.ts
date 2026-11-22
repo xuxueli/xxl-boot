@@ -16,6 +16,7 @@ import { isHttp } from '@/utils/validate'
 import { isRelogin } from '@/utils/request'
 import { useUserStore, useRoutesStore, useSettingsStore } from '@/store'
 import defaultSettings from '@/default-settings'
+import { t } from '@/i18n'
 
 // ==================== 静态路由注册 ====================
 
@@ -46,7 +47,8 @@ export const constantRoutes = [
         name: 'Profile',
         path: '/user/profile/:activeTab?',
         component: () => import('@/modules/framework/authz/user/pages/profile/index.vue'),
-        meta: { title: '个人中心', icon: 'user' }
+        // 使用 getter 延迟翻译，避免模块加载期固化语言
+        meta: { get title() { return t('layout.nav.profile') }, icon: 'user' }
       }
     ]
   },

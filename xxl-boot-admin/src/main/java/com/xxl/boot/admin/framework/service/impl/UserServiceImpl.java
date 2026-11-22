@@ -201,14 +201,14 @@ public class UserServiceImpl implements UserService {
     public Response<String> updatePwd(String loginUserName, String oldPassword, String password){
         // valid password
         if (StringTool.isBlank(oldPassword)){
-            Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_oldpwd") );
+            return Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_oldpwd") );
         }
         if (StringTool.isBlank(password)){
-            Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_newpwd") );
+            return Response.ofFail( I18nUtil.getString("system_please_input") + I18nUtil.getString("change_pwd_field_newpwd") );
         }
         password = password.trim();
         if (!(password.length()>=4 && password.length()<=20)) {
-            Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
+            return Response.ofFail( I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
 
         // md5 password

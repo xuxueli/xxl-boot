@@ -61,8 +61,8 @@ public class FileController {
     private static final String[] DEFAULT_ALLOWED_EXTENSION = {
             // 图片
             "bmp", "gif", "jpg", "jpeg", "png",
-            // word excel powerpoint
-            "doc", "docx", "xls", "xlsx", "ppt", "pptx", "html", "htm", "txt",
+            // word、excel、powerpoint、markdown、txt
+            "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md",
             // 压缩文件
             "rar", "zip", "gz", "bz2",
             // 视频格式

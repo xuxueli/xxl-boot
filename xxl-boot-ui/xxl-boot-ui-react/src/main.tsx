@@ -4,7 +4,7 @@
  * @author xuxueli 2026-11-21
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { App as AntdApp, ConfigProvider } from 'antd';
+import { App as AntdApp, ConfigProvider, theme as antdTheme } from 'antd';
 import type { Locale } from 'antd/es/locale';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
@@ -42,6 +42,7 @@ const queryClient = new QueryClient({
  */
 const AppTheme = ({ children }: { children: React.ReactNode }) => {
   const colorPrimary = useSettingsStore((s) => s.settings.colorPrimary);
+  const navTheme = useSettingsStore((s) => s.settings.navTheme);
   const language = useSettingsStore((s) => s.language);
   const loadBaseConfig = useSettingsStore((s) => s.loadBaseConfig);
 
@@ -55,6 +56,11 @@ const AppTheme = ({ children }: { children: React.ReactNode }) => {
       key={language}
       locale={antdLocales[language]}
       theme={{
+        // 设置面板选择暗色时联动 antd 暗色算法，保证内容区与侧栏主题一致
+        algorithm:
+          navTheme === 'realDark'
+            ? antdTheme.darkAlgorithm
+            : antdTheme.defaultAlgorithm,
         token: {
           fontFamily: 'AlibabaSans, sans-serif',
           colorPrimary,

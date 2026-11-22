@@ -121,11 +121,16 @@ const ThemeColorPicker = () => {
     }
     /* 抽屉在 portal 中渲染，需等待其挂载完成后再测量 */
     const timer = setTimeout(() => {
-      const title = Array.from(
-        document.querySelectorAll('.ant-pro-setting-drawer-body-title'),
-      ).find((h) => /主题色/.test(h.textContent || ''));
-      if (title?.parentElement) {
-        setSectionEl(title.parentElement as HTMLElement);
+      /* 以稳定的业务 class 定位主题色区块，避免依赖会随语言变化的标题文案 */
+      let cursor: HTMLElement | null = document.querySelector(
+        '.ant-pro-setting-drawer-theme-color',
+      );
+      while (cursor) {
+        if (cursor.querySelector('.ant-pro-setting-drawer-body-title')) {
+          setSectionEl(cursor);
+          return;
+        }
+        cursor = cursor.parentElement;
       }
     }, 350);
     return () => clearTimeout(timer);

@@ -36,6 +36,9 @@ const breadcrumbItemRender = (route: { title?: React.ReactNode }) => (
   <span>{route.title}</span>
 );
 
+/** 判断菜单地址是否为 http(s) 外链 */
+const isExternalLink = (path: string) => /^https?:\/\//i.test(path);
+
 /**
  * 菜单项标题渲染：为二级及以下菜单补充展示图标
  * 说明：pro-layout 的 siderMenuType=sub 模式下，仅第一级菜单项渲染 icon，深层菜单项默认不展示，
@@ -86,6 +89,14 @@ const AppLayout = () => {
       const path = item.path ?? '';
       const targetPath = dirRedirectMap[path] || path;
       const label = item.icon ? renderMenuLabel(item) : dom;
+      // 外链菜单交给浏览器打开，避免被 React Router 解析为站内路径
+      if (targetPath && isExternalLink(targetPath)) {
+        return (
+          <a href={targetPath} target="_blank" rel="noopener noreferrer">
+            {label}
+          </a>
+        );
+      }
       return targetPath ? <Link to={targetPath}>{label}</Link> : label;
     },
     [dirRedirectMap],

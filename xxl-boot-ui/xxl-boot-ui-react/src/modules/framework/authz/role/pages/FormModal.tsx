@@ -148,15 +148,17 @@ const FormModal = ({
    * 加载资源树与已授权集合
    */
   const loadTree = (roleId?: number) => {
+    // 进入即清空树状态：避免异步加载期间或新增角色时继承上一个角色的授权
+    setExpandedKeys([]);
+    setCheckedKeys([]);
+    setHalfCheckedKeys([]);
+    setPreservedParentKeys([]);
+
     resourceApi.treeList({}).then((res) => {
       // 数据查询并处理：API查询资源树数据 -> antd Tree 数据
       const tree = toTreeData(handleTree(res.data || []));
       // 设置资源树数据
       setTreeData(tree);
-
-      // 重置 已展开、已勾选 数据
-      setExpandedKeys([]);
-      setCheckedKeys([]);
 
       // 表单编辑场景：回显表单数据，初始化已授权节点
       if (roleId) {

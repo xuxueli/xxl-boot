@@ -266,10 +266,10 @@ const formState = ref<FormState<UserForm>>({
     // 校验规则
     username: [
       { required: true, message: t('common.requiredMsg', [t('auth.login.username')]), trigger: 'blur' },
-      { pattern: /^[a-z][a-z0-9]*$/, message: t('authz.user.usernameFormat'), trigger: 'blur' }
+      { pattern: /^[a-z][a-z0-9]{3,19}$/, message: t('authz.user.usernameFormat'), trigger: 'blur' }
     ],
     realName: [{ required: true, message: t('common.requiredMsg', [t('common.realName')]), trigger: 'blur' }],
-    phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: t('authz.user.phoneInvalid'), trigger: 'blur' }],
+    phone: [{ pattern: /^1[3-9]\d{9}$/, message: t('authz.user.phoneInvalid'), trigger: 'blur' }],
     email: [{ type: 'email', message: t('authz.user.emailInvalid'), trigger: ['blur', 'change'] }]
   }
 })

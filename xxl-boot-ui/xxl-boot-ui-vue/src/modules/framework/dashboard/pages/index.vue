@@ -108,10 +108,11 @@ interface StatItem {
 
 // 指标卡片：顺序固定为用户、角色、日志、消息，加载后按下标回填数值
 const stats = ref<StatItem[]>([
-  { label: t('dashboard.userCount'), value: 0, icon: 'user', color: '#5b6abf', bg: '#eef0fb' },
-  { label: t('dashboard.roleCount'), value: 0, icon: 'peoples', color: '#319c8a', bg: '#e8f6f3' },
-  { label: t('dashboard.logCount'), value: 0, icon: 'log', color: '#d4943c', bg: '#fcf4e8' },
-  { label: t('dashboard.messageCount'), value: 0, icon: 'message', color: '#c5566a', bg: '#fbeef1' }
+  // label 使用 getter 延迟翻译，语言切换后随渲染更新
+  { get label() { return t('dashboard.userCount') }, value: 0, icon: 'user', color: '#5b6abf', bg: '#eef0fb' },
+  { get label() { return t('dashboard.roleCount') }, value: 0, icon: 'peoples', color: '#319c8a', bg: '#e8f6f3' },
+  { get label() { return t('dashboard.logCount') }, value: 0, icon: 'log', color: '#d4943c', bg: '#fcf4e8' },
+  { get label() { return t('dashboard.messageCount') }, value: 0, icon: 'message', color: '#c5566a', bg: '#fbeef1' }
 ])
 
 // 顶部消息列表

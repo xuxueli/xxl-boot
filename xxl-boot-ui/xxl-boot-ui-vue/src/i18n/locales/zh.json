@@ -258,7 +258,7 @@
   "authz": {
     "user": {
       "username": "账号",
-      "usernameFormat": "格式：小写字母开头，字母/数字",
+      "usernameFormat": "格式：小写字母开头，字母/数字，长度 4-20",
       "password": "密码",
       "passwordLength": "密码长度 6-20",
       "role": "角色",
